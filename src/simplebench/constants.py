@@ -1,0 +1,34 @@
+# -*- coding: utf-8 -*-
+"""constants for simplebenchmark."""
+
+import time
+
+MIN_MEASURED_ITERATIONS: int = 3
+"""Minimum number of iterations for statistical analysis."""
+
+DEFAULT_ITERATIONS: int = 20
+"""Default number of iterations for benchmarking."""
+
+DEFAULT_TIMER = time.perf_counter_ns
+"""Default timer function for benchmarking."""
+
+DEFAULT_INTERVAL_SCALE: float = 1e-9
+"""Default scaling factor for time intervals (nanoseconds -> seconds)."""
+
+DEFAULT_INTERVAL_UNIT: str = 'ns'
+"""Default unit for time intervals (nanoseconds)."""
+
+BASE_INTERVAL_UNIT: str = 's'
+"""Base unit for time intervals."""
+
+DEFAULT_OPS_PER_INTERVAL_SCALE: float = 1.0
+"""Default scaling factor for operations per interval (1.0 -> 1.0)."""
+
+DEFAULT_OPS_PER_INTERVAL_UNIT: str = 'Ops/s'
+"""Default unit for operations per interval (operations per second)."""
+
+BASE_OPS_PER_INTERVAL_UNIT: str = 'Ops/s'
+"""Base unit for operations per interval."""
+
+DEFAULT_SIGNIFICANT_FIGURES: int = 3
+"""Default number of significant figures for output values (3 significant figures)."""

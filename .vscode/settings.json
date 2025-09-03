@@ -1,0 +1,54 @@
+{
+  "python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    ".",
+    "-p",
+    "test_*.py"
+],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": true,
+  "explorer.autoRevealExclude": {
+    ".mypy_cache": true,
+    ".venv": true,
+    ".venv-3*": true,
+    "**/._.DS_Store": true,
+    "**/__pycache__": true,
+    "bazel-bin": true,
+    "bazel-datadog": true,
+    "bazel-out": true,
+    "bazel-testlogs": true,
+    "bazel-python-gen-tries": true,
+    "coverage.lcov": true
+  },
+  "files.autoSave": "afterDelay",
+  "files.exclude": {
+    ".coverage": true,
+    ".mypy_cache": true,
+    ".venv": true,
+    ".venv-3*": true,
+    "**/._.DS_Store": true,
+    "**/__pycache__": true,
+    "**/perl-lang": true,
+    "bazel-bin": true,
+    "bazel-datadog": true,
+    "bazel-out": true,
+    "bazel-testlogs": true,
+    "bazel-python-*": true,
+    "coverage.lcov": true
+  },
+  "markiscodecoverage.searchCriteria": "${workspace_dir}/coverage/*dat",
+  "terminal.integrated.env.osx": {
+    "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/src"
+  },
+  "python.REPL.enableREPLSmartSend": false,
+  "flake8.args": [
+    "--max-line-length=120"
+  ],
+  "python.createEnvironment.contentButton": "show",
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.terminal.launchArgs": [],
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "pylint.cwd": "${workspaceFolder}/src"
+}
