@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Container for managing progress tasks."""
+"""module for managing progress tasks using Rich Progress."""
 from typing import Optional
-import weakref
 
 from rich.progress import Progress, TaskID
 
