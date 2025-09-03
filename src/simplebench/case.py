@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
+"""Benchmark case declaration and execution."""
 from dataclasses import dataclass, field
 import itertools
 from typing import Any, Callable, Literal, Optional
 
 from rich.progress import TaskID
 
-from .constants import (BASE_OPS_PER_INTERVAL_UNIT, BASE_INTERVAL_UNIT, DEFAULT_ITERATIONS,
-                        DEFAULT_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE)
+from .constants import DEFAULT_ITERATIONS
 from .results import Results
 from .runners import SimpleRunner
 from .session import Session
 from .tasks import RichTask
-from .utils import si_scale_for_smallest, sigfigs
 
 
 @dataclass(kw_only=True)
@@ -130,7 +129,7 @@ class Case:
             # full dump if no session or if session.args specifies json_data
             if session is None or (session.args is not None and session.args.json_data):
                 results.append(result.results_and_data_as_dict)
-            else: # otherwise only stats
+            else:  # otherwise only stats
                 results.append(result.results_as_dict)
         return {
             'type': self.__class__.__name__,
