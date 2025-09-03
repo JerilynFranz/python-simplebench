@@ -7,7 +7,8 @@ from .case import Case
 from .constants import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERATIONS
 from .iteration import Iteration
 from .results import Results
-from .tasks import Tasks
+from .session import Session
+from .tasks import RichTask
 
 
 class SimpleRunner():
@@ -16,12 +17,12 @@ class SimpleRunner():
     def __init__(self,
                  case: Case,
                  kwargs: dict[str, Any],
-                 tasks: Tasks,
+                 session: Optional[Session] = None,
                  runner: Optional[Callable[..., Any]] = None) -> None:
         self.case: Case = case
         self.kwargs: dict[str, Any] = kwargs
         self.run: Callable[..., Any] = runner if runner is not None else self.default_runner
-        self.tasks: Tasks = tasks
+        self.session: Session | None = session
 
     @property
     def variation_marks(self) -> dict[str, Any]:
@@ -73,21 +74,24 @@ class SimpleRunner():
 
         gc.collect()
 
-        tasks_name = 'runner'
-
         progress_max: float = 100.0
-        if self.case.progress and tasks_name not in TASKS:
-            TASKS[tasks_name] = PROGRESS.add_task(
-                            description=f'[green] Benchmarking {group}',
-                            total=progress_max)
-        if tasks_name in TASKS:
-            PROGRESS.reset(TASKS[tasks_name])
-            PROGRESS.update(TASKS[tasks_name],
-                            completed=5.0,
-                            description=f'[green] Benchmarking {group} (iteration {iteration_pass:<6d}; '
-                                        f'time {0.00:<3.2f}s)')
-            PROGRESS.start_task(TASKS[tasks_name])
-        total_elapsed: float = 0
+        task_name: str = 'case_runner'
+        task: RichTask | None = None
+        if self.session and self.session.tasks:
+            task = self.session.tasks.get(task_name)
+            if not task:
+                task = self.session.tasks.new_task(
+                    name=task_name,
+                    description=f'[green] Benchmarking {group}',
+                    completed=0,
+                    total=progress_max)
+        if task:
+            task.reset()
+            task.update(
+                completed=5,
+                description=(f'[green] Benchmarking {group} (iteration {iteration_pass:<6d}; '
+                             f'time {0.00:<3.2f}s)'))
+        total_elapsed: int = 0
         iterations_list: list[Iteration] = []
         while ((iteration_pass <= iterations_min or wall_time < min_stop_at)
                 and wall_time < max_stop_at):
@@ -116,16 +120,15 @@ class SimpleRunner():
             wall_time = DEFAULT_TIMER()
 
             # Update progress display if showing progress
-            if tasks_name in TASKS:
+            if task:
                 iteration_completion: float = progress_max * iteration_pass / iterations_min
                 wall_time_elapsed_seconds: float = (wall_time - time_start) * DEFAULT_INTERVAL_SCALE
                 time_completion: float = progress_max * (wall_time - time_start) / (min_stop_at - time_start)
-                progress_current = min(iteration_completion, time_completion)
-                PROGRESS.update(TASKS[tasks_name],
-                                completed=progress_current,
-                                description=(
-                                    f'[green] Benchmarking {group} (iteration {iteration_pass:6d}; '
-                                    f'time {wall_time_elapsed_seconds:<3.2f}s)'))
+                progress_current = int(min(iteration_completion, time_completion))
+                task.update(completed=progress_current,
+                            description=(
+                                f'[green] Benchmarking {group} (iteration {iteration_pass:6d}; '
+                                f'time {wall_time_elapsed_seconds:<3.2f}s)'))
 
         benchmark_results = Results(
             group=group,
@@ -137,7 +140,7 @@ class SimpleRunner():
             total_elapsed=total_elapsed,
             extra_info={})
 
-        if tasks_name in TASKS:
-            PROGRESS.stop_task(TASKS[tasks_name])
+        if task:
+            task.stop()
 
         return benchmark_results

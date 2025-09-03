@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """module for managing progress tasks using Rich Progress."""
-from typing import Optional
+from typing import Any, Optional
 
 from rich.progress import Progress, TaskID
 
@@ -15,7 +15,7 @@ class RichTask:
                  name: str,
                  description: str,
                  completed: int = 0,
-                 total: int = 100,
+                 total: float = 100.0,
                  progress: Optional[Progress] = None) -> None:
         """Construct a new RichTask.
 
@@ -74,18 +74,39 @@ class RichTask:
         if self._progress is not None and self._task_id is not None:
             self._progress.reset(self._task_id)
 
-    def update(self, completed: int) -> None:
+    def update(self,
+               completed: int,
+               description: Optional[str] = None,
+               refresh: Optional[bool] = None) -> None:
         """Update the task progress.
 
         Args:
             completed (int): The number of completed steps.
+            description (Optional[str]): The description of the task.
+            refresh (Optional[bool]): Whether to refresh the progress display.
         """
-        if not isinstance(completed, int):
+        if completed is not None and isinstance(completed, int):
             raise SimpleBenchTypeError(
                 f'Expected completed arg to be an int, got {type(completed)}',
                 ErrorTag.RICH_TASK_UPDATE_INVALID_COMPLETED_ARG)
+        if description is not None and not isinstance(description, str):
+            raise SimpleBenchTypeError(
+                f'Expected description arg to be a str, got {type(description)}',
+                ErrorTag.RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG)
+        if refresh is not None and not isinstance(refresh, bool):
+            raise SimpleBenchTypeError(
+                f'Expected refresh arg to be a bool, got {type(refresh)}',
+                ErrorTag.RICH_TASK_UPDATE_INVALID_REFRESH_ARG)
         if self._progress is not None and self._task_id is not None:
-            self._progress.update(task_id=self._task_id, completed=completed)
+            update_args: dict[str, Any] = {'task_id': self._task_id}
+
+            if isinstance(description, str):
+                update_args['description'] = description
+            if isinstance(completed, int):
+                update_args['completed'] = completed
+            if refresh is not None and isinstance(refresh, bool):
+                update_args['refresh'] = refresh
+            self._progress.update(**update_args)
         else:
             raise SimpleBenchRuntimeError(
                 'Task has already been terminated',
@@ -174,7 +195,7 @@ class RichProgressTasks:
     def new_task(self,
                  name: str,
                  description: str,
-                 total: int = 0,
+                 total: float = 0,
                  completed: int = 0) -> RichTask:
         """Create a new RichTask.
 

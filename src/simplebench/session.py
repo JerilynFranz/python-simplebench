@@ -1,4 +1,5 @@
 """Session management for SimpleBench."""
+from argparse import Namespace
 from enum import Enum
 from typing import Optional, Sequence
 
@@ -45,11 +46,13 @@ class Session:
         tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
     """
     def __init__(self,
+                 args: Optional[Namespace] = None,
                  cases: Optional[Sequence[Case]] = None,
                  verbosity: Verbosity = Verbosity.NORMAL) -> None:
         """Create a new Session.
 
         Args:
+            args (Optional[Namespace]): The command line arguments for the session. (default: None)
             cases (Sequence[Case]): A Sequence of benchmark cases for the session (default: empty list).
             verbosity (Verbosity): The verbosity level for console output (default: Verbosity.NORMAL)
 
@@ -57,6 +60,7 @@ class Session:
             SimpleBenchTypeError: If the arguments are of the wrong type.
         """
         # Initialize hidden attributes
+        self._args: Optional[Namespace] = args
         self._cases: Sequence[Case] = []
         self._verbosity: Verbosity = Verbosity.NORMAL
         self._progress: Progress = Progress()
@@ -88,6 +92,12 @@ class Session:
         """Run all benchmark cases in the session."""
         for case in self.cases:
             case.run(session=self)
+
+
+    @property
+    def args(self) -> Optional[Namespace]:
+        """The command line arguments for the session."""
+        return self._args
 
     @property
     def progress(self) -> Progress:

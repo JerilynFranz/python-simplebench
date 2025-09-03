@@ -10,6 +10,7 @@ from .constants import (BASE_OPS_PER_INTERVAL_UNIT, BASE_INTERVAL_UNIT, DEFAULT_
 from .results import Results
 from .runners import SimpleRunner
 from .session import Session
+from .tasks import RichTask
 from .utils import si_scale_for_smallest, sigfigs
 
 
@@ -88,44 +89,39 @@ class Case:
         """
         all_variations = self.expanded_kwargs_variations
         task_name: str = 'case_variations'
-        task: Task = session.tasks.get_task(task_name) if session else None
-
-        if task_name not in TASKS and self.progress:
-            TASKS[task_name] = PROGRESS.add_task(
-                description=f'[cyan] Running case {self.title}',
-                total=len(all_variations))
-        if task_name in TASKS:
-            PROGRESS.reset(TASKS[task_name])
-            PROGRESS.update(task_id=TASKS[task_name],
-                            description=f'[cyan] Running case {self.title}',
-                            total=len(all_variations))
-        if task_name in TASKS:
-            PROGRESS.start_task(TASKS[task_name])
+        task: RichTask | None = None
+        if session and session.tasks:
+            task = session.tasks.get(task_name)
+            if not task:
+                task = session.tasks.new_task(
+                    name=task_name,
+                    description=f'[cyan] Running case {self.title}',
+                    completed=0,
+                    total=len(all_variations))
+        if task:
+            task.reset()
         collected_results: list[Results] = []
         kwargs: dict[str, Any]
         for variations_counter, kwargs in enumerate(all_variations):
-            benchmark: SimpleRunner = SimpleRunner(case=self, kwargs=kwargs)
+            benchmark: SimpleRunner = SimpleRunner(case=self, session=session, kwargs=kwargs)
             results: Results = self.action(benchmark)
             collected_results.append(results)
-            if task_name in TASKS:
-                PROGRESS.update(task_id=TASKS[task_name],
-                                description=(f'[cyan] Running case {self.title} '
-                                             f'({variations_counter + 1}/{len(all_variations)})'),
-                                completed=variations_counter + 1,
-                                refresh=True)
-        if task_name in TASKS:
-            PROGRESS.stop_task(TASKS[task_name])
+            if task:
+                task.update(
+                        description=(f'[cyan] Running case {self.title} '
+                                     f'({variations_counter + 1}/{len(all_variations)})'),
+                        completed=variations_counter + 1,
+                        refresh=True)
+        if task:
+            task.stop()
         self.results = collected_results
 
-    def as_dict(self, args: Namespace) -> dict[str, Any]:
+    def as_dict(self, session: Optional[Session]) -> dict[str, Any]:
         """Returns the benchmark case and results as a JSON serializable dict.
-
-        Args:
-            args (Namespace): The command line arguments.
         """
         results = []
         for result in self.results:
-            if args.json_data:
+            if session is not None and session.args is not None and session.args.json_data:
                 results.append(result.results_and_data_as_dict)
             else:
                 results.append(result.results_as_dict)
