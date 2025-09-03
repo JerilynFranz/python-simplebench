@@ -118,12 +118,19 @@ class Case:
 
     def as_dict(self, session: Optional[Session]) -> dict[str, Any]:
         """Returns the benchmark case and results as a JSON serializable dict.
+
+        Args:
+            session (Optional[Session]): The session to use for the benchmark case.
+
+        Returns:
+            dict[str, Any]: A JSON serializable dict representation of the benchmark case and results.
         """
         results = []
         for result in self.results:
-            if session is not None and session.args is not None and session.args.json_data:
+            # full dump if no session or if session.args specifies json_data
+            if session is None or (session.args is not None and session.args.json_data):
                 results.append(result.results_and_data_as_dict)
-            else:
+            else: # otherwise only stats
                 results.append(result.results_as_dict)
         return {
             'type': self.__class__.__name__,
