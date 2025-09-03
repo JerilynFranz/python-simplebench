@@ -7,7 +7,7 @@ from rich.progress import Progress
 
 from .case import Case
 from .exceptions import ErrorTag, SimpleBenchTypeError
-from .tasks import ProgressTasks
+from .tasks import RichProgressTasks, RichTask
 
 
 class Verbosity(str, Enum):
@@ -44,7 +44,9 @@ class Session:
         console: (Console): Rich Console instance for displaying output. (read only)
         tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
     """
-    def __init__(self, cases: Optional[Sequence[Case]] = None, verbosity: Verbosity = Verbosity.NORMAL) -> None:
+    def __init__(self,
+                 cases: Optional[Sequence[Case]] = None,
+                 verbosity: Verbosity = Verbosity.NORMAL) -> None:
         """Create a new Session.
 
         Args:
@@ -59,7 +61,7 @@ class Session:
         self._verbosity: Verbosity = Verbosity.NORMAL
         self._progress: Progress = Progress()
         self._console: Console = self._progress.console
-        self._progress_tasks: ProgressTasks = ProgressTasks()
+        self._progress_tasks: RichProgressTasks = RichProgressTasks()
 
         if not cases:
             cases = []
@@ -98,8 +100,8 @@ class Session:
         return self._console
 
     @property
-    def tasks(self) -> ProgressTasks:
-        """The ProgressTasks instance for managing progress tasks."""
+    def tasks(self) -> RichProgressTasks:
+        """The RichProgressTasks instance for managing progress tasks."""
         return self._progress_tasks
 
     @property

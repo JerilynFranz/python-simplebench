@@ -52,7 +52,23 @@ class ErrorTag(str, Enum):
     """The name arg cannot be an empty string"""
     RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION = "RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION"
     """The description arg cannot be an empty string"""
+    
+    RICH_TASK_UPDATE_INVALID_COMPLETED_ARG = "RICH_TASK_UPDATE_INVALID_COMPLETED_ARG"
+    """Something other than an int was passed to the RichTask() update method"""
+    RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK = "RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK"
+    """The task has already been terminated"""
+    RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK = "RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK"
+    """The task has already been terminated"""
 
+    # Rich ProgressTask() tags
+    RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG = "RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG"
+    """Something other than a string was passed to the RichProgressTask() __delitem__ method"""
+    RICH_PROGRESS_TASK_DELITEM_NOT_FOUND = "RICH_PROGRESS_TASK_DELITEM_NOT_FOUND"
+    """The requested task was not found"""
+    RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG = "RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG"
+    """Something other than a string was passed to the RichProgressTask() __getitem__ method"""
+    RICH_PROGRESS_TASK_GETITEM_NOT_FOUND = "RICH_PROGRESS_TASK_GETITEM_NOT_FOUND"
+    """The requested task was not found"""
 
 class SimpleBenchTypeError(TypeError):
     """Base class for all SimpleBench type errors.
@@ -127,3 +143,30 @@ class SimpleBenchValueError(ValueError):
         """
         self.tag_code: ErrorTag = tag
         super().__init__(msg)
+
+
+class SimpleBenchRuntimeError(RuntimeError):
+    """Base class for all SimpleBench runtime errors.
+
+    It differs from a standard RuntimeError by the addition of a
+    tag code used to very specifically identify where the error
+    was thrown in the code for testing and development support.
+
+    This tag code does not have a direct semantic meaning except to identify
+    the specific code throwing the exception for tests.
+
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, tag: ErrorTag) -> None:
+        """Create a new SimpleBenchRuntimeError.
+
+        Args:
+            msg (str): The error message.
+            tag (str): The tag code.
+        """
+        self.tag_code: ErrorTag = tag
+        super().__init__(msg)
+
+
