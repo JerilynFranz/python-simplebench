@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Classes for reporting benchmark results."""
 import csv
+from enum import Enum
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Sequence
 
 import pandas as pd
 import matplotlib as mpl
@@ -18,10 +19,14 @@ from .session import Session
 from .utils import si_scale_for_smallest, sigfigs
 
 
+class Reporters:
+    """Container for reporters."""
+
+
 class RichTableReporter:
     """Reporter for displaying benchmark results as a rich table on the console
     """
-    def __init__(self, session: Session, case: Case) -> None:
+    def __init__(self, session: Session, case: Case, sections: Sequence[str]) -> None:
         if not isinstance(session, Session):
             raise SimpleBenchTypeError(
                 "Expected a Session instance",
@@ -33,6 +38,27 @@ class RichTableReporter:
                 "Expected a Case instance",
                 ErrorTag.RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG)
         self.case: Case = case
+
+        if not isinstance(sections, Sequence):
+            raise SimpleBenchTypeError(
+                "Expected a Sequence of Section instances for sections arg",
+                ErrorTag.RICH_TABLE_REPORTER_INIT_INVALID_SESSION_ARG)
+        for entry in sections:
+            if not isinstance(entry, Sections):
+                raise SimpleBenchTypeError(
+                    f'Expected section items to be Section instances - cannot be a {type(entry)}',
+                    ErrorTag.RICH_TABLE_REPORTER_INIT_INVALID_SESSION_ARG)
+
+    def run_reports(self) -> None:
+        """Run all reports for the case."""
+        case: Case = self.case
+        if not case.results:
+            return
+        if self.session.verbosity in (Verbosity.NORMAL, Verbosity.VERBOSE):
+            if case.ops_per_second_enabled:
+                self.ops_results_as_rich_table()
+            if case.timing_enabled:
+                self.timing_results_as_rich_table()
 
     def results_as_rich_table(self,
                               base_unit: str,

@@ -8,7 +8,7 @@ from rich.progress import Progress
 
 from .case import Case
 from .exceptions import ErrorTag, SimpleBenchTypeError
-from .tasks import RichProgressTasks, RichTask
+from .tasks import RichProgressTasks
 
 
 class Verbosity(str, Enum):
@@ -63,9 +63,9 @@ class Session:
         self._args: Optional[Namespace] = args
         self._cases: Sequence[Case] = []
         self._verbosity: Verbosity = Verbosity.NORMAL
-        self._progress: Progress = Progress()
-        self._console: Console = self._progress.console
         self._progress_tasks: RichProgressTasks = RichProgressTasks()
+        self._progress: Progress = self._progress_tasks._progress
+        self._console: Console = self._progress.console
 
         if not cases:
             cases = []
@@ -92,7 +92,6 @@ class Session:
         """Run all benchmark cases in the session."""
         for case in self.cases:
             case.run(session=self)
-
 
     @property
     def args(self) -> Optional[Namespace]:

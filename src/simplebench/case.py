@@ -79,12 +79,18 @@ class Case:
         values = [self.kwargs_variations[key] for key in keys]
         return [dict(zip(keys, v)) for v in itertools.product(*values)]
 
-    def run(self, session: Optional[Session] = None):
+    def run(self, session: Optional[Session] = None) -> None:
         """Run the benchmark tests.
 
         This method will execute the benchmark for each combination of
         keyword arguments and collect the results. After running the
         benchmarks, the results will be stored in the `self.results` attribute.
+
+        If passed, the session's tasks will be used to display progress,
+        control verbosity, and pass CLI arguments to the benchmark runner.
+
+        Args:
+            session (Optional[Session]): The session to use for the benchmark case.
         """
         all_variations = self.expanded_kwargs_variations
         task_name: str = 'case_variations'
@@ -117,6 +123,11 @@ class Case:
 
     def as_dict(self, session: Optional[Session]) -> dict[str, Any]:
         """Returns the benchmark case and results as a JSON serializable dict.
+
+        If passed, the session's args will be used to determine the level of detail
+        to include in the results. Without a session or if session.args specifies
+        json_data, full results and data will be included. Otherwise, only statistical
+        summaries will be included.
 
         Args:
             session (Optional[Session]): The session to use for the benchmark case.

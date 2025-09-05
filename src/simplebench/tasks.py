@@ -124,6 +124,7 @@ class RichTask:
                 'Task has already been terminated',
                 ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK)
 
+
 class RichProgressTasks:
     """Task Rich Progress management for benchmarking."""
     def __init__(self) -> None:
@@ -139,7 +140,7 @@ class RichProgressTasks:
 
     def __getitem__(self, name: str) -> RichTask:
         """Get a task by name.
-        
+
         Example:
 
         task = progress_tasks['task_name']
@@ -154,7 +155,7 @@ class RichProgressTasks:
             SimpleBenchKeyError: If the requested task does not exist.
         """
         if not isinstance(name, str):
-            raise(SimpleBenchKeyError(
+            raise (SimpleBenchKeyError(
                 'Key not found',
                 ErrorTag.RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG))
         if name not in self._tasks:
@@ -174,7 +175,7 @@ class RichProgressTasks:
 
         Args:
             name (str): The name of the task to delete.
-        
+
         Raises:
             SimpleBenchKeyError: If the task does not exist.
         """
@@ -182,7 +183,7 @@ class RichProgressTasks:
             raise SimpleBenchTypeError(
                 f'Expected name arg to be a str, got {type(name)}',
                 ErrorTag.RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG)
-                
+
         if name in self._tasks:
             task: RichTask = self._tasks[name]
             task.terminate_and_remove()

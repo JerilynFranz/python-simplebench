@@ -52,7 +52,6 @@ class ErrorTag(str, Enum):
     """The name arg cannot be an empty string"""
     RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION = "RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION"
     """The description arg cannot be an empty string"""
-    
     RICH_TASK_UPDATE_INVALID_COMPLETED_ARG = "RICH_TASK_UPDATE_INVALID_COMPLETED_ARG"
     """Something other than an int was passed to the RichTask() update method"""
     RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG = "RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG"
@@ -73,6 +72,39 @@ class ErrorTag(str, Enum):
     """Something other than a string was passed to the RichProgressTask() __getitem__ method"""
     RICH_PROGRESS_TASK_GETITEM_NOT_FOUND = "RICH_PROGRESS_TASK_GETITEM_NOT_FOUND"
     """The requested task was not found"""
+
+    # reporters.Choice() tags
+    CHOICE_INIT_INVALID_REPORTER_ARG = "CHOICE_INIT_INVALID_REPORTER_ARG"
+    """Something other than a ReporterProtocol instance was passed to the Choice() constructor"""
+    CHOICE_INIT_INVALID_RUNNER_ARG = "CHOICE_INIT_INVALID_RUNNER_ARG"
+    """Something other than a callable (function or method) was passed to the Choice() constructor"""
+    CHOICE_INIT_INVALID_NAME_ARG = "CHOICE_INIT_INVALID_NAME_ARG"
+    """Something other than a string was passed to the Choice() constructor"""
+    CHOICE_INIT_EMPTY_STRING_NAME = "CHOICE_INIT_EMPTY_STRING_NAME"
+    """The name arg cannot be an empty string"""
+    CHOICE_INIT_INVALID_DESCRIPTION_ARG = "CHOICE_INIT_INVALID_DESCRIPTION_ARG"
+    """Something other than a string was passed to the Choice() constructor"""
+    CHOICE_INIT_EMPTY_STRING_DESCRIPTION = "CHOICE_INIT_EMPTY_STRING_DESCRIPTION"
+    """The description arg cannot be an empty string"""
+    CHOICE_INIT_INVALID_SECTIONS_ARG = "CHOICE_INIT_INVALID_SECTIONS_ARG"
+    """Something other than a set of Section enums was passed to the Choice() constructor"""
+    CHOICE_INIT_EMPTY_SECTIONS = "CHOICE_INIT_EMPTY_SECTIONS"
+    """The sections arg cannot be an empty set"""
+    CHOICE_INIT_INVALID_TARGETS_ARG = "CHOICE_INIT_INVALID_TARGETS_ARG"
+    """Something other than a set of Target enums was passed to the Choice() constructor"""
+    CHOICE_INIT_EMPTY_TARGETS = "CHOICE_INIT_EMPTY_TARGETS"
+    """The targets arg cannot be an empty set"""
+    CHOICE_INIT_INVALID_FORMATS_ARG = "CHOICE_INIT_INVALID_FORMATS_ARG"
+    """Something other than a set of Format enums was passed to the Choice() constructor"""
+    CHOICE_INIT_EMPTY_FORMATS = "CHOICE_INIT_EMPTY_FORMATS"
+    """The formats arg cannot be an empty set"""
+
+    # reporters.Choices() tags
+    CHOICES_ADD_INVALID_CHOICE_ARG = "CHOICES_ADD_INVALID_CHOICE_ARG"
+    """Something other than a Choice instance was passed to the Choices.add() method"""
+    CHOICES_ADD_DUPLICATE_CHOICE_NAME = "CHOICES_ADD_DUPLICATE_CHOICE_NAME"
+    """A Choice with the same name already exists in the Choices instance"""
+
 
 class SimpleBenchTypeError(TypeError):
     """Base class for all SimpleBench type errors.
@@ -172,5 +204,3 @@ class SimpleBenchRuntimeError(RuntimeError):
         """
         self.tag_code: ErrorTag = tag
         super().__init__(msg)
-
-

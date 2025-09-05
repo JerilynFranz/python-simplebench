@@ -3,21 +3,18 @@
 
 
 from argparse import Namespace, ArgumentParser
-from typing import Any, Callable
+from typing import Any, Sequence
 
 from rich.console import Console
-from rich.progress import Progress
 
 from .case import Case
-from .runners import SimpleRunner
 from .session import Session, Verbosity
-from .tasks import Tasks
 
 
 def run_benchmarks(session: Session):
     """Run the benchmark tests and print the results.
     """
-    benchmark_cases: list[Case] = session.cases()
+    benchmark_cases: Sequence[Case] = session.cases
     for case in benchmark_cases:
         case.verbose = args.verbose
         case.progress = args.progress
@@ -115,14 +112,14 @@ def run_benchmarks(session: Session):
                 PROGRESS.remove_task(task)
 
 
-def main(benchmark_cases: list[Case]) -> int:
+def main(benchmark_cases: Sequence[Case]) -> int:
     """Main entry point for running benchmarks.
 
     Usage:
         This function serves as the main entry point for running benchmarks.
 
     Args:
-        benchmark_cases: A list of benchmark cases.
+        benchmark_cases (Sequence[Case]): A Sequence of benchmark cases.
 
     Returns:
         An integer exit code.
@@ -148,11 +145,16 @@ def main(benchmark_cases: list[Case]) -> int:
     parser.add_argument('--timing', action='store_true', help='Enable operations timing output to console or csv')
 
     args: Namespace = parser.parse_args()
-
-    session: Session = Session(cases=benchmark_cases)
+    session: Session = Session(args=args, cases=benchmark_cases)
+    console: Console = session.console
+    if args.list:
+        console.print('Available benchmarks:')
+        for case in benchmark_cases:
+            console.print('  - ', f'[green]{case.group:<40s}[/green]', f'{case.title}')
+        return 0
 
     if args.quiet and args.verbose:
-        session.console.print('Cannot use both --quiet and --verbose options together')
+        console.print('Error: Cannot use both --quiet and --verbose options together')
         parser.print_usage()
         return 1
 
@@ -163,19 +165,13 @@ def main(benchmark_cases: list[Case]) -> int:
     if args.verbose:
         session.verbosity = Verbosity.VERBOSE
 
-    if args.list:
-        session.console.print('Available benchmarks:')
-        for case in benchmark_cases:
-            session.console.print('  - ', f'[green]{case.group:<40s}[/green]', f'{case.title}')
-        return 0
-
     if not (args.console or args.json or args.csv or args.json or args.json_data):
         session.console.print('No output format(s) selected, using console output by default')
         session.reporters.add(ConsoleReporter(session.console))
         args.console = True
 
     if args.json and args.json_data:
-        session.console.print('Both --json and --json-data are enabled, using --json-data')
+        session.console.print('Warning: Both --json and --json-data are enabled, using --json-data')
         args.json = False
     if (args.graph or args.json or args.json_data or args.csv) and not args.output_dir:
         session.console.print('No output directory specified, using default: .benchmarks')
