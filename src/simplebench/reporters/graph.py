@@ -21,19 +21,7 @@ from .interfaces import Reporter
 
 class GraphReporter(Reporter):
     """Class for outputting benchmark results as graphs."""
-    def __init__(self, session: Session, case: Case) -> None:
-        if not isinstance(session, Session):
-            raise SimpleBenchTypeError(
-                "Expected a Session instance",
-                ErrorTag.GRAPH_REPORTER_INIT_INVALID_SESSION_ARG)
-        self._session: Session = session
-
-        if not isinstance(case, Case):
-            raise SimpleBenchTypeError(
-                "Expected a Case instance",
-                ErrorTag.GRAPH_REPORTER_INIT_INVALID_CASE_ARG)
-        self._case: Case = case
-
+    def __init__(self) -> None:
         self._choices: Choices = Choices()
         self._choices.add(
             Choice(
@@ -57,7 +45,26 @@ class GraphReporter(Reporter):
                 formats=[Format.RICH_TEXT])
         )
 
+    @property
+    def choices(self) -> Choices:
+        """Return the Choices instance for the reporter, including sections,
+        output targets, and formats.
+        """
+        return self._choices
+
+    @property
+    def name(self) -> str:
+        """Return the unique identifying name of the reporter."""
+        return 'graph'
+
+    @property
+    def description(self) -> str:
+        """Return a brief description of the reporter."""
+        return 'Outputs benchmark results as graphs.'
+
     def plot_results(self,
+                     session: Session,
+                     case: Case,
                      filepath: Path,
                      target: Literal['ops_per_second', 'per_round_timings'],
                      base_unit: str = '',
@@ -72,7 +79,26 @@ class GraphReporter(Reporter):
             target_name (str): The name of the target metric.
             scale (float): The scale factor for the y-axis.
         """
-        case: Case = self._case
+        if not isinstance(session, Session):
+            raise SimpleBenchTypeError(
+                "Expected a Session instance",
+                ErrorTag.GRAPH_REPORTER_PLOT_RESULTS_INVALID_SESSION_ARG)
+
+        if not isinstance(case, Case):
+            raise SimpleBenchTypeError(
+                "Expected a Case instance",
+                ErrorTag.GRAPH_REPORTER_PLOT_RESULTS_INVALID_CASE_ARG)
+
+        if not isinstance(filepath, Path):
+            raise SimpleBenchTypeError(
+                "Expected a Path instance",
+                ErrorTag.GRAPH_REPORTER_PLOT_RESULTS_INVALID_FILEPATH_ARG)
+
+        if not isinstance(target, str) or target not in ['ops_per_second', 'per_round_timings']:
+            raise SimpleBenchTypeError(
+                "target must be either 'ops_per_second' or 'per_round_timings'",
+                ErrorTag.GRAPH_REPORTER_PLOT_RESULTS_INVALID_TARGET_ARG)
+
         results: list[Results] = case.results
         if not results:
             return
@@ -132,24 +158,30 @@ class GraphReporter(Reporter):
         plt.savefig(filepath)
         plt.close()  # Close the figure to free memory
 
-    def plot_ops_results(self, path: Path) -> None:
+    def plot_ops_results(self, session: Session, case: Case, path: Path) -> None:
         """Plots the operations per second results graph.
 
         Args:
             path (Path): The path to the output directory.
         """
-        return self.plot_results(filepath=path.joinpath('graphs', 'ops_per_second.png'),
-                                 target='ops_per_second',
-                                 base_unit=BASE_OPS_PER_INTERVAL_UNIT,
-                                 target_name='Operations per Second')
+        return self.plot_results(
+            session=session,
+            case=case,
+            filepath=path.joinpath('graphs', 'ops_per_second.png'),
+            target='ops_per_second',
+            base_unit=BASE_OPS_PER_INTERVAL_UNIT,
+            target_name='Operations per Second')
 
-    def plot_timing_results(self, path: Path) -> None:
+    def plot_timing_results(self, session: Session, case: Case, path: Path) -> None:
         """Plots the timing results graph.
 
         Args:
             filepath (Path): The path to the output directory.
         """
-        return self.plot_results(filepath=path.joinpath('graphs', 'per_round_timings.png'),
-                                 target='per_round_timings',
-                                 base_unit=BASE_INTERVAL_UNIT,
-                                 target_name='Time Per Round')
+        return self.plot_results(
+            session=session,
+            case=case,
+            filepath=path.joinpath('graphs', 'per_round_timings.png'),
+            target='per_round_timings',
+            base_unit=BASE_INTERVAL_UNIT,
+            target_name='Time Per Round')

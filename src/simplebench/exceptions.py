@@ -28,18 +28,63 @@ class ErrorTag(str, Enum):
     """Something other than a Case instance was passed to the RichTableReporter() constructor"""
     RICH_TABLE_REPORTER_INIT_INVALID_SESSION_ARG = "RICH_TABLE_REPORTER_INIT_INVALID_SESSION_ARG"
     """Something other than a Session instance was passed to the RichTableReporter() constructor"""
+    RICH_TABLE_REPORTER_REPORT_INVALID_CASE_ARG = "RICH_TABLE_REPORTER_REPORT_INVALID_CASE_ARG"
+    """Something other than a Case instance was passed to the RichTableReporter.report() method"""
+    RICH_TABLE_REPORTER_REPORT_INVALID_SESSION_ARG = "RICH_TABLE_REPORTER_REPORT_INVALID_SESSION_ARG"
+    """Something other than a Session instance was passed to the RichTableReporter.report() method"""
+    RICH_TABLE_REPORTER_REPORT_INVALID_CHOICE_ARG = "RICH_TABLE_REPORTER_REPORT_INVALID_CHOICE_ARG"
+    """Something other than a Choice instance was passed to the RichTableReporter.report() method"""
+    RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION = "RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION"
+    """An unsupported Section was passed to the RichTableReporter.report() method in the Choice.sections"""
+    RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_TARGET = "RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_TARGET"
+    """An unsupported Target was passed to the RichTableReporter.report() method in the Choice.targets"""
+    RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_FORMAT = "RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_FORMAT"
+    """An unsupported Format was passed to the RichTableReporter.report() method in the Choice.formats"""
+    RICH_TABLE_REPORTER_REPORT_MISSING_PATH_ARG = "RICH_TABLE_REPORTER_REPORT_MISSING_PATH_ARG"
+    """The required 'path' argument was not passed to the RichTableReporter.report() method"""
+    RICH_TABLE_REPORTER_REPORT_INVALID_PATH_ARG = "RICH_TABLE_REPORTER_REPORT_INVALID_PATH_ARG"
+    """Something other than a Path instance was passed to the RichTableReporter.report() method"""
+    RICH_TABLE_REPORTER_REPORT_INVALID_CALLBACK_ARG = "RICH_TABLE_REPORTER_REPORT_INVALID_CALLBACK_ARG"
+    """Something other than a callable was passed to the RichTableReporter.report() method as the callback argument"""
 
     # CSVReporter() tags
     CSV_REPORTER_INIT_INVALID_CASE_ARG = "CSV_REPORTER_INIT_INVALID_CASE_ARG"
     """Something other than a Case instance was passed to the CSVReporter() constructor"""
     CSV_REPORTER_INIT_INVALID_SESSION_ARG = "CSV_REPORTER_INIT_INVALID_SESSION_ARG"
     """Something other than a Session instance was passed to the CSVReporter() constructor"""
+    CSV_REPORTER_REPORT_INVALID_CASE_ARG = "CSV_REPORTER_REPORT_INVALID_CASE_ARG"
+    """Something other than a Case instance was passed to the CSVReporter.report() method"""
+    CSV_REPORTER_REPORT_INVALID_SESSION_ARG = "CSV_REPORTER_REPORT_INVALID_SESSION_ARG"
+    """Something other than a Session instance was passed to the CSVReporter.report() method"""
+    CSV_REPORTER_REPORT_INVALID_CHOICE_ARG = "CSV_REPORTER_REPORT_INVALID_CHOICE_ARG"
+    """Something other than a Choice instance was passed to the CSVReporter.report() method"""
+    CSV_REPORTER_REPORT_UNSUPPORTED_SECTION = "CSV_REPORTER_REPORT_UNSUPPORTED_SECTION"
+    """An unsupported Section was passed to the CSVReporter.report() method in the Choice.sections"""
+    CSV_REPORTER_REPORT_UNSUPPORTED_TARGET = "CSV_REPORTER_REPORT_UNSUPPORTED_TARGET"
+    """An unsupported Target was passed to the CSVReporter.report() method in the Choice.targets"""
+    CSV_REPORTER_REPORT_UNSUPPORTED_FORMAT = "CSV_REPORTER_REPORT_UNSUPPORTED_FORMAT"
+    """An unsupported Format was passed to the CSVReporter.report() method in the Choice.formats"""
+    CSV_REPORTER_REPORT_MISSING_PATH_ARG = "CSV_REPORTER_REPORT_MISSING_PATH_ARG"
+    """The required 'path' argument was not passed to the CSVReporter.report() method"""
+    CSV_REPORTER_REPORT_INVALID_PATH_ARG = "CSV_REPORTER_REPORT_INVALID_PATH_ARG"
+    """Something other than a Path instance was passed to the CSVReporter.report() method"""
+    CSV_REPORTER_REPORT_INVALID_CALLBACK_ARG = "CSV_REPORTER_REPORT_INVALID_CALLBACK_ARG"
+    """Something other than a callable was passed to the CSVReporter.report() method as the callback argument"""
 
     # GraphReporter() tags
     GRAPH_REPORTER_INIT_INVALID_CASE_ARG = "GRAPH_REPORTER_INIT_INVALID_CASE_ARG"
     """Something other than a Case instance was passed to the GraphReporter() constructor"""
     GRAPH_REPORTER_INIT_INVALID_SESSION_ARG = "GRAPH_REPORTER_INIT_INVALID_SESSION_ARG"
     """Something other than a Session instance was passed to the GraphReporter() constructor"""
+    GRAPH_REPORTER_PLOT_RESULTS_INVALID_SESSION_ARG = "GRAPH_REPORTER_PLOT_RESULTS_INVALID_SESSION_ARG"
+    """Something other than a Session instance was passed to the GraphReporter.plot_results() method"""
+    GRAPH_REPORTER_PLOT_RESULTS_INVALID_CASE_ARG = "GRAPH_REPORTER_PLOT_RESULTS_INVALID_CASE_ARG"
+    """Something other than a Case instance was passed to the GraphReporter.plot_results() method"""
+    GRAPH_REPORTER_PLOT_RESULTS_INVALID_FILEPATH_ARG = "GRAPH_REPORTER_PLOT_RESULTS_INVALID_FILEPATH_ARG"
+    """Something other than a Path instance was passed to the GraphReporter.plot_results() method"""
+    GRAPH_REPORTER_PLOT_RESULTS_INVALID_TARGET_ARG = "GRAPH_REPORTER_PLOT_RESULTS_INVALID_TARGET_ARG"
+    """Something other than 'ops_per_second' or 'per_round_timings' was passed to the
+    GraphReporter.plot_results() method"""
 
     # RichTask() tags
     RICH_TASK_INIT_INVALID_NAME_ARG = "RICH_TASK_INIT_INVALID_NAME_ARG"
@@ -104,6 +149,18 @@ class ErrorTag(str, Enum):
     """Something other than a Choice instance was passed to the Choices.add() method"""
     CHOICES_ADD_DUPLICATE_CHOICE_NAME = "CHOICES_ADD_DUPLICATE_CHOICE_NAME"
     """A Choice with the same name already exists in the Choices instance"""
+
+    # Reporter() tags
+    REPORTER_INIT_NOT_IMPLEMENTED = "REPORTER_INIT_NOT_IMPLEMENTED"
+    """The Reporter base class cannot be instantiated directly"""
+    REPORTER_CHOICES_NOT_IMPLEMENTED = "REPORTER_CHOICES_NOT_IMPLEMENTED"
+    """The Reporter.choices property must be implemented in subclasses"""
+    REPORTER_NAME_NOT_IMPLEMENTED = "REPORTER_NAME_NOT_IMPLEMENTED"
+    """The Reporter.name property must be implemented in subclasses"""
+    REPORTER_DESCRIPTION_NOT_IMPLEMENTED = "REPORTER_DESCRIPTION_NOT_IMPLEMENTED"
+    """The Reporter.description property must be implemented in subclasses"""
+    REPORTER_REPORT_NOT_IMPLEMENTED = "REPORTER_REPORT_NOT_IMPLEMENTED"
+    """The Reporter.report() method must be implemented in subclasses"""
 
 
 class SimpleBenchTypeError(TypeError):
@@ -185,6 +242,31 @@ class SimpleBenchRuntimeError(RuntimeError):
     """Base class for all SimpleBench runtime errors.
 
     It differs from a standard RuntimeError by the addition of a
+    tag code used to very specifically identify where the error
+    was thrown in the code for testing and development support.
+
+    This tag code does not have a direct semantic meaning except to identify
+    the specific code throwing the exception for tests.
+
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, tag: ErrorTag) -> None:
+        """Create a new SimpleBenchRuntimeError.
+
+        Args:
+            msg (str): The error message.
+            tag (str): The tag code.
+        """
+        self.tag_code: ErrorTag = tag
+        super().__init__(msg)
+
+
+class SimpleBenchNotImplementedError(NotImplementedError):
+    """Base class for all SimpleBench not implemented errors.
+
+    It differs from a standard NotImplementedError by the addition of a
     tag code used to very specifically identify where the error
     was thrown in the code for testing and development support.
 

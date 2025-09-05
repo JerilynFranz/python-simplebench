@@ -2,11 +2,13 @@
 """Reporters for benchmark results."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from pathlib import Path
+from typing import Any, Callable, Optional, TYPE_CHECKING
 
+from ..exceptions import ErrorTag, SimpleBenchNotImplementedError
 
 if TYPE_CHECKING:
-    from .choices import Choices
+    from .choices import Choices, Choice, Section, Format
     from ..case import Case
     from ..session import Session
 
@@ -23,70 +25,77 @@ class Reporter(ABC):
     HTTP endpoint, or display device.
 
     Attributes:
+        name (str): The unique identifying name of the reporter.
+        description (str): A brief description of the reporter.
+        choices (Choices): A Choices instance defining the sections, output targets,
+            and formats supported by the reporter.
         session (Session): The Session instance containing benchmark results.
-        case (Case): The Case instance representing the benchmarked code.
-        sections (Sequence[str]): The sections to include in the report.
+        callback (Callable[..., Any]): A callback function for additional processing of the report.
 
     Methods:
-        choices() -> Choices: Return a Choices instance for the reporter,
-            including sections, output targets, and formats.
-        name() -> str: Return the unique identifying name of the reporter.
-        description() -> str: Return a brief description of the reporter.
-        text_report() -> Optional[str]: Return a plain text (UTF-8) report
-            suitable for output.
-        rich_text_report() -> Optional[str]: Return a rich text report
-            suitable for console output.
-        run_report() -> None: Run the report and handle output internally
-            to the Reporter.
-        save_report(output_path: str) -> None: Save the report to the
-            specified output path.
-
-        Reporters must implement the abstract methods defined in this interface that
-        are consistent with their Choices configuration.
 
         The choices() method should return a Choices instance that accurately
         reflects the sections, output targets, and formats supported by the reporter.
 
-        The output methods (text_report, rich_text_report, run_report, save_report)
-        should be implemented based on the reporter's capabilities and the targets
-        it supports.
-
         Targets are defined in the Choices instances returned by the choices() method.
-
-        * FILESYSTEM targets should be handled by the save_report method.
-        * CONSOLE targets should be handled by the run_report method.
-        * HTTP targets can be handled by either run_report or save_report,
-          depending on the reporter's design.
-        * DISPLAY targets should be handled by the display_report method.
-        * CALLER targets should be handled by the appropriate output method,
-        typically returning the report as a string.
-
-        Formats and targets not supported by a specific reporter can return None
-        or raise NotImplementedError as appropriate.
 
         The Reporter interface ensures that all reporters provide a consistent
         set of functionalities, making it easier to manage and utilize different
         reporting options within the SimpleBench framework.
     """
     @abstractmethod
-    def __init__(self, session: Session, case: Case) -> None:
-        """Initialize the reporter with a session, case, and sections."""
-        raise NotImplementedError
+    def __init__(self) -> None:
+        """Initialize the reporter with Sections, Targets, and Formats."""
+        raise SimpleBenchNotImplementedError(
+            "Reporter subclasses must implement the __init__ method",
+            ErrorTag.REPORTER_INIT_NOT_IMPLEMENTED
+        )
+
+    def report(self,
+               case: Case,
+               choice: Choice,
+               path: Path,
+               session: Optional[Session] = None,
+               callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
+        """Generate a report based on the benchmark results.
+
+        Args:
+            case (Case): The Case instance containing benchmark results.
+            choice (Choice): The Choice instance specifying the report configuration.
+            path (Path): The path to the directory where the report can be saved.
+            session (Optional[Session]): The Session instance containing benchmark results.
+            callback (Optional[Callable[[Case, Section, Any], None]]):
+                A callback function for additional processing of the report.
+        Raises:
+            NotImplementedError: If the method is not implemented in a subclass.
+        """
+        raise SimpleBenchNotImplementedError(
+            "Reporter subclasses must implement the report method",
+            ErrorTag.REPORTER_REPORT_NOT_IMPLEMENTED)
 
     @property
     @abstractmethod
     def choices(self) -> Choices:
         """Return a Choices instance for the reporter, including sections, output targets, and formats."""
-        raise NotImplementedError
+        raise SimpleBenchNotImplementedError(
+            "Reporter subclasses must implement the choices property",
+            ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED
+        )
 
     @property
     @abstractmethod
     def name(self) -> str:
         """Return the unique identifying name of the reporter."""
-        raise NotImplementedError
+        raise SimpleBenchNotImplementedError(
+            "Reporter subclasses must implement the name property",
+            ErrorTag.REPORTER_NAME_NOT_IMPLEMENTED
+        )
 
     @property
     @abstractmethod
     def description(self) -> str:
         """Return a brief description of the reporter."""
-        raise NotImplementedError
+        raise SimpleBenchNotImplementedError(
+            "Reporter subclasses must implement the description property",
+            ErrorTag.REPORTER_DESCRIPTION_NOT_IMPLEMENTED
+        )

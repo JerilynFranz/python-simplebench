@@ -4,24 +4,35 @@ from __future__ import annotations
 
 from collections import UserDict
 from enum import Enum
-from typing import Any, Callable, Optional, Sequence
+from typing import Any, Sequence
 
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .interfaces import Reporter
 
 
 class Section(str, Enum):
-    """Categories for report sections."""
-    OPS = 'operations per second'
+    """Categories for report sections.
+
+    The string values are used to load the data accessor methods by attribute name in the Results class
+    and name generated files."""
+    OPS = 'ops_per_second'
     """Operations per second section."""
-    TIMING = 'time per operation'
-    """Time per operation section."""
-    MEMORY = 'memory usage'
+    TIMING = 'per_round_timings'
+    """Time per round section."""
+    MEMORY = 'memory_usage'
     """Memory usage section."""
+
+    def __contains__(self, item: Any) -> bool:
+        """Check if the item is a valid Section."""
+        return isinstance(item, Section) or item in self._value2member_map_
 
 
 class Target(str, Enum):
-    """Categories for different output targets."""
+    """Categories for different output targets.
+
+    The enums are used in generating calling parameters
+    for the report() methods in the Reporter subclasses.
+    """
     CONSOLE = 'to console'
     """Output to console."""
     FILESYSTEM = 'to filesystem'
@@ -30,14 +41,16 @@ class Target(str, Enum):
     """Output to HTTP endpoint."""
     DISPLAY = 'to display'
     """Output to display device."""
-    CALLER = 'to caller'
-    """Return to caller (e.g., as a return value)."""
+    CALLBACK = 'to callback'
+    """Pass generated output to a callback function."""
 
 
 class Format(str, Enum):
     """Categories for different output formats."""
     PLAIN_TEXT = 'plain text'
     """Plain text format"""
+    MARKDOWN = 'markdown'
+    """Markdown format"""
     RICH_TEXT = 'rich text'
     """Rich text format"""
     CSV = 'csv'
@@ -79,6 +92,7 @@ class Choice:
 
     Args:
         reporter (Reporter): An instance of a Reporter subclass.
+        flags (Sequence[str]): A sequence of command-line flags associated with the choice.
         name (str): A unique name for the choice.
         description (str): A brief description of the choice.
         sections (Sequence[Section]): A sequence of Section enums to include in the report.
@@ -90,7 +104,6 @@ class Choice:
     """
     def __init__(self,
                  reporter: Reporter,
-                 runner: Callable[..., Optional[Any]],
                  flags: Sequence[str],
                  name: str,
                  description: str,
@@ -103,13 +116,6 @@ class Choice:
                 ErrorTag.CHOICE_INIT_INVALID_REPORTER_ARG)
         self._reporter: Reporter = reporter
         """The Reporter sub-class instance associated with the choice"""
-
-        if not callable(runner):
-            raise SimpleBenchTypeError(
-                "runner must be a callable (function or method)",
-                ErrorTag.CHOICE_INIT_INVALID_RUNNER_ARG)
-        self._runner: Callable[..., Optional[Any]] = runner
-        """The callable (function or method) to execute for this choice"""
 
         if not isinstance(flags, Sequence) or not all(isinstance(f, str) for f in flags):
             raise SimpleBenchTypeError(

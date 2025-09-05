@@ -2,74 +2,195 @@
 """Reporter for benchmark results using CSV files."""
 from __future__ import annotations
 import csv
+from io import TextIOWrapper, StringIO
 from pathlib import Path
-from typing import Literal
+from typing import Any, Callable, Optional
+
 
 from ..constants import (BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT,
                          DEFAULT_INTERVAL_SCALE)
-from ..exceptions import SimpleBenchTypeError, ErrorTag
-from ..session import Session
+
 from ..case import Case
-from ..utils import sigfigs, si_scale_for_smallest
+from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from ..results import Results
+from ..session import Session
+from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
 from .choices import Choice, Choices, Section, Format, Target
 from .interfaces import Reporter
 
 
 class CSVReporter(Reporter):
-    """Class for outputting benchmark results to CSV files."""
+    """Class for outputting benchmark results to CSV files.
 
-    def __init__(self, session: Session, case: Case) -> None:
-        if not isinstance(session, Session):
-            raise SimpleBenchTypeError(
-                "Expected a Session instance",
-                ErrorTag.CSV_REPORTER_INIT_INVALID_SESSION_ARG)
-        self._session: Session = session
+    It supports reporting operations per second and per round timing results,
+    either separately or together, to the filesystem or via a callback function.
 
-        if not isinstance(case, Case):
-            raise SimpleBenchTypeError(
-                "Expected a Case instance",
-                ErrorTag.CSV_REPORTER_INIT_INVALID_CASE_ARG)
-        self._case: Case = case
+    The CSV files are tagged with metadata comments including the case title,
+    description, and units for clarity.
 
+    Defined command-line flags:
+        --csv: Outputs both operations per second and per round timing results to CSV.
+        --csv-ops: Outputs only operations per second results to CSV.
+        --csv-timings: Outputs only per round timing results to CSV.
+
+    Attributes:
+        name (str): The unique identifying name of the reporter.
+        description (str): A brief description of the reporter.
+        choices (Choices): A collection of Choices instances defining
+            the reporter instance, CLI flags, Choice name, supported Result Sections,
+            supported output Targets, and supported output Formats for the reporter.
+    """
+
+    def __init__(self) -> None:
         self._choices: Choices = Choices()
         self._choices.add(
             Choice(
                 reporter=self,
-                runner=self.output_ops_results_to_csv,
-                flags=['--csv-ops'],
-                name='csv-ops',
-                description='Save operations per second results to a CSV file',
-                sections=[Section.OPS],
-                targets=[Target.FILESYSTEM],
+                flags=['--csv'],
+                name='csv',
+                description='operations per second and per round timing results to CSV',
+                sections=[Section.OPS, Section.TIMING],
+                targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.CSV]))
         self._choices.add(
             Choice(
                 reporter=self,
-                runner=self.output_timing_results_to_csv,
+                flags=['--csv-ops'],
+                name='csv-ops',
+                description='Save operations per second results to CSV',
+                sections=[Section.OPS],
+                targets=[Target.FILESYSTEM, Target.CALLBACK],
+                formats=[Format.CSV]))
+        self._choices.add(
+            Choice(
+                reporter=self,
                 flags=['--csv-timings'],
                 name='csv-timings',
-                description='Save per round timing results to a CSV file',
+                description='per round timing results to CSV',
                 sections=[Section.TIMING],
-                targets=[Target.FILESYSTEM],
+                targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.CSV]))
 
-    def output_results_to_csv(self,
-                              filepath: Path,
-                              base_unit: str,
-                              target: Literal['ops_per_second', 'per_round_timings']) -> None:
+    @property
+    def choices(self) -> Choices:
+        """Return the Choices instance for the reporter, including sections,
+        output targets, and formats.
+        """
+        return self._choices
+
+    @property
+    def name(self) -> str:
+        """Return the unique identifying name of the reporter."""
+        return 'csv'
+
+    @property
+    def description(self) -> str:
+        """Return a brief description of the reporter."""
+        return 'Outputs benchmark results to CSV files.'
+
+    def report(self,
+               case: Case,
+               choice: Choice,
+               path: Path,
+               session: Optional[Session] = None,
+               callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
         """Output the benchmark results to a file as tagged CSV if available.
 
         Args:
-            filepath: The path to the CSV file to write.
-            results: The benchmark results to write.
-            target: The target metric to write (either 'ops_per_second' or 'per_round_timings').
+            case (Case): The Case instance representing the benchmarked code.
+            choice (Choice): The Choice instance specifying the report configuration.
+            path (Path): The path to the directory where the CSV file(s) will be saved.
+            session (Optional[Session]): The Session instance containing benchmark results.
+            callback (Optional[Callable[[Case, Section, Format, Any], None]]):
+                A callback function for additional processing of the report.
+                The function should accept two arguments: the Case instance and the CSV data as a string.
+                Leave as None if no callback is needed.
+
+        Return:
+            None
+
+        Raises:
+            SimpleBenchTypeError: If the provided arguments are not of the expected types.
+            SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
-        case = self._case
+        if not isinstance(case, Case):
+            raise SimpleBenchTypeError(
+                "Expected a Case instance",
+                ErrorTag.CSV_REPORTER_REPORT_INVALID_CASE_ARG)
+        if not isinstance(choice, Choice):
+            raise SimpleBenchTypeError(
+                "Expected a Choice instance",
+                ErrorTag.CSV_REPORTER_REPORT_INVALID_CHOICE_ARG)
+        for section in choice.sections:
+            if section not in (Section.OPS, Section.TIMING):
+                raise SimpleBenchValueError(
+                    f"Unsupported Section in Choice: {section}",
+                    ErrorTag.CSV_REPORTER_REPORT_UNSUPPORTED_SECTION)
+        for target in choice.targets:
+            if target not in (Target.FILESYSTEM, Target.CALLBACK):
+                raise SimpleBenchValueError(
+                    f"Unsupported Target in Choice: {target}",
+                    ErrorTag.CSV_REPORTER_REPORT_UNSUPPORTED_TARGET)
+        if Target.CALLBACK in choice.targets:
+            if callback is not None and not callable(callback):
+                raise SimpleBenchTypeError(
+                    "Callback function must be callable if provided",
+                    ErrorTag.CSV_REPORTER_REPORT_INVALID_CALLBACK_ARG)
+        if Target.FILESYSTEM in choice.targets and not isinstance(path, Path):
+            raise SimpleBenchTypeError(
+                "Path must be a pathlib.Path instance when using FILESYSTEM target",
+                ErrorTag.CSV_REPORTER_REPORT_INVALID_PATH_ARG)
+        for output_format in choice.formats:
+            if output_format is not Format.CSV:
+                raise SimpleBenchValueError(
+                    f"Unsupported Format in Choice: {output_format}",
+                    ErrorTag.CSV_REPORTER_REPORT_UNSUPPORTED_FORMAT)
+        if session is not None and not isinstance(session, Session):
+            raise SimpleBenchTypeError(
+                "session must be a Session instance if provided",
+                ErrorTag.CSV_REPORTER_REPORT_INVALID_SESSION_ARG)
+
+        # Only proceed if there are results to report
         results = case.results
         if not results:
             return
 
+        for section in choice.sections:
+            base_unit: str = ''
+            if section is Section.OPS:
+                base_unit = BASE_OPS_PER_INTERVAL_UNIT
+            elif section is Section.TIMING:
+                base_unit = BASE_INTERVAL_UNIT
+            else:  # This should never happen due to earlier validation
+                raise SimpleBenchValueError(
+                    f"Unsupported section: {section} (this should not happen)",
+                    ErrorTag.CSV_REPORTER_REPORT_UNSUPPORTED_SECTION)
+
+            filename: str = sanitize_filename(section.name)
+            if Target.FILESYSTEM in choice.targets:
+                file = path.joinpath('csv', f'{filename}.csv')
+                with file.open(mode='w', encoding='utf-8', newline='') as csvfile:
+                    self.to_csv(case=case, target=section.name, csvfile=csvfile, base_unit=base_unit)
+            if Target.CALLBACK in choice.targets and case.callback is not None:
+                with StringIO(newline='') as csvfile:
+                    self.to_csv(case=case, target=section.value, csvfile=csvfile, base_unit=base_unit)
+                    csvfile.seek(0)
+                    case.callback(case, section, Format.CSV, csvfile.read())
+
+    def to_csv(self, case: Case, csvfile: TextIOWrapper | StringIO, base_unit: str, target: str) -> None:
+        """Output the benchmark results as tagged CSV to the csvfile.
+
+        Args:
+            case: The Case instance representing the benchmarked code.
+            csvfile: The file-like object to write the CSV data to.
+            base_unit: The base unit for the measurements (e.g., 'seconds', 'operations').
+            target: The target section to output (eg. 'ops_per_second' or 'per_round_timing').
+
+        Returns:
+            None
+        """
         all_numbers: list[float] = []
+        results: list[Results] = case.results
         all_numbers.extend([getattr(result, target).mean for result in results])
         all_numbers.extend([getattr(result, target).median for result in results])
         all_numbers.extend([getattr(result, target).minimum for result in results])
@@ -79,57 +200,41 @@ class CSVReporter(Reporter):
         all_numbers.extend([getattr(result, target).standard_deviation for result in results])
         common_unit, common_scale = si_scale_for_smallest(numbers=all_numbers, base_unit=base_unit)
 
-        with filepath.open(mode='w', encoding='utf-8', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow([f'# {case.title}'])
-            writer.writerow([f'# {case.description}'])
-            header: list[str] = [
-                'N',
-                'Iterations',
-                'Elapsed Seconds',
-                f'mean ({common_unit})',
-                f'median ({common_unit})',
-                f'min ({common_unit})',
-                f'max ({common_unit})',
-                f'5th ({common_unit})',
-                f'95th ({common_unit})',
-                f'std dev ({common_unit})',
-                'rsd (%)'
+        writer = csv.writer(csvfile)
+        writer.writerow([f'# title: {case.title}'])
+        writer.writerow([f'# description: {case.description}'])
+        writer.writerow([f'# unit: {common_unit}'])
+        header: list[str] = [
+            'N',
+            'Iterations',
+            'Elapsed Seconds',
+            f'mean ({common_unit})',
+            f'median ({common_unit})',
+            f'min ({common_unit})',
+            f'max ({common_unit})',
+            f'5th ({common_unit})',
+            f'95th ({common_unit})',
+            f'std dev ({common_unit})',
+            'rsd (%)'
+        ]
+        for value in case.variation_cols.values():
+            header.append(value)
+        writer.writerow(header)
+        for result in results:
+            stats_target = getattr(result, target)
+            row: list[str | float | int] = [
+                result.n,
+                len(result.iterations),
+                result.total_elapsed * DEFAULT_INTERVAL_SCALE,
+                sigfigs(stats_target.mean * common_scale),
+                sigfigs(stats_target.median * common_scale),
+                sigfigs(stats_target.minimum * common_scale),
+                sigfigs(stats_target.maximum * common_scale),
+                sigfigs(stats_target.percentiles[5] * common_scale),
+                sigfigs(stats_target.percentiles[95] * common_scale),
+                sigfigs(stats_target.standard_deviation * common_scale),
+                sigfigs(stats_target.relative_standard_deviation)
             ]
-            for value in case.variation_cols.values():
-                header.append(value)
-            writer.writerow(header)
-            for result in results:
-                stats_target = getattr(result, target)
-                row: list[str | float | int] = [
-                    result.n,
-                    len(result.iterations),
-                    result.total_elapsed * DEFAULT_INTERVAL_SCALE,
-                    sigfigs(stats_target.mean * common_scale),
-                    sigfigs(stats_target.median * common_scale),
-                    sigfigs(stats_target.minimum * common_scale),
-                    sigfigs(stats_target.maximum * common_scale),
-                    sigfigs(stats_target.percentiles[5] * common_scale),
-                    sigfigs(stats_target.percentiles[95] * common_scale),
-                    sigfigs(stats_target.standard_deviation * common_scale),
-                    sigfigs(stats_target.relative_standard_deviation)
-                ]
-                for value in result.variation_marks.values():
-                    row.append(value)
-                writer.writerow(row)
-
-        return
-
-    def output_ops_results_to_csv(self, path: Path) -> None:
-        """Output the benchmark results to a file as tagged CSV if available.
-        """
-        return self.output_results_to_csv(filepath=path.joinpath('csv', 'ops_per_second.csv'),
-                                          base_unit=BASE_OPS_PER_INTERVAL_UNIT,
-                                          target='ops_per_second')
-
-    def output_timing_results_to_csv(self, path: Path) -> None:
-        """Outputs the timing benchmark results to file as tagged CSV.
-        """
-        return self.output_results_to_csv(filepath=path.joinpath('csv', 'per_round_timings.csv'),
-                                          base_unit=BASE_INTERVAL_UNIT,
-                                          target='per_round_timings')
+            for value in result.variation_marks.values():
+                row.append(value)
+            writer.writerow(row)

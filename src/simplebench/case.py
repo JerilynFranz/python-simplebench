@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Benchmark case declaration and execution."""
+from __future__ import annotations
 from dataclasses import dataclass, field
 import itertools
 from typing import Any, Callable, Literal, Optional
@@ -8,6 +9,7 @@ from rich.progress import TaskID
 
 from .constants import DEFAULT_ITERATIONS
 from .results import Results
+from .reporters.choices import Section, Format
 from .runners import SimpleRunner
 from .session import Session
 from .tasks import RichTask
@@ -16,15 +18,6 @@ from .tasks import RichTask
 @dataclass(kw_only=True)
 class Case:
     '''Declaration of a benchmark case.
-
-    kwargs_variations are used to describe the variations in keyword arguments for the benchmark.
-    All combinations of these variations will be tested.
-
-    kwargs_variations example:
-        kwargs_variations={
-            'search_depth': [1, 2, 3],
-            'runtime_validation': [True, False]
-        }
 
     Args:
         group (str): The benchmark reporting group to which the benchmark case belongs.
@@ -35,7 +28,24 @@ class Case:
         min_time (float): The minimum time for the benchmark in seconds. (default: 5.0)
         max_time (float): The maximum time for the benchmark in seconds. (default: 20.0)
         variation_cols (dict[str, str]): kwargs to be used for cols to denote kwarg variations.
-        kwargs_variations (dict[str, list[Any]]): Variations of keyword arguments for the benchmark.
+            Each key is a keyword argument name, and the value is the column label to use for that argument.
+
+            .. code-block:: python
+                # example of variation_cols
+                variation_cols={
+                    'search_depth': 'Search Depth',
+                    'runtime_validation': 'Runtime Validation'
+                }
+        kwargs_variations (dict[str, list[Any]]):
+            Variations of keyword arguments for the benchmark.
+            Each key is a keyword argument name, and the value is a list of possible values.
+
+            .. code-block:: python
+                # example of kwargs_variations
+                kwargs_variations={
+                    'search_depth': [1, 2, 3],
+                    'runtime_validation': [True, False]
+                }
         runner (Optional[Callable[..., Any]]): A custom runner for the benchmark.
         verbose (bool): Enable verbose output.
         progress (bool): Enable progress output.
@@ -43,27 +53,66 @@ class Case:
         graph_style (Literal['default', 'dark_background']): The style of the graph (default: 'default').
         graph_y_starts_at_zero (bool): Whether the y-axis of the graph starts at zero (default: True).
         graph_x_labels_rotation (float): The rotation angle of the x-axis tick labels (default: 0.0).
+        callback (Optional[Callable[Case, Section, Format, Any], None]):
+            A callback function for additional processing of the report. The function should accept
+            four arguments: the Case instance, the Section, the Format, and the generated report data.
+            Leave as None if no callback is needed. (default: None)
+
+            The callback function is responsible for handling the returned report data appropriately.
+            The actually returned type signature of the data will depend on the Format
+            specified for the report:
+                - Case: The Case instance processed for the report.
+                - Section: The reporters.choices.Section of the report.
+                - Format: The reporters.choices.Format of the report.
+                - Any: The generated report data (actual type returned depends on the Format).
+                    - Format.PLAIN_TEXT: str (the plain text report as a string)
+                    - Format.RICH_TEXT: str (the rich text report as a string)
+                    - Format.MARKDOWN: str (the markdown report as a string)
+                    - Format.CSV: str (the CSV data as a string)
+                    - Format.JSON: str (the JSON data as a string)
+                    - Format.GRAPH: bytes (the graph image data as bytes)
 
     Properties:
         results (list[BenchResults]): The benchmark results for the case.
     '''
     group: str
+    """The benchmark reporting group to which the benchmark case belongs."""
     title: str
+    """The name of the benchmark case."""
     description: str
+    """A brief description of the benchmark case."""
     action: Callable[..., Any]
+    """The action to perform for the benchmark."""
     iterations: int = DEFAULT_ITERATIONS
+    """The number of iterations to run for the benchmark."""
     min_time: float = 5.0  # seconds
+    """The minimum time for the benchmark in seconds."""
     max_time: float = 20.0  # seconds
+    """The maximum time for the benchmark in seconds."""
     variation_cols: dict[str, str] = field(default_factory=dict[str, str])
+    """Keyword arguments to be used for columns to denote kwarg variations."""
     kwargs_variations: dict[str, list[Any]] = field(default_factory=dict[str, list[Any]])
+    """Variations of keyword arguments for the benchmark."""
     runner: Optional[Callable[..., Any]] = None
+    """A custom runner for the benchmark."""
     verbose: bool = False
+    """Enable verbose output."""
     progress: bool = False
+    """Enable progress output."""
     variations_task: Optional[TaskID] = None
+    """The Rich progress task ID for tracking variations progress."""
     graph_aspect_ratio: float = 1.0
+    """The aspect ratio of the graph."""
     graph_style: Literal['default', 'dark_background'] = 'default'
+    """The style of the graph."""
     graph_y_starts_at_zero: bool = True
+    """Whether the y-axis of the graph starts at zero."""
     graph_x_labels_rotation: float = 0.0
+    """The rotation angle of the x-axis tick labels."""
+    callback: Optional[Callable[[Case, Section, Format, Any], None]] = None
+    """A callback function for additional processing of the report."""
+    results: list[Results] = field(init=False)
+    """The benchmark list of Results for the case."""
 
     def __post_init__(self) -> None:
         self.results: list[Results] = []
