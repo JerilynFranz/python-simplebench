@@ -3,7 +3,8 @@
 from __future__ import annotations
 from collections import UserDict
 
-from .choices import Choices
+from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from .choices import Choices, Choice, Section, Target, Format
 from .csv import CSVReporter
 from .graph import GraphReporter
 from .interfaces import Reporter
@@ -36,13 +37,20 @@ class Reporters(UserDict[str, Reporter]):
             reporter (Reporter): The Reporter to register.
 
         Raises:
-            ValueError: If a Reporter with the same name is already registered.
+            SimpleBenchValueError: If a Reporter with the same name is already registered.
+            SimpleBenchTypeError: If the provided reporter is not an instance of Reporter.
         """
         if not isinstance(reporter, Reporter):
-            raise TypeError("reporter must be an instance of Reporter")
+            raise SimpleBenchTypeError(
+                "reporter must be an instance of Reporter",
+                ErrorTag.REPORTERS_REGISTER_INVALID_REPORTER_ARG
+            )
         name = reporter.name
         if name in self._reporters:
-            raise ValueError(f"A reporter with the name '{name}' is already registered.")
+            raise SimpleBenchValueError(
+                f"A reporter with the name '{name}' is already registered.",
+                ErrorTag.REPORTERS_REGISTER_DUPLICATE_NAME
+            )
         self._reporters[name] = reporter
 
     def unregister(self, name: str) -> None:
@@ -52,17 +60,29 @@ class Reporters(UserDict[str, Reporter]):
             name (str): The unique name of the reporter to unregister.
 
         Raises:
-            KeyError: If no reporter with the given name is registered.
+            SimpleBenchKeyError: If no reporter with the given name is registered.
         """
+        if not isinstance(name, str):
+            raise SimpleBenchTypeError(
+                "name must be a string",
+                ErrorTag.REPORTERS_UNREGISTER_INVALID_NAME_ARG
+            )
         if name not in self._reporters:
-            raise KeyError(f"No reporter with the name '{name}' is registered.")
+            raise SimpleBenchKeyError(
+                f"No reporter with the name '{name}' is registered.",
+                ErrorTag.REPORTERS_UNREGISTER_UNKNOWN_NAME
+            )
         del self._reporters[name]
 
 
 __all__ = [
     'Choices',
+    'Choice',
     'CSVReporter',
+    'Format',
     'GraphReporter',
     'Reporter',
     'RichTableReporter',
+    'Section',
+    'Target',
 ]

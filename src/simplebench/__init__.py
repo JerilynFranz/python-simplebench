@@ -16,7 +16,7 @@ from .iteration import Iteration
 from .session import Session, Verbosity
 from .stats import OperationsPerInterval, OperationTimings, Stats
 from .tasks import RichProgressTasks, RichTask
-from .utils import (sanitize_filename, si_scale_for_smallest, si_scale, si_scale_to_unit, sigfigs)
+from .utils import sanitize_filename, si_scale_for_smallest, si_scale, si_scale_to_unit, sigfigs
 from .reporters.interfaces import Reporter
 from .reporters.choices import Choices, Choice, Section, Target, Format
 from .reporters.rich_table import RichTableReporter

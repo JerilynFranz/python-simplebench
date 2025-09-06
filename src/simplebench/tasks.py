@@ -85,7 +85,7 @@ class RichTask:
             description (Optional[str]): The description of the task.
             refresh (Optional[bool]): Whether to refresh the progress display.
         """
-        if completed is not None and isinstance(completed, int):
+        if completed is not None and not isinstance(completed, int):
             raise SimpleBenchTypeError(
                 f'Expected completed arg to be an int, got {type(completed)}',
                 ErrorTag.RICH_TASK_UPDATE_INVALID_COMPLETED_ARG)
@@ -120,9 +120,10 @@ class RichTask:
             self._progress.remove_task(self._task_id)
             self._task_id = None
             self._progress = None
-            raise SimpleBenchRuntimeError(
-                'Task has already been terminated',
-                ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK)
+            return
+        raise SimpleBenchRuntimeError(
+            'Task has already been terminated',
+            ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK)
 
 
 class RichProgressTasks:

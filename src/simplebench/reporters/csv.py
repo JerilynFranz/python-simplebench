@@ -166,11 +166,11 @@ class CSVReporter(Reporter):
                     f"Unsupported section: {section} (this should not happen)",
                     ErrorTag.CSV_REPORTER_REPORT_UNSUPPORTED_SECTION)
 
-            filename: str = sanitize_filename(section.name)
+            filename: str = sanitize_filename(section.value)
             if Target.FILESYSTEM in choice.targets:
                 file = path.joinpath('csv', f'{filename}.csv')
                 with file.open(mode='w', encoding='utf-8', newline='') as csvfile:
-                    self.to_csv(case=case, target=section.name, csvfile=csvfile, base_unit=base_unit)
+                    self.to_csv(case=case, target=section.value, csvfile=csvfile, base_unit=base_unit)
             if Target.CALLBACK in choice.targets and case.callback is not None:
                 with StringIO(newline='') as csvfile:
                     self.to_csv(case=case, target=section.value, csvfile=csvfile, base_unit=base_unit)

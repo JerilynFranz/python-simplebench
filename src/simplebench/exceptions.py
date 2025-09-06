@@ -23,6 +23,16 @@ class ErrorTag(str, Enum):
     SESSION_PROPERTY_INVALID_VERBOSITY_ARG = "SESSION_PROPERTY_INVALID_VERBOSITY_ARG"
     """Something other than a Verbosity instance was passed to the verbosity property"""
 
+    # Reporters() tags
+    REPORTERS_REGISTER_INVALID_REPORTER_ARG = "REPORTERS_REGISTER_INVALID_REPORTER_ARG"
+    """Something other than a Reporter instance was passed to the Reporters.register() method"""
+    REPORTERS_REGISTER_DUPLICATE_NAME = "REPORTERS_REGISTER_DUPLICATE_NAME"
+    """A Reporter with the same name already exists in the Reporters instance"""
+    REPORTERS_UNREGISTER_UNKNOWN_NAME = "REPORTERS_UNREGISTER_UNKNOWN_NAME"
+    """No Reporter with the given name is registered in the Reporters instance"""
+    REPORTERS_UNREGISTER_INVALID_NAME_ARG = "REPORTERS_UNREGISTER_INVALID_NAME_ARG"
+    """Something other than a string was passed to the Reporters.unregister() method"""
+
     # RichTableReporter() tags
     RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG = "RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG"
     """Something other than a Case instance was passed to the RichTableReporter() constructor"""
