@@ -2,8 +2,10 @@
 """module for managing progress tasks using Rich Progress."""
 from typing import Any, Optional
 
-from rich.progress import Progress, TaskID
+from rich.console import Console
+from rich.progress import Progress, Task, TaskID
 
+from .enums import Verbosity
 from .exceptions import (SimpleBenchKeyError, SimpleBenchTypeError,
                          SimpleBenchValueError, SimpleBenchRuntimeError,
                          ErrorTag)
@@ -12,11 +14,12 @@ from .exceptions import (SimpleBenchKeyError, SimpleBenchTypeError,
 class RichTask:
     """Represents and controls a Rich Progress task."""
     def __init__(self,
+                 progress: Progress,
                  name: str,
                  description: str,
                  completed: int = 0,
                  total: float = 100.0,
-                 progress: Optional[Progress] = None) -> None:
+                 verbosity: Verbosity = Verbosity.NORMAL) -> None:
         """Construct a new RichTask.
 
         Args:
@@ -24,8 +27,12 @@ class RichTask:
             description (str): The description of the task.
             completed (Optional[int]): Completion step (default=0)
             total (Optional[int]): Total number of steps (default=100)
-            progress (Optional[Progress]): The Progress instance to use. If omitted,
-                a new Progress instance will be created.
+            progress (Progress): The Progress instance to use.
+            verbosity (Verbosity): The verbosity level for console output.
+
+        Raises:
+            SimpleBenchTypeError: If any argument is of an incorrect type.
+            SimpleBenchValueError: If any argument has an invalid value.
         """
         if not isinstance(name, str):
             raise SimpleBenchTypeError(
@@ -43,26 +50,38 @@ class RichTask:
             raise SimpleBenchValueError(
                 'description arg cannot be an empty string',
                 ErrorTag.RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION)
-        if progress and not isinstance(progress, Progress):
+        if not isinstance(progress, Progress):
             raise SimpleBenchTypeError(
                 f'Expected progress arg to be a Progress instance, got {type(progress)}',
                 ErrorTag.RICH_TASK_INIT_INVALID_PROGRESS_ARG)
+
         self._name: str = name
         """The name of the task."""
         self._description: str = description
         """The description of the task."""
-        self._progress: Progress | None = progress if progress and isinstance(progress, Progress) else Progress()
+        self._verbosity: Verbosity = verbosity
+        """The verbosity level for console output."""
+        self._progress: Progress | None = progress
         """The Rich Progress instance for displaying progress bars."""
+        self._console: Console = self._progress.console
+        """The Rich Console instance for outputting messages."""
         self._task_id: TaskID | None = self._progress.add_task(
                             description=self._description,
                             completed=completed,
-                            total=total)
-        """The Rich Progress TaskID for the task."""
+                            total=float(total),
+                            start=True,
+                            visible=True)
+        """The Rich Progress TaskID for the new task."""
+        if self._verbosity >= Verbosity.DEBUG:
+            self._console.print(f"[DEBUG] Created task '{self._name}' with ID {self._task_id}")
+        self.start()
 
     def start(self) -> None:
         """Start the task."""
         if self._progress is not None and self._task_id is not None:
             self._progress.start_task(self._task_id)
+            if self._verbosity >= Verbosity.DEBUG:
+                self._console.print(f"[DEBUG] Started task '{self._name}' with ID {self._task_id}")
 
     def stop(self) -> None:
         """Stop the task."""
@@ -73,17 +92,26 @@ class RichTask:
         """Reset the task progress."""
         if self._progress is not None and self._task_id is not None:
             self._progress.reset(self._task_id)
+            if self._verbosity >= Verbosity.DEBUG:
+                self._console.print(f"[DEBUG] Reset task '{self._name}' with ID {self._task_id}")
+
+    def refresh(self) -> None:
+        """Refresh the task progress display."""
+        if self._progress is not None and self._task_id is not None:
+            self._progress.refresh()
+            if self._verbosity >= Verbosity.DEBUG:
+                self._console.print(f"[DEBUG] Refreshed task '{self._name}' with ID {self._task_id}")
 
     def update(self,
                completed: int,
                description: Optional[str] = None,
-               refresh: Optional[bool] = None) -> None:
+               refresh: bool = True) -> None:
         """Update the task progress.
 
         Args:
             completed (int): The number of completed steps.
             description (Optional[str]): The description of the task.
-            refresh (Optional[bool]): Whether to refresh the progress display.
+            refresh (bool): Whether to refresh the progress display. (default=True)
         """
         if completed is not None and not isinstance(completed, int):
             raise SimpleBenchTypeError(
@@ -107,6 +135,8 @@ class RichTask:
             if refresh is not None and isinstance(refresh, bool):
                 update_args['refresh'] = refresh
             self._progress.update(**update_args)
+            if self._verbosity >= Verbosity.DEBUG2:
+                self._console.print(f"[DEBUG2] Updated task '{self._name}' with ID {self._task_id}: {update_args}")
         else:
             raise SimpleBenchRuntimeError(
                 'Task has already been terminated',
@@ -120,20 +150,80 @@ class RichTask:
             self._progress.remove_task(self._task_id)
             self._task_id = None
             self._progress = None
+            if self._verbosity >= Verbosity.DEBUG:
+                self._console.print(f"[DEBUG] Terminated and removed task '{self._name}'")
             return
         raise SimpleBenchRuntimeError(
             'Task has already been terminated',
             ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK)
 
+    def get_task(self) -> Task | None:
+        """Get the Rich Task instance from the Progress instance.
+
+        Returns:
+            Task: The Rich Task instance, or None if not found.
+        """
+        if self._progress is None or self._task_id is None:
+            return None
+        task_list: list[Task] = self._progress.tasks
+        for task in task_list:
+            if task.id == self._task_id:
+                return task
+        return None
+
+    def __str__(self):
+        """Return a string representation of the task."""
+        return (f"RichTask(name='{self._name}', description='{self._description}', "
+                f"task_id={self._task_id}, verbosity={self._verbosity.name}, task={self.get_task()})")
+
 
 class RichProgressTasks:
     """Task Rich Progress management for benchmarking."""
-    def __init__(self) -> None:
-        """Initialize a new RichProgressTasks instance."""
-        self._progress = Progress()
+    def __init__(self, verbosity: Verbosity) -> None:
+        """Initialize a new RichProgressTasks instance.
+
+        This instance manages multiple RichTask instances and provides
+        a Rich Progress display for console output.
+
+        The display will not start until the start() method is called on
+        this instance.
+
+        Args:
+            verbosity (Verbosity): The verbosity level for console output.
+        Raises:
+            SimpleBenchTypeError: If verbosity is not a Verbosity enum.
+        """
+        self._progress = Progress(
+            auto_refresh=True,
+            transient=True,
+            refresh_per_second=5
+        )
         """The Rich Progress instance for displaying progress bars."""
+        self._console = self._progress.console
+        """The Rich Console instance for outputting messages."""
         self._tasks: dict[str, RichTask] = {}
         """Mapping of task names to their RichTask instances."""
+        if not isinstance(verbosity, Verbosity):
+            raise SimpleBenchTypeError(
+                f'Expected verbosity arg to be a Verbosity enum, got {type(verbosity)}',
+                ErrorTag.RICH_PROGRESS_TASKS_INIT_INVALID_VERBOSITY_ARG)
+        self._verbosity: Verbosity = verbosity
+        """The verbosity level for console output."""
+
+        if self._verbosity >= Verbosity.DEBUG:
+            self._console.print(f"[DEBUG] Initialized RichProgressTasks with verbosity {self._verbosity.name}")
+
+    def start(self) -> None:
+        """Start the Rich Progress display."""
+        self._progress.start()
+        if self._verbosity >= Verbosity.DEBUG:
+            self._console.print("[DEBUG] Started Rich Progress display")
+
+    def stop(self) -> None:
+        """Stop the Rich Progress display."""
+        self._progress.stop()
+        if self._verbosity >= Verbosity.DEBUG:
+            self._console.print("[DEBUG] Stopped Rich Progress display")
 
     def __contains__(self, task_name: str) -> bool:
         """Check if a task exists by name."""
@@ -220,7 +310,8 @@ class RichProgressTasks:
                                   name=name,
                                   description=description,
                                   completed=completed,
-                                  total=total)
+                                  total=total,
+                                  verbosity=self._verbosity)
         self._tasks[name] = task
         return task
 

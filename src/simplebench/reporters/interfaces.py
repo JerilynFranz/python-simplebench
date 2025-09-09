@@ -54,7 +54,7 @@ class Reporter(ABC):
     def report(self,
                case: Case,
                choice: Choice,
-               path: Path,
+               path: Optional[Path] = None,
                session: Optional[Session] = None,
                callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
         """Generate a report based on the benchmark results.
@@ -62,7 +62,8 @@ class Reporter(ABC):
         Args:
             case (Case): The Case instance containing benchmark results.
             choice (Choice): The Choice instance specifying the report configuration.
-            path (Path): The path to the directory where the report can be saved.
+            path (Optional[Path]): The path to the directory where the report can be saved if needed.
+                Leave as None if not saving to the filesystem.
             session (Optional[Session]): The Session instance containing benchmark results.
             callback (Optional[Callable[[Case, Section, Any], None]]):
                 A callback function for additional processing of the report.

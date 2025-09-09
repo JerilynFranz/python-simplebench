@@ -91,7 +91,7 @@ class CSVReporter(Reporter):
     def report(self,
                case: Case,
                choice: Choice,
-               path: Path,
+               path: Optional[Path] = None,
                session: Optional[Session] = None,
                callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
         """Output the benchmark results to a file as tagged CSV if available.
@@ -99,7 +99,7 @@ class CSVReporter(Reporter):
         Args:
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
-            path (Path): The path to the directory where the CSV file(s) will be saved.
+            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
             callback (Optional[Callable[[Case, Section, Format, Any], None]]):
                 A callback function for additional processing of the report.
@@ -110,7 +110,10 @@ class CSVReporter(Reporter):
             None
 
         Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types.
+            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
+                required arguments are missing. Also raised if the callback is not callable when
+                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
+                target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
         if not isinstance(case, Case):
@@ -145,6 +148,7 @@ class CSVReporter(Reporter):
                 raise SimpleBenchValueError(
                     f"Unsupported Format in Choice: {output_format}",
                     ErrorTag.CSV_REPORTER_REPORT_UNSUPPORTED_FORMAT)
+
         if session is not None and not isinstance(session, Session):
             raise SimpleBenchTypeError(
                 "session must be a Session instance if provided",
@@ -168,7 +172,7 @@ class CSVReporter(Reporter):
 
             filename: str = sanitize_filename(section.value)
             if Target.FILESYSTEM in choice.targets:
-                file = path.joinpath('csv', f'{filename}.csv')
+                file = path.joinpath('csv', f'{filename}.csv')  # type: ignore[reportOptionalMemberAccess]
                 with file.open(mode='w', encoding='utf-8', newline='') as csvfile:
                     self.to_csv(case=case, target=section.value, csvfile=csvfile, base_unit=base_unit)
             if Target.CALLBACK in choice.targets and case.callback is not None:

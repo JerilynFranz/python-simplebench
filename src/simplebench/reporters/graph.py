@@ -101,7 +101,7 @@ class GraphReporter(Reporter):
     def report(self,
                case: Case,
                choice: Choice,
-               path: Path,
+               path: Optional[Path] = None,
                session: Optional[Session] = None,
                callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
         """Output the benchmark results a graph to a file and/or a callback function.
@@ -109,7 +109,7 @@ class GraphReporter(Reporter):
         Args:
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
-            path (Path): The path to the directory where the graph file(s) will be saved.
+            path (Optional[Path]): The path to the directory where the graph file(s) will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
             callback (Optional[Callable[[Case, Section, Format, Any], None]]):
                 A callback function for additional processing of the report.
@@ -124,7 +124,10 @@ class GraphReporter(Reporter):
             None
 
         Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types.
+            SimpleBenchTypeError: If the provided arguments are not of the expected types. Also raised if
+                required arguments are missing. Also raised if the callback is not callable when
+                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
+                target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
         if not isinstance(case, Case):
@@ -182,7 +185,7 @@ class GraphReporter(Reporter):
 
             filename: str = sanitize_filename(section.name)
             if Target.FILESYSTEM in choice.targets:
-                file = path.joinpath('graph', f'{filename}.svg')
+                file = path.joinpath('graph', f'{filename}.svg')  # type: ignore[reportOptionalMemberAccess]
                 file.parent.mkdir(parents=True, exist_ok=True)
                 with file.open(mode='wb') as graphfile:
                     self.plot(case=case, target=section.value, graphfile=graphfile, base_unit=base_unit)

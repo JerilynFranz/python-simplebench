@@ -3,16 +3,19 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 import itertools
-from typing import Any, Callable, Literal, Optional
+from typing import Any, Callable, Literal, Optional, TYPE_CHECKING
 
 from rich.progress import TaskID
 
 from .constants import DEFAULT_ITERATIONS
-from .results import Results
-from .reporters.choices import Section, Format
 from .runners import SimpleRunner
-from .session import Session
-from .tasks import RichTask
+
+
+if TYPE_CHECKING:
+    from .reporters.choices import Section, Format
+    from .results import Results
+    from .session import Session
+    from .tasks import RichTask
 
 
 @dataclass(kw_only=True)
@@ -73,7 +76,7 @@ class Case:
                     - Format.GRAPH: bytes (the graph image data as bytes)
 
     Properties:
-        results (list[BenchResults]): The benchmark results for the case.
+        results (list[Results]): The benchmark results for the case.
     '''
     group: str
     """The benchmark reporting group to which the benchmark case belongs."""

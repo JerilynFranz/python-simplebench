@@ -47,7 +47,7 @@ class RichTableReporter(Reporter):
         self._choices.add(
              Choice(
                 reporter=self,
-                flags=['--rich-table'],
+                flags=['--rich-table-console'],
                 name='rich-table',
                 description=('Display operations per second and per round timing results '
                              'as a rich text table on the console'),
@@ -57,7 +57,7 @@ class RichTableReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--rich-table-ops'],
+                flags=['--rich-table-ops-console'],
                 name='rich-table-ops',
                 description='Display operations per second results as a rich text table on the console',
                 sections=[Section.OPS],
@@ -66,7 +66,7 @@ class RichTableReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--rich-table-timings'],
+                flags=['--rich-table-timings-console'],
                 name='rich-table-timings',
                 description='Display timing results as a rich text table on the console',
                 sections=[Section.TIMING],
@@ -160,7 +160,8 @@ class RichTableReporter(Reporter):
         Args:
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the Rich Table file(s) will be saved.
+            path (Optional[Path]): The path to the directory where the Rich Table file(s) will be saved if needed.
+            Leave as None if not saving to the filesystem.
             session (Optional[Session]): The Session instance containing benchmark results.
             callback (Optional[Callable[[Case, Section, Format, Any], None]]):
                 A callback function for additional processing of the report.
@@ -174,7 +175,10 @@ class RichTableReporter(Reporter):
             None
 
         Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types.
+            SimpleBenchTypeError: If the provided arguments are not of the expected types. Also raised if
+                required arguments are missing. Also raised if the callback is not callable when
+                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
+                target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
         if not isinstance(case, Case):

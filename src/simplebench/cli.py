@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """CLI script support for SimpleBench."""
-
-
+from __future__ import annotations
 from argparse import Namespace, ArgumentParser
-from typing import Any, Sequence
+from typing import Any, Sequence, TYPE_CHECKING
 
 from rich.console import Console
 
-from .case import Case
-from .session import Session, Verbosity
+from .enums import Verbosity
+from .session import Session
+
+
+if TYPE_CHECKING:
+    from .case import Case
 
 
 def run_benchmarks(session: Session):

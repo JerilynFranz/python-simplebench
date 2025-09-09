@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 """Test runners for benchmarking."""
+from __future__ import annotations
 import gc
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, TYPE_CHECKING
 
-from .case import Case
 from .constants import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERATIONS
 from .iteration import Iteration
 from .results import Results
-from .session import Session
-from .tasks import RichTask
+
+
+if TYPE_CHECKING:
+    from .case import Case
+    from .session import Session
+    from .tasks import RichTask
 
 
 class SimpleRunner():

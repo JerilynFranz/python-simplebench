@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """constants for simplebenchmark."""
-
 import time
+
+# Note: The following constants are defined here for easy access and modification.
+# They are used throughout the SimpleBench framework.
 
 MIN_MEASURED_ITERATIONS: int = 3
 """Minimum number of iterations for statistical analysis."""

@@ -262,6 +262,11 @@ class Choice:
 
 class Choices(UserDict[str, Choice]):
     """A dictionary-like container for Choice instances."""
+    def __init__(self) -> None:
+        self._args_index: dict[str, Choice] = {}
+        self._flags_index: dict[str, Choice] = {}
+        super().__init__()
+
     def add(self, choice: Choice) -> None:
         """Add a Choice instance to the container.
 
@@ -283,3 +288,71 @@ class Choices(UserDict[str, Choice]):
                 f"A Choice with the name '{choice.name}' already exists",
                 ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_NAME)
         self.data[choice.name] = choice
+        self._args_index.update({arg.replace('--', '', 1).replace('-', '_'): choice for arg in choice.flags})
+
+    def all_choice_args(self) -> set[str]:
+        """Return a set of all Namespace args from all Choice instances in the container.
+
+        Returns:
+            set[str]: A set of all Namespace args from all Choice instances.
+        """
+        return set(self._args_index.keys())
+
+    def all_choice_flags(self) -> set[str]:
+        """Return a set of all CLI flags from all Choice instances in the container.
+
+        Returns:
+            set[str]: A set of all CLI flags from all Choice instances.
+        """
+        return set(self._flags_index.keys())
+
+    def get_choice_for_arg(self, arg: str) -> Choice | None:
+        """Return the Choice instance associated with the given Namespace arg.
+
+        Args:
+            arg (str): The Namespace arg to look up.
+
+        Returns:
+            Choice | None: The Choice instance associated with the arg,
+                or None if no such Choice exists.
+        """
+        return self._args_index.get(arg, None)
+
+    def extend(self, choices: Sequence[Choice] | Choices) -> None:
+        """Add multiple Choice instances to the container.
+
+        This method accepts either a sequence of Choice instances or a Choices
+        instance and adds each Choice to the container.
+        """
+        if isinstance(choices, Choices):
+            for choice in choices.values():
+                self.add(choice)
+        elif isinstance(choices, Sequence):
+            for choice in choices:
+                self.add(choice)
+        else:
+            raise SimpleBenchTypeError(
+                "Expected a Sequence of Choice instances or a Choices instance",
+                ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG)
+
+    def remove(self, name: str) -> None:
+        """Remove a Choice instance from the container by its name.
+
+        Args:
+            name (str): The name of the Choice instance to remove.
+
+        Raises:
+            SimpleBenchValueError: If no Choice with the given name exists in the container.
+        """
+        if name not in self.data:
+            raise SimpleBenchValueError(
+                f"No Choice with the name '{name}' exists",
+                ErrorTag.CHOICES_REMOVE_UNKNOWN_CHOICE_NAME)
+        choice = self.data[name]
+        del self.data[name]
+        for arg in choice.flags:
+            if arg in self._flags_index:
+                del self._flags_index[arg]
+            arg_key = arg.replace('--', '', 1).replace('-', '_')
+            if arg_key in self._args_index:
+                del self._args_index[arg_key]
