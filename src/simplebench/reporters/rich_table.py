@@ -7,6 +7,7 @@ from typing import Optional, Any, Callable, TYPE_CHECKING
 from rich.console import Console
 from rich.table import Table
 
+from ..case import Case
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from ..results import Results
@@ -17,7 +18,17 @@ from .interfaces import Reporter
 
 if TYPE_CHECKING:
     from ..session import Session
-    from ..case import Case
+
+_lazy_classes_loaded: bool = False
+
+
+def _lazy_load_classes() -> None:
+    """Lazily load any classes or modules that cannot be loaded during initial setup."""
+    global _lazy_classes_loaded  # pylint: disable=global-statement
+    global Session  # pylint: disable=global-statement
+    if not _lazy_classes_loaded:
+        from ..session import Session  # pylint: disable=import-outside-toplevel
+        _lazy_classes_loaded = True
 
 
 class RichTableReporter(Reporter):
@@ -46,8 +57,9 @@ class RichTableReporter(Reporter):
     """
     def __init__(self) -> None:
         """Initialize the RichTableReporter with Choice."""
-        self._choices: Choices = Choices()
-        self._choices.add(
+        choices: Choices = Choices()
+        self._choices: Choices = choices
+        choices.add(
              Choice(
                 reporter=self,
                 flags=['--rich-table-console'],
@@ -57,7 +69,7 @@ class RichTableReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.CONSOLE, Target.CALLBACK],
                 formats=[Format.RICH_TEXT]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--rich-table-ops-console'],
@@ -66,7 +78,7 @@ class RichTableReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.CONSOLE],
                 formats=[Format.RICH_TEXT]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--rich-table-timings-console'],
@@ -76,7 +88,7 @@ class RichTableReporter(Reporter):
                 targets=[Target.CONSOLE],
                 formats=[Format.RICH_TEXT])
         )
-        self._choices.add(
+        choices.add(
              Choice(
                 reporter=self,
                 flags=['--rich-table-file'],
@@ -86,7 +98,7 @@ class RichTableReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.FILESYSTEM],
                 formats=[Format.RICH_TEXT]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--rich-table-ops-file'],
@@ -95,7 +107,7 @@ class RichTableReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.FILESYSTEM],
                 formats=[Format.RICH_TEXT]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--rich-table-timings-file'],
@@ -105,7 +117,7 @@ class RichTableReporter(Reporter):
                 targets=[Target.FILESYSTEM],
                 formats=[Format.RICH_TEXT])
         )
-        self._choices.add(
+        choices.add(
              Choice(
                 reporter=self,
                 flags=['--rich-table-callback'],
@@ -115,7 +127,7 @@ class RichTableReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.CALLBACK],
                 formats=[Format.RICH_TEXT]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--rich-table-ops-callback'],
@@ -124,7 +136,7 @@ class RichTableReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.CALLBACK],
                 formats=[Format.RICH_TEXT]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--rich-table-timings-callback'],
@@ -184,6 +196,7 @@ class RichTableReporter(Reporter):
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        _lazy_load_classes()
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
@@ -198,7 +211,7 @@ class RichTableReporter(Reporter):
                     f"Unsupported Section in Choice: {section}",
                     ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION)
         for target in choice.targets:
-            if target not in (Target.FILESYSTEM, Target.CALLBACK):
+            if target not in (Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK):
                 raise SimpleBenchValueError(
                     f"Unsupported Target in Choice: {target}",
                     ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_TARGET)
@@ -216,14 +229,14 @@ class RichTableReporter(Reporter):
                 "Path must be a pathlib.Path instance when using FILESYSTEM target",
                 ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_PATH_ARG)
         for output_format in choice.formats:
-            if output_format is not Format.CSV:
+            if output_format is not Format.RICH_TEXT:
                 raise SimpleBenchValueError(
                     f"Unsupported Format in Choice: {output_format}",
                     ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_FORMAT)
-        if session is not None and not isinstance(session, Session):
-            raise SimpleBenchTypeError(
-                "session must be a Session instance if provided",
-                ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_SESSION_ARG)
+        # if session is not None and not isinstance(session, Session):
+        #    raise SimpleBenchTypeError(
+        #        "session must be a Session instance if provided",
+        #        ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_SESSION_ARG)
 
         # Only proceed if there are results to report
         results = case.results

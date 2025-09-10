@@ -1,5 +1,8 @@
 *.py[oc]
 
+# Benchmarks
+.benchmark_reports
+
 # Virtual environments
 .venv
 .venv-3*

@@ -83,11 +83,12 @@ class ReporterManager():
                 ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_RETURNED
             )
         all_choice_flags: set[str] = self._registered_reporter_choices.all_choice_flags()
-        for choice in choices:
+        for choice in choices.values():
             if not isinstance(choice, Choice):
+                print(f'Invalid choice type: {choice} ({type(choice)})')
                 raise SimpleBenchTypeError((
                     "reporter.choices must return a Choices instance containing only Choice instances: "
-                    f'Found {type(choice)} from reporter {reporter.name!r}'),
+                    f'Found {choices} {type(choice)} from reporter {reporter.name!r}'),
                     ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT
                 )
             if choice.name in self._registered_reporter_choices:
@@ -102,6 +103,7 @@ class ReporterManager():
                         ErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_CLI_ARG
                     )
         self._registered_reporter_choices.extend(choices)
+        self._registered_reporters[reporter.name] = reporter
 
     def all_reporters(self) -> dict[str, Reporter]:
         """Return all available Reporter instances as a dictionary keyed by their names.

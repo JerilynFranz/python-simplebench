@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
 
+from ..case import Case
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .interfaces import Reporter
@@ -17,7 +18,17 @@ from .choices import Choice, Choices, Section, Target, Format
 
 if TYPE_CHECKING:
     from ..session import Session
-    from ..case import Case
+
+_lazy_classes_loaded: bool = False
+
+
+def _lazy_load_classes() -> None:
+    """Lazily load any classes or modules that cannot be loaded during initial setup."""
+    global _lazy_classes_loaded  # pylint: disable=global-statement
+    global Session  # pylint: disable=global-statement
+    if not _lazy_classes_loaded:
+        from ..session import Session  # pylint: disable=import-outside-toplevel
+        _lazy_classes_loaded = True
 
 
 class CSVReporter(Reporter):
@@ -118,6 +129,7 @@ class CSVReporter(Reporter):
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        _lazy_load_classes()
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
