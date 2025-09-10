@@ -72,7 +72,7 @@ class RichTask:
                             start=True,
                             visible=True)
         """The Rich Progress TaskID for the new task."""
-        if self._verbosity >= Verbosity.DEBUG:
+        if self._verbosity >= Verbosity.DEBUG2:
             self._console.print(f"[DEBUG] Created task '{self._name}' with ID {self._task_id}")
         self.start()
 
@@ -80,7 +80,7 @@ class RichTask:
         """Start the task."""
         if self._progress is not None and self._task_id is not None:
             self._progress.start_task(self._task_id)
-            if self._verbosity >= Verbosity.DEBUG:
+            if self._verbosity >= Verbosity.DEBUG2:
                 self._console.print(f"[DEBUG] Started task '{self._name}' with ID {self._task_id}")
 
     def stop(self) -> None:
@@ -92,14 +92,14 @@ class RichTask:
         """Reset the task progress."""
         if self._progress is not None and self._task_id is not None:
             self._progress.reset(self._task_id)
-            if self._verbosity >= Verbosity.DEBUG:
+            if self._verbosity >= Verbosity.DEBUG2:
                 self._console.print(f"[DEBUG] Reset task '{self._name}' with ID {self._task_id}")
 
     def refresh(self) -> None:
         """Refresh the task progress display."""
         if self._progress is not None and self._task_id is not None:
             self._progress.refresh()
-            if self._verbosity >= Verbosity.DEBUG:
+            if self._verbosity >= Verbosity.DEBUG2:
                 self._console.print(f"[DEBUG] Refreshed task '{self._name}' with ID {self._task_id}")
 
     def update(self,
@@ -150,7 +150,7 @@ class RichTask:
             self._progress.remove_task(self._task_id)
             self._task_id = None
             self._progress = None
-            if self._verbosity >= Verbosity.DEBUG:
+            if self._verbosity >= Verbosity.DEBUG2:
                 self._console.print(f"[DEBUG] Terminated and removed task '{self._name}'")
             return
         raise SimpleBenchRuntimeError(
@@ -210,19 +210,19 @@ class RichProgressTasks:
         self._verbosity: Verbosity = verbosity
         """The verbosity level for console output."""
 
-        if self._verbosity >= Verbosity.DEBUG:
+        if self._verbosity >= Verbosity.DEBUG2:
             self._console.print(f"[DEBUG] Initialized RichProgressTasks with verbosity {self._verbosity.name}")
 
     def start(self) -> None:
         """Start the Rich Progress display."""
         self._progress.start()
-        if self._verbosity >= Verbosity.DEBUG:
+        if self._verbosity >= Verbosity.DEBUG2:
             self._console.print("[DEBUG] Started Rich Progress display")
 
     def stop(self) -> None:
         """Stop the Rich Progress display."""
         self._progress.stop()
-        if self._verbosity >= Verbosity.DEBUG:
+        if self._verbosity >= Verbosity.DEBUG2:
             self._console.print("[DEBUG] Stopped Rich Progress display")
 
     def __contains__(self, task_name: str) -> bool:

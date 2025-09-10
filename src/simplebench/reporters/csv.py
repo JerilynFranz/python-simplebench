@@ -4,19 +4,20 @@ from __future__ import annotations
 import csv
 from io import TextIOWrapper, StringIO
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, TYPE_CHECKING
 
 
-from ..constants import (BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT,
-                         DEFAULT_INTERVAL_SCALE)
-
-from ..case import Case
+from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
-from ..results import Results
-from ..session import Session
-from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
-from .choices import Choice, Choices, Section, Format, Target
 from .interfaces import Reporter
+from ..results import Results
+from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
+from .choices import Choice, Choices, Section, Target, Format
+
+
+if TYPE_CHECKING:
+    from ..session import Session
+    from ..case import Case
 
 
 class CSVReporter(Reporter):
@@ -42,8 +43,9 @@ class CSVReporter(Reporter):
     """
 
     def __init__(self) -> None:
-        self._choices: Choices = Choices()
-        self._choices.add(
+        choices: Choices = Choices()
+        self._choices: Choices = choices
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--csv'],
@@ -52,7 +54,7 @@ class CSVReporter(Reporter):
                 sections=[Section.OPS, Section.TIMING],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.CSV]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--csv-ops'],
@@ -61,7 +63,7 @@ class CSVReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.CSV]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--csv-timings'],

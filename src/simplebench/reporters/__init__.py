@@ -21,7 +21,7 @@ class ReporterManager():
     CLI arguments. It allows for the registration, retrieval, and unregistration of
     Reporters.
 
-    Initially, it registers a set of predefined Reporters: CSVReporter, GraphReporter, and RichTableReporter.
+    Initially, it registers a set of built-in Reporters: CSVReporter, GraphReporter, and RichTableReporter.
 
     New Reporters can be added using the `register` method, and existing ones can be
     removed using the `unregister` or `unregister_by_name` methods.
@@ -40,6 +40,15 @@ class ReporterManager():
 
         for reporter in _PREDEFINED_REPORTERS:
             self.register(reporter())
+
+    @property
+    def choices(self) -> Choices:
+        """Return a Choices instance containing all registered reporter choices.
+
+        Returns:
+            Choices: A Choices instance with all registered reporter choices.
+        """
+        return self._registered_reporter_choices
 
     def choice_for_arg(self, arg: str) -> Choice | None:
         """Return the Choice instance for a given CLI argument.
@@ -67,7 +76,7 @@ class ReporterManager():
                 "reporter must be an instance of Reporter",
                 ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG
             )
-        choices = reporter.choices
+        choices: Choices = reporter.choices
         if not isinstance(choices, Choices):
             raise SimpleBenchTypeError(
                 "reporter.choices must return a Choices instance",
@@ -76,8 +85,9 @@ class ReporterManager():
         all_choice_flags: set[str] = self._registered_reporter_choices.all_choice_flags()
         for choice in choices:
             if not isinstance(choice, Choice):
-                raise SimpleBenchTypeError(
-                    "reporter.choices must return a Choices instance containing only Choice instances",
+                raise SimpleBenchTypeError((
+                    "reporter.choices must return a Choices instance containing only Choice instances: "
+                    f'Found {type(choice)} from reporter {reporter.name!r}'),
                     ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT
                 )
             if choice.name in self._registered_reporter_choices:

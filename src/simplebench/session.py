@@ -10,6 +10,7 @@ from rich.progress import Progress
 
 from .enums import Verbosity
 from .exceptions import ErrorTag, SimpleBenchTypeError
+from .reporters import ReporterManager
 from .reporters.choices import Choice, Choices, Format, Section, Target
 from .tasks import RichProgressTasks, RichTask
 from .case import Case
@@ -62,7 +63,9 @@ class Session:
         """Rich Progress instance for displaying progress bars."""
         self._console: Console = self._progress.console
         """Rich Console instance for displaying output."""
-        self._choices: Choices = Choices()
+        self._reporter_manager: ReporterManager = ReporterManager()
+        """The ReporterManager instance for managing reporters."""
+        self._choices: Choices = self._reporter_manager.choices
         """The Choices instance for managing registered reporters."""
         if output_path is not None and not isinstance(output_path, Path):
             raise SimpleBenchTypeError(
@@ -139,11 +142,17 @@ class Session:
         # The logic here is that if the arg is set, the user wants that report. By
         # making the lookup go from the defined Choices to the args, we ensure
         # that we only consider valid args that are associated with a Choice.
+        if self.verbosity >= Verbosity.DEBUG:
+            self._console.print(f"[DEBUG] Generating reports for session with {len(self.cases)} case(s)")
         processed_choices: set[str] = set()
         for key in self._choices.all_choice_args():
+            if self.verbosity >= Verbosity.DEBUG:
+                self._console.print(f"[DEBUG] Checking report for arg '{key}'")
             # skip all Choices that are not set in self.args
             if not getattr(self.args, key, None):
                 continue
+            if self.verbosity >= Verbosity.DEBUG:
+                self._console.print(f"[DEBUG] Processing report for arg '{key}'")
             choice: Choice | None = self._choices.get_choice_for_arg(key)
             if not isinstance(choice, Choice):
                 raise SimpleBenchTypeError(

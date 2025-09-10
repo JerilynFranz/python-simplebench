@@ -3,7 +3,7 @@
 from __future__ import annotations
 from io import BytesIO, BufferedWriter
 from pathlib import Path
-from typing import Optional, Callable, Any
+from typing import Optional, Callable, Any, TYPE_CHECKING
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -12,12 +12,15 @@ import seaborn as sns
 
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
-from ..session import Session
-from ..case import Case
 from ..results import Results
 from ..utils import sanitize_filename, si_scale_for_smallest
 from .choices import Choice, Choices, Section, Format, Target
 from .interfaces import Reporter
+
+
+if TYPE_CHECKING:
+    from ..session import Session
+    from ..case import Case
 
 
 class GraphReporter(Reporter):

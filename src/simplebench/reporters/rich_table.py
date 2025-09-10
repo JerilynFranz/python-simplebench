@@ -2,19 +2,22 @@
 """Reporter for benchmark results using Rich tables on the console."""
 from __future__ import annotations
 from pathlib import Path
-from typing import Optional, Any, Callable
+from typing import Optional, Any, Callable, TYPE_CHECKING
 
 from rich.console import Console
 from rich.table import Table
 
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
-from ..session import Session
-from ..case import Case
 from ..results import Results
 from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
 from .choices import Choice, Choices, Section, Format, Target
 from .interfaces import Reporter
+
+
+if TYPE_CHECKING:
+    from ..session import Session
+    from ..case import Case
 
 
 class RichTableReporter(Reporter):
