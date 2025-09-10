@@ -6,8 +6,7 @@ simplebench
 
 ## Description
 
-A pytest compatible benchmarking suite designed to be easy to setup and run. While compatible with pytest, it can be used without
-pytest.
+Benchmarking suite (WIP, pre-alpha)
 
 ## Installation
 
