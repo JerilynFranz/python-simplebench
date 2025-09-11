@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """Decorators for benchmark cases."""
 from __future__ import annotations
-from typing import Any, Callable, Optional, Sequence
+from typing import Any, Callable
 
 
-from .case import Case
 from .session import Session
 
 
@@ -13,6 +12,9 @@ _benchsession: Session = Session()
 
 
 def benchmark(func: Callable[..., Any],
+              n: int = 1,
+              repeat: int = 100,
+              warmup: int = 10,
               *args: Any, **kwargs: Any) -> Any:
     """Decorator to mark a function as a benchmark case.
 
@@ -21,12 +23,9 @@ def benchmark(func: Callable[..., Any],
     which can be used to run the benchmark.
 
     Example:
-        @benchmark
-        def my_benchmark(benchmark: SimpleRunner):
-            def action():
-                # Code to benchmark
-                pass
-            return benchmark.run(n=1000, action=action)
+        @benchmark(n=100, repeat=10)
+        def my_benchmark():
+            sum(range(1000))
 
     Args:
         func (Callable): The function to decorate.
@@ -34,13 +33,4 @@ def benchmark(func: Callable[..., Any],
     Returns:
         Callable: The decorated function.
     """
-    def case(func, *args, **kwargs) -> None:
-        """Decorator to add benchmark cases to a function.
-
-        It takes the same arguments as the Case class and adds the created Case instance
-        to the global _benchsession instance.
-        """
-        _benchsession.add(Case(*args, **kwargs))
-        func(*args, **kwargs)
-
-    return action(_benchsession, *args, *kwargs)
+    ...

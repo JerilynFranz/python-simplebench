@@ -103,19 +103,26 @@ class RichTask:
                 self._console.print(f"[DEBUG] Refreshed task '{self._name}' with ID {self._task_id}")
 
     def update(self,
-               completed: int,
+               completed: Optional[int | float] = None,
                description: Optional[str] = None,
-               refresh: bool = True) -> None:
+               refresh: Optional[bool] = None) -> None:
         """Update the task progress.
 
+        If an attempt to update a terminated task is made, a
+        SimpleBenchRuntimeError will be raised.
+
         Args:
-            completed (int): The number of completed steps.
+            completed (int | float): The number of completed steps.
             description (Optional[str]): The description of the task.
-            refresh (bool): Whether to refresh the progress display. (default=True)
+            refresh (Optional[bool]): Whether to refresh the progress display.
+
+        Raises:
+            SimpleBenchTypeError: If any argument is of an incorrect type.
+            SimpleBenchRuntimeError: If the task has already been terminated.
         """
-        if completed is not None and not isinstance(completed, int):
+        if completed is not None and not isinstance(completed, (int, float)):
             raise SimpleBenchTypeError(
-                f'Expected completed arg to be an int, got {type(completed)}',
+                f'Expected completed arg to be an int or float, got {type(completed)}',
                 ErrorTag.RICH_TASK_UPDATE_INVALID_COMPLETED_ARG)
         if description is not None and not isinstance(description, str):
             raise SimpleBenchTypeError(
@@ -130,13 +137,14 @@ class RichTask:
 
             if isinstance(description, str):
                 update_args['description'] = description
-            if isinstance(completed, int):
+            if isinstance(completed, (int, float)):
                 update_args['completed'] = completed
-            if refresh is not None and isinstance(refresh, bool):
+            if isinstance(refresh, bool):
                 update_args['refresh'] = refresh
-            self._progress.update(**update_args)
-            if self._verbosity >= Verbosity.DEBUG:
-                self._console.print(f"[DEBUG] Updated task '{self._name}' with ID {self._task_id}: {update_args}")
+            if update_args:
+                self._progress.update(**update_args)
+                if self._verbosity >= Verbosity.DEBUG:
+                    self._console.print(f"[DEBUG] Updated task '{self._name}' with ID {self._task_id}: {update_args}")
         else:
             raise SimpleBenchRuntimeError(
                 'Task has already been terminated',

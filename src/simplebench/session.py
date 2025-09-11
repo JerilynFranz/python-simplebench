@@ -1,7 +1,7 @@
 """Session management for SimpleBench."""
 from __future__ import annotations
 from argparse import ArgumentParser, ArgumentError, Namespace
-from importlib.resources import path
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
 
@@ -14,6 +14,7 @@ from .reporters import ReporterManager
 from .reporters.choices import Choice, Choices, Format, Section, Target
 from .tasks import RichProgressTasks, RichTask
 from .case import Case
+from .utils import sanitize_filename, platform_id
 
 
 if TYPE_CHECKING:
@@ -81,7 +82,7 @@ class Session:
         """The Choices instance for managing registered reporters."""
         if output_path is not None and not isinstance(output_path, Path):
             raise SimpleBenchTypeError(
-                f'output_path must be a Path instance - cannot be a {type(path)}',
+                f'output_path must be a Path instance - cannot be a {type(output_path)}',
                 ErrorTag.SESSION_INIT_INVALID_OUTPUT_PATH_ARG
             )
         self._output_path: Optional[Path] = output_path
@@ -196,6 +197,9 @@ class Session:
         # that we only consider valid args that are associated with a Choice.
         if self.verbosity >= Verbosity.DEBUG:
             self._console.print(f"[DEBUG] Generating reports for session with {len(self.cases)} case(s)")
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        platform_name = sanitize_filename(platform_id())
+
         processed_choices: set[str] = set()
         for key in self._choices.all_choice_args():
             if self.verbosity >= Verbosity.DEBUG:
@@ -221,12 +225,17 @@ class Session:
                 callback: Optional[Callable[[Case, Section, Format, Any], None]] = case.callback
                 reporter: Reporter = choice.reporter
                 output_path: Optional[Path] = self._output_path
-                if output_path is None and Target.FILESYSTEM in choice.targets:
-                    flag: str = '--' + key.replace('_', '-')
-                    raise SimpleBenchTypeError(
-                        f'output_path must be set to generate Choice {choice.name} / {flag} report',
-                        ErrorTag.SESSION_REPORT_OUTPUT_PATH_NOT_SET
-                    )
+                if Target.FILESYSTEM in choice.targets:
+                    if output_path is None:
+                        flag: str = '--' + key.replace('_', '-')
+                        raise SimpleBenchTypeError(
+                            f'output_path must be set to generate Choice {choice.name} / {flag} report',
+                            ErrorTag.SESSION_REPORT_OUTPUT_PATH_NOT_SET
+                        )
+                    group_path = sanitize_filename(case.group)
+                    output_path = output_path / platform_name / group_path / timestamp
+                    if self.verbosity >= Verbosity.DEBUG:
+                        self._console.print(f"[DEBUG] Output path for report: {output_path}")
                 reporter.report(
                     case=case,
                     choice=choice,

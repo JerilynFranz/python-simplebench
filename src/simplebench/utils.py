@@ -2,9 +2,26 @@
 """Utility functions"""
 
 import math
+import platform
 import re
 
 from .constants import DEFAULT_SIGNIFICANT_FIGURES
+
+
+def platform_id() -> str:
+    """Return a string that uniquely identifies the current machine and Python version.
+
+    The platform ID is a lowercase string that combines the operating system, Python implementation,
+    Python version, and architecture.
+
+    Returns:
+        str: The platform ID.
+    """
+    return '{system}-{python_impl}-{python_version}-{arch}'.format(  # pylint: disable=consider-using-f-string
+          system=platform.system(),
+          python_impl=platform.python_implementation(),
+          python_version='.'.join(platform.python_version_tuple()[:2]),
+          arch=platform.architecture()[0]).lower().replace(' ', '')
 
 
 def sanitize_filename(name: str) -> str:
