@@ -63,11 +63,11 @@ class Session:
         """The ArgumentParser instance for the session."""
         self._args: Optional[Namespace] = None
         """The command line arguments for the session."""
-        self._cases: Sequence[Case] = []
+        self._cases: Sequence[Case] = [] if cases is None else cases
         """The Sequence of benchmark cases for the session."""
         self._verbosity: Verbosity = Verbosity.NORMAL
         """The verbosity level for console output."""
-        self.show_progress: bool = progress
+        self._show_progress: bool = progress
         """Whether to show progress bars during execution."""
         self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity)
         """ProgressTasks instance for managing progress tasks."""
@@ -260,6 +260,28 @@ class Session:
         return self._progress
 
     @property
+    def show_progress(self) -> bool:
+        """Whether to show progress bars during execution."""
+        return self._show_progress
+
+    @show_progress.setter
+    def show_progress(self, value: bool) -> None:
+        """Set whether to show progress bars during execution.
+
+        Args:
+            value (bool): Whether to show progress bars during execution.
+
+        Raises:
+            SimpleBenchTypeError: If the value is not a bool.
+        """
+        if not isinstance(value, bool):
+            raise SimpleBenchTypeError(
+                f'progress must be a bool - cannot be a {type(value)}',
+                ErrorTag.SESSION_PROPERTY_INVALID_PROGRESS_ARG
+            )
+        self._show_progress = value
+
+    @property
     def console(self) -> Console:
         """The Rich Console instance for displaying output."""
         return self._console
@@ -358,3 +380,22 @@ class Session:
                     ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
                 )
         self._cases = list(self._cases) + list(cases)
+
+    @property
+    def output_path(self) -> Optional[Path]:
+        """The output path for reports."""
+        return self._output_path
+
+    @output_path.setter
+    def output_path(self, value: Path) -> None:
+        """Set the output path for reports.
+
+        Args:
+            value (Path): The output path for reports.
+        """
+        if not isinstance(value, Path):
+            raise SimpleBenchTypeError(
+                f'output_path must be a Path instance - cannot be a {type(value)}',
+                ErrorTag.SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG
+            )
+        self._output_path = value

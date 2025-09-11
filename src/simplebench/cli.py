@@ -2,6 +2,7 @@
 """CLI script support for SimpleBench."""
 from __future__ import annotations
 from argparse import Namespace, ArgumentParser
+import pathlib
 from typing import Any, Sequence, TYPE_CHECKING
 
 from rich.console import Console
@@ -122,73 +123,78 @@ def main(benchmark_cases: Sequence[Case]) -> int:
         This function serves as the main entry point for running benchmarks.
 
     Args:
-        benchmark_cases (Sequence[Case]): A Sequence of benchmark cases.
+        benchmark_cases (Sequence[Case]): A Sequence of SimpleBench.Case instances to be benchmarked.
 
     Returns:
         An integer exit code.
-
     """
-    parser = ArgumentParser(description='Run benchmarks and output results in various formats.')
-    parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
-    parser.add_argument('--quiet', action='store_true', help='Enable quiet output')
-    parser.add_argument('--debug', action='store_true', help='Enable debug output')
-    parser.add_argument('--progress', action='store_true', help='Enable progress output')
-    parser.add_argument('--list', action='store_true', help='List all available benchmarks')
-    parser.add_argument('--run', nargs="+", default='all', metavar='<benchmark>', help='Run specific benchmarks')
-    parser.add_argument('--output_dir', default='.benchmarks',
-                        help='Output destination directory (default: .benchmarks)')
-    session: Session = Session(cases=benchmark_cases, args_parser=parser)
-    session.add_reporter_flags()
-    session.parse_args()
-    args: Namespace = session.args if session.args else Namespace()
-    console: Console = session.console
-    if args.list:
-        console.print('Available benchmarks:')
-        for case in benchmark_cases:
-            console.print('  - ', f'[green]{case.group:<40s}[/green]', f'{case.title}')
-        return 0
+    try:
+        parser = ArgumentParser(description='Run benchmarks and output results in various formats.')
+        parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
+        parser.add_argument('--quiet', action='store_true', help='Enable quiet output')
+        parser.add_argument('--debug', action='store_true', help='Enable debug output')
+        parser.add_argument('--progress', action='store_true', help='Enable progress output')
+        parser.add_argument('--list', action='store_true', help='List all available benchmarks')
+        parser.add_argument('--run', nargs="+", default='all', metavar='<benchmark>', help='Run specific benchmarks')
+        parser.add_argument('--output_path', default='.benchmarks', metavar='<path>', type=pathlib.Path,
+                            help='Output destination directory (default: .benchmarks)')
+        session: Session = Session(args_parser=parser)
+        session.add_reporter_flags()
+        session.parse_args()
+        args: Namespace = session.args if session.args else Namespace()
+        console: Console = session.console
+        if args.list:
+            console.print('Available benchmarks:')
+            for case in benchmark_cases:
+                console.print('  - ', f'[green]{case.group:<40s}[/green]', f'{case.title}')
+            return 0
 
-    if args.quiet and args.verbose:
-        console.print('Error: Cannot use both --quiet and --verbose options together')
-        parser.print_usage()
+        if args.progress and session.verbosity == Verbosity.QUIET:
+            console.print('Error: Cannot use both --progress and --quiet options together')
+            parser.print_usage()
+            return 1
+
+        if args.quiet and args.verbose:
+            console.print('Error: Cannot use both --quiet and --verbose options together')
+            parser.print_usage()
+            return 1
+
+        if args.quiet and args.debug:
+            console.print('Error: Cannot use both --quiet and --debug options together')
+            parser.print_usage()
+            return 1
+
+        if args.output_path:
+            session.output_path = args.output_path
+
+        session.verbosity = Verbosity.NORMAL
+        if args.quiet:
+            session.verbosity = Verbosity.QUIET
+        if args.verbose:
+            session.verbosity = Verbosity.VERBOSE
+        if args.debug:
+            session.verbosity = Verbosity.DEBUG
+
+        session.show_progress = args.progress
+
+        if args.run:
+            if 'all' in args.run:
+                session.cases = benchmark_cases
+            else:
+                selected_cases: list[Case] = []
+                for case in benchmark_cases:
+                    if case.group in args.run:
+                        selected_cases.append(case)
+                if not selected_cases:
+                    console.print('Error: No matching benchmarks found for the specified --run options')
+                    parser.print_usage()
+                    return 1
+                session.cases = selected_cases
+
+        session.run()
+        session.report()
+    except KeyboardInterrupt:
+        print('')
+        print('Benchmarking interrupted by keyboard interrupt')
         return 1
-
-    session.verbosity = Verbosity.NORMAL
-    if args.quiet:
-        session.verbosity = Verbosity.QUIET
-
-    if args.verbose:
-        session.verbosity = Verbosity.VERBOSE
-
-    if not (args.console or args.json or args.csv or args.json or args.json_data):
-        session.console.print('No output format(s) selected, using console output by default')
-        session.reporters.add(ConsoleReporter(session.console))
-        args.console = True
-
-    if args.json and args.json_data:
-        session.console.print('Warning: Both --json and --json-data are enabled, using --json-data')
-        args.json = False
-    if (args.graph or args.json or args.json_data or args.csv) and not args.output_dir:
-        session.console.print('No output directory specified, using default: .benchmarks')
-
-    if args.console and not (args.ops or args.timing):
-        session.console.print(
-            'No benchmark result type selected for --console: At least one of --ops or --timing must be enabled')
-        parser.print_usage()
-        return 1
-
-    if args.csv and not (args.ops or args.timing):
-        session.console.print(
-            'No benchmark result type selected for --csv: At least one of --ops or --timing must be enabled')
-        parser.print_usage()
-        return 1
-
-    if args.graph and not (args.ops or args.timing):
-        PROGRESS.console.print(
-            'No benchmark result type selected for --graph: At least one of --ops or --timing must be enabled')
-        parser.print_usage()
-        return 1
-
-    run_benchmarks(cases=benchmark_cases, args=args)
-
     return 0

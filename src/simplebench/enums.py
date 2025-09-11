@@ -14,21 +14,14 @@ class Verbosity(int, Enum):
     NORMAL = 1
     """Normal messages are shown, including status displays during runs.
 
-    This is the default verbosity level and is incompatible with all other output levels."""
+    This is the default verbosity level and is incompatible with quiet."""
 
     VERBOSE = 2
     """All messages are shown and status displays during runs.
 
-    This is incompatible with all other output levels."""
+    This is incompatible with quiet."""
 
-    DEBUG = 10
+    DEBUG = 5
     """All messages are shown, including debug messages and status displays during runs.
 
-    This is incompatible with all other output levels."""
-
-    DEBUG2 = 20
-    """All messages are shown, including debug messages and status displays during runs.
-
-    More detailed debug messages than DEBUG level.
-
-    This is incompatible with all other output levels."""
+    This is incompatible with quiet."""""
