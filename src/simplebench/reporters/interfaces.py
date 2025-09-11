@@ -2,6 +2,7 @@
 """Reporters for benchmark results."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from argparse import ArgumentParser
 from pathlib import Path
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
@@ -49,6 +50,20 @@ class Reporter(ABC):
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the __init__ method",
             ErrorTag.REPORTER_INIT_NOT_IMPLEMENTED
+        )
+
+    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
+        """Add the reporter's command-line flags to an ArgumentParser.
+
+        Each flag defined in the reporter's Choices should be added to the parser.
+        The reporter is responsible for defining how each flag is handled.
+
+        Args:
+            parser (ArgumentParser): The ArgumentParser to add the flags to.
+        """
+        raise SimpleBenchNotImplementedError(
+            "Reporter subclasses must implement the add_flags_to_argparse method",
+            ErrorTag.REPORTER_ADD_FLAGS_NOT_IMPLEMENTED
         )
 
     def report(self,

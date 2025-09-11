@@ -147,7 +147,7 @@ class Case:
         all_variations = self.expanded_kwargs_variations
         task_name: str = 'case_variations'
         task: RichTask | None = None
-        if session and session.tasks:
+        if session and session.show_progress and session.tasks:
             task = session.tasks.get(task_name)
             if not task:
                 task = session.tasks.new_task(

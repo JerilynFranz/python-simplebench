@@ -1,6 +1,6 @@
 """Session management for SimpleBench."""
 from __future__ import annotations
-from argparse import Namespace
+from argparse import ArgumentParser, ArgumentError, Namespace
 from importlib.resources import path
 from pathlib import Path
 from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
@@ -9,7 +9,7 @@ from rich.console import Console
 from rich.progress import Progress
 
 from .enums import Verbosity
-from .exceptions import ErrorTag, SimpleBenchTypeError
+from .exceptions import ErrorTag, SimpleBenchArgumentError, SimpleBenchTypeError
 from .reporters import ReporterManager
 from .reporters.choices import Choice, Choices, Format, Section, Target
 from .tasks import RichProgressTasks, RichTask
@@ -36,27 +36,39 @@ class Session:
         tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
     """
     def __init__(self,
-                 args: Optional[Namespace] = None,
+                 args_parser: Optional[ArgumentParser] = None,
                  cases: Optional[Sequence[Case]] = None,
                  verbosity: Verbosity = Verbosity.NORMAL,
+                 progress: bool = False,
                  output_path: Optional[Path] = None) -> None:
         """Create a new Session.
 
         Args:
-            args (Optional[Namespace]): The command line arguments for the session. (default: None)
+            args_parser (Optional[ArgumentParser]): The ArgumentParser instance for the session. If None,
+            a new ArgumentParser will be created. (default: None)
             cases (Sequence[Case]): A Sequence of benchmark cases for the session (default: empty list).
             verbosity (Verbosity): The verbosity level for console output (default: Verbosity.NORMAL)
+            progress (bool): Whether to show progress bars during execution. (default: False)
             output_path (Optional[Path]): The output path for reports. (default: None)
 
         Raises:
             SimpleBenchTypeError: If the arguments are of the wrong type.
         """
-        self._args: Optional[Namespace] = args
-        """The command line arguments for the session. """
+        if args_parser is not None and not isinstance(args_parser, ArgumentParser):
+            raise SimpleBenchTypeError(
+                f'args_parser must be an ArgumentParser instance - cannot be a {type(args_parser)}',
+                ErrorTag.SESSION_INIT_INVALID_ARGSPARSER_ARG
+            )
+        self._args_parser: ArgumentParser = args_parser if args_parser else ArgumentParser()
+        """The ArgumentParser instance for the session."""
+        self._args: Optional[Namespace] = None
+        """The command line arguments for the session."""
         self._cases: Sequence[Case] = []
         """The Sequence of benchmark cases for the session."""
         self._verbosity: Verbosity = Verbosity.NORMAL
         """The verbosity level for console output."""
+        self.show_progress: bool = progress
+        """Whether to show progress bars during execution."""
         self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity)
         """ProgressTasks instance for managing progress tasks."""
         self._progress: Progress = self._progress_tasks._progress
@@ -73,6 +85,7 @@ class Session:
                 ErrorTag.SESSION_INIT_INVALID_OUTPUT_PATH_ARG
             )
         self._output_path: Optional[Path] = output_path
+        """The output path for reports."""
 
         if not cases:
             cases = []
@@ -87,6 +100,7 @@ class Session:
                 raise SimpleBenchTypeError(error_text,
                                            ErrorTag.SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE)
         self._cases = cases
+        """The Sequence of benchmark cases for the session."""
 
         if not isinstance(verbosity, Verbosity):
             raise SimpleBenchTypeError(
@@ -94,15 +108,53 @@ class Session:
                 ErrorTag.SESSION_INIT_INVALID_VERBOSITY_ARG
             )
         self._verbosity = verbosity
+        """The verbosity level for console output."""
+
+    def parse_args(self) -> None:
+        """Parse the command line arguments using the session's ArgumentParser.
+
+        This method parses the command line arguments and stores them in the session's args property.
+
+        Raises:
+            SimpleBenchTypeError: If the args_parser is not set.
+        """
+        self._args = self._args_parser.parse_args()
+
+    def add_reporter_flags(self) -> None:
+        """Adds the command line flags for all registered reporters to the session's ArgumentParser.
+
+        Any conflicts in flag names with already declared ArgumentParser flags will have to be
+        handled by the reporters themselves.
+
+        This method should be called before parse_args().
+
+        It is placed in its own method so that a user can customize the ArgumentParser
+        before or after adding the reporter flags as needed.
+
+        It also allows the user to unregister reporters before adding the reporter flags if they
+        want to omit specific built-in reporters entirely.
+
+
+        Raises:
+            SimpleBenchArgumentError: If there is a conflict or other error in reporter flag names.
+        """
+        try:
+            self._reporter_manager.add_reporters_to_argparse(self._args_parser)
+        except ArgumentError as arg_err:
+            raise SimpleBenchArgumentError(
+                argument_name=arg_err.argument_name,
+                message=f'Error adding reporter flags to ArgumentParser: {arg_err.message}',
+                tag=ErrorTag.REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS
+            ) from arg_err
 
     def run(self) -> None:
         """Run all benchmark cases in the session."""
         if self._verbosity >= Verbosity.NORMAL:
             self._console.print(f'Running {len(self.cases)} benchmark case(s)...')
-        self._progress_tasks.start()
         task_name: str = 'cases'
         task: RichTask | None = None
-        if self.verbosity >= Verbosity.NORMAL and self.tasks:
+        if self.show_progress and self.tasks:
+            self._progress_tasks.start()
             task = self.tasks.get(task_name)
             if not task:
                 if self._verbosity >= Verbosity.DEBUG:
@@ -114,7 +166,7 @@ class Session:
                     total=len(self.cases))
 
         case_counter: int = 0
-        if self.verbosity >= Verbosity.NORMAL and task is not None:
+        if task:
             task.reset()
             task.update(
                 completed=0,
@@ -130,9 +182,9 @@ class Session:
                 task.refresh()
             case_counter += 1
             case.run(session=self)
-        if self.verbosity >= Verbosity.NORMAL and task is not None:
+        if task:
             task.terminate_and_remove()
-        self._progress_tasks.stop()
+            self._progress_tasks.stop()
 
     def report(self) -> None:
         """Generate reports for all benchmark cases in the session."""
@@ -184,8 +236,23 @@ class Session:
 
     @property
     def args(self) -> Optional[Namespace]:
-        """The command line arguments for the session."""
+        """The command line arguments for the session. This will be None until the parse_args()
+        method has been called."""
         return self._args
+
+    @args.setter
+    def args(self, value: Namespace) -> None:
+        """Set the command line arguments for the session.
+
+        Args:
+            value (Namespace): The command line arguments for the session.
+        """
+        if not isinstance(value, Namespace):
+            raise SimpleBenchTypeError(
+                f'args must be a Namespace instance - cannot be a {type(value)}',
+                ErrorTag.SESSION_PROPERTY_INVALID_ARGS_ARG
+            )
+        self._args = value
 
     @property
     def progress(self) -> Progress:

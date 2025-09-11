@@ -128,27 +128,19 @@ def main(benchmark_cases: Sequence[Case]) -> int:
         An integer exit code.
 
     """
-    parser = ArgumentParser(description='Run GeneralizedTrie benchmarks.')
+    parser = ArgumentParser(description='Run benchmarks and output results in various formats.')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
+    parser.add_argument('--quiet', action='store_true', help='Enable quiet output')
+    parser.add_argument('--debug', action='store_true', help='Enable debug output')
     parser.add_argument('--progress', action='store_true', help='Enable progress output')
     parser.add_argument('--list', action='store_true', help='List all available benchmarks')
     parser.add_argument('--run', nargs="+", default='all', metavar='<benchmark>', help='Run specific benchmarks')
-    parser.add_argument('--console', action='store_true', help='Enable console output')
-    parser.add_argument('--json', action='store_true', help='Enable JSON file statistics output to files')
-    parser.add_argument('--json-data',
-                        action='store_true',
-                        help='Enable JSON file statistics and data output to files')
-    parser.add_argument('--csv', action='store_true', help='Enable tagged CSV statistics output to files')
-    parser.add_argument('--graph', action='store_true', help='Enable graphical output (e.g., plots)')
     parser.add_argument('--output_dir', default='.benchmarks',
                         help='Output destination directory (default: .benchmarks)')
-    parser.add_argument('--ops',
-                        action='store_true',
-                        help='Enable operations per second output to console or csv')
-    parser.add_argument('--timing', action='store_true', help='Enable operations timing output to console or csv')
-
-    args: Namespace = parser.parse_args()
-    session: Session = Session(args=args, cases=benchmark_cases)
+    session: Session = Session(cases=benchmark_cases, args_parser=parser)
+    session.add_reporter_flags()
+    session.parse_args()
+    args: Namespace = session.args if session.args else Namespace()
     console: Console = session.console
     if args.list:
         console.print('Available benchmarks:')

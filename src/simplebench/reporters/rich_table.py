@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using Rich tables on the console."""
 from __future__ import annotations
+from argparse import ArgumentParser
 from pathlib import Path
 from typing import Optional, Any, Callable, TYPE_CHECKING
 
@@ -163,6 +164,16 @@ class RichTableReporter(Reporter):
     def description(self) -> str:
         """Return a brief description of the reporter."""
         return 'Displays benchmark results as a rich text table on the console.'
+
+    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
+        """Add the reporter's command-line flags to an ArgumentParser.
+
+        Args:
+            parser (ArgumentParser): The ArgumentParser to add the flags to.
+        """
+        for choice in self.choices.values():
+            for flag in choice.flags:
+                parser.add_argument(flag, action='store_true', help=choice.description)
 
     def report(self,
                case: Case,

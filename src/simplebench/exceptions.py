@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Custom exceptions for the simplebench package."""
 from enum import Enum
+import argparse
 
 
 class ErrorTag(str, Enum):
@@ -30,6 +31,12 @@ class ErrorTag(str, Enum):
     """Something other than a Choice instance was retrieved from the report"""
     SESSION_REPORT_OUTPUT_PATH_NOT_SET = "SESSION_REPORT_OUTPUT_PATH_NOT_SET"
     """The output path must be set to generate reports"""
+    SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG = "SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG"
+    """Something other than an ArgumentParser instance was passed to the Session.parse_args() method"""
+    SESSION_INIT_INVALID_ARGSPARSER_ARG = "SESSION_INIT_INVALID_ARGSPARSER_ARG"
+    """Something other than an ArgumentParser instance was passed to the Session() constructor"""
+    SESSION_PROPERTY_INVALID_ARGS_ARG = "SESSION_PROPERTY_INVALID_ARGS_ARG"
+    """Something other than a Namespace instance was found in the args property"""
 
     # Reporters() tags
     REPORTERS_REGISTER_INVALID_REPORTER_ARG = "REPORTERS_REGISTER_INVALID_REPORTER_ARG"
@@ -225,6 +232,8 @@ class ErrorTag(str, Enum):
     """The Reporter.description property must be implemented in subclasses"""
     REPORTER_REPORT_NOT_IMPLEMENTED = "REPORTER_REPORT_NOT_IMPLEMENTED"
     """The Reporter.report() method must be implemented in subclasses"""
+    REPORTER_ADD_FLAGS_NOT_IMPLEMENTED = "REPORTER_ADD_FLAGS_NOT_IMPLEMENTED"
+    """The Reporter.add_flags_to_argparse() method must be implemented in subclasses"""
 
     # reporters.ReporterManager() tags
     REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG = "REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG"
@@ -242,6 +251,13 @@ class ErrorTag(str, Enum):
     """Something other than a Reporter instance was passed to the ReporterManager.unregister() method"""
     REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME = "REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME"
     """No Reporter with the given name is registered in the ReporterManager instance"""
+    REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG = (
+        "REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG"
+    )
+    """Something other than an ArgumentParser instance was passed to the
+    ReporterManager.add_reporters_to_argparse() method"""
+    REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS = "REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS"
+    """An ArgumentError was raised when adding reporter flags to the ArgumentParser instance"""
 
 
 class SimpleBenchTypeError(TypeError):
@@ -367,3 +383,39 @@ class SimpleBenchNotImplementedError(NotImplementedError):
         """
         self.tag_code: ErrorTag = tag
         super().__init__(msg)
+
+
+class SimpleBenchArgumentError(argparse.ArgumentError):
+    """Base class for re-raising all SimpleBench ArgumentError errors.
+
+    It is designed to be used in places where an argparse.ArgumentError
+    would be appropriate and for re-raising ArgumentErrors
+    caught from argparse operations.
+
+    It differs from a argparse.ArgumentError by the addition of a
+    tag code used to very specifically identify where the error
+    was thrown in the code for testing and development support
+    and by directly setting the argument_name property to the name of the
+    argument that caused the error. This is because the argparse.ArgumentError
+    constructor expects an argparse.Action instance as the first argument
+    and that is not always available when re-raising the exception.
+
+    This tag code does not have a direct semantic meaning except to identify
+    the specific code throwing the exception for tests.
+
+    Args:
+        argument_name (str | None): The argument name.
+        message (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, argument_name: str | None, message: str, tag: ErrorTag) -> None:
+        """Create a new SimpleBenchArgumentError.
+
+        Args:
+            argument_name (str | None): The argument name.
+            message (str): The error message.
+            tag (str): The tag code.
+        """
+        self.tag_code: ErrorTag = tag
+        super().__init__(argument=None, message=message)
+        self.argument_name = argument_name

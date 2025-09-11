@@ -81,7 +81,7 @@ class SimpleRunner():
         progress_max: float = 100.0
         task_name: str = 'case_runner'
         task: RichTask | None = None
-        if self.session and self.session.tasks:
+        if self.session and self.session.show_progress and self.session.tasks:
             task = self.session.tasks.get(task_name)
             if not task:
                 task = self.session.tasks.new_task(

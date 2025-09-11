@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Reporters for benchmark results."""
 from __future__ import annotations
+from argparse import ArgumentParser
 
 from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .choices import Choices, Choice, Section, Target, Format
@@ -157,6 +158,23 @@ class ReporterManager():
                 ErrorTag.REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME
             )
         self.unregister(self._registered_reporters[name])
+
+    def add_reporters_to_argparse(self, parser) -> None:
+        """Add all registered reporter choices to an ArgumentParser.
+
+        This method adds the CLI arguments for all registered reporters
+        to the provided ArgumentParser instance.
+
+        Args:
+            parser (ArgumentParser): The ArgumentParser to add the flags to.
+        """
+        if not isinstance(parser, ArgumentParser):
+            raise SimpleBenchTypeError(
+                f'parser must be an ArgumentParser instance - cannot be a {type(parser)}',
+                ErrorTag.REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG
+            )
+        for reporter in self._registered_reporters.values():
+            reporter.add_flags_to_argparse(parser)
 
 
 __all__ = [
