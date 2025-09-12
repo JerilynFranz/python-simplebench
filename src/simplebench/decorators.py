@@ -11,7 +11,7 @@ _benchsession: Session = Session()
 """Global Session instance for storing benchmark cases."""
 
 
-def benchmark(func: Callable[..., Any],
+def simple(func: Callable[..., Any],
               n: int = 1,
               repeat: int = 100,
               warmup: int = 10,
@@ -19,8 +19,6 @@ def benchmark(func: Callable[..., Any],
     """Decorator to mark a function as a benchmark case.
 
     This decorator can be used to wrap a function that performs benchmarking.
-    The decorated function should accept a `SimpleRunner` instance as its first argument,
-    which can be used to run the benchmark.
 
     Example:
         @benchmark(n=100, repeat=10)

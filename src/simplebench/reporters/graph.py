@@ -95,6 +95,18 @@ class GraphReporter(Reporter):
                 formats=[Format.GRAPH])
         )
 
+    def supported_formats(self):
+        """Return the set of supported output formats for the reporter."""
+        return set([Format.GRAPH])
+
+    def supported_sections(self):
+        """Return the set of supported result sections for the reporter."""
+        return set([Section.OPS, Section.TIMING])
+
+    def supported_targets(self):
+        """Return the set of supported output targets for the reporter."""
+        return set([Target.FILESYSTEM, Target.CALLBACK])
+
     @property
     def choices(self) -> Choices:
         """Return the Choices instance for the reporter, including sections,
@@ -122,81 +134,40 @@ class GraphReporter(Reporter):
             for flag in choice.flags:
                 parser.add_argument(flag, action='store_true', help=choice.description)
 
-    def report(self,
-               case: Case,
-               choice: Choice,
-               path: Optional[Path] = None,
-               session: Optional[Session] = None,
-               callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
-        """Output the benchmark results a graph to a file and/or a callback function.
+    def run_report(self,
+                   case: Case,
+                   choice: Choice,
+                   path: Optional[Path] = None,
+                   session: Optional[Session] = None,  # pylint: disable=unused-argument
+                   callback: Optional[Callable[[Case, Section, Format, Any], None]] = None
+                   ) -> None:
+        """Output the benchmark results as graphs.
+
+        This method is called by the base class's report() method after validation. The base class
+        handles validation of the arguments, so subclasses can assume the arguments
+        are valid without a large amount of boilerplate code. The base class also handles lazy
+        loading of the reporter classes, so subclasses can assume any required imports are available
 
         Args:
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the graph file(s) will be saved.
+            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
             callback (Optional[Callable[[Case, Section, Format, Any], None]]):
                 A callback function for additional processing of the report.
-                The function should accept four arguments:
-                    - the Case instance
-                    - the Section being reported
-                    - the Format of the report
-                    - the graph data as bytes
+                The function should accept two arguments: the Case instance and the graph data.
                 Leave as None if no callback is needed.
 
         Return:
             None
 
         Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types. Also raised if
+            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
                 required arguments are missing. Also raised if the callback is not callable when
                 provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
-        _lazy_load_classes()
-        if not isinstance(case, Case):
-            raise SimpleBenchTypeError(
-                "Expected a Case instance",
-                ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CASE_ARG)
-        if not isinstance(choice, Choice):
-            raise SimpleBenchTypeError(
-                "Expected a Choice instance",
-                ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CHOICE_ARG)
-        for section in choice.sections:
-            if section not in (Section.OPS, Section.TIMING):
-                raise SimpleBenchValueError(
-                    f"Unsupported Section in Choice: {section}",
-                    ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION)
-        for target in choice.targets:
-            if target not in (Target.FILESYSTEM, Target.CALLBACK):
-                raise SimpleBenchValueError(
-                    f"Unsupported Target in Choice: {target}",
-                    ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_TARGET)
-        if Target.CALLBACK in choice.targets:
-            if callback is not None and not callable(callback):
-                raise SimpleBenchTypeError(
-                    "Callback function must be callable if provided",
-                    ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CALLBACK_ARG)
-        if Target.FILESYSTEM in choice.targets and not isinstance(path, Path):
-            raise SimpleBenchTypeError(
-                "Path must be a pathlib.Path instance when using FILESYSTEM target",
-                ErrorTag.GRAPH_REPORTER_REPORT_INVALID_PATH_ARG)
-        for output_format in choice.formats:
-            if output_format is not Format.GRAPH:
-                raise SimpleBenchValueError(
-                    f"Unsupported Format in Choice: {output_format}",
-                    ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_FORMAT)
-        # if session is not None and not isinstance(session, Session):
-        #    raise SimpleBenchTypeError(
-        #        "session must be a Session instance if provided",
-        #        ErrorTag.GRAPH_REPORTER_REPORT_INVALID_SESSION_ARG)
-
-        # Only proceed if there are results to report
-        results = case.results
-        if not results:
-            return
-
         for section in choice.sections:
             base_unit: str = ''
             if section is Section.OPS:
@@ -208,25 +179,25 @@ class GraphReporter(Reporter):
                     f"Unsupported section: {section} (this should not happen)",
                     ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION)
 
-            filename: str = sanitize_filename(section.name)
+            filename: str = sanitize_filename(section.value)
             if Target.FILESYSTEM in choice.targets:
                 file = path.joinpath('graph', f'{filename}.svg')  # type: ignore[reportOptionalMemberAccess]
                 file.parent.mkdir(parents=True, exist_ok=True)
                 with file.open(mode='wb') as graphfile:
-                    self.plot(case=case, target=section.value, graphfile=graphfile, base_unit=base_unit)
+                    self._plot_graph(case=case, target=section.value, graphfile=graphfile, base_unit=base_unit)
                     graphfile.close()
             if Target.CALLBACK in choice.targets and case.callback is not None:
                 with BytesIO() as graphfile:
-                    self.plot(case=case, target=section.value, graphfile=graphfile, base_unit=base_unit)
+                    self._plot_graph(case=case, target=section.value, graphfile=graphfile, base_unit=base_unit)
                     graphfile.seek(0)
                     case.callback(case, section, Format.GRAPH, graphfile.read())
                     graphfile.close()
 
-    def plot(self,
-             case: Case,
-             target: str,
-             graphfile: BytesIO | BufferedWriter,
-             base_unit: str = '') -> None:
+    def _plot_graph(self,
+                    case: Case,
+                    target: str,
+                    graphfile: BytesIO | BufferedWriter,
+                    base_unit: str = '') -> None:
         """Generates and saves a scatter plot of the ops/sec and/or round timings results.
 
         Args:

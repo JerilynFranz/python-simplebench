@@ -2,6 +2,7 @@
 
 # Benchmarks
 .benchmark_reports
+.benchmarks
 
 # Virtual environments
 .venv

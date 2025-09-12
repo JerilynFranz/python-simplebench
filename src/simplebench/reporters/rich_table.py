@@ -10,7 +10,7 @@ from rich.table import Table
 
 from ..case import Case
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
-from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from ..exceptions import SimpleBenchValueError, ErrorTag
 from ..results import Results
 from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
 from .choices import Choice, Choices, Section, Format, Target
@@ -148,6 +148,18 @@ class RichTableReporter(Reporter):
                 formats=[Format.RICH_TEXT])
         )
 
+    def supported_formats(self):
+        """Return the set of supported output formats for the reporter."""
+        return set([Format.RICH_TEXT])
+
+    def supported_sections(self):
+        """Return the set of supported result sections for the reporter."""
+        return set([Section.OPS, Section.TIMING])
+
+    def supported_targets(self):
+        """Return the set of supported output targets for the reporter."""
+        return set([Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK])
+
     @property
     def choices(self) -> Choices:
         """Return the Choices instance for the reporter, including sections,
@@ -175,85 +187,41 @@ class RichTableReporter(Reporter):
             for flag in choice.flags:
                 parser.add_argument(flag, action='store_true', help=choice.description)
 
-    def report(self,
-               case: Case,
-               choice: Choice,
-               path: Optional[Path] = None,
-               session: Optional[Session] = None,
-               callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
-        """Output the benchmark results to the console and/or a callback if available.
+    def run_report(self,
+                   case: Case,
+                   choice: Choice,
+                   path: Optional[Path] = None,
+                   session: Optional[Session] = None,  # pylint: disable=unused-argument
+                   callback: Optional[Callable[[Case, Section, Format, Any], None]
+                                      ] = None  # pylint: disable=unused-argument
+                   ) -> None:
+        """Output the benchmark results as rich text if available.
+
+        This method is called by the base class's report() method after validation. The base class
+        handles validation of the arguments, so subclasses can assume the arguments
+        are valid. The base class also handles lazy loading of the reporter classes, so subclasses
+        can assume any required imports are available
 
         Args:
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the Rich Table file(s) will be saved if needed.
-            Leave as None if not saving to the filesystem.
+            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
             callback (Optional[Callable[[Case, Section, Format, Any], None]]):
                 A callback function for additional processing of the report.
-                The function should accept three arguments:
-                 - the Case instance
-                 - the Format instance
-                 - the rich.table.Table data.
+                The function should accept two arguments: the Case instance and the CSV data as a string.
                 Leave as None if no callback is needed.
 
         Return:
             None
 
         Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types. Also raised if
+            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
                 required arguments are missing. Also raised if the callback is not callable when
                 provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
-        _lazy_load_classes()
-        if not isinstance(case, Case):
-            raise SimpleBenchTypeError(
-                "Expected a Case instance",
-                ErrorTag.RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG)
-        if not isinstance(choice, Choice):
-            raise SimpleBenchTypeError(
-                "Expected a Choice instance",
-                ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_CHOICE_ARG)
-        for section in choice.sections:
-            if section not in (Section.OPS, Section.TIMING):
-                raise SimpleBenchValueError(
-                    f"Unsupported Section in Choice: {section}",
-                    ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION)
-        for target in choice.targets:
-            if target not in (Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK):
-                raise SimpleBenchValueError(
-                    f"Unsupported Target in Choice: {target}",
-                    ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_TARGET)
-        if path is not None and not isinstance(path, Path):
-            raise SimpleBenchTypeError(
-                "path must be a pathlib.Path instance if provided",
-                ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_PATH_ARG)
-        if Target.CALLBACK in choice.targets:
-            if callback is not None and not callable(callback):
-                raise SimpleBenchTypeError(
-                    "Callback function must be callable if provided",
-                    ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_CALLBACK_ARG)
-        if Target.FILESYSTEM in choice.targets and not isinstance(path, Path):
-            raise SimpleBenchTypeError(
-                "Path must be a pathlib.Path instance when using FILESYSTEM target",
-                ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_PATH_ARG)
-        for output_format in choice.formats:
-            if output_format is not Format.RICH_TEXT:
-                raise SimpleBenchValueError(
-                    f"Unsupported Format in Choice: {output_format}",
-                    ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_FORMAT)
-        # if session is not None and not isinstance(session, Session):
-        #    raise SimpleBenchTypeError(
-        #        "session must be a Session instance if provided",
-        #        ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_SESSION_ARG)
-
-        # Only proceed if there are results to report
-        results = case.results
-        if not results:
-            return
-
         for section in choice.sections:
             base_unit: str = ''
             if section is Section.OPS:
@@ -265,10 +233,10 @@ class RichTableReporter(Reporter):
                     f"Unsupported section: {section} (this should not happen)",
                     ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION)
 
-            table = self.to_rich_table(case=case, target=section.value, base_unit=base_unit)
+            table = self._to_rich_table(case=case, target=section.value, base_unit=base_unit)
             console: Console
             if Target.FILESYSTEM in choice.targets and path is not None:
-                filename: str = sanitize_filename(section.name)
+                filename: str = sanitize_filename(section.value)
                 file = path.joinpath('rich', f'{filename}.rich.txt')
                 file.parent.mkdir(parents=True, exist_ok=True)
                 with file.open(mode='w', encoding='utf-8', newline='') as f:
@@ -287,10 +255,10 @@ class RichTableReporter(Reporter):
                 console = session.console if session is not None else Console()
                 console.print(table)
 
-    def to_rich_table(self,
-                      case: Case,
-                      target: str,
-                      base_unit: str) -> Table:
+    def _to_rich_table(self,
+                       case: Case,
+                       target: str,
+                       base_unit: str) -> Table:
         """Prints the benchmark results in a rich table format if available.
         """
         results: list[Results] = case.results

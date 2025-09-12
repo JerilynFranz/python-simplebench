@@ -4,9 +4,32 @@
 import math
 import platform
 import re
+import sys
+from cpuinfo import get_cpu_info
 
 from .constants import DEFAULT_SIGNIFICANT_FIGURES
 
+
+def pytest_benchmark_generate_machine_info():
+    python_implementation = platform.python_implementation()
+    python_implementation_version = platform.python_version()
+    if python_implementation == 'PyPy':
+        python_implementation_version = '%d.%d.%d' % sys.pypy_version_info[:3]  # noqa:UP031
+        if sys.pypy_version_info.releaselevel != 'final':
+            python_implementation_version += '-%s%d' % sys.pypy_version_info[3:]  # noqa:UP031
+    return {
+        'node': platform.node(),
+        'processor': platform.processor(),
+        'machine': platform.machine(),
+        'python_compiler': platform.python_compiler(),
+        'python_implementation': python_implementation,
+        'python_implementation_version': python_implementation_version,
+        'python_version': platform.python_version(),
+        'python_build': platform.python_build(),
+        'release': platform.release(),
+        'system': platform.system(),
+        'cpu': get_cpu_info(),
+    }
 
 def platform_id() -> str:
     """Return a string that uniquely identifies the current machine and Python version.
