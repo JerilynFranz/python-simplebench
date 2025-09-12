@@ -18,20 +18,8 @@ from ..results import Results
 from ..utils import sanitize_filename, si_scale_for_smallest
 from .choices import Choice, Choices, Section, Format, Target
 from .interfaces import Reporter
-
 if TYPE_CHECKING:
     from ..session import Session
-
-_lazy_classes_loaded: bool = False
-
-
-def _lazy_load_classes() -> None:
-    """Lazily load any classes or modules that cannot be loaded during initial setup."""
-    global _lazy_classes_loaded  # pylint: disable=global-statement
-    global Session  # pylint: disable=global-statement
-    if not _lazy_classes_loaded:
-        from ..session import Session  # pylint: disable=import-outside-toplevel
-        _lazy_classes_loaded = True
 
 
 class GraphReporter(Reporter):

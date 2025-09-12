@@ -6,12 +6,35 @@ from argparse import ArgumentParser
 from pathlib import Path
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
-from ..case import Case
-from .choices import Choice, Choices, Format, Section, Target
 from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
 
 if TYPE_CHECKING:
+    from .choices import Choice, Choices, Target, Format, Section
+    from ..case import Case
     from ..session import Session
+
+_lazy_classes_loaded: bool = False
+
+
+"""Flag to indicate if lazy classes have been loaded."""
+
+
+def _lazy_load_classes() -> None:
+    """Lazily load any classes or modules that cannot be loaded during initial setup.
+
+    This is primarily to avoid circular import issues between the session, reporter and
+    choices modules in the report() method of the Reporter class.
+    """
+    global Session  # pylint: disable=global-statement
+    global Target  # pylint: disable=global-statement
+    global Format  # pylint: disable=global-statement
+    global Section  # pylint: disable=global-statement
+    global _lazy_classes_loaded  # pylint: disable=global-statement
+    if not _lazy_classes_loaded:
+        from ..session import Session  # pylint: disable=import-outside-toplevel
+        from .choices import Target, Format, Section  # pylint: disable=import-outside-toplevel
+
+        _lazy_classes_loaded = True
 
 
 class Reporter(ABC):
@@ -47,7 +70,6 @@ class Reporter(ABC):
     @abstractmethod
     def __init__(self) -> None:
         """Initialize the reporter with Sections, Targets, and Formats."""
-        self._lazy_classes_loaded: bool = False
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the __init__ method",
             ErrorTag.REPORTER_INIT_NOT_IMPLEMENTED
@@ -79,13 +101,6 @@ class Reporter(ABC):
             ErrorTag.REPORTER_SUPPORTED_TARGETS_NOT_IMPLEMENTED
         )
         # return set([Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE]) --- IGNORE ---
-
-    def lazy_load_classes(self) -> None:
-        """Lazily load any classes or modules that cannot be loaded during initial setup."""
-        global Session  # pylint: disable=global-statement
-        if not self._lazy_classes_loaded:
-            from ..session import Session  # pylint: disable=import-outside-toplevel
-            self._lazy_classes_loaded = True
 
     @abstractmethod
     def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
@@ -122,7 +137,7 @@ class Reporter(ABC):
         Raises:
             NotImplementedError: If the method is not implemented in a subclass.
         """
-        self.lazy_load_classes()
+        _lazy_load_classes()
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
@@ -141,7 +156,7 @@ class Reporter(ABC):
                 raise SimpleBenchValueError(
                     f"Unsupported Target in Choice: {target}",
                     ErrorTag.REPORTER_REPORT_UNSUPPORTED_TARGET)
-        if Target.CALLBACK in choice.targets:
+        if Target.CALLBACK in choice.targets:  # pylint: disable=used-before-assignment
             if callback is not None and not callable(callback):
                 raise SimpleBenchTypeError(
                     "Callback function must be callable if provided",

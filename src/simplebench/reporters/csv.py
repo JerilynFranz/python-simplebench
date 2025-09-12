@@ -15,8 +15,6 @@ from .interfaces import Reporter
 from ..results import Results
 from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
 from .choices import Choice, Choices, Section, Target, Format
-
-
 if TYPE_CHECKING:
     from ..session import Session
 
@@ -44,7 +42,6 @@ class CSVReporter(Reporter):
     """
 
     def __init__(self) -> None:
-        self._lazy_classes_loaded = False
         choices: Choices = Choices()
         self._choices: Choices = choices
         choices.add(
