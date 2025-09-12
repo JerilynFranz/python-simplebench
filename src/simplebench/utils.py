@@ -5,14 +5,15 @@ import math
 import platform
 import re
 import sys
-from typing import Any, TypedDict
+from typing import TypedDict
+
 from cpuinfo import get_cpu_info
 
 from .constants import DEFAULT_SIGNIFICANT_FIGURES
 
 
 class MachineInfo(TypedDict):
-    """TypedDict for machine info returned by pytest_benchmark_generate_machine_info()."""
+    """TypedDict for machine info returned by get_machine_info()."""
     node: str
     """Computer's network name."""
     processor: str
@@ -33,7 +34,7 @@ class MachineInfo(TypedDict):
     """Operating system release."""
     system: str
     """Operating system name."""
-    cpu: dict[str, Any]
+    cpu: dict[str, str]
     """CPU information."""
 
 
@@ -49,14 +50,14 @@ def python_implementation_version() -> str:
     python_implementation: str = platform.python_implementation()
     py_implementation_version: str = platform.python_version()
     if python_implementation == 'PyPy':
-        version_info: 'sys.pypy_version_info' = sys.pypy_version_info  # pyright: ignore[reportAttributeAccessIssue] # pylint: disable=no-member # noqa:UP031, E501
+        version_info: 'sys.pypy_version_info' = sys.pypy_version_info  # pyright: ignore[reportAttributeAccessIssue] # pylint: disable=no-member # noqa: E501
         py_implementation_version = (
             f'{version_info.major:d}.{version_info.minor:d}.{version_info.micro:d}'
             f'-{version_info.releaselevel:d}{version_info.serial:d}')
     return py_implementation_version
 
 
-def pytest_benchmark_generate_machine_info() -> MachineInfo:
+def get_machine_info() -> MachineInfo:
     """Return a dictionary of information about the current machine and Python version."""
     python_implementation = platform.python_implementation()
     machine_info: MachineInfo = {
