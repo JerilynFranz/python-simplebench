@@ -150,12 +150,12 @@ class Session:
 
     def run(self) -> None:
         """Run all benchmark cases in the session."""
-        if self._verbosity >= Verbosity.NORMAL:
+        if self._verbosity > Verbosity.NORMAL:
             self._console.print(f'Running {len(self.cases)} benchmark case(s)...')
         self._progress_tasks.clear()
         task_name: str = 'cases'
         task: RichTask | None = None
-        if self.show_progress and self.tasks:
+        if self.show_progress and self.verbosity > Verbosity.QUIET and self.tasks:
             self._progress_tasks.start()
             task = self.tasks.get(task_name)
             if not task:
@@ -185,8 +185,9 @@ class Session:
             case_counter += 1
             case.run(session=self)
         if task:
-            task.terminate_and_remove()
+            task.stop()
             self._progress_tasks.stop()
+            self._progress_tasks.clear()
 
     def report(self) -> None:
         """Generate reports for all benchmark cases in the session."""
@@ -196,7 +197,7 @@ class Session:
         # The logic here is that if the arg is set, the user wants that report. By
         # making the lookup go from the defined Choices to the args, we ensure
         # that we only consider valid args that are associated with a Choice.
-        if self.verbosity >= Verbosity.NORMAL:
+        if self.verbosity > Verbosity.NORMAL:
             self._console.print(f"Generating reports for {len(self.cases)} case(s)...")
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
         platform_name = sanitize_filename(platform_id())
@@ -213,7 +214,7 @@ class Session:
         self._progress_tasks.clear()
         task_name: str = 'reports'
         task: RichTask | None = None
-        if self.show_progress and self.tasks:
+        if self.show_progress and self.verbosity > Verbosity.QUIET and self.tasks:
             self._progress_tasks.start()
             task = self.tasks.get(task_name)
             if not task:
@@ -247,14 +248,36 @@ class Session:
                 continue
             processed_choices.add(choice.name)
 
-            if self.verbosity >= Verbosity.QUIET and self.show_progress and task is not None:
+            if task is not None:
                 task.update(
                     description=f'Running report {choice.name} ({report_counter:2d}/{n_reports})',
                     completed=report_counter - 1,
                     refresh=True)
                 task.refresh()
 
-            for case in self.cases:
+            cases_task_name = 'cases'
+            cases_task: RichTask | None = None
+            if task is not None:
+                cases_task = self.tasks.get(cases_task_name)
+                if not cases_task:
+                    if self._verbosity >= Verbosity.DEBUG:
+                        self._console.print(f"[DEBUG] Creating task '{cases_task_name}'")
+                    cases_task = self.tasks.new_task(
+                        name=cases_task_name,
+                        description='Generating reports for cases',
+                        completed=0,
+                        total=len(self.cases))
+            if cases_task:
+                cases_task.reset()
+                cases_task.update(completed=0)
+                cases_task.start()
+            for case_counter, case in enumerate(self.cases, start=1):
+                if self.verbosity > Verbosity.QUIET and self.show_progress and cases_task is not None:
+                    cases_task.update(
+                        description=f'Generating reports for case {case.title} (case {case_counter:2d}/{len(self.cases)})',
+                        completed=case_counter - 1,
+                        refresh=True)
+                    cases_task.refresh()
                 callback: Optional[Callable[[Case, Section, Format, Any], None]] = case.callback
                 reporter: Reporter = choice.reporter
                 output_path: Optional[Path] = self._output_path
@@ -275,9 +298,12 @@ class Session:
                     path=output_path,
                     session=self,
                     callback=callback)
-        if task:
-            task.terminate_and_remove()
+            if cases_task is not None:
+                cases_task.stop()
+        if task is not None:
+            task.stop()
             self._progress_tasks.stop()
+            self._progress_tasks.clear()
 
     @property
     def args(self) -> Optional[Namespace]:
