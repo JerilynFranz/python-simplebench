@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import UserDict
 from enum import Enum
-from typing import Any, Sequence
+from typing import Any, Optional, Sequence
 
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .interfaces import Reporter
@@ -98,6 +98,8 @@ class Choice:
         sections (Sequence[Section]): A sequence of Section enums to include in the report.
         targets (Sequence[Target]): A sequence of Target enums for output.
         formats (Sequence[Format]): A sequence of Format enums for output.
+        extra (dict[str, Any], optional): A dictionary for any additional metadata.
+
     Raises:
         SimpleBenchTypeError: If any argument is of an incorrect type.
         SimpleBenchValueError: If any argument has an invalid value (e.g., empty strings or empty sequences).
@@ -109,7 +111,8 @@ class Choice:
                  description: str,
                  sections: Sequence[Section],
                  targets: Sequence[Target],
-                 formats: Sequence[Format]) -> None:
+                 formats: Sequence[Format],
+                 extra: Optional[dict[str, Any]] = None) -> None:
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
                 "reporter must implement the Reporter interface",
@@ -190,6 +193,9 @@ class Choice:
         self._formats: set[Format] = set(formats)
         """Output formats for the choice"""
 
+        self._extra: dict[str, Any] = extra if extra is not None else {}
+        """A dictionary for any additional metadata associated with the choice."""
+
     @property
     def reporter(self) -> Reporter:
         """The reporter sub-class associated with the choice."""
@@ -258,6 +264,11 @@ class Choice:
         and so on.
         """
         return self._formats
+
+    @property
+    def extra(self) -> dict[str, Any]:
+        """A dictionary for any additional metadata associated with the choice."""
+        return self._extra
 
 
 class Choices(UserDict[str, Choice]):

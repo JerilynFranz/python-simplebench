@@ -173,24 +173,21 @@ class Case:
             task.stop()
         self.results = collected_results
 
-    def as_dict(self, session: Optional[Session]) -> dict[str, Any]:
+    def as_dict(self, full_data: bool = False) -> dict[str, Any]:
         """Returns the benchmark case and results as a JSON serializable dict.
 
-        If passed, the session's args will be used to determine the level of detail
-        to include in the results. Without a session or if session.args specifies
-        json_data, full results and data will be included. Otherwise, only statistical
-        summaries will be included.
+        Only the results statistics are included by default. To include full results data,
+        set `full_data` to True.
 
         Args:
-            session (Optional[Session]): The session to use for the benchmark case.
+            full_data (bool): Whether to include full results data. Defaults to False.
 
         Returns:
             dict[str, Any]: A JSON serializable dict representation of the benchmark case and results.
         """
         results = []
         for result in self.results:
-            # full dump if no session or if session.args specifies json_data
-            if session is None or (session.args is not None and session.args.json_data):
+            if full_data:  # full data if requested
                 results.append(result.results_and_data_as_dict)
             else:  # otherwise only stats
                 results.append(result.results_as_dict)

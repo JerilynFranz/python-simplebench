@@ -8,10 +8,11 @@ from .choices import Choices, Choice, Section, Target, Format
 from .csv import CSVReporter
 from .graph import GraphReporter
 from .interfaces import Reporter
+from .json import JSONReporter
 from .rich_table import RichTableReporter
 
 
-_PREDEFINED_REPORTERS = [CSVReporter, GraphReporter, RichTableReporter]
+_PREDEFINED_REPORTERS = [CSVReporter, GraphReporter, RichTableReporter, JSONReporter]
 """Container for all predefined Reporter classes."""
 
 

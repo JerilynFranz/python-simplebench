@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Utility functions"""
-
+from functools import cache
 import math
 import platform
 import re
@@ -57,6 +57,7 @@ def python_implementation_version() -> str:
     return py_implementation_version
 
 
+@cache
 def get_machine_info() -> MachineInfo:
     """Return a dictionary of information about the current machine and Python version."""
     python_implementation = platform.python_implementation()

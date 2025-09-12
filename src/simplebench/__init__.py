@@ -20,6 +20,7 @@ from .utils import sanitize_filename, si_scale_for_smallest, si_scale, si_scale_
 from .reporters import ReporterManager
 from .reporters.interfaces import Reporter
 from .reporters.choices import Choices, Choice, Section, Target, Format
+from .reporters.json import JSONReporter
 from .reporters.rich_table import RichTableReporter
 from .reporters.csv import CSVReporter
 from .reporters.graph import GraphReporter
@@ -36,6 +37,7 @@ __all__ = [
     'Format',
     'GraphReporter',
     'Iteration',
+    'JSONReporter',
     'OperationsPerInterval',
     'OperationTimings',
     'Reporter',

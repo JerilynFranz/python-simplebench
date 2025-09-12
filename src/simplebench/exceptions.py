@@ -132,6 +132,10 @@ class ErrorTag(str, Enum):
     GRAPH_REPORTER_PLOT_INVALID_TARGET_ARG = "GRAPH_REPORTER_PLOT_INVALID_TARGET_ARG"
     """Something other than a valid target string was passed to the GraphReporter.plot() method"""
 
+    # JSONReporter() tags
+    JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION = "JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION"
+    """An unsupported Section was passed to the JSONReporter.run_report() method in the choice.sections"""
+
     # RichTask() tags
     RICH_TASK_INIT_INVALID_NAME_ARG = "RICH_TASK_INIT_INVALID_NAME_ARG"
     """Something other than a string was passed to the RichTask() constructor"""
