@@ -98,7 +98,7 @@ class Choice:
         sections (Sequence[Section]): A sequence of Section enums to include in the report.
         targets (Sequence[Target]): A sequence of Target enums for output.
         formats (Sequence[Format]): A sequence of Format enums for output.
-        extra (dict[str, Any], optional): A dictionary for any additional metadata.
+        extra (Any | None): Any additional metadata associated with the choice. Defaults to None.
 
     Raises:
         SimpleBenchTypeError: If any argument is of an incorrect type.
@@ -112,7 +112,7 @@ class Choice:
                  sections: Sequence[Section],
                  targets: Sequence[Target],
                  formats: Sequence[Format],
-                 extra: Optional[dict[str, Any]] = None) -> None:
+                 extra: Optional[Any] = None) -> None:
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
                 "reporter must implement the Reporter interface",
@@ -193,8 +193,8 @@ class Choice:
         self._formats: set[Format] = set(formats)
         """Output formats for the choice"""
 
-        self._extra: dict[str, Any] = extra if extra is not None else {}
-        """A dictionary for any additional metadata associated with the choice."""
+        self._extra: Optional[Any] = extra
+        """Additional metadata associated with the choice."""
 
     @property
     def reporter(self) -> Reporter:
@@ -266,7 +266,7 @@ class Choice:
         return self._formats
 
     @property
-    def extra(self) -> dict[str, Any]:
+    def extra(self) -> Any:
         """A dictionary for any additional metadata associated with the choice."""
         return self._extra
 

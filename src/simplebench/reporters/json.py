@@ -2,6 +2,7 @@
 """Reporter for benchmark results using JSON files."""
 from __future__ import annotations
 from argparse import ArgumentParser
+from dataclasses import dataclass
 import json
 from io import StringIO
 from pathlib import Path
@@ -13,6 +14,15 @@ from ..utils import sanitize_filename, get_machine_info
 from .choices import Choice, Choices, Section, Target, Format
 if TYPE_CHECKING:
     from ..session import Session
+
+
+@dataclass
+class JSONExtras:
+    """Class for holding extra JSON reporter options."""
+    full_data: bool = False
+    """ Whether to include full data in the JSON output, including all
+    individual timing results and operation counts. Default is False, which
+    includes only summary statistics."""
 
 
 class JSONReporter(Reporter):
@@ -49,7 +59,7 @@ class JSONReporter(Reporter):
                 sections=[Section.OPS, Section.TIMING],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.JSON],
-                extra={'full_data': False})
+                extra=JSONExtras(full_data=False))
         )
         choices.add(
             Choice(
@@ -60,7 +70,7 @@ class JSONReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.JSON],
-                extra={'full_data': False})
+                extra=JSONExtras(full_data=False))
         )
         choices.add(
             Choice(
@@ -71,7 +81,7 @@ class JSONReporter(Reporter):
                 sections=[Section.TIMING],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.JSON],
-                extra={'full_data': False})
+                extra=JSONExtras(full_data=False))
         )
         choices.add(
             Choice(
@@ -82,7 +92,7 @@ class JSONReporter(Reporter):
                 sections=[Section.OPS, Section.TIMING],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.JSON],
-                extra={'full_data': True})
+                extra=JSONExtras(full_data=True))
         )
         choices.add(
             Choice(
@@ -93,7 +103,7 @@ class JSONReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.JSON],
-                extra={'full_data': True})
+                extra=JSONExtras(full_data=True))
         )
         choices.add(
             Choice(
@@ -104,7 +114,7 @@ class JSONReporter(Reporter):
                 sections=[Section.TIMING],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.JSON],
-                extra={'full_data': True})
+                extra=JSONExtras(full_data=True))
         )
 
     def supported_formats(self):
@@ -192,7 +202,7 @@ class JSONReporter(Reporter):
 
         for section in choice.sections:
             json_text: str = ''
-            full_data: bool = choice.extra.get('full_data', False)
+            full_data: bool = choice.extra.full_data if isinstance(choice.extra, JSONExtras) else False
             with StringIO(newline='') as jsonfile:
                 json.dump(case.as_dict(full_data=full_data), jsonfile, indent=4)
                 jsonfile.seek(0)
