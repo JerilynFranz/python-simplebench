@@ -5,31 +5,75 @@ import math
 import platform
 import re
 import sys
+from typing import Any, TypedDict
 from cpuinfo import get_cpu_info
 
 from .constants import DEFAULT_SIGNIFICANT_FIGURES
 
 
-def pytest_benchmark_generate_machine_info():
-    python_implementation = platform.python_implementation()
-    python_implementation_version = platform.python_version()
+class MachineInfo(TypedDict):
+    """TypedDict for machine info returned by pytest_benchmark_generate_machine_info()."""
+    node: str
+    """Computer's network name."""
+    processor: str
+    """Processor name."""
+    machine: str
+    """Machine type."""
+    python_compiler: str
+    """Python compiler used."""
+    python_implementation: str
+    """Python implementation name."""
+    python_implementation_version: str
+    """Python implementation version."""
+    python_version: str
+    """Python version."""
+    python_build: tuple[str, str]
+    """Python build information."""
+    release: str
+    """Operating system release."""
+    system: str
+    """Operating system name."""
+    cpu: dict[str, Any]
+    """CPU information."""
+
+
+def python_implementation_version() -> str:
+    """Return the Python implementation version.
+
+    For CPython, this is the same as platform.python_version().
+    For PyPy, this is the PyPy version (e.g., '7.3.5').
+
+    Returns:
+        str: The Python implementation version.
+    """
+    python_implementation: str = platform.python_implementation()
+    py_implementation_version: str = platform.python_version()
     if python_implementation == 'PyPy':
-        python_implementation_version = '%d.%d.%d' % sys.pypy_version_info[:3]  # noqa:UP031
-        if sys.pypy_version_info.releaselevel != 'final':
-            python_implementation_version += '-%s%d' % sys.pypy_version_info[3:]  # noqa:UP031
-    return {
+        version_info: 'sys.pypy_version_info' = sys.pypy_version_info  # pyright: ignore[reportAttributeAccessIssue] # pylint: disable=no-member # noqa:UP031, E501
+        py_implementation_version = (
+            f'{version_info.major:d}.{version_info.minor:d}.{version_info.micro:d}'
+            f'-{version_info.releaselevel:d}{version_info.serial:d}')
+    return py_implementation_version
+
+
+def pytest_benchmark_generate_machine_info() -> MachineInfo:
+    """Return a dictionary of information about the current machine and Python version."""
+    python_implementation = platform.python_implementation()
+    machine_info: MachineInfo = {
         'node': platform.node(),
         'processor': platform.processor(),
         'machine': platform.machine(),
         'python_compiler': platform.python_compiler(),
         'python_implementation': python_implementation,
-        'python_implementation_version': python_implementation_version,
+        'python_implementation_version': python_implementation_version(),
         'python_version': platform.python_version(),
         'python_build': platform.python_build(),
         'release': platform.release(),
         'system': platform.system(),
         'cpu': get_cpu_info(),
     }
+    return machine_info
+
 
 def platform_id() -> str:
     """Return a string that uniquely identifies the current machine and Python version.
