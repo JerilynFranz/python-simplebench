@@ -274,7 +274,8 @@ class Session:
             for case_counter, case in enumerate(self.cases, start=1):
                 if self.verbosity > Verbosity.QUIET and self.show_progress and cases_task is not None:
                     cases_task.update(
-                        description=f'Generating reports for case {case.title} (case {case_counter:2d}/{len(self.cases)})',
+                        description=(f'Generating reports for case {case.title} '
+                                     f'(case {case_counter:2d}/{len(self.cases)})'),
                         completed=case_counter - 1,
                         refresh=True)
                     cases_task.refresh()
