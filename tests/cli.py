@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from simplebench import Case, SimpleRunner, main
+from simplebench.reporters.graph import GraphOptions
 
 
 def benchcase_one(benchmark: SimpleRunner) -> None:
@@ -22,13 +23,15 @@ def benchmark_cases_list_factory() -> list[Case]:
              action=benchcase_one,
              description='A simple benchmark case function.',
              variation_cols={},
-             kwargs_variations={}),
+             kwargs_variations={},
+             options=[GraphOptions(style='default', output_format='png')]),
         Case(group='example2',
              title='benchcase_two',
              action=benchcase_one,
              description='A simple benchmark case function (fake second).',
              variation_cols={},
-             kwargs_variations={}),
+             kwargs_variations={},
+             options=[GraphOptions(style='default', output_format='svg')]),
     ]
 
 

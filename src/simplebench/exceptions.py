@@ -159,6 +159,8 @@ class ErrorTag(str, Enum):
     """Something other than a valid target string was passed to the CSVReporter.to_csv() method"""
 
     # GraphReporter() tags
+    GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE = "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE"
+    """The theme specified in the GraphOptions has an invalid type. It must be a dict or None."""
     GRAPH_REPORTER_INIT_INVALID_CASE_ARG = "GRAPH_REPORTER_INIT_INVALID_CASE_ARG"
     """Something other than a Case instance was passed to the GraphReporter() constructor"""
     GRAPH_REPORTER_INIT_INVALID_SESSION_ARG = "GRAPH_REPORTER_INIT_INVALID_SESSION_ARG"
@@ -183,6 +185,20 @@ class ErrorTag(str, Enum):
     """Something other than a callable was passed to the GraphReporter.report() method as the callback argument"""
     GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG = "GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG"
     """Something other than a Path instance was passed to the GraphReporter.run_report() method as the path arg"""
+    GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT = "GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT"
+    """The output format specified in the GraphOptions is not supported. Supported formats are 'svg' and 'png'"""
+    GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE = "GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE"
+    """The style specified in the GraphOptions is not supported. Supported styles are 'darkgrid' and 'default'"""
+    GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT = "GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT"
+    """The output format specified in the GraphOptions is not supported. Supported formats are 'svg' and 'png'"""
+    GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO = "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO"
+    """The aspect ratio specified in the GraphOptions is invalid. It must be a positive number."""
+    GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE = (
+        "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE")
+    """The x_labels_rotation specified in the GraphOptions has an invalid type. It must be a float."""
+    GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE = (
+        "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE")
+    """The y_starts_at_zero value specified in the GraphOptions has an invalid type. It must be a bool."""
     GRAPH_REPORTER_PLOT_INVALID_CASE_ARG = "GRAPH_REPORTER_PLOT_INVALID_CASE_ARG"
     """Something other than a Case instance was passed to the GraphReporter.plot() method"""
     GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG = "GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG"

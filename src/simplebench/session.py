@@ -152,6 +152,7 @@ class Session:
         """Run all benchmark cases in the session."""
         if self._verbosity >= Verbosity.NORMAL:
             self._console.print(f'Running {len(self.cases)} benchmark case(s)...')
+        self._progress_tasks.clear()
         task_name: str = 'cases'
         task: RichTask | None = None
         if self.show_progress and self.tasks:
@@ -175,7 +176,7 @@ class Session:
             )
             task.start()
         for case in self.cases:
-            if self.verbosity >= Verbosity.NORMAL and task is not None:
+            if self.verbosity >= Verbosity.QUIET and self.show_progress and task is not None:
                 task.update(
                     description=f'Running benchmark cases (case {case_counter + 1:2d}/{len(self.cases)})',
                     completed=case_counter,
@@ -195,20 +196,45 @@ class Session:
         # The logic here is that if the arg is set, the user wants that report. By
         # making the lookup go from the defined Choices to the args, we ensure
         # that we only consider valid args that are associated with a Choice.
-        if self.verbosity >= Verbosity.DEBUG:
-            self._console.print(f"[DEBUG] Generating reports for session with {len(self.cases)} case(s)")
+        if self.verbosity >= Verbosity.NORMAL:
+            self._console.print(f"Generating reports for {len(self.cases)} case(s)...")
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
         platform_name = sanitize_filename(platform_id())
-
         processed_choices: set[str] = set()
+        n_reports: int = 0
+        report_keys: list[str] = []
         for key in self._choices.all_choice_args():
-            if self.verbosity >= Verbosity.DEBUG:
-                self._console.print(f"[DEBUG] Checking report for arg '{key}'")
             # skip all Choices that are not set in self.args
             if not getattr(self.args, key, None):
                 continue
+            n_reports += 1
+            report_keys.append(key)
+
+        self._progress_tasks.clear()
+        task_name: str = 'reports'
+        task: RichTask | None = None
+        if self.show_progress and self.tasks:
+            self._progress_tasks.start()
+            task = self.tasks.get(task_name)
+            if not task:
+                if self._verbosity >= Verbosity.DEBUG:
+                    self._console.print(f"[DEBUG] Creating task '{task_name}'")
+                task = self.tasks.new_task(
+                    name=task_name,
+                    description='Running reports',
+                    completed=0,
+                    total=n_reports)
+        if task:
+            task.reset()
+            task.update(completed=0)
+            task.start()
+
+        report_counter: int = 0
+        for key in report_keys:
+            report_counter += 1
             if self.verbosity >= Verbosity.DEBUG:
-                self._console.print(f"[DEBUG] Processing report for arg '{key}'")
+                self._console.print(f"[DEBUG] Checking report for arg '{key}'")
+
             choice: Choice | None = self._choices.get_choice_for_arg(key)
             if not isinstance(choice, Choice):
                 raise SimpleBenchTypeError(
@@ -220,6 +246,13 @@ class Session:
             if choice and choice.name in processed_choices:
                 continue
             processed_choices.add(choice.name)
+
+            if self.verbosity >= Verbosity.QUIET and self.show_progress and task is not None:
+                task.update(
+                    description=f'Running report {choice.name} ({report_counter:2d}/{n_reports})',
+                    completed=report_counter - 1,
+                    refresh=True)
+                task.refresh()
 
             for case in self.cases:
                 callback: Optional[Callable[[Case, Section, Format, Any], None]] = case.callback
@@ -242,6 +275,9 @@ class Session:
                     path=output_path,
                     session=self,
                     callback=callback)
+        if task:
+            task.terminate_and_remove()
+            self._progress_tasks.stop()
 
     @property
     def args(self) -> Optional[Namespace]:

@@ -109,6 +109,8 @@ class Case:
     """A callback function for additional processing of the report."""
     results: list[Results] = field(init=False)
     """The benchmark list of Results for the case."""
+    options: list[Any] = field(default_factory=list[Any])
+    """A list of additional options for the benchmark case."""
 
     def __post_init__(self) -> None:
         self.results: list[Results] = []

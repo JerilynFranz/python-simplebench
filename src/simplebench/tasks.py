@@ -234,6 +234,25 @@ class RichProgressTasks:
         if self._verbosity >= Verbosity.DEBUG:
             self._console.print("[DEBUG] Stopped Rich Progress display")
 
+    def clear(self) -> None:
+        """Clear all tasks from the internal task management.
+
+        This causes all tasks to be terminated and removed from the managed index.
+        """
+        for name in list(self._tasks.keys()):
+            task: RichTask = self._tasks[name]
+            try:
+                task.terminate_and_remove()
+            except SimpleBenchRuntimeError as e:
+                self._console.print(f"[ERROR] Failed to terminate task {name}: {e}")
+            del self._tasks[name]
+        if self._verbosity >= Verbosity.DEBUG:
+            self._console.print("[DEBUG] Cleared all tasks from RichProgressTasks")
+
+        task_ids = self._progress.task_ids
+        for task_id in task_ids:
+            self._progress.remove_task(task_id)
+
     def __contains__(self, task_name: str) -> bool:
         """Check if a task exists by name."""
         return task_name in self._tasks
