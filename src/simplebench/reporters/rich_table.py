@@ -10,10 +10,11 @@ from rich.table import Table
 
 from ..case import Case
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
+from ..enums import Section
 from ..exceptions import SimpleBenchValueError, ErrorTag
 from ..results import Results
 from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
-from .choices import Choice, Choices, Section, Format, Target
+from .choices import Choice, Choices, Format, Target
 from .interfaces import Reporter
 if TYPE_CHECKING:
     from ..session import Session
@@ -220,7 +221,7 @@ class RichTableReporter(Reporter):
                     f"Unsupported section: {section} (this should not happen)",
                     ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION)
 
-            table = self._to_rich_table(case=case, target=section.value, base_unit=base_unit)
+            table = self._to_rich_table(case=case, section=section, base_unit=base_unit)
             console: Console
             if Target.FILESYSTEM in choice.targets and path is not None:
                 filename: str = sanitize_filename(section.value)
@@ -244,31 +245,36 @@ class RichTableReporter(Reporter):
 
     def _to_rich_table(self,
                        case: Case,
-                       target: str,
+                       section: Section,
                        base_unit: str) -> Table:
         """Prints the benchmark results in a rich table format if available.
+
+        Args:
+            case (Case): The Case instance representing the benchmarked code.
+            section (Section): The Section enum value specifying the type of results to display.
+            base_unit (str): The base unit for the results, e.g., 'ops/s' or 's'.
         """
         results: list[Results] = case.results
         mean_unit, mean_scale = si_scale_for_smallest(
-            numbers=[getattr(result, target).mean for result in results],
+            numbers=[result.results_section(section).mean for result in results],
             base_unit=base_unit)
         median_unit, median_scale = si_scale_for_smallest(
-            numbers=[getattr(result, target).median for result in results],
+            numbers=[result.results_section(section).median for result in results],
             base_unit=base_unit)
         min_unit, min_scale = si_scale_for_smallest(
-            numbers=[getattr(result, target).minimum for result in results],
+            numbers=[result.results_section(section).minimum for result in results],
             base_unit=base_unit)
         max_unit, max_scale = si_scale_for_smallest(
-            numbers=[getattr(result, target).maximum for result in results],
+            numbers=[result.results_section(section).maximum for result in results],
             base_unit=base_unit)
         p5_unit, p5_scale = si_scale_for_smallest(
-            numbers=[getattr(result, target).percentiles[5] for result in results],
+            numbers=[result.results_section(section).percentiles[5] for result in results],
             base_unit=base_unit)
         p95_unit, p95_scale = si_scale_for_smallest(
-            numbers=[getattr(result, target).percentiles[95] for result in results],
+            numbers=[result.results_section(section).percentiles[95] for result in results],
             base_unit=base_unit)
         stddev_unit, stddev_scale = si_scale_for_smallest(
-            numbers=[getattr(result, target).standard_deviation for result in results],
+            numbers=[result.results_section(section).standard_deviation for result in results],
             base_unit=base_unit)
 
         table = Table(title=(case.title + '\n\n' + case.description),
@@ -289,7 +295,7 @@ class RichTableReporter(Reporter):
         for value in case.variation_cols.values():
             table.add_column(value, justify='center', vertical='bottom', overflow='fold')
         for result in results:
-            stats_target = getattr(result, target)
+            stats_target = result.results_section(section)
             row: list[str] = [
                 f'{result.n:>6d}',
                 f'{len(result.iterations):>6d}',

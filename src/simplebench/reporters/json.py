@@ -9,9 +9,10 @@ from pathlib import Path
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
 from ..case import Case
+from ..enums import Section
 from .interfaces import Reporter
-from ..utils import sanitize_filename, get_machine_info
-from .choices import Choice, Choices, Section, Target, Format
+from ..utils import sanitize_filename, get_machine_info, sigfigs
+from .choices import Choice, Choices, Target, Format
 if TYPE_CHECKING:
     from ..session import Session
 
@@ -220,3 +221,42 @@ class JSONReporter(Reporter):
                     file = directory / f'data.{safe_filename}_{file_counter:03d}.json'
                 with file.open('w', encoding='utf-8') as json_file:
                     json_file.write(json_text)
+
+    def mean_change(self, first: Case, second: Case, section: Section) -> Optional[float]:
+        """Compare two Case instances for a given section and return the change as a float ratio.
+
+        The float ratio is calculated as (value2 - value1) / value1, where value1 and value2
+        are the mean values for the specified section in the first and second cases, respectively.
+
+        A value of 0.0 indicates no change, a positive value indicates an increase,
+        and a negative value indicates a decrease. If either case does not have data for the
+        specified section, None is returned. The ratio is limited to 3 significant digits for
+        clarity and to prevent a false sense of precision to the result.
+
+        If first mean value is 0.0 and second mean value is also 0.0, the change is defined as 0.0.
+        If first mean value is 0.0 and second mean value is non-zero, the change is defined as
+        None to indicate incomparability.
+
+        Args:
+            first (Case): The first Case instance to compare.
+            second (Case): The second Case instance to compare.
+            section (Section): The Section to compare (either OPS or TIMING).
+
+        Returns:
+            Optional[float]: The change between the mean for two cases for the specified section,
+            or None if the section is not present in either case or the numbers are incomparable.
+        """
+        value1 = first.section_mean(section)
+        value2 = second.section_mean(section)
+
+        if value1 is None or value2 is None:
+            return None
+
+        if value1 == 0.0:
+            if value2 == 0.0:
+                return 0.0
+            return None  # Infinite increase from zero to non-zero is not comparable
+        if value1 == 0 and value2 == 0:
+            return 0.0
+
+        return sigfigs((value2 - value1) / value1, 3)

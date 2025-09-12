@@ -13,10 +13,11 @@ import seaborn as sns
 
 from ..case import Case
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT
+from ..enums import Section
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from ..results import Results
 from ..utils import sanitize_filename, si_scale_for_smallest
-from .choices import Choice, Choices, Section, Format, Target
+from .choices import Choice, Choices, Format, Target
 from .interfaces import Reporter
 if TYPE_CHECKING:
     from ..session import Session
@@ -169,29 +170,29 @@ class GraphReporter(Reporter):
 
             filename: str = sanitize_filename(section.value)
             if Target.FILESYSTEM in choice.targets:
-                file = path.joinpath('graph', f'{filename}.svg')  # type: ignore[reportOptionalMemberAccess]
+                file = path.joinpath('graph', f'{filename}.svg')  # type: ignore[reportOptionalMemberAccess, union-attr]
                 file.parent.mkdir(parents=True, exist_ok=True)
                 with file.open(mode='wb') as graphfile:
-                    self._plot_graph(case=case, target=section.value, graphfile=graphfile, base_unit=base_unit)
+                    self._plot_graph(case=case, section=section, graphfile=graphfile, base_unit=base_unit)
                     graphfile.close()
             if Target.CALLBACK in choice.targets and case.callback is not None:
                 with BytesIO() as graphfile:
-                    self._plot_graph(case=case, target=section.value, graphfile=graphfile, base_unit=base_unit)
+                    self._plot_graph(case=case, section=section, graphfile=graphfile, base_unit=base_unit)
                     graphfile.seek(0)
                     case.callback(case, section, Format.GRAPH, graphfile.read())
                     graphfile.close()
 
     def _plot_graph(self,
                     case: Case,
-                    target: str,
+                    section: Section,
                     graphfile: BytesIO | BufferedWriter,
                     base_unit: str = '') -> None:
         """Generates and saves a scatter plot of the ops/sec and/or round timings results.
 
         Args:
             case (Case): The Case instance representing the benchmarked code.
+            section (Section): The section of the results to plot. Must be Section.OPS or Section.TIMING.
             graphfile (BytesIO | BufferedWriter): The file-like object to save the graph to.
-            target (str): The target metric to plot ('ops_per_second' or 'per_round_timings').
             base_unit (str): The base unit for the y-axis.
 
         Raises:
@@ -211,26 +212,26 @@ class GraphReporter(Reporter):
                 "Expected a BytesIO or BufferedWriter instance",
                 ErrorTag.GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG)
 
-        if not isinstance(target, str) or target not in ['ops_per_second', 'per_round_timings']:
+        if not isinstance(section, Section) or section not in [Section.OPS, Section.TIMING]:
             raise SimpleBenchTypeError(
-                "target must be either 'ops_per_second' or 'per_round_timings'",
-                ErrorTag.GRAPH_REPORTER_PLOT_INVALID_TARGET_ARG)
+                "section must be either Section.OPS or Section.TIMING",
+                ErrorTag.GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG)
 
         results: list[Results] = case.results
         if not results:
             return
 
         all_numbers: list[float] = []
-        all_numbers.extend([getattr(result, target).mean for result in results])
+        all_numbers.extend([result.results_section(section).mean for result in results])
         common_unit, common_scale = si_scale_for_smallest(numbers=all_numbers, base_unit=base_unit)
-        target_name = f'{target} ({base_unit})'
+        target_name = f'{section.value} ({base_unit})'
 
         # Prepare data for plotting
         plot_data = []
         x_axis_legend = '\n'.join([f"{case.variation_cols.get(k, k)}"
                                    for k in case.variation_cols.keys()])
         for result in results:
-            target_stats = getattr(result, target)
+            target_stats = result.results_section(section)
             variation_label = '\n'.join([f"{v}" for v in result.variation_marks.values()])
             plot_data.append({
                 x_axis_legend: variation_label,

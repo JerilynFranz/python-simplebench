@@ -4,9 +4,12 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+from simplebench.exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
+
 from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from .enums import Section
 from .iteration import Iteration
-from .stats import OperationsPerInterval, OperationTimings
+from .stats import OperationsPerInterval, OperationTimings, Stats
 
 
 @dataclass(kw_only=True)
@@ -41,6 +44,30 @@ class Results:
     total_elapsed: int = 0
     variation_marks: dict[str, Any] = field(default_factory=dict[str, Any])
     extra_info: dict[str, Any] = field(default_factory=dict[str, Any])
+
+    def results_section(self, section: Section) -> Stats:
+        """Returns the requested section of the benchmark results.
+
+        Args:
+            section (Section): The section of the results to return. Must be Section.OPS or Section.TIMING.
+
+        Returns:
+            Stats: The requested section of the benchmark results.
+        """
+        if not isinstance(section, Section):
+            raise SimpleBenchTypeError(
+                f'Invalid section type: {type(section)}. Must be of type Section.',
+                tag=ErrorTag.RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT
+            )
+        if section == Section.OPS:
+            return self.ops_per_second
+        elif section == Section.TIMING:
+            return self.per_round_timings
+        else:
+            raise SimpleBenchValueError(
+                f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
+                tag=ErrorTag.RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARGUMENT
+            )
 
     def __post_init__(self) -> None:
         if self.iterations:

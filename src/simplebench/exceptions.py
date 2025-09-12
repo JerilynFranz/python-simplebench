@@ -10,13 +10,71 @@ class ErrorTag(str, Enum):
     ErrorTags' are used to identify specific error conditions in the simplebench package.
     Tests use these tags to assert specific error condition paths.
     """
+
+    # Case() tags
+    CASE_INVALID_ITERATIONS = "CASE_INVALID_ITERATIONS"
+    """Invalid iterations argument passed to the Case() constructor"""
+    CASE_INVALID_MIN_TIME = "CASE_INVALID_MIN_TIME"
+    """Invalid min_time argument passed to the Case() constructor"""
+    CASE_INVALID_MAX_TIME = "CASE_INVALID_MAX_TIME"
+    """Invalid max_time argument passed to the Case() constructor"""
+    CASE_INVALID_TIME_RANGE = "CASE_INVALID_TIME_RANGE"
+    """max_time must be greater than or equal to min_time in the Case() constructor"""
+    CASE_INVALID_WARMUP_ROUNDS = "CASE_INVALID_WARMUP_ROUNDS"
+    """Invalid warmup_rounds argument passed to the Case() constructor"""
+    CASE_INVALID_ROUNDS = "CASE_INVALID_ROUNDS"
+    """Invalid rounds argument passed to the Case() constructor"""
+    CASE_INVALID_NAME = "CASE_INVALID_NAME"
+    """Something other than a non-empty string was passed to the Case() constructor as the name arg"""
+    CASE_INVALID_DESCRIPTION = "CASE_INVALID_DESCRIPTION"
+    """Something other than a string was passed to the Case() constructor as the description arg"""
+    CASE_INVALID_RUNNER_NOT_CALLABLE_OR_NONE = "CASE_INVALID_RUNNER_NOT_CALLABLE_OR_NONE"
+    """Something other than a callable (function or method) was passed to the Case() constructor as the runner arg"""
+    CASE_INVALID_ACTION_NOT_CALLABLE = "CASE_INVALID_ACTION_NOT_CALLABLE"
+    """Something other than a callable (function or method) was passed to the Case() constructor as the action arg"""
+    CASE_INVALID_SETUP = "CASE_INVALID_SETUP"
+    """Something other than a callable (function or method) or None was passed to the Case() constructor as
+    the setup arg"""
+    CASE_INVALID_TEARDOWN = "CASE_INVALID_TEARDOWN"
+    """Something other than a callable (function or method) or None was passed to the Case() constructor as
+    the teardown arg"""
+    CASE_INVALID_VARIATION_COLS_NOT_DICT = "CASE_INVALID_VARIATION_COLS_NOT_DICT"
+    """Something other than a dictionary was passed to the Case() constructor as the variation_cols arg"""
+    CASE_INVALID_VARIATION_COLS_ENTRY_NOT_STRINGS = "CASE_INVALID_VARIATION_COLS_ENTRY_NOT_STRINGS"
+    """Something other than string keys and string or number values were found in the dictionary passed to
+    the Case() constructor as the variation_cols arg"""
+    CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT = "CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT"
+    """Something other than a dictionary was passed to the Case() constructor as the kwargs_variations arg"""
+    CASE_INVALID_GRAPH_ASPECT_RATIO = "CASE_INVALID_GRAPH_ASPECT_RATIO"
+    """Something other than a positive number was passed to the Case() constructor as the graph_aspect_ratio arg"""
+    CASE_INVALID_GRAPH_Y_STARTS_AT_ZERO = "CASE_INVALID_GRAPH_Y_STARTS_AT_ZERO"
+    """Something other than a bool was passed to the Case() constructor as the graph_y_starts_at_zero arg"""
+    CASE_INVALID_GRAPH_STYLE = "CASE_INVALID_GRAPH_STYLE"
+    """Something other than 'default' or 'dark_background' was passed to the Case() constructor as the
+    graph_style arg"""
+    CASE_INVALID_GRAPH_X_LABELS_ROTATION = "CASE_INVALID_GRAPH_X_LABELS_ROTATION"
+    """Something other than a number was passed to the Case() constructor as the graph_x_labels_rotation arg"""
+    CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE = "CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE"
+    """Something other than a callable (function or method) or None was passed to the Case() constructor as
+    the callback arg"""
+    CASE_SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT = "CASE_SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT"
+    """Something other than a Section instance was passed to the Case() constructor as the section arg"""
+    CASE_SECTION_MEAN_INVALID_SECTION_ARGUMENT = "CASE_SECTION_MEAN_INVALID_SECTION_ARGUMENT"
+    """Something other than Section.OPS or Section.TIMING was passed to the Case.section_mean() method"""
+
+    # Results() tags
+    RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"
+    """Something other than a Section instance was passed to the Results.result_section() method"""
+    RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARGUMENT = "RESULTS_RESULT_SECTION_UNSUPPORTED_SECTION_ARGUMENT"
+    """Something other than Section.OPS or Section.TIMING was passed to the Results.result_section() method"""
+
     # Session() tags
     SESSION_INIT_INVALID_CASES_SEQUENCE_ARG = "SESSION_INIT_INVALID_CASES_SEQUENCE_ARG"
-    """Something other than a Sequence of Case instances was passed to the Session() constructor_"""
+    """Something other than a Sequence of Case instances was passed to the Session() constructor"""
     SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE = "SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE"
-    """Something other than a Case instance was found in the Sequence passed to the Session() constructor_"""
+    """Something other than a Case instance was found in the Sequence passed to the Session() constructor"""
     SESSION_INIT_INVALID_VERBOSITY_ARG = "SESSION_INIT_INVALID_VERBOSITY_ARG"
-    """Something other than a Verbosity instance was passed to the Session() constructor_"""
+    """Something other than a Verbosity instance was passed to the Session() constructor"""
     SESSION_INIT_INVALID_OUTPUT_PATH_ARG = "SESSION_INIT_INVALID_OUTPUT_PATH_ARG"
     """Something other than a Path instance was passed to the Session() constructor as the path arg"""
     SESSION_PROPERTY_INVALID_CASES_ARG = "SESSION_PROPERTY_INVALID_CASES_ARG"
@@ -129,8 +187,8 @@ class ErrorTag(str, Enum):
     """Something other than a Case instance was passed to the GraphReporter.plot() method"""
     GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG = "GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG"
     """Something other than a Path instance was passed to the GraphReporter.plot() method"""
-    GRAPH_REPORTER_PLOT_INVALID_TARGET_ARG = "GRAPH_REPORTER_PLOT_INVALID_TARGET_ARG"
-    """Something other than a valid target string was passed to the GraphReporter.plot() method"""
+    GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG = "GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG"
+    """Something other than a valid Section was passed to the GraphReporter.plot() method"""
 
     # JSONReporter() tags
     JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION = "JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION"

@@ -2,7 +2,6 @@
 """Simple benchmarking framework."""
 
 from .case import Case
-# from .cli import main
 from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_SCALE,
@@ -10,6 +9,7 @@ from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         DEFAULT_SIGNIFICANT_FIGURES, DEFAULT_TIMER,
                         BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT)
 # from .decorators import benchmark
+from .enums import Section, Verbosity
 from .exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from .runners import SimpleRunner
 from .results import Results
@@ -19,12 +19,12 @@ from .tasks import RichProgressTasks, RichTask
 from .utils import sanitize_filename, si_scale_for_smallest, si_scale, si_scale_to_unit, sigfigs
 from .reporters import ReporterManager
 from .reporters.interfaces import Reporter
-from .reporters.choices import Choices, Choice, Section, Target, Format
+from .reporters.choices import Choices, Choice, Target, Format
 from .reporters.json import JSONReporter
 from .reporters.rich_table import RichTableReporter
 from .reporters.csv import CSVReporter
 from .reporters.graph import GraphReporter
-from .session import Session, Verbosity
+from .session import Session
 from .cli import main
 
 

@@ -5,14 +5,13 @@ from dataclasses import dataclass, field
 import itertools
 from typing import Any, Callable, Literal, Optional, TYPE_CHECKING
 
-from rich.progress import TaskID
-
 from .constants import DEFAULT_ITERATIONS
+from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
 from .runners import SimpleRunner
-
+from .enums import Section
 
 if TYPE_CHECKING:
-    from .reporters.choices import Section, Format
+    from .reporters.choices import Format
     from .results import Results
     from .session import Session
     from .tasks import RichTask
@@ -98,12 +97,6 @@ class Case:
     """Variations of keyword arguments for the benchmark."""
     runner: Optional[Callable[..., Any]] = None
     """A custom runner for the benchmark."""
-    verbose: bool = False
-    """Enable verbose output."""
-    progress: bool = False
-    """Enable progress output."""
-    variations_task: Optional[TaskID] = None
-    """The Rich progress task ID for tracking variations progress."""
     graph_aspect_ratio: float = 1.0
     """The aspect ratio of the graph."""
     graph_style: Literal['default', 'dark_background'] = 'default'
@@ -119,6 +112,86 @@ class Case:
 
     def __post_init__(self) -> None:
         self.results: list[Results] = []
+        self.validate()
+
+    def validate(self) -> None:
+        """Validate the benchmark case parameters.
+
+        Raises:
+            SimpleBenchValueError: If any of the parameters are invalid.
+            SimpleBenchTypeError: If any of the parameters are of the wrong type.
+        """
+        if self.iterations <= 0:
+            raise SimpleBenchValueError(
+                f'Invalid iterations: {self.iterations}. Must be a positive integer.',
+                tag=ErrorTag.CASE_INVALID_ITERATIONS
+                )
+        if self.min_time <= 0.0:
+            raise SimpleBenchValueError(
+                f'Invalid min_time: {self.min_time}. Must be a positive float.',
+                tag=ErrorTag.CASE_INVALID_MIN_TIME
+                )
+        if self.max_time <= 0.0:
+            raise SimpleBenchValueError(
+                f'Invalid max_time: {self.max_time}. Must be a positive float.',
+                tag=ErrorTag.CASE_INVALID_MAX_TIME
+                )
+        if self.min_time > self.max_time:
+            raise SimpleBenchValueError(
+                f'Invalid time range: min_time {self.min_time} > max_time {self.max_time}.',
+                tag=ErrorTag.CASE_INVALID_TIME_RANGE
+                )
+        if not callable(self.action):
+            raise SimpleBenchTypeError(
+                f'Invalid action: {self.action}. Must be a callable.',
+                tag=ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE
+                )
+        if self.runner is not None and not callable(self.runner):
+            raise SimpleBenchTypeError(
+                f'Invalid runner: {self.runner}. Must be a callable or None.',
+                tag=ErrorTag.CASE_INVALID_RUNNER_NOT_CALLABLE_OR_NONE
+                )
+        if not isinstance(self.variation_cols, dict):
+            raise SimpleBenchTypeError(
+                f'Invalid variation_cols: {self.variation_cols}. Must be a dictionary.',
+                tag=ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT
+                )
+        for key, value in self.variation_cols.items():
+            if not isinstance(key, str) or not isinstance(value, str):
+                raise SimpleBenchValueError(
+                    f'Invalid variation_cols entry: {key}: {value}. Keys and values must be strings.',
+                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_NOT_STRINGS
+                    )
+        if not isinstance(self.kwargs_variations, dict):
+            raise SimpleBenchValueError(
+                f'Invalid kwargs_variations: {self.kwargs_variations}. Must be a dictionary.',
+                tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT
+                )
+        if not isinstance(self.graph_aspect_ratio, float) or self.graph_aspect_ratio <= 0.0:
+            raise SimpleBenchValueError(
+                f'Invalid graph_aspect_ratio: {self.graph_aspect_ratio}. Must be a positive float.',
+                tag=ErrorTag.CASE_INVALID_GRAPH_ASPECT_RATIO
+                )
+        if self.graph_style not in ('default', 'dark_background'):
+            raise SimpleBenchValueError(
+                f'Invalid graph_style: {self.graph_style}. Must be "default" or "dark_background".',
+                tag=ErrorTag.CASE_INVALID_GRAPH_STYLE
+                )
+        if not isinstance(self.graph_y_starts_at_zero, bool):
+            raise SimpleBenchTypeError(
+                f'Invalid graph_y_starts_at_zero: {self.graph_y_starts_at_zero}. Must be a boolean.',
+                tag=ErrorTag.CASE_INVALID_GRAPH_Y_STARTS_AT_ZERO
+                )
+        if not isinstance(self.graph_x_labels_rotation, float):
+            raise SimpleBenchValueError(
+                f'Invalid graph_x_labels_rotation: {self.graph_x_labels_rotation}. Must be a float.',
+                tag=ErrorTag.CASE_INVALID_GRAPH_X_LABELS_ROTATION
+                )
+        if self.callback is not None and not callable(self.callback):
+            raise SimpleBenchValueError(
+                f'Invalid callback: {self.callback}. Must be a callable or None.',
+                tag=ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE
+                )
 
     @property
     def expanded_kwargs_variations(self) -> list[dict[str, Any]]:
@@ -199,3 +272,47 @@ class Case:
             'variation_cols': self.variation_cols,
             'results': results
         }
+
+    def section_mean(self, section: Section) -> float:
+        """Calculate the mean value for a specific section across all results.
+
+        This method computes the mean value for the specified section
+        (either OPS or TIMING) across all benchmark results associated with this case.
+
+        This is a very 'hand-wavy' mean calculation that simply averages
+        the means of each result. It does not take into account the number
+        of iterations or other statistical factors. It is intended to provide
+        a rough estimate of the overall performance for the specified section for
+        use in comparisons between successive benchmark runs in tests looking for
+        large performance regressions. As such, it should not be used for any rigorous
+        statistical analysis.
+
+        Args:
+            section (Section): The section for which to calculate the mean.
+
+        Returns:
+            float: The mean value for the specified section.
+        """
+        if not isinstance(section, Section):
+            raise SimpleBenchTypeError(
+                f'Invalid section type: {type(section)}. Must be of type Section.',
+                tag=ErrorTag.CASE_SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT
+                )
+        if section not in (Section.OPS, Section.TIMING):
+            raise SimpleBenchValueError(
+                f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
+                tag=ErrorTag.CASE_SECTION_MEAN_INVALID_SECTION_ARGUMENT
+                )
+
+        if not self.results:
+            return 0.0
+        total = 0.0
+        count = 0
+        for result in self.results:
+            if section == Section.OPS:
+                total += result.per_round_timings.mean
+                count += 1
+            elif section == Section.TIMING:
+                total += result.ops_per_second.mean
+                count += 1
+        return total / count if count > 0 else 0.0

@@ -161,6 +161,7 @@ class RichTask:
             if self._verbosity >= Verbosity.DEBUG:
                 self._console.print(f"[DEBUG] Terminated and removed task '{self._name}'")
             return
+        # only reach here if task was previously terminated
         raise SimpleBenchRuntimeError(
             'Task has already been terminated',
             ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK)

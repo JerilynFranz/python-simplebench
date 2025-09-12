@@ -10,11 +10,12 @@ from typing import Any, Callable, Optional, TYPE_CHECKING
 
 from ..case import Case
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
+from ..enums import Section
 from ..exceptions import SimpleBenchValueError, ErrorTag
 from .interfaces import Reporter
 from ..results import Results
 from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
-from .choices import Choice, Choices, Section, Target, Format
+from .choices import Choice, Choices, Target, Format
 if TYPE_CHECKING:
     from ..session import Session
 
@@ -162,34 +163,36 @@ class CSVReporter(Reporter):
                 file = path.joinpath('csv', f'{filename}.csv')  # type: ignore[reportOptionalMemberAccess]
                 file.parent.mkdir(parents=True, exist_ok=True)
                 with file.open(mode='w', encoding='utf-8', newline='') as csvfile:
-                    self._to_csv(case=case, target=section.value, csvfile=csvfile, base_unit=base_unit)
+                    self._to_csv(case=case, section=section, csvfile=csvfile, base_unit=base_unit)
             if Target.CALLBACK in choice.targets and case.callback is not None:
                 with StringIO(newline='') as csvfile:
-                    self._to_csv(case=case, target=section.value, csvfile=csvfile, base_unit=base_unit)
+                    self._to_csv(case=case, section=section, csvfile=csvfile, base_unit=base_unit)
                     csvfile.seek(0)
                     case.callback(case, section, Format.CSV, csvfile.read())
 
-    def _to_csv(self, case: Case, csvfile: TextIOWrapper | StringIO, base_unit: str, target: str) -> None:
+    def _to_csv(self, case: Case, section: Section, csvfile: TextIOWrapper | StringIO, base_unit: str) -> None:
         """Output the benchmark results as tagged CSV to the csvfile.
 
         Args:
             case: The Case instance representing the benchmarked code.
+            section: The section to output (eg. Section.OPS or Section.TIMING).
             csvfile: The file-like object to write the CSV data to.
             base_unit: The base unit for the measurements (e.g., 'seconds', 'operations').
-            target: The target section to output (eg. 'ops_per_second' or 'per_round_timing').
 
         Returns:
             None
         """
-        all_numbers: list[float] = []
         results: list[Results] = case.results
-        all_numbers.extend([getattr(result, target).mean for result in results])
-        all_numbers.extend([getattr(result, target).median for result in results])
-        all_numbers.extend([getattr(result, target).minimum for result in results])
-        all_numbers.extend([getattr(result, target).maximum for result in results])
-        all_numbers.extend([getattr(result, target).percentiles[5] for result in results])
-        all_numbers.extend([getattr(result, target).percentiles[95] for result in results])
-        all_numbers.extend([getattr(result, target).standard_deviation for result in results])
+
+        # Determine a common SI scale for the output values to improve readability
+        all_numbers: list[float] = []
+        all_numbers.extend([result.results_section(section).mean for result in results])
+        all_numbers.extend([result.results_section(section).median for result in results])
+        all_numbers.extend([result.results_section(section).minimum for result in results])
+        all_numbers.extend([result.results_section(section).maximum for result in results])
+        all_numbers.extend([result.results_section(section).percentiles[5] for result in results])
+        all_numbers.extend([result.results_section(section).percentiles[95] for result in results])
+        all_numbers.extend([result.results_section(section).standard_deviation for result in results])
         common_unit, common_scale = si_scale_for_smallest(numbers=all_numbers, base_unit=base_unit)
 
         writer = csv.writer(csvfile)
@@ -213,7 +216,7 @@ class CSVReporter(Reporter):
             header.append(value)
         writer.writerow(header)
         for result in results:
-            stats_target = getattr(result, target)
+            stats_target = result.results_section(section)
             row: list[str | float | int] = [
                 result.n,
                 len(result.iterations),

@@ -3,8 +3,9 @@
 from __future__ import annotations
 from argparse import ArgumentParser
 
+from ..enums import Section
 from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
-from .choices import Choices, Choice, Section, Target, Format
+from .choices import Choices, Choice, Target, Format
 from .csv import CSVReporter
 from .graph import GraphReporter
 from .interfaces import Reporter

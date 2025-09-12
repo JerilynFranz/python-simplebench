@@ -8,10 +8,10 @@ from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
 from rich.console import Console
 from rich.progress import Progress
 
-from .enums import Verbosity
+from .enums import Section, Verbosity
 from .exceptions import ErrorTag, SimpleBenchArgumentError, SimpleBenchTypeError
 from .reporters import ReporterManager
-from .reporters.choices import Choice, Choices, Format, Section, Target
+from .reporters.choices import Choice, Choices, Format, Target
 from .tasks import RichProgressTasks, RichTask
 from .case import Case
 from .utils import sanitize_filename, platform_id

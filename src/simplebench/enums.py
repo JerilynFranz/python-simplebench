@@ -1,6 +1,24 @@
 # -*- coding: utf-8 -*-
 """Various enums for SimpleBench."""
 from enum import Enum
+from typing import Any
+
+
+class Section(str, Enum):
+    """Categories for case sections.
+
+    The string values are used to load the data accessor methods by attribute name in the Results class
+    and name generated files."""
+    OPS = 'ops_per_second'
+    """Operations per second section."""
+    TIMING = 'per_round_timings'
+    """Time per round section."""
+    MEMORY = 'memory_usage'
+    """Memory usage section."""
+
+    def __contains__(self, item: Any) -> bool:
+        """Check if the item is a valid Section."""
+        return isinstance(item, Section) or item in self._value2member_map_
 
 
 class Verbosity(int, Enum):
