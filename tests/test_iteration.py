@@ -87,15 +87,48 @@ from .testspec import TestSpec
         id="ITERATION_INIT_008"),
     pytest.param(
         TestSpec(
+            name="Iteration Initialization - bad scale arg type (int)",
+            action=Iteration,
+            args=[],
+            kwargs={'scale': 1},
+            exception=SimpleBenchTypeError,
+            exception_tag=ErrorTag.ITERATION_INIT_SCALE_ARG_TYPE),
+        id="ITERATION_INIT_009"),
+    pytest.param(
+        TestSpec(
+            name="Iteration Initialization - bad scale arg value (non-positive float)",
+            action=Iteration,
+            args=[],
+            kwargs={'scale': 0.0},
+            exception=SimpleBenchValueError,
+            exception_tag=ErrorTag.ITERATION_INIT_SCALE_ARG_VALUE),
+        id="ITERATION_INIT_010"),
+    pytest.param(
+        TestSpec(
             name="Iteration Initialization - Good args",
             action=Iteration,
             args=[],
-            kwargs={'n': 2, 'elapsed': 10, 'unit': 'ms', 'scale': 1e-3},
-            validate_result=lambda result: (result.n == 2 and
+            kwargs={'n': 5, 'elapsed': 10, 'unit': 'ms', 'scale': 1e-3},
+            validate_result=lambda result: (result.n == 5 and
                                             result.elapsed == 10 and
                                             result.unit == 'ms' and
-                                            result.scale == 1e-3)),
-        id="ITERATION_INIT_009"),
+                                            result.scale == 1e-3 and
+                                            result.per_round_elapsed == 0.002 and
+                                            result.ops_per_second == 500.0)),
+        id="ITERATION_INIT_011"),
+    pytest.param(
+        TestSpec(
+            name="Iteration Initialization - Good args with zero elapsed time",
+            action=Iteration,
+            args=[],
+            kwargs={'n': 5, 'elapsed': 0, 'unit': 'ms', 'scale': 1e-3},
+            validate_result=lambda result: (result.n == 5 and
+                                            result.elapsed == 0 and
+                                            result.unit == 'ms' and
+                                            result.scale == 1e-3 and
+                                            result.per_round_elapsed == 0.0 and
+                                            result.ops_per_second == 0.0)),
+        id="ITERATION_INIT_012"),
     pytest.param(
         TestSpec(
             name="Iteration Initialization - unknown kw arg",
@@ -103,7 +136,7 @@ from .testspec import TestSpec
             args=[],
             kwargs={'unknown_arg': 0},
             exception=TypeError),
-        id="ITERATION_INIT_010"),
+        id="ITERATION_INIT_013"),
     pytest.param(
         TestSpec(
             name="Iteration Initialization - positional argument for kw_only field",
@@ -111,7 +144,7 @@ from .testspec import TestSpec
             args=[1],
             kwargs={},
             exception=TypeError),
-        id="ITERATION_INIT_011")
+        id="ITERATION_INIT_014"),
     ])
 def test_iteration_init(testspec: TestSpec) -> None:
     """Test the initialization of the Iteration class."""

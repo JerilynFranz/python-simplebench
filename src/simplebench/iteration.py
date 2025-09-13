@@ -58,7 +58,7 @@ class Iteration:
         Returns:
             The mean time for a single round scaled to the base unit.
         '''
-        return self.elapsed * self.scale / self.n if self.n else 0.0
+        return self.elapsed * self.scale / self.n
 
     @property
     def ops_per_second(self) -> float:
@@ -66,9 +66,9 @@ class Iteration:
 
         This is calculated as the inverse of the elapsed time.
 
-        The edge cases of 0 elapsed time or n results in a returned value of 0.
+        The edge cases of 0 elapsed time results in a returned value of 0.0
         This would otherwise be an impossible value and so flags a measurement error.
         '''
-        if not self.elapsed:
-            return 0
+        if self.elapsed == 0.0:
+            return 0.0
         return self.n / (self.elapsed * self.scale)
