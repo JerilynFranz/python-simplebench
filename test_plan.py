@@ -23,7 +23,7 @@ def build_pytest_args() -> list[str]:
     # Quiet by default; adjust as needed
     args.extend(["-q", "--disable-warnings"])
     # Add test path
-    args.append("tests/gentrie")
+    args.append("tests")
 
     return args
 

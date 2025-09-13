@@ -10,6 +10,23 @@ class ErrorTag(str, Enum):
     ErrorTags' are used to identify specific error conditions in the simplebench package.
     Tests use these tags to assert specific error condition paths.
     """
+    # Iteration() tags
+    ITERATION_INIT_N_ARG_TYPE = "ITERATION_INIT_N_ARG_TYPE"
+    """Invalid n argument passed to the Iteration() constructor - must be an int"""
+    ITERATION_INIT_N_ARG_VALUE = "ITERATION_INIT_N_ARG_VALUE"
+    """Invalid n argument passed to the Iteration() constructor - must be greater than zero"""
+    ITERATION_INIT_ELAPSED_ARG_TYPE = "ITERATION_INIT_ELAPSED_ARG_TYPE"
+    """Invalid elapsed argument passed to the Iteration() constructor - must be an int"""
+    ITERATION_INIT_ELAPSED_ARG_VALUE = "ITERATION_INIT_ELAPSED_ARG_VALUE"
+    """Invalid elapsed argument passed to the Iteration() constructor - must be zero or greater"""
+    ITERATION_INIT_UNIT_ARG_TYPE = "ITERATION_INIT_UNIT_ARG_TYPE"
+    """Invalid unit argument passed to the Iteration() constructor - must be a str"""
+    ITERATION_INIT_UNIT_ARG_VALUE = "ITERATION_INIT_UNIT_ARG_VALUE"
+    """Invalid unit argument passed to the Iteration() constructor - must be a non-empty str"""
+    ITERATION_INIT_SCALE_ARG_TYPE = "ITERATION_INIT_SCALE_ARG_TYPE"
+    """Invalid scale argument passed to the Iteration() constructor - must be a float"""
+    ITERATION_INIT_SCALE_ARG_VALUE = "ITERATION_INIT_SCALE_ARG_VALUE"
+    """Invalid scale argument passed to the Iteration() constructor - must be greater than zero"""
 
     # Case() tags
     CASE_INVALID_ITERATIONS = "CASE_INVALID_ITERATIONS"

@@ -4,6 +4,7 @@
 from dataclasses import dataclass
 
 from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from .exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
 
 
 @dataclass(kw_only=True)
@@ -11,17 +12,35 @@ class Iteration:
     '''Container for the results of a single benchmark iteration.
 
     Properties:
-        n (int): The number of rounds performed in the iteration.
-        elapsed (float): The elapsed time for the operations.
-        unit (str): The unit of measurement for the elapsed time.
-        scale (float): The scale factor for the elapsed time.
+        n (int): The number of rounds performed in the iteration. (defaults to 1)
+        elapsed (int): The elapsed time for the operations. (defaults to 0)
+        unit (str): The unit of measurement for the elapsed time. (defaults to 'ns')
+        scale (float): The scale factor for the elapsed time. (defaults to 1e-9)
         ops_per_second (float): The number of operations per second. (read only)
         per_round_elapsed (float): The mean time for a single round scaled to the base unit. (read only)
     '''
-    n: int = 0
+    n: int = 1
     elapsed: int = 0
     unit: str = DEFAULT_INTERVAL_UNIT
     scale: float = DEFAULT_INTERVAL_SCALE
+
+    def __post_init__(self):
+        if not isinstance(self.n, int):
+            raise SimpleBenchTypeError('n must be an int', ErrorTag.ITERATION_INIT_N_ARG_TYPE)
+        if self.n <= 0:
+            raise SimpleBenchValueError('n must be positive', ErrorTag.ITERATION_INIT_N_ARG_VALUE)
+        if not isinstance(self.elapsed, int):
+            raise SimpleBenchTypeError('elapsed must be an int', ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE)
+        if self.elapsed < 0:
+            raise SimpleBenchValueError('elapsed must be non-negative', ErrorTag.ITERATION_INIT_ELAPSED_ARG_VALUE)
+        if not isinstance(self.unit, str):
+            raise SimpleBenchTypeError('unit must be a str', ErrorTag.ITERATION_INIT_UNIT_ARG_TYPE)
+        if not self.unit:
+            raise SimpleBenchValueError('unit must be a non-empty str', ErrorTag.ITERATION_INIT_UNIT_ARG_VALUE)
+        if not isinstance(self.scale, float):
+            raise SimpleBenchTypeError('scale must be a float', ErrorTag.ITERATION_INIT_SCALE_ARG_TYPE)
+        if self.scale <= 0.0:
+            raise SimpleBenchValueError('scale must be a positive float', ErrorTag.ITERATION_INIT_SCALE_ARG_VALUE)
 
     @property
     def per_round_elapsed(self) -> float:
