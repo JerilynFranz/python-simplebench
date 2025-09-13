@@ -24,7 +24,7 @@ def benchmark_cases_list_factory() -> list[Case]:
              description='A simple benchmark case function.',
              variation_cols={},
              kwargs_variations={},
-             options=[GraphOptions(style='default', output_format='png')]),
+             options=[GraphOptions(output_format='png')]),
         Case(group='example2',
              title='benchcase_two',
              action=benchcase_one,
