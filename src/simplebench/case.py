@@ -69,7 +69,8 @@ class Case:
                     - Format.JSON: str (the JSON data as a string)
                     - Format.GRAPH: bytes (the graph image data as bytes)
         options (list[ReporterOption]): A list of additional options for the benchmark case.
-
+        _decoration (bool): This field is used internally to indicate if the Case was created via
+            a benchmark decorator. It should not be set manually. (default: False)
     Properties:
         results (list[Results]): The benchmark results for the case.
     '''
@@ -99,6 +100,8 @@ class Case:
     """The benchmark list of Results for the case."""
     options: list[ReporterOption] = field(default_factory=list[ReporterOption])
     """A list of additional options for the benchmark case."""
+    _decoration: bool = field(default=False, repr=False, compare=False)
+    """Indicates if the Case was created via the @benchmark decorator. (internal use only)"""
 
     def __post_init__(self) -> None:
         self.results: list[Results] = []

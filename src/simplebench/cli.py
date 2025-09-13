@@ -3,10 +3,11 @@
 from __future__ import annotations
 from argparse import Namespace, ArgumentParser
 import pathlib
-from typing import Sequence, TYPE_CHECKING
+from typing import Optional, Sequence, TYPE_CHECKING
 
 from rich.console import Console
 
+from .decorators import get_registered_cases
 from .enums import Verbosity
 from .session import Session
 
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
     from .case import Case
 
 
-def main(benchmark_cases: Sequence[Case]) -> int:
+def main(benchmark_cases: Optional[Sequence[Case]] = None) -> int:
     """Main entry point for running benchmarks.
 
     Usage:
@@ -42,9 +43,13 @@ def main(benchmark_cases: Sequence[Case]) -> int:
         session.parse_args()
         args: Namespace = session.args if session.args else Namespace()
         console: Console = session.console
+        if benchmark_cases is None:
+            benchmark_cases = []
+        available_cases = list(benchmark_cases) + get_registered_cases()
+
         if args.list:
             console.print('Available benchmarks:')
-            for case in benchmark_cases:
+            for case in available_cases:
                 console.print('  - ', f'[green]{case.group:<40s}[/green]', f'{case.title}')
             return 0
 
@@ -73,10 +78,10 @@ def main(benchmark_cases: Sequence[Case]) -> int:
 
         if args.run:
             if 'all' in args.run:
-                session.cases = benchmark_cases
+                session.cases = available_cases
             else:
                 selected_cases: list[Case] = []
-                for case in benchmark_cases:
+                for case in available_cases:
                     if case.group in args.run:
                         selected_cases.append(case)
                 if not selected_cases:
