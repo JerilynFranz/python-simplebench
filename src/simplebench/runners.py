@@ -17,6 +17,18 @@ if TYPE_CHECKING:
 
 class SimpleRunner():
     """A class to run benchmarks for various actions.
+
+    Args:
+        case (Case): The benchmark case to run.
+        kwargs (dict[str, Any]): The keyword arguments for the benchmark case.
+        session (Optional[Session]): The session in which the benchmark is run.
+        runner (Optional[Callable[..., Any]]): The function to use to run the benchmark. If None, uses default_runner.
+
+    Attributes:
+        case (Case): The benchmark case to run.
+        kwargs (dict[str, Any]): The keyword arguments for the benchmark case.
+        session (Optional[Session]): The session in which the benchmark is run.
+        run (Callable[..., Any]): The function to use to run the benchmark.
     """
     def __init__(self,
                  case: Case,
@@ -34,6 +46,8 @@ class SimpleRunner():
 
         The variation marks identify the specific variations being tested in a run
         from the kwargs values.
+
+        Returns: dict[str, Any]: The variation marks for the benchmark.
         '''
         return {key: self.kwargs.get(key, None) for key in self.case.variation_cols.keys()}
 
