@@ -45,15 +45,11 @@ class ErrorTag(str, Enum):
     the Case() constructor as the variation_cols arg"""
     CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT = "CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT"
     """Something other than a dictionary was passed to the Case() constructor as the kwargs_variations arg"""
-    CASE_INVALID_GRAPH_ASPECT_RATIO = "CASE_INVALID_GRAPH_ASPECT_RATIO"
-    """Something other than a positive number was passed to the Case() constructor as the graph_aspect_ratio arg"""
-    CASE_INVALID_GRAPH_Y_STARTS_AT_ZERO = "CASE_INVALID_GRAPH_Y_STARTS_AT_ZERO"
-    """Something other than a bool was passed to the Case() constructor as the graph_y_starts_at_zero arg"""
-    CASE_INVALID_GRAPH_STYLE = "CASE_INVALID_GRAPH_STYLE"
-    """Something other than 'default' or 'dark_background' was passed to the Case() constructor as the
-    graph_style arg"""
-    CASE_INVALID_GRAPH_X_LABELS_ROTATION = "CASE_INVALID_GRAPH_X_LABELS_ROTATION"
-    """Something other than a number was passed to the Case() constructor as the graph_x_labels_rotation arg"""
+    CASE_INVALID_OPTIONS_NOT_LIST = "CASE_INVALID_OPTIONS_NOT_LIST"
+    """Something other than a list was passed to the Case() constructor as the options arg"""
+    CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION = "CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION"
+    """Something other than a ReporterOptions instance was found in the list passed to the Case() constructor
+    as the options arg"""
     CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE = "CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE"
     """Something other than a callable (function or method) or None was passed to the Case() constructor as
     the callback arg"""

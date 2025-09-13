@@ -8,13 +8,23 @@ from io import StringIO
 from pathlib import Path
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
-from ..case import Case
 from ..enums import Section
 from .interfaces import Reporter
 from ..utils import sanitize_filename, get_machine_info, sigfigs
 from .choices import Choice, Choices, Target, Format
 if TYPE_CHECKING:
+    from ..case import Case
     from ..session import Session
+
+_lazy_classes_loaded: bool = False
+
+
+def _lazy_load_classes() -> None:
+    """Lazy load classes to avoid circular import issues."""
+    global Case, _lazy_classes_loaded  # pylint: disable=global-statement
+    if not _lazy_classes_loaded:
+        from ..case import Case  # pylint: disable=import-outside-toplevel
+        _lazy_classes_loaded = True
 
 
 @dataclass

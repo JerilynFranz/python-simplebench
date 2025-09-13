@@ -6,11 +6,11 @@ from argparse import ArgumentParser
 from pathlib import Path
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
-from ..case import Case
 from ..enums import Section
 from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
 
 if TYPE_CHECKING:
+    from ..case import Case
     from .choices import Choice, Choices, Target, Format
     from ..session import Session
 
@@ -26,8 +26,9 @@ def _lazy_load_classes() -> None:
     This is primarily to avoid circular import issues between the session, reporter and
     choices modules in the report() method of the Reporter class.
     """
-    global Session, Choice, Target, Format, _lazy_classes_loaded  # pylint: disable=global-statement
+    global Session, Case, Choice, Target, Format, _lazy_classes_loaded  # pylint: disable=global-statement
     if not _lazy_classes_loaded:
+        from ..case import Case  # pylint: disable=import-outside-toplevel
         from ..session import Session  # pylint: disable=import-outside-toplevel
         from .choices import Choice, Target, Format  # pylint: disable=import-outside-toplevel
         _lazy_classes_loaded = True

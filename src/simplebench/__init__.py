@@ -21,6 +21,7 @@ from .reporters import ReporterManager
 from .reporters.interfaces import Reporter
 from .reporters.choices import Choices, Choice, Target, Format
 from .reporters.json import JSONReporter
+from .reporters.reporter_option import ReporterOption
 from .reporters.rich_table import RichTableReporter
 from .reporters.csv import CSVReporter
 from .reporters.graph import GraphReporter
@@ -42,6 +43,7 @@ __all__ = [
     'OperationTimings',
     'Reporter',
     'ReporterManager',
+    'ReporterOption',
     'Results',
     'RichProgressTasks',
     'RichTableReporter',

@@ -3,10 +3,11 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 import itertools
-from typing import Any, Callable, Literal, Optional, TYPE_CHECKING
+from typing import Any, Callable, Optional, TYPE_CHECKING
 
 from .constants import DEFAULT_ITERATIONS
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
+from .reporters.reporter_option import ReporterOption
 from .runners import SimpleRunner
 from .enums import Section
 
@@ -49,12 +50,6 @@ class Case:
                     'runtime_validation': [True, False]
                 }
         runner (Optional[Callable[..., Any]]): A custom runner for the benchmark.
-        verbose (bool): Enable verbose output.
-        progress (bool): Enable progress output.
-        graph_aspect_ratio (float): The aspect ratio of the graph (default: 1.0).
-        graph_style (Literal['default', 'dark_background']): The style of the graph (default: 'default').
-        graph_y_starts_at_zero (bool): Whether the y-axis of the graph starts at zero (default: True).
-        graph_x_labels_rotation (float): The rotation angle of the x-axis tick labels (default: 0.0).
         callback (Optional[Callable[Case, Section, Format, Any], None]):
             A callback function for additional processing of the report. The function should accept
             four arguments: the Case instance, the Section, the Format, and the generated report data.
@@ -73,6 +68,7 @@ class Case:
                     - Format.CSV: str (the CSV data as a string)
                     - Format.JSON: str (the JSON data as a string)
                     - Format.GRAPH: bytes (the graph image data as bytes)
+        options (list[ReporterOption]): A list of additional options for the benchmark case.
 
     Properties:
         results (list[Results]): The benchmark results for the case.
@@ -97,19 +93,11 @@ class Case:
     """Variations of keyword arguments for the benchmark."""
     runner: Optional[Callable[..., Any]] = None
     """A custom runner for the benchmark."""
-    graph_aspect_ratio: float = 1.0
-    """The aspect ratio of the graph."""
-    graph_style: Literal['default', 'dark_background'] = 'default'
-    """The style of the graph."""
-    graph_y_starts_at_zero: bool = True
-    """Whether the y-axis of the graph starts at zero."""
-    graph_x_labels_rotation: float = 0.0
-    """The rotation angle of the x-axis tick labels."""
     callback: Optional[Callable[[Case, Section, Format, Any], None]] = None
     """A callback function for additional processing of the report."""
     results: list[Results] = field(init=False)
     """The benchmark list of Results for the case."""
-    options: list[Any] = field(default_factory=list[Any])
+    options: list[ReporterOption] = field(default_factory=list[ReporterOption])
     """A list of additional options for the benchmark case."""
 
     def __post_init__(self) -> None:
@@ -169,31 +157,22 @@ class Case:
                 f'Invalid kwargs_variations: {self.kwargs_variations}. Must be a dictionary.',
                 tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT
                 )
-        if not isinstance(self.graph_aspect_ratio, float) or self.graph_aspect_ratio <= 0.0:
-            raise SimpleBenchValueError(
-                f'Invalid graph_aspect_ratio: {self.graph_aspect_ratio}. Must be a positive float.',
-                tag=ErrorTag.CASE_INVALID_GRAPH_ASPECT_RATIO
-                )
-        if self.graph_style not in ('default', 'dark_background'):
-            raise SimpleBenchValueError(
-                f'Invalid graph_style: {self.graph_style}. Must be "default" or "dark_background".',
-                tag=ErrorTag.CASE_INVALID_GRAPH_STYLE
-                )
-        if not isinstance(self.graph_y_starts_at_zero, bool):
-            raise SimpleBenchTypeError(
-                f'Invalid graph_y_starts_at_zero: {self.graph_y_starts_at_zero}. Must be a boolean.',
-                tag=ErrorTag.CASE_INVALID_GRAPH_Y_STARTS_AT_ZERO
-                )
-        if not isinstance(self.graph_x_labels_rotation, float):
-            raise SimpleBenchValueError(
-                f'Invalid graph_x_labels_rotation: {self.graph_x_labels_rotation}. Must be a float.',
-                tag=ErrorTag.CASE_INVALID_GRAPH_X_LABELS_ROTATION
-                )
         if self.callback is not None and not callable(self.callback):
             raise SimpleBenchValueError(
                 f'Invalid callback: {self.callback}. Must be a callable or None.',
                 tag=ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE
                 )
+        if not isinstance(self.options, list):
+            raise SimpleBenchTypeError(
+                f'Invalid options: {self.options}. Must be a list.',
+                tag=ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST
+                )
+        for option in self.options:
+            if not isinstance(option, ReporterOption):
+                raise SimpleBenchTypeError(
+                    f'Invalid option: {option}. Must be of type ReporterOption.',
+                    tag=ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
+                    )
 
     @property
     def expanded_kwargs_variations(self) -> list[dict[str, Any]]:
@@ -312,9 +291,9 @@ class Case:
         count = 0
         for result in self.results:
             if section == Section.OPS:
-                total += result.per_round_timings.mean
+                total += result.ops_per_second.mean
                 count += 1
             elif section == Section.TIMING:
-                total += result.ops_per_second.mean
+                total += result.per_round_timings.mean
                 count += 1
         return total / count if count > 0 else 0.0

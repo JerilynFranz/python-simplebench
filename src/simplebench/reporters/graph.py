@@ -12,16 +12,28 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from ..case import Case
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT
 from ..enums import Section
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from ..results import Results
+from .reporter_option import ReporterOption
 from ..utils import sanitize_filename, si_scale_for_smallest
 from .choices import Choice, Choices, Format, Target
 from .interfaces import Reporter
 if TYPE_CHECKING:
+    from ..case import Case
     from ..session import Session
+
+_lazy_classes_loaded: bool = False
+
+
+def _lazy_load_classes() -> None:
+    """Lazy load classes to avoid circular import issues."""
+    global Case, _lazy_classes_loaded  # pylint: disable=global-statement
+    if not _lazy_classes_loaded:
+        from ..case import Case  # pylint: disable=import-outside-toplevel
+        _lazy_classes_loaded = True
+
 
 DEFAULT_GRAPH_THEME: dict[str, Any] = {
     'axes.grid': True,
@@ -58,7 +70,7 @@ by a GraphOptions instance provided in the Case options.
 """
 
 
-class GraphOptions():
+class GraphOptions(ReporterOption):
     """Container for graphing options for GraphReporter.
 
     This class holds configuration options for graph generation, such as style,
@@ -295,6 +307,7 @@ class GraphReporter(Reporter):
                 a FILESYSTEM target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        _lazy_load_classes()
         output_format: str = 'svg'
         if case.options is not None:
             for item in case.options:
@@ -352,6 +365,7 @@ class GraphReporter(Reporter):
         Returns:
             None
         """
+        _lazy_load_classes()
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",

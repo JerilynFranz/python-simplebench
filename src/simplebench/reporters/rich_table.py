@@ -8,7 +8,6 @@ from typing import Optional, Any, Callable, TYPE_CHECKING
 from rich.console import Console
 from rich.table import Table
 
-from ..case import Case
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
 from ..enums import Section
 from ..exceptions import SimpleBenchValueError, ErrorTag
@@ -17,7 +16,18 @@ from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
 from .choices import Choice, Choices, Format, Target
 from .interfaces import Reporter
 if TYPE_CHECKING:
+    from ..case import Case
     from ..session import Session
+
+_lazy_classes_loaded: bool = False
+
+
+def _lazy_load_classes() -> None:
+    """Lazy load classes to avoid circular import issues."""
+    global Case, _lazy_classes_loaded  # pylint: disable=global-statement
+    if not _lazy_classes_loaded:
+        from ..case import Case  # pylint: disable=import-outside-toplevel
+        _lazy_classes_loaded = True
 
 
 class RichTableReporter(Reporter):
