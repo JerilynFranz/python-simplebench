@@ -1,0 +1,3029 @@
+<!DOCTYPE html>
+<html lang="en"
+      data-content_root="./"
+      x-data="{ darkMode: localStorage.getItem('darkMode') || localStorage.setItem('darkMode', 'system'), activeSection: '' }"
+      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
+      class="scroll-smooth"
+      :class="{'dark': darkMode === 'dark' || (darkMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)}"
+>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="white" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+  
+    <title>Index | SimpleBench 0.0.1 documentation</title>
+    <meta property="og:title" content="Index | SimpleBench 0.0.1 documentation" />
+    <meta name="twitter:title" content="Index | SimpleBench 0.0.1 documentation" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=c309799c" />
+      <link rel="stylesheet" type="text/css" href="_static/theme.css?v=42baaae4" />
+        <link rel="search" title="Search" href="search.html" />
+        <link rel="index" title="Index" href="#" />
+
+    <script>
+    <!-- Prevent Flash of wrong theme -->
+      const userPreference = localStorage.getItem('darkMode');
+      let mode;
+      if (userPreference === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        mode = 'dark';
+        document.documentElement.classList.add('dark');
+      } else {
+        mode = 'light';
+      }
+      if (!userPreference) {localStorage.setItem('darkMode', mode)}
+    </script>
+</head>
+  <body x-data="{ showSidebar: false, showScrollTop: false }" class="min-h-screen font-sans antialiased bg-background text-foreground" :class="{ 'overflow-hidden': showSidebar }">
+    <div x-cloak x-show="showSidebar" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" @click.self="showSidebar = false"></div><div id="page" class="relative flex flex-col min-h-screen"><a href="#content" class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100">
+      Skip to content
+    </a><header
+  class="sticky top-0 z-40 w-full border-b shadow-sm border-border supports-backdrop-blur:bg-background/60 bg-background/95 backdrop-blur"><div class="container flex items-center h-14">
+    <div class="hidden mr-4 md:flex">
+      <a href="index.html" class="flex items-center mr-6"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">SimpleBench 0.0.1 documentation</span>
+      </a></div><button
+      class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden"
+      type="button" @click="showSidebar = true">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" aria-hidden="true"
+        fill="currentColor">
+        <path
+          d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z" />
+      </svg>
+      <span class="sr-only">Toggle navigation menu</span>
+    </button>
+    <div class="flex items-center justify-between flex-1 space-x-2 sm:space-x-4 md:justify-end">
+      <div class="flex-1 w-full md:w-auto md:flex-none"><form id="searchbox"
+      action="search.html"
+      method="get"
+      class="relative flex items-center group"
+      @keydown.k.window.meta="$refs.search.focus()">
+  <input x-ref="search"
+          name="q"
+          id="search-input"
+          type="search"
+          aria-label="Search the docs"
+          placeholder="Search ..."
+          class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" />
+  <kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+    <span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+      </div>
+      <nav class="flex items-center space-x-1">
+        <button @click="darkMode = darkMode === 'light' ? 'dark' : 'light'"
+          class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9"
+          type="button"
+          aria-label="Color theme switcher">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" fill="currentColor"
+            class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0">
+            <path
+              d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" fill="currentColor"
+            class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100">
+            <path
+              d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </div>
+</header>
+
+    <div class="flex-1"><div class="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside id="left-sidebar"
+  class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full shrink-0 overflow-y-auto border-r border-border md:sticky"
+  :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }">
+
+    <a href="index.html" class="!justify-start text-sm md:!hidden bg-background"><span class="font-bold text-clip whitespace-nowrap">SimpleBench 0.0.1 documentation</span>
+    </a>
+
+    <div class="relative overflow-hidden md:overflow-auto my-4 md:my-0 h-[calc(100vh-8rem)] md:h-auto">
+      <div class="overflow-y-auto h-full w-full relative pr-6"><nav class="table w-full min-w-full my-6 lg:my-8">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Using SimpleBench</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="source/modules.html">src</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source/simplebench.html">simplebench package</a></li>
+</ul>
+</li>
+</ul>
+
+</nav>
+      </div>
+    </div>
+    <button type="button" @click="showSidebar = false"
+      class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 96 960 960" fill="currentColor"
+        stroke="none" class="h-4 w-4">
+        <path
+          d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z" />
+      </svg>
+    </button>
+  </aside>
+        <main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<nav aria-label="breadcrumbs"
+     class="flex items-center mb-4 space-x-1 text-sm text-muted-foreground">
+  <a class="overflow-hidden text-ellipsis whitespace-nowrap hover:text-foreground"
+     href="index.html">
+    <span class="hidden md:inline">SimpleBench 0.0.1 documentation</span>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         height="18"
+         width="18"
+         viewBox="0 96 960 960"
+         aria-label="Home"
+         fill="currentColor"
+         stroke="none"
+         class="md:hidden">
+      <path d="M240 856h120V616h240v240h120V496L480 316 240 496v360Zm-80 80V456l320-240 320 240v480H520V696h-80v240H160Zm320-350Z" />
+    </svg>
+  </a>
+  
+<div class="mr-1">/</div><span aria-current="page"
+        class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">Index</span>
+</nav>
+
+<div id="content" role="main">
+
+  <h1 id="index">Index</h1>
+  <h2 id="A">A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Case.action">action (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.action">(simplebench.case.Case attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choices.add">add() (simplebench.Choices method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choices.add">(simplebench.reporters.Choices method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choices.add">(simplebench.reporters.choices.Choices method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Session.add">(simplebench.Session method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.session.Session.add">(simplebench.session.Session method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.CSVReporter.add_flags_to_argparse">add_flags_to_argparse() (simplebench.CSVReporter method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.GraphReporter.add_flags_to_argparse">(simplebench.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.JSONReporter.add_flags_to_argparse">(simplebench.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.add_flags_to_argparse">(simplebench.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter.add_flags_to_argparse">(simplebench.reporters.csv.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter.add_flags_to_argparse">(simplebench.reporters.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter.add_flags_to_argparse">(simplebench.reporters.graph.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter.add_flags_to_argparse">(simplebench.reporters.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.add_flags_to_argparse">(simplebench.reporters.interfaces.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.add_flags_to_argparse">(simplebench.reporters.json.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.add_flags_to_argparse">(simplebench.reporters.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter.add_flags_to_argparse">(simplebench.reporters.rich_table.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter.add_flags_to_argparse">(simplebench.reporters.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.RichTableReporter.add_flags_to_argparse">(simplebench.RichTableReporter method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Session.add_reporter_flags">add_reporter_flags() (simplebench.Session method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.add_reporter_flags">(simplebench.session.Session method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ReporterManager.add_reporters_to_argparse">add_reporters_to_argparse() (simplebench.ReporterManager method)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.Choices.all_choice_args">all_choice_args() (simplebench.Choices method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choices.all_choice_args">(simplebench.reporters.Choices method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choices.all_choice_args">(simplebench.reporters.choices.Choices method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choices.all_choice_flags">all_choice_flags() (simplebench.Choices method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choices.all_choice_flags">(simplebench.reporters.Choices method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choices.all_choice_flags">(simplebench.reporters.choices.Choices method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ReporterManager.all_reporters">all_reporters() (simplebench.ReporterManager method)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.Session.args">args (simplebench.Session property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.args">(simplebench.session.Session property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.as_dict">as_dict() (simplebench.Case method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.as_dict">(simplebench.case.Case method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphOptions.aspect_ratio">aspect_ratio (simplebench.reporters.graph.GraphOptions attribute)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="B">B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.constants.BASE_INTERVAL_UNIT">BASE_INTERVAL_UNIT (in module simplebench.constants)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.constants.BASE_OPS_PER_INTERVAL_UNIT">BASE_OPS_PER_INTERVAL_UNIT (in module simplebench.constants)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="C">C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Case.callback">callback (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.callback">(simplebench.case.Case attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.callback">(simplebench.Reporter attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Target.CALLBACK">CALLBACK (simplebench.reporters.choices.Target attribute)</a>
+</li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.callback">callback (simplebench.reporters.interfaces.Reporter attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.callback">(simplebench.reporters.Reporter attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.Target.CALLBACK">CALLBACK (simplebench.reporters.Target attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.Target.CALLBACK">(simplebench.Target attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case">Case (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case">(class in simplebench.case)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.runners.SimpleRunner.case">case (simplebench.runners.SimpleRunner attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.SimpleRunner.case">(simplebench.SimpleRunner attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE">CASE_INVALID_ACTION_NOT_CALLABLE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE">CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_DESCRIPTION">CASE_INVALID_DESCRIPTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_DESCRIPTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_ITERATIONS">CASE_INVALID_ITERATIONS (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_ITERATIONS">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT">CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_MAX_TIME">CASE_INVALID_MAX_TIME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_MAX_TIME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_MIN_TIME">CASE_INVALID_MIN_TIME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_MIN_TIME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_NAME">CASE_INVALID_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION">CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST">CASE_INVALID_OPTIONS_NOT_LIST (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_ROUNDS">CASE_INVALID_ROUNDS (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_ROUNDS">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_RUNNER_NOT_CALLABLE_OR_NONE">CASE_INVALID_RUNNER_NOT_CALLABLE_OR_NONE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_RUNNER_NOT_CALLABLE_OR_NONE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_SETUP">CASE_INVALID_SETUP (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_SETUP">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_TEARDOWN">CASE_INVALID_TEARDOWN (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_TEARDOWN">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_TIME_RANGE">CASE_INVALID_TIME_RANGE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_TIME_RANGE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_NOT_STRINGS">CASE_INVALID_VARIATION_COLS_ENTRY_NOT_STRINGS (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_NOT_STRINGS">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT">CASE_INVALID_VARIATION_COLS_NOT_DICT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_INVALID_WARMUP_ROUNDS">CASE_INVALID_WARMUP_ROUNDS (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_INVALID_WARMUP_ROUNDS">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_SECTION_MEAN_INVALID_SECTION_ARGUMENT">CASE_SECTION_MEAN_INVALID_SECTION_ARGUMENT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_SECTION_MEAN_INVALID_SECTION_ARGUMENT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CASE_SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT">CASE_SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CASE_SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Session.cases">cases (simplebench.Session property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.cases">(simplebench.session.Session property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choice">Choice (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice">(class in simplebench.reporters)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice">(class in simplebench.reporters.choices)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ReporterManager.choice_for_arg">choice_for_arg() (simplebench.ReporterManager method)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_EMPTY_FORMATS">CHOICE_INIT_EMPTY_FORMATS (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_EMPTY_FORMATS">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_EMPTY_SECTIONS">CHOICE_INIT_EMPTY_SECTIONS (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_EMPTY_SECTIONS">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_EMPTY_STRING_DESCRIPTION">CHOICE_INIT_EMPTY_STRING_DESCRIPTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_EMPTY_STRING_DESCRIPTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_EMPTY_STRING_NAME">CHOICE_INIT_EMPTY_STRING_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_EMPTY_STRING_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_EMPTY_TARGETS">CHOICE_INIT_EMPTY_TARGETS (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_EMPTY_TARGETS">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_INVALID_DESCRIPTION_ARG">CHOICE_INIT_INVALID_DESCRIPTION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_INVALID_DESCRIPTION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_INVALID_FORMATS_ARG">CHOICE_INIT_INVALID_FORMATS_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_INVALID_FORMATS_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_INVALID_NAME_ARG">CHOICE_INIT_INVALID_NAME_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_INVALID_NAME_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_INVALID_REPORTER_ARG">CHOICE_INIT_INVALID_REPORTER_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_INVALID_REPORTER_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_INVALID_RUNNER_ARG">CHOICE_INIT_INVALID_RUNNER_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_INVALID_RUNNER_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_INVALID_SECTIONS_ARG">CHOICE_INIT_INVALID_SECTIONS_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_INVALID_SECTIONS_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICE_INIT_INVALID_TARGETS_ARG">CHOICE_INIT_INVALID_TARGETS_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICE_INIT_INVALID_TARGETS_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choices">Choices (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choices">(class in simplebench.reporters)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choices">(class in simplebench.reporters.choices)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.CSVReporter.choices">choices (simplebench.CSVReporter attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#id7">(simplebench.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.GraphReporter.choices">(simplebench.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.JSONReporter.choices">(simplebench.JSONReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id10">(simplebench.JSONReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.choices">(simplebench.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id13">(simplebench.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.ReporterManager.choices">(simplebench.ReporterManager property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter.choices">(simplebench.reporters.csv.CSVReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id0">(simplebench.reporters.csv.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter.choices">(simplebench.reporters.CSVReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id12">(simplebench.reporters.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter.choices">(simplebench.reporters.graph.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter.choices">(simplebench.reporters.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.choices">(simplebench.reporters.interfaces.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id3">(simplebench.reporters.interfaces.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.choices">(simplebench.reporters.json.JSONReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id6">(simplebench.reporters.json.JSONReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.choices">(simplebench.reporters.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id15">(simplebench.reporters.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter.choices">(simplebench.reporters.rich_table.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id9">(simplebench.reporters.rich_table.RichTableReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter.choices">(simplebench.reporters.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id18">(simplebench.reporters.RichTableReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.RichTableReporter.choices">(simplebench.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id16">(simplebench.RichTableReporter property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_NAME">CHOICES_ADD_DUPLICATE_CHOICE_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_ADD_DUPLICATE_CLI_ARG">CHOICES_ADD_DUPLICATE_CLI_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_ADD_DUPLICATE_CLI_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG">CHOICES_ADD_INVALID_CHOICE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_ALL_CHOICE_FLAGS_INVALID_RETURN">CHOICES_ALL_CHOICE_FLAGS_INVALID_RETURN (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_ALL_CHOICE_FLAGS_INVALID_RETURN">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_CHOICE_FOR_FLAG_INVALID_ARG">CHOICES_CHOICE_FOR_FLAG_INVALID_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_CHOICE_FOR_FLAG_INVALID_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_EXTEND_DUPLICATE_CHOICE_NAME">CHOICES_EXTEND_DUPLICATE_CHOICE_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_EXTEND_DUPLICATE_CHOICE_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_EXTEND_DUPLICATE_CLI_ARG">CHOICES_EXTEND_DUPLICATE_CLI_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_EXTEND_DUPLICATE_CLI_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG">CHOICES_EXTEND_INVALID_CHOICES_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_CONTENT">CHOICES_EXTEND_INVALID_CHOICES_CONTENT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_CONTENT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_GET_CHOICE_BY_CLI_TAG_INVALID_ARG">CHOICES_GET_CHOICE_BY_CLI_TAG_INVALID_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_GET_CHOICE_BY_CLI_TAG_INVALID_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CHOICES_REMOVE_UNKNOWN_CHOICE_NAME">CHOICES_REMOVE_UNKNOWN_CHOICE_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CHOICES_REMOVE_UNKNOWN_CHOICE_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.RichProgressTasks.clear">clear() (simplebench.RichProgressTasks method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichProgressTasks.clear">(simplebench.tasks.RichProgressTasks method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Target.CONSOLE">CONSOLE (simplebench.reporters.choices.Target attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Target.CONSOLE">(simplebench.reporters.Target attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Session.console">console (simplebench.Session property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.console">(simplebench.session.Session property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Target.CONSOLE">CONSOLE (simplebench.Target attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.cpu">cpu (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.Format.CSV">CSV (simplebench.Format attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Format.CSV">(simplebench.reporters.choices.Format attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Format.CSV">(simplebench.reporters.Format attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_INIT_INVALID_CASE_ARG">CSV_REPORTER_INIT_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_INIT_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_INIT_INVALID_SESSION_ARG">CSV_REPORTER_INIT_INVALID_SESSION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_INIT_INVALID_SESSION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_RUN_REPORT_INVALID_CASE_ARG">CSV_REPORTER_RUN_REPORT_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_RUN_REPORT_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_RUN_REPORT_INVALID_CHOICE_ARG">CSV_REPORTER_RUN_REPORT_INVALID_CHOICE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_RUN_REPORT_INVALID_CHOICE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_RUN_REPORT_INVALID_SESSION_ARG">CSV_REPORTER_RUN_REPORT_INVALID_SESSION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_RUN_REPORT_INVALID_SESSION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION">CSV_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_TO_CSV_INVALID_BASE_UNIT_ARG">CSV_REPORTER_TO_CSV_INVALID_BASE_UNIT_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_TO_CSV_INVALID_BASE_UNIT_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_TO_CSV_INVALID_CASE_ARG">CSV_REPORTER_TO_CSV_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_TO_CSV_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_TO_CSV_INVALID_CSVFILE_ARG">CSV_REPORTER_TO_CSV_INVALID_CSVFILE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_TO_CSV_INVALID_CSVFILE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.CSV_REPORTER_TO_CSV_INVALID_TARGET_ARG">CSV_REPORTER_TO_CSV_INVALID_TARGET_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.CSV_REPORTER_TO_CSV_INVALID_TARGET_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.CSVReporter">CSVReporter (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter">(class in simplebench.reporters)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter">(class in simplebench.reporters.csv)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="D">D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.data">data (simplebench.OperationsPerInterval attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.data">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.data">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.data">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.data">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.data">(simplebench.stats.Stats attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.enums.Verbosity.DEBUG">DEBUG (simplebench.enums.Verbosity attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.Verbosity.DEBUG">(simplebench.Verbosity attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.DEFAULT_GRAPH_THEME">DEFAULT_GRAPH_THEME (in module simplebench.reporters.graph)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.constants.DEFAULT_INTERVAL_SCALE">DEFAULT_INTERVAL_SCALE (in module simplebench.constants)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.constants.DEFAULT_INTERVAL_UNIT">DEFAULT_INTERVAL_UNIT (in module simplebench.constants)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.constants.DEFAULT_ITERATIONS">DEFAULT_ITERATIONS (in module simplebench.constants)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.constants.DEFAULT_OPS_PER_INTERVAL_SCALE">DEFAULT_OPS_PER_INTERVAL_SCALE (in module simplebench.constants)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.constants.DEFAULT_OPS_PER_INTERVAL_UNIT">DEFAULT_OPS_PER_INTERVAL_UNIT (in module simplebench.constants)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.runners.SimpleRunner.default_runner">default_runner() (simplebench.runners.SimpleRunner method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.SimpleRunner.default_runner">(simplebench.SimpleRunner method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.constants.DEFAULT_SIGNIFICANT_FIGURES">DEFAULT_SIGNIFICANT_FIGURES (in module simplebench.constants)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.DEFAULT_TIMER">DEFAULT_TIMER() (in module simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.constants.DEFAULT_TIMER">(in module simplebench.constants)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.description">description (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.description">(simplebench.case.Case attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Choice.description">(simplebench.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.CSVReporter.description">(simplebench.CSVReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id8">(simplebench.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.GraphReporter.description">(simplebench.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.JSONReporter.description">(simplebench.JSONReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id11">(simplebench.JSONReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.description">(simplebench.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id14">(simplebench.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice.description">(simplebench.reporters.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice.description">(simplebench.reporters.choices.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter.description">(simplebench.reporters.csv.CSVReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id1">(simplebench.reporters.csv.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter.description">(simplebench.reporters.CSVReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id13">(simplebench.reporters.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter.description">(simplebench.reporters.graph.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter.description">(simplebench.reporters.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.description">(simplebench.reporters.interfaces.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id4">(simplebench.reporters.interfaces.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.description">(simplebench.reporters.json.JSONReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id7">(simplebench.reporters.json.JSONReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.description">(simplebench.reporters.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id16">(simplebench.reporters.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter.description">(simplebench.reporters.rich_table.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id10">(simplebench.reporters.rich_table.RichTableReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter.description">(simplebench.reporters.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id19">(simplebench.reporters.RichTableReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Results.description">(simplebench.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.results.Results.description">(simplebench.results.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.RichTableReporter.description">(simplebench.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id17">(simplebench.RichTableReporter property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Target.DISPLAY">DISPLAY (simplebench.reporters.choices.Target attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Target.DISPLAY">(simplebench.reporters.Target attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Target.DISPLAY">(simplebench.Target attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="E">E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Iteration.elapsed">elapsed (simplebench.Iteration attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.iteration.Iteration.elapsed">(simplebench.iteration.Iteration attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag">ErrorTag (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag">(class in simplebench.exceptions)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.expanded_kwargs_variations">expanded_kwargs_variations (simplebench.Case property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.expanded_kwargs_variations">(simplebench.case.Case property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choices.extend">extend() (simplebench.Choices method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choices.extend">(simplebench.reporters.Choices method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choices.extend">(simplebench.reporters.choices.Choices method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Session.extend">(simplebench.Session method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.session.Session.extend">(simplebench.session.Session method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Choice.extra">extra (simplebench.Choice property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice.extra">(simplebench.reporters.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice.extra">(simplebench.reporters.choices.Choice property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.extra_info">extra_info (simplebench.Results attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.extra_info">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="F">F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Target.FILESYSTEM">FILESYSTEM (simplebench.reporters.choices.Target attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Target.FILESYSTEM">(simplebench.reporters.Target attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Target.FILESYSTEM">(simplebench.Target attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choice.flags">flags (simplebench.Choice property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice.flags">(simplebench.reporters.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice.flags">(simplebench.reporters.choices.Choice property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Format">Format (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Format">(class in simplebench.reporters)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Format">(class in simplebench.reporters.choices)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choice.formats">formats (simplebench.Choice property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice.formats">(simplebench.reporters.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice.formats">(simplebench.reporters.choices.Choice property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONExtras.full_data">full_data (simplebench.reporters.json.JSONExtras attribute)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="G">G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.RichProgressTasks.get">get() (simplebench.RichProgressTasks method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichProgressTasks.get">(simplebench.tasks.RichProgressTasks method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choices.get_choice_for_arg">get_choice_for_arg() (simplebench.Choices method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choices.get_choice_for_arg">(simplebench.reporters.Choices method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choices.get_choice_for_arg">(simplebench.reporters.choices.Choices method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.utils.get_machine_info">get_machine_info() (in module simplebench.utils)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.RichTask.get_task">get_task() (simplebench.RichTask method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichTask.get_task">(simplebench.tasks.RichTask method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Format.GRAPH">GRAPH (simplebench.Format attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Format.GRAPH">(simplebench.reporters.choices.Format attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Format.GRAPH">(simplebench.reporters.Format attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO">GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE">GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE">GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE">GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT">GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE">GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_INIT_INVALID_CASE_ARG">GRAPH_REPORTER_INIT_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_INIT_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_INIT_INVALID_SESSION_ARG">GRAPH_REPORTER_INIT_INVALID_SESSION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_INIT_INVALID_SESSION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_PLOT_INVALID_CASE_ARG">GRAPH_REPORTER_PLOT_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_PLOT_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG">GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG">GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CALLBACK_ARG">GRAPH_REPORTER_REPORT_INVALID_CALLBACK_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CALLBACK_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CASE_ARG">GRAPH_REPORTER_REPORT_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CHOICE_ARG">GRAPH_REPORTER_REPORT_INVALID_CHOICE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_CHOICE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_PATH_ARG">GRAPH_REPORTER_REPORT_INVALID_PATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_PATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_SESSION_ARG">GRAPH_REPORTER_REPORT_INVALID_SESSION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_INVALID_SESSION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_MISSING_PATH_ARG">GRAPH_REPORTER_REPORT_MISSING_PATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_MISSING_PATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_FORMAT">GRAPH_REPORTER_REPORT_UNSUPPORTED_FORMAT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_FORMAT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION">GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_TARGET">GRAPH_REPORTER_REPORT_UNSUPPORTED_TARGET (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_TARGET">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG">GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT">GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphOptions">GraphOptions (class in simplebench.reporters.graph)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.GraphReporter">GraphReporter (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter">(class in simplebench.reporters)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter">(class in simplebench.reporters.graph)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.group">group (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.group">(simplebench.case.Case attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Results.group">(simplebench.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.results.Results.group">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="H">H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Target.HTTP">HTTP (simplebench.reporters.choices.Target attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Target.HTTP">(simplebench.reporters.Target attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Target.HTTP">(simplebench.Target attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="I">I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Results.interval_scale">interval_scale (simplebench.Results attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.interval_scale">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.interval_unit">interval_unit (simplebench.Results attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.interval_unit">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Iteration">Iteration (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.iteration.Iteration">(class in simplebench.iteration)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE">ITERATION_INIT_ELAPSED_ARG_TYPE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.ITERATION_INIT_ELAPSED_ARG_VALUE">ITERATION_INIT_ELAPSED_ARG_VALUE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.ITERATION_INIT_ELAPSED_ARG_VALUE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.ITERATION_INIT_N_ARG_TYPE">ITERATION_INIT_N_ARG_TYPE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.ITERATION_INIT_N_ARG_TYPE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.ITERATION_INIT_N_ARG_VALUE">ITERATION_INIT_N_ARG_VALUE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.ITERATION_INIT_N_ARG_VALUE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.ITERATION_INIT_SCALE_ARG_TYPE">ITERATION_INIT_SCALE_ARG_TYPE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.ITERATION_INIT_SCALE_ARG_TYPE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.ITERATION_INIT_SCALE_ARG_VALUE">ITERATION_INIT_SCALE_ARG_VALUE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.ITERATION_INIT_SCALE_ARG_VALUE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.ITERATION_INIT_UNIT_ARG_TYPE">ITERATION_INIT_UNIT_ARG_TYPE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.ITERATION_INIT_UNIT_ARG_TYPE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.ITERATION_INIT_UNIT_ARG_VALUE">ITERATION_INIT_UNIT_ARG_VALUE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.ITERATION_INIT_UNIT_ARG_VALUE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.iterations">iterations (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.iterations">(simplebench.case.Case attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Results.iterations">(simplebench.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.results.Results.iterations">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="J">J</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Format.JSON">JSON (simplebench.Format attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Format.JSON">(simplebench.reporters.choices.Format attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Format.JSON">(simplebench.reporters.Format attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION">JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONExtras">JSONExtras (class in simplebench.reporters.json)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.JSONReporter">JSONReporter (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter">(class in simplebench.reporters.json)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="K">K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Reporter.known_result_targets">known_result_targets() (simplebench.Reporter method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.known_result_targets">(simplebench.reporters.interfaces.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.known_result_targets">(simplebench.reporters.Reporter method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.runners.SimpleRunner.kwargs">kwargs (simplebench.runners.SimpleRunner attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.SimpleRunner.kwargs">(simplebench.SimpleRunner attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.kwargs_variations">kwargs_variations (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.kwargs_variations">(simplebench.case.Case attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="M">M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.machine">machine (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo">MachineInfo (class in simplebench.utils)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.main">main() (in module simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.cli.main">(in module simplebench.cli)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Format.MARKDOWN">MARKDOWN (simplebench.Format attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Format.MARKDOWN">(simplebench.reporters.choices.Format attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Format.MARKDOWN">(simplebench.reporters.Format attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.max_time">max_time (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.max_time">(simplebench.case.Case attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.maximum">maximum (simplebench.OperationsPerInterval attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.maximum">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.maximum">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id19">(simplebench.Stats property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.maximum">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.maximum">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.maximum">(simplebench.stats.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id0">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.mean">mean (simplebench.OperationsPerInterval attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.mean">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.mean">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id20">(simplebench.Stats property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.mean">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.mean">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.mean">(simplebench.stats.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id1">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.JSONReporter.mean_change">mean_change() (simplebench.JSONReporter method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.mean_change">(simplebench.reporters.json.JSONReporter method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.median">median (simplebench.OperationsPerInterval attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.median">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.median">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id21">(simplebench.Stats property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.median">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.median">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.median">(simplebench.stats.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id2">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.enums.Section.MEMORY">MEMORY (simplebench.enums.Section attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Section.MEMORY">(simplebench.reporters.Section attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Section.MEMORY">(simplebench.Section attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.constants.MIN_MEASURED_ITERATIONS">MIN_MEASURED_ITERATIONS (in module simplebench.constants)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.Case.min_time">min_time (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.min_time">(simplebench.case.Case attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.minimum">minimum (simplebench.OperationsPerInterval attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.minimum">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.minimum">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id22">(simplebench.Stats property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.minimum">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.minimum">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.minimum">(simplebench.stats.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id3">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+      <li>
+    module
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench">simplebench</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.case">simplebench.case</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.cli">simplebench.cli</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.constants">simplebench.constants</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.decorators">simplebench.decorators</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.enums">simplebench.enums</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.exceptions">simplebench.exceptions</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.iteration">simplebench.iteration</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters">simplebench.reporters</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.choices">simplebench.reporters.choices</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.csv">simplebench.reporters.csv</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.graph">simplebench.reporters.graph</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.interfaces">simplebench.reporters.interfaces</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.json">simplebench.reporters.json</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.reporter_option">simplebench.reporters.reporter_option</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.rich_table">simplebench.reporters.rich_table</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.results">simplebench.results</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.runners">simplebench.runners</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.session">simplebench.session</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.stats">simplebench.stats</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.tasks">simplebench.tasks</a>
+</li>
+        <li><a href="source/simplebench.html#module-simplebench.utils">simplebench.utils</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="N">N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Iteration.n">n (simplebench.Iteration attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.iteration.Iteration.n">(simplebench.iteration.Iteration attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Results.n">(simplebench.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.results.Results.n">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choice.name">name (simplebench.Choice property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.CSVReporter.name">(simplebench.CSVReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id9">(simplebench.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.GraphReporter.name">(simplebench.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.JSONReporter.name">(simplebench.JSONReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id12">(simplebench.JSONReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.name">(simplebench.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id15">(simplebench.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice.name">(simplebench.reporters.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice.name">(simplebench.reporters.choices.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter.name">(simplebench.reporters.csv.CSVReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id2">(simplebench.reporters.csv.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter.name">(simplebench.reporters.CSVReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id14">(simplebench.reporters.CSVReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter.name">(simplebench.reporters.graph.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter.name">(simplebench.reporters.GraphReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.name">(simplebench.reporters.interfaces.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id5">(simplebench.reporters.interfaces.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.name">(simplebench.reporters.json.JSONReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id8">(simplebench.reporters.json.JSONReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.name">(simplebench.reporters.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id17">(simplebench.reporters.Reporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter.name">(simplebench.reporters.rich_table.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id11">(simplebench.reporters.rich_table.RichTableReporter property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter.name">(simplebench.reporters.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#id20">(simplebench.reporters.RichTableReporter property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.RichTableReporter.name">(simplebench.RichTableReporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id18">(simplebench.RichTableReporter property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.RichProgressTasks.new_task">new_task() (simplebench.RichProgressTasks method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichProgressTasks.new_task">(simplebench.tasks.RichProgressTasks method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.node">node (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.enums.Verbosity.NORMAL">NORMAL (simplebench.enums.Verbosity attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.Verbosity.NORMAL">(simplebench.Verbosity attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="O">O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval">OperationsPerInterval (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval">(class in simplebench.stats)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.OperationTimings">OperationTimings (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings">(class in simplebench.stats)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.enums.Section.OPS">OPS (simplebench.enums.Section attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Section.OPS">(simplebench.reporters.Section attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Section.OPS">(simplebench.Section attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.ops_per_interval_scale">ops_per_interval_scale (simplebench.Results attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.ops_per_interval_scale">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.ops_per_interval_unit">ops_per_interval_unit (simplebench.Results attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.ops_per_interval_unit">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Iteration.ops_per_second">ops_per_second (simplebench.Iteration property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.iteration.Iteration.ops_per_second">(simplebench.iteration.Iteration property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Results.ops_per_second">(simplebench.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.results.Results.ops_per_second">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.options">options (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.options">(simplebench.case.Case attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphOptions.output_format">output_format (simplebench.reporters.graph.GraphOptions attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.Session.output_path">output_path (simplebench.Session property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.output_path">(simplebench.session.Session property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="P">P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Session.parse_args">parse_args() (simplebench.Session method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.parse_args">(simplebench.session.Session method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Iteration.per_round_elapsed">per_round_elapsed (simplebench.Iteration property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.iteration.Iteration.per_round_elapsed">(simplebench.iteration.Iteration property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.per_round_timings">per_round_timings (simplebench.Results attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.per_round_timings">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.percentiles">percentiles (simplebench.OperationsPerInterval attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.percentiles">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.percentiles">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id23">(simplebench.Stats property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.percentiles">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.percentiles">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.percentiles">(simplebench.stats.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id4">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Format.PLAIN_TEXT">PLAIN_TEXT (simplebench.Format attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Format.PLAIN_TEXT">(simplebench.reporters.choices.Format attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Format.PLAIN_TEXT">(simplebench.reporters.Format attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.utils.platform_id">platform_id() (in module simplebench.utils)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.processor">processor (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.Session.progress">progress (simplebench.Session property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.progress">(simplebench.session.Session property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.python_build">python_build (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.python_compiler">python_compiler (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.python_implementation">python_implementation (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.python_implementation_version">python_implementation_version (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.utils.python_implementation_version">python_implementation_version() (in module simplebench.utils)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.python_version">python_version (simplebench.utils.MachineInfo attribute)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="Q">Q</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.enums.Verbosity.QUIET">QUIET (simplebench.enums.Verbosity attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.Verbosity.QUIET">(simplebench.Verbosity attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="R">R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.RichTask.refresh">refresh() (simplebench.RichTask method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichTask.refresh">(simplebench.tasks.RichTask method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ReporterManager.register">register() (simplebench.ReporterManager method)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.relative_standard_deviation">relative_standard_deviation (simplebench.OperationsPerInterval attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.relative_standard_deviation">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.relative_standard_deviation">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id24">(simplebench.Stats property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.relative_standard_deviation">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.relative_standard_deviation">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.relative_standard_deviation">(simplebench.stats.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id5">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.release">release (simplebench.utils.MachineInfo attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.Choices.remove">remove() (simplebench.Choices method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choices.remove">(simplebench.reporters.Choices method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choices.remove">(simplebench.reporters.choices.Choices method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Reporter.report">report() (simplebench.Reporter method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.report">(simplebench.reporters.interfaces.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.report">(simplebench.reporters.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Session.report">(simplebench.Session method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.session.Session.report">(simplebench.session.Session method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Reporter">Reporter (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter">(class in simplebench.reporters)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter">(class in simplebench.reporters.interfaces)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choice.reporter">reporter (simplebench.Choice property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice.reporter">(simplebench.reporters.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice.reporter">(simplebench.reporters.choices.Choice property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_ADD_FLAGS_NOT_IMPLEMENTED">REPORTER_ADD_FLAGS_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_ADD_FLAGS_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED">REPORTER_CHOICES_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_DESCRIPTION_NOT_IMPLEMENTED">REPORTER_DESCRIPTION_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_DESCRIPTION_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_INIT_NOT_IMPLEMENTED">REPORTER_INIT_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_INIT_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG">REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS">REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_CLI_ARG">REPORTER_MANAGER_REGISTER_DUPLICATE_CLI_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_CLI_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_NAME">REPORTER_MANAGER_REGISTER_DUPLICATE_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT">REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_RETURNED">REPORTER_MANAGER_REGISTER_INVALID_CHOICES_RETURNED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_RETURNED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG">REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_UNREGISTER_INVALID_REPORTER_ARG">REPORTER_MANAGER_UNREGISTER_INVALID_REPORTER_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_UNREGISTER_INVALID_REPORTER_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME">REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_NAME_NOT_IMPLEMENTED">REPORTER_NAME_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_NAME_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_INVALID_CALLBACK_ARG">REPORTER_REPORT_INVALID_CALLBACK_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_INVALID_CALLBACK_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_INVALID_CASE_ARG">REPORTER_REPORT_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_INVALID_CHOICE_ARG">REPORTER_REPORT_INVALID_CHOICE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_INVALID_CHOICE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_INVALID_PATH_ARG">REPORTER_REPORT_INVALID_PATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_INVALID_PATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_INVALID_SESSION_ARG">REPORTER_REPORT_INVALID_SESSION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_INVALID_SESSION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_NOT_IMPLEMENTED">REPORTER_REPORT_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_UNSUPPORTED_FORMAT">REPORTER_REPORT_UNSUPPORTED_FORMAT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_UNSUPPORTED_FORMAT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_UNSUPPORTED_SECTION">REPORTER_REPORT_UNSUPPORTED_SECTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_UNSUPPORTED_SECTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_REPORT_UNSUPPORTED_TARGET">REPORTER_REPORT_UNSUPPORTED_TARGET (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_REPORT_UNSUPPORTED_TARGET">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_SUPPORTED_FORMATS_NOT_IMPLEMENTED">REPORTER_SUPPORTED_FORMATS_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_SUPPORTED_FORMATS_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_SUPPORTED_SECTIONS_NOT_IMPLEMENTED">REPORTER_SUPPORTED_SECTIONS_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_SUPPORTED_SECTIONS_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTER_SUPPORTED_TARGETS_NOT_IMPLEMENTED">REPORTER_SUPPORTED_TARGETS_NOT_IMPLEMENTED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTER_SUPPORTED_TARGETS_NOT_IMPLEMENTED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ReporterManager">ReporterManager (class in simplebench)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.ReporterOption">ReporterOption (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.reporter_option.ReporterOption">(class in simplebench.reporters.reporter_option)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTERS_REGISTER_DUPLICATE_NAME">REPORTERS_REGISTER_DUPLICATE_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTERS_REGISTER_DUPLICATE_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTERS_REGISTER_INVALID_REPORTER_ARG">REPORTERS_REGISTER_INVALID_REPORTER_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTERS_REGISTER_INVALID_REPORTER_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTERS_UNREGISTER_INVALID_NAME_ARG">REPORTERS_UNREGISTER_INVALID_NAME_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTERS_UNREGISTER_INVALID_NAME_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.REPORTERS_UNREGISTER_UNKNOWN_NAME">REPORTERS_UNREGISTER_UNKNOWN_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.REPORTERS_UNREGISTER_UNKNOWN_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.RichTask.reset">reset() (simplebench.RichTask method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichTask.reset">(simplebench.tasks.RichTask method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results">Results (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results">(class in simplebench.results)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.results">results (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.results">(simplebench.case.Case attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.results_and_data_as_dict">results_and_data_as_dict (simplebench.Results property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.results_and_data_as_dict">(simplebench.results.Results property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.results_as_dict">results_as_dict (simplebench.Results property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.results_as_dict">(simplebench.results.Results property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT">RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARGUMENT">RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARGUMENT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARGUMENT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.results_section">results_section() (simplebench.Results method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.results_section">(simplebench.results.Results method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG">RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASK_DELITEM_NOT_FOUND">RICH_PROGRESS_TASK_DELITEM_NOT_FOUND (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASK_DELITEM_NOT_FOUND">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG">RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASK_GETITEM_NOT_FOUND">RICH_PROGRESS_TASK_GETITEM_NOT_FOUND (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASK_GETITEM_NOT_FOUND">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_DESCRIPTION">RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_DESCRIPTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_DESCRIPTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_NAME">RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASK_NEW_TASK_INVALID_DESCRIPTION_ARG">RICH_PROGRESS_TASK_NEW_TASK_INVALID_DESCRIPTION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASK_NEW_TASK_INVALID_DESCRIPTION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASK_NEW_TASK_INVALID_NAME_ARG">RICH_PROGRESS_TASK_NEW_TASK_INVALID_NAME_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASK_NEW_TASK_INVALID_NAME_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASKS_INIT_INVALID_PROGRESS_ARG">RICH_PROGRESS_TASKS_INIT_INVALID_PROGRESS_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASKS_INIT_INVALID_PROGRESS_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_PROGRESS_TASKS_INIT_INVALID_VERBOSITY_ARG">RICH_PROGRESS_TASKS_INIT_INVALID_VERBOSITY_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_PROGRESS_TASKS_INIT_INVALID_VERBOSITY_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG">RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_INIT_INVALID_SESSION_ARG">RICH_TABLE_REPORTER_INIT_INVALID_SESSION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_INIT_INVALID_SESSION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_CALLBACK_ARG">RICH_TABLE_REPORTER_REPORT_INVALID_CALLBACK_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_CALLBACK_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_CASE_ARG">RICH_TABLE_REPORTER_REPORT_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_CHOICE_ARG">RICH_TABLE_REPORTER_REPORT_INVALID_CHOICE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_CHOICE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_PATH_ARG">RICH_TABLE_REPORTER_REPORT_INVALID_PATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_PATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_SESSION_ARG">RICH_TABLE_REPORTER_REPORT_INVALID_SESSION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_INVALID_SESSION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_MISSING_PATH_ARG">RICH_TABLE_REPORTER_REPORT_MISSING_PATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_MISSING_PATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_FORMAT">RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_FORMAT (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_FORMAT">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION">RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_TARGET">RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_TARGET (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_TARGET">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION">RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_INIT_EMPTY_STRING_NAME">RICH_TASK_INIT_EMPTY_STRING_NAME (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_INIT_EMPTY_STRING_NAME">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_INIT_INVALID_DESCRIPTION_ARG">RICH_TASK_INIT_INVALID_DESCRIPTION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_INIT_INVALID_DESCRIPTION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_INIT_INVALID_NAME_ARG">RICH_TASK_INIT_INVALID_NAME_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_INIT_INVALID_NAME_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_INIT_INVALID_PROGRESS_ARG">RICH_TASK_INIT_INVALID_PROGRESS_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_INIT_INVALID_PROGRESS_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK">RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK">RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_UPDATE_INVALID_COMPLETED_ARG">RICH_TASK_UPDATE_INVALID_COMPLETED_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_UPDATE_INVALID_COMPLETED_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG">RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.RICH_TASK_UPDATE_INVALID_REFRESH_ARG">RICH_TASK_UPDATE_INVALID_REFRESH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.RICH_TASK_UPDATE_INVALID_REFRESH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Format.RICH_TEXT">RICH_TEXT (simplebench.Format attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Format.RICH_TEXT">(simplebench.reporters.choices.Format attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Format.RICH_TEXT">(simplebench.reporters.Format attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.RichProgressTasks">RichProgressTasks (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichProgressTasks">(class in simplebench.tasks)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.RichTableReporter">RichTableReporter (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter">(class in simplebench.reporters)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter">(class in simplebench.reporters.rich_table)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.RichTask">RichTask (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichTask">(class in simplebench.tasks)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.runners.SimpleRunner.run">run (simplebench.runners.SimpleRunner attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.SimpleRunner.run">(simplebench.SimpleRunner attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.run">run() (simplebench.Case method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.run">(simplebench.case.Case method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Session.run">(simplebench.Session method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.session.Session.run">(simplebench.session.Session method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.CSVReporter.run_report">run_report() (simplebench.CSVReporter method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.GraphReporter.run_report">(simplebench.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.JSONReporter.run_report">(simplebench.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.run_report">(simplebench.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter.run_report">(simplebench.reporters.csv.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter.run_report">(simplebench.reporters.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter.run_report">(simplebench.reporters.graph.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter.run_report">(simplebench.reporters.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.run_report">(simplebench.reporters.interfaces.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.run_report">(simplebench.reporters.json.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.run_report">(simplebench.reporters.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter.run_report">(simplebench.reporters.rich_table.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter.run_report">(simplebench.reporters.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.RichTableReporter.run_report">(simplebench.RichTableReporter method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.runner">runner (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.runner">(simplebench.case.Case attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="S">S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.sanitize_filename">sanitize_filename() (in module simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.utils.sanitize_filename">(in module simplebench.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Iteration.scale">scale (simplebench.Iteration attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.iteration.Iteration.scale">(simplebench.iteration.Iteration attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.scale">(simplebench.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.scale">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.scale">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.scale">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.scale">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.scale">(simplebench.stats.Stats attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Section">Section (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.enums.Section">(class in simplebench.enums)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Section">(class in simplebench.reporters)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.section_mean">section_mean() (simplebench.Case method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.section_mean">(simplebench.case.Case method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choice.sections">sections (simplebench.Choice property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice.sections">(simplebench.reporters.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice.sections">(simplebench.reporters.choices.Choice property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Session">Session (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session">(class in simplebench.session)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Reporter.session">session (simplebench.Reporter attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.session">(simplebench.reporters.interfaces.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.session">(simplebench.reporters.Reporter attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.runners.SimpleRunner.session">(simplebench.runners.SimpleRunner attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.SimpleRunner.session">(simplebench.SimpleRunner attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_INIT_INVALID_ARGSPARSER_ARG">SESSION_INIT_INVALID_ARGSPARSER_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_INIT_INVALID_ARGSPARSER_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE">SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_INIT_INVALID_CASES_SEQUENCE_ARG">SESSION_INIT_INVALID_CASES_SEQUENCE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_INIT_INVALID_CASES_SEQUENCE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_INIT_INVALID_OUTPUT_PATH_ARG">SESSION_INIT_INVALID_OUTPUT_PATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_INIT_INVALID_OUTPUT_PATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_INIT_INVALID_VERBOSITY_ARG">SESSION_INIT_INVALID_VERBOSITY_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_INIT_INVALID_VERBOSITY_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG">SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_PROPERTY_INVALID_ARGS_ARG">SESSION_PROPERTY_INVALID_ARGS_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_PROPERTY_INVALID_ARGS_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG">SESSION_PROPERTY_INVALID_CASE_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE">SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_PROPERTY_INVALID_CASES_ARG">SESSION_PROPERTY_INVALID_CASES_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_PROPERTY_INVALID_CASES_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG">SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_PROPERTY_INVALID_PROGRESS_ARG">SESSION_PROPERTY_INVALID_PROGRESS_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_PROPERTY_INVALID_PROGRESS_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_PROPERTY_INVALID_VERBOSITY_ARG">SESSION_PROPERTY_INVALID_VERBOSITY_ARG (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_PROPERTY_INVALID_VERBOSITY_ARG">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_REPORT_INVALID_CHOICE_RETRIEVED">SESSION_REPORT_INVALID_CHOICE_RETRIEVED (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_REPORT_INVALID_CHOICE_RETRIEVED">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_REPORT_OUTPUT_PATH_NOT_SET">SESSION_REPORT_OUTPUT_PATH_NOT_SET (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_REPORT_OUTPUT_PATH_NOT_SET">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.ErrorTag.SESSION_RUN_NO_CASES_TO_RUN">SESSION_RUN_NO_CASES_TO_RUN (simplebench.ErrorTag attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.exceptions.ErrorTag.SESSION_RUN_NO_CASES_TO_RUN">(simplebench.exceptions.ErrorTag attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Session.show_progress">show_progress (simplebench.Session property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.show_progress">(simplebench.session.Session property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.si_scale">si_scale() (in module simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.utils.si_scale">(in module simplebench.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.si_scale_for_smallest">si_scale_for_smallest() (in module simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.utils.si_scale_for_smallest">(in module simplebench.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.si_scale_to_unit">si_scale_to_unit() (in module simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.utils.si_scale_to_unit">(in module simplebench.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.sigfigs">sigfigs() (in module simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.utils.sigfigs">(in module simplebench.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.decorators.simple">simple() (in module simplebench.decorators)</a>
+</li>
+      <li>
+    simplebench
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.case
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.case">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.cli
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.cli">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.constants
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.decorators
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.decorators">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.enums
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.enums">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.exceptions
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.exceptions">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.iteration
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.iteration">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.reporters
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.reporters.choices
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.choices">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.reporters.csv
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.csv">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.reporters.graph
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.graph">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.reporters.interfaces
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.interfaces">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li>
+    simplebench.reporters.json
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.json">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.reporters.reporter_option
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.reporter_option">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.reporters.rich_table
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#module-simplebench.reporters.rich_table">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.results
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.results">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.runners
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.runners">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.session
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.session">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.stats
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.stats">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.tasks
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.tasks">module</a>
+</li>
+      </ul></li>
+      <li>
+    simplebench.utils
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#module-simplebench.utils">module</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.exceptions.SimpleBenchArgumentError">SimpleBenchArgumentError</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.SimpleBenchKeyError">SimpleBenchKeyError</a>, <a href="source/simplebench.html#simplebench.exceptions.SimpleBenchKeyError">[1]</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.exceptions.SimpleBenchNotImplementedError">SimpleBenchNotImplementedError</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.exceptions.SimpleBenchRuntimeError">SimpleBenchRuntimeError</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.SimpleBenchTypeError">SimpleBenchTypeError</a>, <a href="source/simplebench.html#simplebench.exceptions.SimpleBenchTypeError">[1]</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.SimpleBenchValueError">SimpleBenchValueError</a>, <a href="source/simplebench.html#simplebench.exceptions.SimpleBenchValueError">[1]</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.SimpleRunner">SimpleRunner (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.runners.SimpleRunner">(class in simplebench.runners)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.standard_deviation">standard_deviation (simplebench.OperationsPerInterval attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.standard_deviation">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.standard_deviation">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id25">(simplebench.Stats property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.standard_deviation">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.standard_deviation">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.standard_deviation">(simplebench.stats.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#id6">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.RichProgressTasks.start">start() (simplebench.RichProgressTasks method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.RichTask.start">(simplebench.RichTask method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.tasks.RichProgressTasks.start">(simplebench.tasks.RichProgressTasks method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.tasks.RichTask.start">(simplebench.tasks.RichTask method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Stats.statistics_and_data_as_dict">statistics_and_data_as_dict (simplebench.Stats property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.statistics_and_data_as_dict">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Stats.statistics_as_dict">statistics_as_dict (simplebench.Stats property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.statistics_as_dict">(simplebench.stats.Stats property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Stats">Stats (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.stats.Stats">(class in simplebench.stats)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.RichProgressTasks.stop">stop() (simplebench.RichProgressTasks method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.RichTask.stop">(simplebench.RichTask method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.tasks.RichProgressTasks.stop">(simplebench.tasks.RichProgressTasks method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.tasks.RichTask.stop">(simplebench.tasks.RichTask method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphOptions.style">style (simplebench.reporters.graph.GraphOptions attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.CSVReporter.supported_formats">supported_formats() (simplebench.CSVReporter method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.GraphReporter.supported_formats">(simplebench.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.JSONReporter.supported_formats">(simplebench.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.supported_formats">(simplebench.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter.supported_formats">(simplebench.reporters.csv.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter.supported_formats">(simplebench.reporters.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter.supported_formats">(simplebench.reporters.graph.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter.supported_formats">(simplebench.reporters.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.supported_formats">(simplebench.reporters.interfaces.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.supported_formats">(simplebench.reporters.json.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.supported_formats">(simplebench.reporters.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter.supported_formats">(simplebench.reporters.rich_table.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter.supported_formats">(simplebench.reporters.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.RichTableReporter.supported_formats">(simplebench.RichTableReporter method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.CSVReporter.supported_sections">supported_sections() (simplebench.CSVReporter method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.GraphReporter.supported_sections">(simplebench.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.JSONReporter.supported_sections">(simplebench.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.supported_sections">(simplebench.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter.supported_sections">(simplebench.reporters.csv.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter.supported_sections">(simplebench.reporters.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter.supported_sections">(simplebench.reporters.graph.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter.supported_sections">(simplebench.reporters.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.supported_sections">(simplebench.reporters.interfaces.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.supported_sections">(simplebench.reporters.json.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.supported_sections">(simplebench.reporters.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter.supported_sections">(simplebench.reporters.rich_table.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter.supported_sections">(simplebench.reporters.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.RichTableReporter.supported_sections">(simplebench.RichTableReporter method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.CSVReporter.supported_targets">supported_targets() (simplebench.CSVReporter method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.GraphReporter.supported_targets">(simplebench.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.JSONReporter.supported_targets">(simplebench.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Reporter.supported_targets">(simplebench.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.csv.CSVReporter.supported_targets">(simplebench.reporters.csv.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.CSVReporter.supported_targets">(simplebench.reporters.CSVReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphReporter.supported_targets">(simplebench.reporters.graph.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.GraphReporter.supported_targets">(simplebench.reporters.GraphReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.interfaces.Reporter.supported_targets">(simplebench.reporters.interfaces.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.json.JSONReporter.supported_targets">(simplebench.reporters.json.JSONReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Reporter.supported_targets">(simplebench.reporters.Reporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.rich_table.RichTableReporter.supported_targets">(simplebench.reporters.rich_table.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.RichTableReporter.supported_targets">(simplebench.reporters.RichTableReporter method)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.RichTableReporter.supported_targets">(simplebench.RichTableReporter method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.utils.MachineInfo.system">system (simplebench.utils.MachineInfo attribute)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="T">T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Target">Target (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Target">(class in simplebench.reporters)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Target">(class in simplebench.reporters.choices)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Choice.targets">targets (simplebench.Choice property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Choice.targets">(simplebench.reporters.Choice property)</a>
+</li>
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.choices.Choice.targets">(simplebench.reporters.choices.Choice property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Session.tasks">tasks (simplebench.Session property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.tasks">(simplebench.session.Session property)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.RichTask.terminate_and_remove">terminate_and_remove() (simplebench.RichTask method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichTask.terminate_and_remove">(simplebench.tasks.RichTask method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphOptions.theme">theme (simplebench.reporters.graph.GraphOptions attribute)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.enums.Section.TIMING">TIMING (simplebench.enums.Section attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.reporters.html#simplebench.reporters.Section.TIMING">(simplebench.reporters.Section attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Section.TIMING">(simplebench.Section attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.title">title (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.title">(simplebench.case.Case attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Results.title">(simplebench.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.results.Results.title">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.total_elapsed">total_elapsed (simplebench.Results attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.total_elapsed">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="U">U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Iteration.unit">unit (simplebench.Iteration attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.iteration.Iteration.unit">(simplebench.iteration.Iteration attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.OperationsPerInterval.unit">(simplebench.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.OperationTimings.unit">(simplebench.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Stats.unit">(simplebench.Stats attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationsPerInterval.unit">(simplebench.stats.OperationsPerInterval attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.OperationTimings.unit">(simplebench.stats.OperationTimings attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.stats.Stats.unit">(simplebench.stats.Stats attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.ReporterManager.unregister">unregister() (simplebench.ReporterManager method)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.ReporterManager.unregister_by_name">unregister_by_name() (simplebench.ReporterManager method)</a>
+</li>
+      <li><a href="source/simplebench.html#simplebench.RichTask.update">update() (simplebench.RichTask method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.tasks.RichTask.update">(simplebench.tasks.RichTask method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="V">V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.Case.validate">validate() (simplebench.Case method)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.validate">(simplebench.case.Case method)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Case.variation_cols">variation_cols (simplebench.Case attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.case.Case.variation_cols">(simplebench.case.Case attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.Results.variation_cols">(simplebench.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.results.Results.variation_cols">(simplebench.results.Results attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Results.variation_marks">variation_marks (simplebench.Results attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.results.Results.variation_marks">(simplebench.results.Results attribute)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.runners.SimpleRunner.variation_marks">(simplebench.runners.SimpleRunner property)</a>
+</li>
+        <li><a href="source/simplebench.html#simplebench.SimpleRunner.variation_marks">(simplebench.SimpleRunner property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.html#simplebench.enums.Verbosity.VERBOSE">VERBOSE (simplebench.enums.Verbosity attribute)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.Verbosity.VERBOSE">(simplebench.Verbosity attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Verbosity">Verbosity (class in simplebench)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.enums.Verbosity">(class in simplebench.enums)</a>
+</li>
+      </ul></li>
+      <li><a href="source/simplebench.html#simplebench.Session.verbosity">verbosity (simplebench.Session property)</a>
+
+      <ul style="list-style-type:none">
+        <li><a href="source/simplebench.html#simplebench.session.Session.verbosity">(simplebench.session.Session property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="X">X</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphOptions.x_labels_rotation">x_labels_rotation (simplebench.reporters.graph.GraphOptions attribute)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+  <h2 id="Y">Y</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="source/simplebench.reporters.html#simplebench.reporters.graph.GraphOptions.y_starts_at_zero">y_starts_at_zero (simplebench.reporters.graph.GraphOptions attribute)</a>
+</li>
+  </ul></td>
+  </tr>
+      </table>
+  
+
+</div></div>
+<aside id="right-sidebar" class="hidden text-sm xl:block">
+<div class="sticky top-16 -mt-10 max-h-[calc(var(--vh)-4rem)] overflow-y-auto pt-6 space-y-2">
+<a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#A">A</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#B">B</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#C">C</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#D">D</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#E">E</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#F">F</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#G">G</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#H">H</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#I">I</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#J">J</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#K">K</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#M">M</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#N">N</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#O">O</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#P">P</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#Q">Q</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#R">R</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#S">S</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#T">T</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#U">U</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#V">V</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#X">X</a><a class="pt-2 block text-muted-foreground no-underline transition-colors hover:text-foreground focus-visible:outline-offset-[-1px]" href="#Y">Y</a>
+</div>
+</aside>
+        </main>
+      </div>
+    </div><footer class="py-6 border-t border-border md:py-0">
+    <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+      <div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+        <p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025, Jerilyn Franz&nbsp;Built with <a class="font-medium underline underline-offset-4"
+    href="https://www.sphinx-doc.org"
+    rel="noreferrer">Sphinx 8.1.3</a></p>
+</div>
+</div>
+</footer>
+  </div>
+  
+    <script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script defer="defer" src="_static/theme.js?v=073f68d9"></script>
+  
+</body>
+</html>

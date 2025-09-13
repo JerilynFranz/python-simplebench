@@ -10,7 +10,7 @@
 
 # Sphinx stuff
 docs/_build
-docs/make.bat
+#docs/make.bat
 docs/html/.buildinfo
 
 # Bazel generated stuff
