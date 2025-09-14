@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 # A global registry to hold benchmark cases created by the decorator.
 _DECORATOR_CASES: list[Case] = []
+"""List to store benchmark cases registered via the @benchmark decorator."""
 
 
 def benchmark(

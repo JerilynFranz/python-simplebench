@@ -378,6 +378,34 @@ class ErrorTag(str, Enum):
     REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS = "REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS"
     """An ArgumentError was raised when adding reporter flags to the ArgumentParser instance"""
 
+    # utils.si_scale() tags
+    UTILS_SI_SCALE_INVALID_UNIT_ARG_TYPE = "UTILS_SI_SCALE_INVALID_UNIT_ARG_TYPE"
+    """The unit argument was not a str"""
+    UTILS_SI_SCALE_INVALID_UNIT_ARG_VALUE = "UTILS_SI_SCALE_INVALID_UNIT_ARG_VALUE"
+    """The unit argument was an empty str"""
+    UTILS_SI_SCALE_INVALID_BASE_UNIT_ARG_TYPE = "UTILS_SI_SCALE_INVALID_BASE_UNIT_ARG_TYPE"
+    """The base_unit argument was not a str"""
+    UTILS_SI_SCALE_EMPTY_BASE_UNIT_ARG = "UTILS_SI_SCALE_EMPTY_BASE_UNIT_ARG"
+    """The base_unit argument was an empty str"""
+    UTILS_SI_SCALE_UNKNOWN_SI_UNIT_PREFIX = "UTILS_SI_SCALE_UNKNOWN_SI_UNIT_PREFIX"
+    """The specified SI unit is not recognized"""
+    UTILS_SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT = "UTILS_SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT"
+    """The specified SI unit and base unit do not match"""
+
+    # utils.kwargs_variations() tags
+    UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE = "UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE"
+    """The kwargs argument was not a dictionary"""
+    UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE = "UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE"
+    """A kwargs argument value was not a Sequence (e.g., list, tuple, set) or was a str or bytes instance"""
+
+    # utils.sigfigs() tags
+    UTILS_SIGFIGS_INVALID_NUMBER_ARG_TYPE = "UTILS_SIGFIGS_INVALID_NUMBER_ARG_TYPE"
+    """The number argument was not an int or float"""
+    UTILS_SIGFIGS_INVALID_FIGURES_ARG_TYPE = "UTILS_SIGFIGS_INVALID_FIGURES_ARG_TYPE"
+    """The figures argument was not an int"""
+    UTILS_SIGFIGS_INVALID_FIGURES_ARG_VALUE = "UTILS_SIGFIGS_INVALID_FIGURES_ARG_VALUE"
+    """The figures argument was less than 1"""
+
 
 class SimpleBenchTypeError(TypeError):
     """Base class for all SimpleBench type errors.

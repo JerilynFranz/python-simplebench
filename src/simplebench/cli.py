@@ -17,13 +17,19 @@ if TYPE_CHECKING:
 
 
 def main(benchmark_cases: Optional[Sequence[Case]] = None) -> int:
-    """Main entry point for running benchmarks.
+    """Main entry point for running benchmarks via a command-line interface.
+
+    This function is responsible for setting up the command-line interface,
+    parsing arguments, and executing the benchmark cases.
+
+    @benchmark() decorated cases are automatically included and added to the
+    list of benchmark cases passed to this function.
 
     Usage:
         This function serves as the main entry point for running benchmarks.
 
     Args:
-        benchmark_cases (Sequence[Case]): A Sequence of SimpleBench.Case instances to be benchmarked.
+        benchmark_cases (Optional[Sequence[Case]]): A Sequence of SimpleBench.Case instances to be benchmarked.
 
     Returns:
         An integer exit code.

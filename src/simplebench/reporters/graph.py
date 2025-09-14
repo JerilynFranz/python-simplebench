@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from ..session import Session
 
 _lazy_classes_loaded: bool = False
+"""Flag to indicate if lazy-loaded classes have been imported."""
 
 
 def _lazy_load_classes() -> None:
