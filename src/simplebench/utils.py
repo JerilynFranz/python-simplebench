@@ -113,15 +113,18 @@ def sanitize_filename(name: str) -> str:
 
 
 _SI_PREFIXES: list[tuple[float, str, float]] = [
+    (1e15, 'P', 1e-15),
     (1e12, 'T', 1e-12),
     (1e9, 'G', 1e-9),
     (1e6, 'M', 1e-6),
-    (1e3, 'K', 1e-3),
+    (1e3, 'k', 1e-3),
     (1.0, '', 1.0),
     (1e-3, 'm', 1e3),
-    (1e-6, 'μ', 1e6),
+    (1e-6, 'μ', 1e6),  # '\u03bc' Greek Small Letter Mu (SI standard)
+    (1e-6, 'µ', 1e6),  # '\ub5' MICRO SIGN (legacy Unicode compatibility)
     (1e-9, 'n', 1e9),
     (1e-12, 'p', 1e12),
+    (1e-15, 'f', 1e15),
 ]
 """List of SI prefixes with their scale thresholds and inverse scale factors.
 Each tuple contains (scale threshold, prefix, inverse scale factor)."""

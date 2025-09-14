@@ -227,9 +227,9 @@ def test_sigfigs(testspec: TestSpec) -> None:
         expected=1e6),
         id="SI_SCALE_011"),
     pytest.param(TestSpec(
-        name="si_scale - Valid unit 'Ks'",
+        name="si_scale - Valid unit 'ks'",
         action=utils.si_scale,
-        args=['Ks', 's'],
+        args=['ks', 's'],
         kwargs={},
         expected=1e3),
         id="SI_SCALE_012"),
@@ -250,24 +250,31 @@ def test_sigfigs(testspec: TestSpec) -> None:
     pytest.param(TestSpec(
         name="si_scale - Valid unit 'μs'",
         action=utils.si_scale,
-        args=['μs', 's'],
+        args=['μs', 's'],  # '\u03bc' Greek Small Letter Mu (SI standard)
         kwargs={},
         expected=1e-6),
         id="SI_SCALE_015"),
+    pytest.param(TestSpec(
+        name="si_scale - Valid unit 'µs'",
+        action=utils.si_scale,
+        args=['µs', 's'],  # '\u00b5' Micro Sign (legacy Unicode compatibility)
+        kwargs={},
+        expected=1e-6),
+        id="SI_SCALE_016"),
     pytest.param(TestSpec(
         name="si_scale - Valid unit 'ns'",
         action=utils.si_scale,
         args=['ns', 's'],
         kwargs={},
         expected=1e-9),
-        id="SI_SCALE_016"),
+        id="SI_SCALE_017"),
     pytest.param(TestSpec(
         name="si_scale - Valid unit 'ps'",
         action=utils.si_scale,
         args=['ps', 's'],
         kwargs={},
         expected=1e-12),
-        id="SI_SCALE_017"),
+        id="SI_SCALE_018"),
 ])
 def test_si_scale(testspec: TestSpec) -> None:
     """Test utils.si_scale() function."""
