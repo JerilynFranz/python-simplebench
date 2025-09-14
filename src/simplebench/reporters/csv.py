@@ -13,7 +13,8 @@ from ..enums import Section
 from ..exceptions import SimpleBenchValueError, ErrorTag
 from .interfaces import Reporter
 from ..results import Results
-from ..utils import sanitize_filename, sigfigs, si_scale_for_smallest
+from ..si_units import si_scale_for_smallest
+from ..utils import sanitize_filename, sigfigs
 from .choices import Choice, Choices, Target, Format
 if TYPE_CHECKING:
     from ..case import Case

@@ -16,7 +16,8 @@ from .results import Results
 from .iteration import Iteration
 from .stats import OperationsPerInterval, OperationTimings, Stats
 from .tasks import RichProgressTasks, RichTask
-from .utils import sanitize_filename, si_scale_for_smallest, si_scale, si_scale_to_unit, sigfigs
+from .si_units import si_scale, si_scale_for_smallest, si_scale_to_unit, si_unit_base
+from .utils import sanitize_filename, sigfigs, kwargs_variations
 from .reporters import ReporterManager
 from .reporters.interfaces import Reporter
 from .reporters.choices import Choices, Choice, Target, Format
@@ -83,5 +84,7 @@ __all__ = [
     'si_scale_for_smallest',
     'si_scale',
     'si_scale_to_unit',
+    'si_unit_base',
+    'kwargs_variations',
     'sigfigs'
 ]

@@ -17,7 +17,8 @@ from ..enums import Section
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from ..results import Results
 from .reporter_option import ReporterOption
-from ..utils import sanitize_filename, si_scale_for_smallest
+from ..si_units import si_scale_for_smallest
+from ..utils import sanitize_filename
 from .choices import Choice, Choices, Format, Target
 from .interfaces import Reporter
 if TYPE_CHECKING:
