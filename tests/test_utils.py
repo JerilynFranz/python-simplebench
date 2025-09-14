@@ -279,3 +279,124 @@ def test_sigfigs(testspec: TestSpec) -> None:
 def test_si_scale(testspec: TestSpec) -> None:
     """Test utils.si_scale() function."""
     testspec.run()
+
+
+@pytest.mark.parametrize("testspec", [
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - missing base_unit arg",
+        args=[],
+        kwargs={'current_unit': 's', 'target_unit': 's'},
+        action=utils.si_scale_to_unit,
+        exception=TypeError),
+        id="SI_SCALE_TO_UNIT_001"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - missing current_unit arg",
+        args=[],
+        kwargs={'base_unit': 's', 'target_unit': 's'},
+        action=utils.si_scale_to_unit,
+        exception=TypeError),
+        id="SI_SCALE_TO_UNIT_002"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - missing target_unit arg",
+        args=[],
+        kwargs={'base_unit': 's', 'current_unit': 's'},
+        action=utils.si_scale_to_unit,
+        exception=TypeError),
+        id="SI_SCALE_TO_UNIT_003"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - invalid base_unit arg type (int)",
+        args=[],
+        kwargs={'base_unit': 1, 'current_unit': 's', 'target_unit': 's'},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE),
+        id="SI_SCALE_TO_UNIT_004"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - invalid current_unit arg type (int)",
+        args=[],
+        kwargs={'base_unit': 's', 'current_unit': 1, 'target_unit': 's'},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_INVALID_CURRENT_UNIT_ARG_TYPE),
+        id="SI_SCALE_TO_UNIT_005"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - invalid target_unit arg type (int)",
+        args=[],
+        kwargs={'base_unit': 's', 'current_unit': 's', 'target_unit': 1},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_INVALID_TARGET_UNIT_ARG_TYPE),
+        id="SI_SCALE_TO_UNIT_006"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - empty base_unit arg",
+        args=[],
+        kwargs={'base_unit': '', 'current_unit': 's', 'target_unit': 's'},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_EMPTY_BASE_UNIT_ARG),
+        id="SI_SCALE_TO_UNIT_007"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - empty current_unit arg",
+        args=[],
+        kwargs={'base_unit': 's', 'current_unit': '', 'target_unit': 's'},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_EMPTY_CURRENT_UNIT_ARG),
+        id="SI_SCALE_TO_UNIT_008"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - empty target_unit arg",
+        args=[],
+        kwargs={'base_unit': 's', 'current_unit': 's', 'target_unit': ''},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_EMPTY_TARGET_UNIT_ARG),
+        id="SI_SCALE_TO_UNIT_009"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - base_unit does not match other units",
+        args=[],
+        kwargs={'base_unit': 'm', 'current_unit': 'ms', 'target_unit': 'ms'},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
+        id="SI_SCALE_TO_UNIT_010"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - current_unit does not match other units",
+        args=[],
+        kwargs={'base_unit': 'ms', 'current_unit': 'm', 'target_unit': 'ms'},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
+        id="SI_SCALE_TO_UNIT_011"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - target_unit does not match other units",
+        args=[],
+        kwargs={'base_unit': 'ms', 'current_unit': 'ms', 'target_unit': 'm'},
+        action=utils.si_scale_to_unit,
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.UTILS_SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
+        id="SI_SCALE_TO_UNIT_012"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - valid args, no scaling (s to s)",
+        args=['s', 's', 's'],
+        kwargs={},
+        action=utils.si_scale_to_unit,
+        expected=1.0),
+        id="SI_SCALE_TO_UNIT_013"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - valid args, scaling up (ms to s)",
+        args=['s', 'ms', 's'],
+        kwargs={},
+        action=utils.si_scale_to_unit,
+        expected=1e3),
+        id="SI_SCALE_TO_UNIT_014"),
+    pytest.param(TestSpec(
+        name="si_scale_to_unit - valid args, scaling down (s to ms)",
+        args=['s', 's', 'ms'],
+        kwargs={},
+        action=utils.si_scale_to_unit,
+        expected=1e-3),
+        id="SI_SCALE_TO_UNIT_015"),
+])
+def test_si_scale_to_unit(testspec: TestSpec) -> None:
+    """Test utils.si_scale_to_unit() function."""
+    testspec.run()

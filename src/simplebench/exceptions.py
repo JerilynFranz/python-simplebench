@@ -392,6 +392,30 @@ class ErrorTag(str, Enum):
     UTILS_SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT = "UTILS_SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT"
     """The specified SI unit and base unit do not match"""
 
+    # utils.si_unit_base() tags
+    UTILS_SI_UNIT_BASE_EMPTY_UNIT_ARG = "UTILS_SI_UNIT_BASE_EMPTY_UNIT_ARG"
+    """The unit argument was an empty str"""
+    UTILS_SI_UNIT_BASE_INVALID_UNIT_ARG_TYPE = "UTILS_SI_UNIT_BASE_INVALID_UNIT_ARG_TYPE"
+    """The unit argument was not a str"""
+    UTILS_SI_UNIT_BASE_UNKNOWN_SI_UNIT_PREFIX = "UTILS_SI_UNIT_BASE_UNKNOWN_SI_UNIT_PREFIX"
+    """The specified SI unit prefix is not recognized"""
+
+    # utils.si_scale_to_unit() tags
+    UTILS_SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE = "UTILS_SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE"
+    """The base_unit argument was not a str"""
+    UTILS_SI_SCALE_TO_UNIT_EMPTY_BASE_UNIT_ARG = "UTILS_SI_SCALE_TO_UNIT_EMPTY_BASE_UNIT_ARG"
+    """The base_unit argument was an empty str"""
+    UTILS_SI_SCALE_TO_UNIT_INVALID_CURRENT_UNIT_ARG_TYPE = "UTILS_SI_SCALE_TO_UNIT_INVALID_CURRENT_UNIT_ARG_TYPE"
+    """The current_unit argument was not a str"""
+    UTILS_SI_SCALE_TO_UNIT_EMPTY_CURRENT_UNIT_ARG = "UTILS_SI_SCALE_TO_UNIT_EMPTY_CURRENT_UNIT_ARG"
+    """The current_unit argument was an empty str"""
+    UTILS_SI_SCALE_TO_UNIT_INVALID_TARGET_UNIT_ARG_TYPE = "UTILS_SI_SCALE_TO_UNIT_INVALID_TARGET_UNIT_ARG_TYPE"
+    """The target_unit argument was not a str"""
+    UTILS_SI_SCALE_TO_UNIT_EMPTY_TARGET_UNIT_ARG = "UTILS_SI_SCALE_TO_UNIT_EMPTY_TARGET_UNIT_ARG"
+    """The target_unit argument was an empty str"""
+    UTILS_SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS = "UTILS_SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS"
+    """The specified base_unit, current_unit, target_unit are not all compatible"""
+
     # utils.kwargs_variations() tags
     UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE = "UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE"
     """The kwargs argument was not a dictionary"""
