@@ -52,10 +52,13 @@ def python_implementation_version() -> str:
     python_implementation: str = platform.python_implementation()
     py_implementation_version: str = platform.python_version()
     if python_implementation == 'PyPy':
-        version_info: 'sys.pypy_version_info' = sys.pypy_version_info  # pyright: ignore[reportAttributeAccessIssue] # pylint: disable=no-member # noqa: E501
-        py_implementation_version = (
-            f'{version_info.major:d}.{version_info.minor:d}.{version_info.micro:d}'
-            f'-{version_info.releaselevel:d}{version_info.serial:d}')
+        version_info = getattr(sys, 'pypy_version_info', None)
+        if version_info is not None:
+            py_implementation_version = (
+                f'{version_info.major:d}.{version_info.minor:d}.{version_info.micro:d}'
+                f'-{version_info.releaselevel:d}{version_info.serial:d}')
+        else:
+            py_implementation_version = 'unknown'
     return py_implementation_version
 
 
@@ -133,23 +136,31 @@ _SI_PREFIXES_SCALE = {scale[1]: scale[0] for scale in _SI_PREFIXES}
 """Mapping of SI prefixes to their scale factors."""
 
 
-def si_scale_for_smallest(numbers: list[float], base_unit: str) -> tuple[str, float]:
-    """Scale factor and SI unit for the smallest in list of numbers.
+def si_scale_for_smallest(numbers: Sequence[float | int], base_unit: str) -> tuple[str, float]:
+    """Scale factor and SI unit for the smallest in a sequence of numbers.
 
-    The scale factor is the factor that will be applied to the numbers to convert
+    The scale factor is the factor that should be applied to the numbers to convert
     them to the desired unit. The SI unit is the unit that corresponds to the scale factor.
 
-    If passed only one number, it effectively gives the scale for that single number.
-    If passed a list, it gives the scale for the smallest absolute value in the list.
+    It gives the SI prefix unit and scale for the smallest non-zero absolute value in the sequence.
+    If all numbers are zero, it returns the base unit and a scale factor of 1.0.
 
     Args:
-        numbers: A list of numbers to scale.
+        numbers: A sequence of numbers to scale.
         base_unit: The base unit to use for scaling.
 
     Returns:
         A tuple containing the scaled unit and the scaling factor.
     """
-    if not numbers:
+    if not isinstance(numbers, Sequence) or isinstance(numbers, (str, bytes)):
+        raise SimpleBenchTypeError(
+            "numbers arg must be a Sequence of int or float",
+            ErrorTag.UTILS_SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE)
+    if not all(isinstance(n, (int, float)) for n in numbers):
+        raise SimpleBenchTypeError(
+            "all items in numbers arg sequence must be type int or float",
+            ErrorTag.UTILS_SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_VALUES_TYPE)
+    if not numbers or all(n == 0 for n in numbers):
         return base_unit, 1.0
 
     min_n: float = min([abs(n) for n in numbers if n != 0], default=0.0)

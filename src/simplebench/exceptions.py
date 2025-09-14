@@ -400,6 +400,13 @@ class ErrorTag(str, Enum):
     UTILS_SI_UNIT_BASE_UNKNOWN_SI_UNIT_PREFIX = "UTILS_SI_UNIT_BASE_UNKNOWN_SI_UNIT_PREFIX"
     """The specified SI unit prefix is not recognized"""
 
+    # utils.si_scale_for_smallest() tags
+    UTILS_SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE = "UTILS_SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE"
+    """The numbers argument was not a list"""
+    UTILS_SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_VALUES_TYPE = (
+        "UTILS_SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_VALUES_TYPE")
+    """One or more values in the numbers argument was not an int or float"""
+
     # utils.si_scale_to_unit() tags
     UTILS_SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE = "UTILS_SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE"
     """The base_unit argument was not a str"""
