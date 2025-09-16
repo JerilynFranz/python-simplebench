@@ -80,8 +80,9 @@ class TestSetGet(TestSpec):
         name (str):
             Identifying name for the test.
         obj (Optional[object], default=NO_OBJ_ASSIGNED):
-            The object whose attribute is to be tested. If not provided, the special sentinel value NO_OBJ_ASSIGNED is used.
-            The object must not be None and must be an instance of object. It must be provided to run the test.
+            The object whose attribute is to be tested. If not provided, the special sentinel value
+            NO_OBJ_ASSIGNED is used. The object must not be None and must be an instance of object.
+            It must be provided to run the test.
         attribute (str):
             The name of the attribute to be tested by setting.
         value (Any):
