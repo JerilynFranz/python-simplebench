@@ -92,7 +92,6 @@ class TaggedException(Exception, Generic[E]):
 
         raise MyTaggedValueError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
-
     Args:
         *args: Positional arguments to pass to the base exception's constructor.
         tag (Enum): An Enum member representing the error code.
