@@ -231,7 +231,7 @@ class RichTableReporter(Reporter):
             else:  # This should never happen due to earlier validation
                 raise SimpleBenchValueError(
                     f"Unsupported section: {section} (this should not happen)",
-                    ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION)
+                    tag=ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION)
 
             table = self._to_rich_table(case=case, section=section, base_unit=base_unit)
             console: Console

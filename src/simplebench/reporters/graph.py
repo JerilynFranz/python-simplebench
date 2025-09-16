@@ -134,14 +134,14 @@ class GraphOptions(ReporterOption):
         if not isinstance(theme, dict):
             raise SimpleBenchTypeError(
                 f"theme must be a dict not a {type(theme)}",
-                ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE)
+                tag=ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE)
         self.theme: dict[str, Any] = theme
         """The theme to use for the graphs."""
 
         if style not in ['dark_background', 'default']:
             raise SimpleBenchValueError(
                 f"Unsupported style: {style}. Supported styles are 'dark_background' and 'default'.",
-                ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE)
+                tag=ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE)
         self.style: str = style
         """The style to use for the graphs.
         See https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html"""
@@ -149,28 +149,28 @@ class GraphOptions(ReporterOption):
         if aspect_ratio <= 0:
             raise SimpleBenchValueError(
                 "Aspect ratio must be a positive number",
-                ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO)
+                tag=ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO)
         self.aspect_ratio: float = aspect_ratio
         """The aspect ratio (width / height) to use for the graphs."""
 
         if not isinstance(y_starts_at_zero, bool):
             raise SimpleBenchTypeError(
                 f"y_starts_at_zero must be a bool not a {type(y_starts_at_zero)}",
-                ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE)
+                tag=ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE)
         self.y_starts_at_zero: bool = y_starts_at_zero
         """Whether the y-axis should start at zero."""
 
         if not isinstance(x_labels_rotation, float):
             raise SimpleBenchTypeError(
                 f"x_labels_rotation must be a float not a {type(x_labels_rotation)}",
-                ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE)
+                tag=ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE)
         self.x_labels_rotation: float = x_labels_rotation
         """The rotation angle (in degrees) for x-axis labels."""
 
         if output_format not in ['svg', 'png']:
             raise SimpleBenchValueError(
                 f"Unsupported output format: {output_format}. Supported formats are 'svg' and 'png'.",
-                ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT)
+                tag=ErrorTag.GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT)
         self.output_format: Literal['svg', 'png'] = output_format
         """The output format for the graph files. SVG by default."""
 
@@ -319,7 +319,7 @@ class GraphReporter(Reporter):
         if output_format not in ['svg', 'png']:
             raise SimpleBenchValueError(
                 f"Unsupported output format: {output_format}. Supported formats are 'svg' and 'png'.",
-                ErrorTag.GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT)
+                tag=ErrorTag.GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT)
 
         for section in choice.sections:
             base_unit: str = ''
@@ -330,7 +330,7 @@ class GraphReporter(Reporter):
             else:  # This should never happen due to earlier validation
                 raise SimpleBenchValueError(
                     f"Unsupported section: {section} (this should not happen)",
-                    ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION)
+                    tag=ErrorTag.GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION)
 
             filename: str = sanitize_filename(section.value)
             if Target.FILESYSTEM in choice.targets:
@@ -371,17 +371,17 @@ class GraphReporter(Reporter):
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
-                ErrorTag.GRAPH_REPORTER_PLOT_INVALID_CASE_ARG)
+                tag=ErrorTag.GRAPH_REPORTER_PLOT_INVALID_CASE_ARG)
 
         if not isinstance(graphfile, (BytesIO, BufferedWriter)):
             raise SimpleBenchTypeError(
                 "Expected a BytesIO or BufferedWriter instance",
-                ErrorTag.GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG)
+                tag=ErrorTag.GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG)
 
         if not isinstance(section, Section) or section not in [Section.OPS, Section.TIMING]:
             raise SimpleBenchTypeError(
                 "section must be either Section.OPS or Section.TIMING",
-                ErrorTag.GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG)
+                tag=ErrorTag.GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG)
 
         results: list[Results] = case.results
         if not results:

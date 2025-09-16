@@ -100,14 +100,14 @@ class Choice:
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
                 "reporter must implement the Reporter interface",
-                ErrorTag.CHOICE_INIT_INVALID_REPORTER_ARG)
+                tag=ErrorTag.CHOICE_INIT_INVALID_REPORTER_ARG)
         self._reporter: Reporter = reporter
         """The Reporter sub-class instance associated with the choice"""
 
         if not isinstance(flags, Sequence) or not all(isinstance(f, str) for f in flags):
             raise SimpleBenchTypeError(
                 "flags must be a sequence of strings",
-                ErrorTag.CHOICE_INIT_INVALID_NAME_ARG)
+                tag=ErrorTag.CHOICE_INIT_INVALID_NAME_ARG)
         self._flags: set[str] = set(flags)
         """Flags associated with the choice. These are used for command-line selection.
         They must be unique across all choices for all reporters. This is enforced
@@ -125,55 +125,55 @@ class Choice:
         if not isinstance(name, str):
             raise SimpleBenchTypeError(
                 "Name must be a string",
-                ErrorTag.CHOICE_INIT_INVALID_NAME_ARG)
+                tag=ErrorTag.CHOICE_INIT_INVALID_NAME_ARG)
         if not name:
             raise SimpleBenchValueError(
                 "Name cannot be an empty string",
-                ErrorTag.CHOICE_INIT_EMPTY_STRING_NAME)
+                tag=ErrorTag.CHOICE_INIT_EMPTY_STRING_NAME)
         self._name: str = name
         """Name of the choice"""
 
         if not isinstance(description, str):
             raise SimpleBenchTypeError(
                 "Description must be a string",
-                ErrorTag.CHOICE_INIT_INVALID_DESCRIPTION_ARG)
+                tag=ErrorTag.CHOICE_INIT_INVALID_DESCRIPTION_ARG)
         if not description:
             raise SimpleBenchValueError(
                 "Description cannot be an empty string",
-                ErrorTag.CHOICE_INIT_EMPTY_STRING_DESCRIPTION)
+                tag=ErrorTag.CHOICE_INIT_EMPTY_STRING_DESCRIPTION)
         self._description: str = description
         """Description of the choice"""
 
         if not isinstance(sections, Sequence) or not all(isinstance(s, Section) for s in sections):
             raise SimpleBenchTypeError(
                 "Sections must be a sequence of Section enums",
-                ErrorTag.CHOICE_INIT_INVALID_SECTIONS_ARG)
+                tag=ErrorTag.CHOICE_INIT_INVALID_SECTIONS_ARG)
         if not sections:
             raise SimpleBenchValueError(
                 "Sections cannot be an empty sequence",
-                ErrorTag.CHOICE_INIT_EMPTY_SECTIONS)
+                tag=ErrorTag.CHOICE_INIT_EMPTY_SECTIONS)
         self._sections: set[Section] = set(sections)
         """Sections included in the choice"""
 
         if not isinstance(targets, Sequence) or not all(isinstance(t, Target) for t in targets):
             raise SimpleBenchTypeError(
                 "Output targets must be a sequence of Target enums",
-                ErrorTag.CHOICE_INIT_INVALID_TARGETS_ARG)
+                tag=ErrorTag.CHOICE_INIT_INVALID_TARGETS_ARG)
         if not targets:
             raise SimpleBenchValueError(
                 "Output targets cannot be an empty sequence",
-                ErrorTag.CHOICE_INIT_EMPTY_TARGETS)
+                tag=ErrorTag.CHOICE_INIT_EMPTY_TARGETS)
         self._targets: set[Target] = set(targets)
         """Output targets for the choice"""
 
         if not isinstance(formats, Sequence) or not all(isinstance(f, Format) for f in formats):
             raise SimpleBenchTypeError(
                 "Output formats must be a sequence of Format enums",
-                ErrorTag.CHOICE_INIT_INVALID_FORMATS_ARG)
+                tag=ErrorTag.CHOICE_INIT_INVALID_FORMATS_ARG)
         if not formats:
             raise SimpleBenchValueError(
                 "Output formats cannot be an empty sequence",
-                ErrorTag.CHOICE_INIT_EMPTY_FORMATS)
+                tag=ErrorTag.CHOICE_INIT_EMPTY_FORMATS)
         self._formats: set[Format] = set(formats)
         """Output formats for the choice"""
 
@@ -277,11 +277,11 @@ class Choices(UserDict[str, Choice]):
         if not isinstance(choice, Choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
-                ErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG)
+                tag=ErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG)
         if choice.name in self.data:
             raise SimpleBenchValueError(
                 f"A Choice with the name '{choice.name}' already exists",
-                ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_NAME)
+                tag=ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_NAME)
         self.data[choice.name] = choice
         self._args_index.update({arg.replace('--', '', 1).replace('-', '_'): choice for arg in choice.flags})
 
@@ -328,7 +328,7 @@ class Choices(UserDict[str, Choice]):
         else:
             raise SimpleBenchTypeError(
                 "Expected a Sequence of Choice instances or a Choices instance",
-                ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG)
+                tag=ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG)
 
     def remove(self, name: str) -> None:
         """Remove a Choice instance from the container by its name.
@@ -342,7 +342,7 @@ class Choices(UserDict[str, Choice]):
         if name not in self.data:
             raise SimpleBenchValueError(
                 f"No Choice with the name '{name}' exists",
-                ErrorTag.CHOICES_REMOVE_UNKNOWN_CHOICE_NAME)
+                tag=ErrorTag.CHOICES_REMOVE_UNKNOWN_CHOICE_NAME)
         choice = self.data[name]
         del self.data[name]
         for arg in choice.flags:

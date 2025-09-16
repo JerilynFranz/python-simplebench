@@ -58,7 +58,7 @@ class Session:
         if args_parser is not None and not isinstance(args_parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 f'args_parser must be an ArgumentParser instance - cannot be a {type(args_parser)}',
-                ErrorTag.SESSION_INIT_INVALID_ARGSPARSER_ARG
+                tag=ErrorTag.SESSION_INIT_INVALID_ARGSPARSER_ARG
             )
         self._args_parser: ArgumentParser = args_parser if args_parser else ArgumentParser()
         """The ArgumentParser instance for the session."""
@@ -83,7 +83,7 @@ class Session:
         if output_path is not None and not isinstance(output_path, Path):
             raise SimpleBenchTypeError(
                 f'output_path must be a Path instance - cannot be a {type(output_path)}',
-                ErrorTag.SESSION_INIT_INVALID_OUTPUT_PATH_ARG
+                tag=ErrorTag.SESSION_INIT_INVALID_OUTPUT_PATH_ARG
             )
         self._output_path: Optional[Path] = output_path
         """The output path for reports."""
@@ -93,20 +93,20 @@ class Session:
         if not isinstance(cases, Sequence):
             raise SimpleBenchTypeError(
                 f'cases must be a Sequence of Case instances - cannot be a {type(cases)}',
-                ErrorTag.SESSION_INIT_INVALID_CASES_SEQUENCE_ARG
+                tag=ErrorTag.SESSION_INIT_INVALID_CASES_SEQUENCE_ARG
             )
         for entry in cases:
             if not isinstance(entry, Case):
                 error_text = f'case items must be Case instances - cannot be a {type(entry)}'
                 raise SimpleBenchTypeError(error_text,
-                                           ErrorTag.SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE)
+                                           tag=ErrorTag.SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE)
         self._cases = cases
         """The Sequence of benchmark cases for the session."""
 
         if not isinstance(verbosity, Verbosity):
             raise SimpleBenchTypeError(
                 f'verbosity must be a Verbosity instance - cannot be a {type(verbosity)}',
-                ErrorTag.SESSION_INIT_INVALID_VERBOSITY_ARG
+                tag=ErrorTag.SESSION_INIT_INVALID_VERBOSITY_ARG
             )
         self._verbosity = verbosity
         """The verbosity level for console output."""
@@ -240,7 +240,7 @@ class Session:
             if not isinstance(choice, Choice):
                 raise SimpleBenchTypeError(
                     "choice must be a Choice instance",
-                    ErrorTag.SESSION_REPORT_INVALID_CHOICE_RETRIEVED
+                    tag=ErrorTag.SESSION_REPORT_INVALID_CHOICE_RETRIEVED
                 )
             # If we have already processed this Choice (there can be multiple
             # possible valid triggering args defined for a single Choice), then skip it.
@@ -287,7 +287,7 @@ class Session:
                         flag: str = '--' + key.replace('_', '-')
                         raise SimpleBenchTypeError(
                             f'output_path must be set to generate Choice {choice.name} / {flag} report',
-                            ErrorTag.SESSION_REPORT_OUTPUT_PATH_NOT_SET
+                            tag=ErrorTag.SESSION_REPORT_OUTPUT_PATH_NOT_SET
                         )
                     group_path = sanitize_filename(case.group)
                     output_path = output_path / platform_name / group_path / timestamp
@@ -322,7 +322,7 @@ class Session:
         if not isinstance(value, Namespace):
             raise SimpleBenchTypeError(
                 f'args must be a Namespace instance - cannot be a {type(value)}',
-                ErrorTag.SESSION_PROPERTY_INVALID_ARGS_ARG
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_ARGS_ARG
             )
         self._args = value
 
@@ -349,7 +349,7 @@ class Session:
         if not isinstance(value, bool):
             raise SimpleBenchTypeError(
                 f'progress must be a bool - cannot be a {type(value)}',
-                ErrorTag.SESSION_PROPERTY_INVALID_PROGRESS_ARG
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_PROGRESS_ARG
             )
         self._show_progress = value
 
@@ -381,7 +381,7 @@ class Session:
         if not isinstance(value, Verbosity):
             raise SimpleBenchTypeError(
                 f'verbosity must be a Verbosity instance - cannot be a {type(value)}',
-                ErrorTag.SESSION_PROPERTY_INVALID_VERBOSITY_ARG
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_VERBOSITY_ARG
             )
         self._verbosity = value
 
@@ -403,14 +403,14 @@ class Session:
         if not isinstance(value, Sequence):
             raise SimpleBenchTypeError(
                 f'value must be a Sequence of Case - cannot be a {type(value)}',
-                ErrorTag.SESSION_PROPERTY_INVALID_CASES_ARG
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_CASES_ARG
             )
         for case in value:
             if not isinstance(case, Case):
                 error_text = f'items in Sequence must be Case instances - cannot be a {type(case)}'
                 raise SimpleBenchTypeError(
                     error_text,
-                    ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
+                    tag=ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
                 )
         self._cases = value
 
@@ -426,7 +426,7 @@ class Session:
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 f'case must be a Case instance - cannot be a {type(case)}',
-                ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG
             )
         self._cases = list(self._cases) + [case]
 
@@ -442,14 +442,14 @@ class Session:
         if not isinstance(cases, Sequence):
             raise SimpleBenchTypeError(
                 f'cases must be a Sequence of Case - cannot be a {type(cases)}',
-                ErrorTag.SESSION_PROPERTY_INVALID_CASES_ARG
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_CASES_ARG
             )
         for case in cases:
             if not isinstance(case, Case):
                 error_text = f'items in Sequence must be Case instances - cannot be a {type(case)}'
                 raise SimpleBenchTypeError(
                     error_text,
-                    ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
+                    tag=ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
                 )
         self._cases = list(self._cases) + list(cases)
 
@@ -468,6 +468,6 @@ class Session:
         if not isinstance(value, Path):
             raise SimpleBenchTypeError(
                 f'output_path must be a Path instance - cannot be a {type(value)}',
-                ErrorTag.SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG
             )
         self._output_path = value

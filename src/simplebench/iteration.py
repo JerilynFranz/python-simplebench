@@ -26,21 +26,21 @@ class Iteration:
 
     def __post_init__(self):
         if not isinstance(self.n, int):
-            raise SimpleBenchTypeError('n must be an int', ErrorTag.ITERATION_INIT_N_ARG_TYPE)
+            raise SimpleBenchTypeError('n must be an int', tag=ErrorTag.ITERATION_INIT_N_ARG_TYPE)
         if self.n <= 0:
-            raise SimpleBenchValueError('n must be positive', ErrorTag.ITERATION_INIT_N_ARG_VALUE)
+            raise SimpleBenchValueError('n must be positive', tag=ErrorTag.ITERATION_INIT_N_ARG_VALUE)
         if not isinstance(self.elapsed, int):
-            raise SimpleBenchTypeError('elapsed must be an int', ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE)
+            raise SimpleBenchTypeError('elapsed must be an int', tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE)
         if self.elapsed < 0:
-            raise SimpleBenchValueError('elapsed must be non-negative', ErrorTag.ITERATION_INIT_ELAPSED_ARG_VALUE)
+            raise SimpleBenchValueError('elapsed must be non-negative', tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_VALUE)
         if not isinstance(self.unit, str):
-            raise SimpleBenchTypeError('unit must be a str', ErrorTag.ITERATION_INIT_UNIT_ARG_TYPE)
+            raise SimpleBenchTypeError('unit must be a str', tag=ErrorTag.ITERATION_INIT_UNIT_ARG_TYPE)
         if not self.unit:
-            raise SimpleBenchValueError('unit must be a non-empty str', ErrorTag.ITERATION_INIT_UNIT_ARG_VALUE)
+            raise SimpleBenchValueError('unit must be a non-empty str', tag=ErrorTag.ITERATION_INIT_UNIT_ARG_VALUE)
         if not isinstance(self.scale, float):
-            raise SimpleBenchTypeError('scale must be a float', ErrorTag.ITERATION_INIT_SCALE_ARG_TYPE)
+            raise SimpleBenchTypeError('scale must be a float', tag=ErrorTag.ITERATION_INIT_SCALE_ARG_TYPE)
         if self.scale <= 0.0:
-            raise SimpleBenchValueError('scale must be a positive float', ErrorTag.ITERATION_INIT_SCALE_ARG_VALUE)
+            raise SimpleBenchValueError('scale must be a positive float', tag=ErrorTag.ITERATION_INIT_SCALE_ARG_VALUE)
 
     @property
     def per_round_elapsed(self) -> float:

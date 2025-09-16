@@ -172,7 +172,7 @@ class CSVReporter(Reporter):
             else:  # This should never happen due to earlier validation
                 raise SimpleBenchValueError(
                     f"Unsupported section: {section} (this should never happen)",
-                    ErrorTag.CSV_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION)
+                    tag=ErrorTag.CSV_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION)
 
             filename: str = sanitize_filename(section.value)
             if Target.FILESYSTEM in choice.targets:

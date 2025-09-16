@@ -54,11 +54,11 @@ class Stats:
         if not isinstance(unit, str):
             raise SimpleBenchTypeError(
                 "unit must be a str",
-                ErrorTag.STATS_INVALID_UNIT_ARG_TYPE)
+                tag=ErrorTag.STATS_INVALID_UNIT_ARG_TYPE)
         if unit == '':
             raise SimpleBenchValueError(
                 "unit must not be an empty string",
-                ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)
+                tag=ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)
         self._unit = unit
 
     @property
@@ -82,11 +82,11 @@ class Stats:
         if not isinstance(scale, (float, int)):
             raise SimpleBenchTypeError(
                 "scale must be a float or int",
-                ErrorTag.STATS_INVALID_SCALE_ARG_TYPE)
+                tag=ErrorTag.STATS_INVALID_SCALE_ARG_TYPE)
         if scale <= 0:
             raise SimpleBenchValueError(
                 "scale must be greater than 0",
-                ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)
+                tag=ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)
         self._scale = float(scale)
 
     @property
@@ -107,13 +107,13 @@ class Stats:
         if data is not None and not isinstance(data, list):
             raise SimpleBenchTypeError(
                 "data must be a list of numbers (int or float) or None",
-                ErrorTag.STATS_INVALID_DATA_ARG_TYPE)
+                tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE)
         if data is not None:
             for value in data:
                 if not isinstance(value, (int, float)):
                     raise SimpleBenchTypeError(
                         "data values must be a list of int or float not " + str(type(value)),
-                        ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)
+                        tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)
         else:
             data = []
         self._data = data

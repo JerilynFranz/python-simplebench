@@ -67,7 +67,7 @@ class Reporter(ABC):
         """Initialize the reporter with Sections, Targets, and Formats."""
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the __init__ method",
-            ErrorTag.REPORTER_INIT_NOT_IMPLEMENTED
+            tag=ErrorTag.REPORTER_INIT_NOT_IMPLEMENTED
         )
 
     @abstractmethod
@@ -75,7 +75,7 @@ class Reporter(ABC):
         """Return the set of supported output formats for the reporter."""
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the supported_formats method",
-            ErrorTag.REPORTER_SUPPORTED_FORMATS_NOT_IMPLEMENTED
+            tag=ErrorTag.REPORTER_SUPPORTED_FORMATS_NOT_IMPLEMENTED
         )
         # return set([Format.CSV, Format.MARKDOWN, Format.JSON, Format.RICH_TEXT, Format.GRAPH]) --- IGNORE ---
 
@@ -84,7 +84,7 @@ class Reporter(ABC):
         """Return the set of supported result sections for the reporter."""
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the supported_sections method",
-            ErrorTag.REPORTER_SUPPORTED_SECTIONS_NOT_IMPLEMENTED
+            tag=ErrorTag.REPORTER_SUPPORTED_SECTIONS_NOT_IMPLEMENTED
         )
         # return set([Section.OPS, Section.TIMING, Section.MEMORY]) --- IGNORE ---
 
@@ -93,7 +93,7 @@ class Reporter(ABC):
         """Return the set of supported output targets for the reporter."""
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the supported_targets method",
-            ErrorTag.REPORTER_SUPPORTED_TARGETS_NOT_IMPLEMENTED
+            tag=ErrorTag.REPORTER_SUPPORTED_TARGETS_NOT_IMPLEMENTED
         )
         # return set([Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE]) --- IGNORE ---
 
@@ -109,7 +109,7 @@ class Reporter(ABC):
         """
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the add_flags_to_argparse method",
-            ErrorTag.REPORTER_ADD_FLAGS_NOT_IMPLEMENTED
+            tag=ErrorTag.REPORTER_ADD_FLAGS_NOT_IMPLEMENTED
         )
 
     def report(self,
@@ -136,40 +136,40 @@ class Reporter(ABC):
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
-                ErrorTag.REPORTER_REPORT_INVALID_CASE_ARG)
+                tag=ErrorTag.REPORTER_REPORT_INVALID_CASE_ARG)
         if not isinstance(choice, Choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
-                ErrorTag.REPORTER_REPORT_INVALID_CHOICE_ARG)
+                tag=ErrorTag.REPORTER_REPORT_INVALID_CHOICE_ARG)
         for section in choice.sections:
             if section not in self.supported_sections():
                 raise SimpleBenchValueError(
                     f"Unsupported Section in Choice: {section}",
-                    ErrorTag.REPORTER_REPORT_UNSUPPORTED_SECTION)
+                    tag=ErrorTag.REPORTER_REPORT_UNSUPPORTED_SECTION)
         for target in choice.targets:
             if target not in self.supported_targets():
                 raise SimpleBenchValueError(
                     f"Unsupported Target in Choice: {target}",
-                    ErrorTag.REPORTER_REPORT_UNSUPPORTED_TARGET)
+                    tag=ErrorTag.REPORTER_REPORT_UNSUPPORTED_TARGET)
         if Target.CALLBACK in choice.targets:  # pylint: disable=used-before-assignment
             if callback is not None and not callable(callback):
                 raise SimpleBenchTypeError(
                     "Callback function must be callable if provided",
-                    ErrorTag.REPORTER_REPORT_INVALID_CALLBACK_ARG)
+                    tag=ErrorTag.REPORTER_REPORT_INVALID_CALLBACK_ARG)
         if Target.FILESYSTEM in choice.targets and not isinstance(path, Path):
             raise SimpleBenchTypeError(
                 "Path must be a pathlib.Path instance when using FILESYSTEM target",
-                ErrorTag.REPORTER_REPORT_INVALID_PATH_ARG)
+                tag=ErrorTag.REPORTER_REPORT_INVALID_PATH_ARG)
         for output_format in choice.formats:
             if output_format not in self.supported_formats():
                 raise SimpleBenchValueError(
                     f"Unsupported Format in Choice: {output_format}",
-                    ErrorTag.REPORTER_REPORT_UNSUPPORTED_FORMAT)
+                    tag=ErrorTag.REPORTER_REPORT_UNSUPPORTED_FORMAT)
 
         if session is not None and not isinstance(session, Session):
             raise SimpleBenchTypeError(
                 "session must be a Session instance if provided",
-                ErrorTag.REPORTER_REPORT_INVALID_SESSION_ARG)
+                tag=ErrorTag.REPORTER_REPORT_INVALID_SESSION_ARG)
 
         # Only proceed if there are results to report
         results = case.results
@@ -239,7 +239,7 @@ class Reporter(ABC):
         """
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the report method",
-            ErrorTag.REPORTER_REPORT_NOT_IMPLEMENTED)
+            tag=ErrorTag.REPORTER_REPORT_NOT_IMPLEMENTED)
 
     @property
     @abstractmethod
@@ -247,7 +247,7 @@ class Reporter(ABC):
         """Return a Choices instance for the reporter, including sections, output targets, and formats."""
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the choices property",
-            ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED
+            tag=ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED
         )
 
     @property
@@ -256,7 +256,7 @@ class Reporter(ABC):
         """Return the unique identifying name of the reporter."""
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the name property",
-            ErrorTag.REPORTER_NAME_NOT_IMPLEMENTED
+            tag=ErrorTag.REPORTER_NAME_NOT_IMPLEMENTED
         )
 
     @property
@@ -265,5 +265,5 @@ class Reporter(ABC):
         """Return a brief description of the reporter."""
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the description property",
-            ErrorTag.REPORTER_DESCRIPTION_NOT_IMPLEMENTED
+            tag=ErrorTag.REPORTER_DESCRIPTION_NOT_IMPLEMENTED
         )

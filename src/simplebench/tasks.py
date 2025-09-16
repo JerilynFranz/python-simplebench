@@ -37,23 +37,23 @@ class RichTask:
         if not isinstance(name, str):
             raise SimpleBenchTypeError(
                 f'Expected name arg are to be a str, got {type(name)}',
-                ErrorTag.RICH_TASK_INIT_INVALID_NAME_ARG)
+                tag=ErrorTag.RICH_TASK_INIT_INVALID_NAME_ARG)
         if not name:
             raise SimpleBenchValueError(
                 'name arg cannot be an empty string',
-                ErrorTag.RICH_TASK_INIT_EMPTY_STRING_NAME)
+                tag=ErrorTag.RICH_TASK_INIT_EMPTY_STRING_NAME)
         if not isinstance(description, str):
             raise SimpleBenchTypeError(
                 f'Expected description arg to be a str, got {type(description)}',
-                ErrorTag.RICH_TASK_INIT_INVALID_DESCRIPTION_ARG)
+                tag=ErrorTag.RICH_TASK_INIT_INVALID_DESCRIPTION_ARG)
         if not description:
             raise SimpleBenchValueError(
                 'description arg cannot be an empty string',
-                ErrorTag.RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION)
+                tag=ErrorTag.RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION)
         if not isinstance(progress, Progress):
             raise SimpleBenchTypeError(
                 f'Expected progress arg to be a Progress instance, got {type(progress)}',
-                ErrorTag.RICH_TASK_INIT_INVALID_PROGRESS_ARG)
+                tag=ErrorTag.RICH_TASK_INIT_INVALID_PROGRESS_ARG)
 
         self._name: str = name
         """The name of the task."""
@@ -123,15 +123,15 @@ class RichTask:
         if completed is not None and not isinstance(completed, (int, float)):
             raise SimpleBenchTypeError(
                 f'Expected completed arg to be an int or float, got {type(completed)}',
-                ErrorTag.RICH_TASK_UPDATE_INVALID_COMPLETED_ARG)
+                tag=ErrorTag.RICH_TASK_UPDATE_INVALID_COMPLETED_ARG)
         if description is not None and not isinstance(description, str):
             raise SimpleBenchTypeError(
                 f'Expected description arg to be a str, got {type(description)}',
-                ErrorTag.RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG)
+                tag=ErrorTag.RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG)
         if refresh is not None and not isinstance(refresh, bool):
             raise SimpleBenchTypeError(
                 f'Expected refresh arg to be a bool, got {type(refresh)}',
-                ErrorTag.RICH_TASK_UPDATE_INVALID_REFRESH_ARG)
+                tag=ErrorTag.RICH_TASK_UPDATE_INVALID_REFRESH_ARG)
         if self._progress is not None and self._task_id is not None:
             update_args: dict[str, Any] = {'task_id': self._task_id}
 
@@ -148,7 +148,7 @@ class RichTask:
         else:
             raise SimpleBenchRuntimeError(
                 'Task has already been terminated',
-                ErrorTag.RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK)
+                tag=ErrorTag.RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK)
 
     def terminate_and_remove(self) -> None:
         """Terminate the task and remove it from the progress display."""
@@ -164,7 +164,7 @@ class RichTask:
         # only reach here if task was previously terminated
         raise SimpleBenchRuntimeError(
             'Task has already been terminated',
-            ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK)
+            tag=ErrorTag.RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK)
 
     def get_task(self) -> Task | None:
         """Get the Rich Task instance from the Progress instance.
@@ -215,7 +215,7 @@ class RichProgressTasks:
         if not isinstance(verbosity, Verbosity):
             raise SimpleBenchTypeError(
                 f'Expected verbosity arg to be a Verbosity enum, got {type(verbosity)}',
-                ErrorTag.RICH_PROGRESS_TASKS_INIT_INVALID_VERBOSITY_ARG)
+                tag=ErrorTag.RICH_PROGRESS_TASKS_INIT_INVALID_VERBOSITY_ARG)
         self._verbosity: Verbosity = verbosity
         """The verbosity level for console output."""
 
@@ -276,11 +276,11 @@ class RichProgressTasks:
         if not isinstance(name, str):
             raise (SimpleBenchKeyError(
                 'Key not found',
-                ErrorTag.RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG))
+                tag=ErrorTag.RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG))
         if name not in self._tasks:
             raise SimpleBenchKeyError(
                 'Key not found',
-                ErrorTag.RICH_PROGRESS_TASK_GETITEM_NOT_FOUND)
+                tag=ErrorTag.RICH_PROGRESS_TASK_GETITEM_NOT_FOUND)
         return self._tasks[name]
 
     def __delitem__(self, name: str) -> None:
@@ -301,7 +301,7 @@ class RichProgressTasks:
         if not isinstance(name, str):
             raise SimpleBenchTypeError(
                 f'Expected name arg to be a str, got {type(name)}',
-                ErrorTag.RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG)
+                tag=ErrorTag.RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG)
 
         if name in self._tasks:
             task: RichTask = self._tasks[name]
@@ -310,7 +310,7 @@ class RichProgressTasks:
         else:
             raise SimpleBenchKeyError(
                 'Key not found',
-                ErrorTag.RICH_PROGRESS_TASK_DELITEM_NOT_FOUND)
+                tag=ErrorTag.RICH_PROGRESS_TASK_DELITEM_NOT_FOUND)
 
     def new_task(self,
                  name: str,
