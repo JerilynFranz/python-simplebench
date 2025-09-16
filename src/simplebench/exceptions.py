@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Custom exceptions for the simplebench package."""
-from enum import Enum
 import argparse
+from enum import Enum
+from typing import Any, Generic, TypeVar
 
 
 class ErrorTag(str, Enum):
@@ -458,7 +459,69 @@ class ErrorTag(str, Enum):
     """The figures argument was less than 1"""
 
 
-class SimpleBenchTypeError(TypeError):
+E = TypeVar('E', bound=Exception)
+
+
+class TaggedException(Exception, Generic[E]):
+    """
+    A generic exception that can be specialized with a base exception type
+    and requires a tag during instantiation.
+
+    This class extends the built-in Exception class and adds a mandatory tag
+    attribute. The tag is intended to provide additional context or categorization
+    for the exception.
+
+    The tag must be an instance of Enum to ensure a controlled set of possible tags and
+    must be the first argument provided during instantiation if passed positionally.
+
+    It is used by other exceptions in the simplebench package to provide
+    standardized error tagging for easier identification and handling of specific error conditions.
+    and is used to create exceptions with specific tags for error handling and identification.
+    with this base class.
+
+    Example:
+
+    class MyTaggedException(TaggedException[ValueError]):
+    '''A tagged exception that is a specialized ValueError.'''
+
+    raise MyTaggedException("An error occurred", tag=MyErrorTags.SOME_ERROR)
+
+
+    Args:
+        tag (Enum, keyword): An Enum member representing the error code.
+        *args: Positional arguments to pass to the base exception's constructor.
+        **kwargs: Keyword arguments to pass to the base exception's constructor.
+
+    Attributes:
+        tag_code: Enum
+    """
+    def __init__(self, *args: Any, tag: Enum, **kwargs: Any) -> None:
+        """
+        Initializes the exception with a mandatory tag.
+
+        Args:
+            *args: Positional arguments to pass to the base exception's constructor.
+            tag (Enum, keyword): An Enum member representing the error code.
+            **kwargs: Keyword arguments to pass to the base exception's constructor.
+        """
+        if not isinstance(tag, Enum):
+            raise TypeError("Missing or wrong type 'tag' argument (must be Enum)")
+        self.tag_code = tag
+        super().__init__(*args, **kwargs)
+
+
+class ExampleTaggedException(TaggedException[ValueError]):
+    '''A tagged exception that is a specialized ValueError.
+
+    It is used here as an example of how to create a tagged exception
+    with this base class.
+
+    Example:
+        raise ExampleTaggedException("An error occurred", tag=MyErrorTags.SOME_ERROR)
+    '''
+
+
+class SimpleBenchTypeError(TaggedException[ValueError]):
     """Base class for all SimpleBench type errors.
 
     It differs from a standard TypeError by the addition of a
@@ -468,47 +531,16 @@ class SimpleBenchTypeError(TypeError):
     This tag code does not have a direct semantic meaning except to identify
     the specific code throwing the exception for tests.
 
-    Args:
-        msg (str): The error message.
-        tag (ErrorTag): The tag code.
-    """
-    def __init__(self, msg: str, tag: ErrorTag) -> None:
-        """Create a new SimpleBenchTypeError.
-
-        Args:
-            msg (str): The error message.
-            tag (str): The tag code.
-        """
-        self.tag_code: ErrorTag = tag
-        super().__init__(msg)
-
-
-class SimpleBenchKeyError(KeyError):
-    """Base class for all SimpleBench key errors.
-
-    It differs from a standard KeyError by the addition of a
-    tag code used to very specifically identify where the error
-    was thrown in the code for testing and development support.
-
-    This tag code does not have a direct semantic meaning except to identify
-    the specific code throwing the exception for tests.
+    Usage:
+        raise SimpleBenchTypeError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
     Args:
-        msg (str): The error message.
+        msg (str, positional): The error message.
         tag (ErrorTag): The tag code.
     """
-    def __init__(self, msg: str, tag: ErrorTag) -> None:
-        """Create a new SimpleBenchKeyError.
-
-        Args:
-            msg (str): The error message.
-            tag (str): The tag code.
-        """
-        self.tag_code: ErrorTag = tag
-        super().__init__(msg)
 
 
-class SimpleBenchValueError(ValueError):
+class SimpleBenchValueError(TaggedException[ValueError]):
     """Base class for all SimpleBench value errors.
 
     It differs from a standard ValueError by the addition of a
@@ -518,22 +550,35 @@ class SimpleBenchValueError(ValueError):
     This tag code does not have a direct semantic meaning except to identify
     the specific code throwing the exception for tests.
 
+    Usage:
+        raise SimpleBenchValueError("An error occurred", tag=MyErrorTags.SOME_ERROR)
+
     Args:
-        msg (str): The error message.
+        msg (str, positional): The error message.
         tag (ErrorTag): The tag code.
     """
-    def __init__(self, msg: str, tag: ErrorTag) -> None:
-        """Create a new SimpleBenchValueError.
-
-        Args:
-            msg (str): The error message.
-            tag (str): The tag code.
-        """
-        self.tag_code: ErrorTag = tag
-        super().__init__(msg)
 
 
-class SimpleBenchRuntimeError(RuntimeError):
+class SimpleBenchKeyError(TaggedException[KeyError]):
+    """Base class for all SimpleBench key errors.
+
+    It differs from a standard KeyError by the addition of a
+    tag code used to very specifically identify where the error
+    was thrown in the code for testing and development support.
+
+    This tag code does not have a direct semantic meaning except to identify
+    the specific code throwing the exception for tests.
+
+    Usage:
+        raise SimpleBenchKeyError("An error occurred", tag=MyErrorTags.SOME_ERROR)
+
+    Args:
+        msg (str, positional): The error message.
+        tag (ErrorTag): The tag code.
+    """
+
+
+class SimpleBenchRuntimeError(TaggedException[RuntimeError]):
     """Base class for all SimpleBench runtime errors.
 
     It differs from a standard RuntimeError by the addition of a
@@ -543,22 +588,16 @@ class SimpleBenchRuntimeError(RuntimeError):
     This tag code does not have a direct semantic meaning except to identify
     the specific code throwing the exception for tests.
 
+    Usage:
+        raise SimpleBenchRuntimeError("An error occurred", tag=MyErrorTags.SOME_ERROR)
+
     Args:
-        msg (str): The error message.
+        msg (str, positional): The error message.
         tag (ErrorTag): The tag code.
     """
-    def __init__(self, msg: str, tag: ErrorTag) -> None:
-        """Create a new SimpleBenchRuntimeError.
-
-        Args:
-            msg (str): The error message.
-            tag (str): The tag code.
-        """
-        self.tag_code: ErrorTag = tag
-        super().__init__(msg)
 
 
-class SimpleBenchNotImplementedError(NotImplementedError):
+class SimpleBenchNotImplementedError(TaggedException[NotImplementedError]):
     """Base class for all SimpleBench not implemented errors.
 
     It differs from a standard NotImplementedError by the addition of a
@@ -568,22 +607,16 @@ class SimpleBenchNotImplementedError(NotImplementedError):
     This tag code does not have a direct semantic meaning except to identify
     the specific code throwing the exception for tests.
 
+    Usage:
+        raise SimpleBenchRuntimeError("An error occurred", tag=MyErrorTags.SOME_ERROR)
+
     Args:
-        msg (str): The error message.
+        msg (str, positional): The error message.
         tag (ErrorTag): The tag code.
     """
-    def __init__(self, msg: str, tag: ErrorTag) -> None:
-        """Create a new SimpleBenchRuntimeError.
-
-        Args:
-            msg (str): The error message.
-            tag (str): The tag code.
-        """
-        self.tag_code: ErrorTag = tag
-        super().__init__(msg)
 
 
-class SimpleBenchArgumentError(argparse.ArgumentError):
+class SimpleBenchArgumentError(TaggedException[argparse.ArgumentError]):
     """Base class for re-raising all SimpleBench ArgumentError errors.
 
     It is designed to be used in places where an argparse.ArgumentError
@@ -601,19 +634,20 @@ class SimpleBenchArgumentError(argparse.ArgumentError):
     This tag code does not have a direct semantic meaning except to identify
     the specific code throwing the exception for tests.
 
+    Usage:
+        raise SimpleBenchArgumentError(argument_name="my-arg",
+                                       message="An error occurred",
+                                       tag=MyErrorTags.SOME_ERROR)
+
     Args:
         argument_name (str | None): The argument name.
         message (str): The error message.
         tag (ErrorTag): The tag code.
     """
-    def __init__(self, argument_name: str | None, message: str, tag: ErrorTag) -> None:
-        """Create a new SimpleBenchArgumentError.
-
-        Args:
-            argument_name (str | None): The argument name.
-            message (str): The error message.
-            tag (str): The tag code.
-        """
-        self.tag_code: ErrorTag = tag
-        super().__init__(argument=None, message=message)
+    def __init__(self, argument_name: str | None, message: str, *, tag: ErrorTag) -> None:
+        # argparse.ArgumentError has a specific signature we must adapt to. It expects
+        # to get an argparse.Action instance as the first argument to infer the
+        # argument_name from, which we don't have here, and so must backfill the argument_name
+        # after initialization.
+        super().__init__(None, message, tag=tag)
         self.argument_name = argument_name
