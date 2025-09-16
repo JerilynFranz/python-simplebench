@@ -10,6 +10,20 @@ class ErrorTag(str, Enum):
     ErrorTags' are used to identify specific error conditions in the simplebench package.
     Tests use these tags to assert specific error condition paths.
     """
+    # Stats() tags
+    STATS_INVALID_UNIT_ARG_TYPE = "STATS_INVALID_UNIT_ARG_TYPE"
+    """Invalid unit argument passed to the Stats() constructor - must be a str"""
+    STATS_INVALID_UNIT_ARG_VALUE = "STATS_INVALID_UNIT_ARG_VALUE"
+    """Invalid unit argument passed to the Stats() constructor - must be a non-empty str"""
+    STATS_INVALID_SCALE_ARG_TYPE = "STATS_INVALID_SCALE_ARG_TYPE"
+    """Invalid scale argument passed to the Stats() constructor - must be a number (int or float)"""
+    STATS_INVALID_SCALE_ARG_VALUE = "STATS_INVALID_SCALE_ARG_VALUE"
+    """Invalid scale argument passed to the Stats() constructor - must be greater than zero"""
+    STATS_INVALID_DATA_ARG_TYPE = "STATS_INVALID_DATA_ARG_TYPE"
+    """Invalid data argument passed to the Stats() constructor - must be a list of numbers (int or float) or None"""
+    STATS_INVALID_DATA_ARG_ITEM_TYPE = "STATS_INVALID_DATA_ARG_ITEM_TYPE"
+    """Invalid data argument item passed to the Stats() constructor - must be a number (int or float)"""
+
     # Iteration() tags
     ITERATION_INIT_N_ARG_TYPE = "ITERATION_INIT_N_ARG_TYPE"
     """Invalid n argument passed to the Iteration() constructor - must be an int"""

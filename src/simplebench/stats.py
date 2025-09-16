@@ -7,6 +7,7 @@ from typing import Optional
 from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_SCALE)
+from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 
 
 class Stats:
@@ -15,7 +16,7 @@ class Stats:
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
         scale (float): The scale factor for the interval (e.g. 1 for seconds).
-        data: list[int | float] = field(default_factory=list[int | float])
+        data: list[int | float] = List of data points.
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)
@@ -24,10 +25,98 @@ class Stats:
         relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
         percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
     '''
-    def __init__(self, unit: str = '', scale: float = 0.0, data: Optional[list[int | float]] = None) -> None:
-        self.unit: str = unit
-        self.scale: float = scale
-        self.data: list[int | float] = data if data is not None else []
+    def __init__(self, unit: str, scale: float, data: Optional[list[int | float]] = None) -> None:
+        self.unit = unit
+        self.scale = scale
+        self.data = data if data is not None else []
+
+    @property
+    def unit(self) -> str:
+        '''The unit of the data.'''
+        return self._unit
+
+    @unit.setter
+    def unit(self, unit: str) -> None:
+        """Set the unit of the data.
+
+        The unit should be a string representing the unit of measurement,
+        such as "ops/s" for operations per second and "ns" for nanoseconds.
+
+        It cannot be an empty string.
+
+        Args:
+            unit: The unit of measurement for the benchmark (e.g., "ops/s").
+
+        Raises:
+            SimpleBenchTypeError: If unit is not a str.
+            SimpleBenchValueError: If unit is an empty string.
+        """
+        if not isinstance(unit, str):
+            raise SimpleBenchTypeError(
+                "unit must be a str",
+                ErrorTag.STATS_INVALID_UNIT_ARG_TYPE)
+        if unit == '':
+            raise SimpleBenchValueError(
+                "unit must not be an empty string",
+                ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)
+        self._unit = unit
+
+    @property
+    def scale(self) -> float:
+        '''The scale of the data.'''
+        return self._scale
+
+    @scale.setter
+    def scale(self, scale: float) -> None:
+        """Set the scale of the data.
+
+        The scale should be a float or int greater than 0.
+
+        Args:
+            scale: The scale factor for the data.
+
+        Raises:
+            SimpleBenchTypeError: If scale is not a float or int.
+            SimpleBenchValueError: If scale is not greater than 0.
+        """
+        if not isinstance(scale, (float, int)):
+            raise SimpleBenchTypeError(
+                "scale must be a float or int",
+                ErrorTag.STATS_INVALID_SCALE_ARG_TYPE)
+        if scale <= 0:
+            raise SimpleBenchValueError(
+                "scale must be greater than 0",
+                ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)
+        self._scale = float(scale)
+
+    @property
+    def data(self) -> list[int | float]:
+        '''The data points.'''
+        return self._data
+
+    @data.setter
+    def data(self, data: Optional[list[int | float]]) -> None:
+        """Set the data points.
+
+        Args:
+            data: A list of int or float data points, or None to clear the data.
+
+        Raises:
+            SimpleBenchTypeError: If data is not a list of int or float, or None.
+        """
+        if data is not None and not isinstance(data, list):
+            raise SimpleBenchTypeError(
+                "data must be a list of numbers (int or float) or None",
+                ErrorTag.STATS_INVALID_DATA_ARG_TYPE)
+        if data is not None:
+            for value in data:
+                if not isinstance(value, (int, float)):
+                    raise SimpleBenchTypeError(
+                        "data values must be a list of int or float not " + str(type(value)),
+                        ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)
+        else:
+            data = []
+        self._data = data
 
     @property
     def mean(self) -> float:
@@ -55,7 +144,7 @@ class Stats:
         return statistics.stdev(self.data) if len(self.data) > 1 else 0.0
 
     @property
-    def relative_standard_deviation(self):
+    def relative_standard_deviation(self) -> float:
         '''The relative standard deviation of the data.'''
         return self.standard_deviation / self.mean * 100 if self.mean else 0.0
 
@@ -68,7 +157,7 @@ class Stats:
         '''
         # Calculate percentiles if we have enough data points
         if not self.data:
-            return {p: float('nan') for p in [5, 10, 25, 50, 75, 90, 95]}
+            return {p: 0.0 for p in [5, 10, 25, 50, 75, 90, 95]}
         percentiles: dict[int, float] = {}
         for percent in [5, 10, 25, 50, 75, 90, 95]:
             percentiles[percent] = statistics.quantiles(self.data, n=100)[percent - 1]
@@ -105,7 +194,7 @@ class OperationsPerInterval(Stats):
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
         scale (float): The scale factor for the interval (e.g. 1 for seconds).
-        data: list[int] = field(default_factory=list[int])
+        data: list[int] = List of data points.
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)
@@ -127,6 +216,7 @@ class OperationTimings(Stats):
     Attributes:
         unit (str): The unit of measurement for the timings (e.g., "ns").
         scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds).
+        data: list[float | int] = List of timing data points.)
         mean (float): The mean time per operation.
         median (float): The median time per operation.
         minimum (float): The minimum time per operation.
@@ -134,7 +224,6 @@ class OperationTimings(Stats):
         standard_deviation (float): The standard deviation of the time per operation.
         relative_standard_deviation (float): The relative standard deviation of the time per operation.
         percentiles (dict[int, float]): Percentiles of time per operation.
-        data: list[float | int] = field(default_factory=list[float | int])
     '''
     def __init__(self,
                  unit: str = DEFAULT_INTERVAL_UNIT,
