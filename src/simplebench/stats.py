@@ -167,7 +167,14 @@ class Stats:
 
     @property
     def statistics_as_dict(self) -> dict[str, str | float | dict[int, float] | list[int | float]]:
-        '''Returns the statistics as a JSON-serializable dictionary.'''
+        '''Returns the statistics as a JSON-serializable dictionary.
+
+        The data values are scaled according to the scale factor to provide
+        human-readable values using the base unit rather than the scaled unit.
+
+        Returns:
+            A dictionary containing the statistics.
+        '''
         return {
             'type': f'{self.__class__.__name__}:statistics',
             'unit': self.unit,
@@ -184,7 +191,15 @@ class Stats:
     @property
     def statistics_and_data_as_dict(self) -> dict[
             str, str | float | dict[int, float] | list[int | float]]:
-        '''Returns the statistics and data as a JSON-serializable dictionary.'''
+        '''Returns the statistics and data as a JSON-serializable dictionary.
+
+        This includes all the statistics as well as the raw data points.
+
+        The data values are scaled according to the scale factor.
+
+        Returns:
+            A dictionary containing the statistics and the scaled data points.
+        '''
         stats: dict[str, str | float | dict[int, float] | list[int | float]] = self.statistics_as_dict
         stats['data'] = [value / self.scale for value in self.data]
         return stats

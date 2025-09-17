@@ -139,6 +139,11 @@ def stats_instances() -> list[stats.Stats]:
         value=[1.0, 'not_a_number', 3.0],
         set_exception=SimpleBenchTypeError,
         set_exception_tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)),
+    idspec("STATS_PROPERTY_011", TestSetGet(
+        name="data property (clear data with None)",
+        attribute='data',
+        value=None,
+        expected=[])),
 ])
 def test_stats_set_get(stats_instances: list[stats.Stats], test: TestSetGet) -> None:
     """Test stats class property setters and getters."""
@@ -221,3 +226,49 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
             percentiles = {p: statistics.quantiles(data, n=100)[p - 1] for p in [5, 10, 25, 50, 75, 90, 95]}
             assert stats_instance.percentiles == percentiles, (
                 f"Percentiles value incorrect: expected {percentiles}, got {stats_instance.percentiles}")
+
+
+@pytest.mark.parametrize("stats_data", [
+    pytest.param([], id="COMPUTED_VALUES_001 empty data"),
+    pytest.param([10.0], id="COMPUTED_VALUES_002 single data point"),
+    pytest.param([10.0, 20.0, 30.0, 40.0, 50.0], id="COMPUTED_VALUES_003 multiple data points"),
+    pytest.param([5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0], id="COMPUTED_VALUES_004 larger data set"),
+    pytest.param([3.0, 3.0, 3.0, 3.0, 3.0], id="COMPUTED_VALUES_005 identical data points"),
+])
+def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
+    """Test that statistics_as_dict and statistics_and_data_as_dict return correct values."""
+    stats_instance = stats.Stats(unit='unit', scale=1.0, data=list(stats_data))
+    stats_dict = stats_instance.statistics_as_dict
+    stats_and_data_dict = stats_instance.statistics_and_data_as_dict
+
+    # Check that the statistics_as_dict contains the expected keys and types
+    expected_keys = {
+        'type': str,
+        'unit': str,
+        'scale': float,
+        'mean': float,
+        'median': float,
+        'minimum': float,
+        'maximum': float,
+        'standard_deviation': float,
+        'relative_standard_deviation': float,
+        'percentiles': dict,
+    }
+    for key, expected_type in expected_keys.items():
+        assert key in stats_dict, f"Key '{key}' missing from statistics_as_dict"
+        assert isinstance(stats_dict[key], expected_type), (
+            f"Key '{key}' in statistics_as_dict should be of type {expected_type.__name__}, "
+            f"got {type(stats_dict[key]).__name__}")
+
+    # Check that the statistics_and_data_as_dict contains the expected keys and types
+    expected_keys_with_data = expected_keys.copy()
+    expected_keys_with_data['data'] = list
+    for key, expected_type in expected_keys_with_data.items():
+        assert key in stats_and_data_dict, f"Key '{key}' missing from statistics_and_data_as_dict"
+        assert isinstance(stats_and_data_dict[key], expected_type), (
+            f"Key '{key}' in statistics_and_data_as_dict should be of type {expected_type.__name__}, "
+            f"got {type(stats_and_data_dict[key]).__name__}")
+
+    # Check that the data in statistics_and_data_as_dict matches the original data scaled
+    scaled_data = [value / stats_instance.scale for value in stats_instance.data]
+    assert stats_and_data_dict['data'] == scaled_data, "Data in statistics_and_data_as_dict does not match scaled data"
