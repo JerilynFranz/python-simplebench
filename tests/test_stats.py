@@ -1,6 +1,9 @@
 """Tests for the simplebench/stats.py module."""
 # Conflicts with pytest fixtures
 # pylint: disable=redefined-outer-name
+import statistics
+from typing import Any, Sequence
+
 import pytest
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
@@ -143,3 +146,78 @@ def test_stats_set_get(stats_instances: list[stats.Stats], test: TestSetGet) -> 
         test.name = f"{test.name} ({type(stats_instance).__name__})"
         test.obj = stats_instance
         test.run()
+
+
+@pytest.mark.parametrize("attribute,value", [
+    pytest.param('mean', 10.0, id="COMPUTED_PROPS_001 mean"),
+    pytest.param('median', 10.0, id="COMPUTED_PROPS_002 median"),
+    pytest.param('minimum', 10.0, id="COMPUTED_PROPS_003 minimum"),
+    pytest.param('maximum', 10.0, id="COMPUTED_PROPS_004 maximum"),
+    pytest.param('standard_deviation', 10.0, id="COMPUTED_PROPS_005 standard_deviation"),
+    pytest.param('relative_standard_deviation', 10.0, id="COMPUTED_PROPS_006 relative_standard_deviation"),
+    pytest.param('percentiles', {50: 10.0}, id="COMPUTED_PROPS_007 percentiles"),
+])
+def test_computed_stats_read_only(stats_instances: list[stats.Stats], attribute: str, value: Any) -> None:
+    """Test that computed stats properties exist and are read-only."""
+    for stats_instance in stats_instances:
+        if not hasattr(stats_instance, attribute):
+            pytest.fail(f"Attribute {attribute} not found in {type(stats_instance).__name__}")
+        with pytest.raises(AttributeError):
+            setattr(stats_instance, attribute, value)
+
+
+@pytest.mark.parametrize("stats_data", [
+    pytest.param([], id="COMPUTED_VALUES_001 empty data"),
+    pytest.param([10.0], id="COMPUTED_VALUES_002 single data point"),
+    pytest.param([10.0, 20.0, 30.0, 40.0, 50.0], id="COMPUTED_VALUES_003 multiple data points"),
+    pytest.param([5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0], id="COMPUTED_VALUES_004 larger data set"),
+    pytest.param([3.0, 3.0, 3.0, 3.0, 3.0], id="COMPUTED_VALUES_005 identical data points"),
+])
+def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
+    """Test that computed stats properties return correct values.
+    """
+    stats_instance = stats.Stats(unit='unit', scale=1.0, data=list(stats_data))
+    data = stats_instance.data
+
+    match len(data):
+        case 0:
+            assert stats_instance.mean == 0.0, "Mean should be 0.0 for empty data"
+            assert stats_instance.median == 0.0, "Median should be 0.0 for empty data"
+            assert stats_instance.minimum == 0.0, "Minimum should be 0.0 for empty data"
+            assert stats_instance.maximum == 0.0, "Maximum should be 0.0 for empty data"
+            assert stats_instance.standard_deviation == 0.0, "Standard deviation should be 0.0 for empty data"
+            assert stats_instance.relative_standard_deviation == 0.0, (
+                "Relative standard deviation should be 0.0 for empty data")
+            assert stats_instance.percentiles == {5: 0.0, 10: 0.0, 25: 0.0, 50: 0.0, 75: 0.0, 90: 0.0, 95: 0.0}, (
+                "Percentiles should be 0.0 for empty data")
+        case 1:
+            assert stats_instance.mean == 10.0, "Mean should be 10.0 for single data point"
+            assert stats_instance.median == 10.0, "Median should be 10.0 for single data point"
+            assert stats_instance.minimum == 10.0, "Minimum should be 10.0 for single data point"
+            assert stats_instance.maximum == 10.0, "Maximum should be 10.0 for single data point"
+            assert stats_instance.standard_deviation == 0.0, "Standard deviation should be 0.0 for single data point"
+            assert stats_instance.relative_standard_deviation == 0.0, (
+                "Relative standard deviation should be 0.0 for single data point")
+            assert stats_instance.percentiles == {
+                5: 10.0, 10: 10.0, 25: 10.0, 50: 10.0, 75: 10.0, 90: 10.0, 95: 10.0}, (
+                "Percentiles should be 10.0 for single data point")
+        case _:  # Multiple data points
+            assert stats_instance.mean == statistics.mean(data), (
+                f"Mean value incorrect: expected {statistics.mean(data)}, got {stats_instance.mean}")
+            assert stats_instance.median == statistics.median(data), (
+                f"Median value incorrect: expected {statistics.median(data)}, got {stats_instance.median}")
+            assert stats_instance.minimum == float(min(data)), (
+                f"Minimum value incorrect: expected {float(min(data))}, got {stats_instance.minimum}")
+            assert stats_instance.maximum == float(max(data)), (
+                f"Maximum value incorrect: expected {float(max(data))}, got {stats_instance.maximum}")
+            assert stats_instance.standard_deviation == statistics.stdev(data), (
+                f"Standard deviation value incorrect: expected {statistics.stdev(data)}, "
+                f"got {stats_instance.standard_deviation}")
+            assert stats_instance.relative_standard_deviation == (
+                statistics.stdev(data) / statistics.mean(data) * 100), (
+                "Relative standard deviation value incorrect: expected "
+                f"{(statistics.stdev(data) / statistics.mean(data) * 100)}, "
+                f"got {stats_instance.relative_standard_deviation}")
+            percentiles = {p: statistics.quantiles(data, n=100)[p - 1] for p in [5, 10, 25, 50, 75, 90, 95]}
+            assert stats_instance.percentiles == percentiles, (
+                f"Percentiles value incorrect: expected {percentiles}, got {stats_instance.percentiles}")

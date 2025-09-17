@@ -158,6 +158,8 @@ class Stats:
         # Calculate percentiles if we have enough data points
         if not self.data:
             return {p: 0.0 for p in [5, 10, 25, 50, 75, 90, 95]}
+        if len(self.data) == 1:
+            return {p: float(self.data[0]) for p in [5, 10, 25, 50, 75, 90, 95]}
         percentiles: dict[int, float] = {}
         for percent in [5, 10, 25, 50, 75, 90, 95]:
             percentiles[percent] = statistics.quantiles(self.data, n=100)[percent - 1]

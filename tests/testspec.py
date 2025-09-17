@@ -100,6 +100,8 @@ class TaggedException(Exception, Generic[E]):
     Attributes:
         tag_code: Enum
     """
+    __test__ = False  # Prevent pytest from trying to collect this class as a test case
+
     def __init__(self, *args: Any, tag: Enum, **kwargs: Any) -> None:
         """
         Initializes the exception with a mandatory tag.
@@ -117,6 +119,7 @@ class TaggedException(Exception, Generic[E]):
 
 class TestSpec():
     """Base class for test specifications."""
+    __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
     def run(self) -> None:
         """Run the test based on the provided TestSpec entry.
@@ -166,6 +169,8 @@ class TestSetGet(TestSpec):
         on_fail (Callable[[str], NoReturn], default=pytest.fail):
             Function to call on test failure to raise an exception
     """
+    __test__ = False  # Prevent pytest from trying to collect this class as a test case
+
     name: str
     """Identifying name for the test."""
     attribute: str
@@ -245,9 +250,12 @@ class TestSetGet(TestSpec):
             raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
         # Set the attribute and check for exceptions as appropriate
         try:
-            self.obj.__setattr__(self.attribute, self.value)
-            if self.set_exception is not None:
-                errors.append("set operation returned instead of raising an expected exception")
+            if not hasattr(self.obj, self.attribute):
+                errors.append(f"obj has no attribute {self.attribute}")
+            else:
+                self.obj.__setattr__(self.attribute, self.value)
+                if self.set_exception is not None:
+                    errors.append("set operation returned instead of raising an expected exception")
 
         except Exception as err:  # pylint: disable=broad-exception-caught
             if self.set_exception is None:
@@ -292,16 +300,19 @@ class TestSetGet(TestSpec):
         # during the set operation.
         attribute_to_get = self.attribute if self.get_attribute is None else self.get_attribute
         try:
-            if self.validate is not None:
-                self.validate(self, self.obj)  # Exception should be raised by validate if invalid obj state
+            if not hasattr(self.obj, attribute_to_get):
+                errors.append(f"obj has no attribute {attribute_to_get}")
+            else:
+                if self.validate is not None:
+                    self.validate(self, self.obj)  # Exception should be raised by validate if invalid obj state
 
-            if self.expected is NO_EXPECTED_VALUE:
-                return
+                if self.expected is NO_EXPECTED_VALUE:
+                    return
 
-            found: Any = self.obj.__getattribute__(attribute_to_get)
-            if self.expected != found:
-                errors.append(
-                    f"expected={self.expected}, found={found} for attribute '{attribute_to_get}'")
+                found: Any = self.obj.__getattribute__(attribute_to_get)
+                if self.expected != found:
+                    errors.append(
+                        f"expected={self.expected}, found={found} for attribute '{attribute_to_get}'")
 
         except Exception as err:  # pylint: disable=broad-exception-caught
             if self.get_exception is None:
