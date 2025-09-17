@@ -84,10 +84,10 @@ class SimpleRunner():
         iterations: int = self.case.iterations
 
         iteration_pass: int = 0
-        time_start: int = DEFAULT_TIMER()
-        max_stop_at: int = int(max_time / DEFAULT_INTERVAL_SCALE) + time_start
-        min_stop_at: int = int(min_time / DEFAULT_INTERVAL_SCALE) + time_start
-        wall_time: int = DEFAULT_TIMER()
+        time_start: float = float(DEFAULT_TIMER())
+        max_stop_at: float = float(max_time / DEFAULT_INTERVAL_SCALE) + time_start
+        min_stop_at: float = float(min_time / DEFAULT_INTERVAL_SCALE) + time_start
+        wall_time: float = float(DEFAULT_TIMER())
         iterations_min: int = max(MIN_MEASURED_ITERATIONS, iterations)
 
         gc.collect()
@@ -109,21 +109,21 @@ class SimpleRunner():
                 completed=5,
                 description=(f'[green] Benchmarking {group} (iteration {iteration_pass:<6d}; '
                              f'time {0.00:<3.2f}s)'))
-        total_elapsed: int = 0
+        total_elapsed: float = 0.0
         iterations_list: list[Iteration] = []
         while ((iteration_pass <= iterations_min or wall_time < min_stop_at)
                 and wall_time < max_stop_at):
             iteration_pass += 1
             iteration_result = Iteration()
-            iteration_result.elapsed = 0
+            iteration_result.elapsed = 0.0
 
             if callable(setup):
                 setup()
 
             # Timer for benchmarked code
-            timer_start: int = DEFAULT_TIMER()
+            raw_timer_start = DEFAULT_TIMER()
             action()
-            timer_end: int = DEFAULT_TIMER()
+            raw_timer_end = DEFAULT_TIMER()
 
             if callable(teardown):
                 teardown()
@@ -131,11 +131,16 @@ class SimpleRunner():
             if iteration_pass == 1:
                 # Warmup iteration, not included in final stats
                 continue
-            iteration_result.elapsed += (timer_end - timer_start)
+            # We difference the raw timer readings to avoid cumulative floating point
+            # errors over many iterations. It effectively pushes the error to the
+            # precision of the timer rather than the precision of floating point.
+            # We add the elapsed time to the iteration result in case the action
+            # is called multiple times in a more complex runner.
+            iteration_result.elapsed += float(raw_timer_end - raw_timer_start)
             iteration_result.n = n
             total_elapsed += iteration_result.elapsed
             iterations_list.append(iteration_result)
-            wall_time = DEFAULT_TIMER()
+            wall_time = float(DEFAULT_TIMER())
 
             # Update progress display if showing progress
             if task:

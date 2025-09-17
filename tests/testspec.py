@@ -261,7 +261,8 @@ class TestSetGet(TestSpec):
             if self.set_exception is None:
                 errors.append(f'Unexpected Exception raised while setting attribute {self.attribute}: {repr(err)}')
             elif not isinstance(err, self.set_exception):
-                errors.append(f'Unexpected exception type: expected={self.set_exception}, found = {type(err)}')
+                errors.append(f'Unexpected exception type: expected={self.set_exception}, '
+                              f'found = {type(err)}: {repr(err)}')
             elif self.set_exception_tag:
                 # Case 1: The expected tag is an Enum member.
                 # This requires the exception object to have a 'tag_code' attribute.
@@ -320,7 +321,7 @@ class TestSetGet(TestSpec):
             elif not isinstance(err, self.get_exception):
                 errors.append(
                     f'Unexpected exception type while validating attribute value: '
-                    f'expected={self.get_exception}, found = {type(err)}')
+                    f'expected={self.get_exception}, found = {type(err)}: {repr(err)}')
             elif self.get_exception_tag:
                 # Case 1: The expected tag is an Enum member.
                 # This requires the exception object to have a 'tag_code' attribute.
@@ -450,7 +451,7 @@ class TestAction(TestSpec):
             elif not isinstance(err, self.exception):
                 errors.append(
                     f"Unexpected exception type: expected={self.exception}, "
-                    f"found = {type(err)}"
+                    f"found = {type(err)} : {repr(err)}"
                 )
             elif self.exception_tag:
                 # Case 1: The expected tag is an Enum member.
@@ -463,7 +464,7 @@ class TestAction(TestSpec):
                         actual_tag = getattr(err, 'tag_code')
                         if actual_tag != self.exception_tag:
                             errors.append(f"Unexpected exception tag: expected={self.exception_tag}, "
-                                          f"found={actual_tag}")
+                                          f"found={actual_tag}: {repr(err)}")
                 # Case 2: The expected tag is a string.
                 # This performs a substring search in the exception's string representation.
                 else:

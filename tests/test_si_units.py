@@ -289,11 +289,10 @@ def test_si_scale_to_unit(testspec: TestAction) -> None:
         exception_tag=ErrorTag.SI_UNITS_SI_UNIT_BASE_EMPTY_UNIT_ARG),
         id="SI_UNIT_BASE_003"),
     pytest.param(TestAction(
-        name="Unknown prefix in unit",
+        name="No known prefix in unit",
         args=['xs'],
         action=si_units.si_unit_base,
-        exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.SI_UNITS_SI_UNIT_BASE_UNKNOWN_SI_UNIT_PREFIX),
+        expected='xs'),
         id="SI_UNIT_BASE_004"),
 ])
 def test_si_unit_base(testspec: TestAction) -> None:
@@ -406,7 +405,7 @@ def test_si_unit_base(testspec: TestAction) -> None:
         name="List with EXTREMELY small numbers",
         kwargs={'numbers': [1e-30, 1e-25, 1e-32], 'base_unit': 's'},
         action=si_units.si_scale_for_smallest,
-        expected=('fs', 1e15)),
+        expected=('ps', 1e12)),
         id="SI_SCALE_FOR_SMALLEST_017"),
 ])
 def test_si_scale_for_smallest(testspec: TestAction) -> None:

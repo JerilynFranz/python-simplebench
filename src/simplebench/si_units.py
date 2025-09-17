@@ -4,8 +4,13 @@ from typing import Sequence
 
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
 
+# SI prefixes from tera (T) to pico (p)
+# We don't go beyond pico (p) because it's not commonly used in benchmarking
+# and increases the chances of confusion with autodetected units.
+# The micro (μ) prefix is represented using the Greek letter mu (U+03BC)
+# as per the SI standard, but the legacy Unicode compatibility character
+# (U+00B5) is also supported.
 _SI_PREFIXES: list[tuple[float, str, float]] = [
-    (1e15, 'P', 1e-15),
     (1e12, 'T', 1e-12),
     (1e9, 'G', 1e-9),
     (1e6, 'M', 1e-6),
@@ -16,7 +21,6 @@ _SI_PREFIXES: list[tuple[float, str, float]] = [
     (1e-6, 'µ', 1e6),  # 'U+00B5' MICRO SIGN (legacy Unicode compatibility)
     (1e-9, 'n', 1e9),
     (1e-12, 'p', 1e12),
-    (1e-15, 'f', 1e15),
 ]
 """List of SI prefixes with their scale thresholds and inverse scale factors.
 Each tuple contains (scale threshold, prefix, inverse scale factor)."""
@@ -108,13 +112,28 @@ def si_scale(unit: str, base_unit: str) -> float:
 
 
 def si_unit_base(unit: str) -> str:
-    """Get the base unit from an SI unit.
+    """Guess the base unit from an SI unit.
 
     This assumes that the SI unit is a valid SI unit with an optional SI prefix.
     If the unit is a single character, it is returned as-is on the assumption
     that it is already the base unit.
 
-    Example: si_unit_base('ns') returns 's'
+    We only check for a single-character SI prefix at the start of the unit from
+    the range of supported SI prefixes (from tera (T) to pico (p)).
+
+    This CAN result in false positives if the base unit starts with a character
+    that is also a valid SI prefix. (potential false positives: 'm' (meter),
+    'M' (mole), 'P' (peta), 'T' (tesla), 'G' (gauss), 'k' (katal),
+    'n' (newton), 'p' (pascal)).  However, these units are uncommon in benchmarking
+    and the benefit of simplicity outweighs the risk of false positives.
+
+    We could do a more complex check by looking for known SI base units, but this would
+    require maintaining a list of known base units and would still not be exhaustive.
+
+    If no valid SI prefix is found, the unit is assumed to already be the base unit.
+
+    Example:
+        si_unit_base('ns') returns 's'
 
     Args:
         unit (str): The SI unit to get the base unit from.
@@ -123,7 +142,7 @@ def si_unit_base(unit: str) -> str:
         The base unit.
 
     Raises:
-        SimpleBenchValueError: If the SI unit is not recognized or if the unit is an empty string.
+        SimpleBenchValueError: If the unit is an empty string.
         SimpleBenchTypeError: If the unit arg is not of type str.
     """
     if not isinstance(unit, str):
@@ -139,8 +158,7 @@ def si_unit_base(unit: str) -> str:
     prefix = unit[:1]
     if prefix in _SI_PREFIXES_SCALE:
         return unit[1:]
-    raise SimpleBenchValueError(
-        f'Unknown SI unit: {unit}', tag=ErrorTag.SI_UNITS_SI_UNIT_BASE_UNKNOWN_SI_UNIT_PREFIX)
+    return unit
 
 
 def si_scale_to_unit(base_unit: str, current_unit: str, target_unit: str) -> float:

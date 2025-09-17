@@ -11,6 +11,70 @@ class ErrorTag(str, Enum):
     ErrorTags' are used to identify specific error conditions in the simplebench package.
     Tests use these tags to assert specific error condition paths.
     """
+    # Results() tags
+    RESULTS_GROUP_INVALID_ARG_TYPE = "RESULTS_GROUP_INVALID_ARG_TYPE"
+    """Something other than a str was passed as the group"""
+    RESULTS_GROUP_INVALID_ARG_VALUE = "RESULTS_GROUP_INVALID_ARG_VALUE"
+    """The group must be a non-empty string"""
+    RESULTS_TITLE_INVALID_ARG_TYPE = "RESULTS_TITLE_INVALID_ARG_TYPE"
+    """Something other than a str was passed as the title arg"""
+    RESULTS_TITLE_INVALID_ARG_VALUE = "RESULTS_TITLE_INVALID_ARG_VALUE"
+    """The title arg passed must be a non-empty string"""
+    RESULTS_DESCRIPTION_INVALID_ARG_TYPE = "RESULTS_DESCRIPTION_INVALID_ARG_TYPE"
+    """Something other than a str was passed as the description arg"""
+    RESULTS_N_INVALID_ARG_TYPE = "RESULTS_N_INVALID_ARG_TYPE"
+    """Something other than an int was passed as the n arg"""
+    RESULTS_N_INVALID_ARG_VALUE = "RESULTS_N_INVALID_ARG_VALUE"
+    """The n arg passed must be greater than zero"""
+    RESULTS_INTERVAL_UNIT_INVALID_ARG_TYPE = "RESULTS_INTERVAL_UNIT_INVALID_ARG_TYPE"
+    """Something other than a str was passed as the interval_unit arg"""
+    RESULTS_INTERVAL_UNIT_INVALID_ARG_VALUE = "RESULTS_INTERVAL_UNIT_INVALID_ARG_VALUE"
+    """The interval_unit arg passed must be a non-empty string"""
+    RESULTS_INTERVAL_SCALE_INVALID_ARG_TYPE = "RESULTS_INTERVAL_SCALE_INVALID_ARG_TYPE"
+    """Something other than a float was passed as the interval_scale arg"""
+    RESULTS_INTERVAL_SCALE_INVALID_ARG_VALUE = "RESULTS_INTERVAL_SCALE_INVALID_ARG_VALUE"
+    """The interval_scale arg passed must be greater than zero"""
+    RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE = "RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE"
+    """Something other than a str was passed as the ops_per_interval_unit arg"""
+    RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE = "RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE"
+    """The ops_per_interval_unit arg passed must be a non-empty string"""
+    RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE = "RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE"
+    """Something other than a float was passed as the ops_per_interval_scale arg"""
+    RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE = "RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE"
+    """The ops_per_interval_scale arg passed must be greater than zero"""
+    RESULTS_TOTAL_ELAPSED_INVALID_ARG_TYPE = "RESULTS_TOTAL_ELAPSED_INVALID_ARG_TYPE"
+    """Something other than a float was passed as the total_elapsed arg"""
+    RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE = "RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE"
+    """The total_elapsed arg passed must be greater than zero"""
+    RESULTS_VARIATION_MARKS_INVALID_ARG_TYPE = "RESULTS_VARIATION_MARKS_INVALID_ARG_TYPE"
+    """Something other than a dict of str to str was passed as the variation_marks arg"""
+    RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_TYPE = "RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_TYPE"
+    """Something other than a str was found as a key in the dict passed as the variation_marks arg"""
+    RESULTS_VARIATION_MARKS_INVALID_ARG_VALUE_TYPE = "RESULTS_VARIATION_MARKS_INVALID_ARG_VALUE_TYPE"
+    """Something other than a str was found as a value in the dict passed as the variation_marks arg"""
+    RESULTS_EXTRA_INFO_INVALID_ARG_TYPE = "RESULTS_EXTRA_INFO_INVALID_ARG_TYPE"
+    """Something other than a dict was passed as the extra_info arg"""
+    RESULTS_OPS_PER_SECOND_INVALID_ARG_TYPE = "RESULTS_OPS_PER_SECOND_INVALID_ARG_TYPE"
+    """Something other than an OperationsPerInterval instance was passed as the ops_per_second arg"""
+    RESULTS_PER_ROUND_TIMINGS_INVALID_ARG_TYPE = "RESULTS_PER_ROUND_TIMINGS_INVALID_ARG_TYPE"
+    """Something other than an OperationTimings instance was passed as the per_round_timings arg"""
+    RESULTS_ITERATIONS_INVALID_ARG_TYPE = "RESULTS_ITERATIONS_INVALID_ARG_TYPE"
+    """Something other than a Sequence of Iteration instances was passed as the iterations arg"""
+    RESULTS_ITERATIONS_INVALID_ARG_IN_SEQUENCE = "RESULTS_ITERATIONS_INVALID_ARG_IN_SEQUENCE"
+    """Something other than an Iteration instance was found in the Sequence passed as the iterations arg"""
+    RESULTS_VARIATION_COLS_INVALID_ARG_TYPE = "RESULTS_VARIATION_COLS_INVALID_ARG_TYPE"
+    """Something other than a dict of str to str was passed as the variation_cols arg"""
+    RESULTS_VARIATION_COLS_INVALID_ARG_KEY_TYPE = "RESULTS_VARIATION_COLS_INVALID_ARG_KEY_TYPE"
+    """Something other than a str was found as a key in the dict passed as the variation_cols arg"""
+    RESULTS_VARIATION_COLS_INVALID_ARG_KEY_VALUE = "RESULTS_VARIATION_COLS_INVALID_ARG_KEY_VALUE"
+    """An empty string was found as a key in the dict passed as the variation_cols arg"""
+    RESULTS_VARIATION_COLS_INVALID_ARG_VALUE_TYPE = "RESULTS_VARIATION_COLS_INVALID_ARG_VALUE_TYPE"
+    """Something other than a str was found as a value in the dict passed as the variation_cols arg"""
+    RESULTS_RESULTS_SECTION_INVALID_SECTION_ARG_TYPE = "RESULTS_RESULTS_SECTION_INVALID_SECTION_ARG_TYPE"
+    """Something other than a Section enum was passed as the results_sections arg"""
+    RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE = "RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE"
+    """Something other than a Section.OPS or Section.TIMING was passed to the Results.result_section() method"""
+
     # Stats() tags
     STATS_INVALID_UNIT_ARG_TYPE = "STATS_INVALID_UNIT_ARG_TYPE"
     """Invalid unit argument passed to the Stats() constructor - must be a str"""
@@ -508,17 +572,6 @@ class TaggedException(Exception, Generic[E]):
             raise TypeError("Missing or wrong type 'tag' argument (must be Enum)")
         self.tag_code = tag
         super().__init__(*args, **kwargs)
-
-
-class ExampleTaggedException(TaggedException[ValueError]):
-    '''A tagged exception that is a specialized ValueError.
-
-    It is used here as an example of how to create a tagged exception
-    with this base class.
-
-    Example:
-        raise ExampleTaggedException("An error occurred", tag=MyErrorTags.SOME_ERROR)
-    '''
 
 
 class SimpleBenchTypeError(TaggedException[ValueError]):

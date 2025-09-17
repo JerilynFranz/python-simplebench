@@ -13,14 +13,14 @@ class Iteration:
 
     Properties:
         n (int): The number of rounds performed in the iteration. (defaults to 1)
-        elapsed (int): The elapsed time for the operations. (defaults to 0)
+        elapsed (float): The elapsed time for the operations. (defaults to 0.0)
         unit (str): The unit of measurement for the elapsed time. (defaults to 'ns')
         scale (float): The scale factor for the elapsed time. (defaults to 1e-9)
         ops_per_second (float): The number of operations per second. (read only)
         per_round_elapsed (float): The mean time for a single round scaled to the base unit. (read only)
     '''
     n: int = 1
-    elapsed: int = 0
+    elapsed: float = 0.0
     unit: str = DEFAULT_INTERVAL_UNIT
     scale: float = DEFAULT_INTERVAL_SCALE
 
@@ -29,9 +29,9 @@ class Iteration:
             raise SimpleBenchTypeError('n must be an int', tag=ErrorTag.ITERATION_INIT_N_ARG_TYPE)
         if self.n <= 0:
             raise SimpleBenchValueError('n must be positive', tag=ErrorTag.ITERATION_INIT_N_ARG_VALUE)
-        if not isinstance(self.elapsed, int):
-            raise SimpleBenchTypeError('elapsed must be an int', tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE)
-        if self.elapsed < 0:
+        if not isinstance(self.elapsed, float):
+            raise SimpleBenchTypeError('elapsed must be a float', tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE)
+        if self.elapsed < 0.0:
             raise SimpleBenchValueError('elapsed must be non-negative', tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_VALUE)
         if not isinstance(self.unit, str):
             raise SimpleBenchTypeError('unit must be a str', tag=ErrorTag.ITERATION_INIT_UNIT_ARG_TYPE)

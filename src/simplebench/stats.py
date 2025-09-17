@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Containers for benchmark statistics"""
 
+from copy import copy
 import statistics
 from typing import Optional
 
@@ -8,6 +9,7 @@ from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_SCALE)
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from .si_units import si_unit_base
 
 
 class Stats:
@@ -172,20 +174,24 @@ class Stats:
         The data values are scaled according to the scale factor to provide
         human-readable values using the base unit rather than the scaled unit.
 
+        The unit is converted to its SI base unit representation. (e.g., "ms" becomes "s")
+
+        This does not include the raw data points, only the statistics.
+
         Returns:
             A dictionary containing the statistics.
         '''
         return {
             'type': f'{self.__class__.__name__}:statistics',
-            'unit': self.unit,
-            'scale': self.scale,
+            'unit': si_unit_base(self.unit),
             'mean': self.mean / self.scale if self.scale else self.mean,
             'median': self.median / self.scale if self.scale else self.median,
             'minimum': self.minimum / self.scale if self.scale else self.minimum,
             'maximum': self.maximum / self.scale if self.scale else self.maximum,
             'standard_deviation': self.standard_deviation / self.scale if self.scale else self.standard_deviation,
             'relative_standard_deviation': self.relative_standard_deviation,
-            'percentiles': self.percentiles,
+            'percentiles': {key: value / self.scale for key, value in self.percentiles.items()
+                            } if self.scale else copy(self.percentiles),
         }
 
     @property
@@ -195,7 +201,10 @@ class Stats:
 
         This includes all the statistics as well as the raw data points.
 
-        The data values are scaled according to the scale factor.
+        The data values are scaled according to the scale factor to provide
+        human-readable values using the base unit rather than the scaled unit.
+
+        The unit is converted to its SI base unit representation. (e.g., "ms" becomes "s")
 
         Returns:
             A dictionary containing the statistics and the scaled data points.

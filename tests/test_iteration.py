@@ -16,7 +16,7 @@ from .testspec import TestAction, idspec
         args=[],
         kwargs={},
         validate_result=lambda result: (result.n == 1 and
-                                        result.elapsed == 0 and
+                                        result.elapsed == 0.0 and
                                         result.unit == DEFAULT_INTERVAL_UNIT and
                                         result.scale == DEFAULT_INTERVAL_SCALE and
                                         isinstance(result, Iteration)))),
@@ -42,17 +42,17 @@ from .testspec import TestAction, idspec
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.ITERATION_INIT_N_ARG_TYPE)),
     idspec("ITERATION_005", TestAction(
-        name="Bad elapsed arg type (float)",
+        name="Bad elapsed arg type (int)",
         action=Iteration,
         args=[],
-        kwargs={'elapsed': 1.0},
+        kwargs={'elapsed': 1},
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE)),
     idspec("ITERATION_006", TestAction(
         name="Bad elapsed arg value (negative)",
         action=Iteration,
         args=[],
-        kwargs={'elapsed': -1},
+        kwargs={'elapsed': -1.0},
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_VALUE)),
     idspec("ITERATION_007", TestAction(
@@ -87,9 +87,9 @@ from .testspec import TestAction, idspec
         name="Good args",
         action=Iteration,
         args=[],
-        kwargs={'n': 5, 'elapsed': 10, 'unit': 'ms', 'scale': 1e-3},
+        kwargs={'n': 5, 'elapsed': 10.0, 'unit': 'ms', 'scale': 1e-3},
         validate_result=lambda result: (result.n == 5 and
-                                        result.elapsed == 10 and
+                                        result.elapsed == 10.0 and
                                         result.unit == 'ms' and
                                         result.scale == 1e-3 and
                                         result.per_round_elapsed == 0.002 and
@@ -98,9 +98,9 @@ from .testspec import TestAction, idspec
         name="Good args with zero elapsed time",
         action=Iteration,
         args=[],
-        kwargs={'n': 5, 'elapsed': 0, 'unit': 'ms', 'scale': 1e-3},
+        kwargs={'n': 5, 'elapsed': 0.0, 'unit': 'ms', 'scale': 1e-3},
         validate_result=lambda result: (result.n == 5 and
-                                        result.elapsed == 0 and
+                                        result.elapsed == 0.0 and
                                         result.unit == 'ms' and
                                         result.scale == 1e-3 and
                                         result.per_round_elapsed == 0.0 and

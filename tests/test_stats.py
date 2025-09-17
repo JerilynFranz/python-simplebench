@@ -245,7 +245,6 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
     expected_keys = {
         'type': str,
         'unit': str,
-        'scale': float,
         'mean': float,
         'median': float,
         'minimum': float,
