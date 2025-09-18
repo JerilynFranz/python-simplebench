@@ -487,92 +487,93 @@ def base_per_round_timings() -> OperationTimings:
         data=[0.01, 0.02, 0.03]
     )
 
+
 @pytest.mark.parametrize("testspec", [
-    idspec("RESULTS_PROPERTIES_001", TestSetGet(
+    idspec("PROPERTIES_001", TestSetGet(
         name='set/get group',
         attribute='group',
         value='new_group',
         expected='new_group',
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_002", TestSetGet(
+    idspec("PROPERTIES_002", TestSetGet(
         name='set/get title',
         attribute='title',
         value='new_title',
         expected='new_title',
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_003", TestSetGet(
+    idspec("PROPERTIES_003", TestSetGet(
         name='set/get description',
         attribute='description',
         value='new_description',
         expected='new_description',
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_004", TestSetGet(
+    idspec("PROPERTIES_004", TestSetGet(
         name='set/get n',
         attribute='n',
         value=5,
         expected=5,
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_005", TestSetGet(
+    idspec("PROPERTIES_005", TestSetGet(
         name='set/get variation_cols',
         attribute='variation_cols',
         value={'key': 'value'},
         expected={'key': 'value'},
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_006", TestSetGet(
+    idspec("PROPERTIES_006", TestSetGet(
         name='set/get interval_unit',
         attribute='interval_unit',
         value='minutes',
         expected='minutes',
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_007", TestSetGet(
+    idspec("PROPERTIES_007", TestSetGet(
         name='set/get interval_scale',
         attribute='interval_scale',
         value=60.0,
         expected=60.0,
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_008", TestSetGet(
+    idspec("PROPERTIES_008", TestSetGet(
         name='set/get iterations',
         attribute='iterations',
         value=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
         expected=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_009", TestSetGet(
+    idspec("PROPERTIES_009", TestSetGet(
         name='set/get ops_per_second',
         attribute='ops_per_second',
         value=base_operations_per_interval(),
         expected=base_operations_per_interval(),
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_010", TestSetGet(
+    idspec("PROPERTIES_010", TestSetGet(
         name='set/get per_round_timings',
         attribute='per_round_timings',
         value=base_per_round_timings(),
         expected=base_per_round_timings(),
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_011", TestSetGet(
+    idspec("PROPERTIES_011", TestSetGet(
         name='set/get ops_per_interval_unit',
         attribute='ops_per_interval_unit',
         value='ops/minute',
         expected='ops/minute',
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_012", TestSetGet(
+    idspec("PROPERTIES_012", TestSetGet(
         name='set/get ops_per_interval_scale',
         attribute='ops_per_interval_scale',
         value=60.0,
         expected=60.0,
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_013", TestSetGet(
+    idspec("PROPERTIES_013", TestSetGet(
         name='set/get total_elapsed',
         attribute='total_elapsed',
         value=1.5,
         expected=1.5,
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_014", TestSetGet(
+    idspec("PROPERTIES_014", TestSetGet(
         name='set/get variation_marks',
         attribute='variation_marks',
         value={'key': 'value'},
         expected={'key': 'value'},
         obj=base_results())),
-    idspec("RESULTS_PROPERTIES_015", TestSetGet(
+    idspec("PROPERTIES_015", TestSetGet(
         name='set/get extra_info',
         attribute='extra_info',
         value={'key': 'value'},
