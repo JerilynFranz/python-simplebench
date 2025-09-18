@@ -1,9 +1,12 @@
 """Tests for the simplebench/results.py module."""
+from __future__ import annotations
+from functools import cache
 
 import pytest
 
 from simplebench.constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from simplebench.iteration import Iteration
 from simplebench.results import Results
 from simplebench.stats import OperationsPerInterval, OperationTimings
 
@@ -435,7 +438,147 @@ from .testspec import TestAction, TestSetGet, idspec
         },
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)),
+    idspec("RESULTS_033", TestAction(
+        name="negative total_elapsed",
+        action=Results,
+        args=[],
+        kwargs={
+            'group': 'default_group',
+            'title': 'default_title',
+            'description': 'default_description',
+            'n': 1,
+            'total_elapsed': -1.0
+        },
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE)),
 ])
 def test_results_init(testspec: TestAction) -> None:
     """Test Results initialization."""
+    testspec.run()
+
+
+@cache
+def base_results() -> Results:
+    """Create a base Results instance for testing."""
+    return Results(
+        group='test_group',
+        title='test_title',
+        description='test_description',
+        n=1
+    )
+
+
+@cache
+def base_operations_per_interval() -> OperationsPerInterval:
+    """Create a base OperationsPerInterval instance for testing."""
+    return OperationsPerInterval(
+        unit='ops/second',
+        scale=1.0,
+        data=[100.0, 200.0, 300.0]
+    )
+
+
+@cache
+def base_per_round_timings() -> OperationTimings:
+    """Create a base OperationTimings instance for testing."""
+    return OperationTimings(
+        unit='seconds',
+        scale=1.0,
+        data=[0.01, 0.02, 0.03]
+    )
+
+@pytest.mark.parametrize("testspec", [
+    idspec("RESULTS_PROPERTIES_001", TestSetGet(
+        name='set/get group',
+        attribute='group',
+        value='new_group',
+        expected='new_group',
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_002", TestSetGet(
+        name='set/get title',
+        attribute='title',
+        value='new_title',
+        expected='new_title',
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_003", TestSetGet(
+        name='set/get description',
+        attribute='description',
+        value='new_description',
+        expected='new_description',
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_004", TestSetGet(
+        name='set/get n',
+        attribute='n',
+        value=5,
+        expected=5,
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_005", TestSetGet(
+        name='set/get variation_cols',
+        attribute='variation_cols',
+        value={'key': 'value'},
+        expected={'key': 'value'},
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_006", TestSetGet(
+        name='set/get interval_unit',
+        attribute='interval_unit',
+        value='minutes',
+        expected='minutes',
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_007", TestSetGet(
+        name='set/get interval_scale',
+        attribute='interval_scale',
+        value=60.0,
+        expected=60.0,
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_008", TestSetGet(
+        name='set/get iterations',
+        attribute='iterations',
+        value=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
+        expected=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_009", TestSetGet(
+        name='set/get ops_per_second',
+        attribute='ops_per_second',
+        value=base_operations_per_interval(),
+        expected=base_operations_per_interval(),
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_010", TestSetGet(
+        name='set/get per_round_timings',
+        attribute='per_round_timings',
+        value=base_per_round_timings(),
+        expected=base_per_round_timings(),
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_011", TestSetGet(
+        name='set/get ops_per_interval_unit',
+        attribute='ops_per_interval_unit',
+        value='ops/minute',
+        expected='ops/minute',
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_012", TestSetGet(
+        name='set/get ops_per_interval_scale',
+        attribute='ops_per_interval_scale',
+        value=60.0,
+        expected=60.0,
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_013", TestSetGet(
+        name='set/get total_elapsed',
+        attribute='total_elapsed',
+        value=1.5,
+        expected=1.5,
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_014", TestSetGet(
+        name='set/get variation_marks',
+        attribute='variation_marks',
+        value={'key': 'value'},
+        expected={'key': 'value'},
+        obj=base_results())),
+    idspec("RESULTS_PROPERTIES_015", TestSetGet(
+        name='set/get extra_info',
+        attribute='extra_info',
+        value={'key': 'value'},
+        expected={'key': 'value'},
+        obj=base_results())),
+])
+def test_results_getset_properties(testspec: TestSetGet) -> None:
+    """Test Results get/set properties."""
     testspec.run()
