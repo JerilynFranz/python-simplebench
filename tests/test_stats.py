@@ -1,6 +1,7 @@
 """Tests for the simplebench/stats.py module."""
 # Conflicts with pytest fixtures
 # pylint: disable=redefined-outer-name
+from enum import Enum
 import statistics
 from typing import Any, Sequence
 
@@ -12,6 +13,11 @@ from simplebench.iteration import Iteration
 from simplebench import stats
 
 from .testspec import TestAction, TestSetGet, idspec
+
+
+class Nonesense(str, Enum):
+    """A nonsense enum value for testing."""
+    NONESENSE = 'nonsense'
 
 
 @pytest.fixture()
@@ -167,6 +173,7 @@ def test_stats_set_get(stats_instances: list[stats.Stats], test: TestSetGet) -> 
 def test_computed_stats_read_only(stats_instances: list[stats.Stats], attribute: str, value: Any) -> None:
     """Test that computed stats properties exist and are read-only."""
     for stats_instance in stats_instances:
+        # only way this should happen is if someone adds a new property to the test but forgets to update the class
         if not hasattr(stats_instance, attribute):
             pytest.fail(f"Attribute {attribute} not found in {type(stats_instance).__name__}")
         with pytest.raises(AttributeError):
@@ -276,7 +283,7 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
 
 
 @pytest.mark.parametrize("section", [
-    pytest.param(section, id=f"Section.{section.name}") for section in list(Section)
+    pytest.param(section, id=f"Section.{section.name}") for section in list(Section) + [Nonesense.NONESENSE]
 ])
 def test_stats_initalization(section: Section) -> None:
     """Test that data is correctly initialized in stats classes."""
