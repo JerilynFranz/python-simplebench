@@ -7,7 +7,9 @@ from typing import Optional
 
 from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_UNIT,
-                        DEFAULT_OPS_PER_INTERVAL_SCALE)
+                        DEFAULT_OPS_PER_INTERVAL_SCALE,
+                        DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT)
+from .iteration import Iteration
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .si_units import si_unit_base
 
@@ -230,9 +232,14 @@ class OperationsPerInterval(Stats):
         percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
     '''
     def __init__(self,
+                 iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_OPS_PER_INTERVAL_UNIT,
                  scale: float = DEFAULT_OPS_PER_INTERVAL_SCALE,
                  data: Optional[list[int | float]] = None):
+        if data is None and iterations is not None:
+            data = []
+            for iteration in iterations:
+                data.append(iteration.ops_per_second)
         super().__init__(unit=unit, scale=scale, data=data)
 
 
@@ -252,7 +259,66 @@ class OperationTimings(Stats):
         percentiles (dict[int, float]): Percentiles of time per operation.
     '''
     def __init__(self,
+                 iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
                  data: Optional[list[int | float]] = None):
+        if data is None and iterations is not None:
+            data = []
+            for iteration in iterations:
+                data.append(iteration.per_round_elapsed)
+        super().__init__(unit=unit, scale=scale, data=data)
+
+
+class MemoryUsage(Stats):
+    '''Container for the memory usage statistics of a benchmark.
+
+    Attributes:
+        unit (str): The unit of measurement for the memory usage (e.g., "MB").
+        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
+        data: list[float | int] = List of memory usage data points.
+        mean (float): The mean memory usage.
+        median (float): The median memory usage.
+        minimum (float): The minimum memory usage.
+        maximum (float): The maximum memory usage.
+        standard_deviation (float): The standard deviation of the memory usage.
+        relative_standard_deviation (float): The relative standard deviation of the memory usage.
+        percentiles (dict[int, float]): Percentiles of memory usage.
+    '''
+    def __init__(self,
+                 iterations: list[Iteration] | None = None,
+                 unit: str = DEFAULT_MEMORY_UNIT,
+                 scale: float = DEFAULT_MEMORY_SCALE,
+                 data: Optional[list[int | float]] = None):
+        if data is None and iterations is not None:
+            data = []
+            for iteration in iterations:
+                data.append(iteration.memory_usage)
+        super().__init__(unit=unit, scale=scale, data=data)
+
+
+class PeakMemoryUsage(Stats):
+    '''Container for the peak memory usage statistics of a benchmark.
+
+    Attributes:
+        unit (str): The unit of measurement for the memory usage (e.g., "MB").
+        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
+        data: list[float | int] = List of peak memory usage data points.
+        mean (float): The mean memory usage.
+        median (float): The median memory usage.
+        minimum (float): The minimum memory usage.
+        maximum (float): The maximum memory usage.
+        standard_deviation (float): The standard deviation of the memory usage.
+        relative_standard_deviation (float): The relative standard deviation of the memory usage.
+        percentiles (dict[int, float]): Percentiles of memory usage.
+    '''
+    def __init__(self,
+                 iterations: list[Iteration] | None = None,
+                 unit: str = DEFAULT_MEMORY_UNIT,
+                 scale: float = DEFAULT_MEMORY_SCALE,
+                 data: Optional[list[int | float]] = None):
+        if data is None and iterations is not None:
+            data = []
+            for iteration in iterations:
+                data.append(iteration.peak_memory_usage)
         super().__init__(unit=unit, scale=scale, data=data)

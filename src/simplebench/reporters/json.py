@@ -67,30 +67,8 @@ class JSONReporter(Reporter):
                 reporter=self,
                 flags=['--json'],
                 name='json',
-                description='operations per second and per round timing results to JSON',
-                sections=[Section.OPS, Section.TIMING],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.JSON],
-                extra=JSONExtras(full_data=False))
-        )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--json-ops'],
-                name='json-ops',
-                description='Save operations per second results to JSON',
-                sections=[Section.OPS],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.JSON],
-                extra=JSONExtras(full_data=False))
-        )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--json-timings'],
-                name='json-timings',
-                description='per round timing results to JSON',
-                sections=[Section.TIMING],
+                description='statistical results to JSON',
+                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.JSON],
                 extra=JSONExtras(full_data=False))
@@ -100,30 +78,8 @@ class JSONReporter(Reporter):
                 reporter=self,
                 flags=['--json-data'],
                 name='json-data',
-                description='operations per second and per round timing results to JSON + full data',
-                sections=[Section.OPS, Section.TIMING],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.JSON],
-                extra=JSONExtras(full_data=True))
-        )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--json-ops-data'],
-                name='json-ops-data',
-                description='Save operations per second results to JSON + full data',
-                sections=[Section.OPS],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.JSON],
-                extra=JSONExtras(full_data=True))
-        )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--json-timings-data'],
-                name='json-timings-data',
-                description='per round timing results to JSON + full data',
-                sections=[Section.TIMING],
+                description='statistical results to JSON + full data',
+                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.JSON],
                 extra=JSONExtras(full_data=True))
@@ -135,7 +91,7 @@ class JSONReporter(Reporter):
 
     def supported_sections(self):
         """Return the set of supported result sections for the reporter."""
-        return set([Section.OPS, Section.TIMING])
+        return set([Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY])
 
     def supported_targets(self):
         """Return the set of supported output targets for the reporter."""

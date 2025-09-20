@@ -4,6 +4,7 @@
 from dataclasses import dataclass
 
 from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from .enums import Section
 from .exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
 
 
@@ -18,11 +19,15 @@ class Iteration:
         scale (float): The scale factor for the elapsed time. (defaults to 1e-9)
         ops_per_second (float): The number of operations per second. (read only)
         per_round_elapsed (float): The mean time for a single round scaled to the base unit. (read only)
+        memory_usage (int): The memory usage in bytes. (defaults to 0)
+        peak_memory_usage (int): The peak memory usage in bytes. (defaults to 0)
     '''
     n: int = 1
     elapsed: float = 0.0
     unit: str = DEFAULT_INTERVAL_UNIT
     scale: float = DEFAULT_INTERVAL_SCALE
+    memory_usage: int = 0  # in bytes
+    peak_memory_usage: int = 0  # in bytes
 
     def __post_init__(self):
         if not isinstance(self.n, int):
@@ -72,3 +77,63 @@ class Iteration:
         if self.elapsed == 0.0:
             return 0.0
         return self.n / (self.elapsed * self.scale)
+
+    @property
+    def memory(self) -> int:
+        '''The memory usage in bytes. This is the difference between the allocated
+        memory before and after the action.
+
+        The edge case of no memory allocated results in a returned value of 0
+        '''
+        return self.memory_usage
+
+    @memory.setter
+    def memory(self, value: int) -> None:
+        if not isinstance(value, int):
+            raise SimpleBenchTypeError('memory_usage must be an int',
+                                       tag=ErrorTag.ITERATION_SET_MEMORY_ARG_TYPE)
+        self.memory_usage = value
+
+    @property
+    def peak_memory(self) -> int:
+        '''The peak memory usage in bytes.
+
+        This is the maximum memory allocated during the action.
+        '''
+        return self.peak_memory_usage
+
+    @peak_memory.setter
+    def peak_memory(self, value: int) -> None:
+        if not isinstance(value, int):
+            raise SimpleBenchTypeError('peak_memory_usage must be an int',
+                                       tag=ErrorTag.ITERATION_SET_PEAK_MEMORY_ARG_TYPE)
+        self.peak_memory_usage = value
+
+    def iteration_section(self, section: Section) -> int | float:
+        """Returns the requested section of the benchmark results.
+
+        Args:
+            section (Section): The section of the results to return. Must be Section.OPS or Section.TIMING.
+
+        Returns:
+            Stats: The requested section of the benchmark results.
+        """
+        if not isinstance(section, Section):
+            raise SimpleBenchTypeError(
+                f'Invalid section type: {type(section)}. Must be of type Section.',
+                tag=ErrorTag.ITERATION_ITERATION_SECTION_INVALID_SECTION_ARG_TYPE
+            )
+        match section:
+            case Section.OPS:
+                return self.ops_per_second
+            case Section.TIMING:
+                return self.per_round_elapsed
+            case Section.MEMORY:
+                return self.memory_usage
+            case Section.PEAK_MEMORY:
+                return self.peak_memory_usage
+            case _:
+                raise SimpleBenchValueError(
+                    f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
+                    tag=ErrorTag.ITERATION_ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
+                )

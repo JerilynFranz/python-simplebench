@@ -67,7 +67,7 @@ class CSVReporter(Reporter):
                 flags=['--csv'],
                 name='csv',
                 description='operations per second and per round timing results to CSV',
-                sections=[Section.OPS, Section.TIMING],
+                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.CSV]))
         choices.add(
@@ -88,6 +88,15 @@ class CSVReporter(Reporter):
                 sections=[Section.TIMING],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.CSV]))
+        choices.add(
+            Choice(
+                reporter=self,
+                flags=['--csv-memory'],
+                name='csv-memory',
+                description='memory usage results to CSV',
+                sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                targets=[Target.FILESYSTEM, Target.CALLBACK],
+                formats=[Format.CSV]))
 
     def supported_formats(self):
         """Return the set of supported output formats for the reporter."""
@@ -95,7 +104,7 @@ class CSVReporter(Reporter):
 
     def supported_sections(self):
         """Return the set of supported result sections for the reporter."""
-        return set([Section.OPS, Section.TIMING])
+        return set([Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY])
 
     def supported_targets(self):
         """Return the set of supported output targets for the reporter."""

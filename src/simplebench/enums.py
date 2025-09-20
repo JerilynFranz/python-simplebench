@@ -9,12 +9,14 @@ class Section(str, Enum):
 
     The string values are used to load the data accessor methods by attribute name in the Results class
     and name generated files."""
-    OPS = 'ops_per_second'
+    OPS = 'operations per second'
     """Operations per second section."""
-    TIMING = 'per_round_timings'
+    TIMING = 'per round timings'
     """Time per round section."""
-    MEMORY = 'memory_usage'
+    MEMORY = 'memory usage'
     """Memory usage section."""
+    PEAK_MEMORY = 'peak memory usage'
+    """Peak memory usage section."""
 
     def __contains__(self, item: Any) -> bool:
         """Check if the item is a valid Section."""

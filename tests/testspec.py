@@ -15,6 +15,33 @@ NO_OBJ_ASSIGNED = object()
 """A sentinel object used to indicate that no obj has been assigned."""
 
 
+class Assert(str, Enum):
+    """Enumeration of supported assertion operators.
+
+    Supported operators include:
+        - EQUAL ('=='): Checks if two values are equal.
+        - NOT_EQUAL ('!='): Checks if two values are not equal.
+        - LESS_THAN ('<'): Checks if one value is less than another.
+        - LESS_THAN_OR_EQUAL ('<='): Checks if one value is less than or equal to another.
+        - GREATER_THAN ('>'): Checks if one value is greater than another.
+        - GREATER_THAN_OR_EQUAL ('>='): Checks if one value is greater than or equal to another.
+        - IN ('in'): Checks if a value is contained within another (e.g., a list or set).
+        - NOT_IN ('not in'): Checks if a value is not contained within another (e.g., a list or set).
+        - IS ('is'): Checks if two references point to the same object.
+        - IS_NOT ('is not'): Checks if two references do not point to the same object.
+    """
+    EQUAL = '=='
+    NOT_EQUAL = '!='
+    LESS_THAN = '<'
+    LESS_THAN_OR_EQUAL = '<='
+    GREATER_THAN = '>'
+    GREATER_THAN_OR_EQUAL = '>='
+    IN = 'in'
+    NOT_IN = 'not in'
+    IS = 'is'
+    IS_NOT = 'is not'
+
+
 def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
     """A placeholder function that raises a NotImplementedError when called.
 
@@ -155,6 +182,8 @@ class TestSetGet(TestSpec):
             get step validation for the set value.
         get_attribute (Optional[str], default=None):
             The name of the attribute to be retrieved for 'expected' validation. If None, use the same as `attribute`.
+        assertion (Assert, default=Assert.EQUAL):
+            The assertion operator to use when comparing the expected and found values.
         exception (Optional[type[Exception]], default=None):
             Expected exception type (if any) to be raised by setting the attribute.
         exception_tag (Optional[str | Enum], default=None):
@@ -181,6 +210,8 @@ class TestSetGet(TestSpec):
     """The object whose attribute is to be tested. It cannot be None, and must be an instance of object.
     If not provided during construction, the special sentinel value NO_OBJ_ASSIGNED is used. This must be
     replaced with a valid object before running the test."""
+    assertion: Assert = Assert.EQUAL
+    """The assertion operator to use when comparing the expected and found values. (default is Assert.EQUAL)"""
     expected: Optional[Any] = NO_EXPECTED_VALUE
     """Expected value of attribute after setting the attribute. If a get_exception or
     set_exception is set, the expected value is ignored. If there is no expected exception
@@ -311,9 +342,13 @@ class TestSetGet(TestSpec):
                     return
 
                 found: Any = self.obj.__getattribute__(attribute_to_get)
-                if self.expected != found:
-                    errors.append(
-                        f"expected={self.expected}, found={found} for attribute '{attribute_to_get}'")
+                match self.assertion:
+                    case '==':
+                        if self.expected != found:
+                            errors.append(
+                                f"expected={self.expected}, found={found} for attribute '{attribute_to_get}'")
+                    case _:
+                        errors.append(f"Unsupported assertion operator '{self.assertion}'")
 
         except Exception as err:  # pylint: disable=broad-exception-caught
             if self.get_exception is None:
@@ -350,6 +385,60 @@ class TestSetGet(TestSpec):
             raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
 
 
+def test_assertion(assertion: Assert, expected: Any, found: Any) -> str:
+    """Helper function to perform an assertion check.
+
+    This function takes an assertion operator, an expected value, and a found value,
+    and performs the specified assertion check. If the assertion fails, it returns
+    an error message; otherwise, it returns an empty string.
+
+    Args:
+        assertion (Assert): The assertion operator to use.
+        expected (Any): The expected value.
+        found (Any): The found value.
+
+    Returns:
+        str: An error message if the assertion fails, otherwise an empty string.
+
+    Raises:
+        ValueError: If an unsupported assertion operator is provided.
+    """
+    match assertion:
+        case Assert.EQUAL:
+            if not found == expected:
+                return f"assertion failed: (found={found}) == (expected={expected})"
+        case Assert.NOT_EQUAL:
+            if not found != expected:
+                return f"assertion failed: (found={found}) != (expected={expected})"
+        case Assert.LESS_THAN:
+            if not found < expected:
+                return f"assertion failed: (found={found}) < (expected={expected})"
+        case Assert.LESS_THAN_OR_EQUAL:
+            if not found <= expected:
+                return f"assertion failed: (found={found}) <= (expected={expected})"
+        case Assert.GREATER_THAN:
+            if not found > expected:
+                return f"assertion failed: (found={found}) > (expected={expected})"
+        case Assert.GREATER_THAN_OR_EQUAL:
+            if not found >= expected:
+                return f"assertion failed: (found={found}) >= (expected={expected})"
+        case Assert.IN:
+            if not (found in expected):  # pylint: disable=superfluous-parens  # for clarity
+                return f"assertion failed: (found={found}) in (expected={expected})"
+        case Assert.NOT_IN:
+            if not (found not in expected):  # pylint: disable=superfluous-parens  # for clarity
+                return f"assertion failed: (found={found}) not in (expected={expected})"
+        case Assert.IS:
+            if not (found is expected):  # pylint: disable=superfluous-parens  # for clarity
+                return f"assertion failed: (found={found}) is (expected={expected})"
+        case Assert.IS_NOT:
+            if not (found is not expected):  # pylint: disable=superfluous-parens  # for clarity
+                return f"assertion failed: (found={found}) is not (expected={expected})"
+        case _:
+            return f"Unsupported assertion operator '{assertion}'"
+    return ""
+
+
 @dataclass
 class TestAction(TestSpec):
     """A generic unit test specification class.
@@ -368,8 +457,12 @@ class TestAction(TestSpec):
             Sequence of positional arguments to be passed to the `action` function or method.
         kwargs (dict[str, Any], default = {}):
             Dictionary containing keyword arguments to be passed to the `action` function or method.
+        assertion (Assert, default=Assert.EQUAL):
+            The assertion operator to use when comparing the expected and found values.
         expected (Any, default=NO_EXPECTED_VALUE ):
-            Expected value (if any) that is expected to be returned by the `action` function or method.
+            Expected value (if any) for the `action` function or method.
+            This is used with the `assertion` operator to validate the return value of the function or method.
+
             If there is no expected value, the special class NoExpectedValue is used to flag it.
             This is used so that the specific return value of None can be distinguished from no
             particular value or any value at all is expected to be returned from the function or method.
@@ -389,8 +482,13 @@ class TestAction(TestSpec):
     """Sequence of positional arguments to be passed to the `action` function or method."""
     kwargs: Optional[dict[str, Any]] = None
     """Dictionary containing keyword arguments to be passed to the `action` function or method."""
+    assertion: Assert = Assert.EQUAL
+    """The assertion operator to use when comparing the expected and found values. (default is Assert.EQUAL)"""
     expected: Any = NO_EXPECTED_VALUE
-    """Expected value (if any) that is expected to be returned by the `action` function or method."""
+    """Expected value (if any) that is associated with the `action` function or method.
+
+    This is used with the `assertion` operator to validate the return value of the function or method.
+    """
     obj: Optional[Any] = None
     """Optional object to be validated."""
     validate_obj: Optional[Callable[[Any], bool]] = None
@@ -436,12 +534,14 @@ class TestAction(TestSpec):
                     errors.append(f"failed result validation: found={found}")
                 if self.validate_obj and not self.validate_obj(self.obj):
                     errors.append(f"failed object validation: obj={self.obj}")
-                if self.expected is not NO_EXPECTED_VALUE and self.expected != found:
-                    errors.append(f"expected={self.expected}, found={found}")
-                    if callable(self.display_on_fail):
-                        errors.append(self.display_on_fail())
-                    elif isinstance(self.display_on_fail, str):
-                        errors.append(self.display_on_fail)
+                if self.expected is not NO_EXPECTED_VALUE:
+                    assertion_result = test_assertion(self.assertion, self.expected, found)
+                    if assertion_result:
+                        errors.append(assertion_result)
+                        if callable(self.display_on_fail):
+                            errors.append(self.display_on_fail())
+                        elif isinstance(self.display_on_fail, str):
+                            errors.append(self.display_on_fail)
         except Exception as err:  # pylint: disable=broad-exception-caught
             if self.exception is None:
                 errors.append(f"Did not expect exception. Caught exception {repr(err)}")

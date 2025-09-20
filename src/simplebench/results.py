@@ -5,10 +5,10 @@ from typing import Any
 
 from simplebench.exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
 
-from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
 from .enums import Section
 from .iteration import Iteration
-from .stats import OperationsPerInterval, OperationTimings, Stats
+from .stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
 
 
 class Results:
@@ -22,11 +22,15 @@ class Results:
         variation_cols (dict[str, str]): The columns to use for labelling kwarg variations in the benchmark.
         interval_unit (str): The unit of measurement for the interval (e.g. "ns").
         interval_scale (float): The scale factor for the interval (e.g. 1e-9 for nanoseconds).
+        ops_per_interval_unit (str): The unit of measurement for operations per interval (e.g. "ops/s").
+        ops_per_interval_scale (float): The scale factor for operations per interval (e.g. 1.0 for ops/s).
+        memory_usage_unit (str): The unit of measurement for memory usage (e.g. "bytes").
+        memory_usage_scale (float): The scale factor for memory usage (e.g. 1.0 for bytes).
         iterations (list[Iteration]): The list of Iteration objects representing each iteration of the benchmark.
         ops_per_second (OperationsPerInterval): Statistics for operations per interval.
         per_round_timings (OperationTimings): Statistics for per-round timings.
-        ops_per_interval_unit (str): The unit of measurement for operations per interval (e.g. "ops/s").
-        ops_per_interval_scale (float): The scale factor for operations per interval (e.g. 1.0 for ops/s).
+        memory_usage (MemoryUsage): Statistics for memory usage.
+        peak_memory_usage (PeakMemoryUsage): Statistics for peak memory usage.
         total_elapsed (float): The total elapsed time for the benchmark.
         variation_marks (dict[str, Any]): A dictionary of variation marks used to identify the benchmark variation.
         extra_info (dict[str, Any]): Additional information about the benchmark run.
@@ -41,9 +45,13 @@ class Results:
                  interval_scale: float = DEFAULT_INTERVAL_SCALE,
                  ops_per_interval_unit: str = DEFAULT_INTERVAL_UNIT,
                  ops_per_interval_scale: float = DEFAULT_INTERVAL_SCALE,
+                 memory_usage_unit: str = DEFAULT_MEMORY_UNIT,
+                 memory_usage_scale: float = DEFAULT_MEMORY_SCALE,
                  iterations: list[Iteration] | None = None,
                  ops_per_second: OperationsPerInterval | None = None,
                  per_round_timings: OperationTimings | None = None,
+                 memory_usage: MemoryUsage | None = None,
+                 peak_memory_usage: PeakMemoryUsage | None = None,
                  total_elapsed: float = 0.0,
                  variation_marks: dict[str, Any] | None = None,
                  extra_info: dict[str, Any] | None = None) -> None:
@@ -51,14 +59,20 @@ class Results:
         self.title = title
         self.description = description
         self.n = n
+        self.iterations = iterations if iterations is not None else []
         self.variation_cols = variation_cols if variation_cols is not None else {}
         self.interval_unit = interval_unit
         self.interval_scale = interval_scale
         self.ops_per_interval_unit = ops_per_interval_unit
         self.ops_per_interval_scale = ops_per_interval_scale
-        self.iterations = iterations if iterations is not None else []
-        self.ops_per_second = ops_per_second if ops_per_second is not None else OperationsPerInterval()
-        self.per_round_timings = per_round_timings if per_round_timings is not None else OperationTimings()
+        self.memory_usage_unit = memory_usage_unit
+        self.memory_usage_scale = memory_usage_scale
+        self.peak_memory_usage_unit = memory_usage_unit
+        self.peak_memory_usage_scale = memory_usage_scale
+        self.ops_per_second = ops_per_second if ops_per_second is not None else OperationsPerInterval(iterations)
+        self.per_round_timings = per_round_timings if per_round_timings is not None else OperationTimings(iterations)
+        self.memory_usage = memory_usage if memory_usage is not None else MemoryUsage(iterations)
+        self.peak_memory_usage = peak_memory_usage if peak_memory_usage is not None else PeakMemoryUsage(iterations)
         self.total_elapsed = total_elapsed
         self.variation_marks = variation_marks if variation_marks is not None else {}
         self.extra_info = extra_info if extra_info is not None else {}
@@ -289,6 +303,34 @@ class Results:
         self._per_round_timings = value
 
     @property
+    def memory_usage(self) -> MemoryUsage:
+        """Statistics for memory usage."""
+        return self._memory_usage
+
+    @memory_usage.setter
+    def memory_usage(self, value: MemoryUsage) -> None:
+        if not isinstance(value, MemoryUsage):
+            raise SimpleBenchTypeError(
+                f'Invalid memory_usage type: {type(value)}. Must be of type MemoryUsage.',
+                tag=ErrorTag.RESULTS_MEMORY_USAGE_INVALID_ARG_TYPE
+            )
+        self._memory_usage = value
+
+    @property
+    def peak_memory_usage(self) -> PeakMemoryUsage:
+        """Statistics for peak memory usage."""
+        return self._peak_memory_usage
+
+    @peak_memory_usage.setter
+    def peak_memory_usage(self, value: PeakMemoryUsage) -> None:
+        if not isinstance(value, PeakMemoryUsage):
+            raise SimpleBenchTypeError(
+                f'Invalid peak_memory_usage type: {type(value)}. Must be of type PeakMemoryUsage.',
+                tag=ErrorTag.RESULTS_PEAK_MEMORY_USAGE_INVALID_ARG_TYPE
+            )
+        self._peak_memory_usage = value
+
+    @property
     def total_elapsed(self) -> float:
         """The total elapsed time for the benchmark."""
         return self._total_elapsed
@@ -360,6 +402,10 @@ class Results:
                 return self.ops_per_second
             case Section.TIMING:
                 return self.per_round_timings
+            case Section.MEMORY:
+                return self.memory_usage
+            case Section.PEAK_MEMORY:
+                return self.peak_memory_usage
             case _:
                 raise SimpleBenchValueError(
                     f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
@@ -380,6 +426,10 @@ class Results:
             'interval_scale': self.interval_scale,
             'ops_per_interval_unit': self.ops_per_interval_unit,
             'ops_per_interval_scale': self.ops_per_interval_scale,
+            'memory_usage_unit': self.memory_usage_unit,
+            'memory_usage_scale': self.memory_usage_scale,
+            'peak_memory_usage_unit': self.peak_memory_usage_unit,
+            'peak_memory_usage_scale': self.peak_memory_usage_scale,
             'total_elapsed': self.total_elapsed,
             'extra_info': self.extra_info,
             'per_round_timings': self.per_round_timings.statistics_as_dict,
@@ -392,4 +442,6 @@ class Results:
         results = self.results_as_dict
         results['per_round_timings'] = self.per_round_timings.statistics_and_data_as_dict
         results['ops_per_second'] = self.ops_per_second.statistics_and_data_as_dict
+        results['memory_usage'] = self.memory_usage.statistics_and_data_as_dict
+        results['peak_memory_usage'] = self.peak_memory_usage.statistics_and_data_as_dict
         return results

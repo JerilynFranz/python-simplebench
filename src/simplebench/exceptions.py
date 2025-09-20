@@ -74,6 +74,10 @@ class ErrorTag(str, Enum):
     """Something other than a Section enum was passed as the results_sections arg"""
     RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE = "RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE"
     """Something other than a Section.OPS or Section.TIMING was passed to the Results.result_section() method"""
+    RESULTS_MEMORY_USAGE_INVALID_ARG_TYPE = "RESULTS_MEMORY_USAGE_INVALID_ARG_TYPE"
+    """Something other than a MemoryUsage instance was passed as the memory_usage arg"""
+    RESULTS_PEAK_MEMORY_USAGE_INVALID_ARG_TYPE = "RESULTS_PEAK_MEMORY_USAGE_INVALID_ARG_TYPE"
+    """Something other than a PeakMemoryUsage instance was passed as the peak_memory_usage arg"""
 
     # Stats() tags
     STATS_INVALID_UNIT_ARG_TYPE = "STATS_INVALID_UNIT_ARG_TYPE"
@@ -106,6 +110,15 @@ class ErrorTag(str, Enum):
     """Invalid scale argument passed to the Iteration() constructor - must be a float"""
     ITERATION_INIT_SCALE_ARG_VALUE = "ITERATION_INIT_SCALE_ARG_VALUE"
     """Invalid scale argument passed to the Iteration() constructor - must be greater than zero"""
+    ITERATION_SET_MEMORY_ARG_TYPE = "ITERATION_SET_MEMORY_ARG_TYPE"
+    """Invalid memory argument passed to the Iteration.memory setter - must be an int"""
+    ITERATION_SET_PEAK_MEMORY_ARG_TYPE = "ITERATION_SET_PEAK_MEMORY_ARG_TYPE"
+    """Invalid peak_memory argument passed to the Iteration.peak_memory setter - must be an int"""
+    ITERATION_ITERATION_SECTION_INVALID_SECTION_ARG_TYPE = "ITERATION_ITERATION_SECTION_INVALID_SECTION_ARG_TYPE"
+    """Something other than a Section instance was passed to the Iteration.iteration_section() method"""
+    ITERATION_ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE = (
+        "ITERATION_ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE")
+    """The requested section is not supported by the Iteration.iteration_section() method"""
 
     # Case() tags
     CASE_INVALID_ITERATIONS = "CASE_INVALID_ITERATIONS"

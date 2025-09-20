@@ -8,7 +8,8 @@ from simplebench.constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from simplebench.iteration import Iteration
 from simplebench.results import Results
-from simplebench.stats import OperationsPerInterval, OperationTimings
+from simplebench.enums import Section
+from simplebench.stats import OperationsPerInterval, OperationTimings, Stats
 
 from .testspec import TestAction, TestSetGet, idspec
 
@@ -583,3 +584,14 @@ def base_per_round_timings() -> OperationTimings:
 def test_results_getset_properties(testspec: TestSetGet) -> None:
     """Test Results get/set properties."""
     testspec.run()
+
+
+@pytest.mark.parametrize("section", [
+    pytest.param(section, id=f"Section.{section.name}") for section in list(Section)
+])
+def test_results_sections(section: Section) -> None:
+    """Test Results sections property."""
+    results = base_results()
+    section_value = results.results_section(section)
+    assert isinstance(section_value, Stats), (
+        f"results_section({section}) should be type Stats not {type(section_value)}")

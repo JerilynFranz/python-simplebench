@@ -8,7 +8,7 @@ from typing import Optional, Any, Callable, TYPE_CHECKING
 from rich.console import Console
 from rich.table import Table
 
-from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
+from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE, BASE_MEMORY_UNIT
 from ..enums import Section
 from ..exceptions import SimpleBenchValueError, ErrorTag
 from ..results import Results
@@ -67,7 +67,7 @@ class RichTableReporter(Reporter):
                 name='rich-table',
                 description=('Display operations per second and per round timing results '
                              'as a rich text table on the console'),
-                sections=[Section.OPS],
+                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.CONSOLE, Target.CALLBACK],
                 formats=[Format.RICH_TEXT]))
         choices.add(
@@ -76,7 +76,7 @@ class RichTableReporter(Reporter):
                 flags=['--rich-table-ops-console'],
                 name='rich-table-ops',
                 description='Display operations per second results as a rich text table on the console',
-                sections=[Section.OPS],
+                sections=[Section.OPS, Section.MEMORY],
                 targets=[Target.CONSOLE],
                 formats=[Format.RICH_TEXT]))
         choices.add(
@@ -90,13 +90,22 @@ class RichTableReporter(Reporter):
                 formats=[Format.RICH_TEXT])
         )
         choices.add(
+            Choice(
+                reporter=self,
+                flags=['--rich-table-memory-console'],
+                name='rich-table-memory',
+                description='Display memory results as rich text tables on the console',
+                sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                targets=[Target.CONSOLE],
+                formats=[Format.RICH_TEXT])
+        )
+        choices.add(
              Choice(
                 reporter=self,
                 flags=['--rich-table-file'],
                 name='rich-table-file',
-                description=('Save operations per second and per round timing results '
-                             'as rich text tables in files'),
-                sections=[Section.OPS],
+                description=('Save all results as rich text tables in files'),
+                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.FILESYSTEM],
                 formats=[Format.RICH_TEXT]))
         choices.add(
@@ -119,13 +128,22 @@ class RichTableReporter(Reporter):
                 formats=[Format.RICH_TEXT])
         )
         choices.add(
+            Choice(
+                reporter=self,
+                flags=['--rich-table-memory-file'],
+                name='rich-table-memory-file',
+                description='Save memory results as rich text tables in files',
+                sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                targets=[Target.FILESYSTEM],
+                formats=[Format.RICH_TEXT])
+        )
+        choices.add(
              Choice(
                 reporter=self,
                 flags=['--rich-table-callback'],
                 name='rich-table-callback',
-                description=('Returns operations per second and per round timing results '
-                             'via callback function as a rich text table'),
-                sections=[Section.OPS],
+                description=('Returns all results via callback function as a rich text table'),
+                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.CALLBACK],
                 formats=[Format.RICH_TEXT]))
         choices.add(
@@ -140,10 +158,10 @@ class RichTableReporter(Reporter):
         choices.add(
             Choice(
                 reporter=self,
-                flags=['--rich-table-timings-callback'],
-                name='rich-table-timings-callback',
-                description=('Returns timing results via callback function as a rich text table'),
-                sections=[Section.TIMING],
+                flags=['--rich-table-memory-callback'],
+                name='rich-table-memory-callback',
+                description=('Returns memory usage via callback function as rich text tables'),
+                sections=[Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.CALLBACK],
                 formats=[Format.RICH_TEXT])
         )
@@ -154,7 +172,7 @@ class RichTableReporter(Reporter):
 
     def supported_sections(self):
         """Return the set of supported result sections for the reporter."""
-        return set([Section.OPS, Section.TIMING])
+        return set([Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY])
 
     def supported_targets(self):
         """Return the set of supported output targets for the reporter."""
@@ -224,14 +242,19 @@ class RichTableReporter(Reporter):
         """
         for section in choice.sections:
             base_unit: str = ''
-            if section is Section.OPS:
-                base_unit = BASE_OPS_PER_INTERVAL_UNIT
-            elif section is Section.TIMING:
-                base_unit = BASE_INTERVAL_UNIT
-            else:  # This should never happen due to earlier validation
-                raise SimpleBenchValueError(
-                    f"Unsupported section: {section} (this should not happen)",
-                    tag=ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION)
+            match section:
+                case Section.OPS:
+                    base_unit = BASE_OPS_PER_INTERVAL_UNIT
+                case Section.TIMING:
+                    base_unit = BASE_INTERVAL_UNIT
+                case Section.MEMORY:
+                    base_unit = BASE_MEMORY_UNIT
+                case Section.PEAK_MEMORY:
+                    base_unit = BASE_MEMORY_UNIT
+                case _:
+                    raise SimpleBenchValueError(
+                        f"Unsupported section: {section} (this should not happen)",
+                        tag=ErrorTag.RICH_TABLE_REPORTER_REPORT_UNSUPPORTED_SECTION)
 
             table = self._to_rich_table(case=case, section=section, base_unit=base_unit)
             console: Console
@@ -289,7 +312,7 @@ class RichTableReporter(Reporter):
             numbers=[result.results_section(section).standard_deviation for result in results],
             base_unit=base_unit)
 
-        table = Table(title=(case.title + '\n\n' + case.description),
+        table = Table(title=(case.title + f'\n{section.value}\n\n' + case.description),
                       show_header=True,
                       title_style='bold green1',
                       header_style='bold magenta')

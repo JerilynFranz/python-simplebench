@@ -2,7 +2,9 @@
 """Test runners for benchmarking."""
 from __future__ import annotations
 import gc
+import tracemalloc
 from typing import Any, Callable, Optional, TYPE_CHECKING
+
 
 from .constants import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERATIONS
 from .iteration import Iteration
@@ -13,6 +15,10 @@ if TYPE_CHECKING:
     from .case import Case
     from .session import Session
     from .tasks import RichTask
+
+
+def _mock_action() -> None:
+    """A mock action that does nothing. Used for testing."""
 
 
 class SimpleRunner():
@@ -83,6 +89,19 @@ class SimpleRunner():
         max_time: float = self.case.max_time
         iterations: int = self.case.iterations
 
+        # measure approximate memory overhead of calling an action.
+        # This is not perfect, but gives a reasonable estimate
+        # of the memory used just by calling the action without
+        # any of the action's own allocations.
+        gc.collect()
+        tracemalloc.start()
+        start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
+        action()
+        end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+        memory_overhead: int = end_memory_current - start_memory_current
+        peak_memory_overhead: int = end_memory_peak - start_memory_peak
+
         iteration_pass: int = 0
         time_start: float = float(DEFAULT_TIMER())
         max_stop_at: float = float(max_time / DEFAULT_INTERVAL_SCALE) + time_start
@@ -120,11 +139,31 @@ class SimpleRunner():
             if callable(setup):
                 setup()
 
-            # Timer for benchmarked code
+            # Time the action. setup and teardown are not included in the timing.
             raw_timer_start = DEFAULT_TIMER()
             action()
             raw_timer_end = DEFAULT_TIMER()
 
+            if callable(teardown):
+                teardown()
+
+            # Measure memory usage of the action
+            # We force a garbage collection before measuring memory usage to reduce noise
+            # from uncollected garbage. It is run separately from the timing to avoid
+            # it affecting the timing measurements.
+            #
+            # We use the tracemalloc module to measure memory allocations during the action.
+            # We start and stop tracemalloc around the action to capture only the memory
+            # allocations made during the action.
+            if callable(setup):
+                setup()
+            gc.collect()
+            tracemalloc.start()
+            tracemalloc.reset_peak()
+            start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
+            action()
+            end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
             if callable(teardown):
                 teardown()
 
@@ -139,6 +178,8 @@ class SimpleRunner():
             iteration_result.elapsed += float(raw_timer_end - raw_timer_start)
             iteration_result.n = n
             total_elapsed += iteration_result.elapsed
+            iteration_result.memory = end_memory_current - start_memory_current - memory_overhead
+            iteration_result.peak_memory = end_memory_peak - start_memory_peak - peak_memory_overhead
             iterations_list.append(iteration_result)
             wall_time = float(DEFAULT_TIMER())
 
@@ -162,7 +203,6 @@ class SimpleRunner():
             iterations=iterations_list,
             total_elapsed=total_elapsed,
             extra_info={})
-
         if task:
             task.stop()
 

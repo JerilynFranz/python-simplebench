@@ -185,7 +185,7 @@ class GraphReporter(Reporter):
                 flags=['--graph-scatter-file'],
                 name='graph-scatter-file',
                 description='Save a scatter graph of operations per second results to a file',
-                sections=[Section.OPS, Section.TIMING],
+                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.FILESYSTEM],
                 formats=[Format.GRAPH]))
         self._choices.add(
@@ -210,10 +210,20 @@ class GraphReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
+                flags=['--graph-scatter-memory-file'],
+                name='graph-scatter-memory-file',
+                description='Save scatter graphs of memory usage to files',
+                sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                targets=[Target.FILESYSTEM],
+                formats=[Format.GRAPH])
+        )
+        self._choices.add(
+            Choice(
+                reporter=self,
                 flags=['--graph-scatter-callback'],
                 name='graph-scatter-callback',
                 description='Return scatter graph of operations per second results to a callback function',
-                sections=[Section.OPS, Section.TIMING],
+                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.CALLBACK],
                 formats=[Format.GRAPH]))
         self._choices.add(
@@ -235,6 +245,16 @@ class GraphReporter(Reporter):
                 targets=[Target.CALLBACK],
                 formats=[Format.GRAPH])
         )
+        self._choices.add(
+            Choice(
+                reporter=self,
+                flags=['--graph-scatter-memory-callback'],
+                name='graph-scatter-memory-callback',
+                description='Return scatter graphs of memory usage to a callback function',
+                sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                targets=[Target.CALLBACK],
+                formats=[Format.GRAPH])
+        )
 
     def supported_formats(self):
         """Return the set of supported output formats for the reporter."""
@@ -242,7 +262,7 @@ class GraphReporter(Reporter):
 
     def supported_sections(self):
         """Return the set of supported result sections for the reporter."""
-        return set([Section.OPS, Section.TIMING])
+        return set([Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY])
 
     def supported_targets(self):
         """Return the set of supported output targets for the reporter."""

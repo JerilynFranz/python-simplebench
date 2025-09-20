@@ -32,5 +32,14 @@ DEFAULT_OPS_PER_INTERVAL_UNIT: str = 'Ops/s'
 BASE_OPS_PER_INTERVAL_UNIT: str = 'Ops/s'
 """Base unit for operations per interval."""
 
+DEFAULT_MEMORY_SCALE: float = 1.0
+"""Default scaling factor for memory usage (1.0 -> 1.0)."""
+
+DEFAULT_MEMORY_UNIT: str = 'bytes'
+"""Default unit for memory usage (bytes)."""
+
+BASE_MEMORY_UNIT: str = 'bytes'
+"""Base unit for memory usage."""
+
 DEFAULT_SIGNIFICANT_FIGURES: int = 3
 """Default number of significant figures for output values (3 significant figures)."""
