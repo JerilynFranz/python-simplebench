@@ -6,7 +6,9 @@ from typing import Any, Sequence
 
 import pytest
 
+from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from simplebench.iteration import Iteration
 from simplebench import stats
 
 from .testspec import TestAction, TestSetGet, idspec
@@ -271,3 +273,55 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
     # Check that the data in statistics_and_data_as_dict matches the original data scaled
     scaled_data = [value / stats_instance.scale for value in stats_instance.data]
     assert stats_and_data_dict['data'] == scaled_data, "Data in statistics_and_data_as_dict does not match scaled data"
+
+
+@pytest.mark.parametrize("section", [
+    pytest.param(section, id=f"Section.{section.name}") for section in list(Section)
+])
+def test_stats_initalization(section: Section) -> None:
+    """Test that data is correctly initialized in stats classes."""
+    iterations: list[Iteration] = []
+    data: dict[str, list[int | float]] = {
+        'elapsed': [1.0, 2.0, 4.0, 5.0, 10.0],
+        'ops': [1.0, 0.5, 0.25, 0.2, 0.1],
+        'memory': [100, 200, 300, 400, 500],
+        'peak_memory': [150, 250, 350, 450, 550],
+    }
+
+    for index in range(len(data['elapsed'])):
+        iterations.append(
+            Iteration(n=1,
+                      unit='s',
+                      scale=1.0,
+                      elapsed=data['elapsed'][index],
+                      memory_usage=int(data['memory'][index]),
+                      peak_memory_usage=int(data['peak_memory'][index]))
+        )
+    stats_instance: stats.Stats
+    match section:
+        case Section.OPS:
+            stats_instance = stats.OperationsPerInterval(unit='ops/s', scale=1.0, iterations=iterations)
+            ops_data = stats_instance.data
+            assert ops_data == data['ops'], (
+                f"Ops data does not match expected values: {ops_data} != {data['ops']}")
+
+        case Section.TIMING:
+            stats_instance = stats.OperationTimings(unit='s', scale=1.0, iterations=iterations)
+            timing_data = stats_instance.data
+            assert timing_data == data['elapsed'], (
+                f"Timing data does not match expected values: {timing_data} != {data['elapsed']}")
+
+        case Section.MEMORY:
+            stats_instance = stats.MemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
+            memory_data = stats_instance.data
+            assert memory_data == data['memory'], (
+                f"Memory data does not match expected values: {memory_data} != {data['memory']}")
+
+        case Section.PEAK_MEMORY:
+            stats_instance = stats.PeakMemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
+            peak_memory_data = stats_instance.data
+            assert peak_memory_data == data['peak_memory'], (
+                f"Peak memory data does not match expected values: {peak_memory_data} != {data['peak_memory']}")
+
+        case _:
+            pytest.skip(f"Section {section} does not correspond to a stats class")
