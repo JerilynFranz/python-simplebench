@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .case import Case
 
 
-def main(benchmark_cases: Optional[Sequence[Case]] = None) -> int:
+def main(benchmark_cases: Optional[Sequence[Case]] = None, argv: Optional[list[str]] = None) -> int:
     """Main entry point for running benchmarks via a command-line interface.
 
     This function is responsible for setting up the command-line interface,
@@ -30,6 +30,7 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None) -> int:
 
     Args:
         benchmark_cases (Optional[Sequence[Case]]): A Sequence of SimpleBench.Case instances to be benchmarked.
+        argv (Optional[list[str]]): A list of command-line arguments to parse. If None, defaults to sys.argv.
 
     Returns:
         An integer exit code.
@@ -46,7 +47,7 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None) -> int:
                             help='Output destination directory (default: .benchmarks)')
         session: Session = Session(args_parser=parser)
         session.add_reporter_flags()
-        session.parse_args()
+        session.parse_args(argv)
         args: Namespace = session.args if session.args else Namespace()
         console: Console = session.console
         if benchmark_cases is None:

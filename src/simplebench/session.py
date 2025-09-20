@@ -111,7 +111,7 @@ class Session:
         self._verbosity = verbosity
         """The verbosity level for console output."""
 
-    def parse_args(self) -> None:
+    def parse_args(self, args: Optional[list[str]] = None) -> None:
         """Parse the command line arguments using the session's ArgumentParser.
 
         This method parses the command line arguments and stores them in the session's args property.
@@ -119,7 +119,7 @@ class Session:
         Raises:
             SimpleBenchTypeError: If the args_parser is not set.
         """
-        self._args = self._args_parser.parse_args()
+        self._args = self._args_parser.parse_args(args=args)
 
     def add_reporter_flags(self) -> None:
         """Adds the command line flags for all registered reporters to the session's ArgumentParser.
