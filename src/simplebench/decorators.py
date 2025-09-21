@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Decorators for simplifying benchmark case creation."""
 from __future__ import annotations
+from functools import wraps
 from typing import Any, Callable, TYPE_CHECKING
 
 from .case import Case
@@ -26,7 +27,7 @@ def benchmark(
     kwargs_variations: dict[str, list[Any]] | None = None,
     options: list[ReporterOption] | None = None,
     n: int | None = None,
-) -> Callable[[Callable[[], None]], Callable[[], None]]:
+) -> Callable:
     """
     A decorator to register a function as a benchmark case.
 
@@ -48,10 +49,10 @@ def benchmark(
     Returns:
         A decorator that registers the function and returns it unmodified.
     """
-    def decorator(func: Callable[[], None]) -> Callable[[], None]:
+    def decorator(func):
         """The actual decorator that wraps the user's function."""
-
-        def case_action_wrapper(runner: SimpleRunner, **kwargs: Any) -> None:
+        @wraps(func)
+        def case_action_wrapper(runner: SimpleRunner, **kwargs) -> Any:
             """
             This wrapper becomes the `action` for the `Case`.
             It calls the user's decorated function inside `runner.run()`.
@@ -61,6 +62,8 @@ def benchmark(
             run_kwargs: dict[str, Any] = {'action': func}
             if n is not None:
                 run_kwargs['n'] = n
+            else:
+                run_kwargs['n'] = 1  # Default to 1 if not specified.
 
             # kwargs from kwargs_variations are passed through
             run_kwargs.update(kwargs)
