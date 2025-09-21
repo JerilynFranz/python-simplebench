@@ -19,10 +19,13 @@ def benchmark(
     group: str,
     title: str | None = None,
     description: str | None = None,
-    n: int | None = None,
+    iterations: int | None = None,
+    min_time: float | None = None,
+    max_time: float | None = None,
     variation_cols: dict[str, str] | None = None,
     kwargs_variations: dict[str, list[Any]] | None = None,
-    options: list[ReporterOption] | None = None
+    options: list[ReporterOption] | None = None,
+    n: int | None = None,
 ) -> Callable[[Callable[[], None]], Callable[[], None]]:
     """
     A decorator to register a function as a benchmark case.
@@ -34,10 +37,13 @@ def benchmark(
         group: The group name for the benchmark case.
         title: The title of the benchmark case. Defaults to the function name.
         description: A description for the case. Defaults to the function's docstring.
-        n: The number of rounds to run inside the benchmark timing loop.
+        iterations: The number of iterations to run for the benchmark. If None, uses the Case default.
+        min_time: The minimum time in seconds to run the benchmark. If None, uses the Case default.
+        max_time: The maximum time in seconds to run the benchmark. If None, uses the Case default.
         variation_cols: See `Case.variation_cols`.
         kwargs_variations: See `Case.kwargs_variations`.
         options: See `Case.options`.
+        n: The 'n' weighting of the benchmark case.
 
     Returns:
         A decorator that registers the function and returns it unmodified.
@@ -62,16 +68,24 @@ def benchmark(
             return runner.run(**run_kwargs)
 
         # Create the Case instance, using sensible defaults from the function.
-        case = Case(
-            group=group,
-            title=title or func.__name__,
-            action=case_action_wrapper,
-            description=description or func.__doc__ or '(no description)',
-            variation_cols=variation_cols or {},
-            kwargs_variations=kwargs_variations or {},
-            options=options or [],
-            _decoration=True
-        )
+        case_kwargs = {
+            'group': group,
+            'title': title or func.__name__,
+            'action': case_action_wrapper,
+            'description': description or func.__doc__ or '(no description)',
+            'variation_cols': variation_cols or {},
+            'kwargs_variations': kwargs_variations or {},
+            'options': options or [],
+            '_decoration': True
+        }
+        if iterations is not None:
+            case_kwargs['iterations'] = iterations
+        if min_time is not None:
+            case_kwargs['min_time'] = min_time
+        if max_time is not None:
+            case_kwargs['max_time'] = max_time
+
+        case = Case(**case_kwargs)
 
         # Add the created case to the global registry.
         _DECORATOR_CASES.append(case)
@@ -90,3 +104,12 @@ def get_registered_cases() -> list[Case]:
         A list of `Case` objects.
     """
     return _DECORATOR_CASES
+
+
+def clear_registered_cases() -> None:
+    """
+    Clear all benchmark cases registered via the `@benchmark` decorator.
+
+    This can be useful in testing scenarios to reset the state.
+    """
+    _DECORATOR_CASES.clear()

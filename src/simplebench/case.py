@@ -300,3 +300,8 @@ class Case:
                 total += result.per_round_timings.mean
                 count += 1
         return total / count if count > 0 else 0.0
+
+    @property
+    def decorated(self) -> bool:
+        """Returns True if the Case was created via the @benchmark decorator."""
+        return self._decoration

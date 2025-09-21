@@ -1,5 +1,6 @@
 """Tests for the simplebench/results.py module."""
 from __future__ import annotations
+from enum import Enum
 from functools import cache
 
 import pytest
@@ -12,6 +13,11 @@ from simplebench.enums import Section
 from simplebench.stats import OperationsPerInterval, OperationTimings, Stats
 
 from .testspec import TestAction, TestSetGet, idspec
+
+
+class Nonsense(str, Enum):
+    """A nonsense enum value for testing."""
+    NONESENSE = 'nonsense'
 
 
 @pytest.mark.parametrize("testspec", [

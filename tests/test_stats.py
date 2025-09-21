@@ -15,7 +15,7 @@ from simplebench import stats
 from .testspec import TestAction, TestSetGet, idspec
 
 
-class Nonesense(str, Enum):
+class Nonsense(str, Enum):
     """A nonsense enum value for testing."""
     NONESENSE = 'nonsense'
 
@@ -283,7 +283,7 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
 
 
 @pytest.mark.parametrize("section", [
-    pytest.param(section, id=f"Section.{section.name}") for section in list(Section) + [Nonesense.NONESENSE]
+    pytest.param(section, id=f"Section.{section.name}") for section in list(Section) + [Nonsense.NONESENSE]
 ])
 def test_stats_initalization(section: Section) -> None:
     """Test that data is correctly initialized in stats classes."""

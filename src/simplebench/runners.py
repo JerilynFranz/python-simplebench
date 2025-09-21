@@ -17,8 +17,9 @@ if TYPE_CHECKING:
     from .tasks import RichTask
 
 
-def _mock_action() -> None:
-    """A mock action that does nothing. Used for testing."""
+def _mock_action(runner: Any, **kwargs) -> None:  # pylint: disable=unused-argument
+    """A mock action that does nothing."""
+    return None
 
 
 class SimpleRunner():
@@ -89,14 +90,13 @@ class SimpleRunner():
         max_time: float = self.case.max_time
         iterations: int = self.case.iterations
 
-        # measure approximate memory overhead of calling an action.
-        # This is not perfect, but gives a reasonable estimate
-        # of the memory used just by calling the action without
-        # any of the action's own allocations.
+        # We force a garbage collection before measuring memory usage to reduce noise
+        # from uncollected garbage. It is run separately from the timing to avoid
+        # it affecting the timing measurements.
         gc.collect()
         tracemalloc.start()
         start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
-        action()
+        _mock_action(runner=self)
         end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
         memory_overhead: int = end_memory_current - start_memory_current

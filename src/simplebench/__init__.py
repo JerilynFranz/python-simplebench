@@ -8,7 +8,7 @@ from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         MIN_MEASURED_ITERATIONS, DEFAULT_ITERATIONS,
                         DEFAULT_SIGNIFICANT_FIGURES, DEFAULT_TIMER,
                         BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT)
-from .decorators import benchmark, get_registered_cases
+from .decorators import benchmark, clear_registered_cases, get_registered_cases
 from .enums import Section, Verbosity
 from .exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from .runners import SimpleRunner
@@ -56,8 +56,9 @@ __all__ = [
     'Target',
     'Verbosity',
 
-    # Decorators
+    # Decorator functions
     'benchmark',
+    'clear_registered_cases',
     'get_registered_cases',
 
     # Exceptions
