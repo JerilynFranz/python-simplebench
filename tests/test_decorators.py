@@ -170,6 +170,18 @@ def test_decorator_invalid_parameters() -> None:
             pass
     assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_N_TYPE
 
+    # Non-positive n value
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test',
+                   title='Valid Title',
+                   variation_cols={'length': 'Length'},
+                   kwargs_variations={'length': [10, 100, 1000]},
+                   use_field_for_n='size',
+                   n=0)
+        def non_positive_n_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_N_VALUE
+
     # Invalid group type
     with pytest.raises(SimpleBenchTypeError) as excinfo:
         @benchmark(group=123, title='Valid Title')  # type: ignore
@@ -257,6 +269,55 @@ def test_decorator_invalid_parameters() -> None:
             pass
     assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_VALUE_VALUE, (
         f"Got {excinfo.value.tag_code}")
+
+    # Invalid variation_cols key (blank string)
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test', title='Valid Title', variation_cols={'': 'Length'})
+        def empty_variation_cols_key():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KEY_VALUE, (
+        f"Got {excinfo.value.tag_code}")
+
+    # Invalid variation_cols type (list instead of dict)
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', variation_cols=['not', 'a', 'dict'])  # type: ignore
+        def variation_cols_not_dict():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_TYPE, (
+        f"Got {excinfo.value.tag_code}")
+
+    # Invalid use_field_for_n type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', use_field_for_n=456)  # type: ignore
+        def invalid_use_field_for_n_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_TYPE, f"Got {excinfo.value.tag_code}"
+
+    # Invalid use_field_for_n value (empty string)
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test', title='Valid Title', use_field_for_n='   ')
+        def empty_use_field_for_n_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUE, (
+        f"Got {excinfo.value.tag_code}")
+
+    # Invalid use_field_for_n value (not in kwargs_variations)
+    with pytest.raises(SimpleBenchTypeError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test',
+                   title='Valid Title',
+                   use_field_for_n='size',
+                   kwargs_variations={'length': [10, 100, 1000]})
+        def use_field_for_n_not_in_kwargs_variations():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS, (
+        f"Got {excinfo.value.tag_code}")
+
+    # Invalid options type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', options='not_a_dict')  # type: ignore
+        def invalid_options_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_OPTIONS_TYPE, f"Got {excinfo.value.tag_code}"
 
 
 if __name__ == "__main__":

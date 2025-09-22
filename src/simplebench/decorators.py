@@ -127,6 +127,10 @@ def benchmark(
                                    "must be a string if passed.",
                                    tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_TYPE)
 
+    if use_field_for_n is not None and use_field_for_n.strip() == '':
+        raise SimpleBenchValueError("The 'use_field_for_n' parameter to the @benchmark decorator "
+                                    "must be a non-empty string if passed.",
+                                    tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUE)
     if use_field_for_n is not None and kwargs_variations is None:
         raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator requires "
                                    "that 'kwargs_variations' also be provided.",
@@ -136,7 +140,7 @@ def benchmark(
             and use_field_for_n not in kwargs_variations):
         raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator must "
                                    f"match one of the kwargs_variations keys: {list(kwargs_variations.keys())}",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUE)
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
 
     if kwargs_variations is not None:
         if not isinstance(kwargs_variations, dict):
