@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import pytest
 
-from simplebench import clear_registered_cases, get_registered_cases, benchmark
+from simplebench.decorators import clear_registered_cases, get_registered_cases, benchmark
+from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 
 
 class MockRunner:
@@ -104,6 +105,158 @@ def test_run_decorated_case() -> None:
     result = case.action(runner)
     expected = sum(range(20))
     assert result == expected, "The action did not return the expected result."
+
+
+def test_decorator_invalid_parameters() -> None:
+    """Test that the @benchmark decorator raises errors for invalid parameters."""
+
+    clear_registered_cases()
+
+    # Invalid title type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title=123)  # type: ignore
+        def invalid_title_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_TITLE_TYPE
+
+    # Empty title value
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test', title='   ')
+        def empty_title_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_TITLE_VALUE
+
+    # Invalid description type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', description=456)  # type: ignore
+        def invalid_description_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_TYPE
+
+    # Empty description value
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test', title='Valid Title', description='   ')
+        def empty_description_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_VALUE
+
+    # Invalid iterations type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', iterations='ten')  # type: ignore
+        def invalid_iterations_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE
+
+    # use_field_for_n not a string
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test',
+                   title='Valid Title',
+                   variation_cols={'length': 'Length'},
+                   kwargs_variations={'length': [10, 100, 1000]},
+                   use_field_for_n=123)  # type: ignore
+        def use_field_not_a_string():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_TYPE
+
+    # Invalid n type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test',
+                   title='Valid Title',
+                   variation_cols={'length': 'Length'},
+                   kwargs_variations={'length': [10, 100, 1000]},
+                   use_field_for_n='size',
+                   n='ten')  # type: ignore
+        def invalid_n_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_N_TYPE
+
+    # Invalid group type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group=123, title='Valid Title')  # type: ignore
+        def invalid_group_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE, f"Got {excinfo.value.tag_code}"
+
+    # Empty group value
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='    ', title='Valid Title', description='Valid Description')
+        def empty_group_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE, f"Got {excinfo.value.tag_code}"
+
+    # Invalid min_time type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', min_time='zero')  # type: ignore
+        def invalid_min_time_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE, f"Got {excinfo.value.tag_code}"
+
+    # Invalid max_time type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', max_time='ten')  # type: ignore
+        def invalid_max_time_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE, f"Got {excinfo.value.tag_code}"
+
+    # Invalid kwargs_variations type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', kwargs_variations='not_a_dict')  # type: ignore
+        def invalid_kwargs_variations_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_TYPE, (
+        f"Got {excinfo.value.tag_code}")
+
+    # Invalid kwargs_variations keys/values
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', kwargs_variations={123: [1, 2, 3]})  # type: ignore
+        def invalid_kwargs_variations_keys():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_KEY_TYPE
+
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', kwargs_variations={'param': 'not_a_list'})  # type: ignore
+        def invalid_kwargs_variations_values():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_VALUE_TYPE
+
+    # Invalid variation_cols type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', variation_cols='not_a_dict', kwargs_variations={})  # type: ignore
+        def invalid_variation_cols_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_TYPE
+
+    # Invalid variation_cols keys/values
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title',
+                   variation_cols={123: 'Length', 'kwargs_variations': {}})  # type: ignore
+        def invalid_variation_cols_keys():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KEY_TYPE
+
+    # Missing kwargs_variations with variation_cols
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title - Missing kwargs_variations', variation_cols={'length': 'Length'})
+        def missing_kwargs_variations():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KWARGS_VARIATIONS_MISMATCH, (
+        f"Got {excinfo.value.tag_code}")
+
+    # Invalid variation_cols values types
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', variation_cols={'length': 456})  # type: ignore
+        def invalid_variation_cols_values():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_VALUE_TYPE, (
+        f"Got {excinfo.value.tag_code}")
+
+    # Invalid variation_cols values (empty string)
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test', title='Valid Title', variation_cols={'length': '   '})
+        def empty_variation_cols_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_VALUE_VALUE, (
+        f"Got {excinfo.value.tag_code}")
 
 
 if __name__ == "__main__":

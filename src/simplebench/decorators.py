@@ -6,6 +6,7 @@ from typing import Any, Callable, TYPE_CHECKING
 
 from .case import Case
 from .runners import SimpleRunner
+from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 
 if TYPE_CHECKING:
     from .reporters.reporter_option import ReporterOption
@@ -26,7 +27,8 @@ def benchmark(
     variation_cols: dict[str, str] | None = None,
     kwargs_variations: dict[str, list[Any]] | None = None,
     options: list[ReporterOption] | None = None,
-    n: int | None = None,
+    n: int = 1,
+    use_field_for_n: str | None = None
 ) -> Callable:
     """
     A decorator to register a function as a benchmark case.
@@ -34,21 +36,161 @@ def benchmark(
     This simplifies creating a `Case` by wrapping the decorated function.
     The decorated function should contain the code to be benchmarked.
 
+    It is important to note that the decorated function will be called
+    within the context of a `SimpleRunner.run()` call, which means it
+    should not handle its own timing or iterations.
+
+    The args provided to the decorator are used to create a `Case` instance,
+    which is then added to a global registry. The original function is returned
+    unmodified, allowing it to be called directly if needed.
+
+    The arguments to the decorator are largely the same as those for `Case`, with
+    the exception of `action`, which is replaced by the decorated function.
+
+    n is included to allow weighting of the benchmark case when using
+    runners that support it.
+
     Args:
-        group: The group name for the benchmark case.
-        title: The title of the benchmark case. Defaults to the function name.
-        description: A description for the case. Defaults to the function's docstring.
-        iterations: The number of iterations to run for the benchmark. If None, uses the Case default.
-        min_time: The minimum time in seconds to run the benchmark. If None, uses the Case default.
-        max_time: The maximum time in seconds to run the benchmark. If None, uses the Case default.
-        variation_cols: See `Case.variation_cols`.
-        kwargs_variations: See `Case.kwargs_variations`.
-        options: See `Case.options`.
-        n: The 'n' weighting of the benchmark case.
+        group (str): The group name for the benchmark case.
+        title (str | None): The title of the benchmark case. Defaults to the function name.
+        description (str | None): A description for the case. Defaults to the function's docstring.
+        iterations (int | None): The number of iterations to run for the benchmark.
+                If None, uses the Case default. See `Case.iterations`.
+        min_time (float | None): The minimum time in seconds to run the benchmark.
+                If None, uses the Case default. See `Case.min_time`.
+        max_time (float | None): The maximum time in seconds to run the benchmark.
+                If None, uses the Case default. See `Case.max_time`.
+        variation_cols (dict[str, str] | None): See `Case.variation_cols`.
+        kwargs_variations (dict[str, list[Any]] | None): See `Case.kwargs_variations`.
+        options (list[ReporterOption] | None): See `Case.options`.
+        n (int, default=1): The 'n' weighting of the benchmark case.
+        use_field_for_n (str | None): If provided, use the value of this field from kwargs_variations
+            to set 'n' dynamically for each variation.
 
     Returns:
         A decorator that registers the function and returns it unmodified.
     """
+    if not isinstance(group, str):
+        raise SimpleBenchTypeError("The 'group' parameter to the @benchmark decorator must be a string.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE)
+
+    if group.strip() == '':
+        raise SimpleBenchValueError("The 'group' parameter to the @benchmark decorator must be a non-empty string.",
+                                    tag=ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE)
+
+    if title is not None and not isinstance(title, str):
+        raise SimpleBenchTypeError("The 'title' parameter to the @benchmark decorator must be a string if passed.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_TITLE_TYPE)
+    if title is not None and title.strip() == '':
+        raise SimpleBenchValueError("The 'title' parameter to the @benchmark decorator must be "
+                                    "a non-empty string if passed.",
+                                    tag=ErrorTag.BENCHMARK_DECORATOR_TITLE_VALUE)
+
+    if description is not None and not isinstance(description, str):
+        raise SimpleBenchTypeError("The 'description' parameter to the @benchmark decorator must be "
+                                   "a string if passed.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_TYPE)
+    if description is not None and description.strip() == '':
+        raise SimpleBenchValueError("The 'description' parameter to the @benchmark decorator must be "
+                                    "a non-empty string if passed.",
+                                    tag=ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_VALUE)
+    if not isinstance(iterations, int) and iterations is not None:
+        raise SimpleBenchTypeError("The 'iterations' parameter to the @benchmark decorator must be an integer.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE)
+
+    if not isinstance(min_time, (float, int)) and min_time is not None:
+        raise SimpleBenchTypeError("The 'min_time' parameter to the @benchmark decorator must be a float or int.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE)
+
+    if not isinstance(max_time, (float, int)) and max_time is not None:
+        raise SimpleBenchTypeError("The 'max_time' parameter to the @benchmark decorator must be a float or int.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE)
+
+    if not isinstance(variation_cols, dict) and variation_cols is not None:
+        raise SimpleBenchTypeError("The 'variation_cols' parameter to the @benchmark decorator must be a dictionary.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_TYPE)
+
+    if not isinstance(options, list) and options is not None:
+        raise SimpleBenchTypeError("The 'options' parameter to the @benchmark decorator must be a list.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_OPTIONS_TYPE)
+
+    if not isinstance(n, int):
+        raise SimpleBenchTypeError("The 'n' parameter to the @benchmark decorator must be an integer.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_N_TYPE)
+
+    if n <= 0:
+        raise SimpleBenchValueError("The 'n' parameter to the @benchmark decorator must be a positive integer.",
+                                    tag=ErrorTag.BENCHMARK_DECORATOR_N_VALUE)
+
+    if not isinstance(use_field_for_n, str) and use_field_for_n is not None:
+        raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator "
+                                   "must be a string if passed.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_TYPE)
+
+    if use_field_for_n is not None and kwargs_variations is None:
+        raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator requires "
+                                   "that 'kwargs_variations' also be provided.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
+
+    if (isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict)
+            and use_field_for_n not in kwargs_variations):
+        raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator must "
+                                   f"match one of the kwargs_variations keys: {list(kwargs_variations.keys())}",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUE)
+
+    if kwargs_variations is not None:
+        if not isinstance(kwargs_variations, dict):
+            raise SimpleBenchTypeError("The 'kwargs_variations' parameter to the @benchmark decorator "
+                                       "must be a dictionary.",
+                                       tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_TYPE)
+        for key, values in kwargs_variations.items():
+            if not isinstance(key, str):
+                raise SimpleBenchTypeError(
+                    "The keys in the 'kwargs_variations' parameter to the @benchmark decorator must be strings.",
+                    tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_KEY_TYPE)
+            if not isinstance(values, list):
+                raise SimpleBenchTypeError(
+                    f"The values for the '{key}' entry in the 'kwargs_variations' parameter "
+                    "to the @benchmark decorator must be in a list.",
+                    tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_VALUE_TYPE)
+            if len(values) == 0:
+                raise SimpleBenchValueError(
+                    f"The values list for the '{key}' entry in the 'kwargs_variations' parameter "
+                    "to the @benchmark decorator must be non-empty.",
+                    tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_VALUE_VALUE)
+
+        if use_field_for_n is not None:
+            if use_field_for_n not in kwargs_variations:
+                raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator must "
+                                           f"be one of the kwargs variations: {list(kwargs_variations.keys())}",
+                                           tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUE)
+            if not all(isinstance(v, int) and v > 0 for v in kwargs_variations[use_field_for_n]):
+                raise SimpleBenchValueError(f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
+                                            "must be positive integers when used with 'use_field_for_n'.",
+                                            tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUES)
+
+    if not isinstance(variation_cols, dict) and variation_cols is not None:
+        raise SimpleBenchTypeError("The 'variation_cols' parameter to the @benchmark decorator must be a dictionary.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_TYPE)
+    if isinstance(variation_cols, dict):
+        for key, value in variation_cols.items():
+            if not isinstance(key, str):
+                raise SimpleBenchTypeError("The keys in the 'variation_cols' dictionary must be strings.",
+                                           tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KEY_TYPE)
+            if not isinstance(value, str):
+                raise SimpleBenchTypeError("The values in the 'variation_cols' dictionary must be strings.",
+                                           tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_VALUE_TYPE)
+            if key.strip() == '':
+                raise SimpleBenchValueError("The keys in the 'variation_cols' dictionary must be non-empty strings.",
+                                            tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KEY_VALUE)
+            if value.strip() == '':
+                raise SimpleBenchValueError("The values in the 'variation_cols' dictionary must be non-empty strings.",
+                                            tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_VALUE_VALUE)
+            if kwargs_variations is None or key not in kwargs_variations:
+                raise SimpleBenchTypeError(f"The key '{key}' in 'variation_cols' must also be present in "
+                                           "'kwargs_variations'.",
+                                           tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KWARGS_VARIATIONS_MISMATCH)
+
     def decorator(func):
         """The actual decorator that wraps the user's function."""
         @wraps(func)
@@ -58,12 +200,21 @@ def benchmark(
             It calls the user's decorated function inside `runner.run()`.
             """
             # The user's function is passed as the action to run.
-            # `n` is passed if provided to the decorator.
-            run_kwargs: dict[str, Any] = {'action': func}
-            if n is not None:
-                run_kwargs['n'] = n
-            else:
-                run_kwargs['n'] = 1  # Default to 1 if not specified.
+            # n and use_field_for_n are handled here.
+            nonlocal n
+            nonlocal use_field_for_n
+            # If use_field_for_n is set, override n with the value from kwargs
+            # if it exists and is a positive integer.
+            # Otherwise, use the default n from the decorator.
+            # This allows dynamic weighting based on variations.
+            #
+            if use_field_for_n is not None:
+                field_value = kwargs.get(use_field_for_n)
+                if isinstance(field_value, int) and field_value > 0:
+                    n = field_value
+                else:
+                    raise ValueError(f"Invalid value for use_field_for_n '{use_field_for_n}': {field_value}")
+            run_kwargs: dict[str, Any] = {'action': func, 'n': n}
 
             # kwargs from kwargs_variations are passed through
             run_kwargs.update(kwargs)
