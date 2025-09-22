@@ -191,7 +191,7 @@ class GraphReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--graph-scatter-ops-file'],
+                flags=['--graph-scatter-ops.file'],
                 name='graph-scatter-ops-file',
                 description='Save a scatter graph of operations per second results to a file',
                 sections=[Section.OPS],
@@ -200,7 +200,7 @@ class GraphReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--graph-scatter-timings-file'],
+                flags=['--graph-scatter-timings.file'],
                 name='graph-scatter-timings-file',
                 description='Save a scatter graph of timing results to a file',
                 sections=[Section.TIMING],
@@ -210,7 +210,7 @@ class GraphReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--graph-scatter-memory-file'],
+                flags=['--graph-scatter-memory.file'],
                 name='graph-scatter-memory-file',
                 description='Save scatter graphs of memory usage to files',
                 sections=[Section.MEMORY, Section.PEAK_MEMORY],
@@ -220,7 +220,7 @@ class GraphReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--graph-scatter-callback'],
+                flags=['--graph-scatter.callback'],
                 name='graph-scatter-callback',
                 description='Return scatter graph of operations per second results to a callback function',
                 sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
@@ -229,7 +229,7 @@ class GraphReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--graph-scatter-ops-callback'],
+                flags=['--graph-scatter-ops.callback'],
                 name='graph-scatter-ops-callback',
                 description='Return scatter graph of operations per second results to a callback function',
                 sections=[Section.OPS],
@@ -238,7 +238,7 @@ class GraphReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--graph-scatter-timings-callback'],
+                flags=['--graph-scatter-timings.callback'],
                 name='graph-scatter-timings-callback',
                 description='Return scatter graph of timing results to a callback function',
                 sections=[Section.TIMING],
@@ -248,7 +248,7 @@ class GraphReporter(Reporter):
         self._choices.add(
             Choice(
                 reporter=self,
-                flags=['--graph-scatter-memory-callback'],
+                flags=['--graph-scatter-memory.callback'],
                 name='graph-scatter-memory-callback',
                 description='Return scatter graphs of memory usage to a callback function',
                 sections=[Section.MEMORY, Section.PEAK_MEMORY],
