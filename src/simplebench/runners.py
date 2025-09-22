@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .tasks import RichTask
 
 
-def _mock_action(runner: Any, **kwargs) -> None:  # pylint: disable=unused-argument
+def _mock_action(**kwargs) -> None:  # pylint: disable=unused-argument
     """A mock action that does nothing."""
     return None
 
@@ -63,7 +63,8 @@ class SimpleRunner():
             n: int,
             action: Callable[..., Any],
             setup: Optional[Callable[..., Any]] = None,
-            teardown: Optional[Callable[..., Any]] = None) -> Results:
+            teardown: Optional[Callable[..., Any]] = None,
+            kwargs: Optional[dict[str, Any]] = None) -> Results:
         """Run a generic benchmark using the specified action and test data for rounds.
 
         This function will execute the benchmark for the given action and
@@ -82,7 +83,13 @@ class SimpleRunner():
             action (Callable[..., Any]): The action to benchmark.
             setup (Optional[Callable[..., Any]]): A setup function to run before each iteration.
             teardown (Optional[Callable[..., Any]]): A teardown function to run after each iteration.
+            kwargs (Optional[dict[str, Any]]): Keyword arguments to pass to the action.
+
+        Returns:
+            Results: The results of the benchmark.
         """
+        if kwargs is None:
+            kwargs = {}
         group: str = self.case.group
         title: str = self.case.title
         description: str = self.case.description
@@ -96,7 +103,7 @@ class SimpleRunner():
         gc.collect()
         tracemalloc.start()
         start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
-        _mock_action(runner=self)
+        _mock_action(**kwargs)
         end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
         memory_overhead: int = end_memory_current - start_memory_current
@@ -141,7 +148,7 @@ class SimpleRunner():
 
             # Time the action. setup and teardown are not included in the timing.
             raw_timer_start = DEFAULT_TIMER()
-            action()
+            action(**kwargs)
             raw_timer_end = DEFAULT_TIMER()
 
             if callable(teardown):
@@ -161,7 +168,7 @@ class SimpleRunner():
             tracemalloc.start()
             tracemalloc.reset_peak()
             start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
-            action()
+            action(**kwargs)
             end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
             tracemalloc.stop()
             if callable(teardown):

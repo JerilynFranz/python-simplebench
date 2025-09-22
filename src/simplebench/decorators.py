@@ -136,12 +136,6 @@ def benchmark(
                                    "that 'kwargs_variations' also be provided.",
                                    tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
 
-    if (isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict)
-            and use_field_for_n not in kwargs_variations):
-        raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator must "
-                                   f"match one of the kwargs_variations keys: {list(kwargs_variations.keys())}",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
-
     if kwargs_variations is not None:
         if not isinstance(kwargs_variations, dict):
             raise SimpleBenchTypeError("The 'kwargs_variations' parameter to the @benchmark decorator "
@@ -160,22 +154,19 @@ def benchmark(
             if len(values) == 0:
                 raise SimpleBenchValueError(
                     f"The values list for the '{key}' entry in the 'kwargs_variations' parameter "
-                    "to the @benchmark decorator cannot be left empty.",
+                    "to the @benchmark decorator cannot be an empty list.",
                     tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_VALUE_VALUE)
 
-        if use_field_for_n is not None:
-            if use_field_for_n not in kwargs_variations:
-                raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator must "
-                                           f"be one of the kwargs variations: {list(kwargs_variations.keys())}",
-                                           tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUE)
-            if not all(isinstance(v, int) and v > 0 for v in kwargs_variations[use_field_for_n]):
-                raise SimpleBenchValueError(f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
-                                            "must all be positive integers when used with 'use_field_for_n'.",
-                                            tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUES)
+    if (isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict)):
+        if use_field_for_n not in kwargs_variations:
+            raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator must "
+                                       f"match one of the kwargs_variations keys: {list(kwargs_variations.keys())}",
+                                       tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
+        if not all(isinstance(v, int) and v > 0 for v in kwargs_variations[use_field_for_n]):
+            raise SimpleBenchValueError(f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
+                                        "must all be positive integers when used with 'use_field_for_n'.",
+                                        tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE)
 
-    if not isinstance(variation_cols, dict) and variation_cols is not None:
-        raise SimpleBenchTypeError("The 'variation_cols' parameter to the @benchmark decorator must be a dictionary.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_TYPE)
     if isinstance(variation_cols, dict):
         for key, value in variation_cols.items():
             if not isinstance(key, str):
@@ -198,35 +189,31 @@ def benchmark(
     def decorator(func):
         """The actual decorator that wraps the user's function."""
         @wraps(func)
-        def case_action_wrapper(runner: SimpleRunner, **kwargs) -> Any:
+        def case_action_wrapper(_runner: SimpleRunner, /,  **kwargs) -> Any:
             """
             This wrapper becomes the `action` for the `Case`.
             It calls the user's decorated function inside `runner.run()`.
+
+            Args:
+                _runner (SimpleRunner): The runner executing the benchmark.
+                **kwargs: Any keyword arguments from `kwargs_variations`.
             """
             # The user's function is passed as the action to run.
             # n and use_field_for_n are handled here.
             nonlocal n
             nonlocal use_field_for_n
             # If use_field_for_n is set, override n with the value from kwargs
-            # if it exists and is a positive integer.
             # Otherwise, use the default n from the decorator.
             # This allows dynamic weighting based on variations.
-            #
-            n_for_run: int = n
+            # Validation of use_field_for_n and its values is done above.
             if use_field_for_n is not None:
-                field_value = kwargs.get(use_field_for_n)
-                if isinstance(field_value, int) and field_value > 0:
-                    n_for_run = field_value
-                else:
+                n = kwargs.get(use_field_for_n)  # pyright: ignore[reportAssignmentType]
+                if n is None:
                     raise SimpleBenchValueError(
-                        f"Invalid value for use_field_for_n '{use_field_for_n}': {field_value}",
-                        tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE)
-            run_kwargs: dict[str, Any] = {'action': func, 'n': n_for_run}
-
-            # kwargs from kwargs_variations are passed through
-            run_kwargs.update(kwargs)
-
-            return runner.run(**run_kwargs)
+                        f"The field '{use_field_for_n}' specified in 'use_field_for_n' "
+                        f"was not found in the kwargs variations. kwargs: {kwargs}",
+                        tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_MISSING_IN_RUNNER)
+            return _runner.run(action=func, n=n, kwargs=kwargs)
 
         # Create the Case instance, using sensible defaults from the function.
         case_kwargs = {

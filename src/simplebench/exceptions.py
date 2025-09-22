@@ -85,6 +85,10 @@ class ErrorTag(str, Enum):
     """The keys in variation_cols must also be present in kwargs_variations."""
     BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE = "BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE"
     """The value in kwargs_variations for the key specified in use_field_for_n must be a positive integer."""
+    BENCHMARK_DECORATOR_USE_FIELD_FOR_N_MISSING_IN_RUNNER = (
+            "BENCHMARK_DECORATOR_USE_FIELD_FOR_N_MISSING_IN_RUNNER")
+    """The use_field_for_n parameter was specified, but the matching field is missing
+    from the kwargs from the runner."""
 
     # Results() tags
     RESULTS_GROUP_INVALID_ARG_TYPE = "RESULTS_GROUP_INVALID_ARG_TYPE"

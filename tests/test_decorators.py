@@ -4,7 +4,9 @@ from __future__ import annotations
 import pytest
 
 from simplebench.decorators import clear_registered_cases, get_registered_cases, benchmark
+from simplebench.enums import Verbosity
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.session import Session
 
 
 class MockRunner:
@@ -328,6 +330,60 @@ def test_decorator_invalid_parameters() -> None:
         def invalid_options_type():
             pass
     assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_OPTIONS_TYPE, f"Got {excinfo.value.tag_code}"
+
+    # Invalid kwargs_variations values (empty list)
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test', title='Valid Title', kwargs_variations={'param': []})
+        def empty_kwargs_variations_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_VALUE_VALUE, (
+        f"Got {excinfo.value.tag_code}")
+
+    # Invalid use_field_for_n values (non-positive integers in list)
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test',
+                   title='Valid Title',
+                   variation_cols={'size': 'Size'},
+                   kwargs_variations={'size': [0, -10, 100]},
+                   use_field_for_n='size')
+        def non_positive_use_field_for_n_values():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE, (
+        f"Got {excinfo.value.tag_code}")
+
+
+def test_decorator_use_field_for_n_valid() -> None:
+    """Test that the @benchmark decorator works correctly with valid use_field_for_n."""
+    clear_registered_cases()
+
+    sizes: list[int] = [10, 100, 1000]
+
+    @benchmark(group='test',
+               title='Valid use_field_for_n',
+               variation_cols={'size': 'Size'},
+               min_time=0.1,
+               max_time=1.0,
+               kwargs_variations={'size': sizes},
+               use_field_for_n='size',
+               n=50)
+    def valid_use_field_for_n(size: int) -> int:
+        return sum(range(size))
+
+    cases = get_registered_cases()
+
+    print(str(cases))
+    assert len(cases) == 1, "Expected exactly one registered case."
+
+    session = Session(cases=cases, verbosity=Verbosity.QUIET)
+    session.run()
+    # cases should have been run without errors and results collected
+
+    test_case = cases[0]
+    assert test_case.results is not None, "Expected results to be collected."
+    assert len(test_case.results) == 3, "Expected three results for the three size variations."
+    expected_n_values: set[int] = set(sizes)
+    actual_n_values: set[int] = set(result.n for result in test_case.results)
+    assert actual_n_values == expected_n_values, "The n values in results do not match the expected sizes."
 
 
 if __name__ == "__main__":

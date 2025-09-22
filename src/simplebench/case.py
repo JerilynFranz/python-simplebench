@@ -218,7 +218,7 @@ class Case:
         kwargs: dict[str, Any]
         for variations_counter, kwargs in enumerate(all_variations):
             benchmark: SimpleRunner = SimpleRunner(case=self, session=session, kwargs=kwargs)
-            results: Results = self.action(benchmark)
+            results: Results = self.action(benchmark, **kwargs)
             collected_results.append(results)
             if task:
                 task.update(

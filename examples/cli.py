@@ -15,6 +15,15 @@ def benchcase_one(benchmark: SimpleRunner) -> None:
     return benchmark.run(n=100000, action=action)
 
 
+def sum_numbers(benchmark: SimpleRunner, n: int) -> None:
+    """A simple benchmark case function that sums numbers up to n."""
+
+    def action(size: int) -> None:
+        """A simple benchmark case function."""
+        sum(range(int))  # Example operation to benchmark
+    return benchmark.run(n=n, action=action)
+
+
 def benchmark_cases_list_factory() -> list[Case]:
     """Factory function to create a list of benchmark cases."""
     return [
