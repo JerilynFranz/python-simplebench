@@ -182,6 +182,16 @@ def test_decorator_invalid_parameters() -> None:
             pass
     assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_N_VALUE
 
+    # Missing kwargs_variations with use_field_for_n
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test',
+                   title='Valid Title',
+                   use_field_for_n='size')
+        def missing_kwargs_variations():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS, (
+        f"Got {excinfo.value.tag_code}")
+
     # Invalid group type
     with pytest.raises(SimpleBenchTypeError) as excinfo:
         @benchmark(group=123, title='Valid Title')  # type: ignore
@@ -249,7 +259,7 @@ def test_decorator_invalid_parameters() -> None:
     # Missing kwargs_variations with variation_cols
     with pytest.raises(SimpleBenchTypeError) as excinfo:
         @benchmark(group='test', title='Valid Title - Missing kwargs_variations', variation_cols={'length': 'Length'})
-        def missing_kwargs_variations():
+        def missing_kwargs_variations_with_variation_cols():
             pass
     assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KWARGS_VARIATIONS_MISMATCH, (
         f"Got {excinfo.value.tag_code}")

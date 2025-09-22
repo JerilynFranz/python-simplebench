@@ -83,6 +83,8 @@ class ErrorTag(str, Enum):
     BENCHMARK_DECORATOR_VARIATION_COLS_KWARGS_VARIATIONS_MISMATCH = (
             "BENCHMARK_DECORATOR_VARIATION_COLS_KWARGS_VARIATIONS_MISMATCH")
     """The keys in variation_cols must also be present in kwargs_variations."""
+    BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE = "BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE"
+    """The value in kwargs_variations for the key specified in use_field_for_n must be a positive integer."""
 
     # Results() tags
     RESULTS_GROUP_INVALID_ARG_TYPE = "RESULTS_GROUP_INVALID_ARG_TYPE"

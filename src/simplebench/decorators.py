@@ -160,7 +160,7 @@ def benchmark(
             if len(values) == 0:
                 raise SimpleBenchValueError(
                     f"The values list for the '{key}' entry in the 'kwargs_variations' parameter "
-                    "to the @benchmark decorator must be non-empty.",
+                    "to the @benchmark decorator cannot be left empty.",
                     tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_VALUE_VALUE)
 
         if use_field_for_n is not None:
@@ -170,7 +170,7 @@ def benchmark(
                                            tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUE)
             if not all(isinstance(v, int) and v > 0 for v in kwargs_variations[use_field_for_n]):
                 raise SimpleBenchValueError(f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
-                                            "must be positive integers when used with 'use_field_for_n'.",
+                                            "must all be positive integers when used with 'use_field_for_n'.",
                                             tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUES)
 
     if not isinstance(variation_cols, dict) and variation_cols is not None:
@@ -212,13 +212,16 @@ def benchmark(
             # Otherwise, use the default n from the decorator.
             # This allows dynamic weighting based on variations.
             #
+            n_for_run: int = n
             if use_field_for_n is not None:
                 field_value = kwargs.get(use_field_for_n)
                 if isinstance(field_value, int) and field_value > 0:
-                    n = field_value
+                    n_for_run = field_value
                 else:
-                    raise ValueError(f"Invalid value for use_field_for_n '{use_field_for_n}': {field_value}")
-            run_kwargs: dict[str, Any] = {'action': func, 'n': n}
+                    raise SimpleBenchValueError(
+                        f"Invalid value for use_field_for_n '{use_field_for_n}': {field_value}",
+                        tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE)
+            run_kwargs: dict[str, Any] = {'action': func, 'n': n_for_run}
 
             # kwargs from kwargs_variations are passed through
             run_kwargs.update(kwargs)
