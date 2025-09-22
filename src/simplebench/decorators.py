@@ -198,22 +198,10 @@ def benchmark(
                 _runner (SimpleRunner): The runner executing the benchmark.
                 **kwargs: Any keyword arguments from `kwargs_variations`.
             """
-            # The user's function is passed as the action to run.
-            # n and use_field_for_n are handled here.
-            nonlocal n
-            nonlocal use_field_for_n
-            # If use_field_for_n is set, override n with the value from kwargs
-            # Otherwise, use the default n from the decorator.
-            # This allows dynamic weighting based on variations.
-            # Validation of use_field_for_n and its values is done above.
-            if use_field_for_n is not None:
-                n = kwargs.get(use_field_for_n)  # pyright: ignore[reportAssignmentType]
-                if n is None:
-                    raise SimpleBenchValueError(
-                        f"The field '{use_field_for_n}' specified in 'use_field_for_n' "
-                        f"was not found in the kwargs variations. kwargs: {kwargs}",
-                        tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_MISSING_IN_RUNNER)
-            return _runner.run(action=func, n=n, kwargs=kwargs)
+            # The designated use_field_for_n field will always be present
+            # in kwargs if specified due to prior validation.
+            n_for_run = n if use_field_for_n is None else kwargs.get(use_field_for_n)
+            return _runner.run(action=func, n=n_for_run, kwargs=kwargs)
 
         # Create the Case instance, using sensible defaults from the function.
         case_kwargs = {
