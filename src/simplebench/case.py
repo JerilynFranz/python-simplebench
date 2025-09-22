@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Benchmark case declaration and execution."""
 from __future__ import annotations
+from abc import ABCMeta
 from dataclasses import dataclass, field
 import itertools
 from typing import Any, Callable, Optional, TYPE_CHECKING
@@ -19,8 +20,12 @@ if TYPE_CHECKING:
     from .tasks import RichTask
 
 
+class ICase(metaclass=ABCMeta):
+    """Interface for a benchmark Case."""
+
+
 @dataclass(kw_only=True)
-class Case:
+class Case(ICase):
     '''Declaration of a benchmark case.
 
     Args:

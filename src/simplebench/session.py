@@ -1,5 +1,6 @@
 """Session management for SimpleBench."""
 from __future__ import annotations
+from abc import ABCMeta
 from argparse import ArgumentParser, ArgumentError, Namespace
 from datetime import datetime
 from pathlib import Path
@@ -19,6 +20,10 @@ from .utils import sanitize_filename, platform_id
 
 if TYPE_CHECKING:
     from .reporters import Reporter
+
+
+class ISession(metaclass=ABCMeta):
+    """Interface for a Session."""
 
 
 class Session:

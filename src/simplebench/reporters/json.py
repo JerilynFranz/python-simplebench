@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using JSON files."""
 from __future__ import annotations
-from argparse import ArgumentParser
 from dataclasses import dataclass
 import json
 from io import StringIO
@@ -15,17 +14,6 @@ from .choices import Choice, Choices, Target, Format
 if TYPE_CHECKING:
     from ..case import Case
     from ..session import Session
-
-_lazy_classes_loaded: bool = False
-"""Flag to indicate if lazy-loaded classes have been imported."""
-
-
-def _lazy_load_classes() -> None:
-    """Lazy load classes to avoid circular import issues."""
-    global Case, _lazy_classes_loaded  # pylint: disable=global-statement
-    if not _lazy_classes_loaded:
-        from ..case import Case  # pylint: disable=import-outside-toplevel
-        _lazy_classes_loaded = True
 
 
 @dataclass
@@ -60,6 +48,16 @@ class JSONReporter(Reporter):
     """
 
     def __init__(self) -> None:
+        super().__init__(
+            name='json',
+            description='Outputs benchmark results to JSON files.',
+            sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
+            targets={Target.FILESYSTEM, Target.CALLBACK},
+            formats={Format.JSON},
+            choices=self._load_choices())
+
+    def _load_choices(self) -> Choices:
+        """Load the Choices instance for the reporter, including sections, output targets, and formats."""
         choices: Choices = Choices()
         self._choices: Choices = choices
         choices.add(
@@ -84,45 +82,7 @@ class JSONReporter(Reporter):
                 formats=[Format.JSON],
                 extra=JSONExtras(full_data=True))
         )
-
-    def supported_formats(self):
-        """Return the set of supported output formats for the reporter."""
-        return set([Format.JSON])
-
-    def supported_sections(self):
-        """Return the set of supported result sections for the reporter."""
-        return set([Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY])
-
-    def supported_targets(self):
-        """Return the set of supported output targets for the reporter."""
-        return set([Target.FILESYSTEM, Target.CALLBACK])
-
-    @property
-    def choices(self) -> Choices:
-        """Return the Choices instance for the reporter, including sections,
-        output targets, and formats.
-        """
-        return self._choices
-
-    @property
-    def name(self) -> str:
-        """Return the unique identifying name of the reporter."""
-        return 'json'
-
-    @property
-    def description(self) -> str:
-        """Return a brief description of the reporter."""
-        return 'Outputs benchmark results to JSON files.'
-
-    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
-        """Add the reporter's command-line flags to an ArgumentParser.
-
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-        """
-        for choice in self.choices.values():
-            for flag in choice.flags:
-                parser.add_argument(flag, action='store_true', help=choice.description)
+        return choices
 
     def run_report(self,
                    case: Case,

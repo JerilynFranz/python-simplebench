@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using Rich tables on the console."""
 from __future__ import annotations
-from argparse import ArgumentParser
 from pathlib import Path
 from typing import Optional, Any, Callable, TYPE_CHECKING
 
@@ -9,27 +8,17 @@ from rich.console import Console
 from rich.table import Table
 
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE, BASE_MEMORY_UNIT
-from ..enums import Section
+from ..enums import Section, Target, Format
 from ..exceptions import SimpleBenchValueError, ErrorTag
 from ..results import Results
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename, sigfigs
-from .choices import Choice, Choices, Format, Target
+from .choices import Choice, Choices
 from .interfaces import Reporter
+
 if TYPE_CHECKING:
     from ..case import Case
     from ..session import Session
-
-_lazy_classes_loaded: bool = False
-"""Flag to indicate if lazy-loaded classes have been imported."""
-
-
-def _lazy_load_classes() -> None:
-    """Lazy load classes to avoid circular import issues."""
-    global Case, _lazy_classes_loaded  # pylint: disable=global-statement
-    if not _lazy_classes_loaded:
-        from ..case import Case  # pylint: disable=import-outside-toplevel
-        _lazy_classes_loaded = True
 
 
 class RichTableReporter(Reporter):
@@ -57,9 +46,22 @@ class RichTableReporter(Reporter):
             supported output Targets, and supported output Formats for the reporter.
     """
     def __init__(self) -> None:
-        """Initialize the RichTableReporter with Choice."""
+        """Initialize the RichTableReporter."""
+        super().__init__(
+            name='rich-table',
+            description='Displays benchmark results as a rich text table on the console.',
+            sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
+            targets={Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK},
+            formats={Format.RICH_TEXT},
+            choices=self._load_choices())
+
+    def _load_choices(self) -> Choices:
+        """Load the Choices instance for the reporter, including sections, output targets, and formats.
+
+        Returns:
+            Choices: The Choices instance for the reporter.
+        """
         choices: Choices = Choices()
-        self._choices: Choices = choices
         choices.add(
              Choice(
                 reporter=self,
@@ -165,45 +167,7 @@ class RichTableReporter(Reporter):
                 targets=[Target.CALLBACK],
                 formats=[Format.RICH_TEXT])
         )
-
-    def supported_formats(self):
-        """Return the set of supported output formats for the reporter."""
-        return set([Format.RICH_TEXT])
-
-    def supported_sections(self):
-        """Return the set of supported result sections for the reporter."""
-        return set([Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY])
-
-    def supported_targets(self):
-        """Return the set of supported output targets for the reporter."""
-        return set([Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK])
-
-    @property
-    def choices(self) -> Choices:
-        """Return the Choices instance for the reporter, including sections,
-        output targets, and formats.
-        """
-        return self._choices
-
-    @property
-    def name(self) -> str:
-        """Return the unique identifying name of the reporter."""
-        return 'rich-table'
-
-    @property
-    def description(self) -> str:
-        """Return a brief description of the reporter."""
-        return 'Displays benchmark results as a rich text table on the console.'
-
-    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
-        """Add the reporter's command-line flags to an ArgumentParser.
-
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-        """
-        for choice in self.choices.values():
-            for flag in choice.flags:
-                parser.add_argument(flag, action='store_true', help=choice.description)
+        return choices
 
     def run_report(self,
                    case: Case,
@@ -217,8 +181,7 @@ class RichTableReporter(Reporter):
 
         This method is called by the base class's report() method after validation. The base class
         handles validation of the arguments, so subclasses can assume the arguments
-        are valid. The base class also handles lazy loading of the reporter classes, so subclasses
-        can assume any required imports are available
+        are valid.
 
         Args:
             case (Case): The Case instance representing the benchmarked code.

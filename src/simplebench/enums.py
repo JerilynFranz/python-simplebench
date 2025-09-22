@@ -44,4 +44,38 @@ class Verbosity(int, Enum):
     DEBUG = 5
     """All messages are shown, including debug messages and status displays during runs.
 
-    This is incompatible with quiet."""""
+    This is incompatible with quiet."""
+
+
+class Target(str, Enum):
+    """Categories for different output targets.
+
+    The enums are used in generating calling parameters
+    for the report() methods in the Reporter subclasses.
+    """
+    CONSOLE = 'to console'
+    """Output to console."""
+    FILESYSTEM = 'to filesystem'
+    """Output to filesystem."""
+    HTTP = 'to http'
+    """Output to HTTP endpoint."""
+    DISPLAY = 'to display'
+    """Output to display device."""
+    CALLBACK = 'to callback'
+    """Pass generated output to a callback function."""
+
+
+class Format(str, Enum):
+    """Categories for different output formats."""
+    PLAIN_TEXT = 'plain text'
+    """Plain text format"""
+    MARKDOWN = 'markdown'
+    """Markdown format"""
+    RICH_TEXT = 'rich text'
+    """Rich text format"""
+    CSV = 'csv'
+    """CSV format"""
+    JSON = 'json'
+    """JSON format"""
+    GRAPH = 'graph'
+    """Graphical format"""

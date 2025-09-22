@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using graphs."""
 from __future__ import annotations
-from argparse import ArgumentParser
 from copy import deepcopy
 from io import BytesIO, BufferedWriter
 from pathlib import Path
@@ -13,28 +12,18 @@ import pandas as pd
 import seaborn as sns
 
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT
-from ..enums import Section
+from ..enums import Section, Target, Format
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from ..metaclasses import ICase
 from ..results import Results
 from .reporter_option import ReporterOption
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename
-from .choices import Choice, Choices, Format, Target
+from .choices import Choice, Choices
 from .interfaces import Reporter
 if TYPE_CHECKING:
     from ..case import Case
     from ..session import Session
-
-_lazy_classes_loaded: bool = False
-"""Flag to indicate if lazy-loaded classes have been imported."""
-
-
-def _lazy_load_classes() -> None:
-    """Lazy load classes to avoid circular import issues."""
-    global Case, _lazy_classes_loaded  # pylint: disable=global-statement
-    if not _lazy_classes_loaded:
-        from ..case import Case  # pylint: disable=import-outside-toplevel
-        _lazy_classes_loaded = True
 
 
 DEFAULT_GRAPH_THEME: dict[str, Any] = {
@@ -178,8 +167,19 @@ class GraphOptions(ReporterOption):
 class GraphReporter(Reporter):
     """Class for outputting benchmark results as graphs."""
     def __init__(self) -> None:
-        self._choices: Choices = Choices()
-        self._choices.add(
+        super().__init__(
+            name='graph',
+            description='Outputs benchmark results as graphs.',
+            sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
+            targets={Target.FILESYSTEM, Target.CALLBACK},
+            formats={Format.GRAPH},
+            choices=self._load_choices()
+        )
+
+    def _load_choices(self) -> Choices:
+        """Load the Choices instance for the reporter, including sections, output targets, and formats."""
+        choices: Choices = Choices()
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--graph-scatter-file'],
@@ -188,7 +188,7 @@ class GraphReporter(Reporter):
                 sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.FILESYSTEM],
                 formats=[Format.GRAPH]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--graph-scatter-ops.file'],
@@ -197,7 +197,7 @@ class GraphReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.FILESYSTEM],
                 formats=[Format.GRAPH]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--graph-scatter-timings.file'],
@@ -207,7 +207,7 @@ class GraphReporter(Reporter):
                 targets=[Target.FILESYSTEM],
                 formats=[Format.GRAPH])
         )
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--graph-scatter-memory.file'],
@@ -217,7 +217,7 @@ class GraphReporter(Reporter):
                 targets=[Target.FILESYSTEM],
                 formats=[Format.GRAPH])
         )
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--graph-scatter.callback'],
@@ -226,7 +226,7 @@ class GraphReporter(Reporter):
                 sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.CALLBACK],
                 formats=[Format.GRAPH]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--graph-scatter-ops.callback'],
@@ -235,7 +235,7 @@ class GraphReporter(Reporter):
                 sections=[Section.OPS],
                 targets=[Target.CALLBACK],
                 formats=[Format.GRAPH]))
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--graph-scatter-timings.callback'],
@@ -245,7 +245,7 @@ class GraphReporter(Reporter):
                 targets=[Target.CALLBACK],
                 formats=[Format.GRAPH])
         )
-        self._choices.add(
+        choices.add(
             Choice(
                 reporter=self,
                 flags=['--graph-scatter-memory.callback'],
@@ -255,45 +255,7 @@ class GraphReporter(Reporter):
                 targets=[Target.CALLBACK],
                 formats=[Format.GRAPH])
         )
-
-    def supported_formats(self):
-        """Return the set of supported output formats for the reporter."""
-        return set([Format.GRAPH])
-
-    def supported_sections(self):
-        """Return the set of supported result sections for the reporter."""
-        return set([Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY])
-
-    def supported_targets(self):
-        """Return the set of supported output targets for the reporter."""
-        return set([Target.FILESYSTEM, Target.CALLBACK])
-
-    @property
-    def choices(self) -> Choices:
-        """Return the Choices instance for the reporter, including sections,
-        output targets, and formats.
-        """
-        return self._choices
-
-    @property
-    def name(self) -> str:
-        """Return the unique identifying registration name of the reporter."""
-        return 'graph'
-
-    @property
-    def description(self) -> str:
-        """Return a brief description of the reporter."""
-        return 'Outputs benchmark results as graphs.'
-
-    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
-        """Add the reporter's command-line flags to an ArgumentParser.
-
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-        """
-        for choice in self.choices.values():
-            for flag in choice.flags:
-                parser.add_argument(flag, action='store_true', help=choice.description)
+        return choices
 
     def run_report(self,
                    case: Case,
@@ -329,7 +291,6 @@ class GraphReporter(Reporter):
                 a FILESYSTEM target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
-        _lazy_load_classes()
         output_format: str = 'svg'
         if case.options is not None:
             for item in case.options:
@@ -387,8 +348,7 @@ class GraphReporter(Reporter):
         Returns:
             None
         """
-        _lazy_load_classes()
-        if not isinstance(case, Case):
+        if not isinstance(case, ICase):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
                 tag=ErrorTag.GRAPH_REPORTER_PLOT_INVALID_CASE_ARG)

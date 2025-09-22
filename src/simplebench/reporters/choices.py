@@ -1,51 +1,19 @@
 # -*- coding: utf-8 -*-
 """Choices for reporters."""
 from __future__ import annotations
-
 from collections import UserDict
-from enum import Enum
-from typing import Any, Optional, Sequence
+from typing import Any, Optional, Sequence, TYPE_CHECKING
 
-from ..enums import Section
+from .metaclasses import IChoice, IChoices, IReporter
+from ..enums import Section, Target, Format
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
-from .interfaces import Reporter
 
 
-class Target(str, Enum):
-    """Categories for different output targets.
-
-    The enums are used in generating calling parameters
-    for the report() methods in the Reporter subclasses.
-    """
-    CONSOLE = 'to console'
-    """Output to console."""
-    FILESYSTEM = 'to filesystem'
-    """Output to filesystem."""
-    HTTP = 'to http'
-    """Output to HTTP endpoint."""
-    DISPLAY = 'to display'
-    """Output to display device."""
-    CALLBACK = 'to callback'
-    """Pass generated output to a callback function."""
+if TYPE_CHECKING:
+    from .interfaces import Reporter
 
 
-class Format(str, Enum):
-    """Categories for different output formats."""
-    PLAIN_TEXT = 'plain text'
-    """Plain text format"""
-    MARKDOWN = 'markdown'
-    """Markdown format"""
-    RICH_TEXT = 'rich text'
-    """Rich text format"""
-    CSV = 'csv'
-    """CSV format"""
-    JSON = 'json'
-    """JSON format"""
-    GRAPH = 'graph'
-    """Graphical format"""
-
-
-class Choice:
+class Choice(IChoice):
     """Definition of a Choice option for reporters.
 
     A Choice represents a specific configuration of a Reporter subclass,
@@ -97,7 +65,7 @@ class Choice:
                  targets: Sequence[Target],
                  formats: Sequence[Format],
                  extra: Optional[Any] = None) -> None:
-        if not isinstance(reporter, Reporter):
+        if not isinstance(reporter, IReporter):
             raise SimpleBenchTypeError(
                 "reporter must implement the Reporter interface",
                 tag=ErrorTag.CHOICE_INIT_INVALID_REPORTER_ARG)
@@ -255,7 +223,7 @@ class Choice:
         return self._extra
 
 
-class Choices(UserDict[str, Choice]):
+class Choices(UserDict[str, Choice], IChoices):
     """A dictionary-like container for Choice instances."""
     def __init__(self) -> None:
         self._args_index: dict[str, Choice] = {}

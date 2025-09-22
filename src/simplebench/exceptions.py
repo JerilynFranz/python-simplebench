@@ -504,10 +504,14 @@ class ErrorTag(str, Enum):
     """No Choice with the given name exists in the Choices instance"""
 
     # Reporter() tags
+    REPORTER_NOT_IMPLEMENTED = "REPORTER_NOT_IMPLEMENTED"
+    """The Reporter base class is an abstract base class and must be subclassed"""
     REPORTER_INIT_NOT_IMPLEMENTED = "REPORTER_INIT_NOT_IMPLEMENTED"
     """The Reporter base class cannot be instantiated directly"""
     REPORTER_CHOICES_NOT_IMPLEMENTED = "REPORTER_CHOICES_NOT_IMPLEMENTED"
     """The Reporter.choices property must be implemented in subclasses"""
+    REPORTER_LOAD_CHOICES_NOT_IMPLEMENTED = "REPORTER_LOAD_CHOICES_NOT_IMPLEMENTED"
+    """The Reporter._load_choices() method must be implemented in subclasses"""
     REPORTER_NAME_NOT_IMPLEMENTED = "REPORTER_NAME_NOT_IMPLEMENTED"
     """The Reporter.name property must be implemented in subclasses"""
     REPORTER_DESCRIPTION_NOT_IMPLEMENTED = "REPORTER_DESCRIPTION_NOT_IMPLEMENTED"

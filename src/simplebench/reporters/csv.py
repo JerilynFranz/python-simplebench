@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using CSV files."""
 from __future__ import annotations
-from argparse import ArgumentParser
 import csv
 from io import TextIOWrapper, StringIO
 from pathlib import Path
@@ -9,31 +8,17 @@ from typing import Any, Callable, Optional, TYPE_CHECKING
 
 
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
-from ..enums import Section
+from ..enums import Section, Target, Format
 from ..exceptions import SimpleBenchValueError, ErrorTag
 from .interfaces import Reporter
 from ..results import Results
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename, sigfigs
-from .choices import Choice, Choices, Target, Format
+from .choices import Choice, Choices
+
 if TYPE_CHECKING:
     from ..case import Case
     from ..session import Session
-
-_lazy_classes_loaded: bool = False
-"""Flag to indicate if lazy-loaded classes have been imported."""
-
-
-def _lazy_load_classes() -> None:
-    """Lazily load any classes or modules that cannot be loaded during initial setup.
-
-    This is primarily to avoid circular import issues between the session, reporter and
-    choices modules in the report() method of the Reporter class.
-    """
-    global Case, _lazy_classes_loaded  # pylint: disable=global-statement
-    if not _lazy_classes_loaded:
-        from ..case import Case  # pylint: disable=import-outside-toplevel
-        _lazy_classes_loaded = True
 
 
 class CSVReporter(Reporter):
@@ -59,6 +44,17 @@ class CSVReporter(Reporter):
     """
 
     def __init__(self) -> None:
+        super().__init__(
+            name='csv',
+            description='Outputs benchmark results to CSV files.',
+            sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
+            targets={Target.FILESYSTEM, Target.CALLBACK},
+            formats={Format.CSV},
+            choices=self._load_choices()
+        )
+
+    def _load_choices(self) -> Choices:
+        """Load the Choices instance for the reporter, including sections, output targets, and formats."""
         choices: Choices = Choices()
         self._choices: Choices = choices
         choices.add(
@@ -97,45 +93,7 @@ class CSVReporter(Reporter):
                 sections=[Section.MEMORY, Section.PEAK_MEMORY],
                 targets=[Target.FILESYSTEM, Target.CALLBACK],
                 formats=[Format.CSV]))
-
-    def supported_formats(self):
-        """Return the set of supported output formats for the reporter."""
-        return set([Format.CSV])
-
-    def supported_sections(self):
-        """Return the set of supported result sections for the reporter."""
-        return set([Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY])
-
-    def supported_targets(self):
-        """Return the set of supported output targets for the reporter."""
-        return set([Target.FILESYSTEM, Target.CALLBACK])
-
-    @property
-    def choices(self) -> Choices:
-        """Return the Choices instance for the reporter, including sections,
-        output targets, and formats.
-        """
-        return self._choices
-
-    @property
-    def name(self) -> str:
-        """Return the unique identifying name of the reporter."""
-        return 'csv'
-
-    @property
-    def description(self) -> str:
-        """Return a brief description of the reporter."""
-        return 'Outputs benchmark results to CSV files.'
-
-    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
-        """Add the reporter's command-line flags to an ArgumentParser.
-
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-        """
-        for choice in self.choices.values():
-            for flag in choice.flags:
-                parser.add_argument(flag, action='store_true', help=choice.description)
+        return choices
 
     def run_report(self,
                    case: Case,
