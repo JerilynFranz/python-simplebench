@@ -9,8 +9,14 @@ from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchVa
 from simplebench.session import Session
 
 
-class MockRunner:
+def mock_action(*arg, **kwargs) -> None:  # pylint: disable=unused-argument
+    """A mock action that does nothing."""
+    return None
+
+
+class MockRunner():
     """A mock SimpleRunner for testing."""
+
     def run(self, n: int, action, **kwargs):  # pylint: disable=unused-argument
         """Mock run method that just calls the action."""
         return action()
@@ -88,7 +94,7 @@ def test_run_decorated_case() -> None:
     case = cases[0]
 
     runner = MockRunner()
-    result = case.action(runner)
+    result = case.action(runner)  # type: ignore
     expected = sum(range(10))
     assert result == expected, "The action did not return the expected result."
 
@@ -104,7 +110,7 @@ def test_run_decorated_case() -> None:
     cases = get_registered_cases()
     assert len(cases) == 1, "Expected exactly one registered case."
     case = cases[0]
-    result = case.action(runner)
+    result = case.action(runner)  # type: ignore
     expected = sum(range(20))
     assert result == expected, "The action did not return the expected result."
 
@@ -148,6 +154,27 @@ def test_decorator_invalid_parameters() -> None:
         def invalid_iterations_type():
             pass
     assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE
+
+    # Non-positive iterations value
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test', title='Valid Title', iterations=0)
+        def non_positive_iterations_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE
+
+    # Invalid warmup_iterations type
+    with pytest.raises(SimpleBenchTypeError) as excinfo:
+        @benchmark(group='test', title='Valid Title', warmup_iterations='five')  # type: ignore
+        def invalid_warmup_iterations_type():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_TYPE
+
+    # Negative warmup_iterations value
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
+        @benchmark(group='test', title='Valid Title', warmup_iterations=-1)
+        def negative_warmup_iterations_value():
+            pass
+    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_VALUE
 
     # use_field_for_n not a string
     with pytest.raises(SimpleBenchTypeError) as excinfo:

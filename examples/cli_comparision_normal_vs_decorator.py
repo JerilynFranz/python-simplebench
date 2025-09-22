@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """A simple benchmark case function."""
 from __future__ import annotations
+from typing import Any
 
 from simplebench import main, benchmark, Case, SimpleRunner
 from simplebench.reporters.graph import GraphOptions
+from simplebench.results import Results
 
 
 @benchmark(
@@ -11,6 +13,7 @@ from simplebench.reporters.graph import GraphOptions
     title='benchcase one',
     description='A simple benchmark case function via decorators.',
     n=100,
+    warmup_iterations=10,
     options=[GraphOptions(output_format='png')]
 )
 def benchcase_one():
@@ -18,13 +21,13 @@ def benchcase_one():
     sum(range(100))  # Example operation to benchmark
 
 
-def benchcase_two(bench: SimpleRunner) -> None:
+def benchcase_two(bench: SimpleRunner, **kwargs: Any) -> Results:
     """A simple benchmark case function."""
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(100))  # Example operation to benchmark
-    return bench.run(n=100, action=action)
+    return bench.run(n=100, action=action, **kwargs)
 
 
 def benchmark_cases_list_factory() -> list[Case]:

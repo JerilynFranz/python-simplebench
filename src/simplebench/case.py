@@ -5,8 +5,9 @@ from dataclasses import dataclass, field
 import itertools
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
-from .constants import DEFAULT_ITERATIONS
+from .constants import DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
+from .protocols import ActionRunner
 from .reporters.reporter_option import ReporterOption
 from .runners import SimpleRunner
 from .enums import Section
@@ -27,7 +28,8 @@ class Case:
         title (str): The name of the benchmark case.
         description (str): A brief description of the benchmark case.
         action (Callable[..., Any]): The action to perform for the benchmark.
-        iterations (int): The number of iterations to run for the benchmark.
+        iterations (int): The minimum number of iterations to run for the benchmark.
+        warmup_iterations (int): The number of warmup iterations to run before the benchmark. (default: 10)
         min_time (float): The minimum time for the benchmark in seconds. (default: 5.0)
         max_time (float): The maximum time for the benchmark in seconds. (default: 20.0)
         variation_cols (dict[str, str]): kwargs to be used for cols to denote kwarg variations.
@@ -80,10 +82,12 @@ class Case:
     """The name of the benchmark case."""
     description: str
     """A brief description of the benchmark case."""
-    action: Callable[..., Any]
+    action: ActionRunner
     """The action to perform for the benchmark."""
     iterations: int = DEFAULT_ITERATIONS
     """The number of iterations to run for the benchmark."""
+    warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS
+    """The number of warmup iterations to run before the benchmark."""
     min_time: float = 5.0  # seconds
     """The minimum time for the benchmark in seconds."""
     max_time: float = 20.0  # seconds
@@ -92,8 +96,8 @@ class Case:
     """Keyword arguments to be used for columns to denote kwarg variations."""
     kwargs_variations: dict[str, list[Any]] = field(default_factory=dict[str, list[Any]])
     """Variations of keyword arguments for the benchmark."""
-    runner: Optional[Callable[..., Any]] = None
-    """A custom runner for the benchmark."""
+    runner: Optional[SimpleRunner] = None
+    """A custom runner for the benchmark. If None, the default SimpleRunner is used."""
     callback: Optional[Callable[[Case, Section, Format, Any], None]] = None
     """A callback function for additional processing of the report."""
     results: list[Results] = field(init=False)
@@ -114,20 +118,45 @@ class Case:
             SimpleBenchValueError: If any of the parameters are invalid.
             SimpleBenchTypeError: If any of the parameters are of the wrong type.
         """
+        if not isinstance(self.iterations, int):
+            raise SimpleBenchTypeError(
+                f'Invalid iterations type: {type(self.iterations)}. Must be an integer.',
+                tag=ErrorTag.CASE_INVALID_ITERATIONS_TYPE
+                )
         if self.iterations <= 0:
             raise SimpleBenchValueError(
                 f'Invalid iterations: {self.iterations}. Must be a positive integer.',
-                tag=ErrorTag.CASE_INVALID_ITERATIONS
+                tag=ErrorTag.CASE_INVALID_ITERATIONS_VALUE
+                )
+        if not isinstance(self.warmup_iterations, int):
+            raise SimpleBenchTypeError(
+                f'Invalid warmup_iterations type: {type(self.warmup_iterations)}. Must be an integer.',
+                tag=ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_VALUE
+                )
+        if self.warmup_iterations < 0:
+            raise SimpleBenchValueError(
+                f'Invalid warmup_iterations: {self.warmup_iterations}. Must be a non-negative integer.',
+                tag=ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_VALUE
+            )
+        if not isinstance(self.min_time, float):
+            raise SimpleBenchTypeError(
+                f'Invalid min_time type: {type(self.min_time)}. Must be a float.',
+                tag=ErrorTag.CASE_INVALID_MIN_TIME_TYPE
                 )
         if self.min_time <= 0.0:
             raise SimpleBenchValueError(
                 f'Invalid min_time: {self.min_time}. Must be a positive float.',
-                tag=ErrorTag.CASE_INVALID_MIN_TIME
+                tag=ErrorTag.CASE_INVALID_MIN_TIME_VALUE
+                )
+        if not isinstance(self.max_time, float):
+            raise SimpleBenchTypeError(
+                f'Invalid max_time type: {type(self.max_time)}. Must be a float.',
+                tag=ErrorTag.CASE_INVALID_MAX_TIME_TYPE
                 )
         if self.max_time <= 0.0:
             raise SimpleBenchValueError(
                 f'Invalid max_time: {self.max_time}. Must be a positive float.',
-                tag=ErrorTag.CASE_INVALID_MAX_TIME
+                tag=ErrorTag.CASE_INVALID_MAX_TIME_VALUE
                 )
         if self.min_time > self.max_time:
             raise SimpleBenchValueError(
@@ -139,10 +168,20 @@ class Case:
                 f'Invalid action: {self.action}. Must be a callable.',
                 tag=ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE
                 )
+        if not isinstance(self.action, ActionRunner):
+            raise SimpleBenchTypeError(
+                f'Invalid action: {self.action}. Must be of type ActionRunner.',
+                tag=ErrorTag.CASE_INVALID_ACTION_NOT_ACTIONRUNNER
+                )
         if self.runner is not None and not callable(self.runner):
             raise SimpleBenchTypeError(
                 f'Invalid runner: {self.runner}. Must be a callable or None.',
                 tag=ErrorTag.CASE_INVALID_RUNNER_NOT_CALLABLE_OR_NONE
+                )
+        if self.runner is not None and not isinstance(self.runner, SimpleRunner):
+            raise SimpleBenchTypeError(
+                f'Invalid runner: {self.runner}. Must be a subclass of SimpleRunner.',
+                tag=ErrorTag.CASE_INVALID_RUNNER_NOT_SIMPLE_RUNNER
                 )
         if not isinstance(self.variation_cols, dict):
             raise SimpleBenchTypeError(
@@ -217,8 +256,8 @@ class Case:
         collected_results: list[Results] = []
         kwargs: dict[str, Any]
         for variations_counter, kwargs in enumerate(all_variations):
-            benchmark: SimpleRunner = SimpleRunner(case=self, session=session, kwargs=kwargs)
-            results: Results = self.action(benchmark, **kwargs)
+            bench: SimpleRunner = SimpleRunner(case=self, session=session, kwargs=kwargs)
+            results: Results = self.action(bench, **kwargs)
             collected_results.append(results)
             if task:
                 task.update(

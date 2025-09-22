@@ -11,6 +11,9 @@ MIN_MEASURED_ITERATIONS: int = 3
 DEFAULT_ITERATIONS: int = 20
 """Default number of iterations for benchmarking."""
 
+DEFAULT_WARMUP_ITERATIONS: int = 10
+"""Default number of warmup iterations before benchmarking."""
+
 DEFAULT_TIMER = time.perf_counter_ns
 """Default timer function for benchmarking."""
 

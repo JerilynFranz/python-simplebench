@@ -5,6 +5,7 @@ from functools import wraps
 from typing import Any, Callable, TYPE_CHECKING
 
 from .case import Case
+from .constants import DEFAULT_WARMUP_ITERATIONS
 from .runners import SimpleRunner
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 
@@ -22,6 +23,7 @@ def benchmark(
     title: str | None = None,
     description: str | None = None,
     iterations: int | None = None,
+    warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
     min_time: float | None = None,
     max_time: float | None = None,
     variation_cols: dict[str, str] | None = None,
@@ -54,8 +56,10 @@ def benchmark(
         group (str): The group name for the benchmark case.
         title (str | None): The title of the benchmark case. Defaults to the function name.
         description (str | None): A description for the case. Defaults to the function's docstring.
-        iterations (int | None): The number of iterations to run for the benchmark.
+        iterations (int | None): The minimum number of iterations to run for the benchmark.
                 If None, uses the Case default. See `Case.iterations`.
+        warmup_iterations (int): The number of warmup iterations to run before the benchmark.
+                See `Case.warmup_iterations`.
         min_time (float | None): The minimum time in seconds to run the benchmark.
                 If None, uses the Case default. See `Case.min_time`.
         max_time (float | None): The maximum time in seconds to run the benchmark.
@@ -97,6 +101,20 @@ def benchmark(
     if not isinstance(iterations, int) and iterations is not None:
         raise SimpleBenchTypeError("The 'iterations' parameter to the @benchmark decorator must be an integer.",
                                    tag=ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE)
+
+    if iterations is not None and iterations <= 0:
+        raise SimpleBenchValueError(
+            "The 'iterations' parameter to the @benchmark decorator must be a positive integer.",
+            tag=ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE)
+
+    if not isinstance(warmup_iterations, int):
+        raise SimpleBenchTypeError("The 'warmup_iterations' parameter to the @benchmark decorator must be an integer.",
+                                   tag=ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_TYPE)
+
+    if warmup_iterations < 0:
+        raise SimpleBenchValueError(
+            "The 'warmup_iterations' parameter to the @benchmark decorator must be a non-negative integer.",
+            tag=ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_VALUE)
 
     if not isinstance(min_time, (float, int)) and min_time is not None:
         raise SimpleBenchTypeError("The 'min_time' parameter to the @benchmark decorator must be a float or int.",

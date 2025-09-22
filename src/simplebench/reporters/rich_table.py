@@ -76,7 +76,7 @@ class RichTableReporter(Reporter):
                 flags=['--rich-table-ops-console'],
                 name='rich-table-ops',
                 description='Display operations per second results as a rich text table on the console',
-                sections=[Section.OPS, Section.MEMORY],
+                sections=[Section.OPS],
                 targets=[Target.CONSOLE],
                 formats=[Format.RICH_TEXT]))
         choices.add(

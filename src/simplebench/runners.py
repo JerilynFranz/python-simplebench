@@ -29,7 +29,8 @@ class SimpleRunner():
         case (Case): The benchmark case to run.
         kwargs (dict[str, Any]): The keyword arguments for the benchmark case.
         session (Optional[Session]): The session in which the benchmark is run.
-        runner (Optional[Callable[..., Any]]): The function to use to run the benchmark. If None, uses default_runner.
+        runner (Optional[Callable[..., Any]]): The function to use to run the benchmark. If None, uses default_runner
+            from SimpleRunner.
 
     Attributes:
         case (Case): The benchmark case to run.
@@ -109,7 +110,10 @@ class SimpleRunner():
         memory_overhead: int = end_memory_current - start_memory_current
         peak_memory_overhead: int = end_memory_peak - start_memory_peak
 
-        iteration_pass: int = 0
+        # warmup iterations are not included in the final stats
+        # We start the count from -warmup_iterations to ensure we do the correct number of warmup
+        # iterations even if warmup_iterations is 0.
+        iteration_pass: int = -self.case.warmup_iterations
         time_start: float = float(DEFAULT_TIMER())
         max_stop_at: float = float(max_time / DEFAULT_INTERVAL_SCALE) + time_start
         min_stop_at: float = float(min_time / DEFAULT_INTERVAL_SCALE) + time_start
@@ -174,8 +178,8 @@ class SimpleRunner():
             if callable(teardown):
                 teardown()
 
-            if iteration_pass == 1:
-                # Warmup iteration, not included in final stats
+            if iteration_pass < 1:
+                # Warmup iterations not included in final stats
                 continue
             # We difference the raw timer readings to avoid cumulative floating point
             # errors over many iterations. It effectively pushes the error to the
