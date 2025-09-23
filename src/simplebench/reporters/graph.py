@@ -173,89 +173,73 @@ class GraphReporter(Reporter):
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
             targets={Target.FILESYSTEM, Target.CALLBACK},
             formats={Format.GRAPH},
-            choices=self._load_choices()
+            choices=Choices([
+                Choice(
+                    reporter=self,
+                    flags=['--graph-scatter-file'],
+                    name='graph-scatter-file',
+                    description='Save a scatter graph of operations per second results to a file',
+                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM],
+                    formats=[Format.GRAPH]),
+                Choice(
+                    reporter=self,
+                    flags=['--graph-scatter-ops.file'],
+                    name='graph-scatter-ops-file',
+                    description='Save a scatter graph of operations per second results to a file',
+                    sections=[Section.OPS],
+                    targets=[Target.FILESYSTEM],
+                    formats=[Format.GRAPH]),
+                Choice(
+                    reporter=self,
+                    flags=['--graph-scatter-timings.file'],
+                    name='graph-scatter-timings-file',
+                    description='Save a scatter graph of timing results to a file',
+                    sections=[Section.TIMING],
+                    targets=[Target.FILESYSTEM],
+                    formats=[Format.GRAPH]),
+                Choice(
+                    reporter=self,
+                    flags=['--graph-scatter-memory.file'],
+                    name='graph-scatter-memory-file',
+                    description='Save scatter graphs of memory usage to files',
+                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM],
+                    formats=[Format.GRAPH]),
+                Choice(
+                    reporter=self,
+                    flags=['--graph-scatter.callback'],
+                    name='graph-scatter-callback',
+                    description='Return scatter graph of operations per second results to a callback function',
+                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.CALLBACK],
+                    formats=[Format.GRAPH]),
+                Choice(
+                    reporter=self,
+                    flags=['--graph-scatter-ops.callback'],
+                    name='graph-scatter-ops-callback',
+                    description='Return scatter graph of operations per second results to a callback function',
+                    sections=[Section.OPS],
+                    targets=[Target.CALLBACK],
+                    formats=[Format.GRAPH]),
+                Choice(
+                    reporter=self,
+                    flags=['--graph-scatter-timings.callback'],
+                    name='graph-scatter-timings-callback',
+                    description='Return scatter graph of timing results to a callback function',
+                    sections=[Section.TIMING],
+                    targets=[Target.CALLBACK],
+                    formats=[Format.GRAPH]),
+                Choice(
+                    reporter=self,
+                    flags=['--graph-scatter-memory.callback'],
+                    name='graph-scatter-memory-callback',
+                    description='Return scatter graphs of memory usage to a callback function',
+                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.CALLBACK],
+                    formats=[Format.GRAPH]),
+            ])
         )
-
-    def _load_choices(self) -> Choices:
-        """Load the Choices instance for the reporter, including sections, output targets, and formats."""
-        choices: Choices = Choices()
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--graph-scatter-file'],
-                name='graph-scatter-file',
-                description='Save a scatter graph of operations per second results to a file',
-                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.FILESYSTEM],
-                formats=[Format.GRAPH]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--graph-scatter-ops.file'],
-                name='graph-scatter-ops-file',
-                description='Save a scatter graph of operations per second results to a file',
-                sections=[Section.OPS],
-                targets=[Target.FILESYSTEM],
-                formats=[Format.GRAPH]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--graph-scatter-timings.file'],
-                name='graph-scatter-timings-file',
-                description='Save a scatter graph of timing results to a file',
-                sections=[Section.TIMING],
-                targets=[Target.FILESYSTEM],
-                formats=[Format.GRAPH])
-        )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--graph-scatter-memory.file'],
-                name='graph-scatter-memory-file',
-                description='Save scatter graphs of memory usage to files',
-                sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.FILESYSTEM],
-                formats=[Format.GRAPH])
-        )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--graph-scatter.callback'],
-                name='graph-scatter-callback',
-                description='Return scatter graph of operations per second results to a callback function',
-                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.CALLBACK],
-                formats=[Format.GRAPH]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--graph-scatter-ops.callback'],
-                name='graph-scatter-ops-callback',
-                description='Return scatter graph of operations per second results to a callback function',
-                sections=[Section.OPS],
-                targets=[Target.CALLBACK],
-                formats=[Format.GRAPH]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--graph-scatter-timings.callback'],
-                name='graph-scatter-timings-callback',
-                description='Return scatter graph of timing results to a callback function',
-                sections=[Section.TIMING],
-                targets=[Target.CALLBACK],
-                formats=[Format.GRAPH])
-        )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--graph-scatter-memory.callback'],
-                name='graph-scatter-memory-callback',
-                description='Return scatter graphs of memory usage to a callback function',
-                sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.CALLBACK],
-                formats=[Format.GRAPH])
-        )
-        return choices
 
     def run_report(self,
                    *,

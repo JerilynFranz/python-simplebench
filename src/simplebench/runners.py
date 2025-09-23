@@ -93,6 +93,7 @@ class SimpleRunner():
         """
         if kwargs is None:
             kwargs = {}
+
         group: str = self.case.group
         title: str = self.case.title
         description: str = self.case.description

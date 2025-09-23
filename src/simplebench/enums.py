@@ -17,6 +17,8 @@ class Section(str, Enum):
     """Memory usage section."""
     PEAK_MEMORY = 'peak memory usage'
     """Peak memory usage section."""
+    CUSTOM = 'custom metrics'
+    """Custom metrics section."""
 
     def __contains__(self, item: Any) -> bool:
         """Check if the item is a valid Section."""
@@ -63,6 +65,8 @@ class Target(str, Enum):
     """Output to display device."""
     CALLBACK = 'to callback'
     """Pass generated output to a callback function."""
+    CUSTOM = 'to custom target'
+    """Output to a custom target."""
 
 
 class Format(str, Enum):
@@ -79,3 +83,5 @@ class Format(str, Enum):
     """JSON format"""
     GRAPH = 'graph'
     """Graphical format"""
+    CUSTOM = 'custom'
+    """Custom format"""

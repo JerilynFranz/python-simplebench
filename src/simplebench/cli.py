@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .case import Case
 
 
-def main(*, benchmark_cases: Optional[Sequence[Case]] = None, argv: Optional[list[str]] = None) -> int:
+def main(benchmark_cases: Optional[Sequence[Case]] = None, argv: Optional[list[str]] = None) -> int:
     """Main entry point for running benchmarks via a command-line interface.
 
     This function is responsible for setting up the command-line interface,

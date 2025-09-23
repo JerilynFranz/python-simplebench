@@ -326,3 +326,32 @@ class PeakMemoryUsage(Stats):
             for iteration in iterations:
                 data.append(iteration.peak_memory_usage)
         super().__init__(unit=unit, scale=scale, data=data)
+
+
+class CustomMetrics(Stats):
+    '''Container for custom metrics statistics of a benchmark.
+
+    Attributes:
+        unit (str): The unit of measurement for the custom metric.
+        scale (float): The scale factor for the custom metric.
+        data: list[float | int] = List of custom metric data points.
+        mean (float): The mean of the custom metric.
+        median (float): The median of the custom metric.
+        minimum (float): The minimum of the custom metric.
+        maximum (float): The maximum of the custom metric.
+        standard_deviation (float): The standard deviation of the custom metric.
+        relative_standard_deviation (float): The relative standard deviation of the custom metric.
+        percentiles (dict[int, float]): Percentiles of the custom metric.
+    '''
+    def __init__(self,
+                 *,
+                 iterations: list[Iteration] | None = None,
+                 unit: str = 'units',
+                 scale: float = 1.0,
+                 data: Optional[list[int | float]] = None):
+        if data is None and iterations is not None:
+            data = []
+            for iteration in iterations:
+                if iteration.custom_metric is not None:
+                    data.append(iteration.custom_metric)
+        super().__init__(unit=unit, scale=scale, data=data)

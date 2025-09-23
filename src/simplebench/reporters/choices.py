@@ -225,10 +225,22 @@ class Choice(IChoice):
 
 class Choices(UserDict[str, Choice], IChoices):
     """A dictionary-like container for Choice instances."""
-    def __init__(self) -> None:
+    def __init__(self, choices: Optional[Sequence[Choice] | Choices] = None) -> None:
+        """Construct a Choices container.
+
+        Args:
+            choices (Sequence[Choice] | Choices): An optional sequence of Choice instances
+                or another Choices instance to initialize the container with.
+                If not provided, the container will be initialized empty."""
         self._args_index: dict[str, Choice] = {}
         self._flags_index: dict[str, Choice] = {}
         super().__init__()
+        if not isinstance(choices, (type(None), Sequence, Choices)):
+            raise SimpleBenchTypeError(
+                "Expected a Sequence or Choices instance",
+                tag=ErrorTag.CHOICES_INIT_INVALID_CHOICES_ARG_TYPE)
+        if choices:
+            self.extend(choices)
 
     def add(self, choice: Choice) -> None:
         """Add a Choice instance to the container.
@@ -252,6 +264,12 @@ class Choices(UserDict[str, Choice], IChoices):
                 tag=ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_NAME)
         self.data[choice.name] = choice
         self._args_index.update({arg.replace('--', '', 1).replace('-', '_'): choice for arg in choice.flags})
+        for flag in choice.flags:
+            if flag in self._flags_index:
+                raise SimpleBenchValueError(
+                    f"A Choice with the flag '{flag}' already exists",
+                    tag=ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_FLAG)
+            self._flags_index[flag] = choice
 
     def all_choice_args(self) -> set[str]:
         """Return a set of all Namespace args from all Choice instances in the container.

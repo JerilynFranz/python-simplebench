@@ -50,50 +50,41 @@ class CSVReporter(Reporter):
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
             targets={Target.FILESYSTEM, Target.CALLBACK},
             formats={Format.CSV},
-            choices=self._load_choices()
+            choices=Choices([
+                Choice(
+                    reporter=self,
+                    flags=['--csv'],
+                    name='csv',
+                    description='operations per second and per round timing results to CSV',
+                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    formats=[Format.CSV]),
+                Choice(
+                    reporter=self,
+                    flags=['--csv-ops'],
+                    name='csv-ops',
+                    description='Save operations per second results to CSV',
+                    sections=[Section.OPS],
+                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    formats=[Format.CSV]),
+                Choice(
+                    reporter=self,
+                    flags=['--csv-timings'],
+                    name='csv-timings',
+                    description='per round timing results to CSV',
+                    sections=[Section.TIMING],
+                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    formats=[Format.CSV]),
+                Choice(
+                    reporter=self,
+                    flags=['--csv-memory'],
+                    name='csv-memory',
+                    description='memory usage results to CSV',
+                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    formats=[Format.CSV]),
+            ])
         )
-
-    def _load_choices(self) -> Choices:
-        """Load the Choices instance for the reporter, including sections, output targets, and formats."""
-        choices: Choices = Choices()
-        self._choices: Choices = choices
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--csv'],
-                name='csv',
-                description='operations per second and per round timing results to CSV',
-                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.CSV]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--csv-ops'],
-                name='csv-ops',
-                description='Save operations per second results to CSV',
-                sections=[Section.OPS],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.CSV]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--csv-timings'],
-                name='csv-timings',
-                description='per round timing results to CSV',
-                sections=[Section.TIMING],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.CSV]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--csv-memory'],
-                name='csv-memory',
-                description='memory usage results to CSV',
-                sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.CSV]))
-        return choices
 
     def run_report(self,
                    *,

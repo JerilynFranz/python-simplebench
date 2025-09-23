@@ -53,121 +53,98 @@ class RichTableReporter(Reporter):
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
             targets={Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK},
             formats={Format.RICH_TEXT},
-            choices=self._load_choices())
-
-    def _load_choices(self) -> Choices:
-        """Load the Choices instance for the reporter, including sections, output targets, and formats.
-
-        Returns:
-            Choices: The Choices instance for the reporter.
-        """
-        choices: Choices = Choices()
-        choices.add(
-             Choice(
-                reporter=self,
-                flags=['--rich-table.console'],
-                name='rich-table',
-                description=('Display operations per second, per round timing, and memory usage results '
-                             'as rich text tables on the console'),
-                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.CONSOLE, Target.CALLBACK],
-                formats=[Format.RICH_TEXT]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--rich-table-ops.console'],
-                name='rich-table-ops',
-                description='Display operations per second results as a rich text table on the console',
-                sections=[Section.OPS],
-                targets=[Target.CONSOLE],
-                formats=[Format.RICH_TEXT]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--rich-table-timings.console'],
-                name='rich-table-timings',
-                description='Display timing results as a rich text table on the console',
-                sections=[Section.TIMING],
-                targets=[Target.CONSOLE],
-                formats=[Format.RICH_TEXT])
+            choices=Choices([
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table.console'],
+                    name='rich-table',
+                    description=('Display operations per second, per round timing, and memory usage results '
+                                 'as rich text tables on the console'),
+                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.CONSOLE, Target.CALLBACK],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table-ops.console'],
+                    name='rich-table-ops',
+                    description='Display operations per second results as a rich text table on the console',
+                    sections=[Section.OPS],
+                    targets=[Target.CONSOLE],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table-timings.console'],
+                    name='rich-table-timings',
+                    description='Display timing results as a rich text table on the console',
+                    sections=[Section.TIMING],
+                    targets=[Target.CONSOLE],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table-memory.console'],
+                    name='rich-table-memory',
+                    description='Display memory results as rich text tables on the console',
+                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.CONSOLE],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table.file'],
+                    name='rich-table-file',
+                    description=('Save all results as rich text tables in files'),
+                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table-ops.file'],
+                    name='rich-table-ops-file',
+                    description='Save operations per second results as a rich text table in a file',
+                    sections=[Section.OPS],
+                    targets=[Target.FILESYSTEM],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table-timings.file'],
+                    name='rich-table-timings-file',
+                    description='Save timing results as a rich text table in a file',
+                    sections=[Section.TIMING],
+                    targets=[Target.FILESYSTEM],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table-memory.file'],
+                    name='rich-table-memory-file',
+                    description='Save memory results as rich text tables in files',
+                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table.callback'],
+                    name='rich-table-callback',
+                    description=('Returns all results via callback function as a rich text table'),
+                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.CALLBACK],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table-ops.callback'],
+                    name='rich-table-ops-callback',
+                    description=('Returns operations per second results via callback function as a rich text table'),
+                    sections=[Section.OPS],
+                    targets=[Target.CALLBACK],
+                    formats=[Format.RICH_TEXT]),
+                Choice(
+                    reporter=self,
+                    flags=['--rich-table-memory.callback'],
+                    name='rich-table-memory-callback',
+                    description=('Returns memory usage via callback function as rich text tables'),
+                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.CALLBACK],
+                    formats=[Format.RICH_TEXT]),
+            ])
         )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--rich-table-memory.console'],
-                name='rich-table-memory',
-                description='Display memory results as rich text tables on the console',
-                sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.CONSOLE],
-                formats=[Format.RICH_TEXT])
-        )
-        choices.add(
-             Choice(
-                reporter=self,
-                flags=['--rich-table.file'],
-                name='rich-table-file',
-                description=('Save all results as rich text tables in files'),
-                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.FILESYSTEM],
-                formats=[Format.RICH_TEXT]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--rich-table-ops.file'],
-                name='rich-table-ops-file',
-                description='Save operations per second results as a rich text table in a file',
-                sections=[Section.OPS],
-                targets=[Target.FILESYSTEM],
-                formats=[Format.RICH_TEXT]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--rich-table-timings.file'],
-                name='rich-table-timings-file',
-                description='Save timing results as a rich text table in a file',
-                sections=[Section.TIMING],
-                targets=[Target.FILESYSTEM],
-                formats=[Format.RICH_TEXT])
-        )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--rich-table-memory.file'],
-                name='rich-table-memory-file',
-                description='Save memory results as rich text tables in files',
-                sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.FILESYSTEM],
-                formats=[Format.RICH_TEXT])
-        )
-        choices.add(
-             Choice(
-                reporter=self,
-                flags=['--rich-table.callback'],
-                name='rich-table-callback',
-                description=('Returns all results via callback function as a rich text table'),
-                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.CALLBACK],
-                formats=[Format.RICH_TEXT]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--rich-table-ops.callback'],
-                name='rich-table-ops-callback',
-                description=('Returns operations per second results via callback function as a rich text table'),
-                sections=[Section.OPS],
-                targets=[Target.CALLBACK],
-                formats=[Format.RICH_TEXT]))
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--rich-table-memory.callback'],
-                name='rich-table-memory-callback',
-                description=('Returns memory usage via callback function as rich text tables'),
-                sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.CALLBACK],
-                formats=[Format.RICH_TEXT])
-        )
-        return choices
 
     def run_report(self,
                    *,

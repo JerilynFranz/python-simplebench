@@ -1,6 +1,5 @@
 """Session management for SimpleBench."""
 from __future__ import annotations
-from abc import ABCMeta
 from argparse import ArgumentParser, ArgumentError, Namespace
 from datetime import datetime
 from pathlib import Path
@@ -11,6 +10,7 @@ from rich.progress import Progress
 
 from .enums import Section, Verbosity, Format, Target
 from .exceptions import ErrorTag, SimpleBenchArgumentError, SimpleBenchTypeError
+from .metaclasses import ISession
 from .reporters import ReporterManager
 from .reporters.choices import Choice, Choices
 from .tasks import RichProgressTasks, RichTask
@@ -22,11 +22,7 @@ if TYPE_CHECKING:
     from .reporters import Reporter
 
 
-class ISession(metaclass=ABCMeta):
-    """Interface for a Session."""
-
-
-class Session:
+class Session(ISession):
     """Container for session related information while running benchmarks.
 
     Arguments:

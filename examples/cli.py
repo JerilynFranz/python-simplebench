@@ -15,7 +15,7 @@ def benchcase_one(bench: SimpleRunner, **kwargs: Any) -> Results:
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(100000))  # Example operation to benchmark
-    return bench.run(n=100000, action=action, **kwargs)
+    return bench.run(n=100000, action=action, kwargs=kwargs)
 
 
 def benchcase_four(bench: SimpleRunner, **kwargs: Any) -> Results:
@@ -23,7 +23,7 @@ def benchcase_four(bench: SimpleRunner, **kwargs: Any) -> Results:
     def action(size: int) -> int:
         """A simple benchmark case function."""
         return sum(range(size))  # Example operation to benchmark
-    return bench.run(n=kwargs['size'], action=action, **kwargs)
+    return bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
 
 
 @benchmark(

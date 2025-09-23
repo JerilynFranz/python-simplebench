@@ -21,6 +21,7 @@ class Iteration:
         per_round_elapsed (float): The mean time for a single round scaled to the base unit. (read only)
         memory_usage (int): The memory usage in bytes. (defaults to 0)
         peak_memory_usage (int): The peak memory usage in bytes. (defaults to 0)
+        custom_metric (float): The value of a custom metric. (defaults to 0.0)
     '''
     n: int = 1
     elapsed: float = 0.0
@@ -28,6 +29,7 @@ class Iteration:
     scale: float = DEFAULT_INTERVAL_SCALE
     memory_usage: int = 0  # in bytes
     peak_memory_usage: int = 0  # in bytes
+    custom_metric: float | int = 0.0  # custom metric value
 
     def __post_init__(self):
         if not isinstance(self.n, int):
@@ -46,6 +48,14 @@ class Iteration:
             raise SimpleBenchTypeError('scale must be a float', tag=ErrorTag.ITERATION_INIT_SCALE_ARG_TYPE)
         if self.scale <= 0.0:
             raise SimpleBenchValueError('scale must be a positive float', tag=ErrorTag.ITERATION_INIT_SCALE_ARG_VALUE)
+        if not isinstance(self.memory_usage, int):
+            raise SimpleBenchTypeError('memory_usage must be an int', tag=ErrorTag.ITERATION_INIT_MEMORY_ARG_TYPE)
+        if not isinstance(self.peak_memory_usage, int):
+            raise SimpleBenchTypeError('peak_memory_usage must be an int',
+                                       tag=ErrorTag.ITERATION_INIT_PEAK_MEMORY_ARG_TYPE)
+        if not isinstance(self.custom_metric, float):
+            raise SimpleBenchTypeError('custom_metric must be an int or float',
+                                       tag=ErrorTag.ITERATION_INIT_CUSTOM_METRIC_ARG_TYPE)
 
     @property
     def per_round_elapsed(self) -> float:
@@ -109,6 +119,21 @@ class Iteration:
                                        tag=ErrorTag.ITERATION_SET_PEAK_MEMORY_ARG_TYPE)
         self.peak_memory_usage = value
 
+    @property
+    def custom(self) -> float | int:
+        '''The value of a custom metric.
+
+        This can be used to store any additional metric that is relevant to the benchmark.
+        '''
+        return self.custom_metric
+
+    @custom.setter
+    def custom(self, value: float | int) -> None:
+        if not isinstance(value, (float, int)):
+            raise SimpleBenchTypeError('custom_metric must be a float or int',
+                                       tag=ErrorTag.ITERATION_SET_CUSTOM_METRIC_ARG_TYPE)
+        self.custom_metric = value
+
     def iteration_section(self, section: Section) -> int | float:
         """Returns the requested section of the benchmark results.
 
@@ -132,6 +157,8 @@ class Iteration:
                 return self.memory_usage
             case Section.PEAK_MEMORY:
                 return self.peak_memory_usage
+            case Section.CUSTOM:
+                return self.custom_metric
             case _:
                 raise SimpleBenchValueError(
                     f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',

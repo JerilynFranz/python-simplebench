@@ -54,35 +54,27 @@ class JSONReporter(Reporter):
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
             targets={Target.FILESYSTEM, Target.CALLBACK},
             formats={Format.JSON},
-            choices=self._load_choices())
-
-    def _load_choices(self) -> Choices:
-        """Load the Choices instance for the reporter, including sections, output targets, and formats."""
-        choices: Choices = Choices()
-        self._choices: Choices = choices
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--json'],
-                name='json',
-                description='statistical results to JSON',
-                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.JSON],
-                extra=JSONExtras(full_data=False))
+            choices=Choices([
+                Choice(
+                    reporter=self,
+                    flags=['--json'],
+                    name='json',
+                    description='statistical results to JSON',
+                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    formats=[Format.JSON],
+                    extra=JSONExtras(full_data=False)),
+                Choice(
+                    reporter=self,
+                    flags=['--json-data'],
+                    name='json-data',
+                    description='statistical results to JSON + full data',
+                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    formats=[Format.JSON],
+                    extra=JSONExtras(full_data=True)),
+            ])
         )
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--json-data'],
-                name='json-data',
-                description='statistical results to JSON + full data',
-                sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                targets=[Target.FILESYSTEM, Target.CALLBACK],
-                formats=[Format.JSON],
-                extra=JSONExtras(full_data=True))
-        )
-        return choices
 
     def run_report(self,
                    *,
