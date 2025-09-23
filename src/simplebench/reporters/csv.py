@@ -96,6 +96,7 @@ class CSVReporter(Reporter):
         return choices
 
     def run_report(self,
+                   *,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,

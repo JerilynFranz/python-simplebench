@@ -258,6 +258,7 @@ class GraphReporter(Reporter):
         return choices
 
     def run_report(self,
+                   *,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
@@ -329,6 +330,7 @@ class GraphReporter(Reporter):
                     graphfile.close()
 
     def _plot_graph(self,
+                    *,
                     case: Case,
                     section: Section,
                     graphfile: BytesIO | BufferedWriter,

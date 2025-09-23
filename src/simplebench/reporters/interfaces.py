@@ -49,6 +49,7 @@ class Reporter(ABC, IReporter):
     """
     @abstractmethod
     def __init__(self,
+                 *,
                  name: Optional[str] = None,
                  description: Optional[str] = None,
                  sections: Optional[set[Section]] = None,
@@ -147,6 +148,7 @@ class Reporter(ABC, IReporter):
                 parser.add_argument(flag, action='store_true', help=choice.description)
 
     def report(self,
+               *,
                case: Case,
                choice: Choice,
                path: Optional[Path] = None,
@@ -215,6 +217,7 @@ class Reporter(ABC, IReporter):
 
     @abstractmethod
     def run_report(self,
+                   *,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
