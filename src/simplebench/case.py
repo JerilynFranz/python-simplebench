@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """Benchmark case declaration and execution."""
 from __future__ import annotations
-from abc import ABCMeta
 from dataclasses import dataclass, field
 import itertools
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
 from .constants import DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
+from .metaclasses import ICase
 from .protocols import ActionRunner
 from .reporters.reporter_option import ReporterOption
 from .runners import SimpleRunner
@@ -18,10 +18,6 @@ if TYPE_CHECKING:
     from .results import Results
     from .session import Session
     from .tasks import RichTask
-
-
-class ICase(metaclass=ABCMeta):
-    """Interface for a benchmark Case."""
 
 
 @dataclass(kw_only=True)
