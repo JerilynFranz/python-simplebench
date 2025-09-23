@@ -36,6 +36,7 @@ class Results:
         extra_info (dict[str, Any]): Additional information about the benchmark run.
     '''
     def __init__(self,
+                 *,
                  group: str,
                  title: str,
                  description: str,
@@ -69,10 +70,14 @@ class Results:
         self.memory_usage_scale = memory_usage_scale
         self.peak_memory_usage_unit = memory_usage_unit
         self.peak_memory_usage_scale = memory_usage_scale
-        self.ops_per_second = ops_per_second if ops_per_second is not None else OperationsPerInterval(iterations)
-        self.per_round_timings = per_round_timings if per_round_timings is not None else OperationTimings(iterations)
-        self.memory_usage = memory_usage if memory_usage is not None else MemoryUsage(iterations)
-        self.peak_memory_usage = peak_memory_usage if peak_memory_usage is not None else PeakMemoryUsage(iterations)
+        self.ops_per_second = ops_per_second if ops_per_second is not None else OperationsPerInterval(
+                                                                                    iterations=iterations)
+        self.per_round_timings = per_round_timings if per_round_timings is not None else OperationTimings(
+                                                                                            iterations=iterations)
+        self.memory_usage = memory_usage if memory_usage is not None else MemoryUsage(
+                                                                            iterations=iterations)
+        self.peak_memory_usage = peak_memory_usage if peak_memory_usage is not None else PeakMemoryUsage(
+                                                                                            iterations=iterations)
         self.total_elapsed = total_elapsed
         self.variation_marks = variation_marks if variation_marks is not None else {}
         self.extra_info = extra_info if extra_info is not None else {}

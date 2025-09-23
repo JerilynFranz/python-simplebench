@@ -42,6 +42,7 @@ class Session:
         tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
     """
     def __init__(self,
+                 *,
                  args_parser: Optional[ArgumentParser] = None,
                  cases: Optional[Sequence[Case]] = None,
                  verbosity: Verbosity = Verbosity.NORMAL,

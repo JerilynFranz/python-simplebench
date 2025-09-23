@@ -39,6 +39,7 @@ class SimpleRunner():
         run (Callable[..., Any]): The function to use to run the benchmark.
     """
     def __init__(self,
+                 *,
                  case: Case,
                  kwargs: dict[str, Any],
                  session: Optional[Session] = None,
@@ -61,6 +62,7 @@ class SimpleRunner():
 
     def default_runner(
             self,
+            *,
             n: int,
             action: Callable[..., Any],
             setup: Optional[Callable[..., Any]] = None,

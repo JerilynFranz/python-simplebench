@@ -29,7 +29,7 @@ class Stats:
         relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
         percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
     '''
-    def __init__(self, unit: str, scale: float, data: Optional[list[int | float]] = None) -> None:
+    def __init__(self, *, unit: str, scale: float, data: Optional[list[int | float]] = None) -> None:
         self.unit = unit
         self.scale = scale
         self.data = data if data is not None else []
@@ -232,6 +232,7 @@ class OperationsPerInterval(Stats):
         percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
     '''
     def __init__(self,
+                 *,
                  iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_OPS_PER_INTERVAL_UNIT,
                  scale: float = DEFAULT_OPS_PER_INTERVAL_SCALE,
@@ -259,6 +260,7 @@ class OperationTimings(Stats):
         percentiles (dict[int, float]): Percentiles of time per operation.
     '''
     def __init__(self,
+                 *,
                  iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
@@ -286,6 +288,7 @@ class MemoryUsage(Stats):
         percentiles (dict[int, float]): Percentiles of memory usage.
     '''
     def __init__(self,
+                 *,
                  iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
@@ -313,6 +316,7 @@ class PeakMemoryUsage(Stats):
         percentiles (dict[int, float]): Percentiles of memory usage.
     '''
     def __init__(self,
+                 *,
                  iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
