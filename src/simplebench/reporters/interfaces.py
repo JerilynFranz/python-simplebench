@@ -2,13 +2,14 @@
 """Reporters for benchmark results."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentError
 from pathlib import Path
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
 from .metaclasses import IReporter, IChoices, IChoice
 from ..enums import Section, Target, Format
-from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
+from ..exceptions import (ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchArgumentError,
+                          SimpleBenchNotImplementedError)
 from ..metaclasses import ICase, ISession
 
 if TYPE_CHECKING:
@@ -26,9 +27,9 @@ class Reporter(ABC, IReporter):
 
     All Reporter subclasses must implement the methods defined in this interface.
     Reporters should handle their own output, whether to console, file system,
-    HTTP endpoint, or display device.
+    HTTP endpoint, display device, via a callback or other output.
 
-    Attributes:
+    Arguments:
         name (str): The unique identifying name of the reporter.
         description (str): A brief description of the reporter.
         choices (Choices): A Choices instance defining the sections, output targets,
@@ -37,7 +38,6 @@ class Reporter(ABC, IReporter):
         callback (Callable[..., Any]): A callback function for additional processing of the report.
 
     Methods:
-
         The choices() method should return a Choices instance that accurately
         reflects the sections, output targets, and formats supported by the reporter.
 
@@ -56,16 +56,8 @@ class Reporter(ABC, IReporter):
                  targets: set[Target],
                  formats: set[Format],
                  choices: Choices) -> None:
-        """Initialize the Reporter instance.
-
-            - name must be a non-empty string
-            - description must be a non-empty string
-            - sections must be a non-empty set of Section enums
-            - targets must be a non-empty set of Target enums
-            - formats must be a non-empty set of Format enums
-            - choices must be a Choices instance with at least one Choice
-            - Choices must only include sections, targets, and formats
-                that are supported by the reporter.
+        """
+        Initialize the Reporter instance.
 
         Args:
             name (str): The unique identifying name of the reporter. Must be a non-empty string.
@@ -73,13 +65,12 @@ class Reporter(ABC, IReporter):
             sections (set[Section]): The set of Sections supported by the reporter.
             targets (set[Target]): The set of Targets supported by the reporter.
             formats (set[Format]): The set of Formats supported by the reporter.
-            choices (Choices): A Choices instance defining the sections,
-                output targets, and formats supported by the reporter.
+            choices (Choices): A Choices instance defining the sections, output targets,
+                and formats supported by the reporter. Must have at least one Choice.
 
         Raises:
             SimpleBenchNotImplementedError: If any of the required attributes
                 are not provided
-
             SimpleBenchValueError: If any of the provided attributes have invalid values.
             SimpleBenchTypeError: If any of the provided attributes are of incorrect types.
         """
@@ -190,12 +181,27 @@ class Reporter(ABC, IReporter):
     def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
         """Add the reporter's command-line flags to an ArgumentParser.
 
+        This is a default implementation that adds boolean flags for each Choice's flags.
+        Subclasses can override this method if they need custom behavior such as
+        adding arguments with different types or more complex logic.
+
         Args:
             parser (ArgumentParser): The ArgumentParser to add the flags to.
         """
-        for choice in self.choices.values():
-            for flag in choice.flags:
-                parser.add_argument(flag, action='store_true', help=choice.description)
+        if not isinstance(parser, ArgumentParser):
+            raise SimpleBenchTypeError(
+                "parser arg must be an argparse.ArgumentParser instance",
+                tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
+        flag: str = ''
+        try:
+            for choice in self.choices.values():
+                for flag in choice.flags:
+                    parser.add_argument(flag, action='store_true', help=choice.description)
+        except ArgumentError as e:
+            raise SimpleBenchArgumentError(
+                argument_name=flag,
+                message=f"Error adding flag {flag} to argparser: {e}",
+                tag=ErrorTag.REPORTER_ADD_FLAGS_ARGUMENT_ERROR) from e
 
     def report(self,
                *,
@@ -348,7 +354,17 @@ class Reporter(ABC, IReporter):
 
     @property
     def choices(self) -> Choices:
-        """Return the Choices instance for the reporter, including sections, output targets, and formats."""
+        """Return the Choices instance for the reporter, including sections, output targets, and formats.
+
+        The Choices instance contains one or more Choice instances, each representing a specific combination of
+        sections, targets, and formats, command line flags, and descriptions.
+
+        This property allows access to the reporter's choices for generating reports and customizing report
+        output and available options.
+
+        Returns:
+            Choices: The Choices instance for the reporter.
+        """
         return self._choices
 
     @property
@@ -366,7 +382,7 @@ class Reporter(ABC, IReporter):
 
         This is the set of Sections that the reporter can include in its reports.
 
-        Defined Choices can only include Sections that are in this set.
+        Defined Choices can only include Sections that are declared in this set.
         """
         return self._sections
 
@@ -375,7 +391,7 @@ class Reporter(ABC, IReporter):
 
         This is the set of Targets that the reporter can output to.
 
-        Defined Choices can only include Targets that are in this set.
+        Defined Choices can only include Targets that are declared in this set.
         """
         return self._targets
 
@@ -384,6 +400,6 @@ class Reporter(ABC, IReporter):
 
         This is the set of Formats that the reporter can output in.
 
-        Defined Choices can only include Formats that are in this set.
+        Defined Choices can only include Formats that are declared in this set.
         """
         return self._formats

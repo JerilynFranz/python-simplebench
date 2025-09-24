@@ -589,6 +589,10 @@ class ErrorTag(str, Enum):
     """A Target in the Choice instance passed to the Reporter.add_choice() method is not supported by the Reporter"""
     REPORTER_ADD_CHOICE_UNSUPPORTED_FORMAT = "REPORTER_ADD_CHOICE_UNSUPPORTED_FORMAT"
     """A Format in the Choice instance passed to the Reporter.add_choice() method is not supported by the Reporter"""
+    REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE = "REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE"
+    """Something other than an ArgumentParser instance was passed to the Reporter.add_flags_to_argparse() method"""
+    REPORTER_ADD_FLAGS_ARGUMENT_ERROR = "REPORTER_ADD_FLAGS_ARGUMENT_ERROR"
+    """An ArgumentError was raised when adding flags to the ArgumentParser instance"""
 
     # reporters.ReporterManager() tags
     REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG = "REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG"

@@ -165,7 +165,8 @@ class ReporterManager():
         """Add all registered reporter choices to an ArgumentParser.
 
         This method adds the CLI arguments for all registered reporters
-        to the provided ArgumentParser instance.
+        to the provided ArgumentParser instance using the `add_flags_to_argparse` method
+        of each Reporter.
 
         Args:
             parser (ArgumentParser): The ArgumentParser to add the flags to.
@@ -175,6 +176,11 @@ class ReporterManager():
                 f'parser must be an ArgumentParser instance - cannot be a {type(parser)}',
                 tag=ErrorTag.REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG
             )
+        # Add flags for each registered reporter
+        # The reporter is responsible for adding its own flags, so we just call its method
+        # here. This allows each reporter to define its own flags and behavior.
+        # We assume that the reporter's add_flags_to_argparse method is implemented correctly
+        # and will handle any errors internally.
         for reporter in self._registered_reporters.values():
             reporter.add_flags_to_argparse(parser)
 

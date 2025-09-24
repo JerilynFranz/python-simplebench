@@ -1,5 +1,6 @@
 """Test simplebench/reporters/interfaces.py module"""
 from __future__ import annotations
+from argparse import ArgumentParser
 from pathlib import Path
 from typing import Any, Callable, Optional
 
@@ -13,7 +14,7 @@ from simplebench.reporters.interfaces import Reporter
 from simplebench.results import Results
 from simplebench.session import Session
 
-from .testspec import TestAction, TestSetGet, TestSpec, idspec
+from .testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE
 
 
 class MockChoice(Choice):
@@ -339,6 +340,31 @@ class BadSuperMockReporter(Reporter):
             'targets': {Target.CONSOLE},
             'formats': {Format.RICH_TEXT},
             'choices': MockChoices()})),
+    idspec('REPORTER_017', TestAction(
+        name="Init of Report with empty description raises SimpleBenchValueError/REPORTER_DESCRIPTION_INVALID_VALUE",
+        action=MockReporterInit,
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.REPORTER_DESCRIPTION_INVALID_VALUE,
+        kwargs={
+            'name': 'dummy',
+            'description': '',
+            'sections': {Section.OPS},
+            'targets': {Target.CONSOLE},
+            'formats': {Format.RICH_TEXT},
+            'choices': MockChoices()})),
+    idspec('REPORTER_018', TestAction(
+        name=("Init of Report with no defined Choices raises "
+              "SimpleBenchNotImplementedError/REPORTER_CHOICES_NOT_IMPLEMENTED"),
+        action=MockReporterInit,
+        exception=SimpleBenchNotImplementedError,
+        exception_tag=ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED,
+        kwargs={
+            'name': 'dummy',
+            'description': 'A dummy reporter for testing.',
+            'sections': {Section.OPS},
+            'targets': {Target.CONSOLE},
+            'formats': {Format.RICH_TEXT},
+            'choices': Choices()})),
 ])
 def test_reporter_init(testspec: TestSpec) -> None:
     """Test Reporter init parameters."""
@@ -437,4 +463,37 @@ def mock_path() -> Path:
 ])
 def test_reporter_report(testspec: TestSpec) -> None:
     """Test Reporter.report() method."""
+    testspec.run()
+
+
+class MockReporterForChoices(MockReporterInit):
+    """A dummy Reporter subclass for testing add_flags_to_argparse()."""
+    def __init__(self, *, choices: Choices) -> None:
+        super().__init__(
+            name='dummy',
+            description='A dummy reporter for testing.',
+            sections={Section.OPS},
+            targets={Target.CONSOLE},
+            formats={Format.RICH_TEXT},
+            choices=choices)
+
+
+@pytest.mark.parametrize('testspec', [
+    idspec('REPORTER_ADD_FLAGS_001', TestAction(
+        name="Adding a valid flag to an ArgumentParser",
+        action=lambda: MockReporterForChoices(
+            choices=Choices(choices=[MockChoice()])).add_flags_to_argparse(ArgumentParser()),
+        expected=NO_EXPECTED_VALUE)),
+    idspec('REPORTER_ADD_FLAGS_002', TestAction(
+        name=("Passing a non-ArgumentParser to add_flags_to_argparse raises "
+              "SimpleBenchTypeError/REPORTER_ADD_FLAGS_INVALID_PARSER_ARG"),
+        action=lambda: MockReporterForChoices(
+            choices=Choices(choices=[
+                MockChoice(),
+            ])).add_flags_to_argparse("not_an_argument_parser"),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)),
+])
+def test_reporter_add_flags_to_argparse(testspec: TestSpec) -> None:
+    """Test Reporter.add_flags_to_argparse() method."""
     testspec.run()
