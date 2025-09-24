@@ -9,7 +9,7 @@ simplebench
 Benchmarking suite (WIP, pre-alpha)
 
 This is **IN DEVELOPMENT** benchmarking suite. The APIs and commandline interfaces are still subject to radical change without any notice until
-it reaches at the first alpha release. If you want to play with it, feel free - but this is absolutely not yet ready for production use yet.
+it reaches the first alpha release. If you want to play with it, feel free - but this is absolutely not yet ready for production use yet.
 
 I'm hoping to reach the first alpha release around the second or third week of October, 2025.
 
