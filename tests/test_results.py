@@ -637,6 +637,24 @@ def base_custom_metrics() -> CustomMetrics:
         value={'key': 'value'},
         expected={'key': 'value'},
         obj=base_results())),
+    idspec("PROPERTIES_016", TestSetGet(
+        name='set/get custom_metrics',
+        attribute='custom_metrics',
+        value=base_custom_metrics(),
+        expected=base_custom_metrics(),
+        obj=base_results())),
+    idspec("PROPERTIES_017", TestSetGet(
+        name='set/get custom_metrics_unit',
+        attribute='custom_metrics_unit',
+        value='units per millenium',
+        expected='units per millenium',
+        obj=base_results())),
+    idspec("PROPERTIES_082", TestSetGet(
+        name='set/get custom_metrics_scale',
+        attribute='custom_metrics_scale',
+        value=60.0,
+        expected=60.0,
+        obj=base_results())),
 ])
 def test_results_getset_properties(testspec: TestSetGet) -> None:
     """Test Results get/set properties."""

@@ -300,11 +300,6 @@ class Results:
                 f'Invalid custom_metrics_scale type: {type(value)}. Must be of type float.',
                 tag=ErrorTag.RESULTS_CUSTOM_METRICS_SCALE_INVALID_ARG_TYPE
             )
-        if value <= 0:
-            raise SimpleBenchValueError(
-                f'Invalid custom_metrics_scale value: {value}. Must be a positive number.',
-                tag=ErrorTag.RESULTS_CUSTOM_METRICS_SCALE_INVALID_ARG_VALUE
-            )
         self._custom_metrics_scale = float(value)
 
     @property
