@@ -173,7 +173,7 @@ def test_stats_set_get(stats_instances: list[stats.Stats], test: TestSetGet) -> 
 def test_computed_stats_read_only(stats_instances: list[stats.Stats], attribute: str, value: Any) -> None:
     """Test that computed stats properties exist and are read-only."""
     for stats_instance in stats_instances:
-        # only way this should happen is if someone adds a new property to the test but forgets to update the class
+        # only way this should happen is if someone messes up the parametrize above
         if not hasattr(stats_instance, attribute):
             pytest.fail(f"Attribute {attribute} not found in {type(stats_instance).__name__}")
         with pytest.raises(AttributeError):

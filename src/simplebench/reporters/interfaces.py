@@ -2,14 +2,13 @@
 """Reporters for benchmark results."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from argparse import ArgumentParser, ArgumentError
+from argparse import ArgumentParser
 from pathlib import Path
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
 from .metaclasses import IReporter, IChoices, IChoice
 from ..enums import Section, Target, Format
-from ..exceptions import (ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchArgumentError,
-                          SimpleBenchNotImplementedError)
+from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
 from ..metaclasses import ICase, ISession
 
 if TYPE_CHECKING:
@@ -193,15 +192,9 @@ class Reporter(ABC, IReporter):
                 "parser arg must be an argparse.ArgumentParser instance",
                 tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
         flag: str = ''
-        try:
-            for choice in self.choices.values():
-                for flag in choice.flags:
-                    parser.add_argument(flag, action='store_true', help=choice.description)
-        except ArgumentError as e:
-            raise SimpleBenchArgumentError(
-                argument_name=flag,
-                message=f"Error adding flag {flag} to argparser: {e}",
-                tag=ErrorTag.REPORTER_ADD_FLAGS_ARGUMENT_ERROR) from e
+        for choice in self.choices.values():
+            for flag in choice.flags:
+                parser.add_argument(flag, action='store_true', help=choice.description)
 
     def report(self,
                *,

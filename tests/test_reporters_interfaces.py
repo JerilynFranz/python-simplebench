@@ -2,13 +2,14 @@
 from __future__ import annotations
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Sequence
 
 import pytest
 
 from simplebench.case import Case
 from simplebench.enums import Section, Target, Format
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
+from simplebench.iteration import Iteration
 from simplebench.reporters.choices import Choice, Choices
 from simplebench.reporters.interfaces import Reporter
 from simplebench.results import Results
@@ -17,17 +18,37 @@ from simplebench.session import Session
 from .testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE
 
 
+def mock_path() -> Path:
+    """Return a mock Path instance for testing purposes."""
+    return Path('/tmp/mock_report.txt')  # pragma: no cover (path not actually used)
+
+
+def mock_callback(case: Case, section: Section, fmt: Format, data: Any) -> None:  # pylint: disable=unused-argument
+    """A mock callback function for testing purposes."""
+    return None
+
+
 class MockChoice(Choice):
-    """A dummy Choice subclass for testing purposes."""
-    def __init__(self) -> None:
+    """A dummy Choice subclass for testing purposes.
+
+    Creates a Choice with default parameters for testing that can be overridden as needed.
+
+    """
+    def __init__(self,
+                 flags: Optional[list[str]] = None,
+                 name: Optional[str] = None,
+                 description: Optional[str] = None,
+                 sections: Optional[Sequence[Section]] = None,
+                 targets: Optional[Sequence[Target]] = None,
+                 formats: Optional[Sequence[Format]] = None) -> None:
         super().__init__(
             reporter=MockReporter(),
-            flags=['--dummy'],
-            name='dummy',
-            description='A dummy choice for testing.',
-            sections=[Section.OPS],
-            targets=[Target.CONSOLE],
-            formats=[Format.RICH_TEXT],
+            flags=flags or ['--dummy'],
+            name=name or 'dummy',
+            description=description or 'A dummy choice for testing.',
+            sections=sections or [Section.OPS],
+            targets=targets or [Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM],
+            formats=formats or [Format.RICH_TEXT],
             extra=None)
 
 
@@ -54,7 +75,15 @@ class MockCase(Case):
             group='test_case',
             title='Test Case',
             description='A test case for testing.',
-            n=1))
+            n=1,
+            iterations=[Iteration(), Iteration(), Iteration()]))
+
+
+class MockSession(Session):
+    """A dummy Session subclass for testing purposes."""
+    def __init__(self) -> None:
+
+        super().__init__(cases=[MockCase()])
 
 
 class MockReporterInit(Reporter):
@@ -85,17 +114,17 @@ class MockReporterInit(Reporter):
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
                    callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
-        return None
+        return None  # pragma: no cover (not actually used)
 
 
-class MockReporter(Reporter):
+class MockReporter(MockReporterInit):
     """A dummy Reporter subclass for testing purposes."""
     def __init__(self) -> None:
         super().__init__(
             name='dummy',
             description='A dummy reporter for testing.',
             sections={Section.OPS},
-            targets={Target.CONSOLE},
+            targets={Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM},
             formats={Format.RICH_TEXT},
             choices=self._load_choices())
 
@@ -109,7 +138,7 @@ class MockReporter(Reporter):
                 name='dummy',
                 description='A dummy choice for testing.',
                 sections=[Section.OPS],
-                targets=[Target.CONSOLE],
+                targets=[Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM],
                 formats=[Format.RICH_TEXT],
                 extra=None))
         return choices
@@ -135,7 +164,7 @@ class BadSuperMockReporter(Reporter):
             name='dummy',
             description='A dummy reporter for testing.',
             sections={Section.OPS},
-            targets={Target.CONSOLE},
+            targets={Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM},
             formats={Format.RICH_TEXT},
             choices=Choices([
                 Choice(
@@ -144,7 +173,7 @@ class BadSuperMockReporter(Reporter):
                     name='dummy',
                     description='A dummy choice for testing.',
                     sections=[Section.OPS],
-                    targets=[Target.CONSOLE],
+                    targets=[Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM],
                     formats=[Format.RICH_TEXT],
                     extra=None)
             ])
@@ -183,12 +212,12 @@ class BadSuperMockReporter(Reporter):
     idspec('REPORTER_004', TestAction(
         name=("calling report() on Reporter with bad run_report() super() delegation "
               "raises SimpleBenchNotImplementedError"),
-        action=lambda: BadSuperMockReporter().report(case=MockCase(), choice=MockChoice()),
+        action=lambda: BadSuperMockReporter().report(case=MockCase(), choice=MockChoice(), path=mock_path()),
         exception=SimpleBenchNotImplementedError,
         exception_tag=ErrorTag.REPORTER_RUN_REPORT_NOT_IMPLEMENTED)),
     idspec('REPORTER_005', TestAction(
         name="Correctly configured subclass of Reporter() can call report() successfully",
-        action=lambda: MockReporter().report(case=MockCase(), choice=MockChoice()),
+        action=lambda: MockReporter().report(case=MockCase(), choice=MockChoice(), path=mock_path()),
         validate_result=lambda result: result is None)),
     idspec('REPORTER_006', TestAction(
         name="Init of Reporter with missing name raises SimpleBenchNotImplementedError/REPORTER_NAME_NOT_IMPLEMENTED",
@@ -371,11 +400,6 @@ def test_reporter_init(testspec: TestSpec) -> None:
     testspec.run()
 
 
-def mock_path() -> Path:
-    """Return a mock Path instance for testing purposes."""
-    return Path('/tmp/mock_report.txt')  # pragma: no cover (path not actually used)
-
-
 @pytest.mark.parametrize('testspec', [
     idspec('REPORT_001', TestAction(
         name="report() with non-Case arg raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CASE_ARG",
@@ -460,9 +484,140 @@ def mock_path() -> Path:
                             formats=[Format.RICH_TEXT],
                             extra=None)),
         validate_result=lambda result: result is None)),
+    idspec('REPORT_008', TestAction(
+        name="report() with valid callback runs successfully",
+        action=lambda: MockReporter().report(
+                        case=MockCase(),
+                        choice=Choice(
+                            reporter=MockReporter(),
+                            flags=['--not-registered'],
+                            name='not_registered',
+                            description='A choice not registered with the reporter.',
+                            sections=[Section.OPS],
+                            targets=[Target.CALLBACK],
+                            formats=[Format.RICH_TEXT],
+                            extra=None),
+                        callback=mock_callback),
+        expected=NO_EXPECTED_VALUE)),
+    idspec('REPORT_009', TestAction(
+        name=("report() with invalid callback raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CALLBACK_ARG"),
+        action=lambda: MockReporter().report(
+            case=MockCase(),
+            choice=Choice(
+                reporter=MockReporter(),
+                flags=['--not-registered'],
+                name='not_registered',
+                description='A choice not registered with the reporter.',
+                sections=[Section.OPS],
+                targets=[Target.CALLBACK],
+                formats=[Format.RICH_TEXT],
+                extra=None),
+            callback="not_a_callback"),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.REPORTER_REPORT_INVALID_CALLBACK_ARG)),
+    idspec('REPORT_010', TestAction(
+        name="report() with valid path runs successfully",
+        action=lambda: MockReporter().report(
+                        case=MockCase(),
+                        choice=Choice(
+                            reporter=MockReporter(),
+                            flags=['--not-registered'],
+                            name='not_registered',
+                            description='A choice not registered with the reporter.',
+                            sections=[Section.OPS],
+                            targets=[Target.FILESYSTEM],
+                            formats=[Format.RICH_TEXT],
+                            extra=None),
+                        path=mock_path()),
+        expected=NO_EXPECTED_VALUE)),  # pragma: no cover (path not actually used)
+    idspec('REPORT_011', TestAction(
+        name=("report() with invalid path raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_PATH_ARG"),
+        action=lambda: MockReporter().report(
+            case=MockCase(),
+            choice=Choice(
+                reporter=MockReporter(),
+                flags=['--not-registered'],  # type: ignore[arg-type]
+                name='not_registered',
+                description='A choice not registered with the reporter.',
+                sections=[Section.OPS],
+                targets=[Target.FILESYSTEM],
+                formats=[Format.RICH_TEXT],
+                extra=None),
+            path="not_a_path"),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.REPORTER_REPORT_INVALID_PATH_ARG)),
+    idspec('REPORT_012', TestAction(
+        name=("report() with valid session runs successfully"),
+        action=lambda: MockReporter().report(
+                        case=MockCase(),
+                        choice=Choice(
+                            reporter=MockReporter(),
+                            flags=['--not-registered'],
+                            name='not_registered',
+                            description='A choice not registered with the reporter.',
+                            sections=[Section.OPS],
+                            targets=[Target.CONSOLE],
+                            formats=[Format.RICH_TEXT],
+                            extra=None),
+                        session=MockSession()),
+        expected=NO_EXPECTED_VALUE)),  # pragma: no cover (session not actually used),
+    idspec('REPORT_013', TestAction(
+        name=("report() with invalid session raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_SESSION_ARG"),
+        action=lambda: MockReporter().report(
+            case=MockCase(),
+            choice=Choice(
+                reporter=MockReporter(),
+                flags=['--not-registered'],
+                name='not_registered',
+                description='A choice not registered with the reporter.',
+                sections=[Section.OPS],
+                targets=[Target.CONSOLE],
+                formats=[Format.RICH_TEXT],
+                extra=None),
+            session="not_a_session"),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.REPORTER_REPORT_INVALID_SESSION_ARG)),
 ])
 def test_reporter_report(testspec: TestSpec) -> None:
     """Test Reporter.report() method."""
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    idspec('REPORTER_ADD_CHOICE_001', TestAction(
+        name="Adding a valid Choice to a Reporter works",
+        action=lambda: MockReporter().add_choice(choice=MockChoice(name='dummy2', flags=['--dummy2'])),
+        expected=NO_EXPECTED_VALUE)),
+    idspec('REPORTER_ADD_CHOICE_002', TestAction(
+        name=("Passing wrong type object to add_choice() raises "
+              "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_CHOICE_ARG"),
+        action=lambda: MockReporter().add_choice(choice="not_a_choice_instance"),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.REPORTER_ADD_CHOICE_INVALID_ARG_TYPE)),
+    idspec('REPORTER_ADD_CHOICE_003', TestAction(
+        name=("Passing Choice with a section not supported by the Reporter to add_choice() raises "
+              "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_SECTION_ARG"),
+        action=lambda: MockReporter().add_choice(
+            choice=MockChoice(name='dummy2', flags=['--dummy2'], sections=[Section.CUSTOM])),
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.REPORTER_ADD_CHOICE_UNSUPPORTED_SECTION)),
+    idspec('REPORTER_ADD_CHOICE_004', TestAction(
+        name=("Passing Choice with a target not supported by the Reporter to add_choice() raises "
+              "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_TARGET_ARG"),
+        action=lambda: MockReporter().add_choice(
+            choice=MockChoice(name='dummy2', flags=['--dummy2'], targets=[Target.CUSTOM])),
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.REPORTER_ADD_CHOICE_UNSUPPORTED_TARGET)),
+    idspec('REPORTER_ADD_CHOICE_005', TestAction(
+        name=("Passing Choice with a format not supported by the Reporter to add_choice() raises "
+              "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_FORMAT_ARG"),
+        action=lambda: MockReporter().add_choice(
+            choice=MockChoice(name='dummy2', flags=['--dummy2'], formats=[Format.CUSTOM])),
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.REPORTER_ADD_CHOICE_UNSUPPORTED_FORMAT)),
+])
+def test_add_choice(testspec: TestSpec) -> None:
+    """Test Reporter.add_choice() method."""
     testspec.run()
 
 
@@ -497,3 +652,21 @@ class MockReporterForChoices(MockReporterInit):
 def test_reporter_add_flags_to_argparse(testspec: TestSpec) -> None:
     """Test Reporter.add_flags_to_argparse() method."""
     testspec.run()
+
+
+def test_attributes() -> None:
+    """Test Reporter attributes.
+
+    Verify that Reporter attributes are correctly set and immutable.
+    """
+    reporter: MockReporter = MockReporter()
+    assert reporter.name == 'dummy', "Failed to get Reporter.name"
+    assert reporter.description == 'A dummy reporter for testing.', "Failed to get Reporter.description"
+    choices = reporter.choices
+    assert isinstance(choices, Choices), "Failed to get Reporter.choices"
+    with pytest.raises(AttributeError):
+        reporter.name = "new_name"  # type: ignore[assignment, misc]
+    with pytest.raises(AttributeError):
+        reporter.description = "new_description"  # type: ignore[assignment, misc]
+    with pytest.raises(AttributeError):
+        reporter.choices = Choices(choices=[MockChoice()])  # type: ignore[assignment, misc]
