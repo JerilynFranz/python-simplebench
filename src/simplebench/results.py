@@ -32,6 +32,8 @@ class Results:
         memory_usage (MemoryUsage): Statistics for memory usage.
         peak_memory_usage (PeakMemoryUsage): Statistics for peak memory usage.
         custom_metrics (CustomMetrics): Statistics for custom metrics.
+        custom_metrics_unit (str): The unit of measurement for custom metrics (e.g. "ops/s").
+        custom_metrics_scale (float): The scale factor for custom metrics (e.g. 1.0 for ops/s).
         total_elapsed (float): The total elapsed time for the benchmark.
         variation_marks (dict[str, Any]): A dictionary of variation marks used to identify the benchmark variation.
         extra_info (dict[str, Any]): Additional information about the benchmark run.
@@ -55,6 +57,8 @@ class Results:
                  memory_usage: MemoryUsage | None = None,
                  peak_memory_usage: PeakMemoryUsage | None = None,
                  custom_metrics: CustomMetrics | None = None,
+                 custom_metrics_unit: str = DEFAULT_INTERVAL_UNIT,
+                 custom_metrics_scale: float = DEFAULT_INTERVAL_SCALE,
                  total_elapsed: float = 0.0,
                  variation_marks: dict[str, Any] | None = None,
                  extra_info: dict[str, Any] | None = None) -> None:
@@ -72,6 +76,8 @@ class Results:
         self.memory_usage_scale = memory_usage_scale
         self.peak_memory_usage_unit = memory_usage_unit
         self.peak_memory_usage_scale = memory_usage_scale
+        self.custom_metrics_unit = custom_metrics_unit
+        self.custom_metrics_scale = custom_metrics_scale
         self.ops_per_second = ops_per_second if ops_per_second is not None else OperationsPerInterval(
                                                                                     iterations=iterations)
         self.per_round_timings = per_round_timings if per_round_timings is not None else OperationTimings(
@@ -264,23 +270,42 @@ class Results:
         self._ops_per_interval_scale = float(value)
 
     @property
-    def custom_metric_unit(self) -> str:
+    def custom_metrics_unit(self) -> str:
         """The unit of measurement for custom metrics (e.g. "units")."""
-        return self._custom_metric_unit
+        return self._custom_metrics_unit
 
-    @custom_metric_unit.setter
-    def custom_metric_unit(self, value: str) -> None:
+    @custom_metrics_unit.setter
+    def custom_metrics_unit(self, value: str) -> None:
         if not isinstance(value, str):
             raise SimpleBenchTypeError(
-                f'Invalid custom_metric_unit type: {type(value)}. Must be of type str.',
-                tag=ErrorTag.RESULTS_CUSTOM_METRIC_UNIT_INVALID_ARG_TYPE
+                f'Invalid custom_metrics_unit type: {type(value)}. Must be of type str.',
+                tag=ErrorTag.RESULTS_CUSTOM_METRICS_UNIT_INVALID_ARG_TYPE
             )
         if value == '':
             raise SimpleBenchValueError(
-                'Invalid custom_metric_unit value: empty string. Custom metric unit must be a non-empty string.',
-                tag=ErrorTag.RESULTS_CUSTOM_METRIC_UNIT_INVALID_ARG_VALUE
+                'Invalid custom_metrics_unit value: empty string. Custom metric unit must be a non-empty string.',
+                tag=ErrorTag.RESULTS_CUSTOM_METRICS_UNIT_INVALID_ARG_VALUE
             )
-        self._custom_metric_unit = value
+        self._custom_metrics_unit = value
+
+    @property
+    def custom_metrics_scale(self) -> float:
+        """The scale factor for custom metrics (e.g. 1.0 for units)."""
+        return self._custom_metrics_scale
+
+    @custom_metrics_scale.setter
+    def custom_metrics_scale(self, value: float) -> None:
+        if not isinstance(value, (int, float)):
+            raise SimpleBenchTypeError(
+                f'Invalid custom_metrics_scale type: {type(value)}. Must be of type float.',
+                tag=ErrorTag.RESULTS_CUSTOM_METRICS_SCALE_INVALID_ARG_TYPE
+            )
+        if value <= 0:
+            raise SimpleBenchValueError(
+                f'Invalid custom_metrics_scale value: {value}. Must be a positive number.',
+                tag=ErrorTag.RESULTS_CUSTOM_METRICS_SCALE_INVALID_ARG_VALUE
+            )
+        self._custom_metrics_scale = float(value)
 
     @property
     def iterations(self) -> list[Iteration]:
@@ -368,7 +393,7 @@ class Results:
         if not isinstance(value, CustomMetrics):
             raise SimpleBenchTypeError(
                 f'Invalid custom_metrics type: {type(value)}. Must be of type CustomMetrics.',
-                tag=ErrorTag.RESULTS_CUSTOM_METRIC_INVALID_ARG_TYPE
+                tag=ErrorTag.RESULTS_CUSTOM_METRICS_INVALID_ARG_TYPE
             )
         self._custom_metrics = value
 

@@ -8,7 +8,8 @@ from typing import Optional
 from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_SCALE,
-                        DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT)
+                        DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT,
+                        DEFAULT_CUSTOM_METRICS_UNIT, DEFAULT_CUSTOM_METRICS_SCALE)
 from .iteration import Iteration
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .si_units import si_unit_base
@@ -332,8 +333,8 @@ class CustomMetrics(Stats):
     '''Container for custom metrics statistics of a benchmark.
 
     Attributes:
-        unit (str): The unit of measurement for the custom metric.
-        scale (float): The scale factor for the custom metric.
+        unit (str): The unit of measurement for the custom metric (default = DEFAULT_CUSTOM_METRICS_UNIT).
+        scale (float): The scale factor for the custom metric (default = DEFAULT_CUSTOM_METRICS_SCALE).
         data: list[float | int] = List of custom metric data points.
         mean (float): The mean of the custom metric.
         median (float): The median of the custom metric.
@@ -346,8 +347,8 @@ class CustomMetrics(Stats):
     def __init__(self,
                  *,
                  iterations: list[Iteration] | None = None,
-                 unit: str = 'units',
-                 scale: float = 1.0,
+                 unit: str = DEFAULT_CUSTOM_METRICS_UNIT,
+                 scale: float = DEFAULT_CUSTOM_METRICS_SCALE,
                  data: Optional[list[int | float]] = None):
         if data is None and iterations is not None:
             data = []

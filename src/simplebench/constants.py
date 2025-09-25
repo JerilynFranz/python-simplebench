@@ -41,6 +41,12 @@ DEFAULT_MEMORY_SCALE: float = 1.0
 DEFAULT_MEMORY_UNIT: str = 'bytes'
 """Default unit for memory usage (bytes)."""
 
+DEFAULT_CUSTOM_METRICS_UNIT: str = 'units'
+"""Default unit for custom metrics."""
+
+DEFAULT_CUSTOM_METRICS_SCALE: float = 1.0
+"""Default scaling factor for custom metrics (1.0 -> 1.0)."""
+
 BASE_MEMORY_UNIT: str = 'bytes'
 """Base unit for memory usage."""
 
