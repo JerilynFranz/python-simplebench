@@ -17,7 +17,7 @@ from .testspec import TestAction, TestSetGet, idspec
 
 class Nonsense(str, Enum):
     """A nonsense enum value for testing."""
-    NONESENSE = 'nonsense'
+    NONSENSE = 'nonsense'
 
 
 @pytest.mark.parametrize("testspec", [
@@ -608,3 +608,19 @@ def test_results_sections(section: Section) -> None:
     section_value = results.results_section(section)
     assert isinstance(section_value, Stats), (
         f"results_section({section}) should be type Stats not {type(section_value)}")
+
+
+def test_results_sections_invalid() -> None:
+    """Test Results sections property with unsupported or invalid sections."""
+    results = base_results()
+    with pytest.raises(SimpleBenchValueError) as excinfo:
+        results.results_section(Section.NULL)
+    assert excinfo.value.tag_code == ErrorTag.RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE, (
+        f"Expected SimpleBenchValueError for unsupported section {Section.NULL}"
+    )
+
+    with pytest.raises(SimpleBenchTypeError) as excinfo1:
+        results.results_section(Nonsense.NONSENSE)  # type: ignore[arg-type]
+    assert excinfo1.value.tag_code == ErrorTag.RESULTS_RESULTS_SECTION_INVALID_SECTION_ARG_TYPE, (
+        f"Expected SimpleBenchTypeError for invalid section type {type(Nonsense.NONSENSE)}"
+    )

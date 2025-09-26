@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Decorators for simplifying benchmark case creation."""
 from __future__ import annotations
-from functools import wraps
 from typing import Any, Callable, TYPE_CHECKING
 
 from .case import Case
@@ -206,20 +205,19 @@ def benchmark(
 
     def decorator(func):
         """The actual decorator that wraps the user's function."""
-        @wraps(func)
-        def case_action_wrapper(_runner: SimpleRunner, /,  **kwargs) -> Any:
+        def case_action_wrapper(bench: SimpleRunner,  **kwargs) -> Any:
             """
             This wrapper becomes the `action` for the `Case`.
             It calls the user's decorated function inside `runner.run()`.
 
             Args:
                 _runner (SimpleRunner): The runner executing the benchmark.
-                **kwargs: Any keyword arguments from `kwargs_variations`.
+                **kwargs: Any keyworsd arguments from `kwargs_variations`.
             """
             # The designated use_field_for_n field will always be present
             # in kwargs if specified due to prior validation.
             n_for_run = n if use_field_for_n is None else kwargs.get(use_field_for_n)
-            return _runner.run(action=func, n=n_for_run, kwargs=kwargs)
+            return bench.run(action=func, n=n_for_run, kwargs=kwargs)
 
         # Create the Case instance, using sensible defaults from the function.
         case_kwargs = {

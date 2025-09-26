@@ -2,6 +2,7 @@
 """Benchmark case declaration and execution."""
 from __future__ import annotations
 from dataclasses import dataclass, field
+import inspect
 import itertools
 from typing import Any, Callable, Optional, TYPE_CHECKING
 
@@ -28,8 +29,10 @@ class Case(ICase):
         group (str): The benchmark reporting group to which the benchmark case belongs.
         title (str): The name of the benchmark case.
         description (str): A brief description of the benchmark case.
-        action (Callable[..., Any]): The action to perform for the benchmark.
-        iterations (int): The minimum number of iterations to run for the benchmark.
+        action (Callable[..., Results]): The function to perform the benchmark. This function must
+            accept a `bench` parameter of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
+            It must return a Results object.
+        iterations (int): The minimum number of iterations to run for the benchmark. (default: 20)
         warmup_iterations (int): The number of warmup iterations to run before the benchmark. (default: 10)
         min_time (float): The minimum time for the benchmark in seconds. (default: 5.0)
         max_time (float): The maximum time for the benchmark in seconds. (default: 20.0)
@@ -119,6 +122,36 @@ class Case(ICase):
             SimpleBenchValueError: If any of the parameters are invalid.
             SimpleBenchTypeError: If any of the parameters are of the wrong type.
         """
+        if not isinstance(self.group, str):
+            raise SimpleBenchTypeError(
+                f'Invalid group type: {type(self.group)}. Must be a string.',
+                tag=ErrorTag.CASE_INVALID_GROUP_TYPE
+                )
+        if not self.group.strip():
+            raise SimpleBenchValueError(
+                'Invalid group: cannot be empty or whitespace.',
+                tag=ErrorTag.CASE_INVALID_GROUP_VALUE
+                )
+        if not isinstance(self.title, str):
+            raise SimpleBenchTypeError(
+                f'Invalid title type: {type(self.title)}. Must be a string.',
+                tag=ErrorTag.CASE_INVALID_TITLE_TYPE
+                )
+        if not self.title.strip():
+            raise SimpleBenchValueError(
+                'Invalid title: cannot be empty or whitespace.',
+                tag=ErrorTag.CASE_INVALID_TITLE_VALUE
+                )
+        if not isinstance(self.description, str):
+            raise SimpleBenchTypeError(
+                f'Invalid description type: {type(self.description)}. Must be a string.',
+                tag=ErrorTag.CASE_INVALID_DESCRIPTION_TYPE
+                )
+        if not self.description.strip():
+            raise SimpleBenchValueError(
+                'Invalid description: cannot be empty or whitespace.',
+                tag=ErrorTag.CASE_INVALID_DESCRIPTION_VALUE
+                )
         if not isinstance(self.iterations, int):
             raise SimpleBenchTypeError(
                 f'Invalid iterations type: {type(self.iterations)}. Must be an integer.',
@@ -169,10 +202,17 @@ class Case(ICase):
                 f'Invalid action: {self.action}. Must be a callable.',
                 tag=ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE
                 )
-        if not isinstance(self.action, ActionRunner):
+        action_signature = inspect.signature(self.action)
+        if 'bench' not in action_signature.parameters:
             raise SimpleBenchTypeError(
-                f'Invalid action: {self.action}. Must be of type ActionRunner.',
-                tag=ErrorTag.CASE_INVALID_ACTION_NOT_ACTIONRUNNER
+                f'Invalid action: {self.action}. Must accept a "bench" parameter.',
+                tag=ErrorTag.CASE_INVALID_ACTION_MISSING_BENCH_PARAMETER
+                )
+        kwargs_param = action_signature.parameters.get('kwargs')
+        if kwargs_param is None or kwargs_param.kind not in (inspect.Parameter.VAR_KEYWORD,):
+            raise SimpleBenchTypeError(
+                f'Invalid action: {self.action}. Must accept "**kwargs" parameter.',
+                tag=ErrorTag.CASE_INVALID_ACTION_MISSING_KWARGS_PARAMETER
                 )
         if self.runner is not None and not callable(self.runner):
             raise SimpleBenchTypeError(

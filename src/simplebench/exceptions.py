@@ -216,6 +216,18 @@ class ErrorTag(str, Enum):
     """Invalid n value assigned to n attribute - must be greater than zero"""
 
     # Case() tags
+    CASE_INVALID_GROUP_TYPE = "CASE_INVALID_GROUP_TYPE"
+    """Invalid group argument type passed to the Case() constructor"""
+    CASE_INVALID_GROUP_VALUE = "CASE_INVALID_GROUP_VALUE"
+    """Invalid group argument value passed to the Case() constructor"""
+    CASE_INVALID_TITLE_TYPE = "CASE_INVALID_TITLE_TYPE"
+    """Invalid title argument type passed to the Case() constructor"""
+    CASE_INVALID_TITLE_VALUE = "CASE_INVALID_TITLE_VALUE"
+    """Invalid title argument value passed to the Case() constructor"""
+    CASE_INVALID_DESCRIPTION_TYPE = "CASE_INVALID_DESCRIPTION_TYPE"
+    """Invalid description argument type passed to the Case() constructor"""
+    CASE_INVALID_DESCRIPTION_VALUE = "CASE_INVALID_DESCRIPTION_VALUE"
+    """Invalid description argument value passed to the Case() constructor"""
     CASE_INVALID_ITERATIONS_TYPE = "CASE_INVALID_ITERATIONS_TYPE"
     """Invalid iterations argument type passed to the Case() constructor"""
     CASE_INVALID_ITERATIONS_VALUE = "CASE_INVALID_ITERATIONS_VALUE"
@@ -269,8 +281,10 @@ class ErrorTag(str, Enum):
     """Something other than Section.OPS or Section.TIMING was passed to the Case.section_mean() method"""
     CASE_INVALID_RUNNER_NOT_SIMPLE_RUNNER = "CASE_INVALID_RUNNER_NOT_SIMPLE_RUNNER"
     """Something other than a SimpleRunner or a subclass was passed to the Case() constructor as the runner arg"""
-    CASE_INVALID_ACTION_NOT_ACTIONRUNNER = "CASE_INVALID_ACTION_NOT_ACTIONRUNNER"
-    """Something other than an ActionRunner was passed to the Case() constructor as the action arg"""
+    CASE_INVALID_ACTION_MISSING_BENCH_PARAMETER = "CASE_INVALID_ACTION_MISSING_BENCH_PARAMETER"
+    """The action function is missing the required 'bench' parameter."""
+    CASE_INVALID_ACTION_MISSING_KWARGS_PARAMETER = "CASE_INVALID_ACTION_MISSING_KWARGS_PARAMETER"
+    """The action function is missing the required '**kwargs' parameter."""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"

@@ -29,6 +29,7 @@ class Assert(str, Enum):
         - NOT_IN ('not in'): Checks if a value is not contained within another (e.g., a list or set).
         - IS ('is'): Checks if two references point to the same object.
         - IS_NOT ('is not'): Checks if two references do not point to the same object.
+        - ISINSTANCE ('isinstance'): Checks if an object is an instance of a specified class or tuple of classes.
     """
     EQUAL = '=='
     NOT_EQUAL = '!='
@@ -40,6 +41,7 @@ class Assert(str, Enum):
     NOT_IN = 'not in'
     IS = 'is'
     IS_NOT = 'is not'
+    ISINSTANCE = 'isinstance'
 
 
 def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
@@ -396,6 +398,8 @@ def test_assertion(assertion: Assert, expected: Any, found: Any) -> str:
         assertion (Assert): The assertion operator to use.
         expected (Any): The expected value.
         found (Any): The found value.
+        on_fail (Callable[[str], None]): A callback function to call on failure. It should accept a single
+            string argument containing the failure message and must not return (i.e., it should raise an exception).
 
     Returns:
         str: An error message if the assertion fails, otherwise an empty string.
@@ -434,6 +438,9 @@ def test_assertion(assertion: Assert, expected: Any, found: Any) -> str:
         case Assert.IS_NOT:
             if not (found is not expected):  # pylint: disable=superfluous-parens  # for clarity
                 return f"assertion failed: (found={found}) is not (expected={expected})"
+        case Assert.ISINSTANCE:
+            if not isinstance(found, expected):
+                return f"assertion failed: (found={type(found)}) isinstance (expected={expected})"
         case _:
             return f"Unsupported assertion operator '{assertion}'"
     return ""
