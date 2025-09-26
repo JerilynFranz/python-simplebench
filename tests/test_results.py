@@ -43,6 +43,10 @@ class Nonsense(str, Enum):
                                         result.ops_per_second.data == [] and
                                         isinstance(result.per_round_timings, OperationTimings) and
                                         result.per_round_timings.data == [] and
+                                        isinstance(result.memory, MemoryUsage) and
+                                        result.memory.data == [] and
+                                        isinstance(result.peak_memory, PeakMemoryUsage) and
+                                        result.peak_memory.data == [] and
                                         result.ops_per_interval_unit == DEFAULT_INTERVAL_UNIT and
                                         result.ops_per_interval_scale == DEFAULT_INTERVAL_SCALE and
                                         result.total_elapsed == 0 and
