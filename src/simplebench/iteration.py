@@ -59,7 +59,7 @@ class Iteration:
         Two Iteration instances are considered equal if all their attributes are equal.
         """
         if not isinstance(other, Iteration):
-            return NotImplemented
+            return False
         return (self.n == other.n and
                 self.elapsed == other.elapsed and
                 self.unit == other.unit and
@@ -211,11 +211,7 @@ class Iteration:
                 )
 
     def __repr__(self) -> str:
-        return (f"Iteration(n={self.n}, elapsed={self.elapsed}, unit='{self.unit}', "
+        """Return a string representation of the Iteration instance."""
+        unit = self.unit.replace("'", "\\'")
+        return (f"Iteration(n={self.n}, elapsed={self.elapsed}, unit='{unit}', "
                 f"scale={self.scale}, memory={self.memory}, peak_memory={self.peak_memory})")
-
-    def __str__(self) -> str:
-        return (f"Iteration: n={self.n}, elapsed={self.elapsed} {self.unit}, "
-                f"scale={self.scale}, ops_per_second={self.ops_per_second:.2f}, "
-                f"per_round_elapsed={self.per_round_elapsed:.6f} s, "
-                f"memory={self.memory} bytes, peak_memory={self.peak_memory} bytes)")

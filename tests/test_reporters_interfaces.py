@@ -423,7 +423,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.REPORTER_REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_004', TestAction(
-        name=("report() with Section not in Reporter's targets raises "
+        name=("report() with Section not in Reporter's sections raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_SECTION"),
         action=lambda: MockReporter().report(
                         case=MockCase(),
