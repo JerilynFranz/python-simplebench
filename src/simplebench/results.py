@@ -8,7 +8,7 @@ from simplebench.exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchT
 from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
 from .enums import Section
 from .iteration import Iteration
-from .stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, CustomMetrics, Stats
+from .stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
 
 
 class Results:
@@ -24,16 +24,13 @@ class Results:
         interval_scale (float): The scale factor for the interval (e.g. 1e-9 for nanoseconds).
         ops_per_interval_unit (str): The unit of measurement for operations per interval (e.g. "ops/s").
         ops_per_interval_scale (float): The scale factor for operations per interval (e.g. 1.0 for ops/s).
-        memory_usage_unit (str): The unit of measurement for memory usage (e.g. "bytes").
-        memory_usage_scale (float): The scale factor for memory usage (e.g. 1.0 for bytes).
+        memory_unit (str): The unit of measurement for memory usage (e.g. "bytes").
+        memory_scale (float): The scale factor for memory usage (e.g. 1.0 for bytes).
         iterations (list[Iteration]): The list of Iteration objects representing each iteration of the benchmark.
         ops_per_second (OperationsPerInterval): Statistics for operations per interval.
         per_round_timings (OperationTimings): Statistics for per-round timings.
-        memory_usage (MemoryUsage): Statistics for memory usage.
-        peak_memory_usage (PeakMemoryUsage): Statistics for peak memory usage.
-        custom_metrics (CustomMetrics): Statistics for custom metrics.
-        custom_metrics_unit (str): The unit of measurement for custom metrics (e.g. "ops/s").
-        custom_metrics_scale (float): The scale factor for custom metrics (e.g. 1.0 for ops/s).
+        memory (MemoryUsage): Statistics for memory usage.
+        peak_memory (PeakMemoryUsage): Statistics for peak memory usage.
         total_elapsed (float): The total elapsed time for the benchmark.
         variation_marks (dict[str, Any]): A dictionary of variation marks used to identify the benchmark variation.
         extra_info (dict[str, Any]): Additional information about the benchmark run.
@@ -49,16 +46,13 @@ class Results:
                  interval_scale: float = DEFAULT_INTERVAL_SCALE,
                  ops_per_interval_unit: str = DEFAULT_INTERVAL_UNIT,
                  ops_per_interval_scale: float = DEFAULT_INTERVAL_SCALE,
-                 memory_usage_unit: str = DEFAULT_MEMORY_UNIT,
-                 memory_usage_scale: float = DEFAULT_MEMORY_SCALE,
+                 memory_unit: str = DEFAULT_MEMORY_UNIT,
+                 memory_scale: float = DEFAULT_MEMORY_SCALE,
                  iterations: list[Iteration] | None = None,
                  ops_per_second: OperationsPerInterval | None = None,
                  per_round_timings: OperationTimings | None = None,
-                 memory_usage: MemoryUsage | None = None,
-                 peak_memory_usage: PeakMemoryUsage | None = None,
-                 custom_metrics: CustomMetrics | None = None,
-                 custom_metrics_unit: str = DEFAULT_INTERVAL_UNIT,
-                 custom_metrics_scale: float = DEFAULT_INTERVAL_SCALE,
+                 memory: MemoryUsage | None = None,
+                 peak_memory: PeakMemoryUsage | None = None,
                  total_elapsed: float = 0.0,
                  variation_marks: dict[str, Any] | None = None,
                  extra_info: dict[str, Any] | None = None) -> None:
@@ -72,21 +66,18 @@ class Results:
         self.interval_scale = interval_scale
         self.ops_per_interval_unit = ops_per_interval_unit
         self.ops_per_interval_scale = ops_per_interval_scale
-        self.memory_usage_unit = memory_usage_unit
-        self.memory_usage_scale = memory_usage_scale
-        self.peak_memory_usage_unit = memory_usage_unit
-        self.peak_memory_usage_scale = memory_usage_scale
-        self.custom_metrics_unit = custom_metrics_unit
-        self.custom_metrics_scale = custom_metrics_scale
+        self.memory_unit = memory_unit
+        self.memory_scale = memory_scale
+        self.peak_memory_unit = memory_unit
+        self.peak_memory_scale = memory_scale
+
         self.ops_per_second = ops_per_second if ops_per_second is not None else OperationsPerInterval(
                                                                                     iterations=iterations)
         self.per_round_timings = per_round_timings if per_round_timings is not None else OperationTimings(
                                                                                             iterations=iterations)
-        self.memory_usage = memory_usage if memory_usage is not None else MemoryUsage(
+        self.memory = memory if memory is not None else MemoryUsage(
                                                                             iterations=iterations)
-        self.peak_memory_usage = peak_memory_usage if peak_memory_usage is not None else PeakMemoryUsage(
-                                                                                            iterations=iterations)
-        self.custom_metrics = custom_metrics if custom_metrics is not None else CustomMetrics(
+        self.peak_memory = peak_memory if peak_memory is not None else PeakMemoryUsage(
                                                                                             iterations=iterations)
         self.total_elapsed = total_elapsed
         self.variation_marks = variation_marks if variation_marks is not None else {}
@@ -270,39 +261,6 @@ class Results:
         self._ops_per_interval_scale = float(value)
 
     @property
-    def custom_metrics_unit(self) -> str:
-        """The unit of measurement for custom metrics (e.g. "units")."""
-        return self._custom_metrics_unit
-
-    @custom_metrics_unit.setter
-    def custom_metrics_unit(self, value: str) -> None:
-        if not isinstance(value, str):
-            raise SimpleBenchTypeError(
-                f'Invalid custom_metrics_unit type: {type(value)}. Must be of type str.',
-                tag=ErrorTag.RESULTS_CUSTOM_METRICS_UNIT_INVALID_ARG_TYPE
-            )
-        if value == '':
-            raise SimpleBenchValueError(
-                'Invalid custom_metrics_unit value: empty string. Custom metric unit must be a non-empty string.',
-                tag=ErrorTag.RESULTS_CUSTOM_METRICS_UNIT_INVALID_ARG_VALUE
-            )
-        self._custom_metrics_unit = value
-
-    @property
-    def custom_metrics_scale(self) -> float:
-        """The scale factor for custom metrics (e.g. 1.0 for units)."""
-        return self._custom_metrics_scale
-
-    @custom_metrics_scale.setter
-    def custom_metrics_scale(self, value: float) -> None:
-        if not isinstance(value, (int, float)):
-            raise SimpleBenchTypeError(
-                f'Invalid custom_metrics_scale type: {type(value)}. Must be of type float.',
-                tag=ErrorTag.RESULTS_CUSTOM_METRICS_SCALE_INVALID_ARG_TYPE
-            )
-        self._custom_metrics_scale = float(value)
-
-    @property
     def iterations(self) -> list[Iteration]:
         """The list of Iteration objects representing each iteration of the benchmark."""
         return self._iterations
@@ -351,46 +309,32 @@ class Results:
         self._per_round_timings = value
 
     @property
-    def memory_usage(self) -> MemoryUsage:
+    def memory(self) -> MemoryUsage:
         """Statistics for memory usage."""
-        return self._memory_usage
+        return self._memory
 
-    @memory_usage.setter
-    def memory_usage(self, value: MemoryUsage) -> None:
+    @memory.setter
+    def memory(self, value: MemoryUsage) -> None:
         if not isinstance(value, MemoryUsage):
             raise SimpleBenchTypeError(
-                f'Invalid memory_usage type: {type(value)}. Must be of type MemoryUsage.',
-                tag=ErrorTag.RESULTS_MEMORY_USAGE_INVALID_ARG_TYPE
+                f'Invalid memory type: {type(value)}. Must be of type MemoryUsage.',
+                tag=ErrorTag.RESULTS_MEMORY_INVALID_ARG_TYPE
             )
-        self._memory_usage = value
+        self._memory = value
 
     @property
-    def peak_memory_usage(self) -> PeakMemoryUsage:
+    def peak_memory(self) -> PeakMemoryUsage:
         """Statistics for peak memory usage."""
-        return self._peak_memory_usage
+        return self._peak_memory
 
-    @peak_memory_usage.setter
-    def peak_memory_usage(self, value: PeakMemoryUsage) -> None:
+    @peak_memory.setter
+    def peak_memory(self, value: PeakMemoryUsage) -> None:
         if not isinstance(value, PeakMemoryUsage):
             raise SimpleBenchTypeError(
-                f'Invalid peak_memory_usage type: {type(value)}. Must be of type PeakMemoryUsage.',
-                tag=ErrorTag.RESULTS_PEAK_MEMORY_USAGE_INVALID_ARG_TYPE
+                f'Invalid peak_memory type: {type(value)}. Must be of type PeakMemoryUsage.',
+                tag=ErrorTag.RESULTS_PEAK_MEMORY_INVALID_ARG_TYPE
             )
-        self._peak_memory_usage = value
-
-    @property
-    def custom_metrics(self) -> CustomMetrics:
-        """Statistics for custom metrics."""
-        return self._custom_metrics
-
-    @custom_metrics.setter
-    def custom_metrics(self, value: CustomMetrics) -> None:
-        if not isinstance(value, CustomMetrics):
-            raise SimpleBenchTypeError(
-                f'Invalid custom_metrics type: {type(value)}. Must be of type CustomMetrics.',
-                tag=ErrorTag.RESULTS_CUSTOM_METRICS_INVALID_ARG_TYPE
-            )
-        self._custom_metrics = value
+        self._peak_memory = value
 
     @property
     def total_elapsed(self) -> float:
@@ -465,14 +409,13 @@ class Results:
             case Section.TIMING:
                 return self.per_round_timings
             case Section.MEMORY:
-                return self.memory_usage
+                return self.memory
             case Section.PEAK_MEMORY:
-                return self.peak_memory_usage
-            case Section.CUSTOM:
-                return self.custom_metrics
+                return self.peak_memory
             case _:
                 raise SimpleBenchValueError(
-                    f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
+                    (f'Invalid section: {section}. Must be Section.OPS, Section.TIMING, '
+                     'Section.MEMORY, or Section.PEAK_MEMORY.'),
                     tag=ErrorTag.RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
                 )
 
@@ -490,17 +433,16 @@ class Results:
             'interval_scale': self.interval_scale,
             'ops_per_interval_unit': self.ops_per_interval_unit,
             'ops_per_interval_scale': self.ops_per_interval_scale,
-            'memory_usage_unit': self.memory_usage_unit,
-            'memory_usage_scale': self.memory_usage_scale,
-            'peak_memory_usage_unit': self.peak_memory_usage_unit,
-            'peak_memory_usage_scale': self.peak_memory_usage_scale,
+            'memory_unit': self.memory_unit,
+            'memory_scale': self.memory_scale,
+            'peak_memory_unit': self.peak_memory_unit,
+            'peak_memory_scale': self.peak_memory_scale,
             'total_elapsed': self.total_elapsed,
             'extra_info': self.extra_info,
             'per_round_timings': self.per_round_timings.statistics_as_dict,
             'ops_per_second': self.ops_per_second.statistics_as_dict,
-            'memory_usage': self.memory_usage.statistics_as_dict,
-            'peak_memory_usage': self.peak_memory_usage.statistics_as_dict,
-            'custom_metrics': self.custom_metrics.statistics_as_dict,
+            'memory': self.memory.statistics_as_dict,
+            'peak_memory': self.peak_memory.statistics_as_dict,
         }
 
     @property
@@ -509,7 +451,6 @@ class Results:
         results = self.results_as_dict
         results['per_round_timings'] = self.per_round_timings.statistics_and_data_as_dict
         results['ops_per_second'] = self.ops_per_second.statistics_and_data_as_dict
-        results['memory_usage'] = self.memory_usage.statistics_and_data_as_dict
-        results['peak_memory_usage'] = self.peak_memory_usage.statistics_and_data_as_dict
-        results['custom_metrics'] = self.custom_metrics.statistics_and_data_as_dict
+        results['memory'] = self.memory.statistics_and_data_as_dict
+        results['peak_memory'] = self.peak_memory.statistics_and_data_as_dict
         return results

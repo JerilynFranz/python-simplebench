@@ -23,7 +23,7 @@ class Nonsense(str, Enum):
 @pytest.fixture()
 def stats_classes() -> list[type[stats.Stats]]:
     """Fixture to return list of stats classes."""
-    return [stats.Stats, stats.OperationsPerInterval, stats.OperationTimings]
+    return [stats.Stats, stats.OperationsPerInterval, stats.OperationTimings, stats.MemoryUsage, stats.PeakMemoryUsage]
 
 
 @pytest.mark.parametrize("test", [
@@ -301,8 +301,8 @@ def test_stats_initalization(section: Section) -> None:
                       unit='s',
                       scale=1.0,
                       elapsed=data['elapsed'][index],
-                      memory_usage=int(data['memory'][index]),
-                      peak_memory_usage=int(data['peak_memory'][index]))
+                      memory=int(data['memory'][index]),
+                      peak_memory=int(data['peak_memory'][index]))
         )
     stats_instance: stats.Stats
     match section:

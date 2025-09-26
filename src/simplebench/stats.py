@@ -3,13 +3,12 @@
 
 from copy import copy
 import statistics
-from typing import Optional
+from typing import Optional, Sequence
 
 from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_SCALE,
-                        DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT,
-                        DEFAULT_CUSTOM_METRICS_UNIT, DEFAULT_CUSTOM_METRICS_SCALE)
+                        DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT)
 from .iteration import Iteration
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .si_units import si_unit_base
@@ -30,10 +29,10 @@ class Stats:
         relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
         percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
     '''
-    def __init__(self, *, unit: str, scale: float, data: Optional[list[int | float]] = None) -> None:
+    def __init__(self, *, unit: str, scale: float, data: Optional[Sequence[int | float]] = None) -> None:
         self.unit = unit
         self.scale = scale
-        self.data = data if data is not None else []
+        self.data = data
 
     @property
     def unit(self) -> str:
@@ -95,12 +94,12 @@ class Stats:
         self._scale = float(scale)
 
     @property
-    def data(self) -> list[int | float]:
+    def data(self) -> Sequence[int | float]:
         '''The data points.'''
         return self._data
 
     @data.setter
-    def data(self, data: Optional[list[int | float]]) -> None:
+    def data(self, data: Optional[Sequence[int | float]] = None) -> None:
         """Set the data points.
 
         Args:
@@ -297,7 +296,7 @@ class MemoryUsage(Stats):
         if data is None and iterations is not None:
             data = []
             for iteration in iterations:
-                data.append(iteration.memory_usage)
+                data.append(iteration.memory)
         super().__init__(unit=unit, scale=scale, data=data)
 
 
@@ -325,34 +324,5 @@ class PeakMemoryUsage(Stats):
         if data is None and iterations is not None:
             data = []
             for iteration in iterations:
-                data.append(iteration.peak_memory_usage)
-        super().__init__(unit=unit, scale=scale, data=data)
-
-
-class CustomMetrics(Stats):
-    '''Container for custom metrics statistics of a benchmark.
-
-    Attributes:
-        unit (str): The unit of measurement for the custom metric (default = DEFAULT_CUSTOM_METRICS_UNIT).
-        scale (float): The scale factor for the custom metric (default = DEFAULT_CUSTOM_METRICS_SCALE).
-        data: list[float | int] = List of custom metric data points.
-        mean (float): The mean of the custom metric.
-        median (float): The median of the custom metric.
-        minimum (float): The minimum of the custom metric.
-        maximum (float): The maximum of the custom metric.
-        standard_deviation (float): The standard deviation of the custom metric.
-        relative_standard_deviation (float): The relative standard deviation of the custom metric.
-        percentiles (dict[int, float]): Percentiles of the custom metric.
-    '''
-    def __init__(self,
-                 *,
-                 iterations: list[Iteration] | None = None,
-                 unit: str = DEFAULT_CUSTOM_METRICS_UNIT,
-                 scale: float = DEFAULT_CUSTOM_METRICS_SCALE,
-                 data: Optional[list[int | float]] = None):
-        if data is None and iterations is not None:
-            data = []
-            for iteration in iterations:
-                if iteration.custom_metric is not None:
-                    data.append(iteration.custom_metric)
+                data.append(iteration.peak_memory)
         super().__init__(unit=unit, scale=scale, data=data)

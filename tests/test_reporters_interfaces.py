@@ -432,7 +432,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                             flags=['--not-registered'],
                             name='not_registered',
                             description='A choice not registered with the reporter.',
-                            sections=[Section.CUSTOM],
+                            sections=[Section.NULL],
                             targets=[Target.CONSOLE],
                             formats=[Format.RICH_TEXT],
                             extra=None)),
@@ -598,7 +598,7 @@ def test_reporter_report(testspec: TestSpec) -> None:
         name=("Passing Choice with a section not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_SECTION_ARG"),
         action=lambda: MockReporter().add_choice(
-            choice=MockChoice(name='dummy2', flags=['--dummy2'], sections=[Section.CUSTOM])),
+            choice=MockChoice(name='dummy2', flags=['--dummy2'], sections=[Section.NULL])),
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.REPORTER_ADD_CHOICE_UNSUPPORTED_SECTION)),
     idspec('REPORTER_ADD_CHOICE_004', TestAction(

@@ -10,7 +10,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, 
 from simplebench.iteration import Iteration
 from simplebench.results import Results
 from simplebench.enums import Section
-from simplebench.stats import OperationsPerInterval, OperationTimings, CustomMetrics, Stats
+from simplebench.stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
 
 from .testspec import TestAction, TestSetGet, idspec
 
@@ -43,8 +43,6 @@ class Nonsense(str, Enum):
                                         result.ops_per_second.data == [] and
                                         isinstance(result.per_round_timings, OperationTimings) and
                                         result.per_round_timings.data == [] and
-                                        isinstance(result.custom_metrics, CustomMetrics) and
-                                        result.custom_metrics.data == [] and
                                         result.ops_per_interval_unit == DEFAULT_INTERVAL_UNIT and
                                         result.ops_per_interval_scale == DEFAULT_INTERVAL_SCALE and
                                         result.total_elapsed == 0 and
@@ -460,45 +458,6 @@ class Nonsense(str, Enum):
         },
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE)),
-    idspec("RESULTS_034", TestAction(
-        name="non-CustomMetrics custom_metrics argument",
-        action=Results,
-        args=[],
-        kwargs={
-            'group': 'default_group',
-            'title': 'default_title',
-            'description': 'default_description',
-            'n': 1,
-            'custom_metrics': {}
-        },
-        exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.RESULTS_CUSTOM_METRICS_INVALID_ARG_TYPE)),
-    idspec("RESULTS_035", TestAction(
-        name="non-string custom_metrics unit",
-        action=Results,
-        args=[],
-        kwargs={
-            'group': 'default_group',
-            'title': 'default_title',
-            'description': 'default_description',
-            'n': 1,
-            'custom_metrics_unit': 123
-        },
-        exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.RESULTS_CUSTOM_METRICS_UNIT_INVALID_ARG_TYPE)),
-    idspec("RESULTS_036", TestAction(
-        name="non-float custom_metrics scale",
-        action=Results,
-        args=[],
-        kwargs={
-            'group': 'default_group',
-            'title': 'default_title',
-            'description': 'default_description',
-            'n': 1,
-            'custom_metrics_scale': 'large'
-        },
-        exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.RESULTS_CUSTOM_METRICS_SCALE_INVALID_ARG_TYPE)),
 ])
 def test_results_init(testspec: TestAction) -> None:
     """Test Results initialization."""
@@ -531,16 +490,6 @@ def base_per_round_timings() -> OperationTimings:
     """Create a base OperationTimings instance for testing."""
     return OperationTimings(
         unit='seconds',
-        scale=1.0,
-        data=[0.01, 0.02, 0.03]
-    )
-
-
-@cache
-def base_custom_metrics() -> CustomMetrics:
-    """Create a base CustomMetrics instance for testing."""
-    return CustomMetrics(
-        unit='units',
         scale=1.0,
         data=[0.01, 0.02, 0.03]
     )
@@ -637,24 +586,6 @@ def base_custom_metrics() -> CustomMetrics:
         value={'key': 'value'},
         expected={'key': 'value'},
         obj=base_results())),
-    idspec("PROPERTIES_016", TestSetGet(
-        name='set/get custom_metrics',
-        attribute='custom_metrics',
-        value=base_custom_metrics(),
-        expected=base_custom_metrics(),
-        obj=base_results())),
-    idspec("PROPERTIES_017", TestSetGet(
-        name='set/get custom_metrics_unit',
-        attribute='custom_metrics_unit',
-        value='units per millenium',
-        expected='units per millenium',
-        obj=base_results())),
-    idspec("PROPERTIES_082", TestSetGet(
-        name='set/get custom_metrics_scale',
-        attribute='custom_metrics_scale',
-        value=60.0,
-        expected=60.0,
-        obj=base_results())),
 ])
 def test_results_getset_properties(testspec: TestSetGet) -> None:
     """Test Results get/set properties."""
@@ -662,7 +593,10 @@ def test_results_getset_properties(testspec: TestSetGet) -> None:
 
 
 @pytest.mark.parametrize("section", [
-    pytest.param(section, id=f"Section.{section.name}") for section in list(Section)
+    pytest.param(Section.OPS, id="Section.OPS"),
+    pytest.param(Section.TIMING, id="Section.TIMING"),
+    pytest.param(Section.MEMORY, id="Section.MEMORY"),
+    pytest.param(Section.PEAK_MEMORY, id="Section.PEAK_MEMORY"),
 ])
 def test_results_sections(section: Section) -> None:
     """Test Results sections property."""
