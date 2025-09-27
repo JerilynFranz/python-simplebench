@@ -4,12 +4,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Any, Callable, Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from .metaclasses import IReporter, IChoices, IChoice
 from ..enums import Section, Target, Format
 from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
 from ..metaclasses import ICase, ISession
+from ..protocols import ReporterCallback
 
 if TYPE_CHECKING:
     from ..case import Case
@@ -34,7 +35,7 @@ class Reporter(ABC, IReporter):
         choices (Choices): A Choices instance defining the sections, output targets,
             and formats supported by the reporter.
         session (Session): The Session instance containing benchmark results.
-        callback (Callable[..., Any]): A callback function for additional processing of the report.
+        callback (ReporterCallback): A callback function for additional processing of the report.
 
     Methods:
         The choices() method should return a Choices instance that accurately
@@ -202,7 +203,7 @@ class Reporter(ABC, IReporter):
                choice: Choice,
                path: Optional[Path] = None,
                session: Optional[Session] = None,
-               callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
+               callback: Optional[ReporterCallback] = None) -> None:
         """Generate a report based on the benchmark results. This method
         performs validation and then calls the subclass's run_report method.
 
@@ -271,7 +272,7 @@ class Reporter(ABC, IReporter):
                    choice: Choice,
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
-                   callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
+                   callback: Optional[ReporterCallback] = None) -> None:
         """Internal method to be implemented by subclasses to actually generate the report.
 
         Output the benchmark results.
@@ -291,10 +292,13 @@ class Reporter(ABC, IReporter):
             choice (Choice): The Choice instance specifying the report configuration.
             path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[Callable[[Case, Section, Format, Any], None]]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
+            callback (Optional[ReporterCallback]): A callback function for additional processing of the report.
+                The function should accept four arguments: the Case instance, the Section instance,
+                the Format instance, and the report output.
+
+                Example callback function signature:
+                    def my_callback(case: Case, section: Section, output_format: Format, output: Any) -> None:
+                        # Custom processing logic here
 
         Return:
             None

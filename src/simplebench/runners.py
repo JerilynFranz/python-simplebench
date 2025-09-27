@@ -45,13 +45,26 @@ class SimpleRunner():
                  session: Optional[Session] = None,
                  runner: Optional[Callable[..., Any]] = None) -> None:
         self.case: Case = case
+        """The benchmark Case to run."""
         self.kwargs: dict[str, Any] = kwargs
+        """The keyword arguments for the benchmark function."""
         self.run: Callable[..., Any] = runner if runner is not None else self.default_runner
+        """Benchmark runner function. Defaults to SimpleRunner.default_runner.
+
+        The runner function must accept the following parameters:
+            n (int): The number of test rounds that will be run by the action on each iteration.
+            action (Callable[..., Any]): The function to benchmark.
+            setup (Optional[Callable[..., Any]]): A setup function to run before each iteration.
+            teardown (Optional[Callable[..., Any]]): A teardown function to run after each iteration.
+            kwargs (Optional[dict[str, Any]]): Keyword arguments to pass to the function being benchmarked.
+        """
         self.session: Session | None = session
+        """The session in which the benchmark is run."""
 
     @property
     def variation_marks(self) -> dict[str, Any]:
-        '''Return the variation marks for the benchmark.
+        '''Returns the variation marks for the benchmark as defined by the `Case.variation_cols`
+        and the current keyworded arguments to the function being benchmarked.
 
         The variation marks identify the specific variations being tested in a run
         from the kwargs values.

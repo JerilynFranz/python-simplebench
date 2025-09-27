@@ -2,7 +2,7 @@
 """Reporter for benchmark results using Rich tables on the console."""
 from __future__ import annotations
 from pathlib import Path
-from typing import Optional, Any, Callable, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from rich.console import Console
 from rich.table import Table
@@ -10,6 +10,7 @@ from rich.table import Table
 from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE, BASE_MEMORY_UNIT
 from ..enums import Section, Target, Format
 from ..exceptions import SimpleBenchValueError, ErrorTag
+from ..protocols import ReporterCallback
 from ..results import Results
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename, sigfigs
@@ -152,8 +153,7 @@ class RichTableReporter(Reporter):
                    choice: Choice,
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,  # pylint: disable=unused-argument
-                   callback: Optional[Callable[[Case, Section, Format, Any], None]
-                                      ] = None  # pylint: disable=unused-argument
+                   callback: Optional[ReporterCallback] = None  # pylint: disable=unused-argument
                    ) -> None:
         """Output the benchmark results as rich text if available.
 
@@ -166,10 +166,10 @@ class RichTableReporter(Reporter):
             choice (Choice): The Choice instance specifying the report configuration.
             path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[Callable[[Case, Section, Format, Any], None]]):
+            callback (Optional[ReporterCallback]):
                 A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
+                The function should accept four arguments: the Case instance, the Section instance,
+                the Format instance, and the report output.
 
         Return:
             None
@@ -214,7 +214,7 @@ class RichTableReporter(Reporter):
                 console.print(table)
                 console.end_capture()
                 text: str = console.export_text()
-                case.callback(case, section, Format.RICH_TEXT, text)
+                case.callback(case=case, section=section, output_format=Format.RICH_TEXT, output=text)
             if Target.CONSOLE in choice.targets:
                 console = session.console if session is not None else Console()
                 console.print(table)
