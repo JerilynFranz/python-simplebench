@@ -228,7 +228,6 @@ def benchmark(
             'variation_cols': variation_cols or {},
             'kwargs_variations': kwargs_variations or {},
             'options': options or [],
-            '_decoration': True
         }
         if iterations is not None:
             case_kwargs['iterations'] = iterations

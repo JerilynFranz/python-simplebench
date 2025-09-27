@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 """Benchmark case declaration and execution."""
 from __future__ import annotations
-from dataclasses import dataclass, field
 import inspect
 import itertools
 from typing import Any, Optional, TYPE_CHECKING
 
-from .constants import DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS
+from .constants import DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME, DEFAULT_MAX_TIME
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
 from .metaclasses import ICase
 from .protocols import ActionRunner, ReporterCallback
 from .reporters.reporter_option import ReporterOption
 from .runners import SimpleRunner
-from .enums import Section
+from .enums import Section, Format
 
 if TYPE_CHECKING:
     from .results import Results
@@ -20,7 +19,6 @@ if TYPE_CHECKING:
     from .tasks import RichTask
 
 
-@dataclass(kw_only=True)
 class Case(ICase):
     '''Declaration of a benchmark case.
 
@@ -28,13 +26,17 @@ class Case(ICase):
         group (str): The benchmark reporting group to which the benchmark case belongs.
         title (str): The name of the benchmark case.
         description (str): A brief description of the benchmark case.
-        action (Callable[..., Results]): The function to perform the benchmark. This function must
+        action (ActionRunner): The function to perform the benchmark. This function must
             accept a `bench` parameter of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
             It must return a Results object.
-        iterations (int): The minimum number of iterations to run for the benchmark. (default: 20)
-        warmup_iterations (int): The number of warmup iterations to run before the benchmark. (default: 10)
-        min_time (float): The minimum time for the benchmark in seconds. (default: 5.0)
-        max_time (float): The maximum time for the benchmark in seconds. (default: 20.0)
+        iterations (int): The minimum number of iterations to run for the benchmark.
+            (default: 20 - DEFAULT_ITERATIONS)
+        warmup_iterations (int): The number of warmup iterations to run before the benchmark.
+            (default: 10 - DEFAULT_WARMUP_ITERATIONS)
+        min_time (float): The minimum time for the benchmark in seconds.
+            (default: 5.0 seconds - DEFAULT_MIN_TIME)
+        max_time (float): The maximum time for the benchmark in seconds.
+            (default: 20.0 seconds - DEFAULT_MAX_TIME)
         variation_cols (dict[str, str]): kwargs to be used for cols to denote kwarg variations.
             Each key is a keyword argument name, and the value is the column label to use for that argument.
 
@@ -93,152 +95,300 @@ class Case(ICase):
     Properties:
         results (list[Results]): The benchmark results for the case.
     '''
-    group: str
-    """The benchmark reporting group to which the benchmark case belongs."""
-    title: str
-    """The name of the benchmark case."""
-    description: str
-    """A brief description of the benchmark case."""
-    action: ActionRunner
-    """The action to perform for the benchmark."""
-    iterations: int = DEFAULT_ITERATIONS
-    """The number of iterations to run for the benchmark."""
-    warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS
-    """The number of warmup iterations to run before the benchmark."""
-    min_time: float = 5.0  # seconds
-    """The minimum time for the benchmark in seconds."""
-    max_time: float = 20.0  # seconds
-    """The maximum time for the benchmark in seconds."""
-    variation_cols: dict[str, str] = field(default_factory=dict[str, str])
-    """Keyword arguments to be used for columns to denote kwarg variations."""
-    kwargs_variations: dict[str, list[Any]] = field(default_factory=dict[str, list[Any]])
-    """Variations of keyword arguments for the benchmark."""
-    runner: Optional[SimpleRunner] = None
-    """A custom runner for the benchmark. If None, the default SimpleRunner is used."""
-    callback: Optional[ReporterCallback] = None
-    """A callback function for additional processing of a report."""
-    results: list[Results] = field(init=False)
-    """The benchmark list of Results for the case."""
-    options: list[ReporterOption] = field(default_factory=list[ReporterOption])
-    """A list of additional options for the benchmark case."""
-    _decoration: bool = field(default=False, repr=False, compare=False)
-    """Indicates if the Case was created via the @benchmark decorator. (internal use only)"""
+    __slots__ = ('_group', '_title', '_description', '_action',
+                 '_iterations', '_warmup_iterations', '_min_time', '_max_time',
+                 '_variation_cols', '_kwargs_variations', '_runner',
+                 '_callback', '_results', '_options')
 
-    def __post_init__(self) -> None:
-        self.results: list[Results] = []
+    def __init__(self, *,
+                 group: str,
+                 title: str,
+                 description: str,
+                 action: ActionRunner,
+                 iterations: int = DEFAULT_ITERATIONS,
+                 warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
+                 min_time: float = DEFAULT_MIN_TIME,
+                 max_time: float = DEFAULT_MAX_TIME,
+                 variation_cols: Optional[dict[str, str]] = None,
+                 kwargs_variations: Optional[dict[str, list[Any]]] = None,
+                 runner: Optional[SimpleRunner] = None,
+                 callback: Optional[ReporterCallback] = None,
+                 options: Optional[list[ReporterOption]] = None) -> None:
+        """Constructor for Case.
+
+        Args:
+            group (str): The benchmark reporting group to which the benchmark case belongs.
+            title (str): The name of the benchmark case.
+            description (str): A brief description of the benchmark case.
+            action (Callable[..., Results]): The function to perform the benchmark. This function must
+                accept a `bench` parameter of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
+                It must return a Results object.
+            iterations (int): The minimum number of iterations to run for the benchmark.
+                (default: 20 - DEFAULT_ITERATIONS)
+            warmup_iterations (int): The number of warmup iterations to run before the benchmark.
+                (default: 10 - DEFAULT_WARMUP_ITERATIONS)
+            min_time (float): The minimum time for the benchmark in seconds.
+                (default: 5.0 seconds - DEFAULT_MIN_TIME)
+            max_time (float): The maximum time for the benchmark in seconds.
+                (default: 20.0 seconds - DEFAULT_MAX_TIME)
+            variation_cols (dict[str, str]): kwargs to be used for cols to denote kwarg variations.
+                Each key is a keyword argument name, and the value is the column label to use for that argument.
+                (default: None)
+            kwargs_variations (dict[str, list[Any]]):
+                Variations of keyword arguments for the benchmark.
+                Each key is a keyword argument name, and the value is a list of possible values.
+                (default: None)
+            runner (Optional[SimpleRunner]): A custom runner for the benchmark.
+                If None, the default SimpleRunner is used. (default: None)
+                The custom runner must be a subclass of SimpleRunner and must have a method
+                named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
+                The action function will be called with a `bench` parameter that is an instance of the
+                custom runner.
+                It may also accept additional parameters to the run method as needed. If additional
+                parameters are needed for the custom runner, they will need to be passed to the run
+                method as keyword arguments.
+                No support is provided for passing additional parameters to a custom runner from the @benchmark
+                decorator.
+            callback (ReporterCallback):
+                A callback function for additional processing of the report. The function should accept
+                four arguments: the Case instance, the Section, the Format, and the generated report data.
+                Leave as None if no callback is needed. (default: None)
+                The callback function will be called with the following arguments:
+                    case (Case): The `Case` instance processed for the report.
+                    section (Section): The `Section` of the report.
+                    output_format (Format): The `Format` of the report.
+                    output (Any): The generated report data. Note that the actual type of this data will
+                        depend on the Format specified for the report and the type generated by the
+                        reporter for that Format
+            options (list[ReporterOption]): A list of additional options for the benchmark case.
+                Each option is an instance of ReporterOption or a subclass of ReporterOption.
+                Reporter options can be used to customize the output of the benchmark reports for
+                specific reporters. Reporters are responsible for extracting applicable ReporterOptions
+                from the list of options themselves. (default: [])
+        """
+        self.group = group
+        self.title = title
+        self.description = description
+        self.action = action
+        self.iterations = iterations
+        self.warmup_iterations = warmup_iterations
+        self.min_time = min_time
+        self.max_time = max_time
+        self.kwargs_variations = kwargs_variations if kwargs_variations is not None else {}
+        self.variation_cols = variation_cols if variation_cols is not None else {}
+        self.runner = runner
+        self.callback = callback
+        self.results = []
+        self.options = options if options is not None else []
+
         self.validate()
 
-    def validate(self) -> None:
-        """Validate the benchmark case parameters.
+    @property
+    def group(self) -> str:
+        """The benchmark reporting group to which the benchmark case belongs."""
+        return self._group
 
-        Raises:
-            SimpleBenchValueError: If any of the parameters are invalid.
-            SimpleBenchTypeError: If any of the parameters are of the wrong type.
-        """
-        if not isinstance(self.group, str):
+    @group.setter
+    def group(self, value: str) -> None:
+        if not isinstance(value, str):
             raise SimpleBenchTypeError(
-                f'Invalid group type: {type(self.group)}. Must be a string.',
+                f'Invalid group type: {type(value)}. Must be a string.',
                 tag=ErrorTag.CASE_INVALID_GROUP_TYPE
-                )
-        if not self.group.strip():
+            )
+        if not value.strip():
             raise SimpleBenchValueError(
                 'Invalid group: cannot be empty or whitespace.',
                 tag=ErrorTag.CASE_INVALID_GROUP_VALUE
                 )
-        if not isinstance(self.title, str):
+        self._group = value.strip()
+
+    @property
+    def title(self) -> str:
+        """The name of the benchmark case."""
+        return self._title
+
+    @title.setter
+    def title(self, value: str) -> None:
+        if not isinstance(value, str):
             raise SimpleBenchTypeError(
-                f'Invalid title type: {type(self.title)}. Must be a string.',
+                f'Invalid title type: {type(value)}. Must be a string.',
                 tag=ErrorTag.CASE_INVALID_TITLE_TYPE
                 )
-        if not self.title.strip():
+        if not value.strip():
             raise SimpleBenchValueError(
                 'Invalid title: cannot be empty or whitespace.',
                 tag=ErrorTag.CASE_INVALID_TITLE_VALUE
                 )
-        if not isinstance(self.description, str):
+        self._title = value.strip()
+
+    @property
+    def description(self) -> str:
+        """A brief description of the benchmark case."""
+        return self._description
+
+    @description.setter
+    def description(self, value: str) -> None:
+        if not isinstance(value, str):
             raise SimpleBenchTypeError(
-                f'Invalid description type: {type(self.description)}. Must be a string.',
+                f'Invalid description type: {type(value)}. Must be a string.',
                 tag=ErrorTag.CASE_INVALID_DESCRIPTION_TYPE
                 )
-        if not self.description.strip():
+        if not value.strip():
             raise SimpleBenchValueError(
                 'Invalid description: cannot be empty or whitespace.',
                 tag=ErrorTag.CASE_INVALID_DESCRIPTION_VALUE
                 )
-        if not isinstance(self.iterations, int):
+        self._description = value.strip()
+
+    @property
+    def action(self) -> ActionRunner:
+        """The function to perform the benchmark."""
+        return self._action
+
+    @action.setter
+    def action(self, value: ActionRunner) -> None:
+        if not callable(value):
             raise SimpleBenchTypeError(
-                f'Invalid iterations type: {type(self.iterations)}. Must be an integer.',
-                tag=ErrorTag.CASE_INVALID_ITERATIONS_TYPE
-                )
-        if self.iterations <= 0:
-            raise SimpleBenchValueError(
-                f'Invalid iterations: {self.iterations}. Must be a positive integer.',
-                tag=ErrorTag.CASE_INVALID_ITERATIONS_VALUE
-                )
-        if not isinstance(self.warmup_iterations, int):
-            raise SimpleBenchTypeError(
-                f'Invalid warmup_iterations type: {type(self.warmup_iterations)}. Must be an integer.',
-                tag=ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_TYPE
-                )
-        if self.warmup_iterations < 0:
-            raise SimpleBenchValueError(
-                f'Invalid warmup_iterations: {self.warmup_iterations}. Must be a non-negative integer.',
-                tag=ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_VALUE
-            )
-        if not isinstance(self.min_time, float):
-            raise SimpleBenchTypeError(
-                f'Invalid min_time type: {type(self.min_time)}. Must be a float.',
-                tag=ErrorTag.CASE_INVALID_MIN_TIME_TYPE
-                )
-        if self.min_time <= 0.0:
-            raise SimpleBenchValueError(
-                f'Invalid min_time: {self.min_time}. Must be a positive float.',
-                tag=ErrorTag.CASE_INVALID_MIN_TIME_VALUE
-                )
-        if not isinstance(self.max_time, float):
-            raise SimpleBenchTypeError(
-                f'Invalid max_time type: {type(self.max_time)}. Must be a float.',
-                tag=ErrorTag.CASE_INVALID_MAX_TIME_TYPE
-                )
-        if self.max_time <= 0.0:
-            raise SimpleBenchValueError(
-                f'Invalid max_time: {self.max_time}. Must be a positive float.',
-                tag=ErrorTag.CASE_INVALID_MAX_TIME_VALUE
-                )
-        if self.min_time > self.max_time:
-            raise SimpleBenchValueError(
-                f'Invalid time range: min_time {self.min_time} > max_time {self.max_time}.',
-                tag=ErrorTag.CASE_INVALID_TIME_RANGE
-                )
-        if not callable(self.action):
-            raise SimpleBenchTypeError(
-                f'Invalid action: {self.action}. Must be a callable.',
+                f'Invalid action: {value}. Must be a callable.',
                 tag=ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE
                 )
-        action_signature = inspect.signature(self.action)
+        action_signature = inspect.signature(value)
         if 'bench' not in action_signature.parameters:
             raise SimpleBenchTypeError(
-                f'Invalid action: {self.action}. Must accept a "bench" parameter.',
+                f'Invalid action: {value}. Must accept a "bench" parameter.',
                 tag=ErrorTag.CASE_INVALID_ACTION_MISSING_BENCH_PARAMETER
                 )
         kwargs_param = action_signature.parameters.get('kwargs')
         if kwargs_param is None or kwargs_param.kind not in (inspect.Parameter.VAR_KEYWORD,):
             raise SimpleBenchTypeError(
-                f'Invalid action: {self.action}. Must accept "**kwargs" parameter.',
+                f'Invalid action: {value}. Must accept "**kwargs" parameter.',
                 tag=ErrorTag.CASE_INVALID_ACTION_MISSING_KWARGS_PARAMETER
                 )
         if len(action_signature.parameters) != 2:
             raise SimpleBenchValueError(
-                f'Invalid action: {self.action}. Must accept exactly 2 parameters: bench and **kwargs.',
+                f'Invalid action: {value}. Must accept exactly 2 parameters: bench and **kwargs.',
                 tag=ErrorTag.CASE_INVALID_ACTION_PARAMETER_COUNT
             )
-       
-        if not isinstance(self.kwargs_variations, dict):
+        self._action = value
+
+    @property
+    def iterations(self) -> int:
+        '''The number of iterations to run for the benchmark.'''
+        return self._iterations
+
+    @iterations.setter
+    def iterations(self, value: int) -> None:
+        if not isinstance(value, int):
             raise SimpleBenchTypeError(
-                f'Invalid kwargs_variations: {self.kwargs_variations}. Must be a dictionary.',
+                f'Invalid iterations type: {type(value)}. Must be an integer.',
+                tag=ErrorTag.CASE_INVALID_ITERATIONS_TYPE
+                )
+        if value <= 0:
+            raise SimpleBenchValueError(
+                f'Invalid iterations: {value}. Must be a positive integer.',
+                tag=ErrorTag.CASE_INVALID_ITERATIONS_VALUE
+                )
+        self._iterations = value
+
+    @property
+    def warmup_iterations(self) -> int:
+        '''The number of warmup iterations to run before the benchmark.'''
+        return self._warmup_iterations
+
+    @warmup_iterations.setter
+    def warmup_iterations(self, value: int) -> None:
+        if not isinstance(value, int):
+            raise SimpleBenchTypeError(
+                f'Invalid warmup_iterations type: {type(value)}. Must be an integer.',
+                tag=ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_TYPE
+                )
+        if value < 0:
+            raise SimpleBenchValueError(
+                f'Invalid warmup_iterations: {value}. Must be a non-negative integer.',
+                tag=ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_VALUE
+            )
+        self._warmup_iterations = value
+
+    @property
+    def min_time(self) -> float:
+        '''The minimum time for the benchmark in seconds.'''
+        return self._min_time
+
+    @min_time.setter
+    def min_time(self, value: float) -> None:
+        if not isinstance(value, float):
+            raise SimpleBenchTypeError(
+                f'Invalid min_time type: {type(value)}. Must be a float.',
+                tag=ErrorTag.CASE_INVALID_MIN_TIME_TYPE
+                )
+        if value <= 0.0:
+            raise SimpleBenchValueError(
+                f'Invalid min_time: {value}. Must be a positive float.',
+                tag=ErrorTag.CASE_INVALID_MIN_TIME_VALUE
+                )
+        self._min_time = value
+
+    @property
+    def max_time(self) -> float:
+        '''The maximum time for the benchmark in seconds.'''
+        return self._max_time
+
+    @max_time.setter
+    def max_time(self, value: float) -> None:
+        if not isinstance(value, float):
+            raise SimpleBenchTypeError(
+                f'Invalid max_time type: {type(value)}. Must be a float.',
+                tag=ErrorTag.CASE_INVALID_MAX_TIME_TYPE
+                )
+        if value <= 0.0:
+            raise SimpleBenchValueError(
+                f'Invalid max_time: {value}. Must be a positive float.',
+                tag=ErrorTag.CASE_INVALID_MAX_TIME_VALUE
+                )
+        self._max_time = value
+
+    @property
+    def variation_cols(self) -> dict[str, str]:
+        '''Keyword arguments to be used for columns to denote kwarg variations.'''
+        return self._variation_cols if self._variation_cols is not None else {}
+
+    @variation_cols.setter
+    def variation_cols(self, value: dict[str, str]) -> None:
+        if not isinstance(value, dict):
+            raise SimpleBenchTypeError(
+                f'Invalid variation_cols: {value}. Must be a dictionary.',
+                tag=ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT
+                )
+        for key, vc_value in value.items():
+            if key not in self.kwargs_variations:
+                raise SimpleBenchValueError(
+                    f'Invalid variation_cols entry key: {key}. Key not found in kwargs_variations.',
+                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
+            if not isinstance(vc_value, str):
+                raise SimpleBenchTypeError(
+                    f'Invalid variation_cols entry value for entry "{key}": "{vc_value}". Values must be of type str.',
+                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING
+                    )
+            if vc_value.strip() == '':
+                raise SimpleBenchValueError(
+                    f'Invalid variation_cols entry value: "{vc_value}". Values cannot be blank strings.',
+                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK
+                    )
+        self._variation_cols = value
+
+    @property
+    def kwargs_variations(self) -> dict[str, list[Any]]:
+        '''Variations of keyword arguments for the benchmark.'''
+        return self._kwargs_variations if self._kwargs_variations is not None else {}
+
+    @kwargs_variations.setter
+    def kwargs_variations(self, value: dict[str, list[Any]]) -> None:
+        if not isinstance(value, dict):
+            raise SimpleBenchTypeError(
+                f'Invalid kwargs_variations: {value}. Must be a dictionary.',
                 tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT
                 )
-        for key, value in self.kwargs_variations.items():
+        for key, kw_value in value.items():
             if not isinstance(key, str):
                 raise SimpleBenchTypeError(
                     f'Invalid kwargs_variations entry key: {key}. Keys must be of type str.',
@@ -249,63 +399,147 @@ class Case(ICase):
                     f'Invalid kwargs_variations entry key: {key}. Keys must be valid Python identifiers.',
                     tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER
                     )
-            if not isinstance(value, list):
+            if not isinstance(kw_value, list):
                 raise SimpleBenchTypeError(
-                    f'Invalid kwargs_variations entry value for entry "{key}": {value}. Values must be in a list.',
+                    f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. Values must be in a list.',
                     tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST
                     )
-            if not value:
+            if not kw_value:
                 raise SimpleBenchValueError(
-                    f'Invalid kwargs_variations entry value for entry "{key}": {value}. Values cannot be empty lists.',
+                    (f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. '
+                     'Values cannot be empty lists.'),
                     tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST
                     )
-        if self.runner is not None and not isinstance(self.runner, SimpleRunner):
+        self._kwargs_variations = value
+
+    @property
+    def runner(self) -> Optional[SimpleRunner]:
+        '''A custom runner for the benchmark. If None, the default SimpleRunner is used.'''
+        return self._runner
+
+    @runner.setter
+    def runner(self, value: Optional[SimpleRunner]) -> None:
+        if value is not None and not isinstance(value, SimpleRunner):
             raise SimpleBenchTypeError(
-                f'Invalid runner: {self.runner}. Must be a subclass of SimpleRunner.',
+                f'Invalid runner: {value}. Must be a subclass of SimpleRunner.',
                 tag=ErrorTag.CASE_INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS
                 )
-        if not isinstance(self.variation_cols, dict):
-            raise SimpleBenchTypeError(
-                f'Invalid variation_cols: {self.variation_cols}. Must be a dictionary.',
-                tag=ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT
-                )
-        for key, value in self.variation_cols.items():
-            if key not in self.kwargs_variations:
+        self._runner = value
+
+    @property
+    def callback(self) -> Optional[ReporterCallback]:
+        '''A callback function for additional processing of a report.'''
+        return self._callback
+
+    @callback.setter
+    def callback(self, value: Optional[ReporterCallback]) -> None:
+
+        if value is not None:
+            if not callable(value):
                 raise SimpleBenchValueError(
-                    f'Invalid variation_cols entry key: {key}. Key not found in kwargs_variations.',
-                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
-            if not isinstance(value, str):
-                raise SimpleBenchTypeError(
-                    f'Invalid variation_cols entry value for entry "{key}": "{value}". Values must be of type str.',
-                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING
-                    )
-            if value.strip() == '':
-                raise SimpleBenchValueError(
-                    f'Invalid variation_cols entry value: "{value}". Values cannot be blank strings.',
-                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK
-                    )
-        if self.callback is not None:
-            if not callable(self.callback):
-                raise SimpleBenchValueError(
-                    f'Invalid callback: {self.callback}. Must be a callable or None.',
+                    f'Invalid callback: {value}. Must be a callable or None.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE)
-            callback_signature = inspect.signature(self.callback)
-            if len(callback_signature.parameters) != 4:
+            callback_signature = inspect.signature(value)
+            if 'case' not in callback_signature.parameters:
                 raise SimpleBenchTypeError(
-                    f'Invalid callback: {self.callback}. Must accept four parameters with the following types: '
-                    'Case, Section, Format, and a value of any type.',
+                    f'Invalid callback: {value}. Must accept a "case" parameter.',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_CASE_PARAMETER)
+            case_param = callback_signature.parameters.get('case')
+            if case_param is None or case_param.annotation is not Case:
+                raise SimpleBenchTypeError(
+                    f"Invalid callback: {value}. 'case' parameter must be of type Case.",
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_TYPE)
+            if case_param.kind is not inspect.Parameter.KEYWORD_ONLY:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. "case" parameter must be a keyword-only parameter.',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_NOT_KEYWORD_ONLY)
+            if 'section' not in callback_signature.parameters:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. Must accept a "section" parameter.',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_SECTION_PARAMETER)
+            section_param = callback_signature.parameters.get('section')
+            if section_param is None or section_param.annotation is not Section:
+                raise SimpleBenchTypeError(
+                    f"Invalid callback: {value}. 'section' parameter must be of type Section.",
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_TYPE)
+            if section_param.kind is not inspect.Parameter.KEYWORD_ONLY:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. "section" parameter must be a keyword-only parameter.',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY)
+            if 'output_format' not in callback_signature.parameters:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. Must accept an "output_format" parameter.',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_FORMAT_PARAMETER)
+            format_param = callback_signature.parameters.get('output_format')
+            if format_param is None or format_param.annotation is not Format:
+                raise SimpleBenchTypeError(
+                    f"Invalid callback: {value}. 'output_format' must be of type Format.",
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_TYPE)
+            if format_param.kind is not inspect.Parameter.KEYWORD_ONLY:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. "output_format" parameter must be a keyword-only parameter.',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_NOT_KEYWORD_ONLY)
+            if 'output' not in callback_signature.parameters:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. Must accept a "output" parameter (any type).',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_PARAMETER)
+            output_param = callback_signature.parameters.get('output')
+            if output_param is None or output_param.annotation is not Any:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. "output" parameter must have a type annotation of Any.',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_TYPE)
+            if output_param.kind is not inspect.Parameter.KEYWORD_ONLY:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. "output" parameter must be a keyword-only parameter.',
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_NOT_KEYWORD_ONLY)
+            params = list(callback_signature.parameters.values())
+            if len(params) != 4:
+                raise SimpleBenchTypeError(
+                    f'Invalid callback: {value}. Must accept exactly four parameters with the following types: '
+                    'Case, Section, Format, and a value of Any type.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
-        if not isinstance(self.options, list):
+        self._callback = value
+
+    @property
+    def results(self) -> list[Results]:
+        '''The benchmark list of Results for the case.'''
+        return self._results
+
+    @results.setter
+    def results(self, value: list[Results]) -> None:
+        self._results = value
+
+    @property
+    def options(self) -> list[ReporterOption]:
+        '''A list of additional options for the benchmark case.'''
+        return self._options if self._options is not None else []
+
+    @options.setter
+    def options(self, value: list[ReporterOption]) -> None:
+        if not isinstance(value, list):
             raise SimpleBenchTypeError(
-                f'Invalid options: {self.options}. Must be a list.',
+                f'Invalid options: {value}. Must be a list.',
                 tag=ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST
                 )
-        for option in self.options:
+        for option in value:
             if not isinstance(option, ReporterOption):
                 raise SimpleBenchTypeError(
                     f'Invalid option: {option}. Must be of type ReporterOption or a sub-class.',
                     tag=ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
                     )
+        self._options = value
+
+    def validate(self) -> None:
+        """Validate the benchmark case parameters.
+
+        Raises:
+            SimpleBenchValueError: If any of the parameters are invalid.
+            SimpleBenchTypeError: If any of the parameters are of the wrong type.
+        """
+        if self.min_time > self.max_time:
+            raise SimpleBenchValueError(
+                f'Invalid time range: min_time {self.min_time} > max_time {self.max_time}.',
+                tag=ErrorTag.CASE_INVALID_TIME_RANGE)
 
     @property
     def expanded_kwargs_variations(self) -> list[dict[str, Any]]:
@@ -430,8 +664,3 @@ class Case(ICase):
                 total += result.per_round_timings.mean
                 count += 1
         return total / count if count > 0 else 0.0
-
-    @property
-    def decorated(self) -> bool:
-        """Returns True if the Case was created via the @benchmark decorator."""
-        return self._decoration

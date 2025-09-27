@@ -17,6 +17,12 @@ DEFAULT_WARMUP_ITERATIONS: int = 10
 DEFAULT_TIMER = time.perf_counter_ns
 """Default timer function for benchmarking."""
 
+DEFAULT_MIN_TIME: float = 5.0
+"""Default minimum time for a benchmark run (in seconds)."""
+
+DEFAULT_MAX_TIME: float = 20.0
+"""Default maximum time for a benchmark run (in seconds)."""
+
 DEFAULT_INTERVAL_SCALE: float = 1e-9
 """Default scaling factor for time intervals (nanoseconds -> seconds)."""
 

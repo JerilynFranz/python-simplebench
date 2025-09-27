@@ -308,6 +308,42 @@ class ErrorTag(str, Enum):
     """The action function must accept two parameters: a 'bench' parameter and a '**kwargs' parameter."""
     CASE_INVALID_ACTION_PARAMETER_COUNT = "CASE_INVALID_ACTION_PARAMETER_COUNT"
     """The action function must accept exactly two parameters: a 'bench' parameter and a '**kwargs' parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_CASE_PARAMETER = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_CASE_PARAMETER")
+    """The callback function is missing the required 'case' parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_TYPE = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_TYPE")
+    """The callback function's 'case' parameter must be type Case."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_NOT_KEYWORD_ONLY = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_NOT_KEYWORD_ONLY")
+    """The callback function's 'case' parameter must be a keyword-only parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_SECTION_PARAMETER = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_SECTION_PARAMETER")
+    """The callback function is missing the required 'section' parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_TYPE = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_TYPE")
+    """The callback function's 'section' parameter must be type Section."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY")
+    """The callback function's 'section' parameter must be a keyword-only parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_FORMAT_PARAMETER = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_FORMAT_PARAMETER")
+    """The callback function is missing the required 'output_format' parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_TYPE = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_TYPE")
+    """The callback function's 'output_format' parameter must be type Format."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_NOT_KEYWORD_ONLY = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_NOT_KEYWORD_ONLY")
+    """The callback function's 'output_format' parameter must be a keyword-only parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_PARAMETER = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_PARAMETER")
+    """The callback function is missing the required 'output' parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_NOT_KEYWORD_ONLY = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_NOT_KEYWORD_ONLY")
+    """The callback function's 'output' parameter must be a keyword-only parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_TYPE = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_TYPE")
+    """The callback function's 'output' parameter must have a type annotation."""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"
