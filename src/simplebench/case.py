@@ -216,11 +216,6 @@ class Case(ICase):
                 tag=ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE
                 )
         action_signature = inspect.signature(self.action)
-        if len(action_signature.parameters) != 2:
-            raise SimpleBenchValueError(
-                f'Invalid action: {self.action}. Must accept exactly 2 parameters: bench and **kwargs.',
-                tag=ErrorTag.CASE_INVALID_ACTION_PARAMETER_COUNT
-            )
         if 'bench' not in action_signature.parameters:
             raise SimpleBenchTypeError(
                 f'Invalid action: {self.action}. Must accept a "bench" parameter.',
@@ -232,6 +227,12 @@ class Case(ICase):
                 f'Invalid action: {self.action}. Must accept "**kwargs" parameter.',
                 tag=ErrorTag.CASE_INVALID_ACTION_MISSING_KWARGS_PARAMETER
                 )
+        if len(action_signature.parameters) != 2:
+            raise SimpleBenchValueError(
+                f'Invalid action: {self.action}. Must accept exactly 2 parameters: bench and **kwargs.',
+                tag=ErrorTag.CASE_INVALID_ACTION_PARAMETER_COUNT
+            )
+       
         if not isinstance(self.kwargs_variations, dict):
             raise SimpleBenchTypeError(
                 f'Invalid kwargs_variations: {self.kwargs_variations}. Must be a dictionary.',
