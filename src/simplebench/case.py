@@ -6,15 +6,15 @@ import itertools
 from typing import Any, Optional, TYPE_CHECKING
 
 from .constants import DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME, DEFAULT_MAX_TIME
-from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
+from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchAttributeError, ErrorTag
 from .metaclasses import ICase
 from .protocols import ActionRunner, ReporterCallback
 from .reporters.reporter_option import ReporterOption
+from .results import Results
 from .runners import SimpleRunner
 from .enums import Section, Format
 
 if TYPE_CHECKING:
-    from .results import Results
     from .session import Session
     from .tasks import RichTask
 
@@ -98,7 +98,7 @@ class Case(ICase):
     __slots__ = ('_group', '_title', '_description', '_action',
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
                  '_variation_cols', '_kwargs_variations', '_runner',
-                 '_callback', '_results', '_options')
+                 '_callback', '_results', '_options', '_readonly')
 
     def __init__(self, *,
                  group: str,
@@ -166,6 +166,7 @@ class Case(ICase):
                 specific reporters. Reporters are responsible for extracting applicable ReporterOptions
                 from the list of options themselves. (default: [])
         """
+        self._readonly = False  # Allow setting parameters during initialization
         self.group = group
         self.title = title
         self.description = description
@@ -180,7 +181,7 @@ class Case(ICase):
         self.callback = callback
         self.results = []
         self.options = options if options is not None else []
-
+        self._readonly: bool = True
         self.validate()
 
     @property
@@ -190,6 +191,11 @@ class Case(ICase):
 
     @group.setter
     def group(self, value: str) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'group attribute is read-only.',
+                name='group', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_GROUP)
+
         if not isinstance(value, str):
             raise SimpleBenchTypeError(
                 f'Invalid group type: {type(value)}. Must be a string.',
@@ -209,6 +215,10 @@ class Case(ICase):
 
     @title.setter
     def title(self, value: str) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'title attribute is read-only.',
+                name='title', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_TITLE)
         if not isinstance(value, str):
             raise SimpleBenchTypeError(
                 f'Invalid title type: {type(value)}. Must be a string.',
@@ -228,6 +238,10 @@ class Case(ICase):
 
     @description.setter
     def description(self, value: str) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'description attribute is read-only.',
+                name='description', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_DESCRIPTION)
         if not isinstance(value, str):
             raise SimpleBenchTypeError(
                 f'Invalid description type: {type(value)}. Must be a string.',
@@ -247,6 +261,11 @@ class Case(ICase):
 
     @action.setter
     def action(self, value: ActionRunner) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'action attribute is read-only.',
+                name='action', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_ACTION
+            )
         if not callable(value):
             raise SimpleBenchTypeError(
                 f'Invalid action: {value}. Must be a callable.',
@@ -278,6 +297,11 @@ class Case(ICase):
 
     @iterations.setter
     def iterations(self, value: int) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'iterations attribute is read-only.',
+                name='iterations', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_ITERATIONS
+            )
         if not isinstance(value, int):
             raise SimpleBenchTypeError(
                 f'Invalid iterations type: {type(value)}. Must be an integer.',
@@ -297,6 +321,11 @@ class Case(ICase):
 
     @warmup_iterations.setter
     def warmup_iterations(self, value: int) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'warmup_iterations attribute is read-only.',
+                name='warmup_iterations', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_WARMUP_ITERATIONS
+            )
         if not isinstance(value, int):
             raise SimpleBenchTypeError(
                 f'Invalid warmup_iterations type: {type(value)}. Must be an integer.',
@@ -316,6 +345,11 @@ class Case(ICase):
 
     @min_time.setter
     def min_time(self, value: float) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'min_time attribute is read-only.',
+                name='min_time', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_MIN_TIME
+            )
         if not isinstance(value, float):
             raise SimpleBenchTypeError(
                 f'Invalid min_time type: {type(value)}. Must be a float.',
@@ -335,6 +369,11 @@ class Case(ICase):
 
     @max_time.setter
     def max_time(self, value: float) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'max_time attribute is read-only.',
+                name='max_time', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_MAX_TIME
+            )
         if not isinstance(value, float):
             raise SimpleBenchTypeError(
                 f'Invalid max_time type: {type(value)}. Must be a float.',
@@ -349,11 +388,27 @@ class Case(ICase):
 
     @property
     def variation_cols(self) -> dict[str, str]:
-        '''Keyword arguments to be used for columns to denote kwarg variations.'''
+        '''Keyword arguments to be used for columns to denote kwarg variations.
+
+        Note that all keys in variation_cols must be present in kwargs_variations and
+        updating it may require changes to both variation_cols and kwargs_variations_cols.
+
+        Updating variation_cols does not automatically update kwargs_variations, and vice versa.
+
+        Returns:
+            A dictionary mapping keyword argument names to column labels.
+
+        Each key is a keyword argument name, and the value is the column label to use for that argument.
+        '''
         return self._variation_cols if self._variation_cols is not None else {}
 
     @variation_cols.setter
     def variation_cols(self, value: dict[str, str]) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'variation_cols attribute is read-only.',
+                name='variation_cols', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_VARIATION_COLS
+            )
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid variation_cols: {value}. Must be a dictionary.',
@@ -383,6 +438,11 @@ class Case(ICase):
 
     @kwargs_variations.setter
     def kwargs_variations(self, value: dict[str, list[Any]]) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'kwargs_variations attribute is read-only.',
+                name='kwargs_variations', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_KWARGS_VARIATIONS
+            )
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid kwargs_variations: {value}. Must be a dictionary.',
@@ -419,6 +479,11 @@ class Case(ICase):
 
     @runner.setter
     def runner(self, value: Optional[SimpleRunner]) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'runner attribute is read-only.',
+                name='runner', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_RUNNER
+            )
         if value is not None and not isinstance(value, SimpleRunner):
             raise SimpleBenchTypeError(
                 f'Invalid runner: {value}. Must be a subclass of SimpleRunner.',
@@ -433,6 +498,11 @@ class Case(ICase):
 
     @callback.setter
     def callback(self, value: Optional[ReporterCallback]) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'callback attribute is read-only.',
+                name='callback', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_CALLBACK
+            )
 
         if value is not None:
             if not callable(value):
@@ -507,6 +577,22 @@ class Case(ICase):
 
     @results.setter
     def results(self, value: list[Results]) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'results attribute is read-only.',
+                name='results', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_RESULTS
+            )
+        if not isinstance(value, list):
+            raise SimpleBenchTypeError(
+                f'Invalid results: {value}. Must be a list.',
+                tag=ErrorTag.CASE_INVALID_RESULTS_NOT_LIST
+                )
+        for result in value:
+            if not isinstance(result, Results):
+                raise SimpleBenchTypeError(
+                    f'Invalid result: {result}. Must be of type Results or a sub-class.',
+                    tag=ErrorTag.CASE_INVALID_RESULTS_ENTRY_NOT_RESULTS_INSTANCE
+                    )
         self._results = value
 
     @property
@@ -516,6 +602,11 @@ class Case(ICase):
 
     @options.setter
     def options(self, value: list[ReporterOption]) -> None:
+        if self._readonly:
+            raise SimpleBenchAttributeError(
+                'options attribute is read-only.',
+                name='options', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_OPTIONS
+            )
         if not isinstance(value, list):
             raise SimpleBenchTypeError(
                 f'Invalid options: {value}. Must be a list.',
@@ -578,12 +669,11 @@ class Case(ICase):
                     total=len(all_variations))
         if task:
             task.reset()
-        collected_results: list[Results] = []
         kwargs: dict[str, Any]
         for variations_counter, kwargs in enumerate(all_variations):
             bench: SimpleRunner = SimpleRunner(case=self, session=session, kwargs=kwargs)
             results: Results = self.action(bench, **kwargs)
-            collected_results.append(results)
+            self.results.append(results)
             if task:
                 task.update(
                         description=(f'[cyan] Running case {self.title} '
@@ -592,7 +682,6 @@ class Case(ICase):
                         refresh=True)
         if task:
             task.stop()
-        self.results = collected_results
 
     def as_dict(self, full_data: bool = False) -> dict[str, Any]:
         """Returns the benchmark case and results as a JSON serializable dict.
