@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 
 from simplebench import Case, SimpleRunner, Results, Session, Verbosity
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchAttributeError, ErrorTag
 from simplebench.protocols import ActionRunner, ReporterCallback
 from simplebench.reporters.reporter_option import ReporterOption
 
@@ -120,7 +120,7 @@ class CaseKWArgs(dict):
         for key in (
                 'group', 'title', 'description', 'action', 'iterations', 'warmup_iterations',
                 'min_time', 'max_time', 'variation_cols', 'kwargs_variations', 'runner',
-                'callback', 'results', 'options', '_decoration'):
+                'callback', 'results', 'options'):
             value = locals()[key]
             if not isinstance(value, NoDefaultValue):
                 kwargs[key] = value
@@ -586,3 +586,12 @@ def postrun_benchmark_case() -> Case:
 def test_case_init(testspec: TestAction) -> None:
     """Test the initialization of the Case class."""
     testspec.run()
+
+
+def test_attributes() -> None:
+    """Test the attributes of a Case instance after running a benchmark."""
+    case = postrun_benchmark_case()
+    with pytest.raises(SimpleBenchAttributeError) as exc_info:
+        case.group = 'new_group'  # Should raise SimpleBenchAttributeError
+
+    assert exc_info.value.tag_code == ErrorTag.CASE_MODIFY_READONLY_GROUP

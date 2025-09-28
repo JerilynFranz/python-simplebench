@@ -2,6 +2,7 @@
 """Custom exceptions for the simplebench package."""
 import argparse
 from enum import Enum
+from sys import version_info
 from typing import Any, Generic, TypeVar
 
 
@@ -344,6 +345,40 @@ class ErrorTag(str, Enum):
     CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_TYPE = (
         "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_TYPE")
     """The callback function's 'output' parameter must have a type annotation."""
+    CASE_MODIFY_READONLY_GROUP = "CASE_MODIFY_READONLY_GROUP"
+    """The group attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_TITLE = "CASE_MODIFY_READONLY_TITLE"
+    """The title attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_DESCRIPTION = "CASE_MODIFY_READONLY_DESCRIPTION"
+    """The description attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_NAME = "CASE_MODIFY_READONLY_NAME"
+    """The name attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_RUNNER = "CASE_MODIFY_READONLY_RUNNER"
+    """The runner attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_ACTION = "CASE_MODIFY_READONLY_ACTION"
+    """The action attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_ITERATIONS = "CASE_MODIFY_READONLY_ITERATIONS"
+    """The iterations attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_WARMUP_ITERATIONS = "CASE_MODIFY_READONLY_WARMUP_ITERATIONS"
+    """The warmup_iterations attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_MIN_TIME = "CASE_MODIFY_READONLY_MIN_TIME"
+    """The min_time attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_MAX_TIME = "CASE_MODIFY_READONLY_MAX_TIME"
+    """The max_time attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_VARIATION_COLS = "CASE_MODIFY_READONLY_VARIATION_COLS"
+    """The variation_cols attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_KWARGS_VARIATIONS = "CASE_MODIFY_READONLY_KWARGS_VARIATIONS"
+    """The kwargs_variations attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_OPTIONS = "CASE_MODIFY_READONLY_OPTIONS"
+    """The options attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_CALLBACK = "CASE_MODIFY_READONLY_CALLBACK"
+    """The callback attribute is read-only and cannot be modified."""
+    CASE_MODIFY_READONLY_RESULTS = "CASE_MODIFY_READONLY_RESULTS"
+    """The results attribute is read-only and cannot be modified."""
+    CASE_INVALID_RESULTS_NOT_LIST = "CASE_INVALID_RESULTS_NOT_LIST"
+    """Something other than a list was assigned to the results attribute"""
+    CASE_INVALID_RESULTS_ENTRY_NOT_RESULTS_INSTANCE = "CASE_INVALID_RESULTS_ENTRY_NOT_RESULTS_INSTANCE"
+    """Something other than a Results instance was found in the list assigned to the results attribute"""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"
@@ -899,6 +934,30 @@ class SimpleBenchNotImplementedError(TaggedException[NotImplementedError]):
         msg (str, positional): The error message.
         tag (ErrorTag): The tag code.
     """
+
+
+class SimpleBenchAttributeError(TaggedException[AttributeError]):
+    """Base class for all SimpleBench attribute errors.
+
+    It differs from a standard AttributeError by the addition of a
+    tag code used to very specifically identify where the error
+    was thrown in the code for testing and development support.
+
+    This tag code does not have a direct semantic meaning except to identify
+    the specific code throwing the exception for tests.
+
+    Usage:
+        raise SimpleBenchAttributeError("An error occurred", tag=MyErrorTags.SOME_ERROR)
+
+    Args:
+        msg (str, positional): The error message.
+        name (str | None): The attribute name.
+        obj (object): The object the attribute was not found on.
+        tag (ErrorTag): The tag code.
+    """
+    if version_info >= (3, 10):
+        def __init__(self, *args: object, name: str | None = None, obj: object = ..., tag: ErrorTag) -> None:
+            super().__init__(*args, name, obj, tag=tag)
 
 
 class SimpleBenchArgumentError(TaggedException[argparse.ArgumentError]):

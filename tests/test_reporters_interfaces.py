@@ -2,7 +2,7 @@
 from __future__ import annotations
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Any, Callable, Optional, Sequence
+from typing import Any, Optional, Sequence
 
 import pytest
 
@@ -10,6 +10,7 @@ from simplebench.case import Case
 from simplebench.enums import Section, Target, Format
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
 from simplebench.iteration import Iteration
+from simplebench.protocols import ReporterCallback
 from simplebench.reporters.choices import Choice, Choices
 from simplebench.reporters.interfaces import Reporter
 from simplebench.results import Results
@@ -23,9 +24,10 @@ def mock_path() -> Path:
     return Path('/tmp/mock_report.txt')  # pragma: no cover (path not actually used)
 
 
-def mock_callback(case: Case, section: Section, fmt: Format, data: Any) -> None:  # pylint: disable=unused-argument
+def mock_callback(
+        *, case: Case, section: Section, output_format: Format, output: Any) -> None:  # pylint: disable=unused-argument
     """A mock callback function for testing purposes."""
-    return None
+    return None  # pragma: no cover
 
 
 class MockChoice(Choice):
@@ -113,7 +115,7 @@ class MockReporterInit(Reporter):
                    choice: Choice,
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
-                   callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
+                   callback: Optional[ReporterCallback] = None) -> None:
         return None  # pragma: no cover (not actually used)
 
 
@@ -149,7 +151,7 @@ class MockReporter(MockReporterInit):
                    choice: Choice,
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
-                   callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
+                   callback: Optional[ReporterCallback] = None) -> None:
         return None
 
 
@@ -185,7 +187,7 @@ class BadSuperMockReporter(Reporter):
                    choice: Choice,
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
-                   callback: Optional[Callable[[Case, Section, Format, Any], None]] = None) -> None:
+                   callback: Optional[ReporterCallback] = None) -> None:
         """Incorrectly calls super().run_report(), which should raise NotImplementedError."""
         return super().run_report(case=case,
                                   choice=choice,
