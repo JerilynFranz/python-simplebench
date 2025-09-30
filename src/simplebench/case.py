@@ -111,7 +111,7 @@ class Case(ICase):
                  max_time: float = DEFAULT_MAX_TIME,
                  variation_cols: Optional[dict[str, str]] = None,
                  kwargs_variations: Optional[dict[str, list[Any]]] = None,
-                 runner: Optional[SimpleRunner] = None,
+                 runner: Optional[type[SimpleRunner]] = None,
                  callback: Optional[ReporterCallback] = None,
                  options: Optional[list[ReporterOption]] = None) -> None:
         """Constructor for Case.
@@ -138,9 +138,9 @@ class Case(ICase):
                 Variations of keyword arguments for the benchmark.
                 Each key is a keyword argument name, and the value is a list of possible values.
                 (default: None)
-            runner (Optional[SimpleRunner]): A custom runner for the benchmark.
+            runner (Optional[type[SimpleRunner]]): A custom runner class for the benchmark.
                 If None, the default SimpleRunner is used. (default: None)
-                The custom runner must be a subclass of SimpleRunner and must have a method
+                The custom runner class must be a subclass of SimpleRunner and must have a method
                 named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
                 The action function will be called with a `bench` parameter that is an instance of the
                 custom runner.
@@ -166,7 +166,7 @@ class Case(ICase):
                 specific reporters. Reporters are responsible for extracting applicable ReporterOptions
                 from the list of options themselves. (default: [])
         """
-        self._readonly = False  # Allow setting parameters during initialization
+        self._readonly: bool = False  # Allow setting parameters during initialization
         self.group = group
         self.title = title
         self.description = description
@@ -179,10 +179,10 @@ class Case(ICase):
         self.variation_cols = variation_cols if variation_cols is not None else {}
         self.runner = runner
         self.callback = callback
-        self.results = []
         self.options = options if options is not None else []
+        self._results: list[Results] = []  # No setter validation needed here
         self._readonly = True
-        self.validate()
+        self.validate_time_range()
 
     @property
     def group(self) -> str:
@@ -512,18 +512,18 @@ class Case(ICase):
         self._kwargs_variations = value
 
     @property
-    def runner(self) -> Optional[SimpleRunner]:
+    def runner(self) -> Optional[type[SimpleRunner]]:
         '''A custom runner for the benchmark. If None, the default SimpleRunner is used.'''
         return self._runner
 
     @runner.setter
-    def runner(self, value: Optional[SimpleRunner]) -> None:
+    def runner(self, value: Optional[type[SimpleRunner]]) -> None:
         if self._readonly:
             raise SimpleBenchAttributeError(
                 'runner attribute is read-only.',
                 name='runner', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_RUNNER
             )
-        if value is not None and not isinstance(value, SimpleRunner):
+        if value is not None and not issubclass(value, SimpleRunner):
             raise SimpleBenchTypeError(
                 f'Invalid runner: {value}. Must be a subclass of SimpleRunner.',
                 tag=ErrorTag.CASE_INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS
@@ -648,26 +648,6 @@ class Case(ICase):
         '''The benchmark list of Results for the case.'''
         return self._results
 
-    @results.setter
-    def results(self, value: list[Results]) -> None:
-        if self._readonly:
-            raise SimpleBenchAttributeError(
-                'results attribute is read-only.',
-                name='results', obj=self, tag=ErrorTag.CASE_MODIFY_READONLY_RESULTS
-            )
-        if not isinstance(value, list):
-            raise SimpleBenchTypeError(
-                f'Invalid results: {value}. Must be a list.',
-                tag=ErrorTag.CASE_INVALID_RESULTS_NOT_LIST
-                )
-        for result in value:
-            if not isinstance(result, Results):
-                raise SimpleBenchTypeError(
-                    f'Invalid result: {result}. Must be of type Results or a sub-class.',
-                    tag=ErrorTag.CASE_INVALID_RESULTS_ENTRY_NOT_RESULTS_INSTANCE
-                    )
-        self._results = value
-
     @property
     def options(self) -> list[ReporterOption]:
         '''A list of additional options for the benchmark case.'''
@@ -693,8 +673,8 @@ class Case(ICase):
                     )
         self._options = value
 
-    def validate(self) -> None:
-        """Validate the benchmark case parameters.
+    def validate_time_range(self) -> None:
+        """Validate that min_time < max_time for the case.
 
         Raises:
             SimpleBenchValueError: If any of the parameters are invalid.

@@ -48,7 +48,7 @@ class CaseKWArgs(dict):
             max_time: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             variation_cols: dict[str, str] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             kwargs_variations: dict[str, list[Any]] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument  # noqa: E501
-            runner: SimpleRunner | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
+            runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             results: list[Results] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             options: list[ReporterOption] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
@@ -544,7 +544,7 @@ def good_callback(  # pylint: disable=unused-argument
         name="Invalid (not a SimpleRunner subclass) type for runner option",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          runner=BadRunner()),  # type: ignore[arg-type]  # Invalid: Not a SimpleRunner subclass
+                          runner=BadRunner),  # type: ignore[arg-type]  # Invalid: Not a SimpleRunner subclass
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.CASE_INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS)),
     idspec("INIT_027", TestAction(
@@ -799,6 +799,25 @@ def good_callback(  # pylint: disable=unused-argument
                           callback=broken_callback_output_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_NOT_KEYWORD_ONLY)),
+    idspec("INIT_062", TestAction(
+        name="results attribute is initialized to empty list",
+        action=Case,
+        kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase),
+        validate_result=lambda obj: obj.results == [],
+        assertion=Assert.ISINSTANCE,
+        expected=Case
+    )),
+    idspec("INIT_063", TestAction(
+        name="runner attribute is initialized to None when not provided",
+        action=Case,
+        kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase),
+        validate_result=lambda obj: obj.runner is None)),
+    idspec("INIT_064", TestAction(
+        name="runner attribute is initialized to SimpleRunner class when provided",
+        action=Case,
+        kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
+                          runner=SimpleRunner),
+        validate_result=lambda obj: issubclass(obj.runner, SimpleRunner))),
 ])
 def test_case_init(testspec: TestAction) -> None:
     """Test the initialization of the Case class."""
@@ -808,100 +827,72 @@ def test_case_init(testspec: TestAction) -> None:
 @pytest.mark.parametrize("testspec", [
     idspec("ATTR_001", TestSet(
         name="Test setting read-only attribute 'group'",
-        attribute='group',
-        value='new_group',
-        obj=base_case(),
+        attribute='group', value='new_group', obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_GROUP)),
     idspec("ATTR_002", TestSet(
         name="Test setting read-only attribute 'title'",
-        attribute='title',
-        value='new_title',
-        obj=base_case(),
+        attribute='title', value='new_title', obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_TITLE)),
     idspec("ATTR_003", TestSet(
         name="Test setting read-only attribute 'description'",
-        attribute='description',
-        value='new_description',
-        obj=base_case(),
+        attribute='description', value='new_description', obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_DESCRIPTION)),
     idspec("ATTR_004", TestSet(
         name="Test setting read-only attribute 'action'",
-        attribute='action',
-        value=benchcase,
-        obj=base_case(),
+        attribute='action', value=benchcase, obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_ACTION)),
     idspec("ATTR_005", TestSet(
         name="Test setting read-only attribute 'iterations'",
-        attribute='iterations',
-        value=50,
-        obj=base_case(),
+        attribute='iterations', value=50, obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_ITERATIONS)),
     idspec("ATTR_006", TestSet(
         name="Test read-only attribute 'warmup_iterations'",
-        attribute='warmup_iterations',
-        value=20,
-        obj=base_case(),
+        attribute='warmup_iterations', value=20, obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_WARMUP_ITERATIONS)),
     idspec("ATTR_007", TestSet(
         name="Test setting read-only attribute 'min_time'",
-        attribute='min_time',
-        value=1.0,
-        obj=base_case(),
+        attribute='min_time', value=1.0, obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_MIN_TIME)),
     idspec("ATTR_008", TestSet(
         name="Test setting read-only attribute 'max_time'",
-        attribute='max_time',
-        value=10.0,
-        obj=base_case(),
+        attribute='max_time', value=10.0, obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_MAX_TIME)),
     idspec("ATTR_009", TestSet(
         name="Test setting read-only attribute 'variation_cols'",
-        attribute='variation_cols',
-        value={'param1': 'Param 1'},
-        obj=base_case(),
+        attribute='variation_cols', value={'param1': 'Param 1'}, obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_VARIATION_COLS)),
     idspec("ATTR_010", TestSet(
         name="Test read-only attribute 'kwargs_variations'",
-        attribute='kwargs_variations',
-        value={'param1': [1, 2, 3]},
-        obj=base_case(),
+        attribute='kwargs_variations', value={'param1': [1, 2, 3]}, obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_KWARGS_VARIATIONS)),
     idspec("ATTR_011", TestSet(
         name="Test read-only attribute 'runner'",
-        attribute='runner',
-        value=SimpleRunner(case=base_case(), kwargs={}),
-        obj=base_case(),
+        attribute='runner', value=SimpleRunner, obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_RUNNER)),
     idspec("ATTR_012", TestSet(
         name="Test setting read-only attribute 'callback'",
-        attribute='callback',
-        value=lambda case, section, fmt, output: None,
-        obj=base_case(),
+        obj=base_case, attribute='callback', value=lambda case, section, fmt, output: None,
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_CALLBACK)),
     idspec("ATTR_013", TestSet(
         name="Test setting read-only attribute 'results'",
-        attribute='results',
-        value=[Results(group='new_group', title='new_title', description='new_description', n=1)],
+        attribute='results', value=[Results(group='new_group', title='new_title', description='new_description', n=1)],
         obj=postrun_benchmark_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_RESULTS)),
+        exception=AttributeError)),
     idspec("ATTR_014", TestSet(
         name="Test setting read-only attribute 'options'",
-        attribute='options',
-        value=[],
-        obj=base_case(),
+        attribute='options', value=[], obj=base_case(),
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_OPTIONS)),
 ])
@@ -913,73 +904,59 @@ def test_setting_read_only_attributes(testspec: TestSpec) -> None:
 @pytest.mark.parametrize("testspec", [
     idspec("GET_001", TestGet(
         name="Test getting attribute 'group'",
-        attribute='group',
-        obj=base_case(),
+        attribute='group', obj=base_case(),
         expected=base_casekwargs().get('group'))),
     idspec("GET_002", TestGet(
         name="Test getting attribute 'title'",
-        attribute='title',
-        obj=base_case(),
+        attribute='title', obj=base_case(),
         expected=base_casekwargs().get('title'))),
     idspec("GET_003", TestGet(
         name="Test getting attribute 'description'",
-        attribute='description',
-        obj=base_case(),
+        attribute='description', obj=base_case(),
         expected=base_casekwargs().get('description'))),
     idspec("GET_004", TestGet(
         name="Test getting attribute 'action'",
-        attribute='action',
-        obj=base_case(),
+        attribute='action', obj=base_case(),
         expected=base_casekwargs().get('action'))),
     idspec("GET_005", TestGet(
         name="Test getting attribute 'iterations'",
-        attribute='iterations',
-        obj=base_case(),
+        attribute='iterations', obj=base_case(),
         expected=base_casekwargs().get('iterations'))),
     idspec("GET_006", TestGet(
         name="Test getting attribute 'warmup_iterations'",
-        attribute='warmup_iterations',
-        obj=base_case(),
+        attribute='warmup_iterations', obj=base_case(),
         expected=base_casekwargs().get('warmup_iterations'))),
     idspec("GET_007", TestGet(
         name="Test getting attribute 'min_time'",
-        attribute='min_time',
-        obj=base_case(),
+        attribute='min_time', obj=base_case(),
         expected=base_casekwargs().get('min_time'))),
     idspec("GET_008", TestGet(
         name="Test getting attribute 'max_time'",
-        attribute='max_time',
-        obj=base_case(),
+        attribute='max_time', obj=base_case(),
         expected=base_casekwargs().get('max_time'))),
     idspec("GET_009", TestGet(
         name="Test getting attribute 'variation_cols'",
-        attribute='variation_cols',
-        obj=base_case(),
+        attribute='variation_cols', obj=base_case(),
         expected=base_casekwargs().get('variation_cols'))),
     idspec("GET_010", TestGet(
         name="Test getting attribute 'kwargs_variations'",
-        attribute='kwargs_variations',
-        obj=base_case(),
+        attribute='kwargs_variations', obj=base_case(),
         expected=base_casekwargs().get('kwargs_variations'))),
     idspec("GET_011", TestGet(
         name="Test getting attribute 'runner'",
-        attribute='runner',
-        obj=base_case(),
+        attribute='runner', obj=base_case(),
         expected=base_casekwargs().get('runner'))),
     idspec("GET_012", TestGet(
         name="Test getting attribute 'callback'",
-        attribute='callback',
-        obj=base_case(),
+        attribute='callback', obj=base_case(),
         expected=base_casekwargs().get('callback'))),
     idspec("GET_013", TestGet(
         name="Test getting attribute 'results'",
-        attribute='results',
-        obj=postrun_benchmark_case(),
+        attribute='results', obj=postrun_benchmark_case(),
         expected=postrun_benchmark_case().results)),
     idspec("GET_014", TestGet(
         name="Test getting attribute 'options'",
-        attribute='options',
-        obj=base_case(),
+        attribute='options', obj=base_case(),
         expected=base_casekwargs().get('options'))),
 ])
 def test_getting_attributes(testspec: TestSpec) -> None:
