@@ -1,5 +1,6 @@
 """TestSpec testing framework."""
 from __future__ import annotations
+from abc import abstractmethod, ABC
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
@@ -61,7 +62,7 @@ def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
     raise NotImplementedError("No action assigned for this test.")
 
 
-def idspec(id_base: str, testspec: TestAction | TestSetGet) -> Any:
+def idspec(id_base: str, testspec: TestSpec) -> Any:
     """Helper function to create a test case with a specific pytest id directly from a TestAction or TestProperty.
 
     This function generates a pytest parameter with a custom id based on the provided base
@@ -73,17 +74,18 @@ def idspec(id_base: str, testspec: TestAction | TestSetGet) -> Any:
 
     Args:
         id_base (str): The base string to use for the test case id.
-        testspec (TestAction | TestProperty): The TestAction or TestProperty instance containing the test configuration.
+        testspec (TestSpec): The TestSpec instance containing the test configuration.
+            TestSet, TestGet, TestSetGet, and TestAction are all subclasses of TestSpec.
     Returns:
         A pytest parameter with a custom id.
     Raises:
-        TypeError: If testspec is not an instance of TestAction or TestProperty or id_base is not a str.
+        TypeError: If testspec is not an instance of TestSpec or id_base is not a str.
     """
-    if not isinstance(testspec, (TestAction, TestSetGet)):
-        raise TypeError("testspec must be an instance of TestAction or TestProperty")
+    if not isinstance(testspec, (TestSpec)):
+        raise TypeError("testspec must be an instance of TestSpec")
     if not isinstance(id_base, str):
         raise TypeError("id_base must be a str")
-    return pytest.param(testspec, id=f"{id_base} {testspec.name}")
+    return pytest.param(testspec, id=f"{id_base} {testspec.name}")  # type: ignore[attr-defined]
 
 
 E = TypeVar('E', bound=Exception)
@@ -146,10 +148,11 @@ class TaggedException(Exception, Generic[E]):
         super().__init__(*args, **kwargs)
 
 
-class TestSpec():
+class TestSpec(ABC):
     """Base class for test specifications."""
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
+    @abstractmethod
     def run(self) -> None:
         """Run the test based on the provided TestSpec entry.
 
@@ -231,7 +234,7 @@ class TestSetGet(TestSpec):
     """Expected tag (if any) to be found in an exception message raised by getting the attribute."""
     validate: Optional[Callable[[TestSetGet, Any], None | NoReturn]] = None
     """Function to validate obj state after setting the attribute. It should raise an exception
-    if the object state is invalid.
+    if the object state is unexpected.
 
     This is distinguished from the expected value check in that it can perform more complex validation
     of the entire object state rather than just checking the value of a single attribute.
@@ -338,7 +341,7 @@ class TestSetGet(TestSpec):
                 errors.append(f"obj has no attribute {attribute_to_get}")
             else:
                 if self.validate is not None:
-                    self.validate(self, self.obj)  # Exception should be raised by validate if invalid obj state
+                    self.validate(self, self.obj)  # Exception should be raised by validate if unexpected obj state
 
                 if self.expected is NO_EXPECTED_VALUE:
                     return
@@ -582,6 +585,375 @@ class TestAction(TestSpec):
                         )
         if errors:
             self.on_fail(test_description + ": " + "\n".join(errors))
+
+
+@dataclass
+class TestSet(TestSpec):
+    """A class for testing setting attributes.
+
+    This class allows for testing the setting of attributes on an object. It does not
+    perform any validation of the set value, but it can check for expected exceptions
+    during the set operation and can call a custom validation function after setting
+    the attribute.
+
+    Args:
+        name (str):
+            Identifying name for the test.
+        obj (Optional[object], default=NO_OBJ_ASSIGNED):
+            The object whose attribute is to be tested. If not provided, the special sentinel value
+            NO_OBJ_ASSIGNED is used. The object must not be None and must be an instance of object.
+            It must be provided to run the test.
+        attribute (str):
+            The name of the attribute to be tested by setting.
+        value (Any):
+            Value to set the attribute to.
+        exception (Optional[type[Exception]], default=None):
+            Expected exception type (if any) to be raised by setting the attribute.
+        exception_tag (Optional[str | Enum], default=None):
+            Expected tag (if any) to be found in the exception message.
+        validate (Optional[Callable[[TestSet, Any], bool]], default=None):
+            Function to validate obj after setting the attribute. It should return True if the object state is valid.
+
+            This provides a way to perform post-set validation of the entire object state.
+
+            It is passed two arguments, the TestSet instance and the object being validated.
+        on_fail (Callable[[str], NoReturn], default=pytest.fail):
+            Function to call on test failure to raise an exception
+    """
+    __test__ = False  # Prevent pytest from trying to collect this class as a test case
+
+    name: str
+    """Identifying name for the test."""
+    attribute: str
+    """The name of the attribute to be tested by setting."""
+    value: Any
+    """Value to set the attribute to."""
+    obj: Optional[object] = NO_OBJ_ASSIGNED
+    """The object whose attribute is to be tested.
+
+    It cannot be None, and must be an instance of object. If not provided during construction,
+    the special sentinel value NO_OBJ_ASSIGNED is used. This must be replaced with a valid object
+    before running the test."""
+    exception: Optional[type[Exception]] = None
+    """Expected exception type (if any) to be raised by setting the attribute."""
+    exception_tag: Optional[str | Enum] = None
+    """Expected tag (if any) to be found in an exception message raised by setting the attribute."""
+    validate: Optional[Callable[[TestSet, Any], None | NoReturn]] = None
+    """Function to validate obj state after setting the attribute. It should raise an exception
+    if the object state is unexpected.
+
+    It is passed two arguments, the TestSet instance and the object being validated.
+
+    The validation function should call the `on_fail` method to raise an exception if the object is not
+    in an expected state. None should be returned if the object state is as expected.
+    """
+    on_fail: Callable[[str], NoReturn] = pytest.fail
+    """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
+
+    def __post_init__(self) -> None:
+        """Post-initialization validation checks."""
+        if not isinstance(self.name, str):
+            raise TypeError("name must be a str")
+        if not isinstance(self.attribute, str):
+            raise TypeError("attribute must be a str")
+        if self.obj is None:
+            raise TypeError("obj cannot be None")
+        if not isinstance(self.obj, object):
+            raise TypeError("obj must be an object")
+        if self.attribute == "":
+            raise ValueError("attribute cannot be an empty string")
+        if self.validate is not None and not callable(self.validate):
+            raise TypeError("validate must be callable if provided")
+        if self.exception is not None and not issubclass(self.exception, Exception):
+            raise TypeError("exception must be an Exception type if provided")
+        if self.exception_tag is not None and not isinstance(self.exception_tag, (str, Enum)):
+            raise TypeError("exception_tag must be a str or Enum if provided")
+        if not callable(self.on_fail):
+            raise TypeError("on_fail must be callable")
+
+    def run(self) -> None:
+        """Execute the attribute set test.
+
+        A failure during the set operation is defined as:
+        - An unexpected exception is raised during the set operation.
+        - An expected exception is not raised during the set operation.
+        - An expected exception is raised, but the exception type does not match the expected type.
+        - An expected exception is raised, but the exception tag does not match the expected tag.
+        - The validate function raises an exception indicating the object is not in a valid state.
+
+        Raises:
+            pytest Fail: If the test fails.
+            RuntimeError: If the obj attribute is not assigned to a valid object.
+            RuntimeError: If the test fails and the on_fail function does not raise an exception.
+        """
+        # disabled because we are using the __setattr__ dunder method directly
+        # for testing purposes because there is no other way to set testing for
+        # attributes generically.
+        # pylint: disable=unnecessary-dunder-call
+
+        # hide traceback for this function in pytest output. Disabled for pylint because it is a pytest
+        # feature that is just not understood by pylint.
+        __tracebackhide__ = True  # pylint: disable=unused-variable
+
+        # Errors found during the test
+        errors: list[str] = []
+
+        if self.obj is NO_OBJ_ASSIGNED:
+            self.on_fail(f"{self.name}: obj for test is not assigned")
+            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
+        # Set the attribute and check for exceptions as appropriate
+        try:
+            if not hasattr(self.obj, self.attribute):
+                errors.append(f"obj has no attribute {self.attribute}")
+            else:
+                self.obj.__setattr__(self.attribute, self.value)
+                if self.exception is not None:
+                    errors.append("set operation returned instead of raising an expected exception")
+
+        except Exception as err:  # pylint: disable=broad-exception-caught
+            if self.exception is None:
+                errors.append(f'Unexpected Exception raised while setting attribute {self.attribute}: {repr(err)}')
+            elif not isinstance(err, self.exception):
+                errors.append(f'Unexpected exception type: expected={self.exception}, '
+                              f'found = {type(err)}: {repr(err)}')
+            elif self.exception_tag:
+                # Case 1: The expected tag is an Enum member.
+                # This requires the exception object to have a 'tag_code' attribute.
+                if isinstance(self.exception_tag, Enum):
+                    if not hasattr(err, 'tag_code'):
+                        errors.append(
+                            f"Exception {type(err)} is missing the 'tag_code' attribute "
+                            "required for Enum tag validation.")
+                    else:
+                        actual_tag = getattr(err, 'tag_code')
+                        if actual_tag != self.exception_tag:
+                            errors.append(f"Unexpected exception tag: expected={self.exception_tag}, "
+                                          f"found={actual_tag}")
+                # Case 2: The expected tag is a string.
+                # This performs a substring search in the exception's string representation.
+                else:
+                    if str(self.exception_tag) not in str(err):
+                        errors.append(
+                            f"Correct exception type, but tag '{self.exception_tag}' "
+                            f"not found in exception message: {repr(err)}"
+                        )
+        # bail now if there was an error during the set operation
+        if errors:
+            self.on_fail(self.name + ": " + "\n".join(errors))
+            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
+
+        # If there is no validate function, we can't do any validation on the set value, so just return.
+        # This amounts to a minimal test of just setting the attribute it causes a specified exception or
+        # not causing an exception.
+        if self.validate is None:
+            return
+
+        # Perform post-set validations if requested. This is skipped if there was an exception
+        # already raised during the set operation.
+        try:
+            self.validate(self, self.obj)  # Exception should be raised by validate if unexpected obj state
+
+        except Exception as err:  # pylint: disable=broad-exception-caught
+            if self.exception is None:
+                errors.append(f'Unexpected Exception raised while validating attribute value: {repr(err)}')
+            elif not isinstance(err, self.exception):
+                errors.append(
+                    f'Unexpected exception type while validating attribute value: '
+                    f'expected={self.exception}, found = {type(err)}: {repr(err)}')
+            elif self.exception_tag:
+                # Case 1: The expected tag is an Enum member.
+                # This requires the exception object to have a 'tag_code' attribute.
+                if isinstance(self.exception_tag, Enum):
+                    if not hasattr(err, 'tag_code'):
+                        errors.append(
+                            f"Exception {type(err)} is missing the 'tag_code' attribute "
+                            "required for Enum tag validation.")
+                    else:
+                        actual_tag = getattr(err, 'tag_code')
+                        if actual_tag != self.exception_tag:
+                            errors.append(f"Unexpected exception tag: expected={self.exception_tag}, "
+                                          f"found={actual_tag}")
+                # Case 2: The expected tag is a string.
+                # This performs a substring search in the exception's string representation.
+                else:
+                    if str(self.exception_tag) not in str(err):
+                        errors.append(
+                            f"Correct exception type, but tag '{self.exception_tag}' "
+                            f"not found in exception message: {repr(err)}"
+                        )
+
+        # Report any errors found during the validate portion of the test
+        if errors:
+            self.on_fail(self.name + ": " + "\n".join(errors))
+            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
+
+
+@dataclass
+class TestGet(TestSpec):
+    """A class for testing getting attributes.
+
+    This class allows for testing getting of attributes on an object,
+    including validation of the get value, expected exceptions, and custom validation functions.
+
+    Args:
+        name (str):
+            Identifying name for the test.
+        obj (Optional[object], default=NO_OBJ_ASSIGNED):
+            The object whose attribute is to be tested. If not provided, the special sentinel value
+            NO_OBJ_ASSIGNED is used. The object must not be None and must be an instance of object.
+            It must be provided to run the test.
+        attribute (str):
+            The name of the attribute to be tested by setting.
+        expected Optional(Any):
+            Expected value of attribute after setting the attribute. If a exception is set,
+            the expected value is ignored.
+        assertion (Assert, default=Assert.EQUAL):
+            The assertion operator to use when comparing the expected and found values.
+        exception (Optional[type[Exception]], default=None):
+            Expected exception type (if any) to be raised by setting the attribute.
+        exception_tag (Optional[str | Enum], default=None):
+            Expected tag (if any) to be found in the exception message.
+        validate (Optional[Callable[[TestGet, Any], bool]], default=None):
+            Function to validate obj after getting attribute. It should return True if the object state is valid.
+
+            This is distinguished from the expected value check in that it can perform more complex validation
+            of the entire object state rather than just checking the value of a single attribute.
+
+            It is passed two arguments, the TestGet instance and the object being validated.
+        on_fail (Callable[[str], NoReturn], default=pytest.fail):
+            Function to call on test failure to raise an exception
+    """
+    __test__ = False  # Prevent pytest from trying to collect this class as a test case
+
+    name: str
+    """Identifying name for the test."""
+    attribute: str
+    """The name of the attribute to be tested by setting."""
+    obj: Optional[object] = NO_OBJ_ASSIGNED
+    """The object whose attribute is to be tested. It cannot be None, and must be an instance of object.
+    If not provided during construction, the special sentinel value NO_OBJ_ASSIGNED is used. This must be
+    replaced with a valid object before running the test."""
+    assertion: Assert = Assert.EQUAL
+    """The assertion operator to use when comparing the expected and found values. (default is Assert.EQUAL)"""
+    expected: Optional[Any] = NO_EXPECTED_VALUE
+    """Expected value of attribute after setting the attribute. If a get_exception or
+    set_exception is set, the expected value is ignored. If there is no expected exception
+    and no expected value, use the special sentinel value NO_EXPECTED_VALUE to skip the
+    get step validation for the set value. Omitting this field is equivalent to setting it to NO_EXPECTED_VALUE."""
+    exception: Optional[type[Exception]] = None
+    """Expected exception type (if any) to be raised by getting the attribute."""
+    exception_tag: Optional[str | Enum] = None
+    """Expected tag (if any) to be found in an exception message raised by getting the attribute."""
+    validate: Optional[Callable[[TestGet, Any], None | NoReturn]] = None
+    """Function to validate obj state after setting the attribute. It should raise an exception
+    if the object state is unexpected.
+
+    This is distinguished from the expected value check in that it can perform more complex validation
+    of the entire object state rather than just checking the value of a single attribute.
+
+    It is passed two arguments, the TestSetGet instance and the object being validated.
+
+    The validation function should call the `on_fail` method to raise an exception if the object is not
+    in a valid state. None should be returned if the object is valid.
+    """
+    on_fail: Callable[[str], NoReturn] = pytest.fail
+    """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
+
+    def __post_init__(self) -> None:
+        """Post-initialization validation checks."""
+        if not isinstance(self.name, str):
+            raise TypeError("name must be a str")
+        if not isinstance(self.attribute, str):
+            raise TypeError("attribute must be a str")
+        if self.obj is None:
+            raise TypeError("obj cannot be None")
+        if not isinstance(self.obj, object):
+            raise TypeError("obj must be an object")
+        if self.attribute == "":
+            raise ValueError("attribute cannot be an empty string")
+        if self.validate is not None and not callable(self.validate):
+            raise TypeError("validate must be callable if provided")
+        if self.exception is not None and not issubclass(self.exception, Exception):
+            raise TypeError("exception must be an Exception type if provided")
+        if self.exception_tag is not None and not isinstance(self.exception_tag, (str, Enum)):
+            raise TypeError("set_exception_tag must be a str or Enum if provided")
+        if not callable(self.on_fail):
+            raise TypeError("on_fail must be callable")
+
+    def run(self) -> None:
+        """Execute the attribute set/get test."""
+        # disabled because we are using the __setattr__ and __getattribute__ dunder methods directly
+        # for testing purposes because there is no other way to do get/set testing for attributes generically.
+        # pylint: disable=unnecessary-dunder-call
+
+        # hide traceback for this function in pytest output. Disabled for pylint because it is a pytest
+        # feature that is just not understood by pylint.
+        __tracebackhide__ = True  # pylint: disable=unused-variable
+
+        # Errors found during the test
+        errors: list[str] = []
+
+        if self.obj is NO_OBJ_ASSIGNED:
+            self.on_fail(f"{self.name}: obj for test is not assigned")
+            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
+
+        if self.exception is None and self.expected is NO_EXPECTED_VALUE and self.validate is None:
+            raise ValueError("No validation is possible: exception, expected, and "
+                             "validate are all None/NO_EXPECTED_VALUE or not set")
+
+        attribute_to_get = self.attribute
+        try:
+            if not hasattr(self.obj, attribute_to_get):
+                errors.append(f"obj has no attribute {attribute_to_get}")
+            else:
+                if self.validate is not None:
+                    self.validate(self, self.obj)  # Exception should be raised by validate if unexpected obj state
+
+                if self.expected is NO_EXPECTED_VALUE:
+                    return
+
+                found: Any = self.obj.__getattribute__(attribute_to_get)
+                match self.assertion:
+                    case '==':
+                        if self.expected != found:
+                            errors.append(
+                                f"expected={self.expected}, found={found} for attribute '{attribute_to_get}'")
+                    case _:
+                        errors.append(f"Unsupported assertion operator '{self.assertion}'")
+
+        except Exception as err:  # pylint: disable=broad-exception-caught
+            if self.exception is None:
+                errors.append(f'Unexpected Exception raised while validating attribute value: {repr(err)}')
+            elif not isinstance(err, self.exception):
+                errors.append(
+                    f'Unexpected exception type while validating attribute value: '
+                    f'expected={self.exception}, found = {type(err)}: {repr(err)}')
+            elif self.exception_tag:
+                # Case 1: The expected tag is an Enum member.
+                # This requires the exception object to have a 'tag_code' attribute.
+                if isinstance(self.exception_tag, Enum):
+                    if not hasattr(err, 'tag_code'):
+                        errors.append(
+                            f"Exception {type(err)} is missing the 'tag_code' attribute "
+                            "required for Enum tag validation.")
+                    else:
+                        actual_tag = getattr(err, 'tag_code')
+                        if actual_tag != self.exception_tag:
+                            errors.append(f"Unexpected exception tag: expected={self.exception_tag}, "
+                                          f"found={actual_tag}")
+                # Case 2: The expected tag is a string.
+                # This performs a substring search in the exception's string representation.
+                else:
+                    if str(self.exception_tag) not in str(err):
+                        errors.append(
+                            f"Correct exception type, but tag '{self.exception_tag}' "
+                            f"not found in exception message: {repr(err)}"
+                        )
+
+        # Report any errors found during the get portion of the test
+        if errors:
+            self.on_fail(self.name + ": " + "\n".join(errors))
+            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
 
 
 def run_tests_list(test_specs: Sequence[TestSpec]) -> None:

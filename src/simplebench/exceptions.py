@@ -379,6 +379,8 @@ class ErrorTag(str, Enum):
     """Something other than a list was assigned to the results attribute"""
     CASE_INVALID_RESULTS_ENTRY_NOT_RESULTS_INSTANCE = "CASE_INVALID_RESULTS_ENTRY_NOT_RESULTS_INSTANCE"
     """Something other than a Results instance was found in the list assigned to the results attribute"""
+    CASE_INVALID_CALLBACK_UNRESOLVABLE_HINTS = "CASE_INVALID_CALLBACK_UNRESOLVABLE_HINTS"
+    """The type hints for the callback function could not be resolved."""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"

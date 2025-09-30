@@ -7,11 +7,18 @@ from typing import Any
 import pytest
 
 from simplebench import Case, SimpleRunner, Results, Session, Verbosity
+from simplebench.enums import Format, Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchAttributeError, ErrorTag
 from simplebench.protocols import ActionRunner, ReporterCallback
 from simplebench.reporters.reporter_option import ReporterOption
 
-from .testspec import TestAction, idspec, Assert
+from .testspec import TestAction, TestSet, idspec, Assert, TestGet, TestSpec
+
+
+class MockReporterOption(ReporterOption):
+    """A mock ReporterOption for testing purposes."""
+    def __init__(self, name: str) -> None:
+        self.name = name
 
 
 class NoDefaultValue:
@@ -187,6 +194,30 @@ class BadRunner:  # pragma: no cover
 
 
 @cache
+def base_casekwargs() -> CaseKWArgs:
+    """Creates a base CaseKWArgs instance for use in tests."""
+    return CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            iterations=100,
+            warmup_iterations=10,
+            min_time=0.1,
+            max_time=10.0,
+            variation_cols={'size': 'Size'},
+            kwargs_variations={'size': [10, 100, 1000]},
+            options=[])
+
+
+@cache
+def base_case() -> Case:
+    """Creates a base Case instance for use in tests."""
+    caseargs: CaseKWArgs = base_casekwargs()
+    return Case(**caseargs)
+
+
+@cache
 def postrun_benchmark_case() -> Case:
     """Creates and runs a benchmark Case, returning the Case instance."""
     case = Case(
@@ -204,6 +235,73 @@ def postrun_benchmark_case() -> Case:
     session.run()
 
     return case
+
+
+def broken_callback_missing_case(  # pragma: no cover  # pylint: disable=unused-argument
+        *, section: Section, output_format: Format, output: Any) -> None:
+    """A broken callback function that is missing the required 'case' parameter."""
+
+
+def broken_callback_missing_section(  # pragma: no cover  # pylint: disable=unused-argument
+        *, case: Case,  output_format: Format, output: Any) -> None:
+    """A broken callback function that is missing the required 'section' parameter."""
+
+
+def broken_callback_missing_format(  # pragma: no cover  # pylint: disable=unused-argument
+        *, section: Section, case: Case, output: Any) -> None:
+    """A broken callback function that is missing the required 'output_format' parameter."""
+
+
+def broken_callback_missing_output(  # pragma: no cover  # pylint: disable=unused-argument
+        *, section: Section, output_format: Format, case: Case) -> None:
+    """A broken callback function that is missing the required 'output' parameter."""
+
+
+def broken_callback_wrong_case_type(  # pylint: disable=unused-argument  # pragma: no cover
+        *, case: str, section: Section, output_format: Format, output: Any) -> None:
+    """A broken callback function that has the wrong type of 'case' parameter (should be 'case: Case')."""
+
+
+def broken_callback_wrong_section_type(  # pylint: disable=unused-argument  # pragma: no cover
+        *, case: Case, section: str, output_format: Format, output: Any) -> None:
+    """A broken callback function that has the wrong type of 'section' parameter (should be 'section: Section')."""
+
+
+def broken_callback_wrong_format_type(    # pylint: disable=unused-argument  # pragma: no cover
+        *, case: Case, section: Section, output_format: str, output: Any) -> None:
+    """A broken callback function that has the wrong type of 'output_format' parameter
+    (should be 'output_format: Format')."""
+
+
+def broken_callback_wrong_output_type(  # pylint: disable=unused-argument  # pragma: no cover
+        *, case: Case, section: Section, output_format: Format, output: str) -> None:
+    """A broken callback function that has the wrong type of 'output' parameter (should be 'output: Any')."""
+
+
+def broken_callback_extra_param(  # pylint: disable=unused-argument  # pragma: no cover
+        *, case: Case, section: Section, output_format: Format, output: Any, extra_param: Any) -> None:
+    """A broken callback function that has an extra parameter
+    (should only have 'case', 'section', 'output_format', and 'output')."""
+
+
+def broken_callback_no_type_hints(  # pylint: disable=unused-argument  # pragma: no cover
+        case, section, output_format, output):  # type: ignore[no-untyped-def]
+    """A broken callback function that has no type hints."""
+
+
+def broken_callback_positional_only(  # pylint: disable=unused-argument  # pragma: no cover
+        case: Case, section: Section, /, output_format: Format, output: Any) -> None:
+    """A broken callback function that has positional-only parameters."""
+
+
+def broken_callback_not_keyword_only(  # pylint: disable=unused-argument  # pragma: no cover
+        case: Case, section: Section, output_format: Format, output: Any) -> None:
+    """A broken callback function that is not keyword-only."""
+
+
+def good_callback(  # pylint: disable=unused-argument
+        *, case: Case, section: Section, output_format: Format, output: Any) -> None:
+    """A good callback function that has the correct parameters and types."""
 
 
 @pytest.mark.parametrize("testspec", [
@@ -582,16 +680,380 @@ def postrun_benchmark_case() -> Case:
             action=broken_benchcase_extra_param),  # type: ignore[arg-type]
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.CASE_INVALID_ACTION_PARAMETER_COUNT)),
+    idspec("INIT_036", TestAction(
+        name="Invalid (not a list) type for options parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            options='not_a_list'),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST)),
+    idspec("INIT_037", TestAction(
+        name="Invalid (contains item that is not a ReporterOption) type for options parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            options=[
+                MockReporterOption('valid_option'),
+                'not_a_reporter_option']),  # type: ignore[list-item]  # Invalid item type
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION)),
+    idspec("INIT_038", TestAction(
+        name="Valid (empty) list for options parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            options=[]),  # Valid empty list
+        assertion=Assert.ISINSTANCE,
+        expected=Case,
+    )),
+    idspec("INIT_039", TestAction(
+        name="Valid (non-empty) list for options parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            options=[MockReporterOption('option1'), MockReporterOption('option2')]),  # Valid non-empty list
+        assertion=Assert.ISINSTANCE,
+        expected=Case,
+    )),
+    idspec("INIT_040", TestAction(
+        name="Empty list for kwargs_variations parameter (no variations defined for a parameter)",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            kwargs_variations={'size': []}),  # Empty list for a parameter
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST)),
+    idspec("INIT_041", TestAction(
+        name="Invalid (contains item that is not a list) type for kwargs_variations parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            kwargs_variations={'size': 'not_a_list'}),  # type: ignore[dict-item]  # Invalid item type
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST)),
+    idspec("INIT_042", TestAction(
+        name="Invalid type for callback parameter(str instead of callable)",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback='not_a_function'),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE)),
+    idspec("INIT_043", TestAction(
+        name="Good callback function for callback parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=good_callback),  # Valid callback function
+        assertion=Assert.ISINSTANCE,
+        expected=Case)),
+    idspec("INIT_044", TestAction(
+        name="Callback function missing required 'case' parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_missing_case),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_CASE_PARAMETER)),
+    idspec("INIT_045", TestAction(
+        name="Callback function missing required 'section' parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_missing_section),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_SECTION_PARAMETER)),
+    idspec("INIT_046", TestAction(
+        name="Callback function missing required 'output_format' parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_missing_format),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_FORMAT_PARAMETER)),
+    idspec("INIT_047", TestAction(
+        name="Callback function missing required 'output' parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_missing_output),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_PARAMETER)),
+    idspec("INIT_048", TestAction(
+        name="Callback function has wrong type for 'case' parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_wrong_case_type),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_TYPE)),
+    idspec("INIT_049", TestAction(
+        name="Callback function has wrong type for 'section' parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_wrong_section_type),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_TYPE)),
+    idspec("INIT_050", TestAction(
+        name="Callback function has wrong type for 'output_format' parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_wrong_format_type),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_TYPE)),
+    idspec("INIT_051", TestAction(
+        name="Callback function has wrong type for 'output' parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_wrong_output_type),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_TYPE)),
+    idspec("INIT_052", TestAction(
+        name="Callback function has an extra parameter",
+        action=Case,
+        kwargs=CaseKWArgs(
+            group='example',
+            title='benchcase',
+            description='A simple benchmark case.',
+            action=benchcase,
+            callback=broken_callback_extra_param),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)),
 ])
 def test_case_init(testspec: TestAction) -> None:
     """Test the initialization of the Case class."""
     testspec.run()
 
 
-def test_attributes() -> None:
-    """Test the attributes of a Case instance after running a benchmark."""
-    case = postrun_benchmark_case()
-    with pytest.raises(SimpleBenchAttributeError) as exc_info:
-        case.group = 'new_group'  # Should raise SimpleBenchAttributeError
+@pytest.mark.parametrize("testspec", [
+    idspec("ATTR_001", TestSet(
+        name="Test setting read-only attribute 'group'",
+        attribute='group',
+        value='new_group',
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_GROUP)),
+    idspec("ATTR_002", TestSet(
+        name="Test setting read-only attribute 'title'",
+        attribute='title',
+        value='new_title',
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_TITLE)),
+    idspec("ATTR_003", TestSet(
+        name="Test setting read-only attribute 'description'",
+        attribute='description',
+        value='new_description',
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_DESCRIPTION)),
+    idspec("ATTR_004", TestSet(
+        name="Test setting read-only attribute 'action'",
+        attribute='action',
+        value=benchcase,
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_ACTION)),
+    idspec("ATTR_005", TestSet(
+        name="Test setting read-only attribute 'iterations'",
+        attribute='iterations',
+        value=50,
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_ITERATIONS)),
+    idspec("ATTR_006", TestSet(
+        name="Test read-only attribute 'warmup_iterations'",
+        attribute='warmup_iterations',
+        value=20,
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_WARMUP_ITERATIONS)),
+    idspec("ATTR_007", TestSet(
+        name="Test setting read-only attribute 'min_time'",
+        attribute='min_time',
+        value=1.0,
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_MIN_TIME)),
+    idspec("ATTR_008", TestSet(
+        name="Test setting read-only attribute 'max_time'",
+        attribute='max_time',
+        value=10.0,
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_MAX_TIME)),
+    idspec("ATTR_009", TestSet(
+        name="Test setting read-only attribute 'variation_cols'",
+        attribute='variation_cols',
+        value={'param1': 'Param 1'},
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_VARIATION_COLS)),
+    idspec("ATTR_010", TestSet(
+        name="Test read-only attribute 'kwargs_variations'",
+        attribute='kwargs_variations',
+        value={'param1': [1, 2, 3]},
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_KWARGS_VARIATIONS)),
+    idspec("ATTR_011", TestSet(
+        name="Test read-only attribute 'runner'",
+        attribute='runner',
+        value=SimpleRunner(case=base_case(), kwargs={}),
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_RUNNER)),
+    idspec("ATTR_012", TestSet(
+        name="Test setting read-only attribute 'callback'",
+        attribute='callback',
+        value=lambda case, section, fmt, output: None,
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_CALLBACK)),
+    idspec("ATTR_013", TestSet(
+        name="Test setting read-only attribute 'results'",
+        attribute='results',
+        value=[Results(group='new_group', title='new_title', description='new_description', n=1)],
+        obj=postrun_benchmark_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_RESULTS)),
+    idspec("ATTR_014", TestSet(
+        name="Test setting read-only attribute 'options'",
+        attribute='options',
+        value=[],
+        obj=base_case(),
+        exception=SimpleBenchAttributeError,
+        exception_tag=ErrorTag.CASE_MODIFY_READONLY_OPTIONS)),
+])
+def test_setting_read_only_attributes(testspec: TestSpec) -> None:
+    """Test attempting to set read-only attributes on Case instances."""
+    testspec.run()
 
-    assert exc_info.value.tag_code == ErrorTag.CASE_MODIFY_READONLY_GROUP
+
+@pytest.mark.parametrize("testspec", [
+    idspec("GET_001", TestGet(
+        name="Test getting attribute 'group'",
+        attribute='group',
+        obj=base_case(),
+        expected=base_casekwargs().get('group'))),
+    idspec("GET_002", TestGet(
+        name="Test getting attribute 'title'",
+        attribute='title',
+        obj=base_case(),
+        expected=base_casekwargs().get('title'))),
+    idspec("GET_003", TestGet(
+        name="Test getting attribute 'description'",
+        attribute='description',
+        obj=base_case(),
+        expected=base_casekwargs().get('description'))),
+    idspec("GET_004", TestGet(
+        name="Test getting attribute 'action'",
+        attribute='action',
+        obj=base_case(),
+        expected=base_casekwargs().get('action'))),
+    idspec("GET_005", TestGet(
+        name="Test getting attribute 'iterations'",
+        attribute='iterations',
+        obj=base_case(),
+        expected=base_casekwargs().get('iterations'))),
+    idspec("GET_006", TestGet(
+        name="Test getting attribute 'warmup_iterations'",
+        attribute='warmup_iterations',
+        obj=base_case(),
+        expected=base_casekwargs().get('warmup_iterations'))),
+    idspec("GET_007", TestGet(
+        name="Test getting attribute 'min_time'",
+        attribute='min_time',
+        obj=base_case(),
+        expected=base_casekwargs().get('min_time'))),
+    idspec("GET_008", TestGet(
+        name="Test getting attribute 'max_time'",
+        attribute='max_time',
+        obj=base_case(),
+        expected=base_casekwargs().get('max_time'))),
+    idspec("GET_009", TestGet(
+        name="Test getting attribute 'variation_cols'",
+        attribute='variation_cols',
+        obj=base_case(),
+        expected=base_casekwargs().get('variation_cols'))),
+    idspec("GET_010", TestGet(
+        name="Test getting attribute 'kwargs_variations'",
+        attribute='kwargs_variations',
+        obj=base_case(),
+        expected=base_casekwargs().get('kwargs_variations'))),
+    idspec("GET_011", TestGet(
+        name="Test getting attribute 'runner'",
+        attribute='runner',
+        obj=base_case(),
+        expected=base_casekwargs().get('runner'))),
+    idspec("GET_012", TestGet(
+        name="Test getting attribute 'callback'",
+        attribute='callback',
+        obj=base_case(),
+        expected=base_casekwargs().get('callback'))),
+    idspec("GET_013", TestGet(
+        name="Test getting attribute 'results'",
+        attribute='results',
+        obj=postrun_benchmark_case(),
+        expected=postrun_benchmark_case().results)),
+    idspec("GET_014", TestGet(
+        name="Test getting attribute 'options'",
+        attribute='options',
+        obj=base_case(),
+        expected=base_casekwargs().get('options'))),
+])
+def test_getting_attributes(testspec: TestSpec) -> None:
+    """Test getting attributes on Case instances."""
+    testspec.run()

@@ -3,7 +3,7 @@
 from __future__ import annotations
 import inspect
 import itertools
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, get_type_hints
 
 from .constants import DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME, DEFAULT_MAX_TIME
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchAttributeError, ErrorTag
@@ -181,7 +181,7 @@ class Case(ICase):
         self.callback = callback
         self.results = []
         self.options = options if options is not None else []
-        self._readonly: bool = True
+        self._readonly = True
         self.validate()
 
     @property
@@ -256,7 +256,46 @@ class Case(ICase):
 
     @property
     def action(self) -> ActionRunner:
-        """The function to perform the benchmark."""
+        """The function to perform the benchmark.
+
+        The function must accept a `bench` parameter of type SimpleRunner and
+        arbitrary keyword arguments ('**kwargs') and return a Results object.
+
+        Example:
+        .. code-block:: python
+
+            def my_benchmark_action(*, bench: SimpleRunner, **kwargs) -> Results:
+                def setup_function(size: int) -> None:
+                    # Setup code goes here
+                    pass
+
+                def teardown_function(size: int) -> None:
+                    # Teardown code goes here
+                    pass
+
+                def action_function(size: int) -> None:
+                    # The code to benchmark goes here
+                    lst = list(range(size))
+
+                # Perform the benchmark using the provided SimpleRunner instance
+                results: Results = bench.run(
+                    n=kwargs.get('size', 1),
+                    setup=setup_function, teardown=teardown_function,
+                    action=action_function, **kwargs)
+                return results
+
+        Args:
+            action (ActionRunner): The benchmark action function.
+            **kwargs: Arbitrary keyword arguments to be passed to the action function.
+
+        Returns:
+            A Results object containing the benchmark results.
+
+        Raises:
+            SimpleBenchTypeError: If the action is not callable.
+            SimpleBenchValueError: If the action does not have the correct signature.
+
+        """
         return self._action
 
     @action.setter
@@ -506,58 +545,92 @@ class Case(ICase):
 
         if value is not None:
             if not callable(value):
-                raise SimpleBenchValueError(
+                raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. Must be a callable or None.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE)
+
+            try:
+                resolved_hints = get_type_hints(
+                    value, globalns=value.__globals__)  # pyright: ignore[reportAttributeAccessIssue]
+            except (NameError, TypeError) as e:
+                # This can happen if an annotation refers to a type that doesn't exist.
+                raise SimpleBenchTypeError(
+                    f"Invalid callback: {value}. Could not resolve type hints. Original error: {e}",
+                    tag=ErrorTag.CASE_INVALID_CALLBACK_UNRESOLVABLE_HINTS
+                ) from e
+
             callback_signature = inspect.signature(value)
+
+            # case: Case
             if 'case' not in callback_signature.parameters:
                 raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. Must accept a "case" parameter.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_CASE_PARAMETER)
-            case_param = callback_signature.parameters.get('case')
-            if case_param is None or case_param.annotation is not Case:
+
+            case_param_type = resolved_hints.get('case')
+            if case_param_type is not Case:
                 raise SimpleBenchTypeError(
-                    f"Invalid callback: {value}. 'case' parameter must be of type Case.",
+                    f"Invalid callback: {value}. 'case' parameter must be of type "
+                    f"'simplebench.case.Case', not '{case_param_type}'.",
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_TYPE)
+
+            case_param = callback_signature.parameters['case']
             if case_param.kind is not inspect.Parameter.KEYWORD_ONLY:
                 raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. "case" parameter must be a keyword-only parameter.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_NOT_KEYWORD_ONLY)
+
+            # section: Section
             if 'section' not in callback_signature.parameters:
                 raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. Must accept a "section" parameter.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_SECTION_PARAMETER)
-            section_param = callback_signature.parameters.get('section')
-            if section_param is None or section_param.annotation is not Section:
+
+            section_param_type = resolved_hints.get('section')
+            if section_param_type is not Section:
                 raise SimpleBenchTypeError(
-                    f"Invalid callback: {value}. 'section' parameter must be of type Section.",
+                    f"Invalid callback: {value}. 'section' parameter must be of type "
+                    f"'simplebench.enum.Section', not '{section_param_type}'.",
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_TYPE)
+
+            section_param = callback_signature.parameters['section']
             if section_param.kind is not inspect.Parameter.KEYWORD_ONLY:
                 raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. "section" parameter must be a keyword-only parameter.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY)
+
+            # output_format: Format
             if 'output_format' not in callback_signature.parameters:
                 raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. Must accept an "output_format" parameter.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_FORMAT_PARAMETER)
-            format_param = callback_signature.parameters.get('output_format')
-            if format_param is None or format_param.annotation is not Format:
+            output_format_param_type = resolved_hints.get('output_format')
+            if output_format_param_type is not Format:
                 raise SimpleBenchTypeError(
-                    f"Invalid callback: {value}. 'output_format' must be of type Format.",
+                    f"Invalid callback: {value}. 'output_format' parameter must be of type "
+                    f"'simplebench.enum.Format', not '{output_format_param_type}'.",
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_TYPE)
+
+            format_param = callback_signature.parameters['output_format']
             if format_param.kind is not inspect.Parameter.KEYWORD_ONLY:
                 raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. "output_format" parameter must be a keyword-only parameter.',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_NOT_KEYWORD_ONLY)
+
+            # output: Any
             if 'output' not in callback_signature.parameters:
                 raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. Must accept a "output" parameter (any type).',
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_PARAMETER)
-            output_param = callback_signature.parameters.get('output')
-            if output_param is None or output_param.annotation is not Any:
+
+            output_param_type = resolved_hints.get('output')
+            if output_param_type is not Any:
                 raise SimpleBenchTypeError(
-                    f'Invalid callback: {value}. "output" parameter must have a type annotation of Any.',
+                    f"Invalid callback: {value}. 'output' parameter must be of type "
+                    f"'Any', not '{output_param_type}'.",
                     tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_TYPE)
+
+            output_param = callback_signature.parameters['output']
             if output_param.kind is not inspect.Parameter.KEYWORD_ONLY:
                 raise SimpleBenchTypeError(
                     f'Invalid callback: {value}. "output" parameter must be a keyword-only parameter.',
