@@ -1,7 +1,7 @@
 *.py[oc]
 
 # codeql
-codeql-custom-queries-python/
+# codeql-custom-queries-python/
 
 # Benchmarks
 .benchmark_reports
