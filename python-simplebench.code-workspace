@@ -4,7 +4,4 @@
 			"path": "."
 		}
 	],
-	"settings": {
-		"codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
-	}
 }

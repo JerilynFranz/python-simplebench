@@ -50,5 +50,6 @@
   "python.terminal.launchArgs": [],
   "python.testing.cwd": "${workspaceFolder}",
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "pylint.cwd": "${workspaceFolder}/src"
+  "pylint.cwd": "${workspaceFolder}/src",
+  "codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
 }
