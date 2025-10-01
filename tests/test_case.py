@@ -10,7 +10,8 @@ from rich.console import Console
 
 from simplebench import Case, SimpleRunner, Results, Session, Verbosity
 from simplebench.enums import Format, Section
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchAttributeError, ErrorTag
+from simplebench.exceptions import (SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchRuntimeError,
+                                    SimpleBenchAttributeError, ErrorTag)
 from simplebench.protocols import ActionRunner, ReporterCallback
 from simplebench.reporters.reporter_option import ReporterOption
 
@@ -245,6 +246,14 @@ def broken_benchcase_extra_param(bench: SimpleRunner, extra_param: Any, **kwargs
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
+    return bench.run(n=1000, action=action, kwargs=kwargs)
+
+
+def broken_benchcase_action_that_raises(bench: SimpleRunner, **kwargs: Any) -> Results:  # pragma: no cover
+    """A broken benchmark case function whose action raises an exception."""
+    def action() -> None:
+        """A simple benchmark case function that raises an exception."""
+        raise RuntimeError("Intentional error in benchmark action")
     return bench.run(n=1000, action=action, kwargs=kwargs)
 
 
@@ -1110,6 +1119,17 @@ def test_getting_attributes(testspec: TestSpec) -> None:
             'output_expected': False,
             'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
                                       min_time=0.01, max_time=0.1, action=benchcase),
+        })),
+    idspec("RUN_009", TestAction(
+        name="Benchmark case with broken action function raises exception",
+        action=broken_benchcase_action_that_raises,
+        kwargs={},
+        exception=SimpleBenchRuntimeError,
+        exception_tag=ErrorTag.CASE_BENCHMARK_ACTION_RAISED_EXCEPTION,
+        extra={
+            'output_expected': False,
+            'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+                                      min_time=0.01, max_time=0.1, action=broken_benchcase_action_that_raises),
         })),
 ])
 def test_run(capsys, testspec: TestAction) -> None:

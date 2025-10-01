@@ -739,7 +739,7 @@ class Case(ICase):
                 raise SimpleBenchRuntimeError(
                     f'Error running benchmark action {str(self.action)} for case '
                     f'"{self.title}" with kwargs {kwargs}: {e}, {type(e)}',
-                    tag=ErrorTag.CASE_BENCHMARK_ACTION_RUNTIME_ERROR
+                    tag=ErrorTag.CASE_BENCHMARK_ACTION_RAISED_EXCEPTION
                     ) from e
             self.results.append(results)
             if task:
