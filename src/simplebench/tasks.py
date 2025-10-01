@@ -188,7 +188,7 @@ class RichTask:
 
 class RichProgressTasks:
     """Task Rich Progress management for benchmarking."""
-    def __init__(self, verbosity: Verbosity) -> None:
+    def __init__(self, verbosity: Verbosity, console: Optional[Console] = None) -> None:
         """Initialize a new RichProgressTasks instance.
 
         This instance manages multiple RichTask instances and provides
@@ -199,10 +199,21 @@ class RichProgressTasks:
 
         Args:
             verbosity (Verbosity): The verbosity level for console output.
+            console (Optional[Console]): The Rich Console instance for displaying output.
+                If None, a new Console will be created as needed. (default: None)
         Raises:
             SimpleBenchTypeError: If verbosity is not a Verbosity enum.
         """
+        if console is None:
+            console = Console()
+        if not isinstance(console, Console):
+            raise SimpleBenchTypeError(
+                f'Expected console arg to be a Console instance, got {type(console)}',
+                tag=ErrorTag.RICH_PROGRESS_TASKS_INIT_INVALID_CONSOLE_ARG)
+        self._console: Console = console
+        """The Rich Console instance for outputting messages."""
         self._progress = Progress(
+            console=self._console,
             auto_refresh=True,
             transient=True,
             refresh_per_second=5

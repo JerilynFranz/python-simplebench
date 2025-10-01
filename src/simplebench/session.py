@@ -30,12 +30,13 @@ class Session(ISession):
     Properties:
         args: (Namespace): The command line arguments for the session.
         cases: (Sequence[Case]): Sequence of benchmark cases for the session.
+        output_path: (Optional[Path]): The output path for reports.
+        console: (Console): A Rich Console instance for displaying output.
         verbosity: (Verbosity): Verbosity level for console output (default: Verbosity.NORMAL)
         default_runner: (Optional[type[SimpleRunner]]): The default runner class to use for Cases
             that do not specify a runner. If None, SimpleRunner will be used. (default: None)
         show_progress: (bool): Whether to show progress bars during execution.
         progress: (Progress): Rich Progress instance for displaying progress bars. (read only)
-        console: (Console): Rich Console instance for displaying output. (read only)
         tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
     """
     def __init__(self,
@@ -45,7 +46,8 @@ class Session(ISession):
                  default_runner: Optional[type[SimpleRunner]] = None,
                  args_parser: Optional[ArgumentParser] = None,
                  progress: bool = False,
-                 output_path: Optional[Path] = None) -> None:
+                 output_path: Optional[Path] = None,
+                 console: Optional[Console] = None) -> None:
         """Create a new Session.
 
         Args:
@@ -57,6 +59,8 @@ class Session(ISession):
                 a new ArgumentParser will be created. (default: None)
             progress (bool): Whether to show progress bars during execution. (default: False)
             output_path (Optional[Path]): The output path for reports. (default: None)
+            console: (Optional[Console]): A Rich Console instance for displaying output. If None, a new Console
+                will be created. (default: None)
 
         Raises:
             SimpleBenchTypeError: If the arguments are of the wrong type.
@@ -68,9 +72,10 @@ class Session(ISession):
         self.verbosity = verbosity if verbosity is not None else Verbosity.NORMAL
         self.show_progress = progress if progress is not None else False
         self.output_path = output_path
+        self.console = console if console is not None else Console()
 
         # private attributes
-        self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity)
+        self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity, console=self.console)
         """ProgressTasks instance for managing progress tasks - backing field for the 'tasks' attribute."""
         self._progress: Progress = self._progress_tasks._progress
         """Rich Progress instance for displaying progress bars - backing field for the 'progress' attribute."""
@@ -370,11 +375,6 @@ class Session(ISession):
         self._show_progress = value
 
     @property
-    def console(self) -> Console:
-        """The Rich Console instance for displaying output."""
-        return self._console
-
-    @property
     def tasks(self) -> RichProgressTasks:
         """The RichProgressTasks instance for managing progress tasks."""
         return self._progress_tasks
@@ -487,3 +487,22 @@ class Session(ISession):
                 tag=ErrorTag.SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG
             )
         self._output_path = value
+
+    @property
+    def console(self) -> Console:
+        """The Rich Console instance for displaying output."""
+        return self._console
+
+    @console.setter
+    def console(self, value: Console) -> None:
+        """Set the Rich Console instance for displaying output.
+
+        Args:
+            value (Console): The Rich Console instance for displaying output.
+        """
+        if not isinstance(value, Console):
+            raise SimpleBenchTypeError(
+                f'console must be a Console instance - cannot be a {type(value)}',
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_CONSOLE_ARG
+            )
+        self._console = value

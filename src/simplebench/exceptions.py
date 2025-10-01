@@ -430,6 +430,8 @@ class ErrorTag(str, Enum):
     """Something other than a Namespace instance was found in the args property"""
     SESSION_PROPERTY_INVALID_DEFAULT_RUNNER_ARG = "SESSION_PROPERTY_INVALID_DEFAULT_RUNNER_ARG"
     """Something other than a subclass of SimpleRunner or None was assigned to the default_runner property"""
+    SESSION_PROPERTY_INVALID_CONSOLE_ARG = "SESSION_PROPERTY_INVALID_CONSOLE_ARG"
+    """Something other than a Console instance was assigned to the console property"""
 
     # Reporters() tags
     REPORTERS_REGISTER_INVALID_REPORTER_ARG = "REPORTERS_REGISTER_INVALID_REPORTER_ARG"
@@ -583,6 +585,8 @@ class ErrorTag(str, Enum):
     constructor as the verbosity arg"""
     RICH_PROGRESS_TASKS_INIT_INVALID_PROGRESS_ARG = "RICH_PROGRESS_TASKS_INIT_INVALID_PROGRESS_ARG"
     """Something other than a Progress instance was passed to the RichProgressTasks() constructor as the progress arg"""
+    RICH_PROGRESS_TASKS_INIT_INVALID_CONSOLE_ARG = "RICH_PROGRESS_TASKS_INIT_INVALID_CONSOLE_ARG"
+    """Something other than a Console instance was passed to the RichProgressTasks() constructor as the console arg"""
 
     # reporters.Choice() tags
     CHOICE_INIT_INVALID_REPORTER_ARG = "CHOICE_INIT_INVALID_REPORTER_ARG"

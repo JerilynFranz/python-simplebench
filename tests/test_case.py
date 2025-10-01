@@ -2,9 +2,11 @@
 from __future__ import annotations
 from argparse import ArgumentParser
 from functools import cache
-from typing import Any
+from pathlib import Path
+from typing import Any, Sequence
 
 import pytest
+from rich.console import Console
 
 from simplebench import Case, SimpleRunner, Results, Session, Verbosity
 from simplebench.enums import Format, Section
@@ -12,7 +14,8 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, 
 from simplebench.protocols import ActionRunner, ReporterCallback
 from simplebench.reporters.reporter_option import ReporterOption
 
-from .testspec import TestAction, TestSet, idspec, Assert, TestGet, TestSpec, NO_EXPECTED_VALUE, no_assigned_action
+
+from .testspec import TestAction, TestSet, idspec, Assert, TestGet, TestSpec, no_assigned_action
 
 
 class MockReporterOption(ReporterOption):
@@ -23,6 +26,42 @@ class MockReporterOption(ReporterOption):
 
 class NoDefaultValue:
     """A class to mark parameters that have no default value."""
+
+
+class SessionKWArgs(dict):
+    """A class to hold keyword arguments for initializing a Session instance.
+
+    This class is used to facilitate testing of the Session class initialization
+    with various combinations of parameters, including those that are optional and those
+    that have no default value.
+    """
+    def __init__(  # pylint: disable=unused-argument
+            self, *,
+            cases: Sequence[Case] | NoDefaultValue = NoDefaultValue(),
+            verbosity: Verbosity | NoDefaultValue = NoDefaultValue(),
+            default_runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),
+            args_parser: ArgumentParser | NoDefaultValue = NoDefaultValue(),
+            progress: bool | NoDefaultValue = NoDefaultValue(),
+            output_path: Path | NoDefaultValue = NoDefaultValue(),
+            console: Console | NoDefaultValue = NoDefaultValue()) -> None:
+        """Constructs a SessionKWArgs instance. This class is used to hold keyword arguments for
+        initializing a Session instance in tests.
+
+        Args:
+            cases (Sequence[Case]): A sequence of Case instances.
+            verbosity (Verbosity): The verbosity level for the session.
+            default_runner (type[SimpleRunner]): The default runner class to use for the session.
+            args_parser (ArgumentParser): The argument parser instance for the session.
+            progress (bool): Whether to show progress information during the session.
+            output_path (Path): The output path for the session results.
+            console (Console): The console instance to use for the session.
+        """
+        kwargs = {}
+        for key in ('cases', 'verbosity', 'default_runner', 'args_parser', 'progress', 'output_path', 'console'):
+            value = locals()[key]
+            if not isinstance(value, NoDefaultValue):
+                kwargs[key] = value
+        super().__init__(**kwargs)
 
 
 class CaseKWArgs(dict):
@@ -153,6 +192,16 @@ def benchcase_with_size(bench: SimpleRunner, **kwargs: Any) -> Results:
     return bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
 
 
+def benchcase_with_size_and_factor(bench: SimpleRunner, **kwargs: Any) -> Results:
+    """A simple benchmark case function."""
+    def action(size: int, factor: int) -> None:
+        """A simple benchmark case function with size and factor parameters and weighted n."""
+        _ = sum(range(size)) * factor
+    if 'size' not in kwargs or 'factor' not in kwargs:
+        raise ValueError("Missing required 'size' or 'factor' parameter in kwargs")
+    return bench.run(n=kwargs['size'] * kwargs['factor'], action=action, kwargs=kwargs)
+
+
 def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pragma: no cover
     """A broken benchmark case function that is missing the required 'bench' parameter."""
     bench = SimpleRunner(
@@ -213,8 +262,8 @@ def base_casekwargs() -> CaseKWArgs:
             action=benchcase,
             iterations=100,
             warmup_iterations=10,
-            min_time=0.1,
-            max_time=1.0,
+            min_time=0.01,
+            max_time=0.1,
             variation_cols={'size': 'Size'},
             kwargs_variations={'size': [10, 100, 1000]},
             options=[])
@@ -364,6 +413,12 @@ def broken_callback_invalid_output_type_hint(  # pylint: disable=unused-argument
 def good_callback(  # pylint: disable=unused-argument
         *, case: Case, section: Section, output_format: Format, output: Any) -> None:
     """A good callback function that has the correct parameters and types."""
+
+
+@cache
+def displayless_console() -> Console:
+    """Creates a displayless Console for testing purposes."""
+    return Console(quiet=True)
 
 
 @pytest.mark.parametrize("testspec", [
@@ -979,22 +1034,62 @@ def test_getting_attributes(testspec: TestSpec) -> None:
         name="Minimal benchmark case with no variations successfully runs without exceptions",
         action=no_assigned_action,
         kwargs={},
-        extra=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', min_time=0.01, max_time=0.1,
-                         action=benchcase),
-        expected=NO_EXPECTED_VALUE)),
+        extra={
+            'output_expected': False,
+            'case_kwargs': CaseKWArgs(
+                                group='example', title='benchcase', description='Benchmark case',
+                                min_time=0.01, max_time=0.1,
+                                action=benchcase),
+        })),
     idspec("RUN_002", TestAction(
         name="Benchmark case with one variation axis successfully runs without exceptions",
         action=no_assigned_action,
         kwargs={},
-        extra=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', min_time=0.01, max_time=0.1,
-                         action=benchcase_with_size,
-                         kwargs_variations={'size': [10, 100, 1000]}))),
+        extra={
+            'output_expected': False,
+            'case_kwargs': CaseKWArgs(
+                                group='example', title='benchcase', description='Benchmark case',
+                                min_time=0.01, max_time=0.1,
+                                action=benchcase_with_size,
+                                kwargs_variations={'size': [10, 100, 1000]})
+        })),
+    idspec("RUN_003", TestAction(
+        name="Benchmark case with two variation axes successfully runs without exceptions",
+        action=no_assigned_action,
+        kwargs={},
+        extra={
+            'output_expected': False,
+            'case_kwargs': CaseKWArgs(
+                                group='example', title='benchcase', description='Benchmark case',
+                                min_time=0.01, max_time=0.1,
+                                action=benchcase_with_size_and_factor,
+                                kwargs_variations={'size': [10, 100], 'factor': [1, 2, 3]})
+        })),
+    idspec("RUN_004", TestAction(
+        name="Benchmark case run with a displayless Session successfully runs without exceptions or output",
+        action=no_assigned_action,
+        kwargs={'session': Session(console=displayless_console())},
+        extra={
+            'output_expected': False,
+            'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+                                      min_time=0.01, max_time=0.1, action=benchcase)})),
+    idspec("RUN_005", TestAction(
+        name=("Benchmark case run with a displayless Session and progress=True "
+              "successfully runs without exceptions or output"),
+        action=no_assigned_action,
+        kwargs={'session': Session(console=displayless_console(), progress=True)},
+        extra={
+            'output_expected': False,
+            'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+                                      min_time=0.01, max_time=0.1, action=benchcase),
+        })),
 ])
-def test_run(testspec: TestAction) -> None:
+def test_run(capsys, testspec: TestAction) -> None:
     """Test the run method of the Case class."""
     if isinstance(testspec, TestAction):
-        case_args = testspec.extra if isinstance(testspec.extra, CaseKWArgs) else None
-        assert case_args is not None, "CaseKWArgs must be provided in the test spec extra field"
+        if 'case_kwargs' not in testspec.extra or not isinstance(testspec.extra['case_kwargs'], CaseKWArgs):
+            raise AssertionError("CaseKWArgs must be provided in the test spec extra['case_kwargs'] field")
+        case_args = testspec.extra['case_kwargs']
         try:
             benchmark_case = Case(**case_args)
         except Exception as e:
@@ -1002,3 +1097,10 @@ def test_run(testspec: TestAction) -> None:
         testspec.action = benchmark_case.run
 
     testspec.run()
+
+    if isinstance(testspec, TestAction):
+        output = capsys.readouterr().out
+        if testspec.extra.get('output_expected', True):
+            assert output != "", "Expected output to stdout/stderr during session run"
+        else:
+            assert output == "", "Expected no output to stdout/stderr during displayless session run"
