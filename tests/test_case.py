@@ -1083,6 +1083,34 @@ def test_getting_attributes(testspec: TestSpec) -> None:
             'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
                                       min_time=0.01, max_time=0.1, action=benchcase),
         })),
+    idspec("RUN_006", TestAction(
+        name=("Benchmark case run with a normal Session at DEBUG verbosity "
+              "successfully runs without exceptions and with output"),
+        action=no_assigned_action,
+        kwargs={'session': Session(verbosity=Verbosity.DEBUG, progress=True)},
+        extra={
+            'output_expected': True,
+            'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+                                      min_time=0.01, max_time=0.1, action=benchcase),
+        })),
+    idspec("RUN_007", TestAction(
+        name="Benchmark case with SimpleRunner set directly runs without exceptions",
+        action=no_assigned_action,
+        kwargs={},
+        extra={
+            'output_expected': False,
+            'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+                                      min_time=0.01, max_time=0.1, action=benchcase, runner=SimpleRunner),
+        })),
+    idspec("RUN_008", TestAction(
+        name="Benchmark case with SimpleRunner set as session default_runner runs without exceptions",
+        action=no_assigned_action,
+        kwargs={'session': Session(default_runner=SimpleRunner)},
+        extra={
+            'output_expected': False,
+            'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+                                      min_time=0.01, max_time=0.1, action=benchcase),
+        })),
 ])
 def test_run(capsys, testspec: TestAction) -> None:
     """Test the run method of the Case class."""
