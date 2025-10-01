@@ -6,7 +6,8 @@ import itertools
 from typing import Any, Optional, TYPE_CHECKING, get_type_hints
 
 from .constants import DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME, DEFAULT_MAX_TIME
-from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchAttributeError, ErrorTag
+from .exceptions import (SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchAttributeError,
+                         SimpleBenchRuntimeError, ErrorTag)
 from .metaclasses import ICase
 from .protocols import ActionRunner, ReporterCallback
 from .reporters.reporter_option import ReporterOption
@@ -732,7 +733,14 @@ class Case(ICase):
                 bench = session.default_runner(case=self, session=session, kwargs=kwargs)
             else:
                 bench = SimpleRunner(case=self, session=session, kwargs=kwargs)
-            results: Results = self.action(bench, **kwargs)
+            try:
+                results: Results = self.action(bench, **kwargs)
+            except Exception as e:
+                raise SimpleBenchRuntimeError(
+                    f'Error running benchmark action {str(self.action)} for case '
+                    f'"{self.title}" with kwargs {kwargs}: {e}, {type(e)}',
+                    tag=ErrorTag.CASE_BENCHMARK_ACTION_RUNTIME_ERROR
+                    ) from e
             self.results.append(results)
             if task:
                 task.update(

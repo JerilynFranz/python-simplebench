@@ -386,6 +386,8 @@ class ErrorTag(str, Enum):
     """The type hints for the callback function could not be resolved."""
     CASE_INVALID_DEFAULT_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS = "CASE_INVALID_DEFAULT_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS"
     """Attempted to set a default runner for Case that is not a SimpleRunner or a subclass."""
+    CASE_BENCHMARK_ACTION_RUNTIME_ERROR = "CASE_BENCHMARK_ACTION_RUNTIME_ERROR"
+    """The action function raised an exception during execution."""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"

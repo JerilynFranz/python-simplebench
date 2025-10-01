@@ -50,7 +50,11 @@ def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
 
     This function serves as a sentinel value to indicate that no action has been assigned.
     It can be used in scenarios where a callable is expected, but no specific implementation
-    is provided during initialization.
+    is provided during initialization. It raises a NotImplementedError to signal that the
+    function is not intended to be called in its current state.
+
+    This function can be used as a placeholder for the `action` attribute in the TestAction class
+    that is replaced by a real function or method before the test is run.
 
     Args:
         *args: Positional arguments (not used).
@@ -77,7 +81,7 @@ def idspec(id_base: str, testspec: TestSpec) -> Any:
         testspec (TestSpec): The TestSpec instance containing the test configuration.
             TestSet, TestGet, TestSetGet, and TestAction are all subclasses of TestSpec.
     Returns:
-        A pytest parameter with a custom id.
+        A pytest parameter with a custom id derived from the id_base string and the test specification name.
     Raises:
         TypeError: If testspec is not an instance of TestSpec or id_base is not a str.
     """
@@ -202,6 +206,9 @@ class TestSetGet(TestSpec):
             It is passed two arguments, the TestSetGet instance and the object being validated.
         on_fail (Callable[[str], NoReturn], default=pytest.fail):
             Function to call on test failure to raise an exception
+        extra (Any):
+            Extra fields for use by test frameworks. It is not used by the TestSetGet class itself.
+            Default is None.
     """
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
@@ -246,6 +253,9 @@ class TestSetGet(TestSpec):
     """
     on_fail: Callable[[str], NoReturn] = pytest.fail
     """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
+
+    extra: Any = None
+    """Extra data for use by test frameworks. It is not used by the TestSetGet class itself. Default is None."""
 
     def __post_init__(self) -> None:
         """Post-initialization validation checks."""
@@ -483,6 +493,8 @@ class TestAction(TestSpec):
         exception_tag: Optional[str] = None
         on_fail: Callable[[str], NoReturn] = pytest.fail
             Function to call on test failure. (default is pytest.fail)
+        extra (Any): Extra data for use by test frameworks. It is not used by the TestAction class itself.
+            Default is None.
     """
     name: str
     """Identifying name for the test."""
@@ -517,6 +529,8 @@ class TestAction(TestSpec):
     The function must accept a single string argument containing the failure message
     and must not return (i.e., it should raise an exception or terminate the test).
     """
+    extra: Any = None
+    """Extra data for use by test frameworks. It is not used by the TestAction class itself. Default is None."""
 
     def run(self) -> None:  # pylint: disable=too-many-branches
         """Run the test based on the provided TestSpec entry.
@@ -619,6 +633,9 @@ class TestSet(TestSpec):
             It is passed two arguments, the TestSet instance and the object being validated.
         on_fail (Callable[[str], NoReturn], default=pytest.fail):
             Function to call on test failure to raise an exception
+        extra (Any):
+            Extra fields for use by test frameworks. It is not used by the TestSet class itself.
+            Default is None.
     """
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
@@ -649,6 +666,8 @@ class TestSet(TestSpec):
     """
     on_fail: Callable[[str], NoReturn] = pytest.fail
     """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
+    extra: Any = None
+    """Extra data for use by test frameworks. It is not used by the TestSet class itself. Default is None."""
 
     def __post_init__(self) -> None:
         """Post-initialization validation checks."""
@@ -822,6 +841,9 @@ class TestGet(TestSpec):
             It is passed two arguments, the TestGet instance and the object being validated.
         on_fail (Callable[[str], NoReturn], default=pytest.fail):
             Function to call on test failure to raise an exception
+        extra (Any):
+            Extra fields for use by test frameworks. It is not used by the TestGet class itself.
+            Default is None.
     """
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
@@ -858,6 +880,8 @@ class TestGet(TestSpec):
     """
     on_fail: Callable[[str], NoReturn] = pytest.fail
     """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
+    extra: Any = None
+    """Extra data for use by test frameworks. It is not used by the TestGet class itself. Default is None."""
 
     def __post_init__(self) -> None:
         """Post-initialization validation checks."""

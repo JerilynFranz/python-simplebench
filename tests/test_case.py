@@ -12,7 +12,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, 
 from simplebench.protocols import ActionRunner, ReporterCallback
 from simplebench.reporters.reporter_option import ReporterOption
 
-from .testspec import TestAction, TestSet, idspec, Assert, TestGet, TestSpec
+from .testspec import TestAction, TestSet, idspec, Assert, TestGet, TestSpec, NO_EXPECTED_VALUE, no_assigned_action
 
 
 class MockReporterOption(ReporterOption):
@@ -143,6 +143,16 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
     return bench.run(n=1000, action=action, **kwargs)
 
 
+def benchcase_with_size(bench: SimpleRunner, **kwargs: Any) -> Results:
+    """A simple benchmark case function."""
+    def action(size: int) -> None:
+        """A simple benchmark case function with a size parameter and weighted n."""
+        _ = sum(range(size))
+    if 'size' not in kwargs:
+        raise ValueError("Missing required 'size' parameter in kwargs")
+    return bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
+
+
 def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pragma: no cover
     """A broken benchmark case function that is missing the required 'bench' parameter."""
     bench = SimpleRunner(
@@ -204,7 +214,7 @@ def base_casekwargs() -> CaseKWArgs:
             iterations=100,
             warmup_iterations=10,
             min_time=0.1,
-            max_time=10.0,
+            max_time=1.0,
             variation_cols={'size': 'Size'},
             kwargs_variations={'size': [10, 100, 1000]},
             options=[])
@@ -882,13 +892,13 @@ def test_case_init(testspec: TestAction) -> None:
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_RUNNER)),
     idspec("ATTR_012", TestSet(
         name="Test setting read-only attribute 'callback'",
-        obj=base_case, attribute='callback', value=lambda case, section, fmt, output: None,
+        obj=base_case(), attribute='callback', value=lambda case, section, fmt, output: None,
         exception=SimpleBenchAttributeError,
         exception_tag=ErrorTag.CASE_MODIFY_READONLY_CALLBACK)),
     idspec("ATTR_013", TestSet(
         name="Test setting read-only attribute 'results'",
         attribute='results', value=[Results(group='new_group', title='new_title', description='new_description', n=1)],
-        obj=postrun_benchmark_case(),
+        obj=base_case(),
         exception=AttributeError)),
     idspec("ATTR_014", TestSet(
         name="Test setting read-only attribute 'options'",
@@ -961,4 +971,34 @@ def test_setting_read_only_attributes(testspec: TestSpec) -> None:
 ])
 def test_getting_attributes(testspec: TestSpec) -> None:
     """Test getting attributes on Case instances."""
+    testspec.run()
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("RUN_001", TestAction(
+        name="Minimal benchmark case with no variations successfully runs without exceptions",
+        action=no_assigned_action,
+        kwargs={},
+        extra=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', min_time=0.01, max_time=0.1,
+                         action=benchcase),
+        expected=NO_EXPECTED_VALUE)),
+    idspec("RUN_002", TestAction(
+        name="Benchmark case with one variation axis successfully runs without exceptions",
+        action=no_assigned_action,
+        kwargs={},
+        extra=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', min_time=0.01, max_time=0.1,
+                         action=benchcase_with_size,
+                         kwargs_variations={'size': [10, 100, 1000]}))),
+])
+def test_run(testspec: TestAction) -> None:
+    """Test the run method of the Case class."""
+    if isinstance(testspec, TestAction):
+        case_args = testspec.extra if isinstance(testspec.extra, CaseKWArgs) else None
+        assert case_args is not None, "CaseKWArgs must be provided in the test spec extra field"
+        try:
+            benchmark_case = Case(**case_args)
+        except Exception as e:
+            raise AssertionError(f"Failed to initialize Case: {e}") from e
+        testspec.action = benchmark_case.run
+
     testspec.run()
