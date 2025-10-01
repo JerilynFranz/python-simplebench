@@ -5,6 +5,6 @@
 		}
 	],
 	"settings": {
-		"codeQL.createQuery.qlPackLocation": "/Users/snowhare/git/python-simplebench"
+		"codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
 	}
 }
