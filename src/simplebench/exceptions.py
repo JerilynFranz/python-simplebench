@@ -384,6 +384,8 @@ class ErrorTag(str, Enum):
     """Something other than a Results instance was found in the list assigned to the results attribute"""
     CASE_INVALID_CALLBACK_UNRESOLVABLE_HINTS = "CASE_INVALID_CALLBACK_UNRESOLVABLE_HINTS"
     """The type hints for the callback function could not be resolved."""
+    CASE_INVALID_DEFAULT_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS = "CASE_INVALID_DEFAULT_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS"
+    """Attempted to set a default runner for Case that is not a SimpleRunner or a subclass."""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"
@@ -420,10 +422,12 @@ class ErrorTag(str, Enum):
     """The output path must be set to generate reports"""
     SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG = "SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG"
     """Something other than an ArgumentParser instance was passed to the Session.parse_args() method"""
-    SESSION_INIT_INVALID_ARGSPARSER_ARG = "SESSION_INIT_INVALID_ARGSPARSER_ARG"
-    """Something other than an ArgumentParser instance was passed to the Session() constructor"""
+    SESSION_INVALID_ARGSPARSER_ARG = "SESSION_INVALID_ARGSPARSER_ARG"
+    """Something other than an ArgumentParser instance was assigned to the args_parser property"""
     SESSION_PROPERTY_INVALID_ARGS_ARG = "SESSION_PROPERTY_INVALID_ARGS_ARG"
     """Something other than a Namespace instance was found in the args property"""
+    SESSION_PROPERTY_INVALID_DEFAULT_RUNNER_ARG = "SESSION_PROPERTY_INVALID_DEFAULT_RUNNER_ARG"
+    """Something other than a subclass of SimpleRunner or None was assigned to the default_runner property"""
 
     # Reporters() tags
     REPORTERS_REGISTER_INVALID_REPORTER_ARG = "REPORTERS_REGISTER_INVALID_REPORTER_ARG"

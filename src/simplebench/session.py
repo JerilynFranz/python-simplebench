@@ -3,16 +3,18 @@ from __future__ import annotations
 from argparse import ArgumentParser, ArgumentError, Namespace
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
+from typing import Optional, Sequence, TYPE_CHECKING
 
 from rich.console import Console
 from rich.progress import Progress
 
-from .enums import Section, Verbosity, Format, Target
+from .enums import Verbosity, Target
 from .exceptions import ErrorTag, SimpleBenchArgumentError, SimpleBenchTypeError
 from .metaclasses import ISession
+from .protocols import ReporterCallback
 from .reporters import ReporterManager
 from .reporters.choices import Choice, Choices
+from .runners import SimpleRunner
 from .tasks import RichProgressTasks, RichTask
 from .case import Case
 from .utils import sanitize_filename, platform_id
@@ -25,93 +27,63 @@ if TYPE_CHECKING:
 class Session(ISession):
     """Container for session related information while running benchmarks.
 
-    Arguments:
-        cases: (Sequence[Case]): A Sequence of benchmark cases for the session.
-        verbosity: (Verbosity): The verbosity level for console output (default: Verbosity.NORMAL)
-
     Properties:
         args: (Namespace): The command line arguments for the session.
         cases: (Sequence[Case]): Sequence of benchmark cases for the session.
         verbosity: (Verbosity): Verbosity level for console output (default: Verbosity.NORMAL)
+        default_runner: (Optional[type[SimpleRunner]]): The default runner class to use for Cases
+            that do not specify a runner. If None, SimpleRunner will be used. (default: None)
+        show_progress: (bool): Whether to show progress bars during execution.
         progress: (Progress): Rich Progress instance for displaying progress bars. (read only)
         console: (Console): Rich Console instance for displaying output. (read only)
         tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
     """
     def __init__(self,
                  *,
-                 args_parser: Optional[ArgumentParser] = None,
                  cases: Optional[Sequence[Case]] = None,
                  verbosity: Verbosity = Verbosity.NORMAL,
+                 default_runner: Optional[type[SimpleRunner]] = None,
+                 args_parser: Optional[ArgumentParser] = None,
                  progress: bool = False,
                  output_path: Optional[Path] = None) -> None:
         """Create a new Session.
 
         Args:
-            args_parser (Optional[ArgumentParser]): The ArgumentParser instance for the session. If None,
-            a new ArgumentParser will be created. (default: None)
             cases (Sequence[Case]): A Sequence of benchmark cases for the session (default: empty list).
             verbosity (Verbosity): The verbosity level for console output (default: Verbosity.NORMAL)
+            default_runner (Optional[type[SimpleRunner]]): The default runner class to use for Cases
+                that do not specify a runner. If None, SimpleRunner will be used. (default: None)
+            args_parser (Optional[ArgumentParser]): The ArgumentParser instance for the session. If None,
+                a new ArgumentParser will be created. (default: None)
             progress (bool): Whether to show progress bars during execution. (default: False)
             output_path (Optional[Path]): The output path for reports. (default: None)
 
         Raises:
             SimpleBenchTypeError: If the arguments are of the wrong type.
         """
-        if args_parser is not None and not isinstance(args_parser, ArgumentParser):
-            raise SimpleBenchTypeError(
-                f'args_parser must be an ArgumentParser instance - cannot be a {type(args_parser)}',
-                tag=ErrorTag.SESSION_INIT_INVALID_ARGSPARSER_ARG
-            )
-        self._args_parser: ArgumentParser = args_parser if args_parser else ArgumentParser()
-        """The ArgumentParser instance for the session."""
-        self._args: Optional[Namespace] = None
-        """The command line arguments for the session."""
-        self._cases: Sequence[Case] = [] if cases is None else cases
-        """The Sequence of benchmark cases for the session."""
-        self._verbosity: Verbosity = Verbosity.NORMAL
-        """The verbosity level for console output."""
-        self._show_progress: bool = progress
-        """Whether to show progress bars during execution."""
+        # public read/write properties with private backing fields
+        self.default_runner = default_runner
+        self.args_parser = args_parser if args_parser is not None else ArgumentParser()
+        self.cases = cases if cases is not None else []
+        self.verbosity = verbosity if verbosity is not None else Verbosity.NORMAL
+        self.show_progress = progress if progress is not None else False
+        self.output_path = output_path
+
+        # private attributes
         self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity)
-        """ProgressTasks instance for managing progress tasks."""
+        """ProgressTasks instance for managing progress tasks - backing field for the 'tasks' attribute."""
         self._progress: Progress = self._progress_tasks._progress
-        """Rich Progress instance for displaying progress bars."""
-        self._console: Console = self._progress.console
-        """Rich Console instance for displaying output."""
+        """Rich Progress instance for displaying progress bars - backing field for the 'progress' attribute."""
         self._reporter_manager: ReporterManager = ReporterManager()
         """The ReporterManager instance for managing reporters."""
         self._choices: Choices = self._reporter_manager.choices
         """The Choices instance for managing registered reporters."""
-        if output_path is not None and not isinstance(output_path, Path):
-            raise SimpleBenchTypeError(
-                f'output_path must be a Path instance - cannot be a {type(output_path)}',
-                tag=ErrorTag.SESSION_INIT_INVALID_OUTPUT_PATH_ARG
-            )
-        self._output_path: Optional[Path] = output_path
-        """The output path for reports."""
 
-        if not cases:
-            cases = []
-        if not isinstance(cases, Sequence):
-            raise SimpleBenchTypeError(
-                f'cases must be a Sequence of Case instances - cannot be a {type(cases)}',
-                tag=ErrorTag.SESSION_INIT_INVALID_CASES_SEQUENCE_ARG
-            )
-        for entry in cases:
-            if not isinstance(entry, Case):
-                error_text = f'case items must be Case instances - cannot be a {type(entry)}'
-                raise SimpleBenchTypeError(error_text,
-                                           tag=ErrorTag.SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE)
-        self._cases = cases
-        """The Sequence of benchmark cases for the session."""
-
-        if not isinstance(verbosity, Verbosity):
-            raise SimpleBenchTypeError(
-                f'verbosity must be a Verbosity instance - cannot be a {type(verbosity)}',
-                tag=ErrorTag.SESSION_INIT_INVALID_VERBOSITY_ARG
-            )
-        self._verbosity = verbosity
-        """The verbosity level for console output."""
+        # backing fields for public read-only properties
+        self._args: Optional[Namespace] = None
+        """The command line arguments - backing field for the 'args' attribute."""
+        self._console: Console = self._progress.console
+        """Rich Console instance for displaying output - backing field for the 'console' attribute."""
 
     def parse_args(self, args: Optional[list[str]] = None) -> None:
         """Parse the command line arguments using the session's ArgumentParser.
@@ -281,7 +253,7 @@ class Session(ISession):
                         completed=case_counter - 1,
                         refresh=True)
                     cases_task.refresh()
-                callback: Optional[Callable[[Case, Section, Format, Any], None]] = case.callback
+                callback: Optional[ReporterCallback] = case.callback
                 reporter: Reporter = choice.reporter
                 output_path: Optional[Path] = self._output_path
                 if Target.FILESYSTEM in choice.targets:
@@ -307,6 +279,48 @@ class Session(ISession):
             task.stop()
             self._progress_tasks.stop()
             self._progress_tasks.clear()
+
+    @property
+    def default_runner(self) -> type[SimpleRunner] | None:
+        """The default runner class to use for Cases that do not specify a runner. If None,
+        SimpleRunner will be used."""
+        return self._default_runner
+
+    @default_runner.setter
+    def default_runner(self, value: type[SimpleRunner] | None) -> None:
+        """Set the default runner class to use for Cases that do not specify a runner.
+
+        Args:
+            value (type[SimpleRunner] | None): The default runner class to use for Cases that do
+                not specify a runner. If None, SimpleRunner will be used.
+        Raises:
+            SimpleBenchTypeError: If the value is not a subclass of SimpleRunner or None.
+        """
+        if value is not None and not (isinstance(value, type) and issubclass(value, SimpleRunner)):
+            raise SimpleBenchTypeError(
+                f'default_runner must be a subclass of SimpleRunner or None - cannot be a {type(value)}',
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_DEFAULT_RUNNER_ARG
+            )
+        self._default_runner = value
+
+    @property
+    def args_parser(self) -> ArgumentParser:
+        """The ArgumentParser instance for the session."""
+        return self._args_parser
+
+    @args_parser.setter
+    def args_parser(self, value: ArgumentParser) -> None:
+        """Set the ArgumentParser instance for the session.
+
+        Args:
+            value (ArgumentParser): The ArgumentParser instance for the session.
+        """
+        if not isinstance(value, ArgumentParser):
+            raise SimpleBenchTypeError(
+                f'args_parser must be an ArgumentParser instance - cannot be a {type(value)}',
+                tag=ErrorTag.SESSION_INVALID_ARGSPARSER_ARG
+            )
+        self._args_parser = value
 
     @property
     def args(self) -> Optional[Namespace]:
@@ -456,18 +470,18 @@ class Session(ISession):
         self._cases = list(self._cases) + list(cases)
 
     @property
-    def output_path(self) -> Optional[Path]:
+    def output_path(self) -> Path | None:
         """The output path for reports."""
         return self._output_path
 
     @output_path.setter
-    def output_path(self, value: Path) -> None:
+    def output_path(self, value: Path | None) -> None:
         """Set the output path for reports.
 
         Args:
-            value (Path): The output path for reports.
+            value (Path | None): The output path for reports.
         """
-        if not isinstance(value, Path):
+        if value is not None and not isinstance(value, Path):
             raise SimpleBenchTypeError(
                 f'output_path must be a Path instance - cannot be a {type(value)}',
                 tag=ErrorTag.SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG

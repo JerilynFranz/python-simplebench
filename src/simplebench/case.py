@@ -14,6 +14,7 @@ from .results import Results
 from .runners import SimpleRunner
 from .enums import Section, Format
 
+
 if TYPE_CHECKING:
     from .session import Session
     from .tasks import RichTask
@@ -724,7 +725,13 @@ class Case(ICase):
             task.reset()
         kwargs: dict[str, Any]
         for variations_counter, kwargs in enumerate(all_variations):
-            bench: SimpleRunner = SimpleRunner(case=self, session=session, kwargs=kwargs)
+            bench: SimpleRunner
+            if self.runner:
+                bench = self.runner(case=self, session=session, kwargs=kwargs)
+            elif session and session.default_runner:
+                bench = session.default_runner(case=self, session=session, kwargs=kwargs)
+            else:
+                bench = SimpleRunner(case=self, session=session, kwargs=kwargs)
             results: Results = self.action(bench, **kwargs)
             self.results.append(results)
             if task:
