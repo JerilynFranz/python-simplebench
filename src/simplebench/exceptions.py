@@ -396,7 +396,7 @@ class ErrorTag(str, Enum):
     """Something other than Section.OPS or Section.TIMING was passed to the Results.result_section() method"""
 
     # Session() tags
-    SESSION_INIT_INVALID_CASES_SEQUENCE_ARG = "SESSION_INIT_INVALID_CASES_SEQUENCE_ARG"
+    SESSION_INVALID_CASES_SEQUENCE_ARG = "SESSION_INVALID_CASES_SEQUENCE_ARG"
     """Something other than a Sequence of Case instances was passed to the Session() constructor"""
     SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE = "SESSION_INIT_INVALID_CASE_ARG_IN_SEQUENCE"
     """Something other than a Case instance was found in the Sequence passed to the Session() constructor"""
@@ -424,7 +424,7 @@ class ErrorTag(str, Enum):
     """The output path must be set to generate reports"""
     SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG = "SESSION_PARSE_ARGS_INVALID_ARGSPARSER_ARG"
     """Something other than an ArgumentParser instance was passed to the Session.parse_args() method"""
-    SESSION_INVALID_ARGSPARSER_ARG = "SESSION_INVALID_ARGSPARSER_ARG"
+    SESSION_PROPERTY_INVALID_ARGSPARSER_ARG = "SESSION_PROPERTY_INVALID_ARGSPARSER_ARG"
     """Something other than an ArgumentParser instance was assigned to the args_parser property"""
     SESSION_PROPERTY_INVALID_ARGS_ARG = "SESSION_PROPERTY_INVALID_ARGS_ARG"
     """Something other than a Namespace instance was found in the args property"""

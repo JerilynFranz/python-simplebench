@@ -323,7 +323,7 @@ class Session(ISession):
         if not isinstance(value, ArgumentParser):
             raise SimpleBenchTypeError(
                 f'args_parser must be an ArgumentParser instance - cannot be a {type(value)}',
-                tag=ErrorTag.SESSION_INVALID_ARGSPARSER_ARG
+                tag=ErrorTag.SESSION_PROPERTY_INVALID_ARGSPARSER_ARG
             )
         self._args_parser = value
 

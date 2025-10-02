@@ -2,8 +2,7 @@
 from __future__ import annotations
 from argparse import ArgumentParser
 from functools import cache
-from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 import pytest
 from rich.console import Console
@@ -27,42 +26,6 @@ class MockReporterOption(ReporterOption):
 
 class NoDefaultValue:
     """A class to mark parameters that have no default value."""
-
-
-class SessionKWArgs(dict):
-    """A class to hold keyword arguments for initializing a Session instance.
-
-    This class is used to facilitate testing of the Session class initialization
-    with various combinations of parameters, including those that are optional and those
-    that have no default value.
-    """
-    def __init__(  # pylint: disable=unused-argument
-            self, *,
-            cases: Sequence[Case] | NoDefaultValue = NoDefaultValue(),
-            verbosity: Verbosity | NoDefaultValue = NoDefaultValue(),
-            default_runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),
-            args_parser: ArgumentParser | NoDefaultValue = NoDefaultValue(),
-            progress: bool | NoDefaultValue = NoDefaultValue(),
-            output_path: Path | NoDefaultValue = NoDefaultValue(),
-            console: Console | NoDefaultValue = NoDefaultValue()) -> None:
-        """Constructs a SessionKWArgs instance. This class is used to hold keyword arguments for
-        initializing a Session instance in tests.
-
-        Args:
-            cases (Sequence[Case]): A sequence of Case instances.
-            verbosity (Verbosity): The verbosity level for the session.
-            default_runner (type[SimpleRunner]): The default runner class to use for the session.
-            args_parser (ArgumentParser): The argument parser instance for the session.
-            progress (bool): Whether to show progress information during the session.
-            output_path (Path): The output path for the session results.
-            console (Console): The console instance to use for the session.
-        """
-        kwargs = {}
-        for key in ('cases', 'verbosity', 'default_runner', 'args_parser', 'progress', 'output_path', 'console'):
-            value = locals()[key]
-            if not isinstance(value, NoDefaultValue):
-                kwargs[key] = value
-        super().__init__(**kwargs)
 
 
 class CaseKWArgs(dict):
