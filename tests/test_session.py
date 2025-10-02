@@ -293,6 +293,6 @@ def test_session_init(testspec: TestSpec) -> None:
     for the Session class initialization. It checks that the Session instance is created successfully
     with each combination of parameters or raises the appropriate exception for invalid parameters.
     Args:
-        idspec (idspec): An idspec instance for generating test IDs.
+        testspec (TestSpec): An TestSpec instance for specifying a test.
     """
     testspec.run()
