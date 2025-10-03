@@ -2,6 +2,7 @@
 from __future__ import annotations
 from argparse import ArgumentParser
 from functools import cache
+import inspect
 from typing import Any
 
 import pytest
@@ -53,9 +54,8 @@ class CaseKWArgs(dict):
             kwargs_variations: dict[str, list[Any]] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument  # noqa: E501
             runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            results: list[Results] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             options: list[ReporterOption] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            _decoration: bool | NoDefaultValue = NoDefaultValue()) -> None:  # pylint: disable=unused-argument
+        ) -> None:  # pylint: disable=unused-argument
         """Constructs a CaseKWArgs instance. This class is used to hold keyword arguments for
         initializing a Case instance in tests.
 
@@ -123,14 +123,12 @@ class CaseKWArgs(dict):
                 Reporter options can be used to customize the output of the benchmark reports for
                 specific reporters. Reporters are responsible for extracting applicable ReporterOptions
                 from the list of options themselves.
-            _decoration (bool): This field is used internally to indicate if a Case was created via
-                a benchmark decorator.
         """
         kwargs = {}
         for key in (
                 'group', 'title', 'description', 'action', 'iterations', 'warmup_iterations',
                 'min_time', 'max_time', 'variation_cols', 'kwargs_variations', 'runner',
-                'callback', 'results', 'options'):
+                'callback', 'options'):
             value = locals()[key]
             if not isinstance(value, NoDefaultValue):
                 kwargs[key] = value
@@ -391,6 +389,26 @@ def good_callback(  # pylint: disable=unused-argument
 def displayless_console() -> Console:
     """Creates a displayless Console for testing purposes."""
     return Console(quiet=True)
+
+
+def test_casekwargs_matches_case_signature():
+    """Verify CaseKWArgs signature matches Case.__init__.
+
+    This test ensures that the CaseKWArgs class has the same parameters as
+    the Case class's __init__ method. This prevents discrepancies between
+    the two classes that could lead to errors in tests or misunderstandings
+    about the parameters required to initialize a Case instance.
+    """
+    case_sig = inspect.signature(Case.__init__)
+    casekwargs_sig = inspect.signature(CaseKWArgs.__init__)
+
+    # Get parameter names (excluding 'self')
+    case_params = set(case_sig.parameters.keys()) - {'self'}
+    casekwargs_params = set(casekwargs_sig.parameters.keys()) - {'self'}
+
+    assert case_params == casekwargs_params, \
+        f"Mismatch: Case has {case_params - casekwargs_params}, " \
+        f"CaseKWArgs has {casekwargs_params - case_params}"
 
 
 @pytest.mark.parametrize("testspec", [
@@ -716,56 +734,56 @@ def displayless_console() -> Console:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_case),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_CASE_PARAMETER)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_045", TestAction(
         name="Callback function missing required 'section' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_section),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_SECTION_PARAMETER)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_046", TestAction(
         name="Callback function missing required 'output_format' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_format),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_FORMAT_PARAMETER)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_047", TestAction(
         name="Callback function missing required 'output' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_output),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_PARAMETER)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_048", TestAction(
         name="Callback function has wrong type for 'case' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_case_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_TYPE)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_049", TestAction(
         name="Callback function has wrong type for 'section' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_section_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_TYPE)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_050", TestAction(
         name="Callback function has wrong type for 'output_format' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_format_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_TYPE)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_051", TestAction(
         name="Callback function has wrong type for 'output' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_output_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_TYPE)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_052", TestAction(
         name="Callback function has an extra parameter",
         action=Case,
@@ -807,35 +825,35 @@ def displayless_console() -> Console:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_no_type_hints),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_TYPE)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_058", TestAction(
         name="Callback function allows case parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_case_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_CASE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_059", TestAction(
         name="Callback function allows section parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_section_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_060", TestAction(
         name="Callback function allows output_format parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_output_format_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_FORMAT_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_061", TestAction(
         name="Callback function allows output parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_output_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_OUTPUT_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_062", TestAction(
         name="results attribute is initialized to empty list",
         action=Case,

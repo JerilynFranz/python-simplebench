@@ -1,7 +1,6 @@
 """Tests for the session.py module."""
 from __future__ import annotations
 from argparse import ArgumentParser
-from functools import cache
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -9,14 +8,12 @@ import pytest
 from rich.console import Console
 
 from simplebench import Case, SimpleRunner, Results, Session, Verbosity
-from simplebench.enums import Format, Section
-from simplebench.exceptions import (SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchRuntimeError,
-                                    SimpleBenchAttributeError, ErrorTag)
+from simplebench.exceptions import (SimpleBenchTypeError, ErrorTag)
 from simplebench.protocols import ActionRunner, ReporterCallback
 from simplebench.reporters.reporter_option import ReporterOption
 
 
-from .testspec import TestAction, TestSet, idspec, Assert, TestGet, TestSpec, no_assigned_action
+from .testspec import TestAction, idspec, Assert, TestSpec
 
 
 class MockReporterOption(ReporterOption):

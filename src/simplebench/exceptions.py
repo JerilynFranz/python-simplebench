@@ -388,6 +388,15 @@ class ErrorTag(str, Enum):
     """Attempted to set a default runner for Case that is not a SimpleRunner or a subclass."""
     CASE_BENCHMARK_ACTION_RAISED_EXCEPTION = "CASE_BENCHMARK_ACTION_RAISED_EXCEPTION"
     """The action function raised an exception during execution."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER")
+    """The callback function is missing a required parameter."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE")
+    """A parameter in the callback function has an incorrect type."""
+    CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY = (
+        "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY")
+    """A parameter in the callback function is not keyword-only."""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"
