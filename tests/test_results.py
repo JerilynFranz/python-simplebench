@@ -177,13 +177,13 @@ def base_iterations() -> list[Iteration]:
                                         result.interval_scale == DEFAULT_INTERVAL_SCALE and
                                         len(result.iterations) == 1 and
                                         isinstance(result.ops_per_second, OperationsPerInterval) and
-                                        result.ops_per_second.data == [1.0] and
+                                        result.ops_per_second.data == (1.0,) and
                                         isinstance(result.per_round_timings, OperationTimings) and
-                                        result.per_round_timings.data == [1.0] and
+                                        result.per_round_timings.data == (1.0,) and
                                         isinstance(result.memory, MemoryUsage) and
-                                        result.memory.data == [100] and
+                                        result.memory.data == (100,) and
                                         isinstance(result.peak_memory, PeakMemoryUsage) and
-                                        result.peak_memory.data == [150] and
+                                        result.peak_memory.data == (150,) and
                                         result.ops_per_interval_unit == DEFAULT_INTERVAL_UNIT and
                                         result.ops_per_interval_scale == DEFAULT_INTERVAL_SCALE and
                                         result.total_elapsed == 1.0 and

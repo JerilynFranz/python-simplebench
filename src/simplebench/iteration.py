@@ -3,6 +3,8 @@
 from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from .enums import Section
 from .exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
+from .validators import (validate_non_empty_string, validate_int, validate_positive_int,
+                         validate_positive_float, validate_non_negative_float)
 
 
 class Iteration:
@@ -46,12 +48,28 @@ class Iteration:
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
             SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        self.n = n
-        self.unit = unit
-        self.scale = scale
-        self.elapsed = elapsed
-        self.memory = memory  # in bytes
-        self.peak_memory = peak_memory  # in bytes
+        self._n = validate_positive_int(
+                    n, 'n',
+                    ErrorTag.ITERATION_N_ARG_TYPE,
+                    ErrorTag.ITERATION_N_ARG_VALUE)
+        self._unit = validate_non_empty_string(
+                    unit, 'unit',
+                    ErrorTag.ITERATION_UNIT_ARG_TYPE,
+                    ErrorTag.ITERATION_UNIT_ARG_VALUE)
+        self._scale = validate_positive_float(
+                    scale, 'scale',
+                    ErrorTag.ITERATION_SCALE_ARG_TYPE,
+                    ErrorTag.ITERATION_SCALE_ARG_VALUE)
+        self._elapsed = validate_non_negative_float(
+            elapsed, 'elapsed',
+            ErrorTag.ITERATION_ELAPSED_ARG_TYPE,
+            ErrorTag.ITERATION_ELAPSED_ARG_VALUE)
+        self._memory = validate_int(
+            memory, 'memory',
+            ErrorTag.ITERATION_MEMORY_ARG_TYPE)
+        self._peak_memory = validate_int(
+            peak_memory, 'peak_memory',
+            ErrorTag.ITERATION_PEAK_MEMORY_ARG_TYPE)
 
     def __eq__(self, other: object) -> bool:
         """Check equality between two Iteration instances.
@@ -72,52 +90,20 @@ class Iteration:
         '''The n weight of the iteration'''
         return self._n
 
-    @n.setter
-    def n(self, value: int) -> None:
-        if not isinstance(value, int):
-            raise SimpleBenchTypeError('n must be an int', tag=ErrorTag.ITERATION_SET_N_ARG_TYPE)
-        if value <= 0:
-            raise SimpleBenchValueError('n must be a positive int', tag=ErrorTag.ITERATION_SET_N_ARG_VALUE)
-        self._n = value
-
     @property
     def unit(self) -> str:
         '''The unit of measurement for the elapsed time.'''
         return self._unit
-
-    @unit.setter
-    def unit(self, value: str) -> None:
-        if not isinstance(value, str):
-            raise SimpleBenchTypeError('unit must be a str', tag=ErrorTag.ITERATION_INIT_UNIT_ARG_TYPE)
-        if value.strip() == "":
-            raise SimpleBenchValueError('unit must be a non-empty str', tag=ErrorTag.ITERATION_INIT_UNIT_ARG_VALUE)
-        self._unit = value
 
     @property
     def scale(self) -> float:
         '''The scale factor for the elapsed time.'''
         return self._scale
 
-    @scale.setter
-    def scale(self, value: float) -> None:
-        if not isinstance(value, float):
-            raise SimpleBenchTypeError('scale must be a float', tag=ErrorTag.ITERATION_INIT_SCALE_ARG_TYPE)
-        if value <= 0.0:
-            raise SimpleBenchValueError('scale must be a positive float', tag=ErrorTag.ITERATION_INIT_SCALE_ARG_VALUE)
-        self._scale = value
-
     @property
     def elapsed(self) -> float:
         '''The total elapsed time for the iteration in the specified unit.'''
         return self._elapsed
-
-    @elapsed.setter
-    def elapsed(self, value: float) -> None:
-        if not isinstance(value, float):
-            raise SimpleBenchTypeError('elapsed must be a float', tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_TYPE)
-        if value < 0.0:
-            raise SimpleBenchValueError('elapsed must be non-negative', tag=ErrorTag.ITERATION_INIT_ELAPSED_ARG_VALUE)
-        self._elapsed = value
 
     @property
     def memory(self) -> int:
@@ -128,13 +114,6 @@ class Iteration:
         '''
         return self._memory
 
-    @memory.setter
-    def memory(self, value: int) -> None:
-        if not isinstance(value, int):
-            raise SimpleBenchTypeError('memory must be an int',
-                                       tag=ErrorTag.ITERATION_SET_MEMORY_ARG_TYPE)
-        self._memory = value
-
     @property
     def peak_memory(self) -> int:
         '''The peak memory usage in bytes.
@@ -142,13 +121,6 @@ class Iteration:
         This is the maximum memory allocated during the action.
         '''
         return self._peak_memory
-
-    @peak_memory.setter
-    def peak_memory(self, value: int) -> None:
-        if not isinstance(value, int):
-            raise SimpleBenchTypeError('peak_memory must be an int',
-                                       tag=ErrorTag.ITERATION_SET_PEAK_MEMORY_ARG_TYPE)
-        self._peak_memory = value
 
     @property
     def per_round_elapsed(self) -> float:
@@ -204,7 +176,7 @@ class Iteration:
                 return self.memory
             case Section.PEAK_MEMORY:
                 return self.peak_memory
-            case _:
+            case _:  # needed for mypy
                 raise SimpleBenchValueError(
                     f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
                     tag=ErrorTag.ITERATION_ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE

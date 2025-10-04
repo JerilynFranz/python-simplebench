@@ -40,8 +40,54 @@ def validate_non_empty_string(
     return value.strip()
 
 
-def validate_positive_int(
-        value: int, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> int:
+def validate_int(value: int, field_name: str, type_tag: ErrorTag) -> int:
+    """Validate that a value is an integer.
+
+    Args:
+        value (int): The value to validate.
+        field_name (str): The name of the field being validated (for error messages).
+        type_tag (ErrorTag): The error tag to use for type errors.
+
+    Returns:
+        int: The validated integer.
+
+    Raises:
+        SimpleBenchTypeError: If the value is not an integer.
+    """
+    if not isinstance(value, int):
+        raise SimpleBenchTypeError(
+            f'Invalid {field_name} type: {type(value)}. Must be an int.',
+            tag=type_tag
+        )
+    return value
+
+
+def validate_float(value: float | int, field_name: str, type_tag: ErrorTag) -> float:
+    """Validate that a value is a float or integer.
+
+    Validates that the value is either a float or an int.
+    The return type is always a float.
+
+    Args:
+        value (float | int): The value to validate.
+        field_name (str): The name of the field being validated (for error messages).
+        type_tag (ErrorTag): The error tag to use for type errors.
+
+    Returns:
+        float: The validated float.
+
+    Raises:
+        SimpleBenchTypeError: If the value is not a float.
+    """
+    if not isinstance(value, (float, int)):  # Allow ints as valid floats
+        raise SimpleBenchTypeError(
+            f'Invalid {field_name} type: {type(value)}. Must be a float or int.',
+            tag=type_tag
+        )
+    return float(value)
+
+
+def validate_positive_int(value: int, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> int:
     """Validate that a value is a positive integer.
 
     Args:
@@ -132,12 +178,45 @@ def validate_positive_float(
     return float(value)
 
 
+def validate_non_negative_float(
+        value: float | int, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> float:
+    """Validate that a value is a non-negative float or integer.
+
+    Validates that the value is either a float or an int and that it is non-negative.
+    The return type is always a float.
+
+    Args:
+        value (float | int): The value to validate.
+        field_name (str): The name of the field being validated (for error messages).
+        type_tag (ErrorTag): The error tag to use for type errors.
+        value_tag (ErrorTag): The error tag to use for value errors.
+
+    Returns:
+        float: The validated non-negative float.
+
+    Raises:
+        SimpleBenchTypeError: If the value is not a float.
+        SimpleBenchValueError: If the value is negative.
+    """
+    if not isinstance(value, (float, int)):  # Allow ints as valid floats
+        raise SimpleBenchTypeError(
+            f'Invalid {field_name} type: {type(value)}. Must be a float or int.',
+            tag=type_tag
+        )
+    if value < 0.0:
+        raise SimpleBenchValueError(
+            f'Invalid {field_name}: must be a non-negative float or int.',
+            tag=value_tag
+        )
+    return float(value)
+
+
 def validate_sequence_of_numbers(
         value: Sequence[int | float],
         field_name: str,
         type_tag: ErrorTag,
         value_tag: ErrorTag,
-        allow_empty: bool = True) -> list[int | float]:
+        allow_empty: bool = True) -> Sequence[int | float]:
     """Validate that a value is a sequence of numbers (ints or floats).
 
     Args:
@@ -148,7 +227,7 @@ def validate_sequence_of_numbers(
         allow_empty (bool): Whether to allow an empty sequence. Defaults to True.
 
     Returns:
-        list[int | float]: The validated sequence of numbers as a list.
+        Sequence[int | float]: The validated Sequence of numbers.
 
     Raises:
         SimpleBenchTypeError: If the value is not a sequence or contains non-numeric types.
@@ -170,4 +249,4 @@ def validate_sequence_of_numbers(
                 f'Invalid {field_name} element at index {i}: {type(item)}. Must be an int or float.',
                 tag=type_tag
             )
-    return list(value)
+    return value

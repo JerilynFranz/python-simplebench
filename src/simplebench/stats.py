@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Containers for benchmark statistics"""
 
-from copy import copy
 import statistics
 from typing import Optional, Sequence
 
@@ -10,7 +9,7 @@ from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                         DEFAULT_OPS_PER_INTERVAL_SCALE,
                         DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT)
 from .iteration import Iteration
-from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from .exceptions import ErrorTag
 from .si_units import si_unit_base
 from .validators import (validate_non_empty_string, validate_positive_float, validate_sequence_of_numbers)
 
@@ -19,20 +18,32 @@ class Stats:
     '''Generic container for statistics on a benchmark.
 
     Attributes:
-        unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
-        scale (float): The scale factor for the interval (e.g. 1 for seconds).
-        data: list[int | float] = List of data points.
+        unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
+        scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        data: (tuple[float | int, ...]) = Tuple of data points. (read only)
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)
         maximum (float): The maximum operations per time interval. (read only)
         standard_deviation (float): The standard deviation of operations per time interval. (read only)
         relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
-        percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
+        percentiles (tuple[float, ...]): Percentiles of operations per time interval. (read only)
     '''
-    __slots__ = ('_unit', '_scale', '_data')
+    __slots__ = ('_unit', '_scale', '_data', '_percentiles', '_mean', '_median',
+                 '_minimum', '_maximum', '_standard_deviation', '_relative_standard_deviation',
+                 '_statistics_as_dict', '_statistics_and_data_as_dict')
 
     def __init__(self, *, unit: str, scale: float, data: Sequence[int | float]) -> None:
+        """Initialize the Stats object.
+
+        Args:
+            unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
+            scale (float): The scale factor for the interval (e.g. 1 for seconds).
+            data (Sequence[int | float]): Sequence of data points.
+        Raises:
+            SimpleBenchTypeError: If any of the arguments are of the wrong type.
+            SimpleBenchValueError: If any of the arguments have invalid values.
+        """
         self._unit: str = validate_non_empty_string(
                                 unit, 'unit',
                                 ErrorTag.STATS_INVALID_UNIT_ARG_TYPE,
@@ -41,150 +52,106 @@ class Stats:
                                 scale, 'scale',
                                 ErrorTag.STATS_INVALID_SCALE_ARG_TYPE,
                                 ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)
-        self._data: list[float | int] = validate_sequence_of_numbers(
+        # data is left unsorted to allow for time series data to be preserved
+        self._data: tuple[int | float, ...] = tuple(validate_sequence_of_numbers(
                                             value=data,
                                             field_name='data',
                                             allow_empty=False,
                                             type_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE,
-                                            value_tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)
+                                            value_tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE))
+        self._percentiles: tuple[float, ...] | None = None
+        self._mean: float | None = None
+        self._median: float | None = None
+        self._minimum: float | None = None
+        self._maximum: float | None = None
+        self._standard_deviation: float | None = None
+        self._relative_standard_deviation: float | None = None
+        self._statistics_as_dict: dict[str, str | float | dict[int, float] | list[int | float]] | None = None
+        self._statistics_and_data_as_dict: dict[str, str | float | dict[int, float] | list[int | float]] | None = None
 
     @property
     def unit(self) -> str:
         '''The unit of the data.'''
         return self._unit
 
-    @unit.setter
-    def unit(self, unit: str) -> None:
-        """Set the unit of the data.
-
-        The unit should be a string representing the unit of measurement,
-        such as "ops/s" for operations per second and "ns" for nanoseconds.
-
-        It cannot be an empty string.
-
-        Args:
-            unit: The unit of measurement for the benchmark (e.g., "ops/s").
-
-        Raises:
-            SimpleBenchTypeError: If unit is not a str.
-            SimpleBenchValueError: If unit is an empty string.
-        """
-        if not isinstance(unit, str):
-            raise SimpleBenchTypeError(
-                "unit must be a str",
-                tag=ErrorTag.STATS_INVALID_UNIT_ARG_TYPE)
-        if unit == '':
-            raise SimpleBenchValueError(
-                "unit must not be an empty string",
-                tag=ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)
-        self._unit = unit
-
     @property
     def scale(self) -> float:
         '''The scale of the data.'''
         return self._scale
 
-    @scale.setter
-    def scale(self, scale: float) -> None:
-        """Set the scale of the data.
-
-        The scale should be a float or int greater than 0.
-
-        Args:
-            scale: The scale factor for the data.
-
-        Raises:
-            SimpleBenchTypeError: If scale is not a float or int.
-            SimpleBenchValueError: If scale is not greater than 0.
-        """
-        if not isinstance(scale, (float, int)):
-            raise SimpleBenchTypeError(
-                "scale must be a float or int",
-                tag=ErrorTag.STATS_INVALID_SCALE_ARG_TYPE)
-        if scale <= 0:
-            raise SimpleBenchValueError(
-                "scale must be greater than 0",
-                tag=ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)
-        self._scale = float(scale)
-
     @property
-    def data(self) -> Sequence[int | float]:
+    def data(self) -> tuple[int | float, ...]:
         '''The data points.'''
         return self._data
-
-    @data.setter
-    def data(self, data: Optional[Sequence[int | float]] = None) -> None:
-        """Set the data points.
-
-        Args:
-            data: A list of int or float data points, or None to clear the data.
-
-        Raises:
-            SimpleBenchTypeError: If data is not a list of int or float, or None.
-        """
-        if data is not None and not isinstance(data, list):
-            raise SimpleBenchTypeError(
-                "data must be a list of numbers (int or float) or None",
-                tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE)
-        if data is not None:
-            for value in data:
-                if not isinstance(value, (int, float)):
-                    raise SimpleBenchTypeError(
-                        "data values must be a list of int or float not " + str(type(value)),
-                        tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)
-        else:
-            data = []
-        self._data = data
 
     @property
     def mean(self) -> float:
         '''The mean of the data.'''
-        return statistics.mean(self.data) if self.data else 0.0
+        if self._mean is None:
+            self._mean = statistics.mean(self.data) if self.data else 0.0
+        return self._mean
 
     @property
     def median(self) -> float:
         '''The median of the data.'''
-        return statistics.median(self.data) if self.data else 0.0
+        if self._median is None:
+            self._median = statistics.median(self.data) if self.data else 0.0
+        return self._median
 
     @property
     def minimum(self) -> float:
         '''The minimum of the data.'''
-        return float(min(self.data)) if self.data else 0.0
+        if self._minimum is None:
+            self._minimum = float(min(self.data)) if self.data else 0.0
+        return self._minimum
 
     @property
     def maximum(self) -> float:
         '''The maximum of the data.'''
-        return float(max(self.data)) if self.data else 0.0
+        if self._maximum is None:
+            self._maximum = float(max(self.data)) if self.data else 0.0
+        return self._maximum
 
     @property
     def standard_deviation(self) -> float:
         '''The standard deviation of the data.'''
-        return statistics.stdev(self.data) if len(self.data) > 1 else 0.0
+        if self._standard_deviation is None:
+            self._standard_deviation = statistics.stdev(self.data) if len(self.data) > 1 else 0.0
+        return self._standard_deviation
 
     @property
     def relative_standard_deviation(self) -> float:
         '''The relative standard deviation of the data.'''
-        return self.standard_deviation / self.mean * 100 if self.mean else 0.0
+        if self._relative_standard_deviation is None:
+            self._relative_standard_deviation = self.standard_deviation / self.mean * 100 if self.mean else 0.0
+        return self._relative_standard_deviation
 
     @property
-    def percentiles(self) -> dict[int, float]:
+    def percentiles(self) -> tuple[float, ...]:
         '''Percentiles of the data.
 
-        Computes the 5th, 10th, 25th, 50th, 75th, 90th, and 95th percentiles
-        and returns them as a dictionary keyed by percent.
+        Returns the 0th through 100th percentiles of the data as an immutable tuple.
         '''
-        # Calculate percentiles if we have enough data points
+        if self._percentiles is None:
+            self._percentiles = self._calculate_percentiles()
+        return self._percentiles
+
+    def _calculate_percentiles(self) -> tuple[float, ...]:
+        """Helper to calculate percentiles.
+
+        Returns:
+            A tuple of percentiles keyed positionally by percent from 0 to 100.
+        """
+        percentiles_n: list[int] = list(range(0, 101))
         if not self.data:
-            return {p: 0.0 for p in [5, 10, 25, 50, 75, 90, 95]}
+            return tuple(0.0 for _ in percentiles_n)
         if len(self.data) == 1:
-            return {p: float(self.data[0]) for p in [5, 10, 25, 50, 75, 90, 95]}
-        percentiles: dict[int, float] = {}
-        for percent in [5, 10, 25, 50, 75, 90, 95]:
-            percentiles[percent] = statistics.quantiles(self.data, n=100)[percent - 1]
-        return percentiles
+            return tuple(float(self.data[0]) for _ in percentiles_n)
+        quantile_values = statistics.quantiles(self.data, n=102, method='inclusive')
+        return tuple(quantile_values)
 
     @property
-    def statistics_as_dict(self) -> dict[str, str | float | dict[int, float] | list[int | float]]:
+    def statistics_as_dict(self) -> dict[str, str | float | dict[int, float] | tuple[int | float, ...]]:
         '''Returns the statistics as a JSON-serializable dictionary.
 
         The data values are scaled according to the scale factor to provide
@@ -194,25 +161,27 @@ class Stats:
 
         This does not include the raw data points, only the statistics.
 
+        The dictionary is mutability-safe as all data is either a primitive or a copy.
+
         Returns:
             A dictionary containing the statistics.
         '''
+        # Immutability is preserved because all values are primitives or copies already
         return {
             'type': f'{self.__class__.__name__}:statistics',
             'unit': si_unit_base(self.unit),
-            'mean': self.mean / self.scale if self.scale else self.mean,
-            'median': self.median / self.scale if self.scale else self.median,
-            'minimum': self.minimum / self.scale if self.scale else self.minimum,
-            'maximum': self.maximum / self.scale if self.scale else self.maximum,
-            'standard_deviation': self.standard_deviation / self.scale if self.scale else self.standard_deviation,
+            'mean': self.mean / self.scale,
+            'median': self.median / self.scale,
+            'minimum': self.minimum / self.scale,
+            'maximum': self.maximum / self.scale,
+            'standard_deviation': self.standard_deviation / self.scale,
             'relative_standard_deviation': self.relative_standard_deviation,
-            'percentiles': {key: value / self.scale for key, value in self.percentiles.items()
-                            } if self.scale else copy(self.percentiles),
+            'percentiles': tuple(value / self.scale for value in self.percentiles)
         }
 
     @property
     def statistics_and_data_as_dict(self) -> dict[
-            str, str | float | dict[int, float] | list[int | float]]:
+            str, str | float | dict[int, float] | tuple[int | float, ...]]:
         '''Returns the statistics and data as a JSON-serializable dictionary.
 
         This includes all the statistics as well as the raw data points.
@@ -222,11 +191,14 @@ class Stats:
 
         The unit is converted to its SI base unit representation. (e.g., "ms" becomes "s")
 
+        The dictionary is mutability-safe as all data is either a primitive or a copy.
+
         Returns:
             A dictionary containing the statistics and the scaled data points.
         '''
-        stats: dict[str, str | float | dict[int, float] | list[int | float]] = self.statistics_as_dict
-        stats['data'] = [value / self.scale for value in self.data]
+        # Immutability is preserved because all values are primitives or copies already
+        stats: dict[str, str | float | dict[int, float] | tuple[int | float, ...]] = self.statistics_as_dict
+        stats['data'] = tuple(value / self.scale for value in self.data)
         return stats
 
     def __repr__(self) -> str:
@@ -238,9 +210,9 @@ class OperationsPerInterval(Stats):
     '''Container for the operations per time interval statistics of a benchmark.
 
     Attributes:
-        unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
-        scale (float): The scale factor for the interval (e.g. 1 for seconds).
-        data: list[int] = List of data points.
+        unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
+        scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        data: list[int] = List of data points. (read only)
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)
@@ -255,7 +227,18 @@ class OperationsPerInterval(Stats):
                  unit: str = DEFAULT_OPS_PER_INTERVAL_UNIT,
                  scale: float = DEFAULT_OPS_PER_INTERVAL_SCALE,
                  data: Optional[Sequence[int | float]] = None) -> None:
-        """Initialize the OperationsPerInterval statistics."""
+        """Construct OperationsPerInterval stats from Iteration or raw ops data.
+
+        Args:
+            iterations (list[Iteration] | None): List of Iteration objects to extract ops data from.
+            unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
+            scale (float): The scale factor for the interval (e.g. 1 for seconds).
+            data (Optional[list[int | float]]): Optional list of ops data points. If not provided,
+                ops data will be extracted from the iterations if available.
+        Raises:
+            SimpleBenchTypeError: If any of the arguments are of the wrong type.
+            SimpleBenchValueError: If any of the arguments have invalid values.
+        """
         if not data:
             data = []
         if not data and iterations is not None:
@@ -267,16 +250,16 @@ class OperationTimings(Stats):
     '''Container for the operation timing statistics of a benchmark.
 
     Attributes:
-        unit (str): The unit of measurement for the timings (e.g., "ns").
-        scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds).
-        data: list[float | int] = List of timing data points.)
-        mean (float): The mean time per operation.
-        median (float): The median time per operation.
-        minimum (float): The minimum time per operation.
-        maximum (float): The maximum time per operation.
-        standard_deviation (float): The standard deviation of the time per operation.
-        relative_standard_deviation (float): The relative standard deviation of the time per operation.
-        percentiles (dict[int, float]): Percentiles of time per operation.
+        unit (str): The unit of measurement for the timings (e.g., "ns"). (read only)
+        scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds). (read only)
+        data: list[float | int] = List of timing data points. (read only)
+        mean (float): The mean time per operation. (read only)
+        median (float): The median time per operation. (read only)
+        minimum (float): The minimum time per operation. (read only)
+        maximum (float): The maximum time per operation. (read only)
+        standard_deviation (float): The standard deviation of the time per operation. (read only)
+        relative_standard_deviation (float): The relative standard deviation of the time per operation. (read only)
+        percentiles (dict[int, float]): Percentiles of time per operation. (read only)
     '''
     def __init__(self,
                  *,
@@ -284,6 +267,18 @@ class OperationTimings(Stats):
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
                  data: Optional[Sequence[int | float]] = None):
+        """Construct OperationTimings stats from Iteration or raw timing data.
+
+        Args:
+            iterations (list[Iteration] | None): List of Iteration objects to extract timing data from.
+            unit (str): The unit of measurement for the timings (e.g., "ns").
+            scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds).
+            data (Optional[list[int | float]]): Optional list of timing data points. If not provided,
+                timing data will be extracted from the iterations if available.
+        Raises:
+            SimpleBenchTypeError: If any of the arguments are of the wrong type.
+            SimpleBenchValueError: If any of the arguments have invalid values.
+        """
         if not data:
             data = []
         if not data and iterations is not None:
@@ -295,16 +290,16 @@ class MemoryUsage(Stats):
     '''Container for the memory usage statistics of a benchmark.
 
     Attributes:
-        unit (str): The unit of measurement for the memory usage (e.g., "MB").
-        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
-        data: list[float | int] = List of memory usage data points.
-        mean (float): The mean memory usage.
-        median (float): The median memory usage.
-        minimum (float): The minimum memory usage.
-        maximum (float): The maximum memory usage.
-        standard_deviation (float): The standard deviation of the memory usage.
-        relative_standard_deviation (float): The relative standard deviation of the memory usage.
-        percentiles (dict[int, float]): Percentiles of memory usage.
+        unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
+        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
+        data: list[float | int] = List of memory usage data points. (read only)
+        mean (float): The mean memory usage. (read only)
+        median (float): The median memory usage. (read only)
+        minimum (float): The minimum memory usage. (read only)
+        maximum (float): The maximum memory usage. (read only)
+        standard_deviation (float): The standard deviation of the memory usage. (read only)
+        relative_standard_deviation (float): The relative standard deviation of the memory usage. (read only)
+        percentiles (dict[int, float]): Percentiles of memory usage. (read only)
     '''
     def __init__(self,
                  *,
@@ -312,6 +307,18 @@ class MemoryUsage(Stats):
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
                  data: Optional[list[int | float]] = None):
+        """Construct MemoryUsage stats from Iteration or raw memory data.
+
+        Args:
+            iterations (list[Iteration] | None): List of Iteration objects to extract memory data from.
+            unit (str): The unit of measurement for the memory usage (e.g., "MB").
+            scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
+            data (Optional[list[int | float]]): Optional list of memory usage data points. If not provided,
+                memory data will be extracted from the iterations if available.
+        Raises:
+            SimpleBenchTypeError: If any of the arguments are of the wrong type.
+            SimpleBenchValueError: If any of the arguments have invalid values.
+        """
         if not data:
             data = []
         if not data and iterations is not None:
@@ -323,16 +330,16 @@ class PeakMemoryUsage(Stats):
     '''Container for the peak memory usage statistics of a benchmark.
 
     Attributes:
-        unit (str): The unit of measurement for the memory usage (e.g., "MB").
-        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
-        data: list[float | int] = List of peak memory usage data points.
-        mean (float): The mean memory usage.
-        median (float): The median memory usage.
-        minimum (float): The minimum memory usage.
-        maximum (float): The maximum memory usage.
-        standard_deviation (float): The standard deviation of the memory usage.
-        relative_standard_deviation (float): The relative standard deviation of the memory usage.
-        percentiles (dict[int, float]): Percentiles of memory usage.
+        unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
+        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
+        data: list[float | int] = List of peak memory usage data points. (read only)
+        mean (float): The mean memory usage. (read only)
+        median (float): The median memory usage. (read only)
+        minimum (float): The minimum memory usage. (read only)
+        maximum (float): The maximum memory usage. (read only)
+        standard_deviation (float): The standard deviation of the memory usage. (read only)
+        relative_standard_deviation (float): The relative standard deviation of the memory usage. (read only)
+        percentiles (dict[int, float]): Percentiles of memory usage. (read only)
     '''
     def __init__(self,
                  *,
@@ -340,6 +347,17 @@ class PeakMemoryUsage(Stats):
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
                  data: Optional[Sequence[int | float]] = None):
+        """Construct PeakMemoryUsage stats from Iteration or raw memory data.
+        Args:
+            iterations (list[Iteration] | None): List of Iteration objects to extract peak memory data from.
+            unit (str): The unit of measurement for the memory usage (e.g., "MB").
+            scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
+            data (Optional[list[int | float]]): Optional list of peak memory usage data points. If not provided,
+                peak memory data will be extracted from the iterations if available.
+        Raises:
+            SimpleBenchTypeError: If any of the arguments are of the wrong type.
+            SimpleBenchValueError: If any of the arguments have invalid values.
+        """
         if not data:
             data = []
         if not data and iterations is not None:

@@ -12,7 +12,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, 
 from simplebench.iteration import Iteration
 from simplebench import stats
 
-from .testspec import TestAction, TestSetGet, idspec
+from .testspec import TestAction, TestSet, idspec
 
 
 class Nonsense(str, Enum):
@@ -71,7 +71,7 @@ def stats_classes() -> list[type[stats.Stats]]:
     idspec("STATS_010", TestAction(
         name="valid initial values, correctly set",
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
-        validate_result=lambda obj: obj.unit == 'a unit' and obj.scale == 1.0 and obj.data == [1.0, 2.0, 3.0])),
+        validate_result=lambda obj: obj.unit == 'a unit' and obj.scale == 1.0 and obj.data == (1.0, 2.0, 3.0))),
 ])
 def test_stats_init(stats_classes: list[type[stats.Stats]], test: TestAction) -> None:
     """Test that the stats module is initialized correctly."""
@@ -90,71 +90,24 @@ def stats_instances() -> list[stats.Stats]:
 
 
 @pytest.mark.parametrize("test", [
-    idspec("STATS_PROPERTY_001", TestSetGet(
-        name="unit property (valid)",
+    idspec("SET_001", TestSet(
+        name="unit property (setting read-only attribute)",
         attribute='unit',
         value='new unit',
-        expected='new unit')),
-    idspec("STATS_PROPERTY_002", TestSetGet(
-        name="unit property (invalid type, int)",
-        attribute='unit',
-        value=123,
-        set_exception=SimpleBenchTypeError,
-        set_exception_tag=ErrorTag.STATS_INVALID_UNIT_ARG_TYPE)),
-    idspec("STATS_PROPERTY_003", TestSetGet(
-        name="unit property (invalid value, empty str)",
-        attribute='unit',
-        value='',
-        set_exception=SimpleBenchValueError,
-        set_exception_tag=ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)),
-    idspec("STATS_PROPERTY_004", TestSetGet(
-        name="scale property (valid)",
+        exception=AttributeError)),
+    idspec("SET_002", TestSet(
+        name="scale property (setting read-only attribute)",
         attribute='scale',
         value=2.0,
-        expected=2.0)),
-    idspec("STATS_PROPERTY_005", TestSetGet(
-        name="scale property (invalid type, str)",
-        attribute='scale',
-        value='not_a_number',
-        set_exception=SimpleBenchTypeError,
-        set_exception_tag=ErrorTag.STATS_INVALID_SCALE_ARG_TYPE)),
-    idspec("STATS_PROPERTY_006", TestSetGet(
-        name="scale property (invalid value, zero)",
-        attribute='scale',
-        value=0,
-        set_exception=SimpleBenchValueError,
-        set_exception_tag=ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)),
-    idspec("STATS_PROPERTY_007", TestSetGet(
-        name="scale property (invalid value, negative)",
-        attribute='scale',
-        value=-1.0,
-        set_exception=SimpleBenchValueError,
-        set_exception_tag=ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)),
-    idspec("STATS_PROPERTY_008", TestSetGet(
-        name="data property (valid)",
+        exception=AttributeError)),
+    idspec("SET_003", TestSet(
+        name="data property (setting read-only attribute)",
         attribute='data',
         value=[1.0, 2.0, 3.0],
-        expected=[1.0, 2.0, 3.0])),
-    idspec("STATS_PROPERTY_009", TestSetGet(
-        name="data property (invalid type, str)",
-        attribute='data',
-        value='not_a_list',
-        set_exception=SimpleBenchTypeError,
-        set_exception_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE)),
-    idspec("STATS_PROPERTY_010", TestSetGet(
-        name="data property (invalid value type, list with str)",
-        attribute='data',
-        value=[1.0, 'not_a_number', 3.0],
-        set_exception=SimpleBenchTypeError,
-        set_exception_tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)),
-    idspec("STATS_PROPERTY_011", TestSetGet(
-        name="data property (clear data with None)",
-        attribute='data',
-        value=None,
-        expected=[])),
+        exception=AttributeError)),
 ])
-def test_stats_set_get(stats_instances: list[stats.Stats], test: TestSetGet) -> None:
-    """Test stats class property setters and getters."""
+def test_stats_set(stats_instances: list[stats.Stats], test: TestSet) -> None:
+    """Test stats class property setters."""
     for stats_instance in stats_instances:
         test.name = f"{test.name} ({type(stats_instance).__name__})"
         test.obj = stats_instance
@@ -183,7 +136,7 @@ def test_computed_stats_read_only(stats_instances: list[stats.Stats], attribute:
 @pytest.mark.parametrize("stats_data", [
     pytest.param([10.0], id="COMPUTED_VALUES_001 single data point"),
     pytest.param([10.0, 20.0, 30.0, 40.0, 50.0], id="COMPUTED_VALUES_002 multiple data points"),
-    pytest.param([5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0], id="COMPUTED_VALUES_003 larger data set"),
+    pytest.param([float(value) for value in range(0, 101)], id="COMPUTED_VALUES_003 larger data set"),
     pytest.param([3.0, 3.0, 3.0, 3.0, 3.0], id="COMPUTED_VALUES_004 identical data points"),
 ])
 def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
@@ -201,8 +154,8 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
             assert stats_instance.standard_deviation == 0.0, "Standard deviation should be 0.0 for empty data"
             assert stats_instance.relative_standard_deviation == 0.0, (
                 "Relative standard deviation should be 0.0 for empty data")
-            assert stats_instance.percentiles == {5: 0.0, 10: 0.0, 25: 0.0, 50: 0.0, 75: 0.0, 90: 0.0, 95: 0.0}, (
-                "Percentiles should be 0.0 for empty data")
+            assert stats_instance.percentiles == tuple([0.0] * 101), (
+                "Percentiles should be all 0.0 for empty data")
         case 1:
             assert stats_instance.mean == 10.0, "Mean should be 10.0 for single data point"
             assert stats_instance.median == 10.0, "Median should be 10.0 for single data point"
@@ -211,9 +164,8 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
             assert stats_instance.standard_deviation == 0.0, "Standard deviation should be 0.0 for single data point"
             assert stats_instance.relative_standard_deviation == 0.0, (
                 "Relative standard deviation should be 0.0 for single data point")
-            assert stats_instance.percentiles == {
-                5: 10.0, 10: 10.0, 25: 10.0, 50: 10.0, 75: 10.0, 90: 10.0, 95: 10.0}, (
-                "Percentiles should be 10.0 for single data point")
+            assert stats_instance.percentiles == tuple([10.0] * 101), (
+                "Percentiles should be all 10.0 for single data point")
         case _:  # Multiple data points
             assert stats_instance.mean == statistics.mean(data), (
                 f"Mean value incorrect: expected {statistics.mean(data)}, got {stats_instance.mean}")
@@ -231,16 +183,18 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
                 "Relative standard deviation value incorrect: expected "
                 f"{(statistics.stdev(data) / statistics.mean(data) * 100)}, "
                 f"got {stats_instance.relative_standard_deviation}")
-            percentiles = {p: statistics.quantiles(data, n=100)[p - 1] for p in [5, 10, 25, 50, 75, 90, 95]}
+            percentiles = tuple(statistics.quantiles(data, n=102, method='inclusive'))
+            assert len(percentiles) == 101, (
+                f"Percentiles length incorrect: expected 101, got {len(percentiles)}")
             assert stats_instance.percentiles == percentiles, (
                 f"Percentiles value incorrect: expected {percentiles}, got {stats_instance.percentiles}")
 
 
 @pytest.mark.parametrize("stats_data", [
-    pytest.param([10.0], id="COMPUTED_VALUES_001 single data point"),
-    pytest.param([10.0, 20.0, 30.0, 40.0, 50.0], id="COMPUTED_VALUES_002 multiple data points"),
-    pytest.param([5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0], id="COMPUTED_VALUES_003 larger data set"),
-    pytest.param([3.0, 3.0, 3.0, 3.0, 3.0], id="COMPUTED_VALUES_004 identical data points"),
+    pytest.param((10.0,), id="COMPUTED_VALUES_001 single data point"),
+    pytest.param((10.0, 20.0, 30.0, 40.0, 50.0), id="COMPUTED_VALUES_002 multiple data points"),
+    pytest.param((5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0), id="COMPUTED_VALUES_003 larger data set"),
+    pytest.param((3.0, 3.0, 3.0, 3.0, 3.0), id="COMPUTED_VALUES_004 identical data points"),
 ])
 def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
     """Test that statistics_as_dict and statistics_and_data_as_dict return correct values."""
@@ -258,7 +212,7 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
         'maximum': float,
         'standard_deviation': float,
         'relative_standard_deviation': float,
-        'percentiles': dict,
+        'percentiles': tuple,
     }
     for key, expected_type in expected_keys.items():
         assert key in stats_dict, f"Key '{key}' missing from statistics_as_dict"
@@ -268,7 +222,7 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
 
     # Check that the statistics_and_data_as_dict contains the expected keys and types
     expected_keys_with_data = expected_keys.copy()
-    expected_keys_with_data['data'] = list
+    expected_keys_with_data['data'] = tuple
     for key, expected_type in expected_keys_with_data.items():
         assert key in stats_and_data_dict, f"Key '{key}' missing from statistics_and_data_as_dict"
         assert isinstance(stats_and_data_dict[key], expected_type), (
@@ -276,7 +230,7 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
             f"got {type(stats_and_data_dict[key]).__name__}")
 
     # Check that the data in statistics_and_data_as_dict matches the original data scaled
-    scaled_data = [value / stats_instance.scale for value in stats_instance.data]
+    scaled_data = tuple(value / stats_instance.scale for value in stats_instance.data)
     assert stats_and_data_dict['data'] == scaled_data, "Data in statistics_and_data_as_dict does not match scaled data"
 
 
@@ -286,11 +240,11 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
 def test_stats_initalization(section: Section) -> None:
     """Test that data is correctly initialized in stats classes."""
     iterations: list[Iteration] = []
-    data: dict[str, list[int | float]] = {
-        'elapsed': [1.0, 2.0, 4.0, 5.0, 10.0],
-        'ops': [1.0, 0.5, 0.25, 0.2, 0.1],
-        'memory': [100, 200, 300, 400, 500],
-        'peak_memory': [150, 250, 350, 450, 550],
+    data: dict[str, tuple[int | float, ...]] = {
+        'elapsed': (1.0, 2.0, 4.0, 5.0, 10.0),
+        'ops': (1.0, 0.5, 0.25, 0.2, 0.1),
+        'memory': (100, 200, 300, 400, 500),
+        'peak_memory': (150, 250, 350, 450, 550),
     }
 
     for index in range(len(data['elapsed'])):
@@ -329,4 +283,4 @@ def test_stats_initalization(section: Section) -> None:
                 f"Peak memory data does not match expected values: {peak_memory_data} != {data['peak_memory']}")
 
         case _:
-            pytest.skip(f"Section {section} does not correspond to a stats class")
+            pytest.skip(f"Section {section} does not correspond to a tested stats class")

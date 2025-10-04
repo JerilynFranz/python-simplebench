@@ -160,8 +160,6 @@ class SimpleRunner():
         while ((iteration_pass <= iterations_min or wall_time < min_stop_at)
                 and wall_time < max_stop_at):
             iteration_pass += 1
-            iteration_result = Iteration()
-            iteration_result.elapsed = 0.0
 
             if callable(setup):
                 setup()
@@ -197,17 +195,17 @@ class SimpleRunner():
             if iteration_pass < 1:
                 # Warmup iterations not included in final stats
                 continue
-            # We difference the raw timer readings to avoid cumulative floating point
-            # errors over many iterations. It effectively pushes the error to the
-            # precision of the timer rather than the precision of floating point.
-            # We add the elapsed time to the iteration result in case the action
-            # is called multiple times in a more complex runner.
-            iteration_result.elapsed += float(raw_timer_end - raw_timer_start)
-            iteration_result.n = n
-            total_elapsed += iteration_result.elapsed
-            iteration_result.memory = end_memory_current - start_memory_current - memory_overhead
-            iteration_result.peak_memory = end_memory_peak - start_memory_peak - peak_memory_overhead
+
+            # We difference the raw timer readings to avoid floating point
+            # precision issues with elapsed time. It effectively pushes the error to the
+            # precision of the timer rather than the precision of floating point
+            # with small differences between large values.
+            elapsed = float(raw_timer_end - raw_timer_start)
+            memory = end_memory_current - start_memory_current - memory_overhead
+            peak_memory = end_memory_peak - start_memory_peak - peak_memory_overhead
+            iteration_result = Iteration(n=n, elapsed=elapsed, memory=memory, peak_memory=peak_memory)
             iterations_list.append(iteration_result)
+            total_elapsed += iteration_result.elapsed
             wall_time = float(DEFAULT_TIMER())
 
             # Update progress display if showing progress
