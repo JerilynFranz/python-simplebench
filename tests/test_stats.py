@@ -29,33 +29,33 @@ def stats_classes() -> list[type[stats.Stats]]:
 @pytest.mark.parametrize("test", [
     idspec("STATS_001", TestAction(
         name="minimal args",
-        kwargs={'unit': 'a unit', 'scale': 1.0})),
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]})),
     idspec("STATS_002", TestAction(
         name="all args",
         kwargs={'unit': 'a unit', 'scale': 2.0, 'data': [1.0, 2.0, 3.0]})),
     idspec("STATS_003", TestAction(
         name="invalid unit type (int)",
-        kwargs={'unit': 123, 'scale': 1.0},
+        kwargs={'unit': 123, 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.STATS_INVALID_UNIT_ARG_TYPE)),
     idspec("STATS_004", TestAction(
         name="invalid unit value (empty str)",
-        kwargs={'unit': '', 'scale': 1.0},
+        kwargs={'unit': '', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)),
     idspec("STATS_005", TestAction(
         name="invalid scale type (str)",
-        kwargs={'unit': 'a unit', 'scale': 'not_a_number'},
+        kwargs={'unit': 'a unit', 'scale': 'not_a_number', 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.STATS_INVALID_SCALE_ARG_TYPE)),
     idspec("STATS_006", TestAction(
         name="invalid scale value (zero)",
-        kwargs={'unit': 'a unit', 'scale': 0},
+        kwargs={'unit': 'a unit', 'scale': 0, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)),
     idspec("STATS_007", TestAction(
         name="invalid scale value (negative)",
-        kwargs={'unit': 'a unit', 'scale': -1.0},
+        kwargs={'unit': 'a unit', 'scale': -1.0, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)),
     idspec("STATS_008", TestAction(
@@ -67,7 +67,7 @@ def stats_classes() -> list[type[stats.Stats]]:
         name="invalid data value type (list with str)",
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 'not_a_number', 3.0]},
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)),
+        exception_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE)),
     idspec("STATS_010", TestAction(
         name="valid initial values, correctly set",
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
@@ -84,9 +84,9 @@ def test_stats_init(stats_classes: list[type[stats.Stats]], test: TestAction) ->
 @pytest.fixture()
 def stats_instances() -> list[stats.Stats]:
     """Fixture to return a minimal Stats instance for each class and subclass for testing."""
-    return [stats.Stats(unit='unit', scale=1.0),
-            stats.OperationsPerInterval(unit='ops/s', scale=1.0),
-            stats.OperationTimings(unit='s', scale=1.0)]
+    return [stats.Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0]),
+            stats.OperationsPerInterval(unit='ops/s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            stats.OperationTimings(unit='s', scale=1.0, data=[1.0, 2.0, 3.0])]
 
 
 @pytest.mark.parametrize("test", [
@@ -181,11 +181,10 @@ def test_computed_stats_read_only(stats_instances: list[stats.Stats], attribute:
 
 
 @pytest.mark.parametrize("stats_data", [
-    pytest.param([], id="COMPUTED_VALUES_001 empty data"),
-    pytest.param([10.0], id="COMPUTED_VALUES_002 single data point"),
-    pytest.param([10.0, 20.0, 30.0, 40.0, 50.0], id="COMPUTED_VALUES_003 multiple data points"),
-    pytest.param([5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0], id="COMPUTED_VALUES_004 larger data set"),
-    pytest.param([3.0, 3.0, 3.0, 3.0, 3.0], id="COMPUTED_VALUES_005 identical data points"),
+    pytest.param([10.0], id="COMPUTED_VALUES_001 single data point"),
+    pytest.param([10.0, 20.0, 30.0, 40.0, 50.0], id="COMPUTED_VALUES_002 multiple data points"),
+    pytest.param([5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0], id="COMPUTED_VALUES_003 larger data set"),
+    pytest.param([3.0, 3.0, 3.0, 3.0, 3.0], id="COMPUTED_VALUES_004 identical data points"),
 ])
 def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
     """Test that computed stats properties return correct values.
@@ -238,11 +237,10 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
 
 
 @pytest.mark.parametrize("stats_data", [
-    pytest.param([], id="COMPUTED_VALUES_001 empty data"),
-    pytest.param([10.0], id="COMPUTED_VALUES_002 single data point"),
-    pytest.param([10.0, 20.0, 30.0, 40.0, 50.0], id="COMPUTED_VALUES_003 multiple data points"),
-    pytest.param([5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0], id="COMPUTED_VALUES_004 larger data set"),
-    pytest.param([3.0, 3.0, 3.0, 3.0, 3.0], id="COMPUTED_VALUES_005 identical data points"),
+    pytest.param([10.0], id="COMPUTED_VALUES_001 single data point"),
+    pytest.param([10.0, 20.0, 30.0, 40.0, 50.0], id="COMPUTED_VALUES_002 multiple data points"),
+    pytest.param([5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0], id="COMPUTED_VALUES_003 larger data set"),
+    pytest.param([3.0, 3.0, 3.0, 3.0, 3.0], id="COMPUTED_VALUES_004 identical data points"),
 ])
 def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
     """Test that statistics_as_dict and statistics_and_data_as_dict return correct values."""

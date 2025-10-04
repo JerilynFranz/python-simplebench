@@ -8,10 +8,10 @@ from typing import Any
 import pytest
 from rich.console import Console
 
-from simplebench import Case, SimpleRunner, Results, Session, Verbosity
+from simplebench import Case, SimpleRunner, Iteration, Results, Session, Verbosity
 from simplebench.enums import Format, Section
 from simplebench.exceptions import (SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchRuntimeError,
-                                    SimpleBenchAttributeError, ErrorTag)
+                                    ErrorTag)
 from simplebench.protocols import ActionRunner, ReporterCallback
 from simplebench.reporters.reporter_option import ReporterOption
 
@@ -54,8 +54,8 @@ class CaseKWArgs(dict):
             kwargs_variations: dict[str, list[Any]] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument  # noqa: E501
             runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            options: list[ReporterOption] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-        ) -> None:  # pylint: disable=unused-argument
+            options: list[ReporterOption] | NoDefaultValue = NoDefaultValue()  # pylint: disable=unused-argument
+    ) -> None:
         """Constructs a CaseKWArgs instance. This class is used to hold keyword arguments for
         initializing a Case instance in tests.
 
@@ -883,73 +883,66 @@ def test_case_init(testspec: TestAction) -> None:
     idspec("ATTR_001", TestSet(
         name="Test setting read-only attribute 'group'",
         attribute='group', value='new_group', obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_GROUP)),
+        exception=AttributeError)),
     idspec("ATTR_002", TestSet(
         name="Test setting read-only attribute 'title'",
         attribute='title', value='new_title', obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_TITLE)),
+        exception=AttributeError)),
     idspec("ATTR_003", TestSet(
         name="Test setting read-only attribute 'description'",
         attribute='description', value='new_description', obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_DESCRIPTION)),
+        exception=AttributeError)),
     idspec("ATTR_004", TestSet(
         name="Test setting read-only attribute 'action'",
         attribute='action', value=benchcase, obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_ACTION)),
+        exception=AttributeError)),
     idspec("ATTR_005", TestSet(
         name="Test setting read-only attribute 'iterations'",
         attribute='iterations', value=50, obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_ITERATIONS)),
+        exception=AttributeError)),
     idspec("ATTR_006", TestSet(
         name="Test read-only attribute 'warmup_iterations'",
         attribute='warmup_iterations', value=20, obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_WARMUP_ITERATIONS)),
+        exception=AttributeError)),
     idspec("ATTR_007", TestSet(
         name="Test setting read-only attribute 'min_time'",
         attribute='min_time', value=1.0, obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_MIN_TIME)),
+        exception=AttributeError)),
     idspec("ATTR_008", TestSet(
         name="Test setting read-only attribute 'max_time'",
         attribute='max_time', value=10.0, obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_MAX_TIME)),
+        exception=AttributeError)),
     idspec("ATTR_009", TestSet(
         name="Test setting read-only attribute 'variation_cols'",
         attribute='variation_cols', value={'param1': 'Param 1'}, obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_VARIATION_COLS)),
+        exception=AttributeError)),
     idspec("ATTR_010", TestSet(
         name="Test read-only attribute 'kwargs_variations'",
         attribute='kwargs_variations', value={'param1': [1, 2, 3]}, obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_KWARGS_VARIATIONS)),
+        exception=AttributeError)),
     idspec("ATTR_011", TestSet(
         name="Test read-only attribute 'runner'",
         attribute='runner', value=SimpleRunner, obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_RUNNER)),
+        exception=AttributeError)),
     idspec("ATTR_012", TestSet(
         name="Test setting read-only attribute 'callback'",
         obj=base_case(), attribute='callback', value=lambda case, section, fmt, output: None,
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_CALLBACK)),
+        exception=AttributeError)),
     idspec("ATTR_013", TestSet(
         name="Test setting read-only attribute 'results'",
-        attribute='results', value=[Results(group='new_group', title='new_title', description='new_description', n=1)],
+        attribute='results', value=[Results(
+                                group='new_group',
+                                title='new_title',
+                                description='new_description',
+                                n=1,
+                                total_elapsed=1,
+                                iterations=[Iteration(elapsed=0.1)])],
         obj=base_case(),
         exception=AttributeError)),
     idspec("ATTR_014", TestSet(
         name="Test setting read-only attribute 'options'",
         attribute='options', value=[], obj=base_case(),
-        exception=SimpleBenchAttributeError,
-        exception_tag=ErrorTag.CASE_MODIFY_READONLY_OPTIONS)),
+        exception=AttributeError)),
 ])
 def test_setting_read_only_attributes(testspec: TestSpec) -> None:
     """Test attempting to set read-only attributes on Case instances."""

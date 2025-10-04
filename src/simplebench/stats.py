@@ -12,6 +12,7 @@ from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
 from .iteration import Iteration
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .si_units import si_unit_base
+from .validators import (validate_non_empty_string, validate_positive_float, validate_sequence_of_numbers)
 
 
 class Stats:
@@ -29,10 +30,23 @@ class Stats:
         relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
         percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
     '''
-    def __init__(self, *, unit: str, scale: float, data: Optional[Sequence[int | float]] = None) -> None:
-        self.unit = unit
-        self.scale = scale
-        self.data = data
+    __slots__ = ('_unit', '_scale', '_data')
+
+    def __init__(self, *, unit: str, scale: float, data: Sequence[int | float]) -> None:
+        self._unit: str = validate_non_empty_string(
+                                unit, 'unit',
+                                ErrorTag.STATS_INVALID_UNIT_ARG_TYPE,
+                                ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)
+        self._scale: float = validate_positive_float(
+                                scale, 'scale',
+                                ErrorTag.STATS_INVALID_SCALE_ARG_TYPE,
+                                ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)
+        self._data: list[float | int] = validate_sequence_of_numbers(
+                                            value=data,
+                                            field_name='data',
+                                            allow_empty=False,
+                                            type_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE,
+                                            value_tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)
 
     @property
     def unit(self) -> str:
@@ -215,6 +229,10 @@ class Stats:
         stats['data'] = [value / self.scale for value in self.data]
         return stats
 
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}(unit='{self.unit}', scale={self.scale}, "
+                f"data=[{', '.join(str(d) for d in self.data)}])")
+
 
 class OperationsPerInterval(Stats):
     '''Container for the operations per time interval statistics of a benchmark.
@@ -236,11 +254,12 @@ class OperationsPerInterval(Stats):
                  iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_OPS_PER_INTERVAL_UNIT,
                  scale: float = DEFAULT_OPS_PER_INTERVAL_SCALE,
-                 data: Optional[list[int | float]] = None):
-        if data is None and iterations is not None:
+                 data: Optional[Sequence[int | float]] = None) -> None:
+        """Initialize the OperationsPerInterval statistics."""
+        if not data:
             data = []
-            for iteration in iterations:
-                data.append(iteration.ops_per_second)
+        if not data and iterations is not None:
+            data = [iteration.ops_per_second for iteration in iterations]
         super().__init__(unit=unit, scale=scale, data=data)
 
 
@@ -264,11 +283,11 @@ class OperationTimings(Stats):
                  iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
-                 data: Optional[list[int | float]] = None):
-        if data is None and iterations is not None:
+                 data: Optional[Sequence[int | float]] = None):
+        if not data:
             data = []
-            for iteration in iterations:
-                data.append(iteration.per_round_elapsed)
+        if not data and iterations is not None:
+            data = [iteration.per_round_elapsed for iteration in iterations]
         super().__init__(unit=unit, scale=scale, data=data)
 
 
@@ -293,10 +312,10 @@ class MemoryUsage(Stats):
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
                  data: Optional[list[int | float]] = None):
-        if data is None and iterations is not None:
+        if not data:
             data = []
-            for iteration in iterations:
-                data.append(iteration.memory)
+        if not data and iterations is not None:
+            data = [iteration.memory for iteration in iterations]
         super().__init__(unit=unit, scale=scale, data=data)
 
 
@@ -320,9 +339,9 @@ class PeakMemoryUsage(Stats):
                  iterations: list[Iteration] | None = None,
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
-                 data: Optional[list[int | float]] = None):
-        if data is None and iterations is not None:
+                 data: Optional[Sequence[int | float]] = None):
+        if not data:
             data = []
-            for iteration in iterations:
-                data.append(iteration.peak_memory)
+        if not data and iterations is not None:
+            data = [iteration.peak_memory for iteration in iterations]
         super().__init__(unit=unit, scale=scale, data=data)

@@ -106,6 +106,8 @@ class ErrorTag(str, Enum):
     """The title arg passed must be a non-empty string"""
     RESULTS_DESCRIPTION_INVALID_ARG_TYPE = "RESULTS_DESCRIPTION_INVALID_ARG_TYPE"
     """Something other than a str was passed as the description arg"""
+    RESULTS_DESCRIPTION_INVALID_ARG_VALUE = "RESULTS_DESCRIPTION_INVALID_ARG_VALUE"
+    """The description arg passed must be a non-empty string"""
     RESULTS_N_INVALID_ARG_TYPE = "RESULTS_N_INVALID_ARG_TYPE"
     """Something other than an int was passed as the n arg"""
     RESULTS_N_INVALID_ARG_VALUE = "RESULTS_N_INVALID_ARG_VALUE"
@@ -162,6 +164,26 @@ class ErrorTag(str, Enum):
     """Something other than a MemoryUsage instance was passed as the memory arg"""
     RESULTS_PEAK_MEMORY_INVALID_ARG_TYPE = "RESULTS_PEAK_MEMORY_INVALID_ARG_TYPE"
     """Something other than a PeakMemoryUsage instance was passed as the peak_memory arg"""
+    RESULTS_PEAK_MEMORY_SCALE_INVALID_ARG_TYPE = "RESULTS_PEAK_MEMORY_SCALE_INVALID_ARG_TYPE"
+    """Something other than a float was passed as the peak_memory_scale arg"""
+    RESULTS_PEAK_MEMORY_SCALE_INVALID_ARG_VALUE = "RESULTS_PEAK_MEMORY_SCALE_INVALID_ARG_VALUE"
+    """The peak_memory_scale arg passed must be greater than zero"""
+    RESULTS_PEAK_MEMORY_UNIT_INVALID_ARG_TYPE = "RESULTS_PEAK_MEMORY_UNIT_INVALID_ARG_TYPE"
+    """Something other than a str was passed as the peak_memory_unit arg"""
+    RESULTS_PEAK_MEMORY_UNIT_INVALID_ARG_VALUE = "RESULTS_PEAK_MEMORY_UNIT_INVALID_ARG_VALUE"
+    """The peak_memory_unit arg passed must be a non-empty string"""
+    RESULTS_MEMORY_UNIT_INVALID_ARG_TYPE = "RESULTS_MEMORY_UNIT_INVALID_ARG_TYPE"
+    """Something other than a str was passed as the memory_unit arg"""
+    RESULTS_MEMORY_UNIT_INVALID_ARG_VALUE = "RESULTS_MEMORY_UNIT_INVALID_ARG_VALUE"
+    """The memory_unit arg passed must be a non-empty string"""
+    RESULTS_MEMORY_SCALE_INVALID_ARG_TYPE = "RESULTS_MEMORY_SCALE_INVALID_ARG_TYPE"
+    """Something other than a float was passed as the memory_scale arg"""
+    RESULTS_MEMORY_SCALE_INVALID_ARG_VALUE = "RESULTS_MEMORY_SCALE_INVALID_ARG_VALUE"
+    """The memory_scale arg passed must be greater than zero"""
+    RESULTS_MODIFY_READONLY_ATTR = "RESULTS_MODIFY_READONLY_ATTR"
+    """An attempt was made to modify a read-only attribute of the Results instance"""
+    RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_VALUE = "RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_VALUE"
+    """An empty string was found as a key in the dict passed as the variation_marks arg"""
 
     # Stats() tags
     STATS_INVALID_UNIT_ARG_TYPE = "STATS_INVALID_UNIT_ARG_TYPE"
@@ -397,6 +419,8 @@ class ErrorTag(str, Enum):
     CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY = (
         "CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY")
     """A parameter in the callback function is not keyword-only."""
+    CASE_ADD_RESULT_INVALID_RESULT_TYPE = "CASE_ADD_RESULT_INVALID_RESULT_TYPE"
+    """Something other than a Results instance was passed to the Case.add_result() method"""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"

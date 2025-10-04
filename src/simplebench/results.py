@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Container for the results of a single benchmark test."""
 from __future__ import annotations
-from typing import Any
+from copy import copy, deepcopy
+from typing import Any, Optional
 
 from simplebench.exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
 
@@ -9,16 +10,21 @@ from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_ME
 from .enums import Section
 from .iteration import Iteration
 from .stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
+from .validators import validate_non_empty_string, validate_positive_int, validate_positive_float
 
 
 class Results:
     '''Container for the results of a single benchmark test.
 
+    The Results class holds all relevant information about a benchmark test's execution and its outcomes.
+    It is immutable after creation to ensure data integrity.
+
     Properties:
         group (str): The reporting group to which the benchmark case belongs.
         title (str): The name of the benchmark case.
         description (str): A brief description of the benchmark case.
-        n (int): The number of rounds the benchmark ran per iteration.
+        n (int): The n weighting the benchmark assigned to the iteration for purposes of Big O analysis.
+        variation_marks (dict[str, Any]): A dictionary of variation marks used to identify the benchmark variation.
         variation_cols (dict[str, str]): The columns to use for labelling kwarg variations in the benchmark.
         interval_unit (str): The unit of measurement for the interval (e.g. "ns").
         interval_scale (float): The scale factor for the interval (e.g. 1e-9 for nanoseconds).
@@ -32,140 +38,164 @@ class Results:
         memory (MemoryUsage): Statistics for memory usage.
         peak_memory (PeakMemoryUsage): Statistics for peak memory usage.
         total_elapsed (float): The total elapsed time for the benchmark.
-        variation_marks (dict[str, Any]): A dictionary of variation marks used to identify the benchmark variation.
-        extra_info (dict[str, Any]): Additional information about the benchmark run.
+        extra_info (dict[str, Any]): Additional information about the benchmark run. Note: Returns a deep copy
+            to prevent external mutation. If extra_info contains large objects, accessing this property
+            may be expensive. Also this means that the extra_info dict must be deepcopy-able.
     '''
-    def __init__(self,
+    __slots__ = (
+        '_group',
+        '_title',
+        '_description',
+        '_n',
+        '_variation_cols',
+        '_variation_marks',
+        '_interval_unit',
+        '_interval_scale',
+        '_ops_per_interval_unit',
+        '_ops_per_interval_scale',
+        '_memory',
+        '_memory_unit',
+        '_memory_scale',
+        '_peak_memory',
+        '_iterations',
+        '_ops_per_second',
+        '_per_round_timings',
+        '_total_elapsed',
+        '_extra_info',
+    )
+
+    def __init__(self,  # pylint: disable=too-many-arguments, too-many-locals
                  *,
                  group: str,
                  title: str,
                  description: str,
                  n: int,
+                 total_elapsed: float,
+                 iterations: list[Iteration],
                  variation_cols: dict[str, str] | None = None,
+                 variation_marks: dict[str, Any] | None = None,
                  interval_unit: str = DEFAULT_INTERVAL_UNIT,
                  interval_scale: float = DEFAULT_INTERVAL_SCALE,
                  ops_per_interval_unit: str = DEFAULT_INTERVAL_UNIT,
                  ops_per_interval_scale: float = DEFAULT_INTERVAL_SCALE,
                  memory_unit: str = DEFAULT_MEMORY_UNIT,
                  memory_scale: float = DEFAULT_MEMORY_SCALE,
-                 iterations: list[Iteration] | None = None,
-                 ops_per_second: OperationsPerInterval | None = None,
-                 per_round_timings: OperationTimings | None = None,
-                 memory: MemoryUsage | None = None,
-                 peak_memory: PeakMemoryUsage | None = None,
-                 total_elapsed: float = 0.0,
-                 variation_marks: dict[str, Any] | None = None,
-                 extra_info: dict[str, Any] | None = None) -> None:
-        self.group = group
-        self.title = title
-        self.description = description
-        self.n = n
-        self.iterations = iterations if iterations is not None else []
-        self.variation_cols = variation_cols if variation_cols is not None else {}
-        self.interval_unit = interval_unit
-        self.interval_scale = interval_scale
-        self.ops_per_interval_unit = ops_per_interval_unit
-        self.ops_per_interval_scale = ops_per_interval_scale
-        self.memory_unit = memory_unit
-        self.memory_scale = memory_scale
-        self.peak_memory_unit = memory_unit
-        self.peak_memory_scale = memory_scale
+                 ops_per_second: Optional[OperationsPerInterval] = None,
+                 per_round_timings: Optional[OperationTimings] = None,
+                 memory: Optional[MemoryUsage] = None,
+                 peak_memory: Optional[PeakMemoryUsage] = None,
+                 extra_info: Optional[dict[str, Any]] = None) -> None:
+        """Initialize a Results object.
 
-        self.ops_per_second = ops_per_second if ops_per_second is not None else OperationsPerInterval(
-                                                                                    iterations=iterations)
-        self.per_round_timings = per_round_timings if per_round_timings is not None else OperationTimings(
-                                                                                            iterations=iterations)
-        self.memory = memory if memory is not None else MemoryUsage(
-                                                                            iterations=iterations)
-        self.peak_memory = peak_memory if peak_memory is not None else PeakMemoryUsage(
-                                                                                            iterations=iterations)
-        self.total_elapsed = total_elapsed
-        self.variation_marks = variation_marks if variation_marks is not None else {}
-        self.extra_info = extra_info if extra_info is not None else {}
+        Args:
+            group (str): The reporting group to which the benchmark case belongs.
+            title (str): The name of the benchmark case.
+            description (str): A brief description of the benchmark case.
+            n (int): The n weighting assigned to the iteration for purposes of Big O analysis.
+            total_elapsed (float): The total elapsed time for the benchmark.
+            iterations (list[Iteration]): The list of Iteration objects representing each iteration of the benchmark.
+            variation_cols (dict[str, str], optional): The columns to use for labelling kwarg variations
+                in the benchmark. Defaults to None, which results in an empty dictionary.
+            variation_marks (dict[str, Any], optional): A dictionary of variation marks used to identify
+                the benchmark variation. Defaults to None, which results in an empty dictionary.
+            interval_unit (str, optional): The unit of measurement for the interval (e.g. "ns").
+                Defaults to "ns".
+            interval_scale (float, optional): The scale factor for the interval (e.g. 1e-9 for nanoseconds).
+                Defaults to 1e-9.
+            ops_per_interval_unit (str, optional): The unit of measurement for operations per interval (e.g. "ops/s").
+                Defaults to "ops/s".
+            ops_per_interval_scale (float, optional): The scale factor for operations per interval (e.g. 1.0 for ops/s).
+                Defaults to 1.0.
+            memory_unit (str, optional): The unit of measurement for memory usage (e.g. "bytes").
+                Defaults to "bytes".
+            memory_scale (float, optional): The scale factor for memory usage (e.g. 1.0 for bytes).
+                Defaults to 1.0.
+            ops_per_second (Optional[OperationsPerInterval], optional): The operations per second for the benchmark.
+                Defaults to a new OperationsPerInterval object initialized from the benchmark's iterations.
+            per_round_timings (Optional[OperationTimings], optional): The per-round timings for the benchmark.
+                Defaults to a new OperationTimings object initialized from the benchmark's iterations.
+            memory (Optional[MemoryUsage], optional): The memory usage for the benchmark.
+                Defaults to a new MemoryUsage object initialized from the benchmark's iterations.
+            peak_memory (Optional[PeakMemoryUsage], optional): The peak memory usage for the benchmark.
+                Defaults to a new PeakMemoryUsage object initialized from the benchmark's iterations.
+            extra_info (Optional[dict[str, Any]], optional): Any extra information to include in the benchmark results.
+                Defaults to {}.
+        """
+        self._group: str = validate_non_empty_string(
+            group, 'group',
+            ErrorTag.RESULTS_GROUP_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_GROUP_INVALID_ARG_VALUE)
+        self._title: str = validate_non_empty_string(
+            title, 'title',
+            ErrorTag.RESULTS_TITLE_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_TITLE_INVALID_ARG_VALUE)
+        self._description: str = validate_non_empty_string(
+            description, 'description',
+            ErrorTag.RESULTS_DESCRIPTION_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_DESCRIPTION_INVALID_ARG_VALUE)
+        self._n: int = validate_positive_int(
+            n, 'n',
+            ErrorTag.RESULTS_N_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_N_INVALID_ARG_VALUE)
+        self._iterations: list[Iteration] = self._validate_iterations(iterations)
+        self._variation_cols: dict[str, str] = self._validate_variation_cols(variation_cols)
+        self._variation_marks: dict[str, Any] = self._validate_variation_marks(variation_marks)
+        self._interval_unit: str = validate_non_empty_string(
+            interval_unit, 'interval_unit',
+            ErrorTag.RESULTS_INTERVAL_UNIT_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_INTERVAL_UNIT_INVALID_ARG_VALUE)
+        self._interval_scale: float = validate_positive_float(
+            interval_scale, 'interval_scale',
+            ErrorTag.RESULTS_INTERVAL_SCALE_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_INTERVAL_SCALE_INVALID_ARG_VALUE)
+        self._ops_per_interval_unit: str = validate_non_empty_string(
+            ops_per_interval_unit, 'ops_per_interval_unit',
+            ErrorTag.RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE)
+        self._ops_per_interval_scale: float = validate_positive_float(
+            ops_per_interval_scale, 'ops_per_interval_scale',
+            ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)
+        self._memory_unit: str = validate_non_empty_string(
+            memory_unit, 'memory_unit',
+            ErrorTag.RESULTS_MEMORY_UNIT_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_MEMORY_UNIT_INVALID_ARG_VALUE)
+        self._memory_scale: float = validate_positive_float(
+            memory_scale, 'memory_scale',
+            ErrorTag.RESULTS_MEMORY_SCALE_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_MEMORY_SCALE_INVALID_ARG_VALUE)
+        self._memory: MemoryUsage = self._validate_memory(memory)
+        self._peak_memory: PeakMemoryUsage = self._validate_peak_memory(peak_memory)
+        self._ops_per_second: OperationsPerInterval = self._validate_ops_per_second(ops_per_second)
+        self._per_round_timings: OperationTimings = self._validate_per_round_timings(per_round_timings)
+        self._total_elapsed: float = validate_positive_float(
+            total_elapsed, 'total_elapsed',
+            ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_TYPE,
+            ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE)
+        self._extra_info = self._validate_extra_info(extra_info)
 
-    @property
-    def group(self) -> str:
-        """The reporting group to which the benchmark case belongs."""
-        return self._group
+    def _validate_variation_cols(self, value: dict[str, str] | None) -> dict[str, str]:
+        """Validate the variation_cols dictionary.
 
-    @group.setter
-    def group(self, value: str) -> None:
-        if not isinstance(value, str):
-            raise SimpleBenchTypeError(
-                f'Invalid group type: {type(value)}. Must be of type str.',
-                tag=ErrorTag.RESULTS_GROUP_INVALID_ARG_TYPE
-            )
-        if value == '':
-            raise SimpleBenchValueError(
-                'Invalid group value: empty string. Group must be a non-empty string.',
-                tag=ErrorTag.RESULTS_GROUP_INVALID_ARG_VALUE
-            )
-        self._group = value
+        Args:
+            value (dict[str, str]): The variation_cols dictionary to validate.
 
-    @property
-    def title(self) -> str:
-        """The name of the benchmark case."""
-        return self._title
+        Returns:
+            dict[str, str]: A copy of the validated variation_cols dictionary.
 
-    @title.setter
-    def title(self, value: str) -> None:
-        if not isinstance(value, str):
-            raise SimpleBenchTypeError(
-                f'Invalid title type: {type(value)}. Must be of type str.',
-                tag=ErrorTag.RESULTS_TITLE_INVALID_ARG_TYPE
-            )
-        if value == '':
-            raise SimpleBenchValueError(
-                'Invalid title value: empty string. Title must be a non-empty string.',
-                tag=ErrorTag.RESULTS_TITLE_INVALID_ARG_VALUE
-            )
-        self._title = value
-
-    @property
-    def description(self) -> str:
-        """A brief description of the benchmark case."""
-        return self._description
-
-    @description.setter
-    def description(self, value: str) -> None:
-        if not isinstance(value, str):
-            raise SimpleBenchTypeError(
-                f'Invalid description type: {type(value)}. Must be of type str.',
-                tag=ErrorTag.RESULTS_DESCRIPTION_INVALID_ARG_TYPE
-            )
-        self._description = value
-
-    @property
-    def n(self) -> int:
-        """The number of rounds the benchmark ran per iteration."""
-        return self._n
-
-    @n.setter
-    def n(self, value: int) -> None:
-        if not isinstance(value, int):
-            raise SimpleBenchTypeError(
-                f'Invalid n type: {type(value)}. Must be of type int.',
-                tag=ErrorTag.RESULTS_N_INVALID_ARG_TYPE
-            )
-        if value <= 0:
-            raise SimpleBenchValueError(
-                f'Invalid n value: {value}. Must be a positive integer.',
-                tag=ErrorTag.RESULTS_N_INVALID_ARG_VALUE
-            )
-        self._n = value
-
-    @property
-    def variation_cols(self) -> dict[str, str]:
-        """The columns to use for labelling kwarg variations in the benchmark."""
-        return self._variation_cols
-
-    @variation_cols.setter
-    def variation_cols(self, value: dict[str, str]) -> None:
+        Raises:
+            SimpleBenchTypeError: If the variation_cols is not a dictionary or if any key or
+                value is not a string.
+            SimpleBenchValueError: If any value is a blank string.
+        """
+        if value is None:
+            return {}
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
-                f'Invalid variation_cols type: {type(value)}. Must be of type dict.',
+                f'Invalid variation_cols: {value}. Must be a dictionary.',
                 tag=ErrorTag.RESULTS_VARIATION_COLS_INVALID_ARG_TYPE
-            )
+                )
+
         for key, val in value.items():
             if not isinstance(key, str):
                 raise SimpleBenchTypeError(
@@ -182,91 +212,11 @@ class Results:
                     f'Invalid variation_cols value type: {type(val)}. Must be of type str.',
                     tag=ErrorTag.RESULTS_VARIATION_COLS_INVALID_ARG_VALUE_TYPE
                 )
-        self._variation_cols = value
+        # shallow copy to prevent external mutation
+        return copy(value)
 
-    @property
-    def interval_unit(self) -> str:
-        """The unit of measurement for the interval (e.g. "ns")."""
-        return self._interval_unit
-
-    @interval_unit.setter
-    def interval_unit(self, value: str) -> None:
-        if not isinstance(value, str):
-            raise SimpleBenchTypeError(
-                f'Invalid interval_unit type: {type(value)}. Must be of type str.',
-                tag=ErrorTag.RESULTS_INTERVAL_UNIT_INVALID_ARG_TYPE
-            )
-        if value == '':
-            raise SimpleBenchValueError(
-                'Invalid interval_unit value: empty string. Interval unit must be a non-empty string.',
-                tag=ErrorTag.RESULTS_INTERVAL_UNIT_INVALID_ARG_VALUE
-            )
-        self._interval_unit = value
-
-    @property
-    def interval_scale(self) -> float:
-        """The scale factor for the interval (e.g. 1e-9 for nanoseconds)."""
-        return self._interval_scale
-
-    @interval_scale.setter
-    def interval_scale(self, value: float) -> None:
-        if not isinstance(value, (float)):
-            raise SimpleBenchTypeError(
-                f'Invalid interval_scale type: {type(value)}. Must be of type float.',
-                tag=ErrorTag.RESULTS_INTERVAL_SCALE_INVALID_ARG_TYPE
-            )
-        if value <= 0:
-            raise SimpleBenchValueError(
-                f'Invalid interval_scale value: {value}. Must be a positive number.',
-                tag=ErrorTag.RESULTS_INTERVAL_SCALE_INVALID_ARG_VALUE
-            )
-        self._interval_scale = value
-
-    @property
-    def ops_per_interval_unit(self) -> str:
-        """The unit of measurement for operations per interval (e.g. "ops/s")."""
-        return self._ops_per_interval_unit
-
-    @ops_per_interval_unit.setter
-    def ops_per_interval_unit(self, value: str) -> None:
-        if not isinstance(value, str):
-            raise SimpleBenchTypeError(
-                f'Invalid ops_per_interval_unit type: {type(value)}. Must be of type str.',
-                tag=ErrorTag.RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE
-            )
-        if value == '':
-            raise SimpleBenchValueError(
-                'Invalid ops_per_interval_unit value: empty string. Ops per interval unit must be a non-empty string.',
-                tag=ErrorTag.RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE
-            )
-        self._ops_per_interval_unit = value
-
-    @property
-    def ops_per_interval_scale(self) -> float:
-        """The scale factor for operations per interval (e.g. 1.0 for ops/s)."""
-        return self._ops_per_interval_scale
-
-    @ops_per_interval_scale.setter
-    def ops_per_interval_scale(self, value: float) -> None:
-        if not isinstance(value, (int, float)):
-            raise SimpleBenchTypeError(
-                f'Invalid ops_per_interval_scale type: {type(value)}. Must be of type float.',
-                tag=ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE
-            )
-        if value <= 0:
-            raise SimpleBenchValueError(
-                f'Invalid ops_per_interval_scale value: {value}. Must be a positive number.',
-                tag=ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE
-            )
-        self._ops_per_interval_scale = float(value)
-
-    @property
-    def iterations(self) -> list[Iteration]:
-        """The list of Iteration objects representing each iteration of the benchmark."""
-        return self._iterations
-
-    @iterations.setter
-    def iterations(self, value: list[Iteration]) -> None:
+    def _validate_iterations(self, value: list[Iteration]) -> list[Iteration]:
+        """Validate the iterations list."""
         if not isinstance(value, list):
             raise SimpleBenchTypeError(
                 f'Invalid iterations type: {type(value)}. Must be of type list.',
@@ -278,116 +228,282 @@ class Results:
                     f'Invalid iteration element type: {type(iteration)}. Must be of type Iteration.',
                     tag=ErrorTag.RESULTS_ITERATIONS_INVALID_ARG_IN_SEQUENCE
                 )
-        self._iterations = value
+        # shallow copy to prevent external mutation
+        return copy(value)
 
-    @property
-    def ops_per_second(self) -> OperationsPerInterval:
-        """Statistics for operations per interval."""
-        return self._ops_per_second
+    def _validate_variation_marks(self, value: dict[str, Any] | None) -> dict[str, Any]:
+        """Validate the variation_marks dictionary.
 
-    @ops_per_second.setter
-    def ops_per_second(self, value: OperationsPerInterval) -> None:
-        if not isinstance(value, OperationsPerInterval):
-            raise SimpleBenchTypeError(
-                f'Invalid ops_per_second type: {type(value)}. Must be of type OperationsPerInterval.',
-                tag=ErrorTag.RESULTS_OPS_PER_SECOND_INVALID_ARG_TYPE
-            )
-        self._ops_per_second = value
+        Performs shallow copy of the dictionary to help mitigate external mutation. Because
+        the values can be of ANY type, including types that do not support deep copying, we do not
+        attempt to deep copy the values.
 
-    @property
-    def per_round_timings(self) -> OperationTimings:
-        """Statistics for per-round timings."""
-        return self._per_round_timings
+        Args:
+            value (dict[str, Any]): The variation_marks dictionary to validate.
 
-    @per_round_timings.setter
-    def per_round_timings(self, value: OperationTimings) -> None:
-        if not isinstance(value, OperationTimings):
-            raise SimpleBenchTypeError(
-                f'Invalid per_round_timings type: {type(value)}. Must be of type OperationTimings.',
-                tag=ErrorTag.RESULTS_PER_ROUND_TIMINGS_INVALID_ARG_TYPE
-            )
-        self._per_round_timings = value
+        Returns:
+            dict[str, Any]: A shallow copy of the validated variation_marks dictionary.
 
-    @property
-    def memory(self) -> MemoryUsage:
-        """Statistics for memory usage."""
-        return self._memory
-
-    @memory.setter
-    def memory(self, value: MemoryUsage) -> None:
-        if not isinstance(value, MemoryUsage):
-            raise SimpleBenchTypeError(
-                f'Invalid memory type: {type(value)}. Must be of type MemoryUsage.',
-                tag=ErrorTag.RESULTS_MEMORY_INVALID_ARG_TYPE
-            )
-        self._memory = value
-
-    @property
-    def peak_memory(self) -> PeakMemoryUsage:
-        """Statistics for peak memory usage."""
-        return self._peak_memory
-
-    @peak_memory.setter
-    def peak_memory(self, value: PeakMemoryUsage) -> None:
-        if not isinstance(value, PeakMemoryUsage):
-            raise SimpleBenchTypeError(
-                f'Invalid peak_memory type: {type(value)}. Must be of type PeakMemoryUsage.',
-                tag=ErrorTag.RESULTS_PEAK_MEMORY_INVALID_ARG_TYPE
-            )
-        self._peak_memory = value
-
-    @property
-    def total_elapsed(self) -> float:
-        """The total elapsed time for the benchmark."""
-        return self._total_elapsed
-
-    @total_elapsed.setter
-    def total_elapsed(self, value: float) -> None:
-        if not isinstance(value, float):
-            raise SimpleBenchTypeError(
-                f'Invalid total_elapsed type: {type(value)}. Must be of type float or int.',
-                tag=ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_TYPE
-            )
-        if value < 0:
-            raise SimpleBenchValueError(
-                f'Invalid total_elapsed value: {value}. Must be a non-negative number.',
-                tag=ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE
-            )
-        self._total_elapsed = value
-
-    @property
-    def variation_marks(self) -> dict[str, Any]:
-        """A dictionary of variation marks used to identify the benchmark variation."""
-        return self._variation_marks
-
-    @variation_marks.setter
-    def variation_marks(self, value: dict[str, Any]) -> None:
+        Raises:
+            SimpleBenchTypeError: If the variation_marks is not a dictionary or if any key is not a string.
+            SimpleBenchValueError: If any key is a blank string.
+        """
+        if value is None:
+            return {}
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
-                f'Invalid variation_marks type: {type(value)}. Must be of type dict.',
+                f'Invalid variation_marks: {value}. Must be a dictionary.',
                 tag=ErrorTag.RESULTS_VARIATION_MARKS_INVALID_ARG_TYPE
             )
+
+        # shallow copy to prevent external mutation
+        # not deep copying values because they can be of ANY type,
+        # including types that do not support deep copying
+        return_value: dict[str, Any] = {}
         for key in value.keys():
             if not isinstance(key, str):
                 raise SimpleBenchTypeError(
                     f'Invalid variation_marks key type: {type(key)}. Must be of type str.',
                     tag=ErrorTag.RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_TYPE
                 )
-        self._variation_marks = value
+            stripped_key = key.strip()
+            if stripped_key == '':
+                raise SimpleBenchValueError(
+                    'Invalid variation_marks key value: empty string. Keys must be non-empty strings.',
+                    tag=ErrorTag.RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_VALUE
+                )
+            return_value[stripped_key] = value[key]
+        return return_value
+
+    def _validate_peak_memory(self, value: PeakMemoryUsage | None) -> PeakMemoryUsage:
+        """Validate the peak_memory object if passed, or create a default one if None.
+
+        The default PeakMemoryUsage object will have its iterations set to the same list
+        of Iteration objects as the Results object and initialized with the values from
+        `memory_unit` and `memory_scale` for unit and scale.
+
+        Args:
+            value (PeakMemoryUsage | None): The peak_memory object to validate or None.
+
+        Returns:
+            PeakMemoryUsage: The validated or default PeakMemoryUsage object.
+
+        Raises:
+            SimpleBenchTypeError: If the value is not None and not of type PeakMemoryUsage
+        """
+        if value is None:
+            return PeakMemoryUsage(unit=self._memory_unit, scale=self._memory_scale, iterations=self._iterations)
+
+        if not isinstance(value, PeakMemoryUsage):
+            raise SimpleBenchTypeError(
+                f'Invalid peak_memory type: {type(value)}. Must be of type PeakMemoryUsage.',
+                tag=ErrorTag.RESULTS_PEAK_MEMORY_INVALID_ARG_TYPE
+            )
+        return value
+
+    def _validate_memory(self, value: MemoryUsage | None) -> MemoryUsage:
+        """Validate the memory object if passed, or create a default one if None.
+
+        The default MemoryUsage object will have its iterations set to the same list
+        of Iteration objects as the Results object and initialized with the values from
+        `memory_unit` and `memory_scale` for unit and scale.
+
+        Args:
+            value (MemoryUsage | None): The peak_memory object to validate or None.
+
+        Returns:
+            MemoryUsage: The validated or default MemoryUsage object.
+
+        Raises:
+            SimpleBenchTypeError: If the value is not None and not of type MemoryUsage.
+        """
+        if value is None:
+            return MemoryUsage(unit=self._memory_unit, scale=self._memory_scale, iterations=self._iterations)
+
+        if not isinstance(value, MemoryUsage):
+            raise SimpleBenchTypeError(
+                f'Invalid memory type: {type(value)}. Must be of type MemoryUsage.',
+                tag=ErrorTag.RESULTS_MEMORY_INVALID_ARG_TYPE
+            )
+        return value
+
+    def _validate_ops_per_second(self, value: OperationsPerInterval | None) -> OperationsPerInterval:
+        """Validate the ops_per_second object if passed, or create a default one if None.
+
+        The default OperationsPerInterval object will have its iterations set to the same list
+        of Iteration objects as the Results object and initialized with the values from
+        `ops_per_interval_unit` and `ops_per_interval_scale` for unit and scale.
+
+        Args:
+            value (OperationsPerInterval | None): The ops_per_second object to validate or None.
+
+        Returns:
+            OperationsPerInterval: The validated or default OperationsPerInterval object.
+
+        Raises:
+            SimpleBenchTypeError: If the value is not None and not of type OperationsPerInterval
+        """
+        if value is None:
+            return OperationsPerInterval(
+                unit=self._ops_per_interval_unit, scale=self._ops_per_interval_scale, iterations=self._iterations)
+
+        if not isinstance(value, OperationsPerInterval):
+            raise SimpleBenchTypeError(
+                f'Invalid ops_per_second type: {type(value)}. Must be of type OperationsPerInterval.',
+                tag=ErrorTag.RESULTS_OPS_PER_SECOND_INVALID_ARG_TYPE
+            )
+        return value
+
+    def _validate_per_round_timings(self, value: OperationTimings | None) -> OperationTimings:
+        """Validate the per_round_timings object if passed, or create a default one if None.
+
+        The default OperationTimings object will have its iterations set to the same list
+        of Iteration objects as the Results object and initialized with the values from
+        `interval_unit` and `interval_scale` for unit and scale.
+
+        Args:
+            value (OperationTimings | None): The per_round_timings object to validate or None.
+
+        Returns:
+            OperationTimings: The validated or default OperationTimings object.
+
+        Raises:
+            SimpleBenchTypeError: If the value is not None and not of type OperationTimings
+        """
+        if value is None:
+            return OperationTimings(unit=self._interval_unit, scale=self._interval_scale, iterations=self._iterations)
+
+        if not isinstance(value, OperationTimings):
+            raise SimpleBenchTypeError(
+                f'Invalid per_round_timings type: {type(value)}. Must be of type OperationTimings.',
+                tag=ErrorTag.RESULTS_PER_ROUND_TIMINGS_INVALID_ARG_TYPE
+            )
+        return value
+
+    def _validate_extra_info(self, value: dict[str, Any] | None) -> dict[str, Any]:
+        """Validate the extra_info object if passed, or create a default one if None.
+
+        Performs deep copy of the dictionary to help mitigate external mutation. This means
+        that the extra_info dict must be deepcopy-able.
+
+        Args:
+            value (dict[str, Any] | None): The extra_info object to validate or None.
+
+        Returns:
+            dict[str, Any]: The validated or default extra_info dictionary.
+
+        Raises:
+            SimpleBenchTypeError: If the value is not None and not of type dict[str, Any]
+        """
+        if value is None:
+            return {}
+
+        if not isinstance(value, dict):
+            raise SimpleBenchTypeError(
+                f'Invalid extra_info type: {type(value)}. Must be of type dict[str, Any].',
+                tag=ErrorTag.RESULTS_EXTRA_INFO_INVALID_ARG_TYPE
+            )
+
+        # Perform deep copy to prevent external mutation
+        return deepcopy(value)
+
+    @property
+    def group(self) -> str:
+        """The reporting group to which the benchmark case belongs."""
+        return self._group
+
+    @property
+    def title(self) -> str:
+        """The name of the benchmark case."""
+        return self._title
+
+    @property
+    def description(self) -> str:
+        """A brief description of the benchmark case."""
+        return self._description
+
+    @property
+    def n(self) -> int:
+        """The number of rounds the benchmark ran per iteration."""
+        return self._n
+
+    @property
+    def variation_cols(self) -> dict[str, str]:
+        """The columns to use for labelling kwarg variations in the benchmark."""
+        # shallow copy to prevent external mutation
+        return copy(self._variation_cols)
+
+    @property
+    def variation_marks(self) -> dict[str, Any]:
+        """A dictionary of variation marks used to identify the benchmark variation."""
+        # shallow copy to prevent external mutation
+        return copy(self._variation_marks)
+
+    @property
+    def interval_unit(self) -> str:
+        """The unit of measurement for the interval (e.g. "ns")."""
+        return self._interval_unit
+
+    @property
+    def interval_scale(self) -> float:
+        """The scale factor for the interval (e.g. 1e-9 for nanoseconds)."""
+        return self._interval_scale
+
+    @property
+    def ops_per_interval_unit(self) -> str:
+        """The unit of measurement for operations per interval (e.g. "ops/s")."""
+        return self._ops_per_interval_unit
+
+    @property
+    def ops_per_interval_scale(self) -> float:
+        """The scale factor for operations per interval (e.g. 1.0 for ops/s)."""
+        return self._ops_per_interval_scale
+
+    @property
+    def iterations(self) -> list[Iteration]:
+        """The list of Iteration objects representing each iteration of the benchmark."""
+        # shallow copy to prevent external mutation
+        return copy(self._iterations)
+
+    @property
+    def ops_per_second(self) -> OperationsPerInterval:
+        """Statistics for operations per interval."""
+        return self._ops_per_second
+
+    @property
+    def per_round_timings(self) -> OperationTimings:
+        """Statistics for per-round timings."""
+        return self._per_round_timings
+
+    @property
+    def memory(self) -> MemoryUsage:
+        """Statistics for memory usage."""
+        return self._memory
+
+    @property
+    def memory_unit(self) -> str:
+        """The unit of measurement for memory usage (e.g. "bytes")."""
+        return self._memory_unit
+
+    @property
+    def memory_scale(self) -> float:
+        """The scale factor for memory usage (e.g. 1.0 for bytes)."""
+        return self._memory_scale
+
+    @property
+    def peak_memory(self) -> PeakMemoryUsage:
+        """Statistics for peak memory usage."""
+        return self._peak_memory
+
+    @property
+    def total_elapsed(self) -> float:
+        """The total elapsed time for the benchmark."""
+        return self._total_elapsed
 
     @property
     def extra_info(self) -> dict[str, Any]:
         """Additional information about the benchmark run."""
-        return self._extra_info
-
-    @extra_info.setter
-    def extra_info(self, value: dict[str, Any]) -> None:
-        if not isinstance(value, dict):
-            raise SimpleBenchTypeError(
-                f'Invalid extra_info type: {type(value)}. Must be of type dict.',
-                tag=ErrorTag.RESULTS_EXTRA_INFO_INVALID_ARG_TYPE
-            )
-        self._extra_info = value
+        return deepcopy(self._extra_info)
 
     def results_section(self, section: Section) -> Stats:
         """Returns the requested section of the benchmark results.
@@ -412,7 +528,7 @@ class Results:
                 return self.memory
             case Section.PEAK_MEMORY:
                 return self.peak_memory
-            case _:
+            case _:  # should be unreachable due to the enum type check above, but mypy needs this
                 raise SimpleBenchValueError(
                     (f'Invalid section: {section}. Must be Section.OPS, Section.TIMING, '
                      'Section.MEMORY, or Section.PEAK_MEMORY.'),
@@ -435,8 +551,6 @@ class Results:
             'ops_per_interval_scale': self.ops_per_interval_scale,
             'memory_unit': self.memory_unit,
             'memory_scale': self.memory_scale,
-            'peak_memory_unit': self.peak_memory_unit,
-            'peak_memory_scale': self.peak_memory_scale,
             'total_elapsed': self.total_elapsed,
             'extra_info': self.extra_info,
             'per_round_timings': self.per_round_timings.statistics_as_dict,
@@ -454,3 +568,26 @@ class Results:
         results['memory'] = self.memory.statistics_and_data_as_dict
         results['peak_memory'] = self.peak_memory.statistics_and_data_as_dict
         return results
+
+    def __repr__(self) -> str:
+        """Return a string representation of the Results object."""
+        return (f'{self.__class__.__name__}('
+                f'group={self.group!r}, '
+                f'title={self.title!r}, '
+                f'description={self.description!r}, '
+                f'n={self.n!r}, '
+                f'variation_cols={self.variation_cols!r}, '
+                f'variation_marks={self.variation_marks!r}, '
+                f'interval_unit={self.interval_unit!r}, '
+                f'interval_scale={self.interval_scale!r}, '
+                f'ops_per_interval_unit={self.ops_per_interval_unit!r}, '
+                f'ops_per_interval_scale={self.ops_per_interval_scale!r}, '
+                f'memory_unit={self.memory_unit!r}, '
+                f'memory_scale={self.memory_scale!r}, '
+                f'total_elapsed={self.total_elapsed!r}, '
+                f'iterations={self.iterations!r}, '
+                f'ops_per_second={self.ops_per_second!r}, '
+                f'per_round_timings={self.per_round_timings!r}, '
+                f'memory={self.memory!r}, '
+                f'peak_memory={self.peak_memory!r}, '
+                f'extra_info={self.extra_info!r})')

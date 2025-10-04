@@ -69,16 +69,12 @@ class MockCase(Case):
             title='Test Case',
             description='A test case for testing.',
             action=lambda bench, **kwargs: Results(
-                group='test_case',
-                title='Test Case',
-                description='A test case for testing.',
-                n=1))
-        self.results.append(Results(
-            group='test_case',
-            title='Test Case',
-            description='A test case for testing.',
-            n=1,
-            iterations=[Iteration(), Iteration(), Iteration()]))
+                group='test_case', title='Test Case', description='A test case for testing.',
+                n=1, total_elapsed=1.0, iterations=[Iteration(elapsed=1.0)]))
+        self._results.append(Results(
+            group='test_case', title='Test Case', description='A test case for testing.',
+            n=1, total_elapsed=6.0,
+            iterations=[Iteration(elapsed=1.0), Iteration(elapsed=2.0), Iteration(elapsed=3.0)]))
 
 
 class MockSession(Session):
