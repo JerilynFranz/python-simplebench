@@ -143,7 +143,7 @@ class Stats:
             A tuple of percentiles keyed positionally by percent from 0 to 100.
         """
         percentiles_n: list[int] = list(range(0, 101))
-        if not self.data:
+        if not self.data:  # edge case of no data, forbidden by constructor but just in case
             return tuple(0.0 for _ in percentiles_n)
         if len(self.data) == 1:
             return tuple(float(self.data[0]) for _ in percentiles_n)
@@ -212,7 +212,7 @@ class OperationsPerInterval(Stats):
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
         scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
-        data: list[int] = List of data points. (read only)
+        data: Sequence[int | float] = List of data points. (read only)
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)
@@ -223,7 +223,7 @@ class OperationsPerInterval(Stats):
     '''
     def __init__(self,
                  *,
-                 iterations: list[Iteration] | None = None,
+                 iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_OPS_PER_INTERVAL_UNIT,
                  scale: float = DEFAULT_OPS_PER_INTERVAL_SCALE,
                  data: Optional[Sequence[int | float]] = None) -> None:
@@ -252,7 +252,7 @@ class OperationTimings(Stats):
     Attributes:
         unit (str): The unit of measurement for the timings (e.g., "ns"). (read only)
         scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds). (read only)
-        data: list[float | int] = List of timing data points. (read only)
+        data: (tuple[int | float, ...]) = Tuple of timing data points. (read only)
         mean (float): The mean time per operation. (read only)
         median (float): The median time per operation. (read only)
         minimum (float): The minimum time per operation. (read only)
@@ -263,17 +263,17 @@ class OperationTimings(Stats):
     '''
     def __init__(self,
                  *,
-                 iterations: list[Iteration] | None = None,
+                 iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
                  data: Optional[Sequence[int | float]] = None):
         """Construct OperationTimings stats from Iteration or raw timing data.
 
         Args:
-            iterations (list[Iteration] | None): List of Iteration objects to extract timing data from.
+            iterations (Sequence[Iteration] | None): Sequence of Iteration objects to extract timing data from.
             unit (str): The unit of measurement for the timings (e.g., "ns").
             scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds).
-            data (Optional[list[int | float]]): Optional list of timing data points. If not provided,
+            data (Optional[Sequence[int | float]]): Optional Sequence of timing data points. If not provided,
                 timing data will be extracted from the iterations if available.
         Raises:
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
@@ -292,7 +292,7 @@ class MemoryUsage(Stats):
     Attributes:
         unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
         scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
-        data: list[float | int] = List of memory usage data points. (read only)
+        data: tuple[float | int, ...] = Tuple of memory usage data points. (read only)
         mean (float): The mean memory usage. (read only)
         median (float): The median memory usage. (read only)
         minimum (float): The minimum memory usage. (read only)
@@ -303,14 +303,14 @@ class MemoryUsage(Stats):
     '''
     def __init__(self,
                  *,
-                 iterations: list[Iteration] | None = None,
+                 iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
-                 data: Optional[list[int | float]] = None):
+                 data: Optional[Sequence[int | float]] = None):
         """Construct MemoryUsage stats from Iteration or raw memory data.
 
         Args:
-            iterations (list[Iteration] | None): List of Iteration objects to extract memory data from.
+            iterations (Sequence[Iteration] | None): List of Iteration objects to extract memory data from.
             unit (str): The unit of measurement for the memory usage (e.g., "MB").
             scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
             data (Optional[list[int | float]]): Optional list of memory usage data points. If not provided,
@@ -332,7 +332,7 @@ class PeakMemoryUsage(Stats):
     Attributes:
         unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
         scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
-        data: list[float | int] = List of peak memory usage data points. (read only)
+        data: tuple[int | float, ...] = Tuple of peak memory usage data points. (read only)
         mean (float): The mean memory usage. (read only)
         median (float): The median memory usage. (read only)
         minimum (float): The minimum memory usage. (read only)
@@ -343,16 +343,16 @@ class PeakMemoryUsage(Stats):
     '''
     def __init__(self,
                  *,
-                 iterations: list[Iteration] | None = None,
+                 iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
                  data: Optional[Sequence[int | float]] = None):
         """Construct PeakMemoryUsage stats from Iteration or raw memory data.
         Args:
-            iterations (list[Iteration] | None): List of Iteration objects to extract peak memory data from.
+            iterations (Sequence[Iteration] | None): Sequence of Iteration objects to extract peak memory data from.
             unit (str): The unit of measurement for the memory usage (e.g., "MB").
             scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
-            data (Optional[list[int | float]]): Optional list of peak memory usage data points. If not provided,
+            data (Optional[Sequence[int | float]]): Optional Sequence of peak memory usage data points. If not provided,
                 peak memory data will be extracted from the iterations if available.
         Raises:
             SimpleBenchTypeError: If any of the arguments are of the wrong type.

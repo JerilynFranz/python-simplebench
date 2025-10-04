@@ -2,7 +2,8 @@
 """Container for the results of a single benchmark test."""
 from __future__ import annotations
 from copy import copy, deepcopy
-from typing import Any, Optional
+from typing import Any, Optional, Sequence, Mapping
+from types import MappingProxyType
 
 from simplebench.exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
 
@@ -20,27 +21,29 @@ class Results:
     It is immutable after creation to ensure data integrity.
 
     Properties:
-        group (str): The reporting group to which the benchmark case belongs.
-        title (str): The name of the benchmark case.
-        description (str): A brief description of the benchmark case.
-        n (int): The n weighting the benchmark assigned to the iteration for purposes of Big O analysis.
-        variation_marks (dict[str, Any]): A dictionary of variation marks used to identify the benchmark variation.
-        variation_cols (dict[str, str]): The columns to use for labelling kwarg variations in the benchmark.
-        interval_unit (str): The unit of measurement for the interval (e.g. "ns").
-        interval_scale (float): The scale factor for the interval (e.g. 1e-9 for nanoseconds).
-        ops_per_interval_unit (str): The unit of measurement for operations per interval (e.g. "ops/s").
-        ops_per_interval_scale (float): The scale factor for operations per interval (e.g. 1.0 for ops/s).
-        memory_unit (str): The unit of measurement for memory usage (e.g. "bytes").
-        memory_scale (float): The scale factor for memory usage (e.g. 1.0 for bytes).
-        iterations (list[Iteration]): The list of Iteration objects representing each iteration of the benchmark.
-        ops_per_second (OperationsPerInterval): Statistics for operations per interval.
-        per_round_timings (OperationTimings): Statistics for per-round timings.
-        memory (MemoryUsage): Statistics for memory usage.
-        peak_memory (PeakMemoryUsage): Statistics for peak memory usage.
-        total_elapsed (float): The total elapsed time for the benchmark.
-        extra_info (dict[str, Any]): Additional information about the benchmark run. Note: Returns a deep copy
-            to prevent external mutation. If extra_info contains large objects, accessing this property
-            may be expensive. Also this means that the extra_info dict must be deepcopy-able.
+        group (str): The reporting group to which the benchmark case belongs. (read only)
+        title (str): The name of the benchmark case. (read only)
+        description (str): A brief description of the benchmark case. (read only)
+        n (int): The n weighting the benchmark assigned to the iteration for purposes of Big O analysis. (read only)
+        variation_marks (MappingProxyType[str, Any]): A dictionary of variation marks used to identify the
+            benchmark variation. (read only)
+        variation_cols (MappingProxyType[str, str]): The columns to use for labelling kwarg variations in
+            the benchmark. (read only)
+        interval_unit (str): The unit of measurement for the interval (e.g. "ns"). (read only)
+        interval_scale (float): The scale factor for the interval (e.g. 1e-9 for nanoseconds). (read only)
+        ops_per_interval_unit (str): The unit of measurement for operations per interval (e.g. "ops/s"). (read only)
+        ops_per_interval_scale (float): The scale factor for operations per interval (e.g. 1.0 for ops/s). (read only)
+        memory_unit (str): The unit of measurement for memory usage (e.g. "bytes"). (read only)
+        memory_scale (float): The scale factor for memory usage (e.g. 1.0 for bytes). (read only)
+        iterations (tuple[Iteration, ...]): A tuple of Iteration objects representing each iteration of
+            the benchmark. (read only)
+        ops_per_second (OperationsPerInterval): Statistics for operations per interval. (read only)
+        per_round_timings (OperationTimings): Statistics for per-round timings. (read only)
+        memory (MemoryUsage): Statistics for memory usage. (read only)
+        peak_memory (PeakMemoryUsage): Statistics for peak memory usage. (read only)
+        total_elapsed (float): The total elapsed time for the benchmark. (read only)
+        extra_info (MappingProxyType[str, Any]): Additional information about the benchmark run. This is a
+            read-only property that returns a mapping proxy to prevent external mutation. (read only)
     '''
     __slots__ = (
         '_group',
@@ -62,6 +65,7 @@ class Results:
         '_per_round_timings',
         '_total_elapsed',
         '_extra_info',
+        '_repr_cache',
     )
 
     def __init__(self,  # pylint: disable=too-many-arguments, too-many-locals
@@ -71,7 +75,7 @@ class Results:
                  description: str,
                  n: int,
                  total_elapsed: float,
-                 iterations: list[Iteration],
+                 iterations: Sequence[Iteration],
                  variation_cols: dict[str, str] | None = None,
                  variation_marks: dict[str, Any] | None = None,
                  interval_unit: str = DEFAULT_INTERVAL_UNIT,
@@ -137,7 +141,7 @@ class Results:
             n, 'n',
             ErrorTag.RESULTS_N_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_N_INVALID_ARG_VALUE)
-        self._iterations: list[Iteration] = self._validate_iterations(iterations)
+        self._iterations: tuple[Iteration, ...] = self._validate_iterations(iterations)
         self._variation_cols: dict[str, str] = self._validate_variation_cols(variation_cols)
         self._variation_marks: dict[str, Any] = self._validate_variation_marks(variation_marks)
         self._interval_unit: str = validate_non_empty_string(
@@ -173,6 +177,7 @@ class Results:
             ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE)
         self._extra_info = self._validate_extra_info(extra_info)
+        self._repr_cache: Optional[str] = None  # cache for __repr__
 
     def _validate_variation_cols(self, value: dict[str, str] | None) -> dict[str, str]:
         """Validate the variation_cols dictionary.
@@ -215,9 +220,16 @@ class Results:
         # shallow copy to prevent external mutation
         return copy(value)
 
-    def _validate_iterations(self, value: list[Iteration]) -> list[Iteration]:
-        """Validate the iterations list."""
-        if not isinstance(value, list):
+    def _validate_iterations(self, value: Sequence[Iteration]) -> tuple[Iteration, ...]:
+        """Validate the iterations Sequence.
+
+        Args:
+            value (Sequence[Iteration]): The iterations Sequence to validate.
+
+        Returns:
+            tuple[Iteration, ...]: A copy of the validated iterations as a tuple.
+        """
+        if not isinstance(value, Sequence):
             raise SimpleBenchTypeError(
                 f'Invalid iterations type: {type(value)}. Must be of type list.',
                 tag=ErrorTag.RESULTS_ITERATIONS_INVALID_ARG_TYPE
@@ -228,8 +240,8 @@ class Results:
                     f'Invalid iteration element type: {type(iteration)}. Must be of type Iteration.',
                     tag=ErrorTag.RESULTS_ITERATIONS_INVALID_ARG_IN_SEQUENCE
                 )
-        # shallow copy to prevent external mutation
-        return copy(value)
+        # shallow copy to prevent external mutation of iterations sequence itself
+        return tuple(value)
 
     def _validate_variation_marks(self, value: dict[str, Any] | None) -> dict[str, Any]:
         """Validate the variation_marks dictionary.
@@ -428,16 +440,14 @@ class Results:
         return self._n
 
     @property
-    def variation_cols(self) -> dict[str, str]:
+    def variation_cols(self) -> MappingProxyType[str, str]:
         """The columns to use for labelling kwarg variations in the benchmark."""
-        # shallow copy to prevent external mutation
-        return copy(self._variation_cols)
+        return MappingProxyType(self._variation_cols)
 
     @property
-    def variation_marks(self) -> dict[str, Any]:
+    def variation_marks(self) -> MappingProxyType[str, Any]:
         """A dictionary of variation marks used to identify the benchmark variation."""
-        # shallow copy to prevent external mutation
-        return copy(self._variation_marks)
+        return MappingProxyType(self._variation_marks)
 
     @property
     def interval_unit(self) -> str:
@@ -460,10 +470,9 @@ class Results:
         return self._ops_per_interval_scale
 
     @property
-    def iterations(self) -> list[Iteration]:
-        """The list of Iteration objects representing each iteration of the benchmark."""
-        # shallow copy to prevent external mutation
-        return copy(self._iterations)
+    def iterations(self) -> tuple[Iteration, ...]:
+        """The tuple of Iteration objects representing each iteration of the benchmark."""
+        return self._iterations
 
     @property
     def ops_per_second(self) -> OperationsPerInterval:
@@ -536,7 +545,7 @@ class Results:
                 )
 
     @property
-    def results_as_dict(self) -> dict[str, str | float | dict[int, float] | dict[str, Any]]:
+    def results_as_dict(self) -> dict[str, str | float | Mapping[int, float] | Mapping[str, Any]]:
         '''Returns the benchmark results as a JSON-serializable dictionary.'''
         return {
             'type': self.__class__.__name__,
@@ -560,8 +569,12 @@ class Results:
         }
 
     @property
-    def results_and_data_as_dict(self) -> dict[str, str | float | dict[int, float] | dict[str, Any]]:
-        '''Returns the benchmark results and iterations as a JSON-serializable dictionary.'''
+    def results_and_data_as_dict(self) -> dict[str, str | float | Mapping[int, float] | Mapping[str, Any]]:
+        '''Returns the benchmark results and iterations as a JSON-serializable dictionary.
+
+        Includes all statistics and raw data for per-round timings, operations per second,
+        memory usage, and peak memory usage.
+        '''
         results = self.results_as_dict
         results['per_round_timings'] = self.per_round_timings.statistics_and_data_as_dict
         results['ops_per_second'] = self.ops_per_second.statistics_and_data_as_dict
@@ -571,6 +584,12 @@ class Results:
 
     def __repr__(self) -> str:
         """Return a string representation of the Results object."""
+        if self._repr_cache is None:
+            self._repr_cache = self._generate_repr()
+        return self._repr_cache
+
+    def _generate_repr(self) -> str:
+        """Generate the string representation of the Results object."""
         return (f'{self.__class__.__name__}('
                 f'group={self.group!r}, '
                 f'title={self.title!r}, '

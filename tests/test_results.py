@@ -332,7 +332,7 @@ def base_iterations() -> list[Iteration]:
             iterations='not_a_list'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.RESULTS_ITERATIONS_INVALID_ARG_TYPE)),
+        exception_tag=ErrorTag.RESULTS_ITERATIONS_INVALID_ARG_IN_SEQUENCE)),
     idspec("RESULTS_014", TestAction(
         name="non-Iteration iterations elements",
         action=Results,
