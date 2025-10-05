@@ -48,10 +48,7 @@ class MemoryUsage(Stats):
         super().__init__(unit=unit, scale=scale, data=data)
 
     @classmethod
-    def from_dict(cls,
-                  data: dict[str, Any],
-                  unit: Optional[str] = 'bytes',
-                  scale: Optional[int | float] = 1.0) -> MemoryUsage:
+    def from_dict(cls, data: dict[str, Any],) -> MemoryUsage:
         """Construct a MemoryUsage object from a dictionary.
 
         By default, the unit is "bytes" and the scale is 1.0. If provided in the dictionary,
@@ -69,16 +66,12 @@ class MemoryUsage(Stats):
         Args:
             data (dict): A dictionary containing the ops data. Must contain 'data' key with a non-empty
                 sequence of data points consisting of integers or floats.
-            unit (str): The unit of measurement for the benchmark (e.g., "bytes"). Defaults to "bytes".
-            scale (int | float): The scale factor for the interval (e.g. 1 for bytes). Defaults to 1.0.
+
         Returns:
             MemoryUsage: A MemoryUsage object constructed from the provided dictionary.
+
         Raises:
             SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
-            SimpleBenchKeyError: If the data dictionary does not contain a 'unit' key and
-                no unit argument is provided.
-            SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key
-                with at least one data point, if the scale argument is not greater than zero,
-                or if the unit argument is an empty string.
+            SimpleBenchKeyError: If the data dictionary does not contain the 'unit', 'scale' or 'data' keys
         """
-        return super().from_dict(data=data, unit=unit, scale=scale)  # type: ignore[return]
+        return super().from_dict(data=data)  # type: ignore[return]

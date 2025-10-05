@@ -10,9 +10,9 @@ import pytest
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError, ErrorTag
 from simplebench.iteration import Iteration
-from simplebench.stats import Stats, OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage
+from simplebench.stats import Stats, StatsSummary, OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage
 
-from .testspec import TestAction, TestSet, idspec, Assert, TestSpec
+from .testspec import TestAction, TestSet, idspec, Assert, TestSpec, NO_EXPECTED_VALUE
 
 
 class Nonsense(str, Enum):
@@ -288,11 +288,9 @@ def test_stats_initalization(section: Section) -> None:
 
 @pytest.mark.parametrize("testspec", [
     idspec("STATS_FROM_DICT_001", TestAction(
-        name="Stats - valid input with unit and scale in data",
+        name="Stats - valid input with unit, scale, and data in data dictionary",
         action=Stats.from_dict,
         kwargs={
-            'unit': 's',
-            'scale': 1.0,
             'data': {
                 'type': 'Stats:statistics',
                 'data': [1.0, 2.0, 3.0],
@@ -303,11 +301,9 @@ def test_stats_initalization(section: Section) -> None:
         assertion=Assert.ISINSTANCE,
         expected=Stats)),
     idspec("STATS_FROM_DICT_002", TestAction(
-        name="OperationsPerInterval - valid input with unit and scale in data",
+        name="OperationsPerInterval - valid input with unit, scale, and data in data dictionary",
         action=OperationsPerInterval.from_dict,
         kwargs={
-            'unit': 'ops/s',
-            'scale': 1.0,
             'data': {
                 'type': 'OperationsPerInterval:statistics',
                 'data': [1.0, 2.0, 3.0],
@@ -318,11 +314,9 @@ def test_stats_initalization(section: Section) -> None:
         assertion=Assert.ISINSTANCE,
         expected=OperationsPerInterval)),
     idspec("STATS_FROM_DICT_003", TestAction(
-        name="OperationTimings - valid input with unit and scale in data",
+        name="OperationTimings - valid input with unit, scale, and data in data dictionary",
         action=OperationTimings.from_dict,
         kwargs={
-            'unit': 's',
-            'scale': 1.0,
             'data': {
                 'type': 'OperationsTiming:statistics',
                 'data': [1.0, 2.0, 3.0],
@@ -333,11 +327,9 @@ def test_stats_initalization(section: Section) -> None:
         assertion=Assert.ISINSTANCE,
         expected=OperationTimings)),
     idspec("STATS_FROM_DICT_004", TestAction(
-        name="MemoryUsage - valid input with unit and scale in data",
+        name="MemoryUsage - valid input with unit, scale, and data in data dictionary",
         action=MemoryUsage.from_dict,
         kwargs={
-            'unit': 'bytes',
-            'scale': 1.0,
             'data': {
                 'type': 'MemoryUsage:statistics',
                 'data': [100, 200, 300],
@@ -348,11 +340,9 @@ def test_stats_initalization(section: Section) -> None:
         assertion=Assert.ISINSTANCE,
         expected=MemoryUsage)),
     idspec("STATS_FROM_DICT_005", TestAction(
-        name="PeakMemoryUsage - valid input with unit and scale in data",
+        name="PeakMemoryUsage valid input with unit, scale, and data in data dictionary",
         action=PeakMemoryUsage.from_dict,
         kwargs={
-            'unit': 'bytes',
-            'scale': 1.0,
             'data': {
                 'type': 'PeakMemoryUsage:statistics',
                 'data': [150, 250, 350],
@@ -363,152 +353,22 @@ def test_stats_initalization(section: Section) -> None:
         assertion=Assert.ISINSTANCE,
         expected=PeakMemoryUsage)),
     idspec("STATS_FROM_DICT_006", TestAction(
-        name="Stats - no unit in args, unit in data",
+        name="Stats - missing unit in data dictionary",
         action=Stats.from_dict,
         kwargs={
-            'scale': 1.0,
             'data': {
                 'type': 'Stats:statistics',
                 'data': [1.0, 2.0, 3.0],
-                'unit': 's',
                 'scale': 1.0
             }
         },
-        assertion=Assert.ISINSTANCE,
-        expected=Stats)),
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_MISSING_UNIT_KEY)),
     idspec("STATS_FROM_DICT_007", TestAction(
-        name="Stats - unit in args, no unit in data",
-        action=Stats.from_dict,
-        kwargs={
-            'scale': 1.0,
-            'unit': 's',
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'scale': 1.0
-            }
-        },
-        assertion=Assert.ISINSTANCE,
-        expected=Stats)),
-    idspec("STATS_FROM_DICT_008", TestAction(
-        name="Stats - no unit in args, no unit in data (should raise exception)",
-        action=Stats.from_dict,
-        kwargs={
-            'scale': 1.0,
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'scale': 1.0
-            }
-        },
-        exception=SimpleBenchKeyError,
-        exception_tag=ErrorTag.STATS_FROM_DICT_MISSING_UNIT)),
-    idspec("STATS_FROM_DICT_009", TestAction(
-        name="Stats - unit in data overrides unit in args",
-        action=Stats.from_dict,
-        kwargs={
-            'unit': 'wrong unit',
-            'scale': 1.0,
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'unit': 's',
-                'scale': 1.0
-            }
-        },
-        validate_result=lambda obj: obj.unit == 's')),
-    idspec("STATS_FROM_DICT_010", TestAction(
-        name="Stats - unit in args has wrong type (int)",
-        action=Stats.from_dict,
-        kwargs={
-            'unit': 123,  # type: ignore[arg-type]
-            'scale': 1.0,
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'unit': 's',
-                'scale': 1.0
-            }
-        },
-        exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_UNIT_ARG_TYPE)),
-    idspec("STATS_FROM_DICT_011", TestAction(
-        name="Stats - unit in args has wrong value (blank string)",
-        action=Stats.from_dict,
-        kwargs={
-            'unit': '   ',
-            'scale': 1.0,
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'unit': 's',
-                'scale': 1.0
-            }
-        },
-        exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_UNIT_ARG_VALUE)),
-    idspec("STATS_FROM_DICT_012", TestAction(
-        name="Stats - no scale in args, scale in data",
-        action=Stats.from_dict,
-        kwargs={
-            'unit': 's',
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'unit': 's',
-                'scale': 1.0
-            }
-        },
-        assertion=Assert.ISINSTANCE,
-        expected=Stats)),
-    idspec("STATS_FROM_DICT_013", TestAction(
-        name="Stats - scale in args, no scale in data",
-        action=Stats.from_dict,
-        kwargs={
-            'unit': 's',
-            'scale': 1.0,
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'unit': 's',
-            }
-        },
-        assertion=Assert.ISINSTANCE,
-        expected=Stats)),
-    idspec("STATS_FROM_DICT_014", TestAction(
-        name="Stats - no scale in args, no scale in data (should raise exception)",
-        action=Stats.from_dict,
-        kwargs={
-            'unit': 's',
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'unit': 's',
-            }
-        },
-        exception=SimpleBenchKeyError,
-        exception_tag=ErrorTag.STATS_FROM_DICT_MISSING_SCALE)),
-    idspec("STATS_FROM_DICT_015", TestAction(
-        name="Stats - scale in data overrides scale in args",
-        action=Stats.from_dict,
-        kwargs={
-            'unit': 's',
-            'scale': 2.0,
-            'data': {
-                'type': 'Stats:statistics',
-                'data': [1.0, 2.0, 3.0],
-                'unit': 's',
-                'scale': 1.0
-            }
-        },
-        validate_result=lambda obj: obj.scale == 1.0)),
-    idspec("STATS_FROM_DICT_016", TestAction(
         name="Stats - data arg is not a dict (str)",
         action=Stats.from_dict,
         kwargs={
-            'unit': 's',
-            'scale': 1.0,
-            'data': 'not_a_dict'  # type: ignore[arg-type]
+            'data': 'not_a_dict'
         },
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE
@@ -516,4 +376,99 @@ def test_stats_initalization(section: Section) -> None:
 ])
 def test_stats_from_dict(testspec: TestSpec) -> None:
     """Test the from_dict class method of the Stats class and sub-classes."""
+    testspec.run()
+
+
+def compare_stats(stats1: Stats, stats2: Stats) -> None:
+    """Helper function to compare two Stats objects for equality, considering scale and unit."""
+    if stats1 != stats2:
+        error = f"""Stats objects are not equal:
+        stats1 = {stats1.statistics_as_dict}
+        stats2 = {stats2.statistics_as_dict}"""
+        raise AssertionError(error)
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("EQUALITY_001", TestAction(
+        name="Stats - equal to exported StatsSummary",
+        action=Stats.from_dict,
+        kwargs={
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        validate_result=lambda obj: obj == obj.as_stats_summary()
+        )),
+    idspec("EQUALITY_002", TestAction(
+        name="Stats - equal to seperately defined Stats instance",
+        action=Stats,
+        kwargs={
+            'unit': 's',
+            'scale': 1.0,
+            'data': [1.0, 2.0, 3.0]
+        },
+        validate_result=lambda obj: obj == Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0])
+        )),
+    idspec("EQUALITY_003", TestAction(
+        name="Stats - equal to Stats with different scales",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='ms', scale=0.001, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='s', scale=1.0, data=[0.001, 0.002, 0.003])
+        },
+        expected=NO_EXPECTED_VALUE
+    )),
+    idspec("EQUALITY_004", TestAction(
+        name="Stats - not equal to Stats with different data",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 4.0])
+        },
+        exception=AssertionError)),
+    idspec("EQUALITY_005", TestAction(
+        name="Stats - not equal to Stats with different units",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='ms', scale=1.0, data=[1.0, 2.0, 3.0])
+        },
+        exception=AssertionError)),
+    idspec("EQUALITY_006", TestAction(
+        name="Stats - not equal to Stats with different scales",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='s', scale=0.001, data=[1.0, 2.0, 3.0])
+        },
+        exception=AssertionError)),
+    idspec("EQUALITY_007", TestAction(
+        name="Stats - not equal to non-Stats object",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            'stats2': "not_a_stats_object"  # type: ignore[arg-type]
+        },
+        exception=AttributeError)),
+    idspec("EQUALITY_008", TestAction(
+        name="Stats - equal to itself through export as StatsSummary",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).as_stats_summary()
+        })),
+    idspec("EQUALITY_009", TestAction(
+        name="Stats - equal to itself through export to dict and rehydrate",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats.from_dict(
+                data=Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).statistics_and_data_as_dict)
+        })),
+])
+def test_stats_equality(testspec: TestSpec) -> None:
+    """Test the equality operator of the Stats class and sub-classes."""
     testspec.run()

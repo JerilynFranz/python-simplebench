@@ -47,10 +47,7 @@ class PeakMemoryUsage(Stats):
         super().__init__(unit=unit, scale=scale, data=data)
 
     @classmethod
-    def from_dict(cls,
-                  data: dict[str, Any],
-                  unit: Optional[str] = 'bytes',
-                  scale: Optional[int | float] = 1.0) -> PeakMemoryUsage:
+    def from_dict(cls, data: dict[str, Any]) -> PeakMemoryUsage:
         """Construct a PeakMemoryUsage object from a dictionary.
 
         By default, the unit is "bytes" and the scale is 1.0. If provided in the dictionary,
@@ -80,4 +77,4 @@ class PeakMemoryUsage(Stats):
                 with at least one data point, if the scale argument is not greater than zero,
                 or if the unit argument is an empty string.
         """
-        return super().from_dict(data=data, unit=unit, scale=scale)  # type: ignore[return]
+        return super().from_dict(data=data)  # type: ignore[return]

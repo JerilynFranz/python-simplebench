@@ -165,7 +165,7 @@ def si_scale_to_unit(base_unit: str, current_unit: str, target_unit: str) -> flo
     """Scale factor to convert a current SI unit to a target SI unit based on their SI prefixes.
 
     Example:
-    scale_by: float = self.si_scale_to_unit(base_unit='s', current_unit='s', target_unit='ns')
+    scale_by: float = si_scale_to_unit(base_unit='s', current_unit='s', target_unit='ns')
 
     Args:
         base_unit: The base unit to use for scaling.

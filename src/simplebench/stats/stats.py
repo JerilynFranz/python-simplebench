@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """Base benchmark statistics class."""
 from __future__ import annotations
+from math import isclose
 import statistics
-from typing import Any, Optional, Sequence
+from typing import Any, Sequence
 
-from ..exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError
-from ..si_units import si_unit_base
-from ..validators import (validate_non_blank_string, validate_positive_float, validate_sequence_of_numbers,
-                          validate_float, validate_non_negative_float, validate_non_blank_string_or_is_none)
+from ..exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from ..si_units import si_unit_base, si_scale_to_unit
+from ..validators import (validate_non_blank_string, validate_float, validate_non_negative_float,
+                          validate_positive_float, validate_sequence_of_numbers)
 
 
 class Stats:
@@ -217,7 +218,7 @@ class Stats:
         )
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any], unit: Optional[str] = None, scale: Optional[int | float] = None) -> Stats:
+    def from_dict(cls, data: dict[str, Any]) -> Stats:
         """Construct a Stats object from a dictionary.
 
         Example:
@@ -232,14 +233,6 @@ class Stats:
         Args:
             data (dict): A dictionary containing the stats data. Must contain 'data' key with a non-empty
                 sequence of data points consisting of integers or floats.
-            unit (Optional[str]): The unit of measurement for the benchmark (e.g., "ops/s").
-                It will be taken from the 'unit' key in the data dictionary by priority and
-                from the unit argument if not present in the data dictionary.
-                At least one of these must be provided.
-            scale (Optional[int | float]): The scale factor for the interval (e.g. 1 for seconds).
-                It will be taken from the 'scale' key in the data dictionary by priority and
-                from the scale argument if not present in the data dictionary.
-                At least one of these must be provided.
 
         Returns:
             Stats: A Stats object constructed from the provided dictionary.
@@ -255,48 +248,82 @@ class Stats:
         if not isinstance(data, dict):
             raise SimpleBenchTypeError('The data argument must be a dictionary.',
                                        tag=ErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE)
+        if 'unit' not in data:
+            raise SimpleBenchKeyError('The data dictionary is missing the required "unit" key.',
+                                      tag=ErrorTag.STATS_FROM_DICT_MISSING_UNIT_KEY)
+        if 'scale' not in data:
+            raise SimpleBenchKeyError('The data dictionary is missing the required "scale" key.',
+                                      tag=ErrorTag.STATS_FROM_DICT_MISSING_SCALE_KEY)
+        if 'data' not in data:
+            raise SimpleBenchKeyError('The data dictionary is missing the required "data" key.',
+                                      tag=ErrorTag.STATS_FROM_DICT_MISSING_DATA_KEY)
 
-        arg_unit: str | None = validate_non_blank_string_or_is_none(
-                    unit, 'unit',
-                    ErrorTag.STATS_FROM_DICT_INVALID_UNIT_ARG_TYPE,
-                    ErrorTag.STATS_FROM_DICT_INVALID_UNIT_ARG_VALUE,
-                    allow_none=True)
-        data_unit: str | None = validate_non_blank_string_or_is_none(
-                        data.get('unit'), 'unit',
-                        ErrorTag.STATS_FROM_DICT_INVALID_UNIT_DATA_TYPE,
-                        ErrorTag.STATS_FROM_DICT_INVALID_UNIT_DATA_VALUE,
-                        allow_none=True)
-        final_unit: str | None = data_unit if data_unit is not None else arg_unit
-        if final_unit is None:
-            raise SimpleBenchKeyError(
-                'The data dictionary must contain a non-empty string "unit" key or '
-                'a non-empty string unit must be provided as an argument.',
-                tag=ErrorTag.STATS_FROM_DICT_MISSING_UNIT)
+        return cls(unit=data['unit'], scale=data['scale'], data=data['data'])  # type: ignore[arg-type]
 
-        arg_scale: float | None = validate_positive_float(
-                        scale, 'scale',
-                        ErrorTag.STATS_FROM_DICT_INVALID_SCALE_ARG_TYPE,
-                        ErrorTag.STATS_FROM_DICT_INVALID_SCALE_ARG_VALUE) if scale is not None else None
-        raw_data_scale: int | float | None = data.get('scale')
-        data_scale: float | None = validate_positive_float(
-                        raw_data_scale, 'scale',  # type: ignore[arg-type]
-                        ErrorTag.STATS_FROM_DICT_INVALID_SCALE_DATA_TYPE,
-                        ErrorTag.STATS_FROM_DICT_INVALID_SCALE_DATA_VALUE) if raw_data_scale is not None else None
-        final_scale = arg_scale if data_scale is None else data_scale
-        if final_scale is None:
-            raise SimpleBenchKeyError(
-                'The "data" dictionary must contain an int or float "scale" key or '
-                'an int or float scale must be provided as an argument.',
-                tag=ErrorTag.STATS_FROM_DICT_MISSING_SCALE)
+    def __eq__(self, other: object) -> bool:
+        """Compare two Stats objects for equality.
 
-        raw_data_points: Sequence[int | float] = validate_sequence_of_numbers(
-                    value=data.get('data'),   # type: ignore[arg-type]
-                    field_name='data',
-                    allow_empty=False,
-                    type_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE,
-                    value_tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)
-        final_data_points: Sequence[int | float] = [value * final_scale for value in raw_data_points]
-        return cls(unit=final_unit, scale=final_scale, data=final_data_points)
+        Equality is based on stats statistics and not on object identity.
+
+        It handles scale differences between two Stats objects and compares
+        the statistics accordingly using an appropriate tolerance for floating-point comparisons.
+
+        It also verifies that the units are equivalent when converted to their SI base units.
+
+        It does not consider the raw data points in the comparison as they will differ
+        between a basic Stats object and a StatsSummary object derived from it.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: True if the objects are considered equal, False otherwise.
+
+        Raises:
+            SimpleBenchValueError: If either Stats object has a scale of zero.
+        """
+        if not isinstance(other, Stats):
+            return NotImplemented
+
+        # this handles scale differences between two Stats objects
+        self_base_unit: str = si_unit_base(self.unit)
+        other_base_unit: str = si_unit_base(other.unit)
+        if self_base_unit != other_base_unit:
+            return False
+
+        scale_by: float = si_scale_to_unit(base_unit=self_base_unit,
+                                           current_unit=other.unit,
+                                           target_unit=self.unit)
+        if self.scale == 0:  # should never happen due to validation in constructors
+            raise SimpleBenchValueError(
+                "self.scale must not be zero when comparing two Stats objects",
+                tag=ErrorTag.STATS_COMPARISON_INCOMPATIBLE_SCALES)
+        if other.scale == 0:   # should never happen due to validation in constructors
+            raise SimpleBenchValueError(
+                "other.scale must not be zero when comparing two Stats objects",
+                tag=ErrorTag.STATS_COMPARISON_INCOMPATIBLE_SCALES)
+        relative_scale: float = self.scale / other.scale
+
+        if not isclose(scale_by, relative_scale):
+            return False
+
+        if not (isclose(self.mean, other.mean / relative_scale) and
+                isclose(self.median,  other.median / relative_scale) and
+                isclose(self.minimum, other.minimum / relative_scale) and
+                isclose(self.maximum, other.maximum / relative_scale) and
+                isclose(self.standard_deviation, other.standard_deviation / relative_scale) and
+                isclose(self.relative_standard_deviation, other.relative_standard_deviation)):
+            return False
+
+        # should never happen due to validation in constructors
+        if len(self.percentiles) != len(other.percentiles):
+            return False
+
+        for self_pct, other_pct in zip(self.percentiles, other.percentiles):
+            if not isclose(self_pct, other_pct / relative_scale):
+                return False
+
+        return si_unit_base(self.unit) == si_unit_base(other.unit)
 
     def __repr__(self) -> str:
         return (f"{self.__class__.__name__}(unit='{self.unit}', scale={self.scale}, "
@@ -389,3 +416,53 @@ class StatsSummary(Stats):
         This is always an empty tuple as a StatsSummary does not contain raw data points.
         '''
         return tuple()
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Stats:
+        """Construct a StatsSummary object from a dictionary.
+
+        Example:
+            stats_summary_dict = {
+                "unit": "ops/s",
+                "scale": 1.0,
+                "data": [1000, 2000, 1500, 3000, 2500]
+            }
+            stats_summary = Stats.from_dict(stats_summary_dict)
+            print(stats_summary.mean)  # Output: 2000.0
+
+        Args:
+            data (dict): A dictionary containing the stats data. Must contain 'data' key with a non-empty
+                sequence of data points consisting of integers or floats.
+            unit (Optional[str]): The unit of measurement for the benchmark (e.g., "ops/s").
+                It will be taken from the 'unit' key in the data dictionary by priority and
+                from the unit argument if not present in the data dictionary.
+            scale (Optional[int | float]): The scale factor for the interval (e.g. 1 for seconds).
+                It will be taken from the 'scale' key in the data dictionary by priority and
+                from the scale argument if not present in the data dictionary.
+
+        Returns:
+            Stats: A Stats object constructed from the provided dictionary.
+
+        Raises:
+            SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
+            SimpleBenchKeyError: If the data dictionary does not contain a 'unit' key and
+                no unit argument is provided.
+            SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key
+                with at least one data point, if the scale argument is not greater than zero,
+                or if the unit argument is an empty string
+        """
+        if not isinstance(data, dict):
+            raise SimpleBenchTypeError('The data argument must be a dictionary.',
+                                       tag=ErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE)
+
+        required_keys = [
+            'unit', 'scale', 'mean', 'median', 'minimum', 'maximum',
+            'standard_deviation', 'relative_standard_deviation', 'percentiles'
+        ]
+        keys_for_construction = {}
+        for key in required_keys:
+            if key not in data:
+                raise SimpleBenchKeyError(f"The data dictionary is missing the required '{key}' key.",
+                                          tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)
+            keys_for_construction[key] = data[key]
+        return cls(**keys_for_construction)  # type: ignore[arg-type]  # pylint: disable=missing-kwoa
