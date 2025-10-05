@@ -7,14 +7,15 @@ from typing import Any
 
 import pytest
 
-from simplebench.constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from simplebench.constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
+                                   DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT)
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from simplebench.iteration import Iteration
 from simplebench.results import Results
 from simplebench.enums import Section
 from simplebench.stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
 
-from .testspec import TestAction, idspec, Assert
+from .testspec import TestAction, TestGet, idspec, Assert
 
 
 class NoDefaultValue:
@@ -186,6 +187,8 @@ def base_iterations() -> list[Iteration]:
                                         result.peak_memory.data == (150,) and
                                         result.ops_per_interval_unit == DEFAULT_INTERVAL_UNIT and
                                         result.ops_per_interval_scale == DEFAULT_INTERVAL_SCALE and
+                                        result.memory_unit == DEFAULT_MEMORY_UNIT and
+                                        result.memory_scale == DEFAULT_MEMORY_SCALE and
                                         result.total_elapsed == 1.0 and
                                         result.variation_marks == {} and
                                         result.extra_info == {} and
@@ -534,6 +537,94 @@ def base_iterations() -> list[Iteration]:
         ),
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE)),
+    idspec("RESULTS_034", TestAction(
+        name="blank string variation_marks key",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            variation_marks={' ': 'value'}),  # invalid blank string key
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_VALUE)),
+    idspec("RESULTS_035", TestAction(
+        name="Wrong type for peak_memory argument (str instead of PeakMemoryUsage)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            peak_memory='invalid_type'  # type: ignore[arg-type]
+        ),
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.RESULTS_PEAK_MEMORY_INVALID_ARG_TYPE)),
+    idspec("RESULTS_036", TestAction(
+        name="Correct type for peak_memory argument (PeakMemoryUsage)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            peak_memory=PeakMemoryUsage(unit='bytes', scale=1.0, data=[150])),
+        assertion=Assert.ISINSTANCE,
+        expected=Results)),
+    idspec("RESULTS_037", TestAction(
+        name="Wrong type for memory argument (str instead of MemoryUsage)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            memory='invalid_type'  # type: ignore[arg-type]
+        ),
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.RESULTS_MEMORY_INVALID_ARG_TYPE)),
+    idspec("RESULTS_038", TestAction(
+        name="Correct type for memory argument (MemoryUsage)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            memory=MemoryUsage(unit='bytes', scale=1.0, data=[150])
+        ),
+        assertion=Assert.ISINSTANCE,
+        expected=Results)),
+    idspec("RESULTS_039", TestAction(
+        name="Wrong type for per_round_timings argument (str instead of OperationTimings)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            per_round_timings='invalid_type'  # type: ignore[arg-type]
+        ),
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.RESULTS_PER_ROUND_TIMINGS_INVALID_ARG_TYPE)),
+    idspec("RESULTS_040", TestAction(
+        name="Correct type for per_round_timings argument (OperationTimings)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            per_round_timings=OperationTimings(unit='s', scale=1.0, data=[1.0])
+        ),
+        assertion=Assert.ISINSTANCE,
+        expected=Results)),
+    idspec("RESULTS_041", TestAction(
+        name="Wrong type for ops_per_second argument (str instead of OperationsPerInterval)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            ops_per_second='invalid_type'  # type: ignore[arg-type]
+        ),
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.RESULTS_OPS_PER_SECOND_INVALID_ARG_TYPE)),
+    idspec("RESULTS_042", TestAction(
+        name="Correct type for ops_per_second argument (OperationsPerInterval)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            ops_per_second=OperationsPerInterval(unit='ops/s', scale=1.0, data=[1.0])
+        ),
+        assertion=Assert.ISINSTANCE,
+        expected=Results)),
 ])
 def test_results_init(testspec: TestAction) -> None:
     """Test Results initialization."""
@@ -551,6 +642,147 @@ def base_results() -> Results:
         total_elapsed=1.0,
         iterations=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
     )
+
+
+@cache
+def getattribute_results() -> Results:
+    """Create a Results instance for testing getting attributes."""
+    return Results(
+        group='test_group',
+        title='test_title',
+        description='test_description',
+        n=1,
+        total_elapsed=1.0,
+        iterations=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
+        variation_cols={'size': 'N', 'type': 'test'},
+        variation_marks={'size': 1, 'type': 'A'},
+    )
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("GET_001", TestGet(
+        name="Get non-existent attribute",
+        attribute='non_existent_attr',
+        obj=getattribute_results(),
+        exception=AttributeError)),
+    idspec("GET_002", TestGet(
+        name="Get 'group' attribute",
+        attribute='group',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected='test_group')),
+    idspec("GET_003", TestGet(
+        name="Get 'title' attribute",
+        attribute='title',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected='test_title')),
+    idspec("GET_004", TestGet(
+        name="Get 'description' attribute",
+        attribute='description',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected='test_description')),
+    idspec("GET_005", TestGet(
+        name="Get 'n' attribute",
+        attribute='n',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=1)),
+    idspec("GET_006", TestGet(
+        name="Get 'total_elapsed' attribute",
+        attribute='total_elapsed',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=1.0)),
+    idspec("GET_007", TestGet(
+        name="Get 'iterations' attribute",
+        attribute='iterations',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=(Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)))),
+    idspec("GET_008", TestGet(
+        name="Get 'variation_cols' attribute",
+        attribute='variation_cols',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected={'size': 'N', 'type': 'test'})),
+    idspec("GET_009", TestGet(
+        name="Get 'variation_marks' attribute",
+        attribute='variation_marks',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected={'size': 1, 'type': 'A'})),
+    idspec("GET_010", TestGet(
+        name="Get 'interval_unit' attribute",
+        attribute='interval_unit',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=DEFAULT_INTERVAL_UNIT)),
+    idspec("GET_011", TestGet(
+        name="Get 'interval_scale' attribute",
+        attribute='interval_scale',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=DEFAULT_INTERVAL_SCALE)),
+    idspec("GET_012", TestGet(
+        name="Get 'ops_per_second' attribute",
+        attribute='ops_per_second',
+        assertion=Assert.ISINSTANCE,
+        obj=getattribute_results(),
+        expected=OperationsPerInterval)),
+    idspec("GET_013", TestGet(
+        name="Get 'per_round_timings' attribute",
+        attribute='per_round_timings',
+        assertion=Assert.ISINSTANCE,
+        obj=getattribute_results(),
+        expected=OperationTimings)),
+    idspec("GET_014", TestGet(
+        name="Get 'memory' attribute",
+        attribute='memory',
+        assertion=Assert.ISINSTANCE,
+        obj=getattribute_results(),
+        expected=MemoryUsage)),
+    idspec("GET_015", TestGet(
+        name="Get 'peak_memory' attribute",
+        attribute='peak_memory',
+        assertion=Assert.ISINSTANCE,
+        obj=getattribute_results(),
+        expected=PeakMemoryUsage)),
+    idspec("GET_016", TestGet(
+        name="Get 'ops_per_interval_unit' attribute",
+        attribute='ops_per_interval_unit',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=DEFAULT_INTERVAL_UNIT)),
+    idspec("GET_017", TestGet(
+        name="Get 'ops_per_interval_scale' attribute",
+        attribute='ops_per_interval_scale',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=DEFAULT_INTERVAL_SCALE)),
+    idspec("GET_018", TestGet(
+        name="Get 'memory_unit' attribute",
+        attribute='memory_unit',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=DEFAULT_MEMORY_UNIT)),
+    idspec("GET_019", TestGet(
+        name="Get 'memory_scale' attribute",
+        attribute='memory_scale',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected=DEFAULT_MEMORY_SCALE)),
+    idspec("GET_020", TestGet(
+        name="Get 'extra_info' attribute",
+        attribute='extra_info',
+        assertion=Assert.EQUAL,
+        obj=getattribute_results(),
+        expected={})),
+])
+def test_getattribute(testspec: TestGet) -> None:
+    """Test getting attributes from Results."""
+    testspec.run()
 
 
 @cache

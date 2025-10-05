@@ -198,6 +198,57 @@ class ErrorTag(str, Enum):
     """Invalid data argument passed to the Stats() constructor - must be a list of numbers (int or float) or None"""
     STATS_INVALID_DATA_ARG_ITEM_TYPE = "STATS_INVALID_DATA_ARG_ITEM_TYPE"
     """Invalid data argument item passed to the Stats() constructor - must be a number (int or float)"""
+    STATS_FROM_DICT_INVALID_DATA_ARG_TYPE = "STATS_FROM_DICT_INVALID_DATA_ARG_TYPE"
+    """Invalid data argument passed to the Stats.from_dict() method - must be a dict"""
+    STATS_FROM_DICT_MISSING_UNIT = "STATS_FROM_DICT_MISSING_UNIT"
+    """Missing unit argument in the data dictionary or argument passed to the Stats.from_dict() method"""
+    STATS_FROM_DICT_MISSING_SCALE = "STATS_FROM_DICT_MISSING_SCALE"
+    """Missing scale argument in the data dictionary or argument passed to the Stats.from_dict() method"""
+    STATS_FROM_DICT_INVALID_SCALE_ARG_TYPE = "STATS_FROM_DICT_INVALID_SCALE_ARG_TYPE"
+    """Invalid scale argument in the data dictionary or argument passed to the Stats.from_dict() method
+    - must be a float"""
+    STATS_FROM_DICT_INVALID_SCALE_ARG_VALUE = "STATS_FROM_DICT_INVALID_SCALE_ARG_VALUE"
+    """Invalid scale argument in the data dictionary or argument passed to the Stats.from_dict() method
+    - must be greater than zero"""
+    STATS_FROM_DICT_UNKNOWN_STATS_DATA_TYPE = "STATS_FROM_DICT_UNKNOWN_STATS_DATA_TYPE"
+    """Unknown stats type found in the data dictionary or argument passed to the Stats.from_dict() method"""
+
+    # StatsSummary() tags
+    STATS_SUMMARY_INVALID_UNIT_ARG_TYPE = "STATS_SUMMARY_INVALID_UNIT_ARG_TYPE"
+    """Invalid unit argument passed to the StatsSummary() constructor - must be a str"""
+    STATS_SUMMARY_INVALID_UNIT_ARG_VALUE = "STATS_SUMMARY_INVALID_UNIT_ARG_VALUE"
+    """Invalid unit argument passed to the StatsSummary() constructor - must be a non-empty str"""
+    STATS_SUMMARY_INVALID_SCALE_ARG_TYPE = "STATS_SUMMARY_INVALID_SCALE_ARG_TYPE"
+    """Invalid scale argument passed to the StatsSummary() constructor - must be a number (int or float)"""
+    STATS_SUMMARY_INVALID_SCALE_ARG_VALUE = "STATS_SUMMARY_INVALID_SCALE_ARG_VALUE"
+    """Invalid scale argument passed to the StatsSummary() constructor - must be greater than zero"""
+    STATS_SUMMARY_INVALID_MINIMUM_ARG_TYPE = "STATS_SUMMARY_INVALID_MINIMUM_ARG_TYPE"
+    """Invalid minimum argument passed to the StatsSummary() constructor - must be a number (int or float)"""
+    STATS_SUMMARY_INVALID_MAXIMUM_ARG_TYPE = "STATS_SUMMARY_INVALID_MAXIMUM_ARG_TYPE"
+    """Invalid maximum argument passed to the StatsSummary() constructor - must be a number (int or float)"""
+    STATS_SUMMARY_INVALID_MEAN_ARG_TYPE = "STATS_SUMMARY_INVALID_MEAN_ARG_TYPE"
+    """Invalid mean argument passed to the StatsSummary() constructor - must be a number (int or float)"""
+    STATS_SUMMARY_INVALID_MEDIAN_ARG_TYPE = "STATS_SUMMARY_INVALID_MEDIAN_ARG_TYPE"
+    """Invalid median argument passed to the StatsSummary() constructor - must be a number (int or float)"""
+    STATS_SUMMARY_INVALID_STANDARD_DEVIATION_ARG_TYPE = "STATS_SUMMARY_INVALID_STANDARD_DEVIATION_ARG_TYPE"
+    """Invalid relative_standard_deviation argument passed to the StatsSummary() constructor
+    - must be a number (int or float)"""
+    STATS_SUMMARY_INVALID_STANDARD_DEVIATION_ARG_VALUE = "STATS_SUMMARY_INVALID_STANDARD_DEVIATION_ARG_VALUE"
+    """Invalid standard_deviation argument passed to the StatsSummary() constructor - must be a number (int or float)"""
+    STATS_SUMMARY_INVALID_RELATIVE_STANDARD_DEVIATION_ARG_TYPE = (
+        "STATS_SUMMARY_INVALID_RELATIVE_STANDARD_DEVIATION_ARG_TYPE")
+    """Invalid relative_standard_deviation argument passed to the StatsSummary() constructor
+    - must be a number (int or float)"""
+    STATS_SUMMARY_INVALID_RELATIVE_STANDARD_DEVIATION_ARG_VALUE = (
+        "STATS_SUMMARY_INVALID_RELATIVE_STANDARD_DEVIATION_ARG_VALUE")
+    """Invalid relative_standard_deviation argument passed to the StatsSummary() constructor
+    - must be greater than zero"""
+    STATS_SUMMARY_INVALID_PERCENTILES_ARG_TYPE = "STATS_SUMMARY_INVALID_PERCENTILES_ARG_TYPE"
+    """Invalid percentiles argument passed to the StatsSummary() constructor
+    - must be a sequence of numbers (int or float)"""
+    STATS_SUMMARY_INVALID_PERCENTILES_ARG_VALUE = "STATS_SUMMARY_INVALID_PERCENTILES_ARG_VALUE"
+    """Invalid percentiles item passed to the StatsSummary() constructor in sequence
+    - must be a number (int or float)"""
 
     # Iteration() tags
     ITERATION_N_ARG_TYPE = "ITERATION_N_ARG_TYPE"

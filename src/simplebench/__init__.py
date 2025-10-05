@@ -14,7 +14,7 @@ from .exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, Sim
 from .runners import SimpleRunner
 from .results import Results
 from .iteration import Iteration
-from .stats import OperationsPerInterval, OperationTimings, Stats
+from .stats import OperationsPerInterval, OperationTimings, Stats, StatsSummary, MemoryUsage, PeakMemoryUsage
 from .tasks import RichProgressTasks, RichTask
 from .si_units import si_scale, si_scale_for_smallest, si_scale_to_unit, si_unit_base
 from .utils import sanitize_filename, sigfigs, kwargs_variations
@@ -52,6 +52,11 @@ __all__ = [
     'Section',
     'Session',
     'Stats',
+    'StatsSummary',
+    'MemoryUsage',
+    'OperationsPerInterval',
+    'OperationTimings',
+    'PeakMemoryUsage',
     'SimpleRunner',
     'Target',
     'Verbosity',

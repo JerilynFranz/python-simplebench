@@ -839,6 +839,8 @@ class TestGet(TestSpec):
             of the entire object state rather than just checking the value of a single attribute.
 
             It is passed two arguments, the TestGet instance and the object being validated.
+        display_on_fail (str | Callable[[], str], default=""):
+            Message to display on test failure. This can be a static string or a callable that returns a string.
         on_fail (Callable[[str], NoReturn], default=pytest.fail):
             Function to call on test failure to raise an exception
         extra (Any):
@@ -878,6 +880,8 @@ class TestGet(TestSpec):
     The validation function should call the `on_fail` method to raise an exception if the object is not
     in a valid state. None should be returned if the object is valid.
     """
+    display_on_fail: str | Callable[[], str] = ""
+    """String or function to display additional information on test failure."""
     on_fail: Callable[[str], NoReturn] = pytest.fail
     """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
     extra: Any = None
@@ -893,6 +897,8 @@ class TestGet(TestSpec):
             raise TypeError("obj cannot be None")
         if not isinstance(self.obj, object):
             raise TypeError("obj must be an object")
+        if self.assertion not in Assert:
+            raise ValueError(f"assertion must be one of {list(Assert)}")
         if self.attribute == "":
             raise ValueError("attribute cannot be an empty string")
         if self.validate is not None and not callable(self.validate):
@@ -903,10 +909,12 @@ class TestGet(TestSpec):
             raise TypeError("set_exception_tag must be a str or Enum if provided")
         if not callable(self.on_fail):
             raise TypeError("on_fail must be callable")
+        if self.display_on_fail and not (isinstance(self.display_on_fail, str) or callable(self.display_on_fail)):
+            raise TypeError("display_on_fail must be a str or callable if provided")
 
     def run(self) -> None:
-        """Execute the attribute set/get test."""
-        # disabled because we are using the __setattr__ and __getattribute__ dunder methods directly
+        """Execute the attribute get test."""
+        # disabled because we are using the __getattribute__ dunder method directly
         # for testing purposes because there is no other way to do get/set testing for attributes generically.
         # pylint: disable=unnecessary-dunder-call
 
@@ -927,23 +935,21 @@ class TestGet(TestSpec):
 
         attribute_to_get = self.attribute
         try:
-            if not hasattr(self.obj, attribute_to_get):
-                errors.append(f"obj has no attribute {attribute_to_get}")
-            else:
-                if self.validate is not None:
-                    self.validate(self, self.obj)  # Exception should be raised by validate if unexpected obj state
+            if self.validate is not None:
+                self.validate(self, self.obj)  # Exception should be raised by validate if unexpected obj state
 
-                if self.expected is NO_EXPECTED_VALUE:
-                    return
+            if self.expected is NO_EXPECTED_VALUE:
+                return
 
-                found: Any = self.obj.__getattribute__(attribute_to_get)
-                match self.assertion:
-                    case '==':
-                        if self.expected != found:
-                            errors.append(
-                                f"expected={self.expected}, found={found} for attribute '{attribute_to_get}'")
-                    case _:
-                        errors.append(f"Unsupported assertion operator '{self.assertion}'")
+            found: Any = self.obj.__getattribute__(attribute_to_get)
+            if self.expected is not NO_EXPECTED_VALUE:
+                assertion_result = test_assertion(self.assertion, self.expected, found)
+                if assertion_result:
+                    errors.append(assertion_result)
+                    if callable(self.display_on_fail):
+                        errors.append(self.display_on_fail())
+                    elif isinstance(self.display_on_fail, str):
+                        errors.append(self.display_on_fail)
 
         except Exception as err:  # pylint: disable=broad-exception-caught
             if self.exception is None:

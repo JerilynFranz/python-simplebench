@@ -10,9 +10,9 @@ import pytest
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from simplebench.iteration import Iteration
-from simplebench import stats
+from simplebench.stats import Stats, OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage
 
-from .testspec import TestAction, TestSet, idspec
+from .testspec import TestAction, TestSet, idspec, Assert, TestSpec
 
 
 class Nonsense(str, Enum):
@@ -21,9 +21,9 @@ class Nonsense(str, Enum):
 
 
 @pytest.fixture()
-def stats_classes() -> list[type[stats.Stats]]:
+def stats_classes() -> list[type[Stats]]:
     """Fixture to return list of stats classes."""
-    return [stats.Stats, stats.OperationsPerInterval, stats.OperationTimings, stats.MemoryUsage, stats.PeakMemoryUsage]
+    return [Stats, OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage]
 
 
 @pytest.mark.parametrize("test", [
@@ -73,7 +73,7 @@ def stats_classes() -> list[type[stats.Stats]]:
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
         validate_result=lambda obj: obj.unit == 'a unit' and obj.scale == 1.0 and obj.data == (1.0, 2.0, 3.0))),
 ])
-def test_stats_init(stats_classes: list[type[stats.Stats]], test: TestAction) -> None:
+def test_stats_init(stats_classes: list[type[Stats]], test: TestAction) -> None:
     """Test that the stats module is initialized correctly."""
     for stats_class in stats_classes:
         test.name = f"{test.name} - {stats_class.__name__}"
@@ -82,11 +82,11 @@ def test_stats_init(stats_classes: list[type[stats.Stats]], test: TestAction) ->
 
 
 @pytest.fixture()
-def stats_instances() -> list[stats.Stats]:
+def stats_instances() -> list[Stats]:
     """Fixture to return a minimal Stats instance for each class and subclass for testing."""
-    return [stats.Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0]),
-            stats.OperationsPerInterval(unit='ops/s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            stats.OperationTimings(unit='s', scale=1.0, data=[1.0, 2.0, 3.0])]
+    return [Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0]),
+            OperationsPerInterval(unit='ops/s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            OperationTimings(unit='s', scale=1.0, data=[1.0, 2.0, 3.0])]
 
 
 @pytest.mark.parametrize("test", [
@@ -106,7 +106,7 @@ def stats_instances() -> list[stats.Stats]:
         value=[1.0, 2.0, 3.0],
         exception=AttributeError)),
 ])
-def test_stats_set(stats_instances: list[stats.Stats], test: TestSet) -> None:
+def test_stats_set(stats_instances: list[Stats], test: TestSet) -> None:
     """Test stats class property setters."""
     for stats_instance in stats_instances:
         test.name = f"{test.name} ({type(stats_instance).__name__})"
@@ -123,7 +123,7 @@ def test_stats_set(stats_instances: list[stats.Stats], test: TestSet) -> None:
     pytest.param('relative_standard_deviation', 10.0, id="COMPUTED_PROPS_006 relative_standard_deviation"),
     pytest.param('percentiles', {50: 10.0}, id="COMPUTED_PROPS_007 percentiles"),
 ])
-def test_computed_stats_read_only(stats_instances: list[stats.Stats], attribute: str, value: Any) -> None:
+def test_computed_stats_read_only(stats_instances: list[Stats], attribute: str, value: Any) -> None:
     """Test that computed stats properties exist and are read-only."""
     for stats_instance in stats_instances:
         # only way this should happen is if someone messes up the parametrize above
@@ -142,7 +142,7 @@ def test_computed_stats_read_only(stats_instances: list[stats.Stats], attribute:
 def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
     """Test that computed stats properties return correct values.
     """
-    stats_instance = stats.Stats(unit='unit', scale=1.0, data=list(stats_data))
+    stats_instance = Stats(unit='unit', scale=1.0, data=list(stats_data))
     data = stats_instance.data
 
     match len(data):
@@ -198,7 +198,7 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
 ])
 def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
     """Test that statistics_as_dict and statistics_and_data_as_dict return correct values."""
-    stats_instance = stats.Stats(unit='unit', scale=1.0, data=list(stats_data))
+    stats_instance = Stats(unit='unit', scale=1.0, data=list(stats_data))
     stats_dict = stats_instance.statistics_as_dict
     stats_and_data_dict = stats_instance.statistics_and_data_as_dict
 
@@ -256,31 +256,68 @@ def test_stats_initalization(section: Section) -> None:
                       memory=int(data['memory'][index]),
                       peak_memory=int(data['peak_memory'][index]))
         )
-    stats_instance: stats.Stats
+    stats_instance: Stats
     match section:
         case Section.OPS:
-            stats_instance = stats.OperationsPerInterval(unit='ops/s', scale=1.0, iterations=iterations)
+            stats_instance = OperationsPerInterval(unit='ops/s', scale=1.0, iterations=iterations)
             ops_data = stats_instance.data
             assert ops_data == data['ops'], (
                 f"Ops data does not match expected values: {ops_data} != {data['ops']}")
 
         case Section.TIMING:
-            stats_instance = stats.OperationTimings(unit='s', scale=1.0, iterations=iterations)
+            stats_instance = OperationTimings(unit='s', scale=1.0, iterations=iterations)
             timing_data = stats_instance.data
             assert timing_data == data['elapsed'], (
                 f"Timing data does not match expected values: {timing_data} != {data['elapsed']}")
 
         case Section.MEMORY:
-            stats_instance = stats.MemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
+            stats_instance = MemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
             memory_data = stats_instance.data
             assert memory_data == data['memory'], (
                 f"Memory data does not match expected values: {memory_data} != {data['memory']}")
 
         case Section.PEAK_MEMORY:
-            stats_instance = stats.PeakMemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
+            stats_instance = PeakMemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
             peak_memory_data = stats_instance.data
             assert peak_memory_data == data['peak_memory'], (
                 f"Peak memory data does not match expected values: {peak_memory_data} != {data['peak_memory']}")
 
         case _:
             pytest.skip(f"Section {section} does not correspond to a tested stats class")
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("FROM_DICT_001", TestAction(
+        name="Stats - valid input with unit and scale in data",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': 's',
+            'scale': 1.0,
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=Stats)),
+    idspec("FROM_DICT_001", TestAction(
+        name="OperationsPerInterval - valid input with unit and scale in data",
+        action=OperationsPerInterval.from_dict,
+        kwargs={
+            'unit': 'ops/s',
+            'scale': 1.0,
+            'data': {
+                'type': 'OperationsPerInterval:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 'ops/s',
+                'scale': 1.0
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=OperationsPerInterval)),
+])
+def test_stats_from_dict(testspec: TestSpec) -> None:
+    """Test the from_dict class method of the Stats class and sub-classes."""
+    testspec.run()

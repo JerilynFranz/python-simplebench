@@ -281,7 +281,7 @@ class Results:
             stripped_key = key.strip()
             if stripped_key == '':
                 raise SimpleBenchValueError(
-                    'Invalid variation_marks key value: empty string. Keys must be non-empty strings.',
+                    'Invalid variation_marks key value: blank string. Keys must be non-blank strings.',
                     tag=ErrorTag.RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_VALUE
                 )
             return_value[stripped_key] = value[key]
