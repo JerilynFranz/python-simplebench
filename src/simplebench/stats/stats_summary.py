@@ -5,7 +5,7 @@ from typing import Optional, Sequence, Any
 
 from . import Stats
 from ..exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError
-from ..validators import (validate_non_empty_string, validate_float, validate_positive_float,
+from ..validators import (validate_non_blank_string, validate_float, validate_positive_float,
                           validate_non_negative_float, validate_sequence_of_numbers)
 
 

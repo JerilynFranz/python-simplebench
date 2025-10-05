@@ -8,7 +8,7 @@ from typing import Any, Sequence
 import pytest
 
 from simplebench.enums import Section
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError, ErrorTag
 from simplebench.iteration import Iteration
 from simplebench.stats import Stats, OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage
 
@@ -287,7 +287,7 @@ def test_stats_initalization(section: Section) -> None:
 
 
 @pytest.mark.parametrize("testspec", [
-    idspec("FROM_DICT_001", TestAction(
+    idspec("STATS_FROM_DICT_001", TestAction(
         name="Stats - valid input with unit and scale in data",
         action=Stats.from_dict,
         kwargs={
@@ -302,7 +302,7 @@ def test_stats_initalization(section: Section) -> None:
         },
         assertion=Assert.ISINSTANCE,
         expected=Stats)),
-    idspec("FROM_DICT_001", TestAction(
+    idspec("STATS_FROM_DICT_002", TestAction(
         name="OperationsPerInterval - valid input with unit and scale in data",
         action=OperationsPerInterval.from_dict,
         kwargs={
@@ -317,6 +317,202 @@ def test_stats_initalization(section: Section) -> None:
         },
         assertion=Assert.ISINSTANCE,
         expected=OperationsPerInterval)),
+    idspec("STATS_FROM_DICT_003", TestAction(
+        name="OperationTimings - valid input with unit and scale in data",
+        action=OperationTimings.from_dict,
+        kwargs={
+            'unit': 's',
+            'scale': 1.0,
+            'data': {
+                'type': 'OperationsTiming:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=OperationTimings)),
+    idspec("STATS_FROM_DICT_004", TestAction(
+        name="MemoryUsage - valid input with unit and scale in data",
+        action=MemoryUsage.from_dict,
+        kwargs={
+            'unit': 'bytes',
+            'scale': 1.0,
+            'data': {
+                'type': 'MemoryUsage:statistics',
+                'data': [100, 200, 300],
+                'unit': 'bytes',
+                'scale': 1.0
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=MemoryUsage)),
+    idspec("STATS_FROM_DICT_005", TestAction(
+        name="PeakMemoryUsage - valid input with unit and scale in data",
+        action=PeakMemoryUsage.from_dict,
+        kwargs={
+            'unit': 'bytes',
+            'scale': 1.0,
+            'data': {
+                'type': 'PeakMemoryUsage:statistics',
+                'data': [150, 250, 350],
+                'unit': 'bytes',
+                'scale': 1.0
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=PeakMemoryUsage)),
+    idspec("STATS_FROM_DICT_006", TestAction(
+        name="Stats - no unit in args, unit in data",
+        action=Stats.from_dict,
+        kwargs={
+            'scale': 1.0,
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=Stats)),
+    idspec("STATS_FROM_DICT_007", TestAction(
+        name="Stats - unit in args, no unit in data",
+        action=Stats.from_dict,
+        kwargs={
+            'scale': 1.0,
+            'unit': 's',
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'scale': 1.0
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=Stats)),
+    idspec("STATS_FROM_DICT_008", TestAction(
+        name="Stats - no unit in args, no unit in data (should raise exception)",
+        action=Stats.from_dict,
+        kwargs={
+            'scale': 1.0,
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'scale': 1.0
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_MISSING_UNIT)),
+    idspec("STATS_FROM_DICT_009", TestAction(
+        name="Stats - unit in data overrides unit in args",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': 'wrong unit',
+            'scale': 1.0,
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        validate_result=lambda obj: obj.unit == 's')),
+    idspec("STATS_FROM_DICT_010", TestAction(
+        name="Stats - unit in args has wrong type (int)",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': 123,  # type: ignore[arg-type]
+            'scale': 1.0,
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_UNIT_ARG_TYPE)),
+    idspec("STATS_FROM_DICT_011", TestAction(
+        name="Stats - unit in args has wrong value (blank string)",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': '   ',
+            'scale': 1.0,
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_UNIT_ARG_VALUE)),
+    idspec("STATS_FROM_DICT_012", TestAction(
+        name="Stats - no scale in args, scale in data",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': 's',
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=Stats)),
+    idspec("STATS_FROM_DICT_013", TestAction(
+        name="Stats - scale in args, no scale in data",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': 's',
+            'scale': 1.0,
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=Stats)),
+    idspec("STATS_FROM_DICT_014", TestAction(
+        name="Stats - no scale in args, no scale in data (should raise exception)",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': 's',
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_MISSING_SCALE)),
+    idspec("STATS_FROM_DICT_015", TestAction(
+        name="Stats - scale in data overrides scale in args",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': 's',
+            'scale': 2.0,
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 's',
+                'scale': 1.0
+            }
+        },
+        validate_result=lambda obj: obj.scale == 1.0)),
+    idspec("STATS_FROM_DICT_016", TestAction(
+        name="Stats - data arg is not a dict (str)",
+        action=Stats.from_dict,
+        kwargs={
+            'unit': 's',
+            'scale': 1.0,
+            'data': 'not_a_dict'  # type: ignore[arg-type]
+        },
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE
+    )),
 ])
 def test_stats_from_dict(testspec: TestSpec) -> None:
     """Test the from_dict class method of the Stats class and sub-classes."""

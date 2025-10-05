@@ -11,7 +11,7 @@ from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_ME
 from .enums import Section
 from .iteration import Iteration
 from .stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
-from .validators import validate_non_empty_string, validate_positive_int, validate_positive_float
+from .validators import validate_non_blank_string, validate_positive_int, validate_positive_float
 
 
 class Results:
@@ -125,15 +125,15 @@ class Results:
             extra_info (Optional[dict[str, Any]], optional): Any extra information to include in the benchmark results.
                 Defaults to {}.
         """
-        self._group: str = validate_non_empty_string(
+        self._group: str = validate_non_blank_string(
             group, 'group',
             ErrorTag.RESULTS_GROUP_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_GROUP_INVALID_ARG_VALUE)
-        self._title: str = validate_non_empty_string(
+        self._title: str = validate_non_blank_string(
             title, 'title',
             ErrorTag.RESULTS_TITLE_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_TITLE_INVALID_ARG_VALUE)
-        self._description: str = validate_non_empty_string(
+        self._description: str = validate_non_blank_string(
             description, 'description',
             ErrorTag.RESULTS_DESCRIPTION_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_DESCRIPTION_INVALID_ARG_VALUE)
@@ -144,7 +144,7 @@ class Results:
         self._iterations: tuple[Iteration, ...] = self._validate_iterations(iterations)
         self._variation_cols: dict[str, str] = self._validate_variation_cols(variation_cols)
         self._variation_marks: dict[str, Any] = self._validate_variation_marks(variation_marks)
-        self._interval_unit: str = validate_non_empty_string(
+        self._interval_unit: str = validate_non_blank_string(
             interval_unit, 'interval_unit',
             ErrorTag.RESULTS_INTERVAL_UNIT_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_INTERVAL_UNIT_INVALID_ARG_VALUE)
@@ -152,7 +152,7 @@ class Results:
             interval_scale, 'interval_scale',
             ErrorTag.RESULTS_INTERVAL_SCALE_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_INTERVAL_SCALE_INVALID_ARG_VALUE)
-        self._ops_per_interval_unit: str = validate_non_empty_string(
+        self._ops_per_interval_unit: str = validate_non_blank_string(
             ops_per_interval_unit, 'ops_per_interval_unit',
             ErrorTag.RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE)
@@ -160,7 +160,7 @@ class Results:
             ops_per_interval_scale, 'ops_per_interval_scale',
             ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)
-        self._memory_unit: str = validate_non_empty_string(
+        self._memory_unit: str = validate_non_blank_string(
             memory_unit, 'memory_unit',
             ErrorTag.RESULTS_MEMORY_UNIT_INVALID_ARG_TYPE,
             ErrorTag.RESULTS_MEMORY_UNIT_INVALID_ARG_VALUE)

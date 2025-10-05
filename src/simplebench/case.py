@@ -14,7 +14,7 @@ from .reporters.reporter_option import ReporterOption
 from .results import Results
 from .runners import SimpleRunner
 from .enums import Section, Format
-from .validators import (validate_non_empty_string, validate_positive_int,
+from .validators import (validate_non_blank_string, validate_positive_int,
                          validate_non_negative_int, validate_positive_float)
 
 
@@ -180,15 +180,15 @@ class Case(ICase):
                 specific reporters. Reporters are responsible for extracting applicable ReporterOptions
                 from the list of options themselves. (default: [])
         """
-        self._group = validate_non_empty_string(
+        self._group = validate_non_blank_string(
                         group, "group",
                         ErrorTag.CASE_INVALID_GROUP_TYPE,
                         ErrorTag.CASE_INVALID_GROUP_VALUE)
-        self._title = validate_non_empty_string(
+        self._title = validate_non_blank_string(
                         title, "title",
                         ErrorTag.CASE_INVALID_TITLE_TYPE,
                         ErrorTag.CASE_INVALID_TITLE_VALUE)
-        self._description = validate_non_empty_string(
+        self._description = validate_non_blank_string(
                         description, "description",
                         ErrorTag.CASE_INVALID_DESCRIPTION_TYPE,
                         ErrorTag.CASE_INVALID_DESCRIPTION_VALUE)

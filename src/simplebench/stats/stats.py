@@ -6,8 +6,8 @@ from typing import Any, Optional, Sequence
 
 from ..exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError
 from ..si_units import si_unit_base
-from ..validators import (validate_non_empty_string, validate_positive_float, validate_sequence_of_numbers,
-                          validate_float, validate_non_negative_float)
+from ..validators import (validate_non_blank_string, validate_positive_float, validate_sequence_of_numbers,
+                          validate_float, validate_non_negative_float, validate_non_blank_string_or_is_none)
 
 
 class Stats:
@@ -40,7 +40,7 @@ class Stats:
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
             SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        self._unit: str = validate_non_empty_string(
+        self._unit: str = validate_non_blank_string(
                                 unit, 'unit',
                                 ErrorTag.STATS_INVALID_UNIT_ARG_TYPE,
                                 ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)
@@ -235,9 +235,11 @@ class Stats:
             unit (Optional[str]): The unit of measurement for the benchmark (e.g., "ops/s").
                 It will be taken from the 'unit' key in the data dictionary by priority and
                 from the unit argument if not present in the data dictionary.
+                At least one of these must be provided.
             scale (Optional[int | float]): The scale factor for the interval (e.g. 1 for seconds).
                 It will be taken from the 'scale' key in the data dictionary by priority and
                 from the scale argument if not present in the data dictionary.
+                At least one of these must be provided.
 
         Returns:
             Stats: A Stats object constructed from the provided dictionary.
@@ -253,36 +255,47 @@ class Stats:
         if not isinstance(data, dict):
             raise SimpleBenchTypeError('The data argument must be a dictionary.',
                                        tag=ErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE)
-        if 'unit' not in data and unit is None:
+
+        arg_unit: str | None = validate_non_blank_string_or_is_none(
+                    unit, 'unit',
+                    ErrorTag.STATS_FROM_DICT_INVALID_UNIT_ARG_TYPE,
+                    ErrorTag.STATS_FROM_DICT_INVALID_UNIT_ARG_VALUE,
+                    allow_none=True)
+        data_unit: str | None = validate_non_blank_string_or_is_none(
+                        data.get('unit'), 'unit',
+                        ErrorTag.STATS_FROM_DICT_INVALID_UNIT_DATA_TYPE,
+                        ErrorTag.STATS_FROM_DICT_INVALID_UNIT_DATA_VALUE,
+                        allow_none=True)
+        final_unit: str | None = data_unit if data_unit is not None else arg_unit
+        if final_unit is None:
             raise SimpleBenchKeyError(
-                'The data dictionary must contain a "unit" key or a unit must be provided as an argument.',
+                'The data dictionary must contain a non-empty string "unit" key or '
+                'a non-empty string unit must be provided as an argument.',
                 tag=ErrorTag.STATS_FROM_DICT_MISSING_UNIT)
-        if 'scale' not in data and scale is None:
+
+        arg_scale: float | None = validate_positive_float(
+                        scale, 'scale',
+                        ErrorTag.STATS_FROM_DICT_INVALID_SCALE_ARG_TYPE,
+                        ErrorTag.STATS_FROM_DICT_INVALID_SCALE_ARG_VALUE) if scale is not None else None
+        raw_data_scale: int | float | None = data.get('scale')
+        data_scale: float | None = validate_positive_float(
+                        raw_data_scale, 'scale',  # type: ignore[arg-type]
+                        ErrorTag.STATS_FROM_DICT_INVALID_SCALE_DATA_TYPE,
+                        ErrorTag.STATS_FROM_DICT_INVALID_SCALE_DATA_VALUE) if raw_data_scale is not None else None
+        final_scale = arg_scale if data_scale is None else data_scale
+        if final_scale is None:
             raise SimpleBenchKeyError(
-                'The data dictionary must contain a "scale" key or a scale must be provided as an argument.',
+                'The "data" dictionary must contain an int or float "scale" key or '
+                'an int or float scale must be provided as an argument.',
                 tag=ErrorTag.STATS_FROM_DICT_MISSING_SCALE)
-        if 'data' not in data:
-            raise SimpleBenchKeyError(
-                'The data dictionary must contain a non-empty "data" key with at least one data point.',
-                tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE)
-        raw_unit = data.get('unit') if 'unit' in data else unit
-        final_unit: str = validate_non_empty_string(
-                    raw_unit, 'unit',  # type: ignore[arg-type]
-                    ErrorTag.STATS_INVALID_UNIT_ARG_TYPE,
-                    ErrorTag.STATS_INVALID_UNIT_ARG_VALUE)
-        raw_scale = data.get('scale') if scale is None else scale
-        final_scale: float = validate_positive_float(
-                    raw_scale, 'scale',  # type: ignore[arg-type]
-                    ErrorTag.STATS_FROM_DICT_INVALID_SCALE_ARG_TYPE,
-                    ErrorTag.STATS_FROM_DICT_INVALID_SCALE_ARG_VALUE)
-        raw_data_points = data.get('data')
-        float_data_points: Sequence[int | float] = validate_sequence_of_numbers(
-                    value=raw_data_points,  # type: ignore[arg-type]
+
+        raw_data_points: Sequence[int | float] = validate_sequence_of_numbers(
+                    value=data.get('data'),   # type: ignore[arg-type]
                     field_name='data',
                     allow_empty=False,
                     type_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE,
                     value_tag=ErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE)
-        final_data_points: Sequence[int | float] = [value * final_scale for value in float_data_points]
+        final_data_points: Sequence[int | float] = [value * final_scale for value in raw_data_points]
         return cls(unit=final_unit, scale=final_scale, data=final_data_points)
 
     def __repr__(self) -> str:
@@ -333,7 +346,7 @@ class StatsSummary(Stats):
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
             SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        self._unit = validate_non_empty_string(
+        self._unit = validate_non_blank_string(
                         unit, 'unit',
                         ErrorTag.STATS_SUMMARY_INVALID_UNIT_ARG_TYPE,
                         ErrorTag.STATS_SUMMARY_INVALID_UNIT_ARG_VALUE)

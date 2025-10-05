@@ -3,7 +3,7 @@
 from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from .enums import Section
 from .exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
-from .validators import (validate_non_empty_string, validate_int, validate_positive_int,
+from .validators import (validate_non_blank_string, validate_int, validate_positive_int,
                          validate_positive_float, validate_non_negative_float)
 
 
@@ -52,7 +52,7 @@ class Iteration:
                     n, 'n',
                     ErrorTag.ITERATION_N_ARG_TYPE,
                     ErrorTag.ITERATION_N_ARG_VALUE)
-        self._unit = validate_non_empty_string(
+        self._unit = validate_non_blank_string(
                     unit, 'unit',
                     ErrorTag.ITERATION_UNIT_ARG_TYPE,
                     ErrorTag.ITERATION_UNIT_ARG_VALUE)

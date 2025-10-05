@@ -8,11 +8,17 @@ from typing import Sequence
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 
 
-def validate_non_empty_string(
-        value: str, field_name: str, type_error_tag: ErrorTag, value_error_tag: ErrorTag) -> str:
-    """Validate and normalize a non-empty string field.
+def validate_non_blank_string(
+        value: str,
+        field_name: str,
+        type_error_tag: ErrorTag,
+        value_error_tag: ErrorTag) -> str:
+    """Validate and normalize a non-blank string field.
 
     Any leading or trailing whitespace is stripped from the string before returning it.
+
+    The validation checks that the value is a string and that it is not blank or only whitespace.
+    The returned value is guaranteed to be non-blank and non-blank and to be of type str.
 
     Args:
         value (str): The string value to validate.
@@ -25,19 +31,59 @@ def validate_non_empty_string(
 
     Raises:
         SimpleBenchTypeError: If the value is not a string.
-        SimpleBenchValueError: If the string is empty or only whitespace.
+        SimpleBenchValueError: If the string is blank or only whitespace.
     """
     if not isinstance(value, str):
         raise SimpleBenchTypeError(
             f'Invalid {field_name} type: {type(value)}. Must be a string.',
             tag=type_error_tag
         )
-    if not value.strip():
+    stripped_value = value.strip()
+    if not stripped_value:
         raise SimpleBenchValueError(
-            f'Invalid {field_name}: cannot be empty or whitespace.',
+            f'Invalid {field_name}: cannot be blank or whitespace.',
             tag=value_error_tag
         )
-    return value.strip()
+    return stripped_value
+
+
+def validate_non_blank_string_or_is_none(
+        value: str | None,
+        field_name: str,
+        type_error_tag: ErrorTag,
+        value_error_tag: ErrorTag,
+        allow_none: bool = True) -> str | None:
+    """Validate and normalize a non-blank string field.
+
+    Any leading or trailing whitespace is stripped from the string before returning it.
+    The validation checks that the value is a string and that it is not blank or only whitespace.
+    If the value is None and allow_none is True, None is returned.
+
+    The validated value is guaranteed to either be non-blank and non-blank and of type str, or
+    None if allow_none is True and None is provided as the value.
+
+    Args:
+        value (str): The string value to validate.
+        field_name (str): The name of the field being validated (for error messages).
+        type_error_tag (ErrorTag): The error tag to use for type errors.
+        value_error_tag (ErrorTag): The error tag to use for value errors.
+        allow_none (bool): Whether to allow None as a valid value. Defaults to True.
+
+    Returns:
+        str | None: The stripped string value or None if allowed and provided.
+
+    Raises:
+        SimpleBenchTypeError: If the value is not a str, or None (if allow_none is False).
+        SimpleBenchValueError: If the string is blank or only whitespace.
+    """
+    if value is None:
+        if allow_none:
+            return None
+        raise SimpleBenchTypeError(
+            f'Invalid {field_name}: cannot be None.',
+            tag=value_error_tag
+        )
+    return validate_non_blank_string(value, field_name, type_error_tag, value_error_tag)
 
 
 def validate_int(value: int, field_name: str, type_tag: ErrorTag) -> int:
@@ -219,19 +265,37 @@ def validate_sequence_of_numbers(
         allow_empty: bool = True) -> Sequence[int | float]:
     """Validate that a value is a sequence of numbers (ints or floats).
 
+    Because this function checks for Sequence[int | float], it will accept lists, tuples, sets, and other
+    sequence types, but not str or bytes.
+
+    The type declaration for the value argument and return type is Sequence[int | float]
+    to indicate that the sequence should contain a mix of ints and/or floats.
+
+    Because this is a validation function, the actual type of the value argument can be
+    and static type checkers may warn if the caller does not pass a value that is already
+    declared as Sequence[int | float]. This is acceptable because the purpose of this
+    function is to validate the type and contents of the value argument - the warnings
+    from the type checkers are synergetic with the purpose of this function.
+
+    Because the returned value is declared to be a Sequence of int or float, this
+    has the effect of narrowing the type for callers that use type checkers.
+
+    If you wish to suppress static type checker warnings for a specific call to this function,
+    you can use a type: ignore[arg-type] comment on that line.
+
     Args:
         value (Sequence[int | float]): The sequence of values to validate.
         field_name (str): The name of the field being validated (for error messages).
         type_tag (ErrorTag): The error tag to use for type errors.
         value_tag (ErrorTag): The error tag to use for value errors.
-        allow_empty (bool): Whether to allow an empty sequence. Defaults to True.
+        allow_empty (bool): Whether to allow a empty sequence. Defaults to True.
 
     Returns:
         Sequence[int | float]: The validated Sequence of numbers.
 
     Raises:
         SimpleBenchTypeError: If the value is not a sequence or contains non-numeric types.
-        SimpleBenchValueError: If the sequence is empty.
+        SimpleBenchValueError: If the sequence is empty and allow_empty is False.
     """
     if not isinstance(value, Sequence) or isinstance(value, str):
         raise SimpleBenchTypeError(
@@ -240,7 +304,7 @@ def validate_sequence_of_numbers(
         )
     if not value and not allow_empty:
         raise SimpleBenchValueError(
-            f'Invalid {field_name}: sequence cannot be empty.',
+            f'Invalid {field_name}: sequence cannot be blank.',
             tag=value_tag
         )
     for i, item in enumerate(value):

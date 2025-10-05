@@ -200,6 +200,12 @@ class ErrorTag(str, Enum):
     """Invalid data argument item passed to the Stats() constructor - must be a number (int or float)"""
     STATS_FROM_DICT_INVALID_DATA_ARG_TYPE = "STATS_FROM_DICT_INVALID_DATA_ARG_TYPE"
     """Invalid data argument passed to the Stats.from_dict() method - must be a dict"""
+    STATS_FROM_DICT_INVALID_UNIT_ARG_TYPE = "STATS_FROM_DICT_INVALID_UNIT_ARG_TYPE"
+    """Invalid unit argument passed to the Stats.from_dict() method - must be a str if provided"""
+    STATS_FROM_DICT_INVALID_UNIT_ARG_VALUE = "STATS_FROM_DICT_INVALID_UNIT_ARG_VALUE"
+    """Invalid unit argument passed to the Stats.from_dict() method - must be a non-blank str"""
+    STATS_FROM_DICT_INVALID_UNIT_ARG_BLANK_STRING = "STATS_FROM_DICT_INVALID_UNIT_ARG_BLANK_STRING"
+    """Invalid unit argument passed to the Stats.from_dict() method - must be a non-blank str"""
     STATS_FROM_DICT_MISSING_UNIT = "STATS_FROM_DICT_MISSING_UNIT"
     """Missing unit argument in the data dictionary or argument passed to the Stats.from_dict() method"""
     STATS_FROM_DICT_MISSING_SCALE = "STATS_FROM_DICT_MISSING_SCALE"
@@ -212,6 +218,24 @@ class ErrorTag(str, Enum):
     - must be greater than zero"""
     STATS_FROM_DICT_UNKNOWN_STATS_DATA_TYPE = "STATS_FROM_DICT_UNKNOWN_STATS_DATA_TYPE"
     """Unknown stats type found in the data dictionary or argument passed to the Stats.from_dict() method"""
+    STATS_FROM_DICT_INVALID_UNIT_DATA_TYPE = "STATS_FROM_DICT_INVALID_UNIT_DATA_TYPE"
+    """Invalid unit data type found in the data dictionary or argument passed to the Stats.from_dict() method
+    - must be a non-blank str"""
+    STATS_FROM_DICT_INVALID_UNIT_DATA_VALUE = "STATS_FROM_DICT_INVALID_UNIT_DATA_VALUE"
+    """Invalid unit data value found in the data dictionary or argument passed to the Stats.from_dict() method
+    - must be a non-blank str"""
+    STATS_FROM_DICT_INVALID_DATA_SCALE_ARG_TYPE = "STATS_FROM_DICT_INVALID_DATA_SCALE_ARG_TYPE"
+    """Invalid scale data type found in the data dictionary or argument passed to the Stats.from_dict() method
+    - must be a float or int"""
+    STATS_FROM_DICT_INVALID_DATA_SCALE_ARG_VALUE = "STATS_FROM_DICT_INVALID_DATA_SCALE_ARG_VALUE"
+    """Invalid scale data value found in the data dictionary or argument passed to the Stats.from_dict() method
+    - must be a float or int greater than zero"""
+    STATS_FROM_DICT_INVALID_SCALE_DATA_TYPE = "STATS_FROM_DICT_INVALID_SCALE_DATA_TYPE"
+    """Invalid scale data type found in the data dictionary and scale argument passed to the Stats.from_dict() method
+    - at least one must be a float or int"""
+    STATS_FROM_DICT_INVALID_SCALE_DATA_VALUE = "STATS_FROM_DICT_INVALID_SCALE_DATA_VALUE"
+    """Invalid scale data value found in the data dictionary and scale argument passed to the Stats.from_dict() method
+    - at least one must be a float or int greater than zero"""
 
     # StatsSummary() tags
     STATS_SUMMARY_INVALID_UNIT_ARG_TYPE = "STATS_SUMMARY_INVALID_UNIT_ARG_TYPE"
