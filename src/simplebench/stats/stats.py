@@ -197,25 +197,13 @@ class Stats:
         stats['data'] = tuple(value / self.scale for value in self.data)
         return stats
 
-    def as_stats_summary(self) -> StatsSummary:
-        '''Returns a StatsSummary derived from this Stats object.
-
-        This effectively strips the raw data points from the Stats object, leaving only the summary statistics.
+    def stats_summary(self) -> StatsSummary:
+        '''Create a StatsSummary object from this Stats object.
 
         Returns:
             A StatsSummary object containing the same statistics as this Stats object.
         '''
-        return StatsSummary(
-            unit=self.unit,
-            scale=self.scale,
-            mean=self.mean,
-            median=self.median,
-            minimum=self.minimum,
-            maximum=self.maximum,
-            standard_deviation=self.standard_deviation,
-            relative_standard_deviation=self.relative_standard_deviation,
-            percentiles=self.percentiles
-        )
+        return StatsSummary.from_stats(self)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Stats:
@@ -416,6 +404,35 @@ class StatsSummary(Stats):
         This is always an empty tuple as a StatsSummary does not contain raw data points.
         '''
         return tuple()
+
+    @classmethod
+    def from_stats(cls, stats: Stats) -> StatsSummary:
+        """Construct a new StatsSummary object from a Stats object.
+
+        Args:
+            stats (Stats): The Stats object to derive the summary from.
+
+        Returns:
+            StatsSummary: A new StatsSummary object containing the same statistics as the provided Stats object.
+
+        Raises:
+            SimpleBenchTypeError: If the stats argument is not a Stats object.
+        """
+        if not isinstance(stats, Stats):
+            raise SimpleBenchTypeError(
+                "The stats argument must be a Stats object.",
+                tag=ErrorTag.STATS_SUMMARY_FROM_STATS_INVALID_STATS_ARG_TYPE)
+        return cls(
+            unit=stats.unit,
+            scale=stats.scale,
+            mean=stats.mean,
+            median=stats.median,
+            minimum=stats.minimum,
+            maximum=stats.maximum,
+            standard_deviation=stats.standard_deviation,
+            relative_standard_deviation=stats.relative_standard_deviation,
+            percentiles=stats.percentiles
+        )
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> StatsSummary:

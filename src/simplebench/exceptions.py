@@ -211,6 +211,79 @@ class ErrorTag(str, Enum):
     STATS_FROM_DICT_MISSING_DATA_KEY = "STATS_FROM_DICT_MISSING_DATA_KEY"
     """Missing data key in the data dictionary passed to the Stats.from_dict() method"""
 
+    # MemoryUsage() tags
+    STATS_MEMORY_USAGE_INVALID_ITERATIONS_ARG_TYPE = "STATS_MEMORY_USAGE_INVALID_ITERATIONS_ARG_TYPE"
+    """Invalid iterations argument passed to the MemoryUsage() constructor
+    - must be a Sequence of Iteration objects or None"""
+    STATS_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE = "STATS_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE"
+    """Invalid type of item passed to the MemoryUsage() constructor in the iterations argument
+    - all items must be Iteration objects"""
+    STATS_MEMORY_USAGE_INVALID_DATA_ARG_TYPE = "STATS_MEMORY_USAGE_INVALID_DATA_ARG_TYPE"
+    """Invalid data argument passed to the MemoryUsage() constructor
+    - must be a sequence of numbers (int or float) or None"""
+    STATS_MEMORY_USAGE_INVALID_DATA_ARG_ITEM_TYPE = "STATS_MEMORY_USAGE_INVALID_DATA_ARG_ITEM_TYPE"
+    """Invalid data argument item passed to the MemoryUsage() constructor - must be a number (int or float)"""
+    STATS_MEMORY_USAGE_INVALID_DATA_ARG_VALUE = "STATS_MEMORY_USAGE_INVALID_DATA_ARG_VALUE"
+    """Invalid data argument value passed to the MemoryUsage() constructor
+    - must be a non-empty sequence of numbers (int or float)"""
+    STATS_MEMORY_USAGE_NO_DATA_OR_ITERATIONS_PROVIDED = "STATS_MEMORY_USAGE_NO_DATA_OR_ITERATIONS_PROVIDED"
+    """No data or iterations provided to the MemoryUsage() constructor"""
+
+    # PeakMemoryUsage() tags
+    STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ARG_TYPE = "STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ARG_TYPE"
+    """Invalid iterations argument passed to the PeakMemoryUsage() constructor
+    - must be a Sequence of Iteration objects or None"""
+    STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE = (
+        "STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE")
+    """Invalid type of item passed to the PeakMemoryUsage() constructor in the iterations argument
+    - all items must be Iteration objects"""
+    STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_TYPE = "STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_TYPE"
+    """Invalid data argument passed to the PeakMemoryUsage() constructor
+    - must be a sequence of numbers (int or float) or None"""
+    STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_ITEM_TYPE = "STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_ITEM_TYPE"
+    """Invalid data argument item passed to the PeakMemoryUsage() constructor - must be a number (int or float)"""
+    STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_VALUE = "STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_VALUE"
+    """Invalid data argument value passed to the PeakMemoryUsage() constructor
+    - must be a non-empty sequence of numbers (int or float)"""
+    STATS_PEAK_MEMORY_USAGE_NO_DATA_OR_ITERATIONS_PROVIDED = "STATS_PEAK_MEMORY_USAGE_NO_DATA_OR_ITERATIONS_PROVIDED"
+    """No data or iterations provided to the PeakMemoryUsage() constructor"""
+
+    # OperationsPerInterval() tags
+    STATS_OPS_INVALID_ITERATIONS_ARG_TYPE = "STATS_OPS_INVALID_ITERATIONS_ARG_TYPE"
+    """Invalid iterations argument passed to the OperationsPerInterval() constructor
+    - must be a Sequence of Iteration objects or None"""
+    STATS_OPS_INVALID_ITERATIONS_ITEM_ARG_TYPE = "STATS_OPS_INVALID_ITERATIONS_ITEM_ARG_TYPE"
+    """Invalid type of item passed to the OperationsPerInterval() constructor in the iterations argument
+    - all items must be Iteration objects"""
+    STATS_OPS_INVALID_DATA_ARG_TYPE = "STATS_OPS_INVALID_DATA_ARG_TYPE"
+    """Invalid data argument passed to the OperationsPerInterval() constructor
+    - must be a sequence of numbers (int or float) or None"""
+    STATS_OPS_INVALID_DATA_ARG_ITEM_TYPE = "STATS_OPS_INVALID_DATA_ARG_ITEM_TYPE"
+    """Invalid data argument item passed to the OperationsPerInterval() constructor - must be a number (int or float)"""
+    STATS_OPS_INVALID_DATA_ARG_VALUE = "STATS_OPS_INVALID_DATA_ARG_VALUE"
+    """Invalid data argument value passed to the OperationsPerInterval() constructor
+    - must be a non-empty sequence of numbers (int or float)"""
+    STATS_OPS_NO_DATA_OR_ITERATIONS_PROVIDED = "STATS_OPS_NO_DATA_OR_ITERATIONS_PROVIDED"
+    """No data or iterations provided to the OperationsPerInterval() constructor"""
+
+    # OperationTimings() tags
+    STATS_TIMINGS_INVALID_ITERATIONS_ARG_TYPE = "STATS_TIMINGS_INVALID_ITERATIONS_ARG_TYPE"
+    """Invalid iterations argument passed to the OperationTimings() constructor
+    - must be a Sequence of Iteration objects or None"""
+    STATS_TIMINGS_INVALID_ITERATIONS_ITEM_ARG_TYPE = "STATS_TIMINGS_INVALID_ITERATIONS_ITEM_ARG_TYPE"
+    """Invalid type of item passed to the OperationTimings() constructor in the iterations argument
+    - all items must be Iteration objects"""
+    STATS_TIMINGS_INVALID_DATA_ARG_TYPE = "STATS_TIMINGS_INVALID_DATA_ARG_TYPE"
+    """Invalid data argument passed to the OperationTimings() constructor
+    - must be a sequence of numbers (int or float) or None"""
+    STATS_TIMINGS_INVALID_DATA_ARG_ITEM_TYPE = "STATS_TIMINGS_INVALID_DATA_ARG_ITEM_TYPE"
+    """Invalid data argument item passed to the OperationTimings() constructor - must be a number (int or float)"""
+    STATS_TIMINGS_INVALID_DATA_ARG_VALUE = "STATS_TIMINGS_INVALID_DATA_ARG_VALUE"
+    """Invalid data argument value passed to the OperationTimings() constructor
+    - must be a non-empty sequence of numbers (int or float)"""
+    STATS_TIMINGS_NO_DATA_OR_ITERATIONS_PROVIDED = "STATS_TIMINGS_NO_DATA_OR_ITERATIONS_PROVIDED"
+    """No data or iterations provided to the OperationTimings() constructor"""
+
     # StatsSummary() tags
     STATS_SUMMARY_INVALID_UNIT_ARG_TYPE = "STATS_SUMMARY_INVALID_UNIT_ARG_TYPE"
     """Invalid unit argument passed to the StatsSummary() constructor - must be a str"""
@@ -251,6 +324,8 @@ class ErrorTag(str, Enum):
     """Invalid data argument passed to the StatsSummary.from_dict() method - must be a dict"""
     STATS_SUMMARY_FROM_DICT_MISSING_KEY = "STATS_SUMMARY_FROM_DICT_MISSING_KEY"
     """Missing key in the data dictionary passed to the StatsSummary.from_dict() method"""
+    STATS_SUMMARY_FROM_STATS_INVALID_STATS_ARG_TYPE = "STATS_SUMMARY_FROM_STATS_INVALID_STATS_ARG_TYPE"
+    """Invalid stats argument passed to the StatsSummary.from_stats() method - must be a Stats instance"""
 
     # Iteration() tags
     ITERATION_N_ARG_TYPE = "ITERATION_N_ARG_TYPE"

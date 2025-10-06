@@ -10,7 +10,8 @@ import pytest
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError, ErrorTag
 from simplebench.iteration import Iteration
-from simplebench.stats import Stats, StatsSummary, OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage
+from simplebench.stats import (Stats, StatsSummary, OperationsPerInterval, OperationTimings,
+                               MemoryUsage, PeakMemoryUsage)
 
 from .testspec import TestAction, TestSet, idspec, Assert, TestSpec, NO_EXPECTED_VALUE
 
@@ -58,27 +59,150 @@ def stats_classes() -> list[type[Stats]]:
         kwargs={'unit': 'a unit', 'scale': -1.0, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
         exception_tag=ErrorTag.STATS_INVALID_SCALE_ARG_VALUE)),
-    idspec("STATS_008", TestAction(
-        name="invalid data type (str)",
-        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
-        exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE)),
-    idspec("STATS_009", TestAction(
-        name="invalid data value type (list with str)",
-        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 'not_a_number', 3.0]},
-        exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE)),
     idspec("STATS_010", TestAction(
         name="valid initial values, correctly set",
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
         validate_result=lambda obj: obj.unit == 'a unit' and obj.scale == 1.0 and obj.data == (1.0, 2.0, 3.0))),
 ])
 def test_stats_init(stats_classes: list[type[Stats]], test: TestAction) -> None:
-    """Test that the stats module is initialized correctly."""
+    """Test that the stats module is initialized correctly for shared aspects of init."""
     for stats_class in stats_classes:
         test.name = f"{test.name} - {stats_class.__name__}"
         test.action = stats_class
         test.run()
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("SUBCLASS_INIT_001", TestAction(
+        name="Stats - invalid data type (str)",
+        action=Stats,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_INVALID_DATA_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_002", TestAction(
+        name="MemoryUsage - invalid data type (str)",
+        action=MemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_MEMORY_USAGE_INVALID_DATA_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_003", TestAction(
+        name="MemoryUsage - no data or iterations provided",
+        action=MemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_MEMORY_USAGE_NO_DATA_OR_ITERATIONS_PROVIDED)),
+    idspec("SUBCLASS_INIT_004", TestAction(
+        name="MemoryUsage - invalid iterations type (int)",
+        action=MemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 123},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_MEMORY_USAGE_INVALID_ITERATIONS_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_005", TestAction(
+        name="MemoryUsage - invalid iterations type (str)",
+        action=MemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 'not_a_number'},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_006", TestAction(
+        name="MemoryUsage - invalid iterations item type (list with str)",
+        action=MemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': [1, 'not_a_number']},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_007", TestAction(
+        name="PeakMemoryUsage - invalid data type (str)",
+        action=PeakMemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_008", TestAction(
+        name="PeakMemoryUsage - no data or iterations provided",
+        action=PeakMemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_NO_DATA_OR_ITERATIONS_PROVIDED)),
+    idspec("SUBCLASS_INIT_009", TestAction(
+        name="PeakMemoryUsage - invalid iterations type (int)",
+        action=PeakMemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 123},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_010", TestAction(
+        name="PeakMemoryUsage - invalid iterations type (str)",
+        action=PeakMemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 'not_a_number'},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_011", TestAction(
+        name="PeakMemoryUsage - invalid iterations item type (list with str)",
+        action=PeakMemoryUsage,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': [1, 'not_a_number']},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_012", TestAction(
+        name="OperationsPerInterval - invalid data type (str)",
+        action=OperationsPerInterval,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_OPS_INVALID_DATA_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_013", TestAction(
+        name="OperationsPerInterval - no data or iterations provided",
+        action=OperationsPerInterval,
+        kwargs={'unit': 'a unit', 'scale': 1.0},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_OPS_NO_DATA_OR_ITERATIONS_PROVIDED)),
+    idspec("SUBCLASS_INIT_014", TestAction(
+        name="OperationsPerInterval - invalid iterations type (int)",
+        action=OperationsPerInterval,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 123},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_OPS_INVALID_ITERATIONS_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_015", TestAction(
+        name="OperationsPerInterval - invalid iterations type (str)",
+        action=OperationsPerInterval,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 'not_a_number'},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_OPS_INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_016", TestAction(
+        name="OperationsPerInterval - invalid iterations item type (list with str)",
+        action=OperationsPerInterval,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': [1, 'not_a_number']},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_OPS_INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_017", TestAction(
+        name="OperationTimings - invalid data value type (list with str)",
+        action=OperationTimings,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 'not_a_number', 3.0]},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_TIMINGS_INVALID_DATA_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_018", TestAction(
+        name="OperationTimings - no data or iterations provided",
+        action=OperationTimings,
+        kwargs={'unit': 'a unit', 'scale': 1.0},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_TIMINGS_NO_DATA_OR_ITERATIONS_PROVIDED)),
+    idspec("SUBCLASS_INIT_019", TestAction(
+        name="OperationTimings - invalid iterations type (int)",
+        action=OperationTimings,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 123},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_020", TestAction(
+        name="OperationTimings - invalid iterations type (str)",
+        action=OperationTimings,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 'not_a_number'},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+    idspec("SUBCLASS_INIT_021", TestAction(
+        name="OperationTimings - invalid iterations item type (list with str)",
+        action=OperationTimings,
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': [1, 'not_a_number']},
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+])
+def test_stats_subclasses_init(testspec: TestSpec) -> None:
+    """Test aspects of init that vary by subclass."""
+    testspec.run()
 
 
 @pytest.fixture()
@@ -224,56 +348,66 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
     assert stats_and_data_dict['data'] == scaled_data, "Data in statistics_and_data_as_dict does not match scaled data"
 
 
+def supported_stats_sections() -> set[Section]:
+    """Return a list of supported Section enum values for stats classes."""
+    return {Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY}
+
+
 @pytest.mark.parametrize("section", [
-    pytest.param(section, id=f"Section.{section.name}") for section in list(Section) + [Nonsense.NONESENSE]
+    pytest.param(section, id=f"Section.{section.name}") for section in supported_stats_sections()
 ])
 def test_stats_initalization(section: Section) -> None:
     """Test that data is correctly initialized in stats classes."""
     iterations: list[Iteration] = []
     data: dict[str, tuple[int | float, ...]] = {
-        'elapsed': (1.0, 2.0, 4.0, 5.0, 10.0),
-        'ops': (1.0, 0.5, 0.25, 0.2, 0.1),
-        'memory': (100, 200, 300, 400, 500),
-        'peak_memory': (150, 250, 350, 450, 550),
+        Section.OPS: (1.0, 2.0, 4.0, 5.0, 10.0),
+        Section.TIMING: (1.0, 0.5, 0.25, 0.2, 0.1),
+        Section.MEMORY: (100, 200, 300, 400, 500),
+        Section.PEAK_MEMORY: (150, 250, 350, 450, 550),
     }
 
-    for index in range(len(data['elapsed'])):
+    for index in range(len(data[section])):
         iterations.append(
             Iteration(n=1,
                       unit='s',
                       scale=1.0,
-                      elapsed=data['elapsed'][index],
-                      memory=int(data['memory'][index]),
-                      peak_memory=int(data['peak_memory'][index]))
+                      elapsed=data[Section.TIMING][index],
+                      memory=int(data[Section.MEMORY][index]),
+                      peak_memory=int(data[Section.PEAK_MEMORY][index]))
         )
     stats_instance: Stats
-    match section:
-        case Section.OPS:
-            stats_instance = OperationsPerInterval(unit='ops/s', scale=1.0, iterations=iterations)
-            ops_data = stats_instance.data
-            assert ops_data == data['ops'], (
-                f"Ops data does not match expected values: {ops_data} != {data['ops']}")
+    try:
+        match section:
+            case Section.OPS:
+                stats_instance = OperationsPerInterval(unit='ops/s', scale=1.0, iterations=iterations)
+                ops_data = stats_instance.data
+                assert ops_data == data[section], (
+                    f"Ops data does not match expected values: {ops_data} != {data['ops']}")
 
-        case Section.TIMING:
-            stats_instance = OperationTimings(unit='s', scale=1.0, iterations=iterations)
-            timing_data = stats_instance.data
-            assert timing_data == data['elapsed'], (
-                f"Timing data does not match expected values: {timing_data} != {data['elapsed']}")
+            case Section.TIMING:
+                stats_instance = OperationTimings(unit='s', scale=1.0, iterations=iterations)
+                timing_data = stats_instance.data
+                assert timing_data == data[section], (
+                    f"Timing data does not match expected values: {timing_data} != {data['elapsed']}")
 
-        case Section.MEMORY:
-            stats_instance = MemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
-            memory_data = stats_instance.data
-            assert memory_data == data['memory'], (
-                f"Memory data does not match expected values: {memory_data} != {data['memory']}")
+            case Section.MEMORY:
+                stats_instance = MemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
+                memory_data = stats_instance.data
+                assert memory_data == data[section], (
+                    f"Memory data does not match expected values: {memory_data} != {data['memory']}")
 
-        case Section.PEAK_MEMORY:
-            stats_instance = PeakMemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
-            peak_memory_data = stats_instance.data
-            assert peak_memory_data == data['peak_memory'], (
-                f"Peak memory data does not match expected values: {peak_memory_data} != {data['peak_memory']}")
+            case Section.PEAK_MEMORY:
+                stats_instance = PeakMemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
+                peak_memory_data = stats_instance.data
+                assert peak_memory_data == data[section], (
+                    f"Peak memory data does not match expected values: {peak_memory_data} != {data['peak_memory']}")
 
-        case _:
-            pytest.skip(f"Section {section} does not correspond to a tested stats class")
+            case _:
+                pytest.skip(f"Section {section} does not correspond to a tested stats class")
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        tag = f', {exc.tag_code.name}' if hasattr(exc, 'tag_code') else ''  # pyright: ignore[reportAttributeAccessIssue]  # pylint: disable=line-too-long  # noqa: E501
+        pytest.fail(f"Unexpected error occurred for Section.{section.name} "
+                    f"(data = {data[section]}): {exc.__class__.__name__}('{exc}'{tag})")
 
 
 @pytest.mark.parametrize("testspec", [
@@ -369,6 +503,26 @@ def test_stats_from_dict(testspec: TestSpec) -> None:
     testspec.run()
 
 
+@pytest.mark.parametrize("testspec", [
+    idspec("STATS_SUMMARY_001", TestAction(
+        name="Construct StatsSummary from Stats instance using from_stats() class method",
+        action=StatsSummary.from_stats,
+        args=[Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0])],
+        assertion=Assert.ISINSTANCE,
+        expected=StatsSummary
+    )),
+    idspec("STATS_SUMMARY_002", TestAction(
+        name="Construct StatsSummary from Stats instance using stats_summary() instance method",
+        action=Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0]).stats_summary,
+        assertion=Assert.ISINSTANCE,
+        expected=StatsSummary
+    )),
+])
+def test_stats_summary(testspec: TestSpec) -> None:
+    """Test the StatsSummary class."""
+    testspec.run()
+
+
 def compare_stats(stats1: Stats, stats2: Stats) -> None:
     """Helper function to compare two Stats objects for equality, considering scale and unit."""
     if stats1 != stats2:
@@ -390,7 +544,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
                 'scale': 1.0
             }
         },
-        validate_result=lambda obj: obj == obj.as_stats_summary()
+        validate_result=lambda obj: obj == obj.stats_summary()
         )),
     idspec("EQUALITY_002", TestAction(
         name="Stats - equal to seperately defined Stats instance",
@@ -448,7 +602,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
         action=compare_stats,
         kwargs={
             'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).as_stats_summary()
+            'stats2': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).stats_summary()
         })),
     idspec("EQUALITY_009", TestAction(
         name="Stats - equal to itself through export to dict and rehydrate",

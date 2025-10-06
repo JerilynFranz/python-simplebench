@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """Containers for benchmark statistics"""
 from __future__ import annotations
-from typing import Optional, Sequence, Any
+from typing import Sequence
 
-from . import Stats
+from . import Stats, StatsSummary
 from ..constants import DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
 from ..iteration import Iteration
+from ..exceptions import SimpleBenchTypeError, ErrorTag
+from ..validators import validate_sequence_of_numbers
 
 
 class MemoryUsage(Stats):
@@ -28,50 +30,64 @@ class MemoryUsage(Stats):
                  iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
-                 data: Optional[Sequence[int | float]] = None):
-        """Construct MemoryUsage stats from Iteration or raw memory data.
+                 data: Sequence[int | float] | None = None):
+        """Construct MemoryUsage stats from sequence of Iteration or raw memory data.
+
+        At least one of iterations or data must be provided.
+
+        If provided, iterations must be a Sequence of Iteration objects and memory data will be extracted
+        from each Iteration's memory attribute. If data is also provided, the memory data extracted from
+        the iterations will be appended to the provided data.
 
         Args:
-            iterations (Sequence[Iteration] | None): List of Iteration objects to extract memory data from.
-            unit (str): The unit of measurement for the memory usage (e.g., "MB").
-            scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
-            data (Optional[list[int | float]]): Optional list of memory usage data points. If not provided,
+            iterations (Sequence[Iteration] | None): Optional list of Iteration objects to extract memory data from.
+            unit (str): Optional unit of measurement for the memory usage (e.g., "MB"). (default = 'bytes')
+            scale (float): Optional scale factor for the memory usage (e.g., "1e6" for megabytes). (default = 1.0)
+            data (Sequence[int | float] | None): Optional list of memory usage data points. If not provided,
                 memory data will be extracted from the iterations if available.
         Raises:
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
             SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        if not data:
+        if iterations is None and data is None:
+            raise SimpleBenchTypeError(
+                "either iterations or data must be provided",
+                tag=ErrorTag.STATS_MEMORY_USAGE_NO_DATA_OR_ITERATIONS_PROVIDED)
+        if data is None:
             data = []
-        if not data and iterations is not None:
-            data = [iteration.memory for iteration in iterations]
-        super().__init__(unit=unit, scale=scale, data=data)
+        imported_data: list[int | float] = list(validate_sequence_of_numbers(
+                data, 'data',
+                type_tag=ErrorTag.STATS_MEMORY_USAGE_INVALID_DATA_ARG_TYPE,
+                value_tag=ErrorTag.STATS_MEMORY_USAGE_INVALID_DATA_ARG_VALUE))
 
-    @classmethod
-    def from_dict(cls, data: dict[str, Any],) -> MemoryUsage:
-        """Construct a MemoryUsage object from a dictionary.
+        if iterations is not None:
+            if not isinstance(iterations, Sequence):
+                raise SimpleBenchTypeError(
+                    "passed iterations arg is not a Sequence",
+                    tag=ErrorTag.STATS_MEMORY_USAGE_INVALID_ITERATIONS_ARG_TYPE)
 
-        By default, the unit is "bytes" and the scale is 1.0. If provided in the dictionary,
-        those values will override the defaults.
+            if not all(isinstance(iteration, Iteration) for iteration in iterations):
+                raise SimpleBenchTypeError(
+                    "There are items in the iterations arg sequence that are not Iteration objects",
+                    tag=ErrorTag.STATS_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE)
+            imported_data.extend(iteration.memory for iteration in iterations)
 
-        Example:
-            ops_dict = {
-                "unit": "bytes",
-                "scale": 1,
-                "data": [1000, 2000, 1500, 3000, 2500]
-            }
-            memory_stats = MemoryUsage.from_dict(ops_dict)
-            print(memory_stats.mean)  # Output: 2000.0
+        super().__init__(unit=unit, scale=scale, data=imported_data)
 
-        Args:
-            data (dict): A dictionary containing the ops data. Must contain 'data' key with a non-empty
-                sequence of data points consisting of integers or floats.
 
-        Returns:
-            MemoryUsage: A MemoryUsage object constructed from the provided dictionary.
+class MemoryUsageSummary(StatsSummary):
+    '''Container for summary statistics of a MemoryUsage benchmark, exclusive of raw data points.
 
-        Raises:
-            SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
-            SimpleBenchKeyError: If the data dictionary does not contain the 'unit', 'scale' or 'data' keys
-        """
-        return super().from_dict(data=data)  # type: ignore[return]
+    Attributes:
+        unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
+        scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        data (tuple[int | float, ...]): Always an empty tuple as a StatsSummary object does not
+            contain raw data points. (read only)
+        mean (float): The mean operations per time interval. (read only)
+        median (float): The median operations per time interval. (read only)
+        minimum (float): The minimum operations per time interval. (read only)
+        maximum (float): The maximum operations per time interval. (read only)
+        standard_deviation (float): The standard deviation of operations per time interval. (read only)
+        relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
+        percentiles (tuple[float, ...]): Percentiles of operations per time interval. (read only)
+    '''

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """Containers for benchmark statistics"""
 from __future__ import annotations
-from typing import Optional, Sequence, Any
+from typing import Optional, Sequence
 
-from . import Stats
+from . import Stats, StatsSummary
 from ..constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from ..exceptions import SimpleBenchTypeError, ErrorTag
+from ..validators import validate_sequence_of_numbers
 from ..iteration import Iteration
 
 
@@ -41,40 +43,43 @@ class OperationTimings(Stats):
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
             SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        if not data:
+        if iterations is None and data is None:
+            raise SimpleBenchTypeError(
+                "either iterations or data must be provided",
+                tag=ErrorTag.STATS_TIMINGS_NO_DATA_OR_ITERATIONS_PROVIDED)
+        if data is None:
             data = []
-        if not data and iterations is not None:
-            data = [iteration.per_round_elapsed for iteration in iterations]
-        super().__init__(unit=unit, scale=scale, data=data)
+        imported_data: list[int | float] = list(validate_sequence_of_numbers(
+                data, 'data',
+                type_tag=ErrorTag.STATS_TIMINGS_INVALID_DATA_ARG_TYPE,
+                value_tag=ErrorTag.STATS_TIMINGS_INVALID_DATA_ARG_VALUE))
 
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> OperationTimings:
-        """Construct an OperationTimings object from a dictionary.
+        if iterations is not None:
+            if not isinstance(iterations, Sequence):
+                raise SimpleBenchTypeError(
+                    "passed iterations arg is not a Sequence",
+                    tag=ErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ARG_TYPE)
 
-        By default, the unit is "s" and the scale is 1.0. If provided in the dictionary,
-        those values will override the defaults.
+            if not all(isinstance(iteration, Iteration) for iteration in iterations):
+                raise SimpleBenchTypeError(
+                    "There are items in the iterations arg sequence that are not Iteration objects",
+                    tag=ErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ITEM_ARG_TYPE)
+            imported_data.extend(iteration.per_round_elapsed for iteration in iterations)
 
-        Example:
-            ops_dict = {
-                "unit": "s",
-                "scale": 1,
-                "data": [1000, 2000, 1500, 3000, 2500]
-            }
-            timing_stats = OperationTimings.from_dict(ops_dict)
-            print(timing_stats.mean)  # Output: 2000.0
+        super().__init__(unit=unit, scale=scale, data=imported_data)
 
-        Args:
-            data (dict): A dictionary containing the ops data. Must contain 'data' key with a non-empty
-                sequence of data points consisting of integers or floats.
 
-        Returns:
-            OperationTimings: An OperationTimings object constructed from the provided dictionary.
+class OperationTimingsSummary(StatsSummary):
+    '''Container for summary of operation timing statistics of a benchmark.
 
-        Raises:
-            SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
-            SimpleBenchKeyError: If the data dictionary does not contain the 'unit', 'scale' or 'data' keys
-            SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key with at
-                least one data point, if the scale argument is not greater than zero, or if the unit
-                argument is an empty string.
-        """
-        return super().from_dict(data=data)  # type: ignore[return]
+    Attributes:
+        unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
+        scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        mean (float): The mean operations per time interval. (read only)
+        median (float): The median operations per time interval. (read only)
+        minimum (float): The minimum operations per time interval. (read only)
+        maximum (float): The maximum operations per time interval. (read only)
+        standard_deviation (float): The standard deviation of operations per time interval. (read only)
+        relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
+        percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
+    '''

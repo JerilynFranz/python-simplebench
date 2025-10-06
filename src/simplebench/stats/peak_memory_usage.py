@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """Containers for benchmark statistics"""
 from __future__ import annotations
-from typing import Optional, Sequence, Any
+from typing import Optional, Sequence
 
-from . import Stats
+from . import Stats, StatsSummary
 from ..constants import DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
+from ..exceptions import SimpleBenchTypeError, ErrorTag
+from ..validators import validate_sequence_of_numbers
 from ..iteration import Iteration
 
 
@@ -40,41 +42,43 @@ class PeakMemoryUsage(Stats):
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
             SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        if not data:
+        if iterations is None and data is None:
+            raise SimpleBenchTypeError(
+                "either iterations or data must be provided",
+                tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_NO_DATA_OR_ITERATIONS_PROVIDED)
+        if data is None:
             data = []
-        if not data and iterations is not None:
-            data = [iteration.peak_memory for iteration in iterations]
-        super().__init__(unit=unit, scale=scale, data=data)
+        imported_data: list[int | float] = list(validate_sequence_of_numbers(
+                data, 'data',
+                type_tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_TYPE,
+                value_tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_INVALID_DATA_ARG_VALUE))
 
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> PeakMemoryUsage:
-        """Construct a PeakMemoryUsage object from a dictionary.
+        if iterations is not None:
+            if not isinstance(iterations, Sequence):
+                raise SimpleBenchTypeError(
+                    "passed iterations arg is not a Sequence",
+                    tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ARG_TYPE)
 
-        By default, the unit is "bytes" and the scale is 1.0. If provided in the dictionary,
-        those values will override the defaults.
+            if not all(isinstance(iteration, Iteration) for iteration in iterations):
+                raise SimpleBenchTypeError(
+                    "There are items in the iterations arg sequence that are not Iteration objects",
+                    tag=ErrorTag.STATS_PEAK_MEMORY_USAGE_INVALID_ITERATIONS_ITEM_ARG_TYPE)
+            imported_data.extend(iteration.peak_memory for iteration in iterations)
 
-        Example:
-            ops_dict = {
-                "unit": "bytes",
-                "scale": 1,
-                "data": [1000, 2000, 1500, 3000, 2500]
-            }
-            peak_memory_stats = PeakMemoryUsage.from_dict(ops_dict)
-            print(peak_memory_stats.mean)  # Output: 2000.0
+        super().__init__(unit=unit, scale=scale, data=imported_data)
 
-        Args:
-            data (dict): A dictionary containing the ops data. Must contain 'data' key with a non-empty
-                sequence of data points consisting of integers or floats.
-            unit (str): The unit of measurement for the benchmark (e.g., "bytes"). Defaults to "bytes".
-            scale (int | float): The scale factor for the interval (e.g. 1 for bytes). Defaults to 1.0.
-        Returns:
-            PeakMemoryUsage: A PeakMemoryUsage object constructed from the provided dictionary.
-        Raises:
-            SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
-            SimpleBenchKeyError: If the data dictionary does not contain a 'unit' key and
-                no unit argument is provided.
-            SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key
-                with at least one data point, if the scale argument is not greater than zero,
-                or if the unit argument is an empty string.
-        """
-        return super().from_dict(data=data)  # type: ignore[return]
+
+class PeakMemoryUsageSummary(StatsSummary):
+    '''Container for the summary of peak memory usage statistics of a benchmark.
+
+    Attributes:
+        unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
+        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
+        mean (float): The mean memory usage. (read only)
+        median (float): The median memory usage. (read only)
+        minimum (float): The minimum memory usage. (read only)
+        maximum (float): The maximum memory usage. (read only)
+        standard_deviation (float): The standard deviation of the memory usage. (read only)
+        relative_standard_deviation (float): The relative standard deviation of the memory usage. (read only)
+        percentiles (dict[int, float]): Percentiles of memory usage. (read only)
+    '''

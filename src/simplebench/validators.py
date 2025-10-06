@@ -302,9 +302,9 @@ def validate_sequence_of_numbers(
             f'Invalid {field_name} type: {type(value)}. Must be a sequence (list, tuple, etc.) of numbers.',
             tag=type_tag
         )
-    if not value and not allow_empty:
+    if len(value) == 0 and not allow_empty:
         raise SimpleBenchValueError(
-            f'Invalid {field_name}: sequence cannot be blank.',
+            f'Invalid {field_name}: sequence cannot be empty.',
             tag=value_tag
         )
     for i, item in enumerate(value):
