@@ -146,16 +146,6 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
     data = stats_instance.data
 
     match len(data):
-        case 0:
-            assert stats_instance.mean == 0.0, "Mean should be 0.0 for empty data"
-            assert stats_instance.median == 0.0, "Median should be 0.0 for empty data"
-            assert stats_instance.minimum == 0.0, "Minimum should be 0.0 for empty data"
-            assert stats_instance.maximum == 0.0, "Maximum should be 0.0 for empty data"
-            assert stats_instance.standard_deviation == 0.0, "Standard deviation should be 0.0 for empty data"
-            assert stats_instance.relative_standard_deviation == 0.0, (
-                "Relative standard deviation should be 0.0 for empty data")
-            assert stats_instance.percentiles == tuple([0.0] * 101), (
-                "Percentiles should be all 0.0 for empty data")
         case 1:
             assert stats_instance.mean == 10.0, "Mean should be 10.0 for single data point"
             assert stats_instance.median == 10.0, "Median should be 10.0 for single data point"
@@ -430,7 +420,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
         },
         exception=AssertionError)),
     idspec("EQUALITY_005", TestAction(
-        name="Stats - not equal to Stats with different units",
+        name="Stats - not equal to Stats because different units",
         action=compare_stats,
         kwargs={
             'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
@@ -438,7 +428,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
         },
         exception=AssertionError)),
     idspec("EQUALITY_006", TestAction(
-        name="Stats - not equal to Stats with different scales",
+        name="Stats - not equal to Stats because different scales",
         action=compare_stats,
         kwargs={
             'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),

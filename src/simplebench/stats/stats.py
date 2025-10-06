@@ -418,7 +418,7 @@ class StatsSummary(Stats):
         return tuple()
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> Stats:
+    def from_dict(cls, data: dict[str, Any]) -> StatsSummary:
         """Construct a StatsSummary object from a dictionary.
 
         Example:
