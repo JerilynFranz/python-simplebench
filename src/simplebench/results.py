@@ -545,8 +545,8 @@ class Results:
                 )
 
     @property
-    def results_as_dict(self) -> dict[str, str | float | Mapping[int, float] | Mapping[str, Any]]:
-        '''Returns the benchmark results as a JSON-serializable dictionary.'''
+    def as_dict(self) -> dict[str, str | float | Mapping[int, float] | Mapping[str, Any]]:
+        '''Returns the benchmark results and statistics as a JSON-serializable dictionary.'''
         return {
             'type': self.__class__.__name__,
             'group': self.group,
@@ -562,24 +562,24 @@ class Results:
             'memory_scale': self.memory_scale,
             'total_elapsed': self.total_elapsed,
             'extra_info': self.extra_info,
-            'per_round_timings': self.per_round_timings.statistics_as_dict,
-            'ops_per_second': self.ops_per_second.statistics_as_dict,
-            'memory': self.memory.statistics_as_dict,
-            'peak_memory': self.peak_memory.statistics_as_dict,
+            'per_round_timings': self.per_round_timings.stats_summary.as_dict,
+            'ops_per_second': self.ops_per_second.stats_summary.as_dict,
+            'memory': self.memory.stats_summary.as_dict,
+            'peak_memory': self.peak_memory.stats_summary.as_dict,
         }
 
     @property
-    def results_and_data_as_dict(self) -> dict[str, str | float | Mapping[int, float] | Mapping[str, Any]]:
-        '''Returns the benchmark results and iterations as a JSON-serializable dictionary.
+    def as_dict_with_data(self) -> dict[str, str | float | Mapping[int, float] | Mapping[str, Any]]:
+        '''Returns the benchmark results, statistics and raw data as a JSON-serializable dictionary.
 
-        Includes all statistics and raw data for per-round timings, operations per second,
+        Includes all statistics PLUS raw data for per-round timings, operations per second,
         memory usage, and peak memory usage.
         '''
-        results = self.results_as_dict
-        results['per_round_timings'] = self.per_round_timings.statistics_and_data_as_dict
-        results['ops_per_second'] = self.ops_per_second.statistics_and_data_as_dict
-        results['memory'] = self.memory.statistics_and_data_as_dict
-        results['peak_memory'] = self.peak_memory.statistics_and_data_as_dict
+        results = self.as_dict
+        results['per_round_timings'] = self.per_round_timings.as_dict
+        results['ops_per_second'] = self.ops_per_second.as_dict
+        results['memory'] = self.memory.as_dict
+        results['peak_memory'] = self.peak_memory.as_dict
         return results
 
     def __repr__(self) -> str:

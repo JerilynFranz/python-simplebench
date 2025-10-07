@@ -5,7 +5,7 @@ from math import isclose
 import statistics
 from typing import Any, Sequence
 
-from ..exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from ..exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError
 from ..si_units import si_unit_base, si_scale_to_unit
 from ..validators import (validate_non_blank_string, validate_float, validate_non_negative_float,
                           validate_positive_float, validate_sequence_of_numbers)
@@ -146,38 +146,7 @@ class Stats:
         return tuple(quantile_values)
 
     @property
-    def statistics_as_dict(self) -> dict[str, str | float | dict[int, float] | tuple[int | float, ...]]:
-        '''Returns the statistics as a JSON-serializable dictionary.
-
-        The data values are scaled according to the scale factor to provide
-        human-readable values using the base unit rather than the scaled unit.
-
-        The unit is converted to its SI base unit representation. (e.g., "ms" becomes "s")
-
-        This does not include the raw data points, only the statistics.
-
-        The dictionary is mutability-safe as all data is either a primitive or a copy.
-
-        Returns:
-            A dictionary containing the statistics.
-        '''
-        # Immutability is preserved because all values are primitives or copies already
-        return {
-            'type': f'{self.__class__.__name__}:statistics',
-            'unit': si_unit_base(self.unit),
-            'scale': 1.0,
-            'mean': self.mean / self.scale,
-            'median': self.median / self.scale,
-            'minimum': self.minimum / self.scale,
-            'maximum': self.maximum / self.scale,
-            'standard_deviation': self.standard_deviation / self.scale,
-            'relative_standard_deviation': self.relative_standard_deviation,
-            'percentiles': tuple(value / self.scale for value in self.percentiles)
-        }
-
-    @property
-    def statistics_and_data_as_dict(self) -> dict[
-            str, str | float | dict[int, float] | tuple[int | float, ...]]:
+    def as_dict(self) -> dict[str, str | float | dict[int, float] | tuple[int | float, ...]]:
         '''Returns the statistics and data as a JSON-serializable dictionary.
 
         This includes all the statistics as well as the raw data points.
@@ -193,12 +162,14 @@ class Stats:
             A dictionary containing the statistics and the scaled data points.
         '''
         # Immutability is preserved because all values are primitives or copies already
-        stats: dict[str, str | float | dict[int, float] | tuple[int | float, ...]] = self.statistics_as_dict
+        stats = self.stats_summary.as_dict
+        stats['type'] = f'{self.__class__.__name__}:statistics'
         stats['data'] = tuple(value / self.scale for value in self.data)
         return stats
 
+    @property
     def stats_summary(self) -> StatsSummary:
-        '''Create a StatsSummary object from this Stats object.
+        '''Returns a StatsSummary object created from this Stats object.
 
         Returns:
             A StatsSummary object containing the same statistics as this Stats object.
@@ -282,14 +253,6 @@ class Stats:
         scale_by: float = si_scale_to_unit(base_unit=self_base_unit,
                                            current_unit=other.unit,
                                            target_unit=self.unit)
-        if self.scale == 0:  # should never happen due to validation in constructors
-            raise SimpleBenchValueError(
-                "self.scale must not be zero when comparing two Stats objects",
-                tag=ErrorTag.STATS_COMPARISON_INCOMPATIBLE_SCALES)
-        if other.scale == 0:   # should never happen due to validation in constructors
-            raise SimpleBenchValueError(
-                "other.scale must not be zero when comparing two Stats objects",
-                tag=ErrorTag.STATS_COMPARISON_INCOMPATIBLE_SCALES)
         relative_scale: float = self.scale / other.scale
 
         if not isclose(scale_by, relative_scale):
@@ -303,7 +266,6 @@ class Stats:
                 isclose(self.relative_standard_deviation, other.relative_standard_deviation)):
             return False
 
-        # should never happen due to validation in constructors
         if len(self.percentiles) != len(other.percentiles):
             return False
 
@@ -483,3 +445,33 @@ class StatsSummary(Stats):
                                           tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)
             keys_for_construction[key] = data[key]
         return cls(**keys_for_construction)  # type: ignore[arg-type]  # pylint: disable=missing-kwoa
+
+    @property
+    def as_dict(self) -> dict[str, str | float | dict[int, float] | tuple[int | float, ...]]:
+        '''Returns the statistics as a JSON-serializable dictionary.
+
+        The data values are scaled according to the scale factor to provide
+        human-readable values using the base unit rather than the scaled unit.
+
+        The unit is converted to its SI base unit representation. (e.g., "ms" becomes "s")
+
+        This does not include raw data points, only the statistics.
+
+        The dictionary is mutability-safe as all data is either a primitive or a copy.
+
+        Returns:
+            A dictionary containing the statistics.
+        '''
+        # Immutability is preserved because all values are primitives or copies already
+        return {
+            'type': f'{self.__class__.__name__}:statistics',
+            'unit': si_unit_base(self.unit),
+            'scale': 1.0,
+            'mean': self.mean / self.scale,
+            'median': self.median / self.scale,
+            'minimum': self.minimum / self.scale,
+            'maximum': self.maximum / self.scale,
+            'standard_deviation': self.standard_deviation / self.scale,
+            'relative_standard_deviation': self.relative_standard_deviation,
+            'percentiles': tuple(value / self.scale for value in self.percentiles)
+        }

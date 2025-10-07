@@ -13,7 +13,7 @@ from simplebench.iteration import Iteration
 from simplebench.stats import (Stats, StatsSummary, OperationsPerInterval, OperationTimings,
                                MemoryUsage, PeakMemoryUsage)
 
-from .testspec import TestAction, TestSet, idspec, Assert, TestSpec, NO_EXPECTED_VALUE
+from .testspec import TestAction, TestGet, TestSet, idspec, Assert, TestSpec, NO_EXPECTED_VALUE
 
 
 class Nonsense(str, Enum):
@@ -310,11 +310,11 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
     pytest.param((5.0, 15.0, 25.0, 35.0, 45.0, 55.0, 65.0, 75.0, 85.0, 95.0), id="COMPUTED_VALUES_003 larger data set"),
     pytest.param((3.0, 3.0, 3.0, 3.0, 3.0), id="COMPUTED_VALUES_004 identical data points"),
 ])
-def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
-    """Test that statistics_as_dict and statistics_and_data_as_dict return correct values."""
+def test_as_dict(stats_data: Sequence[float | int]) -> None:
+    """Test that as_dict returns correct values."""
     stats_instance = Stats(unit='unit', scale=1.0, data=list(stats_data))
-    stats_dict = stats_instance.statistics_as_dict
-    stats_and_data_dict = stats_instance.statistics_and_data_as_dict
+    stats_only_dict = stats_instance.stats_summary.as_dict
+    stats_and_data_dict = stats_instance.as_dict
 
     # Check that the statistics_as_dict contains the expected keys and types
     expected_keys = {
@@ -329,23 +329,23 @@ def test_stats_as_dict(stats_data: Sequence[float | int]) -> None:
         'percentiles': tuple,
     }
     for key, expected_type in expected_keys.items():
-        assert key in stats_dict, f"Key '{key}' missing from statistics_as_dict"
-        assert isinstance(stats_dict[key], expected_type), (
-            f"Key '{key}' in statistics_as_dict should be of type {expected_type.__name__}, "
-            f"got {type(stats_dict[key]).__name__}")
+        assert key in stats_only_dict, f"Key '{key}' missing from StatsSummary(...).as_dict"
+        assert isinstance(stats_only_dict[key], expected_type), (
+            f"Key '{key}' in StatsSummary(...).as_dict should be of type {expected_type.__name__}, "
+            f"got {type(stats_only_dict[key]).__name__}")
 
-    # Check that the statistics_and_data_as_dict contains the expected keys and types
+    # Check that the stats_and_data_dict contains the expected keys and types
     expected_keys_with_data = expected_keys.copy()
     expected_keys_with_data['data'] = tuple
     for key, expected_type in expected_keys_with_data.items():
-        assert key in stats_and_data_dict, f"Key '{key}' missing from statistics_and_data_as_dict"
+        assert key in stats_and_data_dict, f"Key '{key}' missing from Stats(...).as_dict"
         assert isinstance(stats_and_data_dict[key], expected_type), (
-            f"Key '{key}' in statistics_and_data_as_dict should be of type {expected_type.__name__}, "
+            f"Key '{key}' in Stats(...).as_dict should be of type {expected_type.__name__}, "
             f"got {type(stats_and_data_dict[key]).__name__}")
 
-    # Check that the data in statistics_and_data_as_dict matches the original data scaled
+    # Check that the data in stats_and_data_dict matches the original data scaled
     scaled_data = tuple(value / stats_instance.scale for value in stats_instance.data)
-    assert stats_and_data_dict['data'] == scaled_data, "Data in statistics_and_data_as_dict does not match scaled data"
+    assert stats_and_data_dict['data'] == scaled_data, "Data in Stats(..).as_dict does not match scaled data"
 
 
 def supported_stats_sections() -> set[Section]:
@@ -477,7 +477,7 @@ def test_stats_initalization(section: Section) -> None:
         assertion=Assert.ISINSTANCE,
         expected=PeakMemoryUsage)),
     idspec("STATS_FROM_DICT_006", TestAction(
-        name="Stats - missing unit in data dictionary",
+        name="Stats - missing unit key in data dictionary",
         action=Stats.from_dict,
         kwargs={
             'data': {
@@ -497,6 +497,238 @@ def test_stats_initalization(section: Section) -> None:
         exception=SimpleBenchTypeError,
         exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE
     )),
+    idspec("STATS_FROM_DICT_008", TestAction(
+        name="Stats - missing scale key in data dictionary",
+        action=Stats.from_dict,
+        kwargs={
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 'unit',
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_MISSING_SCALE_KEY)),
+    idspec("STATS_FROM_DICT_009", TestAction(
+        name="Stats - missing data key in data dictionary",
+        action=Stats.from_dict,
+        kwargs={
+            'data': {
+                'type': 'Stats:statistics',
+                'unit': 'unit',
+                'scale': 1.0
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_MISSING_DATA_KEY)),
+    idspec("STATS_FROM_DICT_010", TestAction(
+        name="Stats - data argument not a dictionary",
+        action=Stats.from_dict,
+        kwargs={
+            'data': ['not', 'a', 'dict']
+        },
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE)),
+    idspec("STATS_FROM_DICT_011", TestAction(
+        name="StatsSummary - data argument not a dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': ['not', 'a', 'dict']
+        },
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE)),
+    idspec("STATS_FROM_DICT_012", TestAction(
+        name="StatsSummary - All valid keys and values",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 3.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+                'data': tuple(float(value) for value in range(1, 101)),
+            }
+        },
+        assertion=Assert.ISINSTANCE,
+        expected=StatsSummary)),
+    idspec("STATS_FROM_DICT_013", TestAction(
+        name="StatsSummary - Missing unit key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 3.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+                'data': tuple(float(value) for value in range(1, 101)),
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_014", TestAction(
+        name="StatsSummary - Missing scale key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 3.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_015", TestAction(
+        name="StatsSummary - Missing mean key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_016", TestAction(
+        name="StatsSummary - Missing median key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_017", TestAction(
+        name="StatsSummary - Missing minimum key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_018", TestAction(
+        name="StatsSummary - Missing maximum key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_019", TestAction(
+        name="StatsSummary - Missing standard_deviation key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_020", TestAction(
+        name="StatsSummary - Missing relative_standard_deviation key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_021", TestAction(
+        name="StatsSummary - Missing percentiles key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)),
 ])
 def test_stats_from_dict(testspec: TestSpec) -> None:
     """Test the from_dict class method of the Stats class and sub-classes."""
@@ -511,11 +743,19 @@ def test_stats_from_dict(testspec: TestSpec) -> None:
         assertion=Assert.ISINSTANCE,
         expected=StatsSummary
     )),
-    idspec("STATS_SUMMARY_002", TestAction(
-        name="Construct StatsSummary from Stats instance using stats_summary() instance method",
-        action=Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0]).stats_summary,
+    idspec("STATS_SUMMARY_002", TestGet(
+        name="Get StatsSummary from Stats instance using stats_summary property",
+        obj=Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0]),
+        attribute='stats_summary',
         assertion=Assert.ISINSTANCE,
         expected=StatsSummary
+    )),
+    idspec("STATS_SUMMARY_003", TestGet(
+        name="StatsSummary - data attribute is empty tuple",
+        obj=StatsSummary.from_stats(Stats(unit='unit', scale=1.0, data=(1.0, 2.0, 3.0))),
+        attribute='data',
+        assertion=Assert.EQUAL,
+        expected=()
     )),
 ])
 def test_stats_summary(testspec: TestSpec) -> None:
@@ -527,8 +767,8 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
     """Helper function to compare two Stats objects for equality, considering scale and unit."""
     if stats1 != stats2:
         error = f"""Stats objects are not equal:
-        stats1 = {stats1.statistics_as_dict}
-        stats2 = {stats2.statistics_as_dict}"""
+        stats1 = {stats1.as_dict}
+        stats2 = {stats2.as_dict}"""
         raise AssertionError(error)
 
 
@@ -544,7 +784,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
                 'scale': 1.0
             }
         },
-        validate_result=lambda obj: obj == obj.stats_summary()
+        validate_result=lambda obj: obj == obj.stats_summary
         )),
     idspec("EQUALITY_002", TestAction(
         name="Stats - equal to seperately defined Stats instance",
@@ -602,17 +842,116 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
         action=compare_stats,
         kwargs={
             'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).stats_summary()
+            'stats2': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).stats_summary
         })),
     idspec("EQUALITY_009", TestAction(
         name="Stats - equal to itself through export to dict and rehydrate",
         action=compare_stats,
         kwargs={
             'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats.from_dict(
-                data=Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).statistics_and_data_as_dict)
+            'stats2': Stats.from_dict(data=Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).as_dict)
         })),
+    idspec("EQUALITY_010", TestAction(
+        name="Stats - not equal to Stats with different base unit",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='min', scale=60.0, data=[1.0, 2.0, 3.0])
+        },
+        exception=AssertionError)),
+    idspec("EQUALITY_011", TestAction(
+        name="Stats - equal to Stats with different SI prefix and scale but equivalent data",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[0.001, 0.002, 0.003]),
+            'stats2': Stats(unit='ms', scale=0.001, data=[1.0, 2.0, 3.0])
+        })),
+    idspec("EQUALITY_012", TestAction(
+        name="StatsSummary - not equal to Stats with different percentiles data",
+        action=compare_stats,
+        kwargs={
+            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).stats_summary,
+            'stats2': StatsSummary.from_dict(
+                Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).as_dict | {'percentiles': (1.0, 2.0, 4.0)})
+        },
+        exception=AssertionError)),
+    idspec("EQUALITY_013", TestAction(
+        name="differing length percentiles but otherwise identical StatsSummary are not equal",
+        action=compare_stats,
+        kwargs={
+            'stats1': StatsSummary.from_dict({
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }),
+            'stats2': StatsSummary.from_dict({
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': tuple(float(value) for value in range(1, 101)),
+            }),
+        },
+        exception=AssertionError)),
+    idspec("EQUALITY_014", TestAction(
+        name="StatsSummary - differing percentile values but otherwise identical StatsSummary are not equal",
+        action=compare_stats,
+        kwargs={
+            'stats1': StatsSummary.from_dict({
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+            }),
+            'stats2': StatsSummary.from_dict({
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 100.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value + 0.1) for value in range(0, 101)), n=102, method='inclusive'),
+            }),
+        },
+        exception=AssertionError)),
 ])
 def test_stats_equality(testspec: TestSpec) -> None:
     """Test the equality operator of the Stats class and sub-classes."""
+    testspec.run()
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("FROM_STATS_001", TestAction(
+        name="StatsSummary.from_stats() - input is not a Stats instance (str)",
+        action=StatsSummary.from_stats,
+        args=['not_a_stats_instance'],
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.STATS_SUMMARY_FROM_STATS_INVALID_STATS_ARG_TYPE)),
+])
+def test_stats_summaryfrom_stats_error_cases(testspec: TestSpec) -> None:
+    """Test StatsSummary.from_stats()"""
     testspec.run()
