@@ -7,6 +7,9 @@ from .case import Case
 from .constants import DEFAULT_WARMUP_ITERATIONS
 from .runners import SimpleRunner
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from .validators import (validate_positive_int, validate_non_negative_int, validate_positive_float,
+                         validate_non_blank_string)
+
 
 if TYPE_CHECKING:
     from .reporters.reporter_option import ReporterOption
@@ -72,107 +75,56 @@ def benchmark(
 
     Returns:
         A decorator that registers the function and returns it unmodified.
+
+    Raises:
+        SimpleBenchTypeError: If any argument is of an incorrect type.
+        SimpleBenchValueError: If any argument has an invalid value.
     """
-    if not isinstance(group, str):
-        raise SimpleBenchTypeError("The 'group' parameter to the @benchmark decorator must be a string.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE)
+    group = validate_non_blank_string(group, 'group',
+                                      ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE,
+                                      ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE)
 
-    if group.strip() == '':
-        raise SimpleBenchValueError("The 'group' parameter to the @benchmark decorator must be a non-empty string.",
-                                    tag=ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE)
+    if title is not None:
+        title = validate_non_blank_string(title, 'title',
+                                          ErrorTag.BENCHMARK_DECORATOR_TITLE_TYPE,
+                                          ErrorTag.BENCHMARK_DECORATOR_TITLE_VALUE)
 
-    if title is not None and not isinstance(title, str):
-        raise SimpleBenchTypeError("The 'title' parameter to the @benchmark decorator must be a string if passed.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_TITLE_TYPE)
-    if title is not None and title.strip() == '':
-        raise SimpleBenchValueError("The 'title' parameter to the @benchmark decorator must be "
-                                    "a non-empty string if passed.",
-                                    tag=ErrorTag.BENCHMARK_DECORATOR_TITLE_VALUE)
+    if description is not None:
+        description = validate_non_blank_string(description, 'description',
+                                                ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_TYPE,
+                                                ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_VALUE)
+    if iterations is not None:
+        iterations = validate_positive_int(iterations, 'iterations',
+                                           ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE,
+                                           ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE)
 
-    if description is not None and not isinstance(description, str):
-        raise SimpleBenchTypeError("The 'description' parameter to the @benchmark decorator must be "
-                                   "a string if passed.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_TYPE)
-    if description is not None and description.strip() == '':
-        raise SimpleBenchValueError("The 'description' parameter to the @benchmark decorator must be "
-                                    "a non-empty string if passed.",
-                                    tag=ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_VALUE)
-    if not isinstance(iterations, int) and iterations is not None:
-        raise SimpleBenchTypeError("The 'iterations' parameter to the @benchmark decorator must be an integer.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE)
+    warmup_iterations = validate_non_negative_int(warmup_iterations, 'warmup_iterations',
+                                                  ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_TYPE,
+                                                  ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_VALUE)
 
-    if iterations is not None and iterations <= 0:
-        raise SimpleBenchValueError(
-            "The 'iterations' parameter to the @benchmark decorator must be a positive integer.",
-            tag=ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE)
+    if min_time is not None:
+        min_time = validate_positive_float(min_time, 'min_time',
+                                           ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE,
+                                           ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_VALUE)
 
-    if not isinstance(warmup_iterations, int):
-        raise SimpleBenchTypeError("The 'warmup_iterations' parameter to the @benchmark decorator must be an integer.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_TYPE)
+    if max_time is not None:
+        max_time = validate_positive_float(max_time, 'max_time',
+                                           ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE,
+                                           ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_VALUE)
 
-    if warmup_iterations < 0:
-        raise SimpleBenchValueError(
-            "The 'warmup_iterations' parameter to the @benchmark decorator must be a non-negative integer.",
-            tag=ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_VALUE)
+    n = validate_positive_int(n, 'n',
+                              ErrorTag.BENCHMARK_DECORATOR_N_TYPE,
+                              ErrorTag.BENCHMARK_DECORATOR_N_VALUE)
 
-    if not isinstance(min_time, (float, int)) and min_time is not None:
-        raise SimpleBenchTypeError("The 'min_time' parameter to the @benchmark decorator must be a float or int.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE)
-
-    if not isinstance(max_time, (float, int)) and max_time is not None:
-        raise SimpleBenchTypeError("The 'max_time' parameter to the @benchmark decorator must be a float or int.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE)
-
-    if not isinstance(variation_cols, dict) and variation_cols is not None:
-        raise SimpleBenchTypeError("The 'variation_cols' parameter to the @benchmark decorator must be a dictionary.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_TYPE)
-
-    if not isinstance(options, list) and options is not None:
-        raise SimpleBenchTypeError("The 'options' parameter to the @benchmark decorator must be a list.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_OPTIONS_TYPE)
-
-    if not isinstance(n, int):
-        raise SimpleBenchTypeError("The 'n' parameter to the @benchmark decorator must be an integer.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_N_TYPE)
-
-    if n <= 0:
-        raise SimpleBenchValueError("The 'n' parameter to the @benchmark decorator must be a positive integer.",
-                                    tag=ErrorTag.BENCHMARK_DECORATOR_N_VALUE)
+    kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
+    variation_cols = Case.validate_variation_cols(variation_cols=variation_cols,
+                                                  kwargs_variations=kwargs_variations)
+    options = Case.validate_options(options)
 
     if not isinstance(use_field_for_n, str) and use_field_for_n is not None:
         raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator "
                                    "must be a string if passed.",
                                    tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_TYPE)
-
-    if use_field_for_n is not None and use_field_for_n.strip() == '':
-        raise SimpleBenchValueError("The 'use_field_for_n' parameter to the @benchmark decorator "
-                                    "must be a non-empty string if passed.",
-                                    tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_VALUE)
-    if use_field_for_n is not None and kwargs_variations is None:
-        raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator requires "
-                                   "that 'kwargs_variations' also be provided.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
-
-    if kwargs_variations is not None:
-        if not isinstance(kwargs_variations, dict):
-            raise SimpleBenchTypeError("The 'kwargs_variations' parameter to the @benchmark decorator "
-                                       "must be a dictionary.",
-                                       tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_TYPE)
-        for key, values in kwargs_variations.items():
-            if not isinstance(key, str):
-                raise SimpleBenchTypeError(
-                    "The keys in the 'kwargs_variations' parameter to the @benchmark decorator must be strings.",
-                    tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_KEY_TYPE)
-            if not isinstance(values, list):
-                raise SimpleBenchTypeError(
-                    f"The values for the '{key}' entry in the 'kwargs_variations' parameter "
-                    "to the @benchmark decorator must be in a list.",
-                    tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_VALUE_TYPE)
-            if len(values) == 0:
-                raise SimpleBenchValueError(
-                    f"The values list for the '{key}' entry in the 'kwargs_variations' parameter "
-                    "to the @benchmark decorator cannot be an empty list.",
-                    tag=ErrorTag.BENCHMARK_DECORATOR_KWARGS_VARIATIONS_VALUE_VALUE)
 
     if (isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict)):
         if use_field_for_n not in kwargs_variations:
@@ -183,25 +135,6 @@ def benchmark(
             raise SimpleBenchValueError(f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
                                         "must all be positive integers when used with 'use_field_for_n'.",
                                         tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE)
-
-    if isinstance(variation_cols, dict):
-        for key, value in variation_cols.items():
-            if not isinstance(key, str):
-                raise SimpleBenchTypeError("The keys in the 'variation_cols' dictionary must be strings.",
-                                           tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KEY_TYPE)
-            if not isinstance(value, str):
-                raise SimpleBenchTypeError("The values in the 'variation_cols' dictionary must be strings.",
-                                           tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_VALUE_TYPE)
-            if key.strip() == '':
-                raise SimpleBenchValueError("The keys in the 'variation_cols' dictionary must be non-empty strings.",
-                                            tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KEY_VALUE)
-            if value.strip() == '':
-                raise SimpleBenchValueError("The values in the 'variation_cols' dictionary must be non-empty strings.",
-                                            tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_VALUE_VALUE)
-            if kwargs_variations is None or key not in kwargs_variations:
-                raise SimpleBenchTypeError(f"The key '{key}' in 'variation_cols' must also be present in "
-                                           "'kwargs_variations'.",
-                                           tag=ErrorTag.BENCHMARK_DECORATOR_VARIATION_COLS_KWARGS_VARIATIONS_MISMATCH)
 
     def decorator(func):
         """The actual decorator that wraps the user's function."""

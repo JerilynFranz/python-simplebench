@@ -192,7 +192,7 @@ class Case(ICase):
                         description, "description",
                         ErrorTag.CASE_INVALID_DESCRIPTION_TYPE,
                         ErrorTag.CASE_INVALID_DESCRIPTION_VALUE)
-        self._action = self._validate_action_signature(action)
+        self._action = Case.validate_action_signature(action)
         self._iterations = validate_positive_int(
                         iterations, "iterations",
                         ErrorTag.CASE_INVALID_ITERATIONS_TYPE,
@@ -209,30 +209,35 @@ class Case(ICase):
                         max_time, "max_time",
                         ErrorTag.CASE_INVALID_MAX_TIME_TYPE,
                         ErrorTag.CASE_INVALID_MAX_TIME_VALUE)
-        self._kwargs_variations = self._validate_kwargs_variations(kwargs_variations)
-        self._variation_cols = self._validate_variation_cols(variation_cols)
-        self._runner = self._validate_runner(runner)
-        self._callback = self._validate_callback(callback)
-        self._options = self._validate_options(options)
+        self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
+        self._variation_cols = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
+        self._runner = Case.validate_runner(runner)
+        self._callback = Case.validate_callback(callback)
+        self._options = Case.validate_options(options)
         self._results: list[Results] = []  # No validation needed here
-        self._validate_time_range()
+        self.validate_time_range(self._min_time, self._max_time)
 
-    def _validate_time_range(self) -> None:
+    @staticmethod
+    def validate_time_range(min_time: float, max_time: float) -> None:
         """Validate that min_time < max_time for the case.
+
+        Args:
+            min_time (float): The minimum time.
+            max_time (float): The maximum time.
 
         Returns:
             None
 
         Raises:
-            SimpleBenchValueError: If any of the parameters are invalid.
-            SimpleBenchTypeError: If any of the parameters are of the wrong type.
+            SimpleBenchValueError: The min_time is greater than max_time.
         """
-        if self.min_time > self.max_time:
+        if min_time > max_time:
             raise SimpleBenchValueError(
-                f'Invalid time range: min_time {self.min_time} > max_time {self.max_time}.',
+                f'Invalid time range: min_time {min_time} > max_time {max_time}.',
                 tag=ErrorTag.CASE_INVALID_TIME_RANGE)
 
-    def _validate_action_signature(self, action: ActionRunner) -> ActionRunner:
+    @staticmethod
+    def validate_action_signature(action: ActionRunner) -> ActionRunner:
         """Validate that action has correct signature.
 
         An action function must accept the following two parameters:
@@ -274,7 +279,8 @@ class Case(ICase):
             )
         return action
 
-    def _resolve_callback_type_hints(self, callback: Callable) -> dict[str, type]:
+    @staticmethod
+    def resolve_callback_type_hints(callback: Callable) -> dict[str, type]:
         """Resolve the type hints for a callback function.
 
         Args:
@@ -297,10 +303,10 @@ class Case(ICase):
             ) from e
         return resolved_hints
 
-    def _validate_callback_parameter(self,
-                                     callback: Callable,
-                                     expected_type: type | Any,
-                                     param_name: str) -> None:
+    @staticmethod
+    def validate_callback_parameter(callback: Callable,
+                                    expected_type: type | Any,
+                                    param_name: str) -> None:
         """Validate a parameter of the callback function.
 
         The parameter must exist, be of the expected type, and be a keyword-only parameter.
@@ -313,7 +319,7 @@ class Case(ICase):
         Raises:
             SimpleBenchTypeError: If the parameter is invalid.
         """
-        resolved_hints = self._resolve_callback_type_hints(callback)
+        resolved_hints = Case.resolve_callback_type_hints(callback)
         callback_signature = inspect.signature(callback)
         if param_name not in callback_signature.parameters:
             raise SimpleBenchTypeError(
@@ -332,7 +338,8 @@ class Case(ICase):
                 f'Invalid callback: {callback}. "{param_name}" parameter must be a keyword-only parameter.',
                 tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)
 
-    def _validate_callback(self, callback: Optional[ReporterCallback]) -> ReporterCallback | None:
+    @staticmethod
+    def validate_callback(callback: Optional[ReporterCallback]) -> ReporterCallback | None:
         """Validate the callback function.
 
         It must be a callable or None. If callable, it must have the correct signature.
@@ -359,10 +366,10 @@ class Case(ICase):
                 f'Invalid callback: {callback}. Must be a callable or None.',
                 tag=ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE)
         callback_signature = inspect.signature(callback)
-        self._validate_callback_parameter(callback, Case, 'case')
-        self._validate_callback_parameter(callback, Section, 'section')
-        self._validate_callback_parameter(callback, Format, 'output_format')
-        self._validate_callback_parameter(callback, Any, 'output')
+        Case.validate_callback_parameter(callback, Case, 'case')
+        Case.validate_callback_parameter(callback, Section, 'section')
+        Case.validate_callback_parameter(callback, Format, 'output_format')
+        Case.validate_callback_parameter(callback, Any, 'output')
         params = list(callback_signature.parameters.values())
         if len(params) != 4:
             raise SimpleBenchTypeError(
@@ -371,7 +378,8 @@ class Case(ICase):
                 tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
         return callback
 
-    def _validate_kwargs_variations(self, value: dict[str, list[Any]] | None) -> dict[str, list[Any]]:
+    @staticmethod
+    def validate_kwargs_variations(value: dict[str, list[Any]] | None) -> dict[str, list[Any]]:
         """Validate the kwargs_variations dictionary.
 
         Validates that the kwargs_variations is a dictionary where each key is a string
@@ -426,11 +434,15 @@ class Case(ICase):
             validated_dict[key] = copy(kw_value)
         return validated_dict
 
-    def _validate_variation_cols(self, value: dict[str, str] | None) -> dict[str, str]:
+    @staticmethod
+    def validate_variation_cols(variation_cols: dict[str, str] | None,
+                                kwargs_variations: dict[str, list[Any]]) -> dict[str, str]:
         """Validate the variation_cols dictionary.
 
         Args:
-            value (dict[str, str] | None): The variation_cols dictionary to validate.
+            variation_cols (dict[str, str] | None): The variation_cols dictionary to validate.
+            kwargs_variations (dict[str, list[Any]]): The kwargs_variations dictionary to validate against.
+
         Returns:
             dict[str, str]: A shallow copy of the validated variation_cols dictionary or {} if not provided.
                 Each key is a keyword argument name from `kwargs_variations`, and each value is a
@@ -441,16 +453,16 @@ class Case(ICase):
             SimpleBenchValueError: If any key is not found in `kwargs_variations` or if any
                 value is a blank string.
         """
-        if value is None:
+        if variation_cols is None:
             return {}
-        if not isinstance(value, dict):
+        if not isinstance(variation_cols, dict):
             raise SimpleBenchTypeError(
-                f'Invalid variation_cols: {value}. Must be a dictionary.',
+                f'Invalid variation_cols: {variation_cols}. Must be a dictionary.',
                 tag=ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT
                 )
         validated_dict: dict[str, str] = {}
-        for key, vc_value in value.items():
-            if key not in self.kwargs_variations:
+        for key, vc_value in variation_cols.items():
+            if key not in kwargs_variations:
                 raise SimpleBenchValueError(
                     f'Invalid variation_cols entry key: {key}. Key not found in kwargs_variations.',
                     tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
@@ -468,7 +480,8 @@ class Case(ICase):
             validated_dict[key] = stripped_value
         return validated_dict
 
-    def _validate_runner(self, value: type[SimpleRunner] | None) -> type[SimpleRunner] | None:
+    @staticmethod
+    def validate_runner(value: type[SimpleRunner] | None) -> type[SimpleRunner] | None:
         """Validate the runner class.
 
         Args:
@@ -487,7 +500,8 @@ class Case(ICase):
                 )
         return value
 
-    def _validate_options(self, value: list[ReporterOption] | None) -> list[ReporterOption]:
+    @staticmethod
+    def validate_options(value: list[ReporterOption] | None) -> list[ReporterOption]:
         """Validate the options list.
 
         Args:
@@ -714,9 +728,9 @@ class Case(ICase):
         results = []
         for result in self.results:
             if full_data:  # full data if requested
-                results.append(result.results_and_data_as_dict)
+                results.append(result.as_dict)
             else:  # otherwise only stats
-                results.append(result.results_as_dict)
+                results.append(result.as_dict_with_data)
         return {
             'type': self.__class__.__name__,
             'group': self.group,
