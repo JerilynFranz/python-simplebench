@@ -8,7 +8,7 @@ import re
 import sys
 from typing import Any, Sequence, TypedDict
 
-from cpuinfo import get_cpu_info
+from cpuinfo import get_cpu_info  # type: ignore[import-untyped]
 
 from .constants import DEFAULT_SIGNIFICANT_FIGURES
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag

@@ -303,7 +303,7 @@ class TestSetGet(TestSpec):
                 if self.set_exception is not None:
                     errors.append("set operation returned instead of raising an expected exception")
 
-        except Exception as err:  # pylint: disable=broad-exception-caught
+        except BaseException as err:  # pylint: disable=broad-exception-caught
             if self.set_exception is None:
                 errors.append(f'Unexpected Exception raised while setting attribute {self.attribute}: {repr(err)}')
             elif not isinstance(err, self.set_exception):
@@ -365,7 +365,7 @@ class TestSetGet(TestSpec):
                     case _:
                         errors.append(f"Unsupported assertion operator '{self.assertion}'")
 
-        except Exception as err:  # pylint: disable=broad-exception-caught
+        except BaseException as err:  # pylint: disable=broad-exception-caught
             if self.get_exception is None:
                 errors.append(f'Unexpected Exception raised while validating attribute value: {repr(err)}')
             elif not isinstance(err, self.get_exception):
@@ -489,7 +489,7 @@ class TestAction(TestSpec):
         obj: Optional[Any] = None
         validate_obj: Optional[Callable[[Any], bool]] = None
         validate_result: Optional[Callable[[Any], bool]] = None
-        exception: Optional[type[Exception]] = None
+        exception: Optional[type[BaseException]] = None
         exception_tag: Optional[str] = None
         on_fail: Callable[[str], NoReturn] = pytest.fail
             Function to call on test failure. (default is pytest.fail)
@@ -517,7 +517,7 @@ class TestAction(TestSpec):
     """Function to validate the optional object."""
     validate_result: Optional[Callable[[Any], bool]] = None
     """Function to validate the result of the action."""
-    exception: Optional[type[Exception]] = None
+    exception: Optional[type[BaseException]] = None
     """Expected exception type (if any) to be raised by the action."""
     exception_tag: Optional[str | Enum] = None
     """Expected tag (if any) to be found in the exception message."""
@@ -566,7 +566,7 @@ class TestAction(TestSpec):
                             errors.append(self.display_on_fail())
                         elif isinstance(self.display_on_fail, str):
                             errors.append(self.display_on_fail)
-        except Exception as err:  # pylint: disable=broad-exception-caught
+        except BaseException as err:  # pylint: disable=broad-exception-caught
             if self.exception is None:
                 errors.append(f"Did not expect exception. Caught exception {repr(err)}")
                 errors.append("stacktrace = ")
@@ -651,7 +651,7 @@ class TestSet(TestSpec):
     It cannot be None, and must be an instance of object. If not provided during construction,
     the special sentinel value NO_OBJ_ASSIGNED is used. This must be replaced with a valid object
     before running the test."""
-    exception: Optional[type[Exception]] = None
+    exception: Optional[type[BaseException]] = None
     """Expected exception type (if any) to be raised by setting the attribute."""
     exception_tag: Optional[str | Enum] = None
     """Expected tag (if any) to be found in an exception message raised by setting the attribute."""
@@ -729,7 +729,7 @@ class TestSet(TestSpec):
                 if self.exception is not None:
                     errors.append("set operation returned instead of raising an expected exception")
 
-        except Exception as err:  # pylint: disable=broad-exception-caught
+        except BaseException as err:  # pylint: disable=broad-exception-caught
             if self.exception is None:
                 errors.append(f'Unexpected Exception raised while setting attribute {self.attribute}: {repr(err)}')
             elif not isinstance(err, self.exception):
@@ -772,7 +772,7 @@ class TestSet(TestSpec):
         try:
             self.validate(self, self.obj)  # Exception should be raised by validate if unexpected obj state
 
-        except Exception as err:  # pylint: disable=broad-exception-caught
+        except BaseException as err:  # pylint: disable=broad-exception-caught
             if self.exception is None:
                 errors.append(f'Unexpected Exception raised while validating attribute value: {repr(err)}')
             elif not isinstance(err, self.exception):
@@ -864,7 +864,7 @@ class TestGet(TestSpec):
     set_exception is set, the expected value is ignored. If there is no expected exception
     and no expected value, use the special sentinel value NO_EXPECTED_VALUE to skip the
     get step validation for the set value. Omitting this field is equivalent to setting it to NO_EXPECTED_VALUE."""
-    exception: Optional[type[Exception]] = None
+    exception: Optional[type[BaseException]] = None
     """Expected exception type (if any) to be raised by getting the attribute."""
     exception_tag: Optional[str | Enum] = None
     """Expected tag (if any) to be found in an exception message raised by getting the attribute."""
@@ -951,7 +951,7 @@ class TestGet(TestSpec):
                     elif isinstance(self.display_on_fail, str):
                         errors.append(self.display_on_fail)
 
-        except Exception as err:  # pylint: disable=broad-exception-caught
+        except BaseException as err:  # pylint: disable=broad-exception-caught
             if self.exception is None:
                 errors.append(f'Unexpected Exception raised while validating attribute value: {repr(err)}')
             elif not isinstance(err, self.exception):

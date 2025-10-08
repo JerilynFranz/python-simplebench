@@ -38,6 +38,7 @@ class Session(ISession):
         show_progress: (bool): Whether to show progress bars during execution.
         progress: (Progress): Rich Progress instance for displaying progress bars. (read only)
         tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
+        reporter_manager: (ReporterManager): The ReporterManager instance for managing reporters. (read only)
     """
     def __init__(self,
                  *,
@@ -90,15 +91,41 @@ class Session(ISession):
         self._console: Console = self._progress.console
         """Rich Console instance for displaying output - backing field for the 'console' attribute."""
 
-    def parse_args(self, args: Optional[list[str]] = None) -> None:
+    def parse_args(self, args: Sequence[str] | None = None) -> None:
         """Parse the command line arguments using the session's ArgumentParser.
 
         This method parses the command line arguments and stores them in the session's args property.
+        By default, it parses the arguments from sys.argv. If args is provided, it will parse
+        the arguments from the provided sequence of strings instead.
+
+        Args:
+            args (Optional[Sequence[str]]): A list of command line arguments to parse. If None,
+                the arguments will be taken from sys.argv. (default: None)
 
         Raises:
             SimpleBenchTypeError: If the args_parser is not set.
         """
+        if args is not None:
+            if not isinstance(args, Sequence):
+                raise SimpleBenchTypeError(
+                    "'args' argument must either be None or a list of str: "
+                    f"type of passed 'args' was {type(args).__name__}",
+                    tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)
+            args = tuple(args)
+            if not all(isinstance(arg, str) for arg in args):
+                raise SimpleBenchTypeError(
+                    "'args' argument must either be None or a list of str: A non-str item was found in the passed list",
+                    tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)
         self._args = self._args_parser.parse_args(args=args)
+
+    @property
+    def reporter_manager(self) -> ReporterManager:
+        """Return the ReporterManager instance for managing reporters.
+
+        Returns:
+            ReporterManager: The ReporterManager instance for managing reporters.
+        """
+        return self._reporter_manager
 
     def add_reporter_flags(self) -> None:
         """Adds the command line flags for all registered reporters to the session's ArgumentParser.

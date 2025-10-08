@@ -1,7 +1,9 @@
 """Tests for the session.py module."""
 from __future__ import annotations
 from argparse import ArgumentParser
+from functools import cache
 from pathlib import Path
+import sys
 from typing import Any, Sequence
 
 import pytest
@@ -13,7 +15,10 @@ from simplebench.protocols import ActionRunner, ReporterCallback
 from simplebench.reporters.reporter_option import ReporterOption
 
 
-from .testspec import TestAction, idspec, Assert, TestSpec
+from .testspec import TestAction, idspec, Assert, TestSpec, NO_EXPECTED_VALUE
+
+_SAVED_ARGV = sys.argv.copy()
+"""Saved copy of sys.argv for restoring after tests."""
 
 
 class MockReporterOption(ReporterOption):
@@ -293,3 +298,131 @@ def test_session_init(testspec: TestSpec) -> None:
         testspec (TestSpec): An TestSpec instance for specifying a test.
     """
     testspec.run()
+
+
+def pre_action(extras: dict[str, Any]) -> None:
+    """Helper function to perform pre-action tasks."""
+    if extras and "pre_action" in extras:
+        pre_args = extras.get("pre_action_args", [])
+        extras["pre_action"](*pre_args)
+
+
+def post_action(extras: dict[str, Any]) -> None:
+    """Helper function to perform post-action tasks."""
+    if extras and "post_action" in extras:
+        post_args = extras.get("post_action_args", [])
+        extras["post_action"](*post_args)
+
+
+def restore_argv() -> None:
+    """Helper function to restore sys.argv after argparse testing."""
+    try:
+        sys.argv = _SAVED_ARGV.copy()
+    except Exception as e:
+        raise RuntimeError(f"Failed to restore sys.argv: {e}") from e
+
+
+def set_argv(args: list[str]) -> None:
+    """Helper function to set sys.argv for argparse testing."""
+    if not isinstance(args, list) or not all(isinstance(arg, str) for arg in args):
+        raise ValueError("args must be a list of strings")
+    try:
+        sys.argv = ["prog"] + args
+    except Exception as e:
+        sys.argv = _SAVED_ARGV.copy()
+        raise e from e
+
+
+def parseargs_helper(args: list[str]) -> dict[str, Any]:
+    """Helper function to configure extra args for argparse testing.
+
+    This function returns a dictionary with pre_action and post_action keys
+    to set and restore sys.argv around a test action.
+    """
+    if not isinstance(args, list) or not all(isinstance(arg, str) for arg in args):
+        raise ValueError("args must be a list of strings")
+    return {"pre_action": set_argv, "pre_action_args": [args],
+            "post_action": restore_argv, "post_action_args": []}
+
+
+@cache
+def session_instance() -> Session:
+    """Helper function to create a persistent default Session instance."""
+    return Session()
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("PARSE_ARGS_UNINIT_001", TestAction(
+        name="Parse sys.argv --help with uninitialized argparser",
+        action=Session().parse_args,
+        exception=SystemExit,  # argparse throws SystemExit on --help
+        extra=parseargs_helper(["--help"]))),
+    idspec("PARSE_ARGS_UNINIT_002", TestAction(
+        name="Parse passed args with uninitialized argparser",
+        action=Session().parse_args,
+        kwargs={"args": ["--help"]},
+        exception=SystemExit)),  # argparse throws SystemExit on --help
+    idspec("PARSE_ARGS_UNINT_003", TestAction(
+        name="Parse empty args with uninitialized argparser",
+        action=Session().parse_args,
+        kwargs={"args": []},
+        expected=NO_EXPECTED_VALUE)),
+    idspec("PARSE_ARGS_UNINIT_004", TestAction(
+        name="Parse sys.argv '--quiet' with uninitialized argparser",
+        action=Session().parse_args,
+        exception=SystemExit,
+        extra=parseargs_helper(["--quiet"]))),
+    idspec("PARSE_ARGS_UNINIT_005", TestAction(
+        name="Parse args - invalid type (int) with uninitialized argparser",
+        action=Session().parse_args,
+        kwargs={"args": 123},  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)),
+    idspec("PARSE_ARGS_UNINIT_006", TestAction(
+        name="Parse args - invalid type (list with non-str) with uninitialized argparser",
+        action=Session().parse_args,
+        kwargs={"args": ["--json", 123]},  # type: ignore[list-item]  # pyright: ignore[reportArgumentType]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)),
+])
+def test_uninitialized_parse_args(testspec: TestAction) -> None:
+    """Tests the parse_args method of the Session class."""
+    pre_action(testspec.extra)
+    testspec.run()
+    post_action(testspec.extra)
+
+
+@cache
+def session_with_reporters() -> Session:
+    """Helper function to create a persistent Session instance initialized with reporters."""
+    session = session_instance()
+    session.add_reporter_flags()
+    return session
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("PARSE_ARGS_001", TestAction(
+            name="Parse '--help' with initialized argparser",
+            action=session_with_reporters().parse_args,
+            args=[["--help"]],
+            exception=SystemExit)),  # argparse throws SystemExit on --help
+    idspec("PARSE_ARGS_002", TestAction(
+            name="Parse '--json' with initialized argparser (.json should be True)",
+            action=session_with_reporters().parse_args,
+            obj=session_with_reporters(),
+            args=[["--json"]],
+            validate_obj=lambda obj: obj.args.json is True,
+            expected=NO_EXPECTED_VALUE)),
+    idspec("PARSE_ARGS_003", TestAction(
+            name="Parse no arguments with initialized argparser (.json should be False)",
+            action=session_with_reporters().parse_args,
+            obj=session_with_reporters(),
+            args=[[]],
+            validate_obj=lambda obj: obj.args.json is False,
+            expected=NO_EXPECTED_VALUE)),
+])
+def test_parse_args(testspec: TestAction) -> None:
+    """Tests the parse_args method of a Session instance with reporters loaded."""
+    pre_action(testspec.extra)
+    testspec.run()
+    post_action(testspec.extra)

@@ -581,6 +581,11 @@ class ErrorTag(str, Enum):
     """Something other than a subclass of SimpleRunner or None was assigned to the default_runner property"""
     SESSION_PROPERTY_INVALID_CONSOLE_ARG = "SESSION_PROPERTY_INVALID_CONSOLE_ARG"
     """Something other than a Console instance was assigned to the console property"""
+    SESSION_PARSE_ARGS_INVALID_ARGS_TYPE = "SESSION_PARSE_ARGS_INVALID_ARGS_TYPE"
+    """Something other than a list of strings was passed to the Session.parse_args() method as the args argument"""
+    SESSION_PARSE_ARGS_INVALID_ARGS_ITEM_TYPE = "SESSION_PARSE_ARGS_INVALID_ARGS_ITEM_TYPE"
+    """Something other than a string was found in the list passed to the Session.parse_args()
+    method as the args argument"""
 
     # Reporters() tags
     REPORTERS_REGISTER_INVALID_REPORTER_ARG = "REPORTERS_REGISTER_INVALID_REPORTER_ARG"
