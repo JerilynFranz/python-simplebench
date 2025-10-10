@@ -2,12 +2,12 @@
 """Simple benchmarking framework."""
 
 from .case import Case
-from .constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
-                        DEFAULT_OPS_PER_INTERVAL_UNIT,
-                        DEFAULT_OPS_PER_INTERVAL_SCALE,
-                        MIN_MEASURED_ITERATIONS, DEFAULT_ITERATIONS,
-                        DEFAULT_SIGNIFICANT_FIGURES, DEFAULT_TIMER,
-                        BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT)
+from .defaults import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
+                       DEFAULT_OPS_PER_INTERVAL_UNIT,
+                       DEFAULT_OPS_PER_INTERVAL_SCALE,
+                       MIN_MEASURED_ITERATIONS, DEFAULT_ITERATIONS,
+                       DEFAULT_SIGNIFICANT_FIGURES, DEFAULT_TIMER,
+                       BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT)
 from .decorators import benchmark, clear_registered_cases, get_registered_cases
 from .enums import Section, Verbosity
 from .exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError

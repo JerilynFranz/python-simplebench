@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Iteration class"""
-from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from .enums import Section
 from .exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
 from .validators import (validate_non_blank_string, validate_int, validate_positive_int,

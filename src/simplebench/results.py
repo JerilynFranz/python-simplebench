@@ -7,7 +7,7 @@ from types import MappingProxyType
 
 from simplebench.exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
 
-from .constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
+from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
 from .enums import Section
 from .iteration import Iteration
 from .stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats

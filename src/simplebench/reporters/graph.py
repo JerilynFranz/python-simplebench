@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT
+from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT
 from ..enums import Section, Target, Format
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from ..metaclasses import ICase

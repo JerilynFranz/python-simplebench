@@ -7,8 +7,8 @@ from typing import Any
 
 import pytest
 
-from simplebench.constants import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
-                                   DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT)
+from simplebench.defaults import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
+                                  DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT)
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from simplebench.iteration import Iteration
 from simplebench.results import Results

@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Sequence
 
 from . import Stats, StatsSummary
-from ..constants import DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
+from ..defaults import DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
 from ..iteration import Iteration
 from ..exceptions import SimpleBenchTypeError, ErrorTag
 from ..validators import validate_sequence_of_numbers

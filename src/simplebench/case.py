@@ -6,7 +6,8 @@ import inspect
 import itertools
 from typing import Any, Callable, Optional, TYPE_CHECKING, get_type_hints
 
-from .constants import DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME, DEFAULT_MAX_TIME
+from .defaults import (DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME,
+                       DEFAULT_MAX_TIME, DEFAULT_ROUNDS)
 from .exceptions import (SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchRuntimeError, ErrorTag)
 from .metaclasses import ICase
 from .protocols import ActionRunner, ReporterCallback
@@ -30,7 +31,7 @@ class Case(ICase):
     action to be performed, the parameters for the benchmark, and any variations
     of those parameters as well as the reporting group and title for the benchmark.
 
-    It also defines the number of iterations, warmup iterations, minimum and maximum
+    It also defines the number of iterations, warmup iterations, rounds, minimum and maximum
     time for the benchmark, the benchmark runner to use, and any callbacks to be invoked
     to process the results of the benchmark for reporting purposes.
 
@@ -51,6 +52,22 @@ class Case(ICase):
     before `iterations` is completed, the benchmark will continue running until
     either `iterations` or `max_time` is completed (whichever happens first).
 
+    `rounds` specifies the number of times the action will be executed per iteration to get a better average.
+    Each iteration will run the specified number of rounds after setup and before teardown. The timing
+    for the iteration will be the average time taken for the rounds in that iteration.
+
+    This helps to reduce the impact of variability in execution time for a single run of the action
+    for very fast actions. This suppresses the overhead of the loop and timer quantization in Python
+    during the actual timing benchmark but has the side-effect that the timing statistics will artificially
+    appear to have less variability than they actually do in a single iteration (by roughly variability
+    divided by rounds). This may not matter if your action is very consistent in its execution time for
+    a given set of parameters, but if it is not, you may want to consider using `rounds=1` to get a more
+    accurate picture of the variability of the action.
+
+    If your action is not extremely fast (~ 10 nanoseconds or faster), it is recommended to leave
+    `rounds` at its default value of 1. If you do use it, you may want to run dual benchmarks
+    with `rounds=1` and `rounds>1` to see how much the reported variability and other metrics change.
+
     The Case class is designed to be immutable after creation. Once a Case instance
     is created, its properties cannot be directly changed. This immutability ensures that
     benchmark cases remain consistent throughout their lifecycle.
@@ -67,6 +84,9 @@ class Case(ICase):
             accept a `bench` parameter of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
             It must return a Results object.
         iterations (int): The minimum number of iterations to run for the benchmark.
+        rounds (int): The number of rounds to run for the benchmark for each iteration. Rounds are
+            multiple runs of the entire benchmark to get a better average for an iteration. Each iteration will
+            run the specified number of rounds after setup and before teardown. (default: 1)
         warmup_iterations (int): The number of warmup iterations to run before the benchmark.
         min_time (float): The minimum time for the benchmark in seconds.
         max_time (float): The maximum time for the benchmark in seconds.
@@ -121,6 +141,7 @@ class Case(ICase):
                  action: ActionRunner,
                  iterations: int = DEFAULT_ITERATIONS,
                  warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
+                 rounds: int = DEFAULT_ROUNDS,
                  min_time: float = DEFAULT_MIN_TIME,
                  max_time: float = DEFAULT_MAX_TIME,
                  variation_cols: Optional[dict[str, str]] = None,
@@ -141,6 +162,9 @@ class Case(ICase):
                 (default: 20 - DEFAULT_ITERATIONS)
             warmup_iterations (int): The number of warmup iterations to run before the benchmark.
                 (default: 10 - DEFAULT_WARMUP_ITERATIONS)
+            rounds (int): The number of rounds to run for the benchmark. Rounds are multiple runs of
+                the entire benchmark to get a better average. Each round will run the specified
+                number of iterations. (default: 1 - DEFAULT_ROUNDS)
             min_time (float | int): The minimum time for the benchmark in seconds.
                 (default: 5.0 seconds - DEFAULT_MIN_TIME)
             max_time (float | int): The maximum time for the benchmark in seconds.
@@ -201,6 +225,10 @@ class Case(ICase):
                         warmup_iterations, "warmup_iterations",
                         ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_TYPE,
                         ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_VALUE)
+        self._rounds = validate_positive_int(
+                        rounds, "rounds",
+                        ErrorTag.CASE_INVALID_ROUNDS_TYPE,
+                        ErrorTag.CASE_INVALID_ROUNDS_VALUE)
         self._min_time = validate_positive_float(
                         min_time, "min_time",
                         ErrorTag.CASE_INVALID_MIN_TIME_TYPE,
@@ -584,6 +612,11 @@ class Case(ICase):
     def warmup_iterations(self) -> int:
         '''The number of warmup iterations to run before the benchmark.'''
         return self._warmup_iterations
+
+    @property
+    def rounds(self) -> int:
+        '''The number of rounds to run for each iteration in the benchmark.'''
+        return self._rounds
 
     @property
     def min_time(self) -> float:

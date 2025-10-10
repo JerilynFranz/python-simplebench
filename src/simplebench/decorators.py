@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any, Callable, TYPE_CHECKING
 
 from .case import Case
-from .constants import DEFAULT_WARMUP_ITERATIONS
+from .defaults import DEFAULT_WARMUP_ITERATIONS
 from .runners import SimpleRunner
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .validators import (validate_positive_int, validate_non_negative_int, validate_positive_float,

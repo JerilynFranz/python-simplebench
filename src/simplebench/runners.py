@@ -2,19 +2,52 @@
 """Test runners for benchmarking."""
 from __future__ import annotations
 import gc
+import importlib.util
+import sys
 import tracemalloc
 from typing import Any, Callable, Optional, TYPE_CHECKING
+from types import ModuleType
 
-
-from .constants import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERATIONS
+from .defaults import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERATIONS
+from .exceptions import ErrorTag, SimpleBenchImportError
 from .iteration import Iteration
 from .results import Results
+from .validators import validate_non_negative_int
 
 
 if TYPE_CHECKING:
     from .case import Case
     from .session import Session
     from .tasks import RichTask
+
+
+def _create_timers_module() -> ModuleType:
+    """Creates a module to hold dynamically created timer functions.
+
+    The module is created using importlib and added to sys.modules
+    under the name 'simplebench._timers'. If the module already exists
+    in sys.modules, it is returned as is.
+
+    Returns:
+        ModuleType: The created or existing timers module.
+
+    Raises:
+        SimpleBenchImportError: If the module could not be created.
+    """
+    spec = importlib.util.spec_from_loader('simplebench._timers', loader=None)
+    if spec is None:
+        raise SimpleBenchImportError(
+            'Could not create spec for simplebench._timers module',
+            tag=ErrorTag.RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED)
+    if 'simplebench._timers' in sys.modules:
+        return sys.modules['simplebench._timers']
+    timers_module = importlib.util.module_from_spec(spec)
+    sys.modules['simplebench._timers'] = timers_module
+    return timers_module
+
+
+_timers_module = _create_timers_module()  # Ensure the timers module exists
+"""A dynamically created module to hold generated timer functions."""
 
 
 def _mock_action(**kwargs) -> None:  # pylint: disable=unused-argument
@@ -61,6 +94,57 @@ class SimpleRunner():
         self.session: Session | None = session
         """The session in which the benchmark is run."""
 
+    def _timer_function(self, rounds: int) -> Callable[
+            [Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]:
+        """Returns a timer function for the benchmark.
+
+        The generated function will call the action `rounds` times and return the average time taken.
+        The function is generated as a string and then compiled to avoid the overhead of
+        a loop in Python during the actual timing benchmark.
+
+        The generated function will have the following signature:
+
+            def _timer_function_{rounds}(
+                    timer: Callable[[], float | int],
+                    action: Callable[..., Any],
+                    kwargs: dict[str, Any]) -> float:
+
+        It is created in the module `simplebench._timers` to avoid polluting the global namespace.
+
+        By creating a new dedicated function for each needed rounds value, we avoid the overhead
+        of a loop in Python during the actual timing benchmark. This is particularly important
+        for micro-benchmarks where the action being benchmarked is very fast.
+
+        Args:
+            rounds (int): The number of test rounds that will be run by the action on each iteration. Must be >= 1.
+
+        Returns:
+            Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]:
+                A function that returns the elapsed time for the benchmark as a float.
+        """
+        rounds = validate_non_negative_int(
+            rounds, 'rounds',
+            ErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE,
+            ErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE)
+
+        # If the timer function for the specified rounds does not exist, create it.
+        # We create a new function for each rounds value to avoid the overhead of a loop
+        # in the timing function.
+        # The function is created as a string and then compiled to avoid the overhead
+        # of a loop in Python during the actual timing benchmark.
+        timer_name = f'_simplerunner_timer_function_{rounds}'
+        if not hasattr(_timers_module, timer_name):
+            time_function_lines: list[str] = []
+            time_function_lines.append(f'def {timer_name}(timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -> float:')  # pylint: disable=line-too-long  # noqa: E501
+            time_function_lines.append('    start = timer()')
+            time_function_lines.extend(['    action(**kwargs)'] * rounds)
+            time_function_lines.append('    end = timer()')
+            time_function_lines.append(f'    return float((end - start) / {rounds})')
+            time_function_code = '\n'.join(time_function_lines)
+            exec(time_function_code, _timers_module.__dict__)  # pylint: disable=exec-used
+
+        return getattr(_timers_module, timer_name)
+
     @property
     def variation_marks(self) -> dict[str, Any]:
         '''Returns the variation marks for the benchmark as defined by the `Case.variation_cols`
@@ -94,8 +178,12 @@ class SimpleRunner():
         for the overhead of the function call.
 
         Args:
-            variation_cols (dict[str, str]): The variation columns to use for the benchmark.
-            n (int): The number of test rounds that will be run by the action on each iteration.
+            n (int): The O(n) 'n' weight of the benchmark. This is used to calculate
+                a weight for the purpose of O(n) analysis. For example, if the action being benchmarked
+                is a function that sorts a list of length n, then n should be the
+                length of the list. If the action being benchmarked is a function
+                that performs a constant-time operation, then n should be 1.
+            rounds (int): The number of test rounds that will be run by the action on each iteration.
             action (Callable[..., Any]): The action to benchmark.
             setup (Optional[Callable[..., Any]]): A setup function to run before each iteration.
             teardown (Optional[Callable[..., Any]]): A teardown function to run after each iteration.
@@ -155,22 +243,39 @@ class SimpleRunner():
                 completed=5,
                 description=(f'[green] Benchmarking {group} (iteration {iteration_pass:<6d}; '
                              f'time {0.00:<3.2f}s)'))
+        timer_function = self._timer_function(self.case.rounds)
         total_elapsed: float = 0.0
         iterations_list: list[Iteration] = []
+        kiloround_timer = self._timer_function(1000)
+
         while ((iteration_pass <= iterations_min or wall_time < min_stop_at)
                 and wall_time < max_stop_at):
             iteration_pass += 1
-
-            if callable(setup):
-                setup()
-
-            # Time the action. setup and teardown are not included in the timing.
-            raw_timer_start = DEFAULT_TIMER()
-            action(**kwargs)
-            raw_timer_end = DEFAULT_TIMER()
-
-            if callable(teardown):
-                teardown()
+            # Time the action
+            if self.case.rounds < 1000:
+                # for less than 1000 rounds, we can use the generated timer function directly
+                if callable(setup):
+                    setup()
+                elapsed = timer_function(DEFAULT_TIMER, action, kwargs)
+                if callable(teardown):
+                    teardown()
+            else:
+                # for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a "kiloround")
+                # to reduce the footprint of the generated timer functions and avoid hitting
+                # Python's function size limits. Breaking into chunks of 1000 also
+                # reduces the overhead of the loop in the timing function to a negligible level.
+                elapsed = 0.0
+                kiloround_chunks, remaining_rounds = divmod(self.case.rounds, 1000)
+                if callable(setup):
+                    setup()
+                while kiloround_chunks:
+                    elapsed += kiloround_timer(DEFAULT_TIMER, action, kwargs)
+                    kiloround_chunks -= 1
+                if remaining_rounds:
+                    partial_timer = self._timer_function(remaining_rounds)
+                    elapsed += partial_timer(DEFAULT_TIMER, action, kwargs)
+                if callable(teardown):
+                    teardown()
 
             # Measure memory usage of the action
             # We force a garbage collection before measuring memory usage to reduce noise
@@ -196,11 +301,6 @@ class SimpleRunner():
                 # Warmup iterations not included in final stats
                 continue
 
-            # We difference the raw timer readings to avoid floating point
-            # precision issues with elapsed time. It effectively pushes the error to the
-            # precision of the timer rather than the precision of floating point
-            # with small differences between large values.
-            elapsed = float(raw_timer_end - raw_timer_start)
             memory = end_memory_current - start_memory_current - memory_overhead
             peak_memory = end_memory_peak - start_memory_peak - peak_memory_overhead
             iteration_result = Iteration(n=n, elapsed=elapsed, memory=memory, peak_memory=peak_memory)

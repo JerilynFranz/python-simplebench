@@ -537,6 +537,10 @@ class ErrorTag(str, Enum):
     """A parameter in the callback function is not keyword-only."""
     CASE_ADD_RESULT_INVALID_RESULT_TYPE = "CASE_ADD_RESULT_INVALID_RESULT_TYPE"
     """Something other than a Results instance was passed to the Case.add_result() method"""
+    CASE_INVALID_ROUNDS_TYPE = "CASE_INVALID_ROUNDS_TYPE"
+    """Invalid rounds argument type passed to the Case() constructor"""
+    CASE_INVALID_ROUNDS_VALUE = "CASE_INVALID_ROUNDS_VALUE"
+    """Invalid rounds argument value passed to the Case() constructor"""
 
     # Results() tags
     RESULTS_RESULTS_SECTION_INVALID_SECTION_TYPE_ARGUMENT = "RESULTS_RESULT_SECTION_INVALID_SECTION_TYPE_ARGUMENT"
@@ -958,6 +962,14 @@ class ErrorTag(str, Enum):
     UTILS_SIGFIGS_INVALID_FIGURES_ARG_VALUE = "UTILS_SIGFIGS_INVALID_FIGURES_ARG_VALUE"
     """The figures argument was less than 1"""
 
+    SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE = "SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE"
+    """The rounds argument was not an int"""
+    SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE = "SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE"
+    """The rounds argument was less than 1"""
+
+    RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED = "RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED"
+    """Failed to create the timers module spec"""
+
 
 E = TypeVar('E', bound=Exception)
 
@@ -1164,3 +1176,22 @@ class SimpleBenchArgumentError(TaggedException[argparse.ArgumentError]):
         # after initialization.
         super().__init__(None, message, tag=tag)
         self.argument_name = argument_name
+
+
+class SimpleBenchImportError(TaggedException[ImportError]):
+    """Base class for all SimpleBench import errors.
+
+    It differs from a standard ImportError by the addition of a
+    tag code used to very specifically identify where the error
+    was thrown in the code for testing and development support.
+
+    This tag code does not have a direct semantic meaning except to identify
+    the specific code throwing the exception for tests.
+
+    Usage:
+        raise SimpleBenchImportError("An error occurred", tag=MyErrorTags.SOME_ERROR)
+
+    Args:
+        msg (str, positional): The error message.
+        tag (ErrorTag): The tag code.
+    """

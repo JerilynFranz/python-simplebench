@@ -7,7 +7,7 @@ from typing import Optional, TYPE_CHECKING
 from rich.console import Console
 from rich.table import Table
 
-from ..constants import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE, BASE_MEMORY_UNIT
+from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE, BASE_MEMORY_UNIT
 from ..enums import Section, Target, Format
 from ..exceptions import SimpleBenchValueError, ErrorTag
 from ..protocols import ReporterCallback

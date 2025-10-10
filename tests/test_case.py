@@ -48,6 +48,7 @@ class CaseKWArgs(dict):
             action: ActionRunner | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             iterations: int | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             warmup_iterations: int | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
+            rounds: int | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             min_time: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             max_time: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
             variation_cols: dict[str, str] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
@@ -68,6 +69,7 @@ class CaseKWArgs(dict):
                 It must return a Results object.
             iterations (int): The minimum number of iterations to run for the benchmark. (default: 20)
             warmup_iterations (int): The number of warmup iterations to run before the benchmark. (default: 10)
+            rounds (int): The number of test rounds that will be run by the action on each iteration. (default: 1)
             min_time (float): The minimum time for the benchmark in seconds. (default: 5.0)
             max_time (float): The maximum time for the benchmark in seconds. (default: 20.0)
             variation_cols (dict[str, str]): kwargs to be used for cols to denote kwarg variations.
@@ -126,7 +128,7 @@ class CaseKWArgs(dict):
         """
         kwargs = {}
         for key in (
-                'group', 'title', 'description', 'action', 'iterations', 'warmup_iterations',
+                'group', 'title', 'description', 'action', 'iterations', 'warmup_iterations', 'rounds',
                 'min_time', 'max_time', 'variation_cols', 'kwargs_variations', 'runner',
                 'callback', 'options'):
             value = locals()[key]

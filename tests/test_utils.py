@@ -4,11 +4,11 @@ import pytest
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from simplebench import utils
-import simplebench.constants as constants
+import simplebench.defaults as defaults
 
 from .testspec import TestAction, idspec
 
-constants.DEFAULT_SIGNIFICANT_FIGURES = 3  # Ensure default is as expected for tests
+defaults.DEFAULT_SIGNIFICANT_FIGURES = 3  # Ensure default is as expected for tests
 
 
 @pytest.mark.parametrize("testspec", [

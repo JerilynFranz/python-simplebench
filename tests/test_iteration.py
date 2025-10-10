@@ -1,7 +1,7 @@
 """Tests for the simplebench/iteration.py module."""
 import pytest
 
-from simplebench.constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from simplebench.defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from simplebench.iteration import Iteration

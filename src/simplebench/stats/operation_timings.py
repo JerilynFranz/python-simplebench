@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Optional, Sequence
 
 from . import Stats, StatsSummary
-from ..constants import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from ..defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from ..exceptions import SimpleBenchTypeError, ErrorTag
 from ..validators import validate_sequence_of_numbers
 from ..iteration import Iteration

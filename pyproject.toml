@@ -139,11 +139,54 @@ ignore_errors = true
 [tool.coverage.html]
 directory = "coverage_html_report"
 
+# Configuration for generating a dependency graph
+# See https://pypi.org/project/pydeps/
+# You may need to install graphviz separately
+# (e.g. `brew install graphviz` on macOS, `sudo apt install graphviz` on Debian/Ubuntu)
+# Also, you may need to install the `graphviz` Python package
+# (e.g. `pip install graphviz` in your development environment)
+# The output file will be created at the specified location
+# relative to the project root
+# run 'pydeps src/simplebench' from the root directory of the project to generate the graph
+[tool.pydeps]
+format = "svg"
+max_bacon = 1
+max_cluster_size = 2
+max_module_depth = 5
+output = "docs/dependencies.svg"
+reverse = true
+cluster = true
+rankdir = "BT"
+no_show = true
+verbose = 0
+pylib = false
+exclude_exact = [
+    "simplebench.utils",
+    "simplebench.metaclasses",
+    "simplebench.si_units",
+    "simplebench.exceptions",
+    "simplebench.tasks",
+    "simplebench.protocols",
+    "simplebench.reporters.choices",
+    "simplebench.reporters.metaclasses",
+    "simplebench.reporters.reporter_option",
+    "simplebench.reporters.csv",
+    "simplebench.reporters.rich_table",
+    "simplebench.reporters.graph",
+    "simplebench.reporters.json",
+    "simplebench.reporters.interfaces",
+    "simplebench.stats",
+    "simplebench.constants",
+    "simplebench.enums",
+    "simplebench.validators",
+]
+
 [dependency-groups]
 dev = [
     "black>=25.1.0",
     "coverage>=7.10.6",
     "flake8>=7.3.0",
+    "graphviz>=0.21.1",
     "mypy>=1.17.1",
     "py-cpuinfo>=9.0.0",
     "pylint>=3.3.8",
