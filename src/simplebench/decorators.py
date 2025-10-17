@@ -76,9 +76,13 @@ def benchmark(
     ```
 
     Args:
-        group (str, default='default'): The benchmark reporting group to which the benchmark case belongs
-            for selection and reporting purposes. It is used to categorize and filter benchmark cases.
-            Cannot be blank.
+        group (str, positional-only, default='default'): The benchmark reporting group to which the benchmark
+            case belongs for selection and reporting purposes. It is used to categorize and filter benchmark cases.
+            Cannot be blank. The group parameter is positional-only. All other parameters must be passed as keyword
+            arguments. When the decorator is used without parameters, the group defaults to 'default'.
+
+            This has special handling to allow the decorator to be used without any parameters.
+
         title (Optional[str], default=None): The title of the benchmark case. Uses the function
                 name if None. Cannot be blank.
         description (Optional[str], default=None): A description for the case.
