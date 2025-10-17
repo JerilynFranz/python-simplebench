@@ -1,4 +1,5 @@
 """Tests for the case.py module."""
+# pylint: disable=too-many-lines
 from __future__ import annotations
 from argparse import ArgumentParser
 from functools import cache
@@ -140,6 +141,14 @@ class CaseKWArgs(dict):
 def benchcase(bench: SimpleRunner, **kwargs) -> Results:
     """A simple benchmark case function."""
 
+    def action() -> None:
+        """A simple benchmark case function."""
+        sum(range(1000))  # Example operation to benchmark
+    return bench.run(n=1000, action=action, **kwargs)
+
+
+def benchcase_with_no_docstring(bench: SimpleRunner, **kwargs) -> Results:  # pylint: disable=missing-function-docstring  # noqa: E501
+    # No docstring benchcase for testing purposes
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
@@ -413,6 +422,12 @@ def test_casekwargs_matches_case_signature():
         f"CaseKWArgs has {casekwargs_params - case_params}"
 
 
+def validate_description(actual: str | None, expected: str | None) -> bool:
+    """Helper function to validate description strings, accounting for None values."""
+    assert actual == expected, f"Expected description '{expected}', got '{actual}'"
+    return True
+
+
 @pytest.mark.parametrize("testspec", [
     idspec("INIT_001", TestAction(
         name="Minimal good path initialization",
@@ -443,20 +458,26 @@ def test_casekwargs_matches_case_signature():
         assertion=Assert.ISINSTANCE,
         expected=Case)),
     idspec("INIT_003", TestAction(
-        name="Missing group parameter",
+        name="Missing group parameter - default to 'default'",
         action=Case,
         kwargs=CaseKWArgs(title='benchcase', description='A simple benchmark case', action=benchcase),
-        exception=TypeError)),
+        validate_result=lambda case: case.group == 'default',
+        assertion=Assert.ISINSTANCE,
+        expected=Case)),
     idspec("INIT_004", TestAction(
-        name="Missing title parameter",
+        name="Missing title parameter - default to action function name",
         action=Case,
         kwargs=CaseKWArgs(group='example', description='Benchmark case', action=benchcase),
-        exception=TypeError)),
+        validate_result=lambda case: validate_description(case.title, benchcase.__name__),
+        assertion=Assert.ISINSTANCE,
+        expected=Case)),
     idspec("INIT_005", TestAction(
-        name="Missing description parameter",
+        name="Missing description parameter - default to docstring of action function",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', action=benchcase),
-        exception=TypeError)),
+        validate_result=lambda case: validate_description(case.description, benchcase.__doc__),
+        assertion=Assert.ISINSTANCE,
+        expected=Case)),
     idspec("INIT_006", TestAction(
         name="Missing action parameter",
         action=Case,
@@ -875,6 +896,13 @@ def test_casekwargs_matches_case_signature():
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           runner=SimpleRunner),
         validate_result=lambda obj: issubclass(obj.runner, SimpleRunner))),
+    idspec("INIT_065", TestAction(
+        name="Missing description parameter and docstring - default to '(no description)'",
+        action=Case,
+        kwargs=CaseKWArgs(group='example', title='benchcase', action=benchcase_with_no_docstring),
+        validate_result=lambda case: validate_description(case.description, '(no description)'),
+        assertion=Assert.ISINSTANCE,
+        expected=Case)),
 ])
 def test_case_init(testspec: TestAction) -> None:
     """Test the initialization of the Case class."""

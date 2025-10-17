@@ -42,7 +42,9 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None, argv: Optional[list[s
         parser.add_argument('--debug', action='store_true', help='Enable debug output')
         parser.add_argument('--progress', action='store_true', help='Enable progress output')
         parser.add_argument('--list', action='store_true', help='List all available benchmarks')
-        parser.add_argument('--run', nargs="+", default='all', metavar='<benchmark>', help='Run specific benchmarks')
+        parser.add_argument(
+            '--run', nargs="+", default='all', metavar='<benchmark>',
+            help='Run specific benchmarks selected by group name or "all" for all benchmarks (default: all)')
         parser.add_argument('--output_path', default='.benchmarks', metavar='<path>', type=pathlib.Path,
                             help='Output destination directory (default: .benchmarks)')
         session: Session = Session(args_parser=parser)

@@ -4,7 +4,8 @@ from __future__ import annotations
 from typing import Any, Callable, TYPE_CHECKING
 
 from .case import Case
-from .defaults import DEFAULT_WARMUP_ITERATIONS
+from .defaults import (DEFAULT_WARMUP_ITERATIONS, DEFAULT_ROUNDS, DEFAULT_MIN_TIME,
+                       DEFAULT_MAX_TIME, DEFAULT_ITERATIONS)
 from .runners import SimpleRunner
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from .validators import (validate_positive_int, validate_non_negative_int, validate_positive_float,
@@ -21,13 +22,14 @@ _DECORATOR_CASES: list[Case] = []
 
 def benchmark(
     *,
-    group: str,
+    group: str = 'default',
     title: str | None = None,
     description: str | None = None,
-    iterations: int | None = None,
+    iterations: int = DEFAULT_ITERATIONS,
     warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
-    min_time: float | None = None,
-    max_time: float | None = None,
+    rounds: int = DEFAULT_ROUNDS,
+    min_time: float = DEFAULT_MIN_TIME,
+    max_time: float = DEFAULT_MAX_TIME,
     variation_cols: dict[str, str] | None = None,
     kwargs_variations: dict[str, list[Any]] | None = None,
     options: list[ReporterOption] | None = None,
@@ -36,6 +38,8 @@ def benchmark(
 ) -> Callable:
     """
     A decorator to register a function as a benchmark case.
+
+    This adds the decorated function as a benchmark case to a global registry.
 
     This simplifies creating a `Case` by wrapping the decorated function.
     The decorated function should contain the code to be benchmarked.
@@ -54,36 +58,78 @@ def benchmark(
     n is included to allow weighting of the benchmark case when using
     runners that support it.
 
+    A minimal example:
+
+    ```python
+    from simplebench import benchmark, main
+
+
+    @benchmark
+    def addition_benchmark():
+        '''A simple addition benchmark.'''
+        sum(range(1000))
+
+
+    if __name__ == '__main__':
+        main()
+    ```
+
     Args:
-        group (str): The group name for the benchmark case.
-        title (str | None): The title of the benchmark case. Defaults to the function name.
-        description (str | None): A description for the case. Defaults to the function's docstring.
-        iterations (int | None): The minimum number of iterations to run for the benchmark.
-                If None, uses the Case default. See `Case.iterations`.
-        warmup_iterations (int): The number of warmup iterations to run before the benchmark.
-                See `Case.warmup_iterations`.
-        min_time (float | None): The minimum time in seconds to run the benchmark.
-                If None, uses the Case default. See `Case.min_time`.
-        max_time (float | None): The maximum time in seconds to run the benchmark.
-                If None, uses the Case default. See `Case.max_time`.
-        variation_cols (dict[str, str] | None): See `Case.variation_cols`.
-        kwargs_variations (dict[str, list[Any]] | None): See `Case.kwargs_variations`.
-        options (list[ReporterOption] | None): See `Case.options`.
-        n (int, default=1): The 'n' weighting of the benchmark case.
-        use_field_for_n (str | None): If provided, use the value of this field from kwargs_variations
+        group (str, default='default'): The benchmark reporting group to which the benchmark case belongs
+            for selection and reporting purposes. It is used to categorize and filter benchmark cases.
+            Cannot be blank.
+        title (Optional[str], default=None): The title of the benchmark case. Uses the function
+                name if None. Cannot be blank.
+        description (Optional[str], default=None): A description for the case.
+                Uses the function's docstring if None or '(no description)' if there is no docstring.
+                Cannot be blank.
+        iterations (int, default=`DEFAULT_WARMUP_ITERATIONS`): The minimum number of iterations to run for
+                the benchmark.
+        warmup_iterations (int, default=`DEFAULT_WARMUP_ITERATIONS`): The number of warmup iterations
+                to run before the benchmark.
+        rounds (int, default=`DEFAULT_ROUNDS`): The number of rounds to run the benchmark within each
+                iteration.
+        min_time (int | float, default=`DEFAULT_MIN_TIME`): The minimum time in seconds to run the benchmark.
+                Must be a positive number.
+        max_time (int | float, default=`DEFAULT_MAX_TIME`): The maximum time in seconds to run the benchmark.
+                Must be a positive number greater than min_time.
+        variation_cols (Optional[dict[str, str]], default=None): kwargs to be used for cols to denote kwarg
+                variations. Each key is a keyword argument name, and the value is the column label to use for that
+                argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
+                added to the output of reporters that support them as columns of data with the specified labels.
+
+                If None, an empty dict is used.
+        kwargs_variations (Optional[dict[str, list[Any]]], default=None): A mapping of keyword argument key names to
+                a list of possible values for that argument. Default is {}. When tests are run, the benchmark
+                will be executed for each combination of the specified keyword argument variations. The action
+                function will be called with a `bench` parameter that is an instance of the runner and the
+                keyword arguments for the current variation.
+
+                If None, an empty dict is used.
+        options (Optional[list[ReporterOption], default=None): A list of additional options for the benchmark case.
+                Each option is an instance of ReporterOption or a subclass of ReporterOption.
+                Reporter options can be used to customize the output of the benchmark reports for
+                specific reporters. Reporters are responsible for extracting applicable ReporterOptions
+                from the list of options themselves.
+        n (int, default=1): The 'n' weighting of the benchmark case. Must be a positive integer.
+        use_field_for_n (Optional[str], default=None): If provided, use the value of this field from kwargs_variations
             to set 'n' dynamically for each variation.
 
     Returns:
-        A decorator that registers the function and returns it unmodified.
+        A decorator that registers the function for benchmarking and returns it unmodified.
 
     Raises:
         SimpleBenchTypeError: If any argument is of an incorrect type.
         SimpleBenchValueError: If any argument has an invalid value.
     """
+    if group is None:
+        group = 'default'
     group = validate_non_blank_string(group, 'group',
                                       ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE,
                                       ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE)
 
+    # we can't fully validate title and description yet if they are None
+    # because they will be inferred later from the function being decorated
     if title is not None:
         title = validate_non_blank_string(title, 'title',
                                           ErrorTag.BENCHMARK_DECORATOR_TITLE_TYPE,
@@ -93,24 +139,26 @@ def benchmark(
         description = validate_non_blank_string(description, 'description',
                                                 ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_TYPE,
                                                 ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_VALUE)
-    if iterations is not None:
-        iterations = validate_positive_int(iterations, 'iterations',
-                                           ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE,
-                                           ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE)
+
+    iterations = validate_positive_int(iterations, 'iterations',
+                                       ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE,
+                                       ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE)
 
     warmup_iterations = validate_non_negative_int(warmup_iterations, 'warmup_iterations',
                                                   ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_TYPE,
                                                   ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_VALUE)
 
-    if min_time is not None:
-        min_time = validate_positive_float(min_time, 'min_time',
-                                           ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE,
-                                           ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_VALUE)
+    rounds = validate_positive_int(rounds, 'rounds',
+                                   ErrorTag.BENCHMARK_DECORATOR_ROUNDS_TYPE,
+                                   ErrorTag.BENCHMARK_DECORATOR_ROUNDS_VALUE)
 
-    if max_time is not None:
-        max_time = validate_positive_float(max_time, 'max_time',
-                                           ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE,
-                                           ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_VALUE)
+    min_time = validate_positive_float(min_time, 'min_time',
+                                       ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE,
+                                       ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_VALUE)
+
+    max_time = validate_positive_float(max_time, 'max_time',
+                                       ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE,
+                                       ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_VALUE)
 
     n = validate_positive_int(n, 'n',
                               ErrorTag.BENCHMARK_DECORATOR_N_TYPE,
@@ -145,7 +193,7 @@ def benchmark(
 
             Args:
                 _runner (SimpleRunner): The runner executing the benchmark.
-                **kwargs: Any keyworsd arguments from `kwargs_variations`.
+                **kwargs: Any keyword arguments from `kwargs_variations`.
             """
             # The designated use_field_for_n field will always be present
             # in kwargs if specified due to prior validation.
@@ -153,23 +201,29 @@ def benchmark(
             return bench.run(action=func, n=n_for_run, kwargs=kwargs)
 
         # Create the Case instance, using sensible defaults from the function.
-        case_kwargs = {
-            'group': group,
-            'title': title or func.__name__,
-            'action': case_action_wrapper,
-            'description': description or func.__doc__ or '(no description)',
-            'variation_cols': variation_cols or {},
-            'kwargs_variations': kwargs_variations or {},
-            'options': options or [],
-        }
-        if iterations is not None:
-            case_kwargs['iterations'] = iterations
-        if min_time is not None:
-            case_kwargs['min_time'] = min_time
-        if max_time is not None:
-            case_kwargs['max_time'] = max_time
+        if title is None:
+            inferred_title = func.__name__
+        else:
+            inferred_title = title
+        if description is None:
+            inferred_description = '(no description)'if func.__doc__ is None else func.__doc__
+        else:
+            inferred_description = description
 
-        case = Case(**case_kwargs)
+        case = Case(
+            group=group,
+            title=inferred_title,
+            action=case_action_wrapper,
+            description=inferred_description,
+            iterations=iterations,
+            warmup_iterations=warmup_iterations,
+            rounds=rounds,
+            min_time=min_time,
+            max_time=max_time,
+            variation_cols=variation_cols,
+            kwargs_variations=kwargs_variations,
+            options=options,
+        )
 
         # Add the created case to the global registry.
         _DECORATOR_CASES.append(case)

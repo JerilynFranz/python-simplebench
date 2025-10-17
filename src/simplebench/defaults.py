@@ -2,6 +2,7 @@
 """constants for simplebenchmark."""
 import time
 
+
 # Note: The following constants are defined here for easy access and modification.
 # They are used throughout the SimpleBench framework.
 

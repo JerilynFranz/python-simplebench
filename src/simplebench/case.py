@@ -76,13 +76,37 @@ class Case(ICase):
     of Results objects. Each Results object corresponds to a specific combination of
     keyword argument variations.
 
+    Minimal example:
+    ```python
+    from simplebench import Case, SimpleRunner, Results, main
+
+
+    def my_benchmark_action(bench: SimpleRunner, **kwargs) -> Results:
+        # Perform benchmark action here
+        def benchmark_operation():
+            sum(range(1000))  # Example operation to benchmark
+
+        return bench.run(benchmark_operation)
+
+
+    if __name__ == '__main__':
+        cases_list: list[Case] = [
+            Case(action=my_benchmark_action)
+        ]
+        main(cases_list)
+    ```
+
     Properties:
-        group (str): The benchmark reporting group to which the benchmark case belongs.
-        title (str): The name of the benchmark case.
-        description (str): A brief description of the benchmark case.
         action (ActionRunner): The function to perform the benchmark. This function must
             accept a `bench` parameter of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
             It must return a Results object.
+        group (str): The benchmark reporting group to which the benchmark case belongs for selection
+            and reporting purposes. Cannot be blank. It is used to categorize and filter benchmark cases.
+        title (str): The name of the benchmark case. If not specified, defaults to the name of the action function.
+            Cannot be blank.
+        description (str): A brief description of the benchmark case. If not specified, defaults to the
+            docstring of the action function or '(no description)' if no docstring is available.
+            Cannot be blank.
         iterations (int): The minimum number of iterations to run for the benchmark.
         rounds (int): The number of rounds to run for the benchmark for each iteration. Rounds are
             multiple runs of the entire benchmark to get a better average for an iteration. Each iteration will
@@ -112,7 +136,7 @@ class Case(ICase):
             accept them.
         expanded_kwargs_variations (list[dict[str, Any]]): A list of all combinations of keyword argument
             variations.
-        runner (Optional[type[SimpleRunner]]): A custom runner class for the benchmark.
+        runner (type[SimpleRunner] | None): A custom runner class for the benchmark.
             If None, the default SimpleRunner is used.  (default: None)
 
             A custom runner class must be a subclass of SimpleRunner and must have a method
@@ -135,10 +159,10 @@ class Case(ICase):
                  '_callback', '_results', '_options')
 
     def __init__(self, *,
-                 group: str,
-                 title: str,
-                 description: str,
                  action: ActionRunner,
+                 group: str = 'default',
+                 title: Optional[str] = None,
+                 description: Optional[str] = None,
                  iterations: int = DEFAULT_ITERATIONS,
                  warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
                  rounds: int = DEFAULT_ROUNDS,
@@ -149,48 +173,65 @@ class Case(ICase):
                  runner: Optional[type[SimpleRunner]] = None,
                  callback: Optional[ReporterCallback] = None,
                  options: Optional[list[ReporterOption]] = None) -> None:
-        """Constructor for Case.
+        """Constructor for Case. This defines a benchmark case.
+
+        The only REQUIRED parameter is `action`.
 
         Args:
-            group (str): The benchmark reporting group to which the benchmark case belongs.
-            title (str): The name of the benchmark case.
-            description (str): A brief description of the benchmark case.
-            action (Callable[..., Results]): The function to perform the benchmark. This function must
-                accept a `bench` parameter of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
-                It must return a Results object.
-            iterations (int): The minimum number of iterations to run for the benchmark.
-                (default: 20 - DEFAULT_ITERATIONS)
-            warmup_iterations (int): The number of warmup iterations to run before the benchmark.
-                (default: 10 - DEFAULT_WARMUP_ITERATIONS)
-            rounds (int): The number of rounds to run for the benchmark. Rounds are multiple runs of
-                the entire benchmark to get a better average. Each round will run the specified
-                number of iterations. (default: 1 - DEFAULT_ROUNDS)
-            min_time (float | int): The minimum time for the benchmark in seconds.
-                (default: 5.0 seconds - DEFAULT_MIN_TIME)
-            max_time (float | int): The maximum time for the benchmark in seconds.
-                (default: 20.0 seconds - DEFAULT_MAX_TIME)
-            variation_cols (dict[str, str]): kwargs to be used for cols to denote kwarg variations.
-                Each key is a keyword argument name, and the value is the column label to use for that argument.
-                (default: None)
-            kwargs_variations (dict[str, list[Any]]):
-                Variations of keyword arguments for the benchmark.
-                Each key is a keyword argument name, and the value is a list of possible values.
-                (default: None)
-            runner (Optional[type[SimpleRunner]]): A custom runner class for the benchmark.
-                If None, the default SimpleRunner is used. (default: None)
-                The custom runner class must be a subclass of SimpleRunner and must have a method
+            action (ActionRunner): The function to perform the benchmark. This function must
+                accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
+
+                See the `ActionRunner` protocol for the exact signature required.
+
+                It must return a `Results` object.
+            group (str, default='default'): The benchmark reporting group to which the benchmark case belongs.
+            title (Optional[str], default=None): The title of the benchmark case. If None, the name of the action
+                function will be used. Cannot be blank.
+            description (Optional[str], default=None): A brief description of the benchmark case. If None,
+                the docstring of the action function will be used, or '(no description)' if no docstring
+                is available. Cannot be blank.
+            iterations (int, default=`DEFAULT_ITERATIONS`): The minimum number of iterations to run for
+                the benchmark.
+            warmup_iterations (int, default=`DEFAULT_WARMUP_ITERATIONS`): The number of warmup iterations
+                to run before the benchmark.
+            rounds (int, default=`DEFAULT_ROUNDS`): The number of rounds to run for the benchmark.
+                Rounds are multiple runs of calls to the action within an iteration to mitigate timer
+                quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
+                functions are called only once per iteration (all rounds in the same iteration share the same
+                setup/teardown context).
+            min_time (float | int, default=`DEFAULT_MIN_TIME`): The minimum time for the benchmark in seconds.
+            max_time (float | int, default=`DEFAULT_MAX_TIME`): The maximum time for the benchmark in seconds.
+            variation_cols (Optional[dict[str, str]], default=None): kwargs to be used for cols to denote kwarg
+                variations. Each key is a keyword argument name, and the value is the column label to use for that
+                argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
+                added to the output of reporters that support them as columns of data with the specified labels.
+
+                If None, an empty dict is used.
+            kwargs_variations (Optional[dict[str, list[Any]]], default=None): A mapping of keyword argument key names to
+                a list of possible values for that argument. Default is {}. When tests are run, the benchmark
+                will be executed for each combination of the specified keyword argument variations. The action
+                function will be called with a `bench` parameter that is an instance of the runner and the
+                keyword arguments for the current variation.
+
+                If None, an empty dict is used.
+            runner (type[SimpleRunner], default=SimpleRunner): A custom runner class for the benchmark.
+
+                Any custom runner classes must be a subclass of SimpleRunner and must have a method
                 named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
+
                 The action function will be called with a `bench` parameter that is an instance of the
                 custom runner.
+
                 It may also accept additional parameters to the run method as needed. If additional
                 parameters are needed for the custom runner, they will need to be passed to the run
                 method as keyword arguments.
+
                 No support is provided for passing additional parameters to a custom runner from the @benchmark
                 decorator.
-            callback (ReporterCallback):
+            callback (Optional[ReporterCallback], default=None):
                 A callback function for additional processing of the report. The function should accept
                 four arguments: the Case instance, the Section, the Format, and the generated report data.
-                Leave as None if no callback is needed. (default: None)
+
                 The callback function will be called with the following arguments:
                     case (Case): The `Case` instance processed for the report.
                     section (Section): The `Section` of the report.
@@ -198,25 +239,33 @@ class Case(ICase):
                     output (Any): The generated report data. Note that the actual type of this data will
                         depend on the Format specified for the report and the type generated by the
                         reporter for that Format
-            options (list[ReporterOption]): A list of additional options for the benchmark case.
+
+                Omit if no callback is needed by a reporter.
+
+            options (Optional[list[ReporterOption], default=None): A list of additional options for the benchmark case.
                 Each option is an instance of ReporterOption or a subclass of ReporterOption.
                 Reporter options can be used to customize the output of the benchmark reports for
                 specific reporters. Reporters are responsible for extracting applicable ReporterOptions
-                from the list of options themselves. (default: [])
+                from the list of options themselves.
+
+                If None, an empty list is used.
         """
         self._group = validate_non_blank_string(
                         group, "group",
                         ErrorTag.CASE_INVALID_GROUP_TYPE,
                         ErrorTag.CASE_INVALID_GROUP_VALUE)
+        self._action = Case.validate_action_signature(action)
+        title = action.__name__ if title is None else title  # type: ignore[attr-defined]
         self._title = validate_non_blank_string(
                         title, "title",
                         ErrorTag.CASE_INVALID_TITLE_TYPE,
                         ErrorTag.CASE_INVALID_TITLE_VALUE)
+        if description is None:
+            description = action.__doc__ if action.__doc__ else '(no description)'
         self._description = validate_non_blank_string(
                         description, "description",
                         ErrorTag.CASE_INVALID_DESCRIPTION_TYPE,
                         ErrorTag.CASE_INVALID_DESCRIPTION_VALUE)
-        self._action = Case.validate_action_signature(action)
         self._iterations = validate_positive_int(
                         iterations, "iterations",
                         ErrorTag.CASE_INVALID_ITERATIONS_TYPE,
@@ -417,7 +466,8 @@ class Case(ICase):
         external modification.
 
         Args:
-            value (dict[str, list[Any]] | None): The kwargs_variations dictionary to validate.
+            value (dict[str, list[Any]] | None, default={}): The kwargs_variations dictionary to validate.
+                Defaults to {} if None.
 
         Returns:
             dict[str, list[Any]]: A shallow copy of the validated kwargs_variations dictionary or {} if not provided.
@@ -468,7 +518,7 @@ class Case(ICase):
         """Validate the variation_cols dictionary.
 
         Args:
-            variation_cols (dict[str, str] | None): The variation_cols dictionary to validate.
+            variation_cols (dict[str, str] | None): The variation_cols dictionary to validate or None.
             kwargs_variations (dict[str, list[Any]]): The kwargs_variations dictionary to validate against.
 
         Returns:
@@ -724,7 +774,7 @@ class Case(ICase):
             if self.runner is not None and issubclass(self.runner, SimpleRunner):
                 runner: type[SimpleRunner] = self.runner
                 bench = runner(case=self, session=session, kwargs=kwargs)
-            elif session and session.default_runner:
+            elif session and session.default_runner is not None:
                 bench = session.default_runner(case=self, session=session, kwargs=kwargs)
             else:
                 bench = SimpleRunner(case=self, session=session, kwargs=kwargs)

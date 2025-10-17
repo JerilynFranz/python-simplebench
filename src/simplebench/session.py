@@ -33,9 +33,9 @@ class Session(ISession):
         output_path: (Optional[Path]): The output path for reports.
         console: (Console): A Rich Console instance for displaying output.
         verbosity: (Verbosity): Verbosity level for console output (default: Verbosity.NORMAL)
-        default_runner: (Optional[type[SimpleRunner]]): The default runner class to use for Cases
-            that do not specify a runner. If None, SimpleRunner will be used. (default: None)
-        show_progress: (bool): Whether to show progress bars during execution.
+        default_runner: (type[SimpleRunner]): The default runner class to use for Cases
+            that do not specify a runner. Defaults to `SimpleRunner`.
+        show_progress: (bool): Whether to show progress bars during execution. Defaults to False.
         progress: (Progress): Rich Progress instance for displaying progress bars. (read only)
         tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
         reporter_manager: (ReporterManager): The ReporterManager instance for managing reporters. (read only)
@@ -44,7 +44,7 @@ class Session(ISession):
                  *,
                  cases: Optional[Sequence[Case]] = None,
                  verbosity: Verbosity = Verbosity.NORMAL,
-                 default_runner: Optional[type[SimpleRunner]] = None,
+                 default_runner: type[SimpleRunner] | None = None,
                  args_parser: Optional[ArgumentParser] = None,
                  progress: bool = False,
                  output_path: Optional[Path] = None,
@@ -52,28 +52,29 @@ class Session(ISession):
         """Create a new Session.
 
         Args:
-            cases (Sequence[Case]): A Sequence of benchmark cases for the session (default: empty list).
-            verbosity (Verbosity): The verbosity level for console output (default: Verbosity.NORMAL)
-            default_runner (Optional[type[SimpleRunner]]): The default runner class to use for Cases
-                that do not specify a runner. If None, SimpleRunner will be used. (default: None)
-            args_parser (Optional[ArgumentParser]): The ArgumentParser instance for the session. If None,
-                a new ArgumentParser will be created. (default: None)
-            progress (bool): Whether to show progress bars during execution. (default: False)
-            output_path (Optional[Path]): The output path for reports. (default: None)
-            console: (Optional[Console]): A Rich Console instance for displaying output. If None, a new Console
-                will be created. (default: None)
+            cases (Optional[Sequence[Case]], default=None): A Sequence of benchmark cases for the session.
+                If None, an empty list will be created.
+            verbosity (Verbosity, default=Verbosity.NORMAL): The verbosity level for console output
+            default_runner (Optional[type[SimpleRunner], default=None): The default runner class to use
+                for Cases that do not specify a runner. If None, the default SimpleRunner is used.
+            args_parser (Optional[ArgumentParser], default=None): The ArgumentParser instance for the
+                session. If None, a new ArgumentParser will be automatically created.
+            progress (bool, default=False): Whether to show progress bars during execution.
+            output_path (Optional[Path], default=None): The output path for reports.
+            console: (Optional[Console], default=None): A Rich Console instance for displaying output. If None,
+                a new Console will be automatically created.
 
         Raises:
             SimpleBenchTypeError: If the arguments are of the wrong type.
         """
         # public read/write properties with private backing fields
         self.default_runner = default_runner
-        self.args_parser = args_parser if args_parser is not None else ArgumentParser()
-        self.cases = cases if cases is not None else []
-        self.verbosity = verbosity if verbosity is not None else Verbosity.NORMAL
-        self.show_progress = progress if progress is not None else False
+        self.args_parser = ArgumentParser() if args_parser is None else args_parser
+        self.cases = [] if cases is None else cases
+        self.verbosity = verbosity
+        self.show_progress = progress
         self.output_path = output_path
-        self.console = console if console is not None else Console()
+        self.console = Console() if console is None else console
 
         # private attributes
         self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity, console=self.console)
@@ -314,17 +315,25 @@ class Session(ISession):
 
     @property
     def default_runner(self) -> type[SimpleRunner] | None:
-        """The default runner class to use for Cases that do not specify a runner. If None,
-        SimpleRunner will be used."""
+        """The session scoped default runner class to use for Cases that do not specify a runner."""
         return self._default_runner
 
     @default_runner.setter
     def default_runner(self, value: type[SimpleRunner] | None) -> None:
-        """Set the default runner class to use for Cases that do not specify a runner.
+        """Set the session scoped default runner class to use for Cases that do not specify a runner.
+
+        Example:
+
+            ```python
+            from simplebench import Session
+            from mybenchmark.runners import MyCustomRunner
+
+            session = Session(default_runner=MyCustomRunner)
+            ```
 
         Args:
-            value (type[SimpleRunner] | None): The default runner class to use for Cases that do
-                not specify a runner. If None, SimpleRunner will be used.
+            value (type[SimpleRunner] | SimpleRunner): The default runner class to use for Cases that do
+                not specify a runner. Default is `SimpleRunner`
         Raises:
             SimpleBenchTypeError: If the value is not a subclass of SimpleRunner or None.
         """
