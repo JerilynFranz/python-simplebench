@@ -107,16 +107,18 @@ class Session(ISession):
             SimpleBenchTypeError: If the args_parser is not set.
         """
         if args is not None:
+            args = tuple(args)
             if not isinstance(args, Sequence):
                 raise SimpleBenchTypeError(
                     "'args' argument must either be None or a list of str: "
                     f"type of passed 'args' was {type(args).__name__}",
                     tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)
-            args = tuple(args)
+
             if not all(isinstance(arg, str) for arg in args):
                 raise SimpleBenchTypeError(
                     "'args' argument must either be None or a list of str: A non-str item was found in the passed list",
                     tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)
+
         self._args = self._args_parser.parse_args(args=args)
 
     @property
@@ -196,6 +198,20 @@ class Session(ISession):
             self._progress_tasks.stop()
             self._progress_tasks.clear()
 
+    def report_keys(self) -> list[str]:
+        """Get a list of report keys for all reports to be generated in this session.
+
+        Returns:
+            A list of report keys for all reports to be generated in this session.
+        """
+        report_keys: list[str] = []
+        for key in self._choices.all_choice_args():
+            # skip all Choices that are not set in self.args
+            if not getattr(self.args, key, None):
+                continue
+            report_keys.append(key)
+        return report_keys
+
     def report(self) -> None:
         """Generate reports for all benchmark cases in the session."""
 
@@ -209,15 +225,8 @@ class Session(ISession):
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
         platform_name = sanitize_filename(platform_id())
         processed_choices: set[str] = set()
-        n_reports: int = 0
-        report_keys: list[str] = []
-        for key in self._choices.all_choice_args():
-            # skip all Choices that are not set in self.args
-            if not getattr(self.args, key, None):
-                continue
-            n_reports += 1
-            report_keys.append(key)
-
+        report_keys: list[str] = self.report_keys()
+        n_reports = len(report_keys)
         self._progress_tasks.clear()
         task_name: str = 'reports'
         task: RichTask | None = None

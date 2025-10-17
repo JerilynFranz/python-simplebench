@@ -3,11 +3,13 @@
 from __future__ import annotations
 from argparse import Namespace, ArgumentParser
 import pathlib
+import sys
 from typing import Optional, Sequence, TYPE_CHECKING
 
 from rich.console import Console
 
 from .decorators import get_registered_cases
+from .exceptions import SimpleBenchTypeError, ErrorTag
 from .enums import Verbosity
 from .session import Session
 
@@ -16,7 +18,10 @@ if TYPE_CHECKING:
     from .case import Case
 
 
-def main(benchmark_cases: Optional[Sequence[Case]] = None, argv: Optional[list[str]] = None) -> int:
+def main(benchmark_cases: Optional[Sequence[Case]] = None,
+         *,
+         argv: Optional[list[str]] = None,
+         extra_args: Optional[list[str]] = None) -> int:
     """Main entry point for running benchmarks via a command-line interface.
 
     This function is responsible for setting up the command-line interface,
@@ -31,10 +36,31 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None, argv: Optional[list[s
     Args:
         benchmark_cases (Optional[Sequence[Case]]): A Sequence of SimpleBench.Case instances to be benchmarked.
         argv (Optional[list[str]]): A list of command-line arguments to parse. If None, defaults to sys.argv.
+        extra_args (Optional[list[str]]): Additional command-line arguments to include.
 
     Returns:
         An integer exit code.
     """
+    if extra_args is not None:
+        if not isinstance(extra_args, Sequence):
+            raise SimpleBenchTypeError(
+                "'extra_args' argument must either be None or a list of str: "
+                f"type of passed 'extra_args' was {type(extra_args).__name__}",
+                tag=ErrorTag.CLI_INVALID_EXTRA_ARGS_TYPE)
+        extra_args = list(extra_args)
+        if not all(isinstance(item, str) for item in extra_args):
+            raise SimpleBenchTypeError(
+                "'extra_args' argument must either be None or a list of str: "
+                "A non-str item was found in the passed list",
+                tag=ErrorTag.CLI_INVALID_EXTRA_ARGS_ITEM_TYPE)
+
+    if extra_args is not None:
+        if argv is None:
+            sys.argv.extend(extra_args)
+        else:
+            argv = list(argv)
+            argv.extend(extra_args)
+
     try:
         parser = ArgumentParser(description='Run benchmarks and output results in various formats.')
         parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
@@ -84,6 +110,12 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None, argv: Optional[list[s
             session.verbosity = Verbosity.DEBUG  # pyright: ignore[reportAttributeAccessIssue]
 
         session.show_progress = args.progress
+
+        report_keys: list[str] = session.report_keys()
+        if len(report_keys) == 0:
+            console.print('Error: No reporters selected. Please specify at least one reporter via command-line flags.')
+            parser.print_usage()
+            return 1
 
         if args.run:
             if 'all' in args.run:

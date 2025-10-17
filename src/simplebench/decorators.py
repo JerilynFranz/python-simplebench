@@ -21,8 +21,8 @@ _DECORATOR_CASES: list[Case] = []
 
 
 def benchmark(
-    *,
     group: str = 'default',
+    *,
     title: str | None = None,
     description: str | None = None,
     iterations: int = DEFAULT_ITERATIONS,
@@ -64,7 +64,7 @@ def benchmark(
     from simplebench import benchmark, main
 
 
-    @benchmark
+    @benchmark()
     def addition_benchmark():
         '''A simple addition benchmark.'''
         sum(range(1000))

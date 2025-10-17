@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Custom exceptions for the simplebench package."""
+# pylint: disable=too-many-lines
 import argparse
 from enum import Enum
 from sys import version_info
@@ -12,6 +13,11 @@ class ErrorTag(str, Enum):
     ErrorTags' are used to identify specific error conditions in the simplebench package.
     Tests use these tags to assert specific error condition paths.
     """
+    CLI_INVALID_EXTRA_ARGS_TYPE = "CLI_INVALID_EXTRA_ARGS_TYPE"
+    """Something other than a list of strings was passed to the CLI as the extra_args argument"""
+    CLI_INVALID_EXTRA_ARGS_ITEM_TYPE = "CLI_INVALID_EXTRA_ARGS_ITEM_TYPE"
+    """Something other than a string was found in the list passed to the CLI as the extra_args argument"""
+
     # @benchmark decorator tags
     BENCHMARK_DECORATOR_GROUP_TYPE = "BENCHMARK_DECORATOR_GROUP_TYPE"
     """Something other than a str was passed as the group"""
