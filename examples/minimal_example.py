@@ -2,7 +2,8 @@
 '''A minimal example of using simplebench.'''
 import sys
 
-from simplebench import benchmark, main
+import simplebench
+from simplebench import benchmark
 
 
 @benchmark
@@ -21,4 +22,4 @@ def string_concatenation_benchmark():
 
 if __name__ == '__main__':
     extra_args = None if len(sys.argv) > 1 else ['--progress', '--rich-table.console']
-    main(extra_args=extra_args)
+    simplebench.main(extra_args=extra_args)
