@@ -5,7 +5,7 @@ import sys
 from simplebench import benchmark, main
 
 
-@benchmark()
+@benchmark
 def addition_benchmark():
     '''A simple addition benchmark.'''
     sum(range(1000))

@@ -107,13 +107,12 @@ class Session(ISession):
             SimpleBenchTypeError: If the args_parser is not set.
         """
         if args is not None:
-            args = tuple(args)
             if not isinstance(args, Sequence):
                 raise SimpleBenchTypeError(
                     "'args' argument must either be None or a list of str: "
                     f"type of passed 'args' was {type(args).__name__}",
                     tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)
-
+            args = tuple(args)
             if not all(isinstance(arg, str) for arg in args):
                 raise SimpleBenchTypeError(
                     "'args' argument must either be None or a list of str: A non-str item was found in the passed list",

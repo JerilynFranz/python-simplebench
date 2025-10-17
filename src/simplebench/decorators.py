@@ -21,8 +21,8 @@ _DECORATOR_CASES: list[Case] = []
 
 
 def benchmark(
-    group: str = 'default',
-    *,
+    group: str | Callable[..., Any] = 'default',  # group can be the function when used without params
+    /, *,  # keyword-only parameters after this point
     title: str | None = None,
     description: str | None = None,
     iterations: int = DEFAULT_ITERATIONS,
@@ -64,14 +64,15 @@ def benchmark(
     from simplebench import benchmark, main
 
 
-    @benchmark()
+    @benchmark
     def addition_benchmark():
         '''A simple addition benchmark.'''
         sum(range(1000))
 
 
     if __name__ == '__main__':
-        main()
+        extra_args = None if len(sys.argv) > 1 else ['--progress', '--rich-table.console']
+    main(extra_args=extra_args)
     ```
 
     Args:
@@ -122,8 +123,11 @@ def benchmark(
         SimpleBenchTypeError: If any argument is of an incorrect type.
         SimpleBenchValueError: If any argument has an invalid value.
     """
-    if group is None:
+    func: Callable[..., Any] | None = None
+    if callable(group):  # decorator used without parameters
+        func = group
         group = 'default'
+
     group = validate_non_blank_string(group, 'group',
                                       ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE,
                                       ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE)
@@ -231,7 +235,9 @@ def benchmark(
         # Return the original function so it remains callable.
         return func
 
-    return decorator
+    if func:  # @benchmark used without parameters
+        return decorator(func)
+    return decorator  # @benchmark(...) used with parameters
 
 
 def get_registered_cases() -> list[Case]:

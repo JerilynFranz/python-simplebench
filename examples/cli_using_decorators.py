@@ -7,7 +7,7 @@ from simplebench.reporters.graph import GraphOptions
 
 
 @benchmark(
-    group='example',
+    'example',
     n=100,
     options=[GraphOptions(output_format='png')]
 )
@@ -17,7 +17,7 @@ def benchcase_one():
 
 
 @benchmark(
-    group='example2',
+    'example2',
     title='benchcase_two',
     description='A simple benchmark case function (fake second) via decorators.',
     n=100,

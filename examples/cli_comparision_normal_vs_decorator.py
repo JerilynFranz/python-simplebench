@@ -9,7 +9,7 @@ from simplebench.results import Results
 
 
 @benchmark(
-    group='example',
+    'example',
     title='benchcase one',
     description='A simple benchmark case function via decorators.',
     n=100,

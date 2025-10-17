@@ -27,7 +27,7 @@ def benchcase_four(bench: SimpleRunner, **kwargs: Any) -> Results:
 
 
 @benchmark(
-    group='example3',
+    'example3',
     title='sum_numbers',
     description='A benchmark case function that sums numbers up to n.',
     min_time=1.0,
