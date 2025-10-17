@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Decorators for simplifying benchmark case creation."""
 from __future__ import annotations
-from typing import Any, Callable, TYPE_CHECKING
+from typing import Any, Callable, TYPE_CHECKING, TypeVar, ParamSpec
 
 from .case import Case
 from .defaults import (DEFAULT_WARMUP_ITERATIONS, DEFAULT_ROUNDS, DEFAULT_MIN_TIME,
@@ -19,6 +19,9 @@ if TYPE_CHECKING:
 _DECORATOR_CASES: list[Case] = []
 """List to store benchmark cases registered via the @benchmark decorator."""
 
+P = ParamSpec('P')
+R = TypeVar('R')
+
 
 def benchmark(
     group: str | Callable[..., Any] = 'default',  # group can be the function when used without params
@@ -35,11 +38,16 @@ def benchmark(
     options: list[ReporterOption] | None = None,
     n: int = 1,
     use_field_for_n: str | None = None
-) -> Callable:
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     A decorator to register a function as a benchmark case.
 
-    This adds the decorated function as a benchmark case to a global registry.
+    This module uses a global registry to store benchmark cases created via the
+    @benchmark decorator. This enables a streamlined workflow where users simply
+    decorate functions and call main().
+
+    Note: Importing a module that uses @benchmark will register its cases globally.
+    For testing, use clear_registered_cases() to reset state between tests.
 
     This simplifies creating a `Case` by wrapping the decorated function.
     The decorated function should contain the code to be benchmarked.
@@ -81,7 +89,7 @@ def benchmark(
             Cannot be blank. The group parameter is positional-only. All other parameters must be passed as keyword
             arguments. When the decorator is used without parameters, the group defaults to 'default'.
 
-            This has special handling to allow the decorator to be used without any parameters.
+            This has special handling to allow the decorator to be used easily without any parameters.
 
         title (Optional[str], default=None): The title of the benchmark case. Uses the function
                 name if None. Cannot be blank.
@@ -194,13 +202,13 @@ def benchmark(
 
     def decorator(func):
         """The actual decorator that wraps the user's function."""
-        def case_action_wrapper(bench: SimpleRunner,  **kwargs) -> Any:
+        def case_action_wrapper(bench: SimpleRunner, **kwargs) -> Any:
             """
             This wrapper becomes the `action` for the `Case`.
             It calls the user's decorated function inside `runner.run()`.
 
             Args:
-                _runner (SimpleRunner): The runner executing the benchmark.
+                bench (SimpleRunner): The benchmark runner executing the benchmark.
                 **kwargs: Any keyword arguments from `kwargs_variations`.
             """
             # The designated use_field_for_n field will always be present
