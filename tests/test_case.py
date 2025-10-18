@@ -903,6 +903,18 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         validate_result=lambda case: validate_description(case.description, '(no description)'),
         assertion=Assert.ISINSTANCE,
         expected=Case)),
+    idspec("INIT_066", TestAction(
+        name="Invalid rounds parameter (not an int)",
+        action=Case,
+        kwargs=CaseKWArgs(rounds='not_an_int', action=benchcase),  # type: ignore[arg-type]
+        exception=SimpleBenchTypeError,
+        exception_tag=ErrorTag.CASE_INVALID_ROUNDS_TYPE)),
+    idspec("INIT_067", TestAction(
+        name="Invalid rounds parameter (zero value)",
+        action=Case,
+        kwargs=CaseKWArgs(rounds=0, action=benchcase),
+        exception=SimpleBenchValueError,
+        exception_tag=ErrorTag.CASE_INVALID_ROUNDS_VALUE)),
 ])
 def test_case_init(testspec: TestAction) -> None:
     """Test the initialization of the Case class."""

@@ -5,12 +5,14 @@ from dataclasses import dataclass
 import json
 from io import StringIO
 from pathlib import Path
-from typing import Any, Callable, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from ..enums import Section
 from .interfaces import Reporter
-from ..utils import sanitize_filename, get_machine_info, sigfigs
 from .choices import Choice, Choices, Target, Format
+from ..enums import Section
+from ..protocols import ReporterCallback
+from ..utils import sanitize_filename, get_machine_info, sigfigs
+
 if TYPE_CHECKING:
     from ..case import Case
     from ..session import Session
@@ -18,7 +20,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class JSONExtras:
-    """Class for holding extra JSON reporter options."""
+    """Class for holding extra JSON reporter options in a Choice."""
     full_data: bool = False
     """ Whether to include full data in the JSON output, including all
     individual timing results and operation counts. Default is False, which
@@ -80,10 +82,9 @@ class JSONReporter(Reporter):
                    *,
                    case: Case,
                    choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,  # pylint: disable=unused-argument
-                   callback: Optional[Callable[[Case, Section, Format, Any], None]
-                                      ] = None  # pylint: disable=unused-argument
+                   path: Path | None = None,
+                   session: Session | None = None,  # pylint: disable=unused-argument
+                   callback: ReporterCallback | None = None,  # pylint: disable=unused-argument
                    ) -> None:
         """Output the benchmark results to a file as tagged JSON if available.
 
@@ -95,12 +96,10 @@ class JSONReporter(Reporter):
         Args:
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the JSON file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[Callable[[Case, Section, Format, Any], None]]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the JSON data as a string.
-                Leave as None if no callback is needed.
+            path (Path | None, default=None): The path to the directory where the JSON file(s) will be saved.
+            session (Session | None, default=None): The Session instance containing benchmark results.
+            callback (ReporterCallback | None, default=None): A callback function for additional processing
+                of the report.
 
         Return:
             None
@@ -130,7 +129,7 @@ class JSONReporter(Reporter):
                 json_text = jsonfile.read()
 
             if Target.CALLBACK in choice.targets and case.callback is not None:
-                case.callback(case, section, Format.JSON, json_text)
+                case.callback(case=case, section=section, output_format=Format.JSON, output=json_text)
 
             if Target.FILESYSTEM in choice.targets:
                 file_counter: int = 1
@@ -142,7 +141,7 @@ class JSONReporter(Reporter):
                 with file.open('w', encoding='utf-8') as json_file:
                     json_file.write(json_text)
 
-    def mean_change(self, first: Case, second: Case, section: Section) -> Optional[float]:
+    def mean_change(self, first: Case, second: Case, section: Section) -> float | None:
         """Compare two Case instances for a given section and return the change as a float ratio.
 
         The float ratio is calculated as (value2 - value1) / value1, where value1 and value2
@@ -160,10 +159,10 @@ class JSONReporter(Reporter):
         Args:
             first (Case): The first Case instance to compare.
             second (Case): The second Case instance to compare.
-            section (Section): The Section to compare (either OPS or TIMING).
+            section (Section): The Section to compare.
 
         Returns:
-            Optional[float]: The change between the mean for two cases for the specified section,
+            float | None: The change between the mean for two cases for the specified section,
             or None if the section is not present in either case or the numbers are incomparable.
         """
         value1 = first.section_mean(section)

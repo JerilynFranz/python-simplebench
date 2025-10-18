@@ -4,6 +4,9 @@ from __future__ import annotations
 import pytest
 
 from simplebench.decorators import clear_registered_cases, get_registered_cases, benchmark
+from simplebench.defaults import (
+    DEFAULT_ITERATIONS, DEFAULT_ROUNDS, DEFAULT_MIN_TIME, DEFAULT_MAX_TIME,
+    DEFAULT_WARMUP_ITERATIONS)
 from simplebench.enums import Verbosity
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.session import Session
@@ -603,6 +606,72 @@ def test_decorator_use_field_for_n_valid() -> None:
     expected_n_values: set[int] = set(sizes)
     actual_n_values: set[int] = set(result.n for result in test_case.results)
     assert actual_n_values == expected_n_values, "The n values in results do not match the expected sizes."
+
+
+def test_decorator_with_no_parameters() -> None:
+    """Test that the @benchmark decorator works correctly with no optional parameters."""
+    clear_registered_cases()
+
+    @benchmark
+    def no_parameters_function() -> int:
+        return 42
+
+    cases = get_registered_cases()
+    assert len(cases) == 1, "Expected exactly one registered case."
+
+    test_case = cases[0]
+    assert test_case.group == 'default', "Expected default group name to be 'default'."
+    assert test_case.title == 'no_parameters_function', (
+        "Expected default title to be the function name.")
+    assert test_case.iterations == DEFAULT_ITERATIONS, (
+        f"Expected default iterations to be {DEFAULT_ITERATIONS}.")
+    assert test_case.rounds == DEFAULT_ROUNDS, (
+        f"Expected default rounds to be {DEFAULT_ROUNDS}.")
+    assert test_case.min_time == DEFAULT_MIN_TIME, (
+        f"Expected default min_time to be {DEFAULT_MIN_TIME}.")
+    assert test_case.max_time == DEFAULT_MAX_TIME, (
+        f"Expected default max_time to be {DEFAULT_MAX_TIME}.")
+    assert test_case.warmup_iterations == DEFAULT_WARMUP_ITERATIONS, (
+        f"Expected default warmup_iterations to be {DEFAULT_WARMUP_ITERATIONS}.")
+    assert test_case.description == '(no description)', (
+        "Expected default description to be '(no description)'.")
+    assert callable(test_case.action), "Registered action is not callable."
+    assert test_case.variation_cols == {}, "Expected default variation_cols to be empty."
+    assert test_case.kwargs_variations == {}, "Expected default kwargs_variations to be empty."
+    assert test_case.options == [], "Expected default options to be empty."
+
+
+def test_decorator_with_empty_parameters() -> None:
+    """Test that the @benchmark() decorator works correctly with no optional parameters."""
+    clear_registered_cases()
+
+    @benchmark
+    def no_parameters_function() -> int:
+        return 42
+
+    cases = get_registered_cases()
+    assert len(cases) == 1, "Expected exactly one registered case."
+
+    test_case = cases[0]
+    assert test_case.group == 'default', "Expected default group name to be 'default'."
+    assert test_case.title == 'no_parameters_function', (
+        "Expected default title to be the function name.")
+    assert test_case.iterations == DEFAULT_ITERATIONS, (
+        f"Expected default iterations to be {DEFAULT_ITERATIONS}.")
+    assert test_case.rounds == DEFAULT_ROUNDS, (
+        f"Expected default rounds to be {DEFAULT_ROUNDS}.")
+    assert test_case.min_time == DEFAULT_MIN_TIME, (
+        f"Expected default min_time to be {DEFAULT_MIN_TIME}.")
+    assert test_case.max_time == DEFAULT_MAX_TIME, (
+        f"Expected default max_time to be {DEFAULT_MAX_TIME}.")
+    assert test_case.warmup_iterations == DEFAULT_WARMUP_ITERATIONS, (
+        f"Expected default warmup_iterations to be {DEFAULT_WARMUP_ITERATIONS}.")
+    assert test_case.description == '(no description)', (
+        "Expected default description to be '(no description)'.")
+    assert callable(test_case.action), "Registered action is not callable."
+    assert test_case.variation_cols == {}, "Expected default variation_cols to be empty."
+    assert test_case.kwargs_variations == {}, "Expected default kwargs_variations to be empty."
+    assert test_case.options == [], "Expected default options to be empty."
 
 
 if __name__ == "__main__":

@@ -38,7 +38,7 @@ def benchmark(
     options: list[ReporterOption] | None = None,
     n: int = 1,
     use_field_for_n: str | None = None
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+        ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     A decorator to register a function as a benchmark case.
 

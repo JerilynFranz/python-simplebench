@@ -3,9 +3,11 @@
 These functions raise appropriate exceptions with error tags from exceptions.py
 and return the validated and/or normalized value.
 """
-from typing import Sequence
+from typing import Any, Sequence, TypeVar, overload
 
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+
+T = TypeVar('T')
 
 
 def validate_non_blank_string(
@@ -257,6 +259,98 @@ def validate_non_negative_float(
     return float(value)
 
 
+@overload
+def validate_sequence_of_type(
+        value: Sequence[Any],
+        types: type[T],
+        field_name: str,
+        type_tag: ErrorTag,
+        value_tag: ErrorTag,
+        allow_empty: bool = True) -> list[T]: ...
+
+
+@overload
+def validate_sequence_of_type(
+        value: Sequence[Any],
+        types: tuple[type, ...],
+        field_name: str,
+        type_tag: ErrorTag,
+        value_tag: ErrorTag,
+        allow_empty: bool = True) -> list[Any]: ...
+
+
+def validate_sequence_of_type(
+        value: Sequence[Any],
+        types: type[T] | tuple[type, ...],
+        field_name: str,
+        type_tag: ErrorTag,
+        value_tag: ErrorTag,
+        allow_empty: bool = True) -> list[T] | list[Any]:
+    """Validate that a value is a sequence of specified type(s).
+
+    When a single type is provided, the return type is automatically inferred as list[T].
+    When multiple types are provided, the return type is list[Any], which allows the
+    caller to narrow the type with an explicit annotation.
+
+    Args:
+        value (Sequence[Any]): The sequence of values to validate.
+        types (type[T] | tuple[type, ...]): A single type or tuple of allowed types.
+        field_name (str): The name of the field being validated (for error messages).
+        type_tag (ErrorTag): The error tag to use for type errors.
+        value_tag (ErrorTag): The error tag to use for value errors.
+        allow_empty (bool): Whether to allow an empty sequence. Defaults to True.
+
+    Returns:
+        list[T] | list[Any]: For single type, returns list[T]. For multiple types,
+            returns list[Any] which can be narrowed with explicit type annotation.
+
+    Raises:
+        SimpleBenchTypeError: If the value is not a sequence or contains invalid types.
+        SimpleBenchValueError: If the sequence is empty and allow_empty is False.
+
+    Examples:
+        Single type (automatic inference):
+            names = validate_sequence_of_type(['Alice'], str, 'names', ...)
+            # Type: list[str]
+
+        Multiple types (manual narrowing):
+            mixed: list[str | int] = validate_sequence_of_type(
+                ['a', 1], (str, int), 'items', ...
+            )
+            # Type: list[str | int]
+    """
+    if not isinstance(value, Sequence) or isinstance(value, str):
+        raise SimpleBenchTypeError(
+            f'Invalid {field_name} type: {type(value).__name__}. '
+            f'Must be a sequence (list, tuple, etc.).',
+            tag=type_tag
+        )
+
+    if len(value) == 0 and not allow_empty:
+        raise SimpleBenchValueError(
+            f'Invalid {field_name}: sequence cannot be empty.',
+            tag=value_tag
+        )
+
+    # Format type names for error messages
+    if isinstance(types, tuple):
+        type_names = ' or '.join(t.__name__ for t in types)
+    else:
+        type_names = types.__name__
+
+    result: list[Any] = []
+    for i, item in enumerate(value):
+        if not isinstance(item, types):
+            raise SimpleBenchTypeError(
+                f'Invalid {field_name} element at index {i}: {type(item).__name__}. '
+                f'Must be {type_names}.',
+                tag=type_tag
+            )
+        result.append(item)
+
+    return result
+
+
 def validate_sequence_of_numbers(
         value: Sequence[int | float],
         field_name: str,
@@ -314,3 +408,59 @@ def validate_sequence_of_numbers(
                 tag=type_tag
             )
     return value
+
+
+def validate_sequence_of_str(
+        value: Sequence[Any],
+        field_name: str,
+        type_tag: ErrorTag,
+        value_tag: ErrorTag,
+        allow_empty: bool = True,
+        allow_blank: bool = True,
+        allow_whitespace: bool = True) -> list[str]:
+    """Validate that a value is a sequence of strings.
+
+    This function checks that the input is a sequence (list, tuple, etc.) of strings,
+    and that each string meets the specified criteria.
+
+    It can enforce that the sequence is not empty, and that individual strings are not blank
+    or do not contain any whitespace, based on the provided flags.
+
+    Args:
+        value (Sequence[Any]): The sequence of values to validate.
+        field_name (str): The name of the field being validated (for error messages).
+        type_tag (ErrorTag): The error tag to use for type errors.
+        value_tag (ErrorTag): The error tag to use for value errors.
+        allow_empty (bool): Whether to allow an empty sequence. Defaults to True.
+        allow_blank (bool): Whether to allow blank strings in the sequence. Defaults to True.
+        allow_whitespace (bool): Whether to allow strings that contain whitespace. Defaults to True.
+
+    Returns:
+        list[str]: The validated list of strings.
+
+    Raises:
+        SimpleBenchTypeError: If the value is not a sequence or contains non-string types.
+        SimpleBenchValueError: If the sequence is empty and allow_empty is False or an element is
+                blank and allow_blank is False.
+    """
+    list_of_str: list[str] = validate_sequence_of_type(
+                                value, str,
+                                field_name,
+                                type_tag,
+                                value_tag,
+                                allow_empty)
+    if not allow_blank:
+        for i, item in enumerate(list_of_str):
+            if item.strip() == '':
+                raise SimpleBenchValueError(
+                    f'Invalid {field_name} element at index {i}: cannot be blank or whitespace.',
+                    tag=value_tag
+                )
+    if not allow_whitespace:
+        for i, item in enumerate(list_of_str):
+            if any(c.isspace() for c in item):
+                raise SimpleBenchValueError(
+                    f'Invalid {field_name} element at index {i}: cannot contain whitespace characters.',
+                    tag=value_tag
+                )
+    return list_of_str

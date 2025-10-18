@@ -1,6 +1,5 @@
 #!python3
 '''A minimal example of using simplebench.'''
-import sys
 
 import simplebench
 from simplebench import benchmark
@@ -12,7 +11,8 @@ def addition_benchmark():
     sum(range(1000))
 
 
-@benchmark('string_ops', title='String Concatenation Benchmark')
+@benchmark('string_ops',
+           title='String Concatenation Benchmark')
 def string_concatenation_benchmark():
     '''A simple string concatenation benchmark.'''
     result = ''
@@ -21,5 +21,5 @@ def string_concatenation_benchmark():
 
 
 if __name__ == '__main__':
-    extra_args = None if len(sys.argv) > 1 else ['--progress', '--rich-table.console']
+    extra_args = ['--progress', '--rich-table.console']
     simplebench.main(extra_args=extra_args)

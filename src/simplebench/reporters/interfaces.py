@@ -6,6 +6,8 @@ from argparse import ArgumentParser
 from pathlib import Path
 from typing import Optional, TYPE_CHECKING
 
+from rich.console import Console
+
 from .metaclasses import IReporter, IChoices, IChoice
 from ..enums import Section, Target, Format
 from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
@@ -257,6 +259,7 @@ class Reporter(ABC, IReporter):
                 tag=ErrorTag.REPORTER_REPORT_INVALID_SESSION_ARG)
 
         # Only proceed if there are results to report
+        # TODO: THINK ABOUT THIS MORE
         results = case.results
         if not results:
             return
@@ -400,3 +403,47 @@ class Reporter(ABC, IReporter):
         Defined Choices can only include Formats that are declared in this set.
         """
         return self._formats
+
+    def target_filesystem(self, path: Path, output: str | bytes) -> None:
+        """Helper method to output report data to the filesystem.
+
+        Args:
+            path (Path): The path to the file where the output should be saved.
+            output (str | bytes): The report data to write to the file.
+        """
+        mode = 'wb' if isinstance(output, bytes) else 'w'
+        with path.open(mode) as file:
+            file.write(output)
+
+    def target_callback(self,
+                        callback: ReporterCallback,
+                        case: Case,
+                        section: Section,
+                        output_format: Format,
+                        output: str | bytes) -> None:
+        """Helper method to send report data to a callback function.
+
+        Args:
+            callback (ReporterCallback): The callback function to send the output to.
+            case (Case): The Case instance representing the benchmarked code.
+            section (Section): The Section of the report.
+            output_format (Format): The Format of the report.
+            output (str | bytes): The report data to send to the callback.
+
+        Returns:
+            None
+        """
+        if callback is not None:
+            callback(case=case, section=section, output_format=output_format, output=output)
+
+    def target_console(self, session: Session | None, output: str) -> None:
+        """Helper method to output report data to the console.
+
+        Args:
+            output (str): The report data to print to the console.
+
+        Returns:
+            None
+        """
+        console = session.console if session is not None else Console()
+        console.print(output)

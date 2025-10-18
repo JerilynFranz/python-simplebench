@@ -7,6 +7,7 @@ from typing import Any, Optional, Sequence, TYPE_CHECKING
 from .metaclasses import IChoice, IChoices, IReporter
 from ..enums import Section, Target, Format
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from ..validators import validate_sequence_of_str, validate_non_blank_string, validate_sequence_of_type
 
 
 if TYPE_CHECKING:
@@ -42,21 +43,33 @@ class Choice(IChoice):
     predefined reporting configurations without needing to create
     multiple Reporter subclasses.
 
-    Args:
-        reporter (Reporter): An instance of a Reporter subclass.
-        flags (Sequence[str]): A sequence of command-line flags associated with the choice.
+    Choices are normally created and registered with the ReporterManager
+    by the Reporter subclass itself during its initialization. The reporter
+    argument in the Choice constructor is expected to be initialized
+    with the instance of the Reporter subclass that is creating the Choice
+    instance. This establishes the association between the Choice and
+    the Reporter subclass that is creating it.
+
+    This implies that the Reporter subclass must be instantiated
+    before the Choice instances can be created. Therefore, the
+    typical pattern is for the Reporter subclass to create its Choice
+    instances in its __init__() method before calling the super().__init__() method
+    of the Reporter base class. This ensures that the Reporter subclass
+    instance is available to be passed as the reporter argument when
+    creating the Choice instances.
+
+    Attributes:
+        reporter (Reporter): The Reporter subclass instance associated with the choice.
+        flags (set[str]): A set of command-line flags associated with the choice.
         name (str): A unique name for the choice.
         description (str): A brief description of the choice.
-        sections (Sequence[Section]): A sequence of Section enums to include in the report.
-        targets (Sequence[Target]): A sequence of Target enums for output.
-        formats (Sequence[Format]): A sequence of Format enums for output.
-        extra (Any | None): Any additional metadata associated with the choice. Defaults to None.
+        sections (set[Section]): A set of Section enums to include in the report.
+        targets (set[Target]): A set of Target enums for output.
+        formats (set[Format]): A set of Format enums for output.
+        extra (Any | None): Any additional metadata associated with the choice.
 
-    Raises:
-        SimpleBenchTypeError: If any argument is of an incorrect type.
-        SimpleBenchValueError: If any argument has an invalid value (e.g., empty strings or empty sequences).
     """
-    def __init__(self,
+    def __init__(self, *,
                  reporter: Reporter,
                  flags: Sequence[str],
                  name: str,
@@ -64,19 +77,35 @@ class Choice(IChoice):
                  sections: Sequence[Section],
                  targets: Sequence[Target],
                  formats: Sequence[Format],
-                 extra: Optional[Any] = None) -> None:
+                 extra: Any = None) -> None:
+        """Construct a Choice instance.
+
+        Args:
+            reporter (Reporter): An instance of a Reporter subclass.
+            flags (Sequence[str]): A sequence of command-line flags associated with the choice.
+            name (str): A unique name for the choice.
+            description (str): A brief description of the choice.
+            sections (Sequence[Section]): A sequence of Section enums to include in the report.
+            targets (Sequence[Target]): A sequence of Target enums for output.
+            formats (Sequence[Format]): A sequence of Format enums for output.
+            extra (Any, default=None): Any additional metadata associated with the choice.
+
+        Raises:
+            SimpleBenchTypeError: If any argument is of an incorrect type.
+            SimpleBenchValueError: If any argument has an invalid value (e.g., empty strings or empty sequences).
+        """
         if not isinstance(reporter, IReporter):
             raise SimpleBenchTypeError(
                 "reporter must implement the Reporter interface",
-                tag=ErrorTag.CHOICE_INIT_INVALID_REPORTER_ARG)
+                tag=ErrorTag.CHOICE_INVALID_REPORTER_ARG_TYPE)
         self._reporter: Reporter = reporter
-        """The Reporter sub-class instance associated with the choice"""
+        """The Reporter subclass instance associated with the choice"""
 
-        if not isinstance(flags, Sequence) or not all(isinstance(f, str) for f in flags):
-            raise SimpleBenchTypeError(
-                "flags must be a sequence of strings",
-                tag=ErrorTag.CHOICE_INIT_INVALID_NAME_ARG)
-        self._flags: set[str] = set(flags)
+        self._flags: frozenset[str] = frozenset(validate_sequence_of_str(
+            flags, "flags",
+            ErrorTag.CHOICE_INVALID_FLAGS_ARG_TYPE,
+            ErrorTag.CHOICE_INVALID_FLAGS_ARGS_VALUE,
+            allow_empty=False, allow_blank=False, allow_whitespace=False))
         """Flags associated with the choice. These are used for command-line selection.
         They must be unique across all choices for all reporters. This is enforced
         by the ReporterManager when choices are registered.
@@ -90,59 +119,40 @@ class Choice(IChoice):
         help text for the flags when generating command-line help.
         """
 
-        if not isinstance(name, str):
-            raise SimpleBenchTypeError(
-                "Name must be a string",
-                tag=ErrorTag.CHOICE_INIT_INVALID_NAME_ARG)
-        if not name:
-            raise SimpleBenchValueError(
-                "Name cannot be an empty string",
-                tag=ErrorTag.CHOICE_INIT_EMPTY_STRING_NAME)
-        self._name: str = name
+        self._name: str = validate_non_blank_string(
+            name, "name",
+            ErrorTag.CHOICE_INVALID_NAME_ARG_TYPE,
+            ErrorTag.CHOICE_EMPTY_NAME_ARG_VALUE)
         """Name of the choice"""
 
-        if not isinstance(description, str):
-            raise SimpleBenchTypeError(
-                "Description must be a string",
-                tag=ErrorTag.CHOICE_INIT_INVALID_DESCRIPTION_ARG)
-        if not description:
-            raise SimpleBenchValueError(
-                "Description cannot be an empty string",
-                tag=ErrorTag.CHOICE_INIT_EMPTY_STRING_DESCRIPTION)
-        self._description: str = description
+        self._description: str = validate_non_blank_string(
+            description, "description",
+            ErrorTag.CHOICE_INVALID_DESCRIPTION_ARG_TYPE,
+            ErrorTag.CHOICE_EMPTY_DESCRIPTION_ARG_VALUE)
         """Description of the choice"""
 
-        if not isinstance(sections, Sequence) or not all(isinstance(s, Section) for s in sections):
-            raise SimpleBenchTypeError(
-                "Sections must be a sequence of Section enums",
-                tag=ErrorTag.CHOICE_INIT_INVALID_SECTIONS_ARG)
-        if not sections:
-            raise SimpleBenchValueError(
-                "Sections cannot be an empty sequence",
-                tag=ErrorTag.CHOICE_INIT_EMPTY_SECTIONS)
-        self._sections: set[Section] = set(sections)
+        self._sections: frozenset[Section] = frozenset(validate_sequence_of_type(
+            sections, Section,
+            "sections",
+            ErrorTag.CHOICE_INVALID_SECTIONS_ARG_TYPE,
+            ErrorTag.CHOICE_EMPTY_SECTIONS_ARG_VALUE,
+            allow_empty=False))
         """Sections included in the choice"""
 
-        if not isinstance(targets, Sequence) or not all(isinstance(t, Target) for t in targets):
-            raise SimpleBenchTypeError(
-                "Output targets must be a sequence of Target enums",
-                tag=ErrorTag.CHOICE_INIT_INVALID_TARGETS_ARG)
-        if not targets:
-            raise SimpleBenchValueError(
-                "Output targets cannot be an empty sequence",
-                tag=ErrorTag.CHOICE_INIT_EMPTY_TARGETS)
-        self._targets: set[Target] = set(targets)
+        self._targets: frozenset[Target] = frozenset(validate_sequence_of_type(
+            targets, Target,
+            "targets",
+            ErrorTag.CHOICE_INVALID_TARGETS_ARG_TYPE,
+            ErrorTag.CHOICE_EMPTY_TARGETS_ARG_VALUE,
+            allow_empty=False))
         """Output targets for the choice"""
 
-        if not isinstance(formats, Sequence) or not all(isinstance(f, Format) for f in formats):
-            raise SimpleBenchTypeError(
-                "Output formats must be a sequence of Format enums",
-                tag=ErrorTag.CHOICE_INIT_INVALID_FORMATS_ARG)
-        if not formats:
-            raise SimpleBenchValueError(
-                "Output formats cannot be an empty sequence",
-                tag=ErrorTag.CHOICE_INIT_EMPTY_FORMATS)
-        self._formats: set[Format] = set(formats)
+        self._formats: frozenset[Format] = frozenset(validate_sequence_of_type(
+            formats, Format,
+            "formats",
+            ErrorTag.CHOICE_INVALID_FORMATS_ARG_TYPE,
+            ErrorTag.CHOICE_EMPTY_FORMATS_ARG_VALUE,
+            allow_empty=False))
         """Output formats for the choice"""
 
         self._extra: Optional[Any] = extra
@@ -154,7 +164,7 @@ class Choice(IChoice):
         return self._reporter
 
     @property
-    def flags(self) -> set[str]:
+    def flags(self) -> frozenset[str]:
         """Flags associated with the choice. These are used for command-line selection.
         They must be unique across all choices for all reporters. This is enforced
         by the ReporterManager when choices are registered.
@@ -182,7 +192,7 @@ class Choice(IChoice):
         return self._description
 
     @property
-    def sections(self) -> set[Section]:
+    def sections(self) -> frozenset[Section]:
         """Sections included in the choice.
 
         These are the sections that the associated Reporter subclass
@@ -190,7 +200,7 @@ class Choice(IChoice):
         return self._sections
 
     @property
-    def targets(self) -> set[Target]:
+    def targets(self) -> frozenset[Target]:
         """Output targets for the choice.
 
         These are the output targets that the associated Reporter subclass
@@ -198,7 +208,7 @@ class Choice(IChoice):
         return self._targets
 
     @property
-    def formats(self) -> set[Format]:
+    def formats(self) -> frozenset[Format]:
         """Output formats for the choice.
 
         These are the output formats that the associated Reporter subclass
@@ -219,7 +229,7 @@ class Choice(IChoice):
 
     @property
     def extra(self) -> Any:
-        """A dictionary for any additional metadata associated with the choice."""
+        """Any additional metadata associated with the choice."""
         return self._extra
 
 
