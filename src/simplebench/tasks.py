@@ -103,9 +103,9 @@ class RichTask:
                 self._console.print(f"[DEBUG] Refreshed task '{self._name}' with ID {self._task_id}")
 
     def update(self,
-               completed: Optional[int | float] = None,
-               description: Optional[str] = None,
-               refresh: Optional[bool] = None) -> None:
+               completed: int | float | None = None,
+               description: str | None = None,
+               refresh: bool | None = None) -> None:
         """Update the task progress.
 
         If an attempt to update a terminated task is made, a
@@ -113,8 +113,8 @@ class RichTask:
 
         Args:
             completed (int | float): The number of completed steps.
-            description (Optional[str]): The description of the task.
-            refresh (Optional[bool]): Whether to refresh the progress display.
+            description (str | None): The description of the task.
+            refresh (bool | None): Whether to refresh the progress display.
 
         Raises:
             SimpleBenchTypeError: If any argument is of an incorrect type.

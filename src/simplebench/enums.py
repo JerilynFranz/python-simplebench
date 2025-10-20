@@ -1,9 +1,72 @@
 # -*- coding: utf-8 -*-
 """Various enums for SimpleBench."""
+import ast
+import inspect
 from enum import Enum
-from typing import Any
+from functools import partial
+from operator import is_
+from typing import Any, TypeVar
+
+E = TypeVar("E", bound=Enum)
 
 
+# Decorator to attach docstrings to enum members
+# See: https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
+def enum_docstrings(enum: type[E]) -> type[E]:
+    '''Attach docstrings to enum members.
+
+    Docstrings are string literals that appear directly below the enum member
+    assignment expression:
+
+    Example:
+        @enum_docstrings
+        class SomeEnum(Enum):
+            """Docstring for the SomeEnum enum"""
+
+            foo_member = "foo_value"
+            """Docstring for the foo_member enum member"""
+
+        SomeEnum.foo_member.__doc__  # 'Docstring for the foo_member enum member'
+
+    Args:
+        enum (type[Enum]): The enum class to process.
+    Returns:
+        The same enum class with member docstrings attached.
+    '''
+    try:
+        mod = ast.parse(inspect.getsource(enum))
+    except OSError:
+        # no source code available
+        return enum
+
+    if mod.body and isinstance(class_def := mod.body[0], ast.ClassDef):
+        # An enum member docstring is unassigned if it is the exact same object
+        # as enum.__doc__.
+        unassigned = partial(is_, enum.__doc__)
+        names = enum.__members__.keys()
+        member: E | None = None
+        for node in class_def.body:
+            match node:
+                case ast.Assign(targets=[ast.Name(id=name)]) if name in names:
+                    # Enum member assignment, look for a docstring next
+                    member = enum[name]
+                    continue
+
+                case ast.Expr(
+                    value=ast.Constant(value=str(docstring))
+                ) if member and unassigned(member.__doc__):
+                    # docstring immediately following a member assignment
+                    member.__doc__ = docstring
+
+                case _:
+                    pass
+
+            member = None
+
+    return enum
+
+
+@enum_docstrings
 class Section(str, Enum):
     """Categories for case sections.
 
@@ -25,6 +88,7 @@ class Section(str, Enum):
         return isinstance(item, Section) or item in self._value2member_map_
 
 
+@enum_docstrings
 class Verbosity(int, Enum):
     """Verbosity levels for console output."""
     QUIET = 0
@@ -49,6 +113,7 @@ class Verbosity(int, Enum):
     This is incompatible with quiet."""
 
 
+@enum_docstrings
 class Target(str, Enum):
     """Categories for different output targets.
 
@@ -71,6 +136,7 @@ class Target(str, Enum):
     """No output."""
 
 
+@enum_docstrings
 class Format(str, Enum):
     """Categories for different output formats."""
     PLAIN_TEXT = 'plain text'

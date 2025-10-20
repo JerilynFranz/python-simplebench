@@ -55,6 +55,52 @@ def _mock_action(**kwargs) -> None:  # pylint: disable=unused-argument
     return None
 
 
+class ProgressTracker:
+    """Helper to manage benchmark progress updates."""
+
+    def __init__(self, *,
+                 runner: SimpleRunner,
+                 task_name: str,
+                 progress_max: int | float = 100,
+                 description: str = 'Benchmarking') -> None:
+        """Initialize the ProgressTracker.
+
+        Args:
+            runner (SimpleRunner): The SimpleRunner instance.
+            task_name (str): The name of the progress task.
+            progress_max (int | float, default=100): The maximum value for progress completion.
+            description (str, default='Benchmarking'): The description for the progress task.
+        """
+        self._session: Session | None = runner.session
+        self._task: RichTask | None = None
+        if self._session and self._session.show_progress and self._session.tasks:
+            self._task = self._session.tasks.get(task_name)
+            if not self._task:
+                self._task = self._session.tasks.new_task(
+                    name=task_name,
+                    description=f'  [green]{description}[/green]',
+                    completed=0,
+                    total=progress_max)
+        if self._task:
+            self._task.reset()
+            self._task.update(
+                completed=5,
+                description=description)
+
+    def update(self, completed: int | float, description: str, refresh: bool | None = None) -> None:
+        """Update progress display."""
+        if self._task:
+            self._task.update(
+                completed=completed,
+                description=f'  [green]{description}[/green]',
+                refresh=refresh)
+
+    def stop(self) -> None:
+        """Stop the progress tracking."""
+        if self._task:
+            self._task.stop()
+
+
 class SimpleRunner():
     """A class to run benchmarks for various actions.
 
@@ -227,22 +273,12 @@ class SimpleRunner():
         gc.collect()
 
         progress_max: float = 100.0
-        task_name: str = 'case_runner'
-        task: RichTask | None = None
-        if self.session and self.session.show_progress and self.session.tasks:
-            task = self.session.tasks.get(task_name)
-            if not task:
-                task = self.session.tasks.new_task(
-                    name=task_name,
-                    description=f'[green] Benchmarking {group}',
-                    completed=0,
-                    total=progress_max)
-        if task:
-            task.reset()
-            task.update(
-                completed=5,
-                description=(f'[green] Benchmarking {group} (iteration {iteration_pass:<6d}; '
-                             f'time {0.00:<3.2f}s)'))
+        progress_tracker = ProgressTracker(
+            runner=self,
+            task_name='SimpleRunner:case_runner',
+            progress_max=progress_max,
+            description=f'Benchmarking {group} (iteration {0:<6d}; time {0.00:<3.2f}s)')
+
         timer_function = self._timer_function(self.case.rounds)
         total_elapsed: float = 0.0
         iterations_list: list[Iteration] = []
@@ -287,7 +323,9 @@ class SimpleRunner():
             # allocations made during the action.
             if callable(setup):
                 setup()
-            gc.collect()
+
+            if iteration_pass <= 1:
+                gc.collect()  # Only collect garbage before the first measured iteration
             tracemalloc.start()
             tracemalloc.reset_peak()
             start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
@@ -309,15 +347,15 @@ class SimpleRunner():
             wall_time = float(DEFAULT_TIMER())
 
             # Update progress display if showing progress
-            if task:
-                iteration_completion: float = progress_max * iteration_pass / iterations_min
-                wall_time_elapsed_seconds: float = (wall_time - time_start) * DEFAULT_INTERVAL_SCALE
-                time_completion: float = progress_max * (wall_time - time_start) / (min_stop_at - time_start)
-                progress_current = int(min(iteration_completion, time_completion))
-                task.update(completed=progress_current,
-                            description=(
-                                f'[green] Benchmarking {group} (iteration {iteration_pass:6d}; '
-                                f'time {wall_time_elapsed_seconds:<3.2f}s)'))
+            iteration_completion: float = progress_max * iteration_pass / iterations_min
+            wall_time_elapsed_seconds: float = (wall_time - time_start) * DEFAULT_INTERVAL_SCALE
+            time_completion: float = progress_max * (wall_time - time_start) / (min_stop_at - time_start)
+            progress_current = int(min(iteration_completion, time_completion))
+            progress_tracker.update(
+                completed=progress_current,
+                description=(
+                    f'Benchmarking {group} (iteration {iteration_pass:6d}; '
+                    f'time {wall_time_elapsed_seconds:<3.2f}s)'))
 
         benchmark_results = Results(
             group=group,
@@ -328,7 +366,6 @@ class SimpleRunner():
             iterations=iterations_list,
             total_elapsed=total_elapsed,
             extra_info={})
-        if task:
-            task.stop()
+        progress_tracker.stop()
 
         return benchmark_results

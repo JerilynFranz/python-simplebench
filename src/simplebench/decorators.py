@@ -192,13 +192,15 @@ def benchmark(
 
     if (isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict)):
         if use_field_for_n not in kwargs_variations:
-            raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator must "
-                                       f"match one of the kwargs_variations keys: {list(kwargs_variations.keys())}",
-                                       tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
+            raise SimpleBenchValueError(
+                "The 'use_field_for_n' parameter to the @benchmark decorator must "
+                f"match one of the kwargs_variations keys: {list(kwargs_variations.keys())}",
+                tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
         if not all(isinstance(v, int) and v > 0 for v in kwargs_variations[use_field_for_n]):
-            raise SimpleBenchValueError(f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
-                                        "must all be positive integers when used with 'use_field_for_n'.",
-                                        tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE)
+            raise SimpleBenchValueError(
+                f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
+                "must all be positive integers when used with 'use_field_for_n'.",
+                tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE)
 
     def decorator(func):
         """The actual decorator that wraps the user's function."""

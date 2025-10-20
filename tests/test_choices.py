@@ -16,7 +16,7 @@ from simplebench.enums import Section, Target, Format
 from simplebench.reporters import Reporter
 from simplebench.reporters.choices import Choices, Choice
 
-from .testspec import TestSpec, TestAction, idspec, Assert
+from .testspec import TestSpec, TestAction, TestGet, idspec, Assert, NO_EXPECTED_VALUE
 
 
 class NoDefaultValue:
@@ -207,7 +207,7 @@ def sample_reporter() -> Reporter:
             expected=Choice,
         )),
         idspec("INIT_003", TestAction(
-            name="Choice with missing formats argument- raises TypeError",
+            name="Choice with missing formats argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='A sample choice',
@@ -215,7 +215,7 @@ def sample_reporter() -> Reporter:
             exception=TypeError,
         )),
         idspec("INIT_004", TestAction(
-            name="Choice with empty list formats argument- raises SimpleBenchValueError",
+            name="Choice with empty list formats argument - raises SimpleBenchValueError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='A sample choice',
@@ -224,7 +224,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_EMPTY_FORMATS_ARG_VALUE,
         )),
         idspec("INIT_005", TestAction(
-            name="Choice with wrong type formats argument- raises SimpleBenchTypeError",
+            name="Choice with wrong type formats argument - raises SimpleBenchTypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='A sample choice',
@@ -243,7 +243,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_INVALID_FORMATS_ARG_TYPE,
         )),
         idspec("INIT_007", TestAction(
-            name="Choice with missing targets argument- raises TypeError",
+            name="Choice with missing targets argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 flags=['--sample'], name='sample', description='A sample choice',
@@ -251,7 +251,7 @@ def sample_reporter() -> Reporter:
             exception=TypeError,
         )),
         idspec("INIT_008", TestAction(
-            name="Choice with empty list targets argument- raises SimpleBenchValueError",
+            name="Choice with empty list targets argument - raises SimpleBenchValueError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='A sample choice',
@@ -260,7 +260,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_EMPTY_TARGETS_ARG_VALUE,
         )),
         idspec("INIT_009", TestAction(
-            name="Choice with wrong type targets argument- raises SimpleBenchTypeError",
+            name="Choice with wrong type targets argument - raises SimpleBenchTypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='A sample choice',
@@ -279,7 +279,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_INVALID_TARGETS_ARG_TYPE,
         )),
         idspec("INIT_011", TestAction(
-            name="Choice with missing sections argument- raises TypeError",
+            name="Choice with missing sections argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='A sample choice',
@@ -287,7 +287,7 @@ def sample_reporter() -> Reporter:
             exception=TypeError,
         )),
         idspec("INIT_012", TestAction(
-            name="Choice with empty list sections argument- raises SimpleBenchValueError",
+            name="Choice with empty list sections argument - raises SimpleBenchValueError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='A sample choice',
@@ -296,7 +296,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_EMPTY_SECTIONS_ARG_VALUE,
         )),
         idspec("INIT_013", TestAction(
-            name="Choice with wrong type sections argument- raises SimpleBenchTypeError",
+            name="Choice with wrong type sections argument - raises SimpleBenchTypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='A sample choice',
@@ -315,7 +315,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_INVALID_SECTIONS_ARG_TYPE,
         )),
         idspec("INIT_015", TestAction(
-            name="Choice with missing description argument- raises TypeError",
+            name="Choice with missing description argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample',
@@ -323,7 +323,7 @@ def sample_reporter() -> Reporter:
             exception=TypeError,
         )),
         idspec("INIT_016", TestAction(
-            name="Choice with blank string description argument- raises SimpleBenchValueError",
+            name="Choice with blank string description argument - raises SimpleBenchValueError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description='   ',
@@ -332,7 +332,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_EMPTY_DESCRIPTION_ARG_VALUE,
         )),
         idspec("INIT_017", TestAction(
-            name="Choice with wrong type description argument- raises SimpleBenchTypeError",
+            name="Choice with wrong type description argument - raises SimpleBenchTypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='sample', description=123,  # type: ignore[arg-type]
@@ -341,7 +341,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_INVALID_DESCRIPTION_ARG_TYPE,
         )),
         idspec("INIT_018", TestAction(
-            name="Choice with missing name argument- raises TypeError",
+            name="Choice with missing name argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], description='A sample choice',
@@ -349,7 +349,7 @@ def sample_reporter() -> Reporter:
             exception=TypeError,
         )),
         idspec("INIT_019", TestAction(
-            name="Choice with blank string name argument- raises SimpleBenchValueError",
+            name="Choice with blank string name argument - raises SimpleBenchValueError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name='   ', description='A sample choice',
@@ -358,7 +358,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_EMPTY_NAME_ARG_VALUE,
         )),
         idspec("INIT_020", TestAction(
-            name="Choice with wrong type name argument- raises SimpleBenchTypeError",
+            name="Choice with wrong type name argument - raises SimpleBenchTypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], name=123,  # type: ignore[arg-type]
@@ -368,7 +368,7 @@ def sample_reporter() -> Reporter:
             exception_tag=ErrorTag.CHOICE_INVALID_NAME_ARG_TYPE,
         )),
         idspec("INIT_021", TestAction(
-            name="Choice with missing flags argument- raises TypeError",
+            name="Choice with missing flags argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), name='sample', description='A sample choice',
@@ -432,4 +432,287 @@ def test_choice_initialization_with_kwargs(testspec: TestSpec):
     ChoiceKWArgs class. It checks that the attributes of the Choice instance
     match the expected values based on the provided keyword arguments.
     """
+    testspec.run()
+
+
+@cache
+def choice_instance(cache_id: str = 'default', *,  # pylint: disable=unused-argument
+                    name: str = 'mock', flags: Sequence[str] = ('--mock',)) -> Choice:
+    """Factory function to return the same mock Choice instance for testing."""
+    return Choice(
+        reporter=sample_reporter(),
+        flags=flags,
+        name=name,
+        description='A mock choice.',
+        sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON],
+        extra='mock_extra')
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec("PROPS_001", TestGet(
+            name="Choice reporter property",
+            attribute="reporter",
+            obj=choice_instance(),
+            assertion=Assert.IS,
+            expected=sample_reporter(),
+        )),
+        idspec("PROPS_002", TestGet(
+            name="Choice flags property",
+            attribute="flags",
+            obj=choice_instance(),
+            assertion=Assert.EQUAL,
+            expected=frozenset(['--mock']),
+        )),
+        idspec("PROPS_003", TestGet(
+            name="Choice name property",
+            attribute="name",
+            obj=choice_instance(),
+            assertion=Assert.EQUAL,
+            expected='mock',
+        )),
+        idspec("PROPS_004", TestGet(
+            name="Choice description property",
+            attribute="description",
+            obj=choice_instance(),
+            assertion=Assert.EQUAL,
+            expected='A mock choice.',
+        )),
+        idspec("PROPS_005", TestGet(
+            name="Choice sections property",
+            attribute="sections",
+            obj=choice_instance(),
+            assertion=Assert.EQUAL,
+            expected=frozenset([Section.OPS]),
+        )),
+        idspec("PROPS_006", TestGet(
+            name="Choice targets property",
+            attribute="targets",
+            obj=choice_instance(),
+            assertion=Assert.EQUAL,
+            expected=frozenset([Target.CONSOLE]),
+        )),
+        idspec("PROPS_007", TestGet(
+            name="Choice formats property",
+            attribute="formats",
+            obj=choice_instance(),
+            assertion=Assert.EQUAL,
+            expected=frozenset([Format.JSON]),
+        )),
+        idspec("PROPS_008", TestGet(
+            name="Choice extra property",
+            attribute="extra",
+            obj=choice_instance(),
+            assertion=Assert.EQUAL,
+            expected='mock_extra',
+        )),
+    ]
+)
+def test_choice_properties(testspec: TestSpec):
+    """Test Choice properties return expected values."""
+    testspec.run()
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec('INIT_001', TestAction(
+            name="Choices with a list of Choice instances",
+            action=Choices,
+            kwargs=ChoicesKWArgs(
+                choices=[
+                    choice_instance(),
+                ]),
+            validate_result=lambda result: len(result) == 1 and result['mock'] is choice_instance(),
+            assertion=Assert.ISINSTANCE,
+            expected=Choices)),
+        idspec('INIT_002', TestAction(
+            name="Missing choices argument - creates default empty Choices",
+            action=Choices,
+            kwargs=ChoicesKWArgs(),
+            validate_result=lambda result: len(result) == 0,
+            assertion=Assert.ISINSTANCE,
+            expected=Choices)),
+        idspec('INIT_003', TestAction(
+            name="Choices initialized using a different Choices instance",
+            action=Choices,
+            kwargs=ChoicesKWArgs(choices=Choices(choices=[choice_instance()])),
+            validate_result=lambda result: len(result) == 1 and result['mock'] is choice_instance(),
+            assertion=Assert.ISINSTANCE,
+            expected=Choices)),
+        idspec('INIT_004', TestAction(
+            name="Choices with invalid choices argument type - raises SimpleBenchTypeError",
+            action=Choices,
+            kwargs=ChoicesKWArgs(choices='not_a_sequence'),  # type: ignore[arg-type]
+            exception=SimpleBenchTypeError,
+            exception_tag=ErrorTag.CHOICES_INVALID_CHOICES_ARG_TYPE,
+        )),
+    ]
+)
+def test_choices_init(testspec: TestSpec):
+    """Test initializing Choices with various combinations of keyword arguments.
+
+    This test verifies that the Choices class can be initialized correctly
+    using different combinations of parameters provided through the
+    ChoicesKWArgs class. It checks that the attributes of the Choices instance
+    match the expected values based on the provided keyword arguments.
+    """
+    testspec.run()
+
+
+@cache
+def choices_instance(cache_id: str = "default", *,  # pylint: disable=unused-argument
+                     choices: Sequence[Choice] | Choices | None = None) -> Choices:
+    """Factory function to return a cached Choices instance for testing.
+
+    Args:
+        cache_id (str, default="default"):
+            An identifier to cache different Choices instances if needed.
+        choices (Sequence[Choice] | Choices | None, default=None):
+            A sequence of Choice instances or a Choices instance to initialize the Choices instance.
+    """
+    return Choices() if choices is None else Choices(choices=choices)
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec("ADD_001", TestAction(
+            name="Add valid Choice instance to Choices via choices.add(<keyword-argument>)",
+            obj=choices_instance('ADD_001'),
+            action=choices_instance('ADD_001').add,
+            kwargs={'choice': choice_instance()},
+            validate_obj=lambda choices: len(choices) == 1 and choices['mock'] is choice_instance(),
+            expected=NO_EXPECTED_VALUE,
+        )),
+        idspec("ADD_002", TestAction(
+            name="Add valid Choice instance to Choices via choices.add(<positional-argument>)",
+            obj=choices_instance('ADD_002'),
+            action=choices_instance('ADD_002').add,
+            args=[choice_instance()],
+            validate_obj=lambda choices: len(choices) == 1 and choices['mock'] is choice_instance(),
+            expected=NO_EXPECTED_VALUE,
+        )),
+        idspec("ADD_003", TestAction(
+            name="Add invalid type of object to Choices - raises SimpleBenchTypeError",
+            obj=choices_instance('ADD_003'),
+            action=choices_instance('ADD_003').add,
+            args=['not_a_choice'],  # type: ignore[arg-type]
+            exception=SimpleBenchTypeError,
+            exception_tag=ErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG_TYPE,
+        )),
+        idspec("ADD_004", TestAction(
+            name="Add different Choice name to Choices",
+            obj=choices_instance("ADD_004", choices=(choice_instance(
+                "ADD_004", name='unique_choice', flags=('--unique-choice',)),)),
+            action=choices_instance("ADD_004", choices=(choice_instance(
+                "ADD_004", name='unique_choice', flags=('--unique-choice',)),)).add,
+            args=[choice_instance(
+                "ADD_004", name='another_unique_choice', flags=('--another-unique-choice',))],
+            validate_obj=lambda choices: (
+                len(choices) == 2 and
+                choices['unique_choice'] is choice_instance(
+                    "ADD_004", name='unique_choice', flags=('--unique-choice',)) and
+                choices['another_unique_choice'] is choice_instance(
+                    "ADD_004", name='another_unique_choice', flags=('--another-unique-choice',))),
+            expected=NO_EXPECTED_VALUE,
+        )),
+        idspec("ADD_005", TestAction(
+            name="Add duplicate Choice to Choices - raises SimpleBenchValueError",
+            obj=choices_instance('ADD_005', choices=(choice_instance(),)),
+            action=choices_instance('ADD_005', choices=(choice_instance(),)).add,
+            args=[choice_instance()],
+            exception=SimpleBenchValueError,
+            exception_tag=ErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_NAME)
+        ),
+    ]
+)
+def test_choices_add_method(testspec: TestSpec) -> None:
+    """Test the Choices.add() method."""
+    testspec.run()
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec("ALL_CHOICE_ARGS_001", TestAction(
+            name="Get all Choice args from Choices with no choices (expect empty set)",
+            action=Choices().all_choice_args,
+            assertion=Assert.EQUAL,
+            expected=set(),
+        )),
+        idspec("ALL_CHOICE_ARGS_002", TestAction(
+            name="Get all Choice args from Choices with multiple choices",
+            action=Choices(choices=[
+                choice_instance('ALL_CHOICE_ARGS_002', name='choice_one', flags=('--one',)),
+                choice_instance('ALL_CHOICE_ARGS_002', name='choice_two', flags=('--two', '--deux')),
+                choice_instance('ALL_CHOICE_ARGS_002', name='choice_three', flags=('--three',)),
+                choice_instance('ALL_CHOICE_ARGS_002', name='choice_four', flags=('--fourth-item',)),
+            ]).all_choice_args,
+            assertion=Assert.EQUAL,
+            expected={'one', 'two', 'deux', 'three', 'fourth_item'},
+        )),
+    ])
+def test_choices_all_choice_args_method(testspec: TestSpec) -> None:
+    """Test the Choices.all_choice_args() method."""
+    testspec.run()
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec("ALL_CHOICE_FLAGS_001", TestAction(
+            name="Get all Choice flags from Choices with no choices (expect empty set)",
+            action=Choices().all_choice_flags,
+            assertion=Assert.EQUAL,
+            expected=set(),
+        )),
+        idspec("ALL_CHOICE_FLAGS_002", TestAction(
+            name="Get all Choice flags from Choices with multiple choices",
+            action=Choices(choices=[
+                choice_instance('ALL_CHOICE_FLAGS_002', name='choice_one', flags=('--one',)),
+                choice_instance('ALL_CHOICE_FLAGS_002', name='choice_two', flags=('--two', '--deux')),
+                choice_instance('ALL_CHOICE_FLAGS_002', name='choice_three', flags=('--three',)),
+                choice_instance('ALL_CHOICE_FLAGS_002', name='choice_four', flags=('--fourth-item',)),
+            ]).all_choice_flags,
+            assertion=Assert.EQUAL,
+            expected={'--one', '--two', '--deux', '--three', '--fourth-item'},
+        )),
+    ])
+def test_choices_all_choice_flags_method(testspec: TestSpec) -> None:
+    """Test the Choices.all_choice_flags() method."""
+    testspec.run()
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec("GET_CHOICE_FOR_ARG_001", TestAction(
+            name="Get Choice for existing arg",
+            action=Choices(choices=[
+                choice_instance('GET_CHOICE_FOR_ARG_001', name='choice_one', flags=('--one',)),
+                choice_instance('GET_CHOICE_FOR_ARG_001', name='choice_two', flags=('--two', '--deux')),
+            ]).get_choice_for_arg,
+            args=['one'],
+            assertion=Assert.IS,
+            expected=choice_instance('GET_CHOICE_FOR_ARG_001', name='choice_one', flags=('--one',)),
+        )),
+        idspec("GET_CHOICE_FOR_ARG_002", TestAction(
+            name="Get non-existing Choice arg (expect None)",
+            action=Choices(choices=[
+                choice_instance('GET_CHOICE_FOR_ARG_002', name='choice_one', flags=('--one',)),
+                choice_instance('GET_CHOICE_FOR_ARG_002', name='choice_two', flags=('--two', '--deux')),
+            ]).get_choice_for_arg,
+            args=['nonexistent'],
+            assertion=Assert.IS,
+            expected=None,
+        )),
+        idspec("GET_CHOICE_FOR_ARG_003", TestAction(
+            name="Get Choice with wrong type arg (raises SimpleBenchTypeError)",
+            action=Choices(choices=[
+                choice_instance('GET_CHOICE_FOR_ARG_003', name='choice_one', flags=('--one',)),
+                choice_instance('GET_CHOICE_FOR_ARG_003', name='choice_two', flags=('--two', '--deux')),
+            ]).get_choice_for_arg,
+            args=[123],  # type: ignore[arg-type]
+            exception=SimpleBenchTypeError,
+            exception_tag=ErrorTag.CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE,
+        )),
+    ])
+def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
+    """Test the Choices.get_choice_for_arg() method."""
     testspec.run()

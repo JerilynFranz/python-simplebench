@@ -3,10 +3,12 @@
 # pylint: disable=too-many-lines
 import argparse
 from enum import Enum
-from sys import version_info
 from typing import Any, Generic, TypeVar
 
+from .enums import enum_docstrings
 
+
+@enum_docstrings
 class ErrorTag(str, Enum):
     """Tags for error path identification for tests for the simplebench packages.
 
@@ -713,7 +715,7 @@ class ErrorTag(str, Enum):
     RICH_TASK_INIT_INVALID_NAME_ARG = "RICH_TASK_INIT_INVALID_NAME_ARG"
     """Something other than a string was passed to the RichTask() constructor"""
     RICH_TASK_INIT_INVALID_DESCRIPTION_ARG = "RICH_TASK_INIT_INVALID_DESCRIPTION_ARG"
-    """Something other than a string was passed to the RichTask() constructor"""
+    """Something other than a string or rich.Text was passed to the RichTask() constructor"""
     RICH_TASK_INIT_INVALID_PROGRESS_ARG = "RICH_TASK_INIT_INVALID_PROGRESS_ARG"
     """Something other than a Progress instance was passed to the RichTask() constructor"""
     RICH_TASK_INIT_EMPTY_STRING_NAME = "RICH_TASK_INIT_EMPTY_STRING_NAME"
@@ -785,9 +787,13 @@ class ErrorTag(str, Enum):
     """The formats arg cannot be an empty sequence"""
 
     # reporters.Choices() tags
-    CHOICES_INIT_INVALID_CHOICES_ARG_TYPE = "CHOICES_INIT_INVALID_CHOICES_ARG_TYPE"
-    """Something other than a Sequence of Choice instances was passed to the Choices() constructor"""
-    CHOICES_ADD_INVALID_CHOICE_ARG = "CHOICES_ADD_INVALID_CHOICE_ARG"
+    CHOICES_INVALID_CHOICES_ARG_TYPE = "CHOICES_INVALID_CHOICES_ARG_TYPE"
+    """Something other than a Sequence of Choice instances or a Choices instance was passed as the choices arg"""
+    CHOICES_INVALID_CHOICES_ARG_SEQUENCE_TYPE = "CHOICES_INVALID_CHOICES_ARG_SEQUENCE_TYPE"
+    """Something other than a Sequence was passed as the choices arg"""
+    CHOICES_INVALID_CHOICES_ITEM_VALUE = "CHOICES_INVALID_CHOICES_ITEM_VALUE"
+    """Something other than a Choice instance was found in the Sequence passed as the choices arg"""
+    CHOICES_ADD_INVALID_CHOICE_ARG_TYPE = "CHOICES_ADD_INVALID_CHOICE_ARG_TYPE"
     """Something other than a Choice instance was passed to the Choices.add() method"""
     CHOICES_ADD_DUPLICATE_CHOICE_NAME = "CHOICES_ADD_DUPLICATE_CHOICE_NAME"
     """A Choice with the same name already exists in the Choices instance"""
@@ -801,6 +807,10 @@ class ErrorTag(str, Enum):
     """A Choice with the same name already exists in the Choices instance"""
     CHOICES_EXTEND_DUPLICATE_CLI_ARG = "CHOICES_EXTEND_DUPLICATE_CLI_ARG"
     """A Choice with the same CLI argument already exists in the Choices instance"""
+    CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE = "CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE"
+    """Something other than a string was passed to the Choices.get_choice_for_arg() method"""
+    CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_VALUE = "CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_VALUE"
+    """No Choice with the given CLI argument exists in the Choices instance"""
     CHOICES_CHOICE_FOR_FLAG_INVALID_ARG = "CHOICES_CHOICE_FOR_FLAG_INVALID_ARG"
     """Something other than a string was passed to the Choices.choice_for_flag() method"""
     CHOICES_GET_CHOICE_BY_CLI_TAG_INVALID_ARG = "CHOICES_GET_CHOICE_BY_CLI_TAG_INVALID_ARG"
@@ -811,6 +821,14 @@ class ErrorTag(str, Enum):
     """No Choice with the given name exists in the Choices instance"""
     CHOICES_ADD_DUPLICATE_CHOICE_FLAG = "CHOICES_ADD_DUPLICATE_CHOICE_FLAG"
     """A Choice with the same CLI argument already exists in the Choices instance"""
+    CHOICES_SETITEM_INVALID_ITEM_TYPE = "CHOICES_SETITEM_INVALID_ITEM_TYPE"
+    """Something other than a Choice instance was passed to the Choices.__setitem__() method"""
+    CHOICES_SETITEM_INVALID_KEY_TYPE = "CHOICES_SETITEM_INVALID_KEY_TYPE"
+    """Something other than a string was passed as the key to the Choices.__setitem__() method"""
+    CHOICES_SETITEM_KEY_NAME_MISMATCH = "CHOICES_SETITEM_KEY_NAME_MISMATCH"
+    """The key passed to the Choices.__setitem__() method does not match the name attribute of the Choice instance"""
+    CHOICES_SETITEM_DUPLICATE_CHOICE_NAME = "CHOICES_SETITEM_DUPLICATE_CHOICE_NAME"
+    """A Choice with the same name already exists in the Choices instance"""
 
     # Reporter() tags
     REPORTER_NOT_IMPLEMENTED = "REPORTER_NOT_IMPLEMENTED"
@@ -1051,6 +1069,18 @@ class SimpleBenchTypeError(TaggedException[ValueError]):
         msg (str, positional): The error message.
         tag (ErrorTag): The tag code.
     """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchTypeError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        if tag.__doc__ is None:
+            message = f"{msg}: {tag.value}"
+        else:
+            message = f"{msg}: {tag.__doc__}"
+        super().__init__(message, tag=tag)
 
 
 class SimpleBenchValueError(TaggedException[ValueError]):
@@ -1067,9 +1097,15 @@ class SimpleBenchValueError(TaggedException[ValueError]):
         raise SimpleBenchValueError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
     Args:
-        msg (str, positional): The error message.
+        msg (str): The error message.
         tag (ErrorTag): The tag code.
     """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        if tag.__doc__ is None:
+            message = f"{msg}: {tag.value}"
+        else:
+            message = f"{msg}: {tag.__doc__}"
+        super().__init__(message, tag=tag)
 
 
 class SimpleBenchKeyError(TaggedException[KeyError]):
@@ -1086,9 +1122,21 @@ class SimpleBenchKeyError(TaggedException[KeyError]):
         raise SimpleBenchKeyError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
     Args:
-        msg (str, positional): The error message.
+        msg (str): The error message.
         tag (ErrorTag): The tag code.
     """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchKeyError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        if tag.__doc__ is None:
+            message = f"{msg}: {tag.value}"
+        else:
+            message = f"{msg}: {tag.__doc__}"
+        super().__init__(message, tag=tag)
 
 
 class SimpleBenchRuntimeError(TaggedException[RuntimeError]):
@@ -1105,9 +1153,21 @@ class SimpleBenchRuntimeError(TaggedException[RuntimeError]):
         raise SimpleBenchRuntimeError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
     Args:
-        msg (str, positional): The error message.
+        msg (str): The error message.
         tag (ErrorTag): The tag code.
     """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchRuntimeError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        if tag.__doc__ is None:
+            message = f"{msg}: {tag.value}"
+        else:
+            message = f"{msg}: {tag.__doc__}"
+        super().__init__(message, tag=tag)
 
 
 class SimpleBenchNotImplementedError(TaggedException[NotImplementedError]):
@@ -1121,12 +1181,24 @@ class SimpleBenchNotImplementedError(TaggedException[NotImplementedError]):
     the specific code throwing the exception for tests.
 
     Usage:
-        raise SimpleBenchRuntimeError("An error occurred", tag=MyErrorTags.SOME_ERROR)
+        raise SimpleBenchNotImplementedError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
     Args:
-        msg (str, positional): The error message.
+        msg (str): The error message.
         tag (ErrorTag): The tag code.
     """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchNotImplementedError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        if tag.__doc__ is None:
+            message = f"{msg}: {tag.value}"
+        else:
+            message = f"{msg}: {tag.__doc__}"
+        super().__init__(message, tag=tag)
 
 
 class SimpleBenchAttributeError(TaggedException[AttributeError]):
@@ -1143,14 +1215,25 @@ class SimpleBenchAttributeError(TaggedException[AttributeError]):
         raise SimpleBenchAttributeError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
     Args:
-        msg (str, positional): The error message.
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
         name (str | None): The attribute name.
         obj (object): The object the attribute was not found on.
-        tag (ErrorTag): The tag code.
     """
-    if version_info >= (3, 10):
-        def __init__(self, *args: object, name: str | None = None, obj: object = ..., tag: ErrorTag) -> None:
-            super().__init__(*args, name, obj, tag=tag)
+    def __init__(self, msg: str, *, tag: ErrorTag, name: str | None = None, obj: object = ..., ) -> None:
+        """Raises a SimpleBenchAttributeError with the given message, name, obj, and tag.
+
+        Args:
+            msg (str): The error message.
+            name (str | None): The attribute name.
+            obj (object): The object the attribute was not found on.
+            tag (ErrorTag): The tag code.
+        """
+        if tag.__doc__ is None:
+            message = f"{msg}: {tag.value}"
+        else:
+            message = f"{msg}: {tag.__doc__}"
+        super().__init__(message, tag=tag, name=name, obj=obj)
 
 
 class SimpleBenchArgumentError(TaggedException[argparse.ArgumentError]):
@@ -1186,6 +1269,10 @@ class SimpleBenchArgumentError(TaggedException[argparse.ArgumentError]):
         # to get an argparse.Action instance as the first argument to infer the
         # argument_name from, which we don't have here, and so must backfill the argument_name
         # after initialization.
+        if tag.__doc__ is None:
+            message = f"{message}: {tag.value}"
+        else:
+            message = f"{message}: {tag.__doc__}"
         super().__init__(None, message, tag=tag)
         self.argument_name = argument_name
 
@@ -1204,6 +1291,18 @@ class SimpleBenchImportError(TaggedException[ImportError]):
         raise SimpleBenchImportError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
     Args:
-        msg (str, positional): The error message.
+        msg (str): The error message.
         tag (ErrorTag): The tag code.
     """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchImportError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        if tag.__doc__ is None:
+            message = f"{msg}: {tag.value}"
+        else:
+            message = f"{msg}: {tag.__doc__}"
+        super().__init__(message, tag=tag)

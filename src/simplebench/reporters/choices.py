@@ -69,6 +69,17 @@ class Choice(IChoice):
         extra (Any | None): Any additional metadata associated with the choice.
 
     """
+    __slots__ = (
+        '_reporter',
+        '_flags',
+        '_name',
+        '_description',
+        '_sections',
+        '_targets',
+        '_formats',
+        '_extra',
+    )
+
     def __init__(self, *,
                  reporter: Reporter,
                  flags: Sequence[str],
@@ -235,7 +246,7 @@ class Choice(IChoice):
 
 class Choices(UserDict[str, Choice], IChoices):
     """A dictionary-like container for Choice instances."""
-    def __init__(self, choices: Optional[Sequence[Choice] | Choices] = None) -> None:
+    def __init__(self, choices: Sequence[Choice] | Choices | None = None) -> None:
         """Construct a Choices container.
 
         Args:
@@ -245,12 +256,23 @@ class Choices(UserDict[str, Choice], IChoices):
         self._args_index: dict[str, Choice] = {}
         self._flags_index: dict[str, Choice] = {}
         super().__init__()
-        if not isinstance(choices, (type(None), Sequence, Choices)):
-            raise SimpleBenchTypeError(
-                "Expected a Sequence or Choices instance",
-                tag=ErrorTag.CHOICES_INIT_INVALID_CHOICES_ARG_TYPE)
+        choices_list: list[Choice] = []
+        if isinstance(choices, Sequence) and not isinstance(choices, str):
+            choices_list = validate_sequence_of_type(
+                choices, Choice, "choices",
+                ErrorTag.CHOICES_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+                ErrorTag.CHOICES_INVALID_CHOICES_ITEM_VALUE,
+                allow_empty=True)
+        elif choices is not None:
+            if isinstance(choices, Choices):
+                choices_list = list(choices.values())
+            else:
+                raise SimpleBenchTypeError(
+                    f"Expected a Sequence of Choice instances or a Choices instance but got {type(choices)}",
+                    tag=ErrorTag.CHOICES_INVALID_CHOICES_ARG_TYPE)
+
         if choices:
-            self.extend(choices)
+            self.extend(choices_list)
 
     def add(self, choice: Choice) -> None:
         """Add a Choice instance to the container.
@@ -267,25 +289,14 @@ class Choices(UserDict[str, Choice], IChoices):
         if not isinstance(choice, Choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
-                tag=ErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG)
-        if choice.name in self.data:
-            raise SimpleBenchValueError(
-                f"A Choice with the name '{choice.name}' already exists",
-                tag=ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_NAME)
-        self.data[choice.name] = choice
-        self._args_index.update({arg.replace('--', '', 1).replace('-', '_'): choice for arg in choice.flags})
-        for flag in choice.flags:
-            if flag in self._flags_index:
-                raise SimpleBenchValueError(
-                    f"A Choice with the flag '{flag}' already exists",
-                    tag=ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_FLAG)
-            self._flags_index[flag] = choice
+                tag=ErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG_TYPE)
+        self[choice.name] = choice
 
     def all_choice_args(self) -> set[str]:
-        """Return a set of all Namespace args from all Choice instances in the container.
+        """Return a set of all Namespace arg names from all Choice instances in the container.
 
         Returns:
-            set[str]: A set of all Namespace args from all Choice instances.
+            set[str]: A set of all Namespace arg names from all Choice instances.
         """
         return set(self._args_index.keys())
 
@@ -298,15 +309,23 @@ class Choices(UserDict[str, Choice], IChoices):
         return set(self._flags_index.keys())
 
     def get_choice_for_arg(self, arg: str) -> Choice | None:
-        """Return the Choice instance associated with the given Namespace arg.
+        """Return the Choice instance associated with the given Namespace arg name.
 
         Args:
-            arg (str): The Namespace arg to look up.
+            arg (str): The Namespace arg name to look up.
 
         Returns:
             Choice | None: The Choice instance associated with the arg,
                 or None if no such Choice exists.
+
+        Raises:
+            SimpleBenchTypeError: If the arg is not a string.
+            SimpleBenchValueError: If the arg is not formatted as a valid Python identifier.
         """
+        if not isinstance(arg, str):
+            raise SimpleBenchTypeError(
+                "arg must be a string",
+                tag=ErrorTag.CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
         return self._args_index.get(arg, None)
 
     def extend(self, choices: Sequence[Choice] | Choices) -> None:
@@ -347,3 +366,54 @@ class Choices(UserDict[str, Choice], IChoices):
             arg_key = arg.replace('--', '', 1).replace('-', '_')
             if arg_key in self._args_index:
                 del self._args_index[arg_key]
+
+    # custom __setitem__ method to make Choices into a type restricted dict
+    def __setitem__(self, key: str, item: Choice) -> None:
+        """Set a value in the Choices container.
+
+        This restricts setting items to only Choice instances with string keys
+        and raises an error otherwise. It also prevents duplicate Choice names.
+
+        It also restricts the key to match the Choice.name attribute and updates
+        the internal indexes accordingly.
+
+          Example:
+            choices = Choices()
+            choice = Choice(...)
+            choices['my_choice'] = choice
+
+        Args:
+            key (str): The key under which to store the Choice instance.
+            item (Choice): The Choice instance to store.
+
+        Raises:
+            SimpleBenchTypeError: If the key is not a string or the item is not a Choice instance.
+            SimpleBenchValueError: If a Choice with the same name already exists
+                in the container; if the key does not match the Choice.name attribute;
+                or if a Choice with the same flag already exists in the container.
+        """
+        if not isinstance(key, str):
+            raise SimpleBenchTypeError(
+                "Choice key must be a string",
+                tag=ErrorTag.CHOICES_SETITEM_INVALID_KEY_TYPE)
+        if not isinstance(item, Choice):
+            raise SimpleBenchTypeError(
+                "Only Choice instances can be added to Choices",
+                tag=ErrorTag.CHOICES_SETITEM_INVALID_ITEM_TYPE)
+        if key != item.name:
+            raise SimpleBenchValueError(
+                "Choice key must match the Choice.name attribute",
+                tag=ErrorTag.CHOICES_SETITEM_KEY_NAME_MISMATCH)
+        if item.name in self.data:
+            raise SimpleBenchValueError(
+                f"A Choice with the name '{item.name}' already exists",
+                tag=ErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_NAME)
+
+        self._args_index.update({arg.replace('--', '', 1).replace('-', '_'): item for arg in item.flags})
+        for flag in item.flags:
+            if flag in self._flags_index:
+                raise SimpleBenchValueError(
+                    f"A Choice with the flag '{flag}' already exists",
+                    tag=ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_FLAG)
+            self._flags_index[flag] = item
+        super().__setitem__(key, item)

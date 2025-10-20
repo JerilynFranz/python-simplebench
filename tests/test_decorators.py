@@ -253,7 +253,7 @@ def test_decorator_use_field_for_n_not_in_kwargs_variations() -> None:
     clear_registered_cases()
 
     # Invalid use_field_for_n value (not in kwargs_variations)
-    with pytest.raises(SimpleBenchTypeError) as excinfo:  # type: ignore[assignment]
+    with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
         @benchmark('test',
                    title='Valid Title',
                    use_field_for_n='size',
@@ -321,7 +321,7 @@ def test_decorator_missing_kwargs_variations_with_use_field_for_n() -> None:
     clear_registered_cases()
 
     # Missing kwargs_variations with use_field_for_n
-    with pytest.raises(SimpleBenchTypeError) as excinfo:
+    with pytest.raises(SimpleBenchValueError) as excinfo:
         @benchmark('test',
                    title='Valid Title',
                    use_field_for_n='size')
