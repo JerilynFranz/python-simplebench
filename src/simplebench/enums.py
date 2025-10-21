@@ -153,3 +153,24 @@ class Format(str, Enum):
     """Graphical format"""
     CUSTOM = 'custom'
     """Custom format"""
+
+
+@enum_docstrings
+class Color(str, Enum):
+    """Colors for console output."""
+    BLACK = 'black'
+    """Black color."""
+    RED = 'red'
+    """Red color."""
+    GREEN = 'green'
+    """Green color."""
+    YELLOW = 'yellow'
+    """Yellow color."""
+    BLUE = 'blue'
+    """Blue color."""
+    MAGENTA = 'magenta'
+    """Magenta color."""
+    CYAN = 'cyan'
+    """Cyan color."""
+    WHITE = 'white'
+    """White color."""

@@ -8,14 +8,14 @@ from typing import Optional, Sequence, TYPE_CHECKING
 from rich.console import Console
 from rich.progress import Progress
 
-from .enums import Verbosity, Target
+from .enums import Verbosity, Target, Color
 from .exceptions import ErrorTag, SimpleBenchArgumentError, SimpleBenchTypeError
 from .metaclasses import ISession
 from .protocols import ReporterCallback
 from .reporters import ReporterManager
 from .reporters.choices import Choice, Choices
 from .runners import SimpleRunner
-from .tasks import RichProgressTasks, RichTask
+from .tasks import RichProgressTasks, ProgressTracker
 from .case import Case
 from .utils import sanitize_filename, platform_id
 
@@ -160,42 +160,35 @@ class Session(ISession):
         """Run all benchmark cases in the session."""
         if self._verbosity > Verbosity.NORMAL:
             self._console.print(f'Running {len(self.cases)} benchmark case(s)...')
-        self._progress_tasks.clear()
-        task_name: str = 'cases'
-        task: RichTask | None = None
+        self.tasks.clear()
+        progress_tracker = ProgressTracker(
+            session=self,
+            task_name='Session:cases',
+            progress_max=len(self.cases),
+            description='Running benchmark cases',
+            color=Color.WHITE
+        )
+
         if self.show_progress and self.verbosity > Verbosity.QUIET and self.tasks:
-            self._progress_tasks.start()
-            task = self.tasks.get(task_name)
-            if not task:
-                if self._verbosity >= Verbosity.DEBUG:
-                    self._console.print(f"[DEBUG] Creating task '{task_name}'")
-                task = self.tasks.new_task(
-                    name=task_name,
-                    description='Running benchmark cases',
-                    completed=0,
-                    total=len(self.cases))
+            self.tasks.start()
 
         case_counter: int = 0
-        if task:
-            task.reset()
-            task.update(
-                completed=0,
-                description=f'Running benchmark cases (case {case_counter + 1:2d}/{len(self.cases)})'
-            )
-            task.start()
+        progress_tracker.reset()
+        progress_tracker.update(
+            completed=0,
+            description=f'Running benchmark cases (case {case_counter + 1:2d}/{len(self.cases)})')
+        progress_tracker.start()
+
         for case in self.cases:
-            if self.verbosity >= Verbosity.QUIET and self.show_progress and task is not None:
-                task.update(
-                    description=f'Running benchmark cases (case {case_counter + 1:2d}/{len(self.cases)})',
-                    completed=case_counter,
-                    refresh=True)
-                task.refresh()
+            progress_tracker.update(
+                description=f'Running benchmark cases (case {case_counter + 1:2d}/{len(self.cases)})',
+                completed=case_counter,
+                refresh=True)
             case_counter += 1
             case.run(session=self)
-        if task:
-            task.stop()
-            self._progress_tasks.stop()
-            self._progress_tasks.clear()
+        progress_tracker.stop()
+        self.tasks.stop()
+        self.tasks.clear()
 
     def report_keys(self) -> list[str]:
         """Get a list of report keys for all reports to be generated in this session.
@@ -226,25 +219,23 @@ class Session(ISession):
         processed_choices: set[str] = set()
         report_keys: list[str] = self.report_keys()
         n_reports = len(report_keys)
-        self._progress_tasks.clear()
-        task_name: str = 'reports'
-        task: RichTask | None = None
-        if self.show_progress and self.verbosity > Verbosity.QUIET and self.tasks:
-            self._progress_tasks.start()
-            task = self.tasks.get(task_name)
-            if not task:
-                if self._verbosity >= Verbosity.DEBUG:
-                    self._console.print(f"[DEBUG] Creating task '{task_name}'")
-                task = self.tasks.new_task(
-                    name=task_name,
-                    description='Running reports',
-                    completed=0,
-                    total=n_reports)
-        if task:
-            task.reset()
-            task.update(completed=0)
-            task.start()
+        self.tasks.clear()
+        reports_progress_tracker = ProgressTracker(
+            session=self,
+            task_name='Session:reports',
+            progress_max=n_reports,
+            description='Running reports',
+            color=Color.WHITE
+        )
 
+        cases_progress_tracker = ProgressTracker(
+            session=self,
+            task_name='Session:cases',
+            progress_max=len(self.cases),
+            description='Generating reports for cases',
+            color=Color.CYAN)
+
+        reports_progress_tracker.start()
         report_counter: int = 0
         for key in report_keys:
             report_counter += 1
@@ -263,37 +254,19 @@ class Session(ISession):
                 continue
             processed_choices.add(choice.name)
 
-            if task is not None:
-                task.update(
-                    description=f'Running report {choice.name} ({report_counter:2d}/{n_reports})',
-                    completed=report_counter - 1,
-                    refresh=True)
-                task.refresh()
+            reports_progress_tracker.update(
+                description=f'Running report {choice.name} ({report_counter:2d}/{n_reports})',
+                completed=report_counter - 1,
+                refresh=True)
 
-            cases_task_name = 'cases'
-            cases_task: RichTask | None = None
-            if task is not None:
-                cases_task = self.tasks.get(cases_task_name)
-                if not cases_task:
-                    if self._verbosity >= Verbosity.DEBUG:
-                        self._console.print(f"[DEBUG] Creating task '{cases_task_name}'")
-                    cases_task = self.tasks.new_task(
-                        name=cases_task_name,
-                        description='Generating reports for cases',
-                        completed=0,
-                        total=len(self.cases))
-            if cases_task:
-                cases_task.reset()
-                cases_task.update(completed=0)
-                cases_task.start()
+            cases_progress_tracker.reset()
             for case_counter, case in enumerate(self.cases, start=1):
-                if self.verbosity > Verbosity.QUIET and self.show_progress and cases_task is not None:
-                    cases_task.update(
-                        description=(f'Generating reports for case {case.title} '
-                                     f'(case {case_counter:2d}/{len(self.cases)})'),
-                        completed=case_counter - 1,
-                        refresh=True)
-                    cases_task.refresh()
+                cases_progress_tracker.update(
+                    description=(
+                        f'Generating reports for case {case.title} (case {case_counter:2d}/{len(self.cases)})'),
+                    completed=case_counter - 1,
+                    refresh=True)
+
                 callback: Optional[ReporterCallback] = case.callback
                 reporter: Reporter = choice.reporter
                 output_path: Optional[Path] = self._output_path
@@ -314,12 +287,11 @@ class Session(ISession):
                     path=output_path,
                     session=self,
                     callback=callback)
-            if cases_task is not None:
-                cases_task.stop()
-        if task is not None:
-            task.stop()
-            self._progress_tasks.stop()
-            self._progress_tasks.clear()
+            cases_progress_tracker.stop()
+        reports_progress_tracker.stop()
+
+        self.tasks.stop()
+        self.tasks.clear()
 
     @property
     def default_runner(self) -> type[SimpleRunner] | None:

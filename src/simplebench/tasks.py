@@ -1,14 +1,119 @@
 # -*- coding: utf-8 -*-
 """module for managing progress tasks using Rich Progress."""
-from typing import Any, Optional
+from __future__ import annotations
+from typing import Any, Optional, TYPE_CHECKING
 
 from rich.console import Console
 from rich.progress import Progress, Task, TaskID
 
-from .enums import Verbosity
+from .enums import Verbosity, Color
 from .exceptions import (SimpleBenchKeyError, SimpleBenchTypeError,
                          SimpleBenchValueError, SimpleBenchRuntimeError,
                          ErrorTag)
+
+if TYPE_CHECKING:
+    from .session import Session
+
+
+class ProgressTracker:
+    """Helper to manage benchmark progress updates."""
+
+    def __init__(self, *,
+                 session: Session | None = None,
+                 task_name: str,
+                 progress_max: int | float = 100,
+                 description: str = 'Benchmarking',
+                 color: Color = Color.GREEN) -> None:
+        """Initialize the ProgressTracker.
+
+        Args:
+            session (Session | None): The Session instance.
+            task_name (str): The name of the progress task.
+            progress_max (int | float, default=100): The maximum value for progress completion.
+            description (str, default='Benchmarking'): The description for the progress task.
+            color (Color, default=Color.GREEN): The color for the progress task.
+        """
+        self._session: Session | None = session
+        self._task: RichTask | None = None
+        self._color: Color = color
+        self._is_running: bool = False
+        self._description: str = description
+
+        if (self._session and self._session.show_progress
+                and self._session.verbosity > Verbosity.QUIET and self._session.tasks):
+            self._task = self._session.tasks.get(task_name)
+            if not self._task:
+                self._task = self._session.tasks.new_task(
+                    name=task_name,
+                    description=self.styled_description,
+                    completed=0,
+                    total=progress_max)
+        if self._task:
+            self._task.reset()
+            self._task.update(
+                completed=5,
+                description=self.styled_description)
+
+    @property
+    def styled_description(self) -> str:
+        """Get the styled description for the progress task."""
+        return f'[{self._color.value}]{self._description}[/ {self._color.value}]'
+
+    @property
+    def is_running(self) -> bool:
+        """If the progress tracking is currently running.
+
+        The progress tracking is considered running if the start() method has been called
+        and the stop() method has not yet been called.
+
+        Value is True if running, False otherwise.
+        """
+        return self._is_running
+
+    def update(self,
+               completed: int | float,
+               description: str,
+               refresh: bool | None = None,
+               color: Color | None = None) -> None:
+        """Update progress display."""
+        if description:
+            self._description = description
+        if color is not None:
+            self._color = color
+        if self._task:
+            self._task.update(
+                completed=completed,
+                description=self.styled_description,
+                refresh=refresh)
+
+    def start(self) -> None:
+        """Start the progress tracking."""
+        if self._task and self._session and self._session.tasks.is_running:
+            self._task.start()
+            self._is_running = True
+
+    def stop(self) -> None:
+        """Stop the progress tracking."""
+        if self._task and self.is_running:
+            self._task.stop()
+            self._is_running = False
+
+    def refresh(self) -> None:
+        """Refresh the progress tracking display."""
+        if self._task:
+            self._task.refresh()
+
+    def reset(self, start: bool = True) -> None:
+        """Reset the progress tracking.
+
+        Args:
+            start (bool, default=True): Whether to start the progress tracking after resetting.
+
+        This will reset the progress completion to zero and start it running by default.
+        """
+        if self._task:
+            self._task.reset(start=start)
+            self._is_running = start
 
 
 class RichTask:
@@ -88,10 +193,10 @@ class RichTask:
         if self._progress is not None and self._task_id is not None:
             self._progress.stop_task(self._task_id)
 
-    def reset(self) -> None:
+    def reset(self, start: bool = True) -> None:
         """Reset the task progress."""
         if self._progress is not None and self._task_id is not None:
-            self._progress.reset(self._task_id)
+            self._progress.reset(self._task_id, start=start)
             if self._verbosity >= Verbosity.DEBUG:
                 self._console.print(f"[DEBUG] Reset task '{self._name}' with ID {self._task_id}")
 
@@ -233,15 +338,31 @@ class RichProgressTasks:
         if self._verbosity >= Verbosity.DEBUG:
             self._console.print(f"[DEBUG] Initialized RichProgressTasks with verbosity {self._verbosity.name}")
 
+        self._is_running: bool = False
+        """Indicates whether the Rich Progress display is running (has been started but not stopped)."""
+
+    @property
+    def is_running(self) -> bool:
+        """If the Rich Progress display is currently running.
+
+        The display is considered running if the start() method has been called
+        and the stop() method has not yet been called.
+
+        Value is True if running, False otherwise.
+        """
+        return self._is_running
+
     def start(self) -> None:
         """Start the Rich Progress display."""
         self._progress.start()
+        self._is_running = True
         if self._verbosity >= Verbosity.DEBUG:
             self._console.print("[DEBUG] Started Rich Progress display")
 
     def stop(self) -> None:
         """Stop the Rich Progress display."""
         self._progress.stop()
+        self._is_running = False
         if self._verbosity >= Verbosity.DEBUG:
             self._console.print("[DEBUG] Stopped Rich Progress display")
 

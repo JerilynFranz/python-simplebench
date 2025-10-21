@@ -327,7 +327,7 @@ class Choices(UserDict[str, Choice], IChoices):
                 tag=ErrorTag.CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
         return self._args_index.get(arg, None)
 
-    def extend(self, choices: Sequence[Choice]) -> None:
+    def extend(self, choices: Sequence[Choice] | Choices) -> None:
         """Add Choice instances to the container.
 
         Args:

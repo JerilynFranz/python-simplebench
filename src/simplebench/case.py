@@ -14,14 +14,14 @@ from .protocols import ActionRunner, ReporterCallback
 from .reporters.reporter_option import ReporterOption
 from .results import Results
 from .runners import SimpleRunner
-from .enums import Section, Format
+from .enums import Section, Format, Color
+from .tasks import ProgressTracker
 from .validators import (validate_non_blank_string, validate_positive_int,
                          validate_non_negative_int, validate_positive_float)
 
 
 if TYPE_CHECKING:
     from .session import Session
-    from .tasks import RichTask
 
 
 class Case(ICase):
@@ -756,18 +756,14 @@ class Case(ICase):
             session (Optional[Session]): The session to use for the benchmark case.
         """
         all_variations = self.expanded_kwargs_variations
-        task_name: str = 'case_variations'
-        task: RichTask | None = None
-        if session and session.show_progress and session.tasks:
-            task = session.tasks.get(task_name)
-            if not task:
-                task = session.tasks.new_task(
-                    name=task_name,
-                    description=f'[cyan] Running case {self.title}',
-                    completed=0,
-                    total=len(all_variations))
-        if task:
-            task.reset()
+        progress_tracker = ProgressTracker(
+            session=session,
+            task_name='Case:run',
+            progress_max=len(all_variations),
+            description=f'Running case {self.title}',
+            color=Color.CYAN)
+        progress_tracker.reset()
+
         kwargs: dict[str, Any]
         for variations_counter, kwargs in enumerate(all_variations):
             bench: SimpleRunner
@@ -787,14 +783,12 @@ class Case(ICase):
                     tag=ErrorTag.CASE_BENCHMARK_ACTION_RAISED_EXCEPTION
                     ) from e
             self._results.append(results)
-            if task:
-                task.update(
-                        description=(f'[cyan] Running case {self.title} '
-                                     f'({variations_counter + 1}/{len(all_variations)})'),
-                        completed=variations_counter + 1,
-                        refresh=True)
-        if task:
-            task.stop()
+            progress_tracker.update(
+                description=(
+                    f'Running case {self.title} ({variations_counter + 1}/{len(all_variations)})'),
+                completed=variations_counter + 1,
+                refresh=True)
+        progress_tracker.stop()
 
     def as_dict(self, full_data: bool = False) -> dict[str, Any]:
         """Returns the benchmark case and results as a JSON serializable dict.

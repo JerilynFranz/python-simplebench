@@ -9,16 +9,17 @@ from typing import Any, Callable, Optional, TYPE_CHECKING
 from types import ModuleType
 
 from .defaults import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERATIONS
+from .enums import Color
 from .exceptions import ErrorTag, SimpleBenchImportError
 from .iteration import Iteration
 from .results import Results
+from .tasks import ProgressTracker
 from .validators import validate_positive_int
 
 
 if TYPE_CHECKING:
     from .case import Case
     from .session import Session
-    from .tasks import RichTask
 
 
 def _create_timers_module() -> ModuleType:
@@ -53,52 +54,6 @@ _timers_module = _create_timers_module()  # Ensure the timers module exists
 def _mock_action(**kwargs) -> None:  # pylint: disable=unused-argument
     """A mock action that does nothing."""
     return None
-
-
-class ProgressTracker:
-    """Helper to manage benchmark progress updates."""
-
-    def __init__(self, *,
-                 runner: SimpleRunner,
-                 task_name: str,
-                 progress_max: int | float = 100,
-                 description: str = 'Benchmarking') -> None:
-        """Initialize the ProgressTracker.
-
-        Args:
-            runner (SimpleRunner): The SimpleRunner instance.
-            task_name (str): The name of the progress task.
-            progress_max (int | float, default=100): The maximum value for progress completion.
-            description (str, default='Benchmarking'): The description for the progress task.
-        """
-        self._session: Session | None = runner.session
-        self._task: RichTask | None = None
-        if self._session and self._session.show_progress and self._session.tasks:
-            self._task = self._session.tasks.get(task_name)
-            if not self._task:
-                self._task = self._session.tasks.new_task(
-                    name=task_name,
-                    description=f'  [green]{description}[/green]',
-                    completed=0,
-                    total=progress_max)
-        if self._task:
-            self._task.reset()
-            self._task.update(
-                completed=5,
-                description=description)
-
-    def update(self, completed: int | float, description: str, refresh: bool | None = None) -> None:
-        """Update progress display."""
-        if self._task:
-            self._task.update(
-                completed=completed,
-                description=f'  [green]{description}[/green]',
-                refresh=refresh)
-
-    def stop(self) -> None:
-        """Stop the progress tracking."""
-        if self._task:
-            self._task.stop()
 
 
 class SimpleRunner():
@@ -274,10 +229,11 @@ class SimpleRunner():
 
         progress_max: float = 100.0
         progress_tracker = ProgressTracker(
-            runner=self,
+            session=self.session,
             task_name='SimpleRunner:case_runner',
             progress_max=progress_max,
-            description=f'Benchmarking {group} (iteration {0:<6d}; time {0.00:<3.2f}s)')
+            description=f'Benchmarking {group} (iteration {0:<6d}; time {0.00:<3.2f}s)',
+            color=Color.GREEN)
 
         timer_function = self._timer_function(self.case.rounds)
         total_elapsed: float = 0.0
