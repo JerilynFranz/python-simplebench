@@ -11,8 +11,9 @@ from rich.console import Console
 
 from simplebench import Case, SimpleRunner, Results, Session, Verbosity
 from simplebench.exceptions import (SimpleBenchTypeError, ErrorTag)
-from simplebench.protocols import ActionRunner, ReporterCallback
+from simplebench.protocols import ActionRunner
 from simplebench.reporters.reporter_option import ReporterOption
+from simplebench.reporters.protocols import ReporterCallback
 
 
 from .testspec import TestAction, idspec, Assert, TestSpec, NO_EXPECTED_VALUE

@@ -161,7 +161,7 @@ class ReporterManager():
             )
         self.unregister(self._registered_reporters[name])
 
-    def add_reporters_to_argparse(self, parser) -> None:
+    def add_reporters_to_argparse(self, parser: ArgumentParser) -> None:
         """Add all registered reporter choices to an ArgumentParser.
 
         This method adds the CLI arguments for all registered reporters
@@ -182,7 +182,7 @@ class ReporterManager():
         # We assume that the reporter's add_flags_to_argparse method is implemented correctly
         # and will handle any errors internally.
         for reporter in self._registered_reporters.values():
-            reporter.add_flags_to_argparse(parser)
+            reporter.add_flags_to_argparse(parser=parser)
 
 
 __all__ = [

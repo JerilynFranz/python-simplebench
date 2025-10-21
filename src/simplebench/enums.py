@@ -120,19 +120,19 @@ class Target(str, Enum):
     The enums are used in generating calling parameters
     for the report() methods in the Reporter subclasses.
     """
-    CONSOLE = 'to console'
+    CONSOLE = 'console'
     """Output to console."""
-    FILESYSTEM = 'to filesystem'
+    FILESYSTEM = 'filesystem'
     """Output to filesystem."""
-    HTTP = 'to http'
+    HTTP = 'http'
     """Output to HTTP endpoint."""
-    DISPLAY = 'to display'
+    DISPLAY = 'display'
     """Output to display device."""
-    CALLBACK = 'to callback'
+    CALLBACK = 'callback'
     """Pass generated output to a callback function."""
-    CUSTOM = 'to custom target'
+    CUSTOM = 'custom'
     """Output to a custom target."""
-    NULL = 'to null'
+    NULL = 'null'
     """No output."""
 
 
@@ -174,3 +174,18 @@ class Color(str, Enum):
     """Cyan color."""
     WHITE = 'white'
     """White color."""
+
+
+@enum_docstrings
+class FlagType(str, Enum):
+    """Types of command-line flags for reporters."""
+    BOOLEAN = 'boolean'
+    """Boolean flag type.
+
+    This flag type represents a simple on/off or true/false option.
+    """
+    TARGET_LIST = 'target_list'
+    """List of output targets
+
+    This flag type represents a list of output targets for the reporter.
+    """

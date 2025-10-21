@@ -5,13 +5,21 @@ from collections import UserDict
 from typing import Any, Optional, Sequence, TYPE_CHECKING
 
 from .metaclasses import IChoice, IChoices, IReporter
-from ..enums import Section, Target, Format
+from ..enums import Section, Target, Format, FlagType
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError, ErrorTag
 from ..validators import validate_sequence_of_str, validate_non_blank_string, validate_sequence_of_type
 
 
 if TYPE_CHECKING:
     from .interfaces import Reporter
+
+
+class ChoiceOptions:
+    """Base class for holding extra options for a Choice.
+
+    Reporter subclasses are expected to subclass this class to provide
+    additional configuration options specific to that reporter.
+    """
 
 
 class Choice(IChoice):
@@ -61,11 +69,13 @@ class Choice(IChoice):
     Attributes:
         reporter (Reporter): The Reporter subclass instance associated with the choice.
         flags (set[str]): A set of command-line flags associated with the choice.
+        flag_type: (FlagType): The type of command-line flag (e.g., boolean, target_list, etc.).
         name (str): A unique name for the choice.
         description (str): A brief description of the choice.
         sections (set[Section]): A set of Section enums to include in the report.
         targets (set[Target]): A set of Target enums for output.
         formats (set[Format]): A set of Format enums for output.
+        options (ChoiceOptions | None): An optional ChoiceOptions instance for additional configuration.
         extra (Any | None): Any additional metadata associated with the choice.
 
     """
@@ -77,28 +87,34 @@ class Choice(IChoice):
         '_sections',
         '_targets',
         '_formats',
+        '_options',
         '_extra',
     )
 
     def __init__(self, *,
                  reporter: Reporter,
                  flags: Sequence[str],
+                 flag_type: FlagType,
                  name: str,
                  description: str,
                  sections: Sequence[Section],
                  targets: Sequence[Target],
                  formats: Sequence[Format],
+                 options: ChoiceOptions | None = None,
                  extra: Any = None) -> None:
         """Construct a Choice instance.
 
         Args:
             reporter (Reporter): An instance of a Reporter subclass.
             flags (Sequence[str]): A sequence of command-line flags associated with the choice.
+            flag_type (FlagType): The type of command-line flag (e.g., boolean, target_list, etc.).
             name (str): A unique name for the choice.
             description (str): A brief description of the choice.
             sections (Sequence[Section]): A sequence of Section enums to include in the report.
             targets (Sequence[Target]): A sequence of Target enums for output.
             formats (Sequence[Format]): A sequence of Format enums for output.
+            options: (ChoiceOptions | None, default=None):
+                An optional ChoiceOptions instance for additional configuration.
             extra (Any, default=None): Any additional metadata associated with the choice.
 
         Raises:
@@ -129,6 +145,13 @@ class Choice(IChoice):
         The description property of the Choice is used to provide
         help text for the flags when generating command-line help.
         """
+
+        if not isinstance(flag_type, FlagType):
+            raise SimpleBenchTypeError(
+                "flag_type must be a FlagType enum value",
+                tag=ErrorTag.CHOICE_INVALID_FLAG_TYPE_ARG_TYPE)
+        self._flag_type: FlagType = flag_type
+        """The type of command-line flag (e.g., FlagType.BOOLEAN, FlagType.TARGET_LIST, etc.)."""
 
         self._name: str = validate_non_blank_string(
             name, "name",
@@ -166,6 +189,13 @@ class Choice(IChoice):
             allow_empty=False))
         """Output formats for the choice"""
 
+        if options is not None and not isinstance(options, ChoiceOptions):
+            raise SimpleBenchTypeError(
+                "options arg must be a ChoiceOptions instance or None",
+                tag=ErrorTag.CHOICE_INVALID_OPTIONS_ARG_TYPE)
+        self._options: ChoiceOptions | None = options
+        """An optional ChoiceOptions instance for additional configuration."""
+
         self._extra: Optional[Any] = extra
         """Additional metadata associated with the choice."""
 
@@ -189,6 +219,11 @@ class Choice(IChoice):
         help text for the flags when generating command-line help.
         """
         return self._flags
+
+    @property
+    def flag_type(self) -> FlagType:
+        """The type of command-line flag (e.g., FlagType.BOOLEAN, FlagType.TARGET_LIST, etc.)."""
+        return self._flag_type
 
     @property
     def name(self) -> str:
@@ -237,6 +272,11 @@ class Choice(IChoice):
         and so on.
         """
         return self._formats
+
+    @property
+    def options(self) -> ChoiceOptions | None:
+        """An optional ChoiceOptions instance for additional configuration."""
+        return self._options
 
     @property
     def extra(self) -> Any:

@@ -7,6 +7,7 @@ from typing import Any, Sequence, TypeVar, overload
 
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 
+
 T = TypeVar('T')
 
 

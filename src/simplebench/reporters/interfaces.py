@@ -2,22 +2,28 @@
 """Reporters for benchmark results."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, Iterable, Sequence, TYPE_CHECKING
 
 from rich.console import Console
 
-from .metaclasses import IReporter, IChoices, IChoice
-from ..enums import Section, Target, Format
+from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, BASE_MEMORY_UNIT
+from ..enums import Section, Target, Format, FlagType
 from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
 from ..metaclasses import ICase, ISession
-from ..protocols import ReporterCallback
+from ..utils import flag_to_arg
+from .metaclasses import IReporter, IChoices, IChoice
+from .protocols import ReporterCallback
 
 if TYPE_CHECKING:
     from ..case import Case
     from .choices import Choice, Choices
     from ..session import Session
+
+
+NO_ATTRIBUTE = object()
+"""Sentinel value for no attribute."""
 
 
 class Reporter(ABC, IReporter):
@@ -180,27 +186,61 @@ class Reporter(ABC, IReporter):
                 "Reporter subclasses must initialize the Choices with at least one Choice",
                 tag=ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED)
 
-    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
-        """Add the reporter's command-line flags to an ArgumentParser.
+    def select_targets_from_args(
+            self, *,
+            args: Namespace, choice: Choice, default_targets: Iterable[Target]) -> set[Target]:
+        """Select the output targets based on command-line arguments and choice configuration.
 
-        This is a default implementation that adds boolean flags for each Choice's flags.
-        Subclasses can override this method if they need custom behavior such as
-        adding arguments with different types or more complex logic.
+        It checks the command-line arguments for flags corresponding to the choice
+        and collects the specified targets. The default target(s) are any Target enums defined
+        in the arg values for the flags. They are discarded if there are explicit targets specified
+        in the args as strings. Finally, it ensures that the selected targets are valid for the
+        given choice.
+
+        An exception is raised if an unsupported target is specified in the arguments.
 
         Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
+            args (Namespace): The parsed command-line arguments.
+            choice (Choice): The Choice instance specifying the report configuration.
+            default_targets (Iterable[Target]]): The default targets to use if no targets
+                are specified in the command-line arguments.
+
+        Returns:
+            A set of Target enums representing the selected output targets.
+
+        Raises:
+            SimpleBenchTypeError: If args is not an argparse.Namespace instance.
+            SimpleBenchValueError: If an unsupported target is specified in the arguments.
         """
-        if not isinstance(parser, ArgumentParser):
-            raise SimpleBenchTypeError(
-                "parser arg must be an argparse.ArgumentParser instance",
-                tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
-        flag: str = ''
-        for choice in self.choices.values():
-            for flag in choice.flags:
-                parser.add_argument(flag, action='store_true', help=choice.description)
+        selected_targets: set[Target] = set()
+        target_members = Target.__members__
+        for flag in choice.flags:
+            arg_value = getattr(args, flag_to_arg(flag), NO_ATTRIBUTE)
+            if arg_value is NO_ATTRIBUTE:
+                continue
+            if not isinstance(arg_value, Sequence):
+                raise SimpleBenchTypeError(
+                    f"Expected a sequence for argument {flag}, got {type(arg_value)}",
+                    tag=ErrorTag.REPORTER_SELECT_TARGETS_INVALID_ARG_VALUE_TYPE)
+            for target in arg_value:
+                target_enum = target_members.get(target, None)
+                if target_enum is not None:
+                    if target_enum in choice.targets:
+                        selected_targets.add(target_enum)
+                    else:
+                        raise SimpleBenchValueError(
+                            f"Output target {target} is not supported by {flag}.",
+                            tag=ErrorTag.UNSUPPORTED_TARGET_IN_ARGS)
+                else:
+                    raise SimpleBenchValueError(
+                        f"Unknown output target specified for {flag}: {target}",
+                        tag=ErrorTag.UNKNOWN_TARGET_IN_ARGS)
+
+        return set(default_targets) if not selected_targets else selected_targets
 
     def report(self,
                *,
+               args: Namespace,
                case: Case,
                choice: Choice,
                path: Optional[Path] = None,
@@ -210,6 +250,7 @@ class Reporter(ABC, IReporter):
         performs validation and then calls the subclass's run_report method.
 
         Args:
+            args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance containing benchmark results.
             choice (Choice): The Choice instance specifying the report configuration.
             path (Optional[Path]): The path to the directory where the report can be saved if needed.
@@ -220,6 +261,10 @@ class Reporter(ABC, IReporter):
         Raises:
             NotImplementedError: If the method is not implemented in a subclass.
         """
+        if not isinstance(args, Namespace):
+            raise SimpleBenchTypeError(
+                "args argument must be an argparse.Namespace instance",
+                tag=ErrorTag.REPORTER_REPORT_INVALID_ARGS_ARG_TYPE)
         if not isinstance(case, ICase):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
@@ -266,11 +311,12 @@ class Reporter(ABC, IReporter):
 
         # If we reach this point, all validation has passed and execution
         # will pass through to the subclass implementation
-        self.run_report(case=case, choice=choice, path=path, session=session, callback=callback)
+        self.run_report(args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     @abstractmethod
     def run_report(self,
                    *,
+                   args: Namespace,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
@@ -291,6 +337,7 @@ class Reporter(ABC, IReporter):
         may choose to ignore any arguments that are not applicable.
 
         Args:
+            args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
             path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
@@ -404,19 +451,44 @@ class Reporter(ABC, IReporter):
         """
         return self._formats
 
-    def target_filesystem(self, path: Path, output: str | bytes) -> None:
+    def target_filesystem(self, path: Path | None, subdir: str, filename: str, output: str | bytes) -> None:
         """Helper method to output report data to the filesystem.
 
+        path, subdir, and filename are combined to form the full path to the output file.
+
+        The type signature for path is Path | None because the overall report() method
+        accepts path as Optional[Path] because it is not always required. However,
+        this method should only be called when a valid Path is provided and will
+        raise an exception if it is not a Path instance.
+
         Args:
-            path (Path): The path to the file where the output should be saved.
+            path (Path | None): The path to the directory where output should be saved.
+            subdir (str): The subdirectory within the path to save the file to.
+            filename (str): The filename to save the output as.
             output (str | bytes): The report data to write to the file.
+
+        Raises:
+            SimpleBenchTypeError: If path is not a Path instance,
+                or if subdir or filename are not strings.
         """
+        if not isinstance(path, Path):
+            raise SimpleBenchTypeError(
+                "path arg must be a pathlib.Path instance",
+                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
+        if not isinstance(subdir, str):
+            raise SimpleBenchTypeError(
+                "subdir arg must be a string",
+                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE)
+        if not isinstance(filename, str):
+            raise SimpleBenchTypeError(
+                "filename arg must be a string",
+                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_INVALID_FILENAME_ARG_TYPE)
         mode = 'wb' if isinstance(output, bytes) else 'w'
-        with path.open(mode) as file:
-            file.write(output)
+        with (path / subdir / filename).open(mode) as f:
+            f.write(output)
 
     def target_callback(self,
-                        callback: ReporterCallback,
+                        callback: ReporterCallback | None,
                         case: Case,
                         section: Section,
                         output_format: Format,
@@ -424,7 +496,7 @@ class Reporter(ABC, IReporter):
         """Helper method to send report data to a callback function.
 
         Args:
-            callback (ReporterCallback): The callback function to send the output to.
+            callback (ReporterCallback | None): The callback function to send the output to.
             case (Case): The Case instance representing the benchmarked code.
             section (Section): The Section of the report.
             output_format (Format): The Format of the report.
@@ -447,3 +519,115 @@ class Reporter(ABC, IReporter):
         """
         console = session.console if session is not None else Console()
         console.print(output)
+
+    def get_base_unit_for_section(self, section: Section) -> str:
+        """Return the base unit for the specified section.
+
+        Args:
+            section (Section): The section to get the base unit for.
+
+        Returns:
+            str: The base unit for the section.
+        """
+        match section:
+            case Section.OPS:
+                return BASE_OPS_PER_INTERVAL_UNIT
+            case Section.TIMING:
+                return BASE_INTERVAL_UNIT
+            case Section.MEMORY:
+                return BASE_MEMORY_UNIT
+            case Section.PEAK_MEMORY:
+                return BASE_MEMORY_UNIT
+            case _:
+                raise SimpleBenchValueError(
+                    f"Unsupported section: {section} (this should never happen)",
+                    tag=ErrorTag.REPORTER_RUN_REPORT_UNSUPPORTED_SECTION)
+
+    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
+        """Add the reporter's command-line flags to an ArgumentParser.
+
+        This is an interface method for adding flags of different types to an ArgumentParser.
+
+        Choices can define different types of flags, such as boolean flags or
+        flags that accept multiple values (lists). This method allows adding
+        flags of the specified type to the ArgumentParser.
+
+        Args:
+            parser (ArgumentParser): The ArgumentParser to add the flags to.
+        """
+        if not isinstance(parser, ArgumentParser):
+            raise SimpleBenchTypeError(
+                "parser arg must be an argparse.ArgumentParser instance",
+                tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
+        for choice in self.choices.values():
+            match choice.flag_type:
+                case FlagType.BOOLEAN:
+                    self.add_boolean_flags_to_argparse(parser=parser, choice=choice)
+                case FlagType.TARGET_LIST:
+                    self.add_list_of_targets_flags_to_argparse(parser=parser, choice=choice)
+                case _:
+                    raise SimpleBenchValueError(
+                        f"Unsupported flag type: {choice.flag_type}",
+                        tag=ErrorTag.REPORTER_ADD_FLAGS_UNSUPPORTED_FLAG_TYPE)
+
+    def add_list_of_targets_flags_to_argparse(self, parser: ArgumentParser, choice: Choice) -> None:
+        """Add a Choice's command-line flags to an ArgumentParser.
+
+        This is a default implementation of adding flags that accept multiple
+        values for each Choice's flags to specify the output targets for the reporter.
+
+        Example:
+            For a Choice with flags ['--json'], this method will add an argument
+            to the parser that accepts multiple target values, like so:
+
+            --json                             # default target
+            --json console filesystem callback # multiple targets
+            --json filesystem                  # single target
+
+        Subclasses can override this method if they need custom behavior such as adding
+        arguments with different types or more complex logic.
+
+        Args:
+            parser (ArgumentParser): The ArgumentParser to add the flags to.
+            choice (Choice): The Choice instance for which to add the flags.
+
+        Raises:
+            SimpleBenchTypeError: If the parser arg is not an ArgumentParser instance.
+        """
+        if not isinstance(parser, ArgumentParser):
+            raise SimpleBenchTypeError(
+                "parser arg must be an argparse.ArgumentParser instance",
+                tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
+        if not isinstance(choice, IChoice):
+            raise SimpleBenchTypeError(
+                "choice arg must be a Choice instance",
+                tag=ErrorTag.REPORTER_ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE)
+        targets = [target.value for target in choice.targets]
+        for flag in choice.flags:
+            parser.add_argument(flag,
+                                action='append',
+                                nargs='*',
+                                choices=targets,
+                                help=choice.description)
+
+    def add_boolean_flags_to_argparse(self, parser: ArgumentParser, choice: Choice) -> None:
+        """Adds a Choice's command-line flags to an ArgumentParser.
+
+        This is a default implementation that adds boolean flags for each Choice's flags.
+        Subclasses can override this method if they need custom behavior such as
+        adding arguments with different types or more complex logic.
+
+        Args:
+            parser (ArgumentParser): The ArgumentParser to add the flags to.
+            choice (Choice): The Choice instance for which to add the flags.
+        """
+        if not isinstance(parser, ArgumentParser):
+            raise SimpleBenchTypeError(
+                "parser arg must be an argparse.ArgumentParser instance",
+                tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
+        if not isinstance(choice, IChoice):
+            raise SimpleBenchTypeError(
+                "choice arg must be a Choice instance",
+                tag=ErrorTag.REPORTER_ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE)
+        for flag in choice.flags:
+            parser.add_argument(flag, action='store_true', help=choice.description)

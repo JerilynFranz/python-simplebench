@@ -1,24 +1,58 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using CSV files."""
 from __future__ import annotations
+from argparse import Namespace
 import csv
-from io import TextIOWrapper, StringIO
+from io import StringIO
 from pathlib import Path
-from typing import Any, Callable, Optional, TYPE_CHECKING
+from typing import Optional, Iterable, TYPE_CHECKING
 
 
-from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE
-from ..enums import Section, Target, Format
+from ..defaults import DEFAULT_INTERVAL_SCALE
+from ..enums import Section, Target, Format, FlagType
 from ..exceptions import SimpleBenchValueError, ErrorTag
-from .interfaces import Reporter
 from ..results import Results
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename, sigfigs
-from .choices import Choice, Choices
+from .choices import Choice, Choices, ChoiceOptions
+from .interfaces import Reporter
+from .protocols import ReporterCallback
+
 
 if TYPE_CHECKING:
     from ..case import Case
     from ..session import Session
+
+
+class CSVChoiceOptions(ChoiceOptions):
+    """Class for holding CSV reporter specificoptions in a Choice.
+
+    This class provides additional configuration options specific to the CSV reporter.
+    It is accessed via the `options` attribute of a Choice instance.
+
+    Attributes:
+        default_targets (frozenset[Target]): The default targets for the CSV reporter choice.
+        subdir (str): The subdirectory to output CSV files to.
+    """
+    def __init__(self, default_targets: Iterable[Target], subdir: str = 'str') -> None:
+        """Initialize CSVChoiceOptions with default targets and subdirectory.
+
+        Args:
+            default_targets (Iterable[Target]): The default targets for the CSV reporter choice.
+            subdir (str, default='csv'): The subdirectory to output CSV files to.
+        """
+        self._default_targets: frozenset[Target] = frozenset(default_targets)
+        self._subdir: str = subdir
+
+    @property
+    def default_targets(self) -> frozenset[Target]:
+        """Return the default targets for the CSV reporter choice."""
+        return self._default_targets
+
+    @property
+    def subdir(self) -> str:
+        """Return the subdirectory to output CSV files to."""
+        return self._subdir
 
 
 class CSVReporter(Reporter):
@@ -31,9 +65,14 @@ class CSVReporter(Reporter):
     description, and units for clarity.
 
     Defined command-line flags:
-        --csv: Outputs both operations per second and per round timing results to CSV.
-        --csv-ops: Outputs only operations per second results to CSV.
-        --csv-timings: Outputs only per round timing results to CSV.
+        --csv: {file, console, callback} (default=file) Outputs results to CSV.
+
+    Example usage:
+        program.py --csv               # Outputs results to CSV files in the filesystem (default).
+        program.py --csv filesystem    # Outputs results to CSV files in the filesystem.
+        program.py --csv console       # Outputs results to the console in CSV format.
+        program.py --csv callback      # Outputs results via a callback function in CSV format.
+        program.py --csv filesystem console  # Outputs results to both CSV files and the console.
 
     Attributes:
         name (str): The unique identifying name of the reporter.
@@ -43,57 +82,39 @@ class CSVReporter(Reporter):
             supported output Targets, and supported output Formats for the reporter.
     """
 
+    DEFAULT_TARGETS = [Target.FILESYSTEM]
+    """Default targets for CSVReporter choices."""
+
     def __init__(self) -> None:
         super().__init__(
             name='csv',
             description='Outputs benchmark results to CSV files.',
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
-            targets={Target.FILESYSTEM, Target.CALLBACK},
+            targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
             formats={Format.CSV},
             choices=Choices([
                 Choice(
                     reporter=self,
                     flags=['--csv'],
+                    flag_type=FlagType.TARGET_LIST,
                     name='csv',
-                    description='operations per second and per round timing results to CSV',
+                    description=(
+                        'Output results to CSV (file, console, callback, default=file)'),
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
-                    formats=[Format.CSV]),
-                Choice(
-                    reporter=self,
-                    flags=['--csv-ops'],
-                    name='csv-ops',
-                    description='Save operations per second results to CSV',
-                    sections=[Section.OPS],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
-                    formats=[Format.CSV]),
-                Choice(
-                    reporter=self,
-                    flags=['--csv-timings'],
-                    name='csv-timings',
-                    description='per round timing results to CSV',
-                    sections=[Section.TIMING],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
-                    formats=[Format.CSV]),
-                Choice(
-                    reporter=self,
-                    flags=['--csv-memory'],
-                    name='csv-memory',
-                    description='memory usage results to CSV',
-                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
-                    formats=[Format.CSV]),
+                    targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
+                    formats=[Format.CSV],
+                    options=CSVChoiceOptions(default_targets=self.DEFAULT_TARGETS)),
             ])
         )
 
     def run_report(self,
                    *,
+                   args: Namespace,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,  # pylint: disable=unused-argument
-                   callback: Optional[Callable[[Case, Section, Format, Any], None]
-                                      ] = None  # pylint: disable=unused-argument
+                   callback: Optional[ReporterCallback] = None  # pylint: disable=unused-argument
                    ) -> None:
         """Output the benchmark results to a file as tagged CSV if available.
 
@@ -103,11 +124,12 @@ class CSVReporter(Reporter):
         loading of the reporter classes, so subclasses can assume any required imports are available
 
         Args:
+            args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
             path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[Callable[[Case, Section, Format, Any], None]]):
+            callback (Optional[ReporterCallback]):
                 A callback function for additional processing of the report.
                 The function should accept two arguments: the Case instance and the CSV data as a string.
                 Leave as None if no callback is needed.
@@ -122,40 +144,54 @@ class CSVReporter(Reporter):
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        default_targets: frozenset[Target] = frozenset()
+        subdir: str = 'csv'
+        if isinstance(choice.options, CSVChoiceOptions):
+            default_targets = choice.options.default_targets
+            subdir = choice.options.subdir
+
+        targets: set[Target] = self.select_targets_from_args(
+            args=args, choice=choice, default_targets=default_targets)
+
         for section in choice.sections:
-            base_unit: str = ''
-            if section is Section.OPS:
-                base_unit = BASE_OPS_PER_INTERVAL_UNIT
-            elif section is Section.TIMING:
-                base_unit = BASE_INTERVAL_UNIT
-            else:  # This should never happen due to earlier validation
-                raise SimpleBenchValueError(
-                    f"Unsupported section: {section} (this should never happen)",
-                    tag=ErrorTag.CSV_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION)
+            base_unit: str = self.get_base_unit_for_section(section=section)
+            csv_output = self._to_csv(case=case, section=section, base_unit=base_unit)
 
-            filename: str = sanitize_filename(section.value)
-            if Target.FILESYSTEM in choice.targets:
-                file = path.joinpath('csv', f'{filename}.csv')  # type: ignore[reportOptionalMemberAccess]
-                file.parent.mkdir(parents=True, exist_ok=True)
-                with file.open(mode='w', encoding='utf-8', newline='') as csvfile:
-                    self._to_csv(case=case, section=section, csvfile=csvfile, base_unit=base_unit)
-            if Target.CALLBACK in choice.targets and case.callback is not None:
-                with StringIO(newline='') as csvfile:
-                    self._to_csv(case=case, section=section, csvfile=csvfile, base_unit=base_unit)
-                    csvfile.seek(0)
-                    case.callback(case, section, Format.CSV, csvfile.read())
+            for output_target in targets:
+                match output_target:
+                    case Target.FILESYSTEM:
+                        filename: str = sanitize_filename(section.value) + '.csv'
+                        self.target_filesystem(
+                            path=path, subdir=subdir, filename=filename, output=csv_output)
 
-    def _to_csv(self, case: Case, section: Section, csvfile: TextIOWrapper | StringIO, base_unit: str) -> None:
-        """Output the benchmark results as tagged CSV to the csvfile.
+                        # with file.open(mode='w', encoding='utf-8', newline='') as csvfile:
+                        #     self._to_csv(case=case, section=section, csvfile=csvfile, base_unit=base_unit)
+                    case Target.CALLBACK:
+                        self.target_callback(
+                            callback=callback, case=case, section=section, output_format=Format.CSV, output=csv_output)
+
+                    case Target.CONSOLE:
+                        output = f'[bold underline]CSV Report - {section.value}[/bold underline]\n\n{csv_output}'
+                        self.target_console(session=session, output=output)
+
+                    case _:
+                        raise SimpleBenchValueError(
+                            f'Unsupported target for CSVReporter: {output_target}',
+                            tag=ErrorTag.REPORTER_RUN_REPORT_UNSUPPORTED_TARGET)
+
+    def _to_csv(self, case: Case, section: Section, base_unit: str) -> str:
+        """Return the benchmark results as tagged CSV data.
 
         Args:
             case: The Case instance representing the benchmarked code.
             section: The section to output (eg. Section.OPS or Section.TIMING).
-            csvfile: The file-like object to write the CSV data to.
             base_unit: The base unit for the measurements (e.g., 'seconds', 'operations').
 
         Returns:
-            None
+            str: The benchmark results formatted as tagged CSV data.
+
+        Raises:
+            SimpleBenchValueError: If the specified section is unsupported.
         """
         results: list[Results] = case.results
 
@@ -170,41 +206,47 @@ class CSVReporter(Reporter):
         all_numbers.extend([result.results_section(section).standard_deviation for result in results])
         common_unit, common_scale = si_scale_for_smallest(numbers=all_numbers, base_unit=base_unit)
 
-        writer = csv.writer(csvfile)
-        writer.writerow([f'# title: {case.title}'])
-        writer.writerow([f'# description: {case.description}'])
-        writer.writerow([f'# unit: {common_unit}'])
-        header: list[str] = [
-            'N',
-            'Iterations',
-            'Elapsed Seconds',
-            f'mean ({common_unit})',
-            f'median ({common_unit})',
-            f'min ({common_unit})',
-            f'max ({common_unit})',
-            f'5th ({common_unit})',
-            f'95th ({common_unit})',
-            f'std dev ({common_unit})',
-            'rsd (%)'
-        ]
-        for value in case.variation_cols.values():
-            header.append(value)
-        writer.writerow(header)
-        for result in results:
-            stats_target = result.results_section(section)
-            row: list[str | float | int] = [
-                result.n,
-                len(result.iterations),
-                result.total_elapsed * DEFAULT_INTERVAL_SCALE,
-                sigfigs(stats_target.mean * common_scale),
-                sigfigs(stats_target.median * common_scale),
-                sigfigs(stats_target.minimum * common_scale),
-                sigfigs(stats_target.maximum * common_scale),
-                sigfigs(stats_target.percentiles[5] * common_scale),
-                sigfigs(stats_target.percentiles[95] * common_scale),
-                sigfigs(stats_target.standard_deviation * common_scale),
-                sigfigs(stats_target.relative_standard_deviation)
+        with StringIO() as csvfile:
+            csvfile.seek(0)
+
+            writer = csv.writer(csvfile)
+            writer.writerow([f'# title: {case.title}'])
+            writer.writerow([f'# description: {case.description}'])
+            writer.writerow([f'# unit: {common_unit}'])
+            header: list[str] = [
+                'N',
+                'Iterations',
+                'Elapsed Seconds',
+                f'mean ({common_unit})',
+                f'median ({common_unit})',
+                f'min ({common_unit})',
+                f'max ({common_unit})',
+                f'5th ({common_unit})',
+                f'95th ({common_unit})',
+                f'std dev ({common_unit})',
+                'rsd (%)'
             ]
-            for value in result.variation_marks.values():
-                row.append(value)
-            writer.writerow(row)
+            for value in case.variation_cols.values():
+                header.append(value)
+            writer.writerow(header)
+            for result in results:
+                stats_target = result.results_section(section)
+                row: list[str | float | int] = [
+                    result.n,
+                    len(result.iterations),
+                    result.total_elapsed * DEFAULT_INTERVAL_SCALE,
+                    sigfigs(stats_target.mean * common_scale),
+                    sigfigs(stats_target.median * common_scale),
+                    sigfigs(stats_target.minimum * common_scale),
+                    sigfigs(stats_target.maximum * common_scale),
+                    sigfigs(stats_target.percentiles[5] * common_scale),
+                    sigfigs(stats_target.percentiles[95] * common_scale),
+                    sigfigs(stats_target.standard_deviation * common_scale),
+                    sigfigs(stats_target.relative_standard_deviation)
+                ]
+                for value in result.variation_marks.values():
+                    row.append(value)
+                writer.writerow(row)
+
+            csvfile.seek(0)
+            return csvfile.read()

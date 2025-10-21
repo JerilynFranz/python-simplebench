@@ -342,6 +342,11 @@ class RichProgressTasks:
         """Indicates whether the Rich Progress display is running (has been started but not stopped)."""
 
     @property
+    def progress(self) -> Progress:
+        """Get the Rich Progress instance."""
+        return self._progress
+
+    @property
     def is_running(self) -> bool:
         """If the Rich Progress display is currently running.
 

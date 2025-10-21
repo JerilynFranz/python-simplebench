@@ -11,14 +11,13 @@ from rich.progress import Progress
 from .enums import Verbosity, Target, Color
 from .exceptions import ErrorTag, SimpleBenchArgumentError, SimpleBenchTypeError
 from .metaclasses import ISession
-from .protocols import ReporterCallback
+from .reporters.protocols import ReporterCallback
 from .reporters import ReporterManager
 from .reporters.choices import Choice, Choices
 from .runners import SimpleRunner
 from .tasks import RichProgressTasks, ProgressTracker
 from .case import Case
 from .utils import sanitize_filename, platform_id
-
 
 if TYPE_CHECKING:
     from .reporters import Reporter
@@ -79,7 +78,7 @@ class Session(ISession):
         # private attributes
         self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity, console=self.console)
         """ProgressTasks instance for managing progress tasks - backing field for the 'tasks' attribute."""
-        self._progress: Progress = self._progress_tasks._progress
+        self._progress: Progress = self.tasks.progress
         """Rich Progress instance for displaying progress bars - backing field for the 'progress' attribute."""
         self._reporter_manager: ReporterManager = ReporterManager()
         """The ReporterManager instance for managing reporters."""
@@ -148,6 +147,7 @@ class Session(ISession):
             SimpleBenchArgumentError: If there is a conflict or other error in reporter flag names.
         """
         try:
+            # Add reporter flags to the ArgumentParser based on command line args defined in each registered Choice
             self._reporter_manager.add_reporters_to_argparse(self._args_parser)
         except ArgumentError as arg_err:
             raise SimpleBenchArgumentError(
@@ -193,6 +193,10 @@ class Session(ISession):
     def report_keys(self) -> list[str]:
         """Get a list of report keys for all reports to be generated in this session.
 
+        This filters the report choices based on the command line arguments
+        that were set and parsed when the session was created and returns a list of
+        report keys for the reports that should be generated.
+
         Returns:
             A list of report keys for all reports to be generated in this session.
         """
@@ -219,6 +223,7 @@ class Session(ISession):
         processed_choices: set[str] = set()
         report_keys: list[str] = self.report_keys()
         n_reports = len(report_keys)
+
         self.tasks.clear()
         reports_progress_tracker = ProgressTracker(
             session=self,
@@ -281,12 +286,14 @@ class Session(ISession):
                     output_path = output_path / platform_name / group_path / timestamp
                     if self.verbosity >= Verbosity.DEBUG:
                         self._console.print(f"[DEBUG] Output path for report: {output_path}")
-                reporter.report(
-                    case=case,
-                    choice=choice,
-                    path=output_path,
-                    session=self,
-                    callback=callback)
+                if self.args:  # mypy guard
+                    reporter.report(
+                        args=self.args,
+                        case=case,
+                        choice=choice,
+                        path=output_path,
+                        session=self,
+                        callback=callback)
             cases_progress_tracker.stop()
         reports_progress_tracker.stop()
 

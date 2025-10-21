@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using Rich tables on the console."""
 from __future__ import annotations
+from argparse import Namespace
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from rich.console import Console
 from rich.table import Table
 
 from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE, BASE_MEMORY_UNIT
-from ..enums import Section, Target, Format
+from ..enums import Section, Target, Format, FlagType
 from ..exceptions import SimpleBenchValueError, ErrorTag
-from ..protocols import ReporterCallback
 from ..results import Results
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename, sigfigs
 from .choices import Choice, Choices
 from .interfaces import Reporter
+from .protocols import ReporterCallback
+
 
 if TYPE_CHECKING:
     from ..case import Case
@@ -58,6 +60,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table.console'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table',
                     description=('Display operations per second, per round timing, and memory usage results '
                                  'as rich text tables on the console'),
@@ -67,6 +70,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table-ops.console'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-ops',
                     description='Display operations per second results as a rich text table on the console',
                     sections=[Section.OPS],
@@ -75,6 +79,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table-timings.console'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-timings',
                     description='Display timing results as a rich text table on the console',
                     sections=[Section.TIMING],
@@ -83,6 +88,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table-memory.console'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-memory',
                     description='Display memory results as rich text tables on the console',
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
@@ -91,6 +97,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table.file'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-file',
                     description=('Save all results as rich text tables in files'),
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
@@ -99,6 +106,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table-ops.file'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-ops-file',
                     description='Save operations per second results as a rich text table in a file',
                     sections=[Section.OPS],
@@ -107,6 +115,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table-timings.file'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-timings-file',
                     description='Save timing results as a rich text table in a file',
                     sections=[Section.TIMING],
@@ -115,6 +124,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table-memory.file'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-memory-file',
                     description='Save memory results as rich text tables in files',
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
@@ -123,6 +133,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table.callback'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-callback',
                     description=('Returns all results via callback function as a rich text table'),
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
@@ -131,6 +142,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table-ops.callback'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-ops-callback',
                     description=('Returns operations per second results via callback function as a rich text table'),
                     sections=[Section.OPS],
@@ -139,6 +151,7 @@ class RichTableReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--rich-table-memory.callback'],
+                    flag_type=FlagType.BOOLEAN,
                     name='rich-table-memory-callback',
                     description=('Returns memory usage via callback function as rich text tables'),
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
@@ -149,11 +162,12 @@ class RichTableReporter(Reporter):
 
     def run_report(self,
                    *,
+                   args: Namespace,
                    case: Case,
                    choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,  # pylint: disable=unused-argument
-                   callback: Optional[ReporterCallback] = None  # pylint: disable=unused-argument
+                   path: Path | None = None,
+                   session: Session | None = None,  # pylint: disable=unused-argument
+                   callback: ReporterCallback | None = None  # pylint: disable=unused-argument
                    ) -> None:
         """Output the benchmark results as rich text if available.
 
@@ -162,6 +176,7 @@ class RichTableReporter(Reporter):
         are valid.
 
         Args:
+            args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
             path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.

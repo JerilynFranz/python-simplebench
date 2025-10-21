@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using graphs."""
 from __future__ import annotations
+from argparse import Namespace
 from copy import deepcopy
 from io import BytesIO, BufferedWriter
 from pathlib import Path
-from typing import Optional, Callable, Literal, Any, TYPE_CHECKING
+from typing import Optional, Literal, Any, TYPE_CHECKING
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -12,15 +13,16 @@ import pandas as pd
 import seaborn as sns
 
 from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT
-from ..enums import Section, Target, Format
+from ..enums import Section, Target, Format, FlagType
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
 from ..metaclasses import ICase
 from ..results import Results
-from .reporter_option import ReporterOption
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename
 from .choices import Choice, Choices
-from .interfaces import Reporter
+from .interfaces import Reporter, ReporterCallback
+from .reporter_option import ReporterOption
+
 if TYPE_CHECKING:
     from ..case import Case
     from ..session import Session
@@ -177,6 +179,7 @@ class GraphReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--graph-scatter-file'],
+                    flag_type=FlagType.BOOLEAN,
                     name='graph-scatter-file',
                     description='Save a scatter graph of operations per second results to a file',
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
@@ -185,6 +188,7 @@ class GraphReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--graph-scatter-ops.file'],
+                    flag_type=FlagType.BOOLEAN,
                     name='graph-scatter-ops-file',
                     description='Save a scatter graph of operations per second results to a file',
                     sections=[Section.OPS],
@@ -193,6 +197,7 @@ class GraphReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--graph-scatter-timings.file'],
+                    flag_type=FlagType.BOOLEAN,
                     name='graph-scatter-timings-file',
                     description='Save a scatter graph of timing results to a file',
                     sections=[Section.TIMING],
@@ -201,6 +206,7 @@ class GraphReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--graph-scatter-memory.file'],
+                    flag_type=FlagType.BOOLEAN,
                     name='graph-scatter-memory-file',
                     description='Save scatter graphs of memory usage to files',
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
@@ -209,6 +215,7 @@ class GraphReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--graph-scatter.callback'],
+                    flag_type=FlagType.BOOLEAN,
                     name='graph-scatter-callback',
                     description='Return scatter graph of operations per second results to a callback function',
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
@@ -217,6 +224,7 @@ class GraphReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--graph-scatter-ops.callback'],
+                    flag_type=FlagType.BOOLEAN,
                     name='graph-scatter-ops-callback',
                     description='Return scatter graph of operations per second results to a callback function',
                     sections=[Section.OPS],
@@ -225,6 +233,7 @@ class GraphReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--graph-scatter-timings.callback'],
+                    flag_type=FlagType.BOOLEAN,
                     name='graph-scatter-timings-callback',
                     description='Return scatter graph of timing results to a callback function',
                     sections=[Section.TIMING],
@@ -233,6 +242,7 @@ class GraphReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--graph-scatter-memory.callback'],
+                    flag_type=FlagType.BOOLEAN,
                     name='graph-scatter-memory-callback',
                     description='Return scatter graphs of memory usage to a callback function',
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
@@ -243,11 +253,12 @@ class GraphReporter(Reporter):
 
     def run_report(self,
                    *,
+                   args: Namespace,
                    case: Case,
                    choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,  # pylint: disable=unused-argument
-                   callback: Optional[Callable[[Case, Section, Format, Any], None]] = None
+                   path: Path | None = None,
+                   session: Session | None = None,  # pylint: disable=unused-argument
+                   callback: ReporterCallback | None = None
                    ) -> None:
         """Output the benchmark results as graphs.
 
@@ -257,6 +268,7 @@ class GraphReporter(Reporter):
         loading of the reporter classes, so subclasses can assume any required imports are available
 
         Args:
+            args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
             path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
@@ -310,7 +322,7 @@ class GraphReporter(Reporter):
                 with BytesIO() as graphfile:
                     self._plot_graph(case=case, section=section, graphfile=graphfile, base_unit=base_unit)
                     graphfile.seek(0)
-                    case.callback(case, section, Format.GRAPH, graphfile.read())
+                    case.callback(case=case, section=section, output_format=Format.GRAPH, output=graphfile.read())
                     graphfile.close()
 
     def _plot_graph(self,

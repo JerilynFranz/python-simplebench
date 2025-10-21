@@ -8,3 +8,7 @@ class ICase(metaclass=ABCMeta):
 
 class ISession(metaclass=ABCMeta):
     """Interface for Session classes."""
+
+
+class ISimpleRunner(metaclass=ABCMeta):
+    """Interface for SimpleRunner classes."""

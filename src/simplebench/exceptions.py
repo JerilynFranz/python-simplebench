@@ -20,6 +20,11 @@ class ErrorTag(str, Enum):
     CLI_INVALID_EXTRA_ARGS_ITEM_TYPE = "CLI_INVALID_EXTRA_ARGS_ITEM_TYPE"
     """Something other than a string was found in the list passed to the CLI as the extra_args argument"""
 
+    UNKNOWN_TARGET_IN_ARGS = "UNKNOWN_TARGET_IN_ARGS"
+    """An unknown target string was specified in the command-line arguments"""
+    UNSUPPORTED_TARGET_IN_ARGS = "UNSUPPORTED_TARGET_IN_ARGS"
+    """An unsupported target string was specified in the command-line arguments"""
+
     # @benchmark decorator tags
     BENCHMARK_DECORATOR_GROUP_TYPE = "BENCHMARK_DECORATOR_GROUP_TYPE"
     """Something other than a str was passed as the group"""
@@ -613,6 +618,10 @@ class ErrorTag(str, Enum):
     REPORTERS_UNREGISTER_INVALID_NAME_ARG = "REPORTERS_UNREGISTER_INVALID_NAME_ARG"
     """Something other than a string was passed to the Reporters.unregister() method"""
 
+    # get_base_unit_for_section() tags
+    REPORTER_RUN_REPORT_UNSUPPORTED_SECTION = "REPORTER_RUN_REPORT_UNSUPPORTED_SECTION"
+    """An unsupported Section was passed to the reporter's run_report() method"""
+
     # RichTableReporter() tags
     RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG = "RICH_TABLE_REPORTER_INIT_INVALID_CASE_ARG"
     """Something other than a Case instance was passed to the RichTableReporter() constructor"""
@@ -658,6 +667,12 @@ class ErrorTag(str, Enum):
     """Something other than a non-empty string was passed to the CSVReporter.to_csv() method"""
     CSV_REPORTER_TO_CSV_INVALID_TARGET_ARG = "CSV_REPORTER_TO_CSV_INVALID_TARGET_ARG"
     """Something other than a valid target string was passed to the CSVReporter.to_csv() method"""
+    CSV_REPORTER_RUN_REPORT_INVALID_PATH_ARG_TYPE = "CSV_REPORTER_RUN_REPORT_INVALID_PATH_ARG_TYPE"
+    """Something other than a Path instance was passed to the CSVReporter.run_report() method as the path arg"""
+    CSV_REPORTER_RUN_REPORT_INVALID_CALLBACK_ARG_TYPE = "CSV_REPORTER_RUN_REPORT_INVALID_CALLBACK_ARG_TYPE"
+    """Something other than a callable was passed to the CSVReporter.run_report() method as the callback arg"""
+    REPORTER_RUN_REPORT_UNSUPPORTED_TARGET = "REPORTER_RUN_REPORT_UNSUPPORTED_TARGET"
+    """An unsupported Target was passed to the reporter's run_report() method"""
 
     # GraphReporter() tags
     GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE = "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE"
@@ -785,6 +800,10 @@ class ErrorTag(str, Enum):
     """Something other than a sequence of Format enums was passed as the formats arg"""
     CHOICE_EMPTY_FORMATS_ARG_VALUE = "CHOICE_EMPTY_FORMATS_ARG_VALUE"
     """The formats arg cannot be an empty sequence"""
+    CHOICE_INVALID_OPTIONS_ARG_TYPE = "CHOICE_INVALID_OPTIONS_ARG_TYPE"
+    """Something other than a ReporterOptions instance was passed as the options arg"""
+    CHOICE_INVALID_FLAG_TYPE_ARG_TYPE = "CHOICE_INVALID_FLAG_TYPE_ARG_TYPE"
+    """Something other than a FlagType enum was passed as the flag_type arg"""
 
     # reporters.Choices() tags
     CHOICES_INVALID_CHOICES_ARG_TYPE = "CHOICES_INVALID_CHOICES_ARG_TYPE"
@@ -853,6 +872,14 @@ class ErrorTag(str, Enum):
     """The Reporter.run_report() method must be implemented by subclasses"""
     REPORTER_ADD_FLAGS_NOT_IMPLEMENTED = "REPORTER_ADD_FLAGS_NOT_IMPLEMENTED"
     """The Reporter.add_flags_to_argparse() method must be implemented in subclasses"""
+    REPORTER_ADD_FLAGS_UNSUPPORTED_FLAG_TYPE = "REPORTER_ADD_FLAGS_UNSUPPORTED_FLAG_TYPE"
+    """The Reporter.add_flags_to_argparse() method only supports flags of type
+    FlagType.BOOLEAN or FlagType.TARGET_LIST"""
+    REPORTER_ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE = (
+        "REPORTER_ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE")
+    """Something other than a Choice instance was passed to the Reporter.add_list_of_targets_flags() method"""
+    REPORTER_ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE = "REPORTER_ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE"
+    """Something other than a Choice instance was passed to the Reporter.add_boolean_flags() method"""
     REPORTER_FORMATS_NOT_IMPLEMENTED = "REPORTER_FORMATS_NOT_IMPLEMENTED"
     """The Reporter.formats property must be implemented in subclasses"""
     REPORTER_INVALID_FORMATS_ENTRY_TYPE = "REPORTER_INVALID_FORMATS_ENTRY_TYPE"
@@ -865,6 +892,8 @@ class ErrorTag(str, Enum):
     """The Reporter.targets property must be implemented in subclasses"""
     REPORTER_INVALID_TARGETS_ENTRY_TYPE = "REPORTER_INVALID_TARGETS_ENTRY_TYPE"
     """Something other than a Target enum was found in the targets argument."""
+    REPORTER_REPORT_INVALID_ARGS_ARG_TYPE = "REPORTER_REPORT_INVALID_ARGS_ARG_TYPE"
+    """Something other than a Namespace instance was passed to the Reporter.report() method as the args argument"""
     REPORTER_REPORT_INVALID_CASE_ARG = "REPORTER_REPORT_INVALID_CASE_ARG"
     """Something other than a Case instance was passed to the Reporter.report() method"""
     REPORTER_REPORT_INVALID_CHOICE_ARG = "REPORTER_REPORT_INVALID_CHOICE_ARG"
@@ -904,6 +933,20 @@ class ErrorTag(str, Enum):
     """Something other than an ArgumentParser instance was passed to the Reporter.add_flags_to_argparse() method"""
     REPORTER_ADD_FLAGS_ARGUMENT_ERROR = "REPORTER_ADD_FLAGS_ARGUMENT_ERROR"
     """An ArgumentError was raised when adding flags to the ArgumentParser instance"""
+    REPORTER_SELECT_TARGETS_INVALID_ARG_VALUE_TYPE = "REPORTER_SELECT_TARGETS_INVALID_ARG_VALUE_TYPE"
+    """The value provided for a target CLI argument has an invalid type"""
+    REPORTER_TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE = "REPORTER_TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE"
+    """Something other than a Path instance was passed to the Reporter._target_filesystem() method"""
+    REPORTER_TARGET_FILESYSTEM_PATH_NOT_DIRECTORY = "REPORTER_TARGET_FILESYSTEM_PATH_NOT_DIRECTORY"
+    """The Path instance passed to the Reporter._target_filesystem() method is not a directory"""
+    REPORTER_TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE = "REPORTER_TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE"
+    """Something other than a string was passed to the Reporter._target_filesystem() method as the subdir argument"""
+    REPORTER_TARGET_FILESYSTEM_EMPTY_SUBDIR_ARG = "REPORTER_TARGET_FILESYSTEM_EMPTY_SUBDIR_ARG"
+    """The subdir argument passed to the Reporter.target_filesystem() method cannot be an empty string"""
+    REPORTER_TARGET_FILESYSTEM_INVALID_FILENAME_ARG_TYPE = "REPORTER_TARGET_FILESYSTEM_INVALID_FILENAME_ARG_TYPE"
+    """Something other than a string was passed to the Reporter._target_filesystem() method as the filename argument"""
+    REPORTER_TARGET_FILESYSTEM_EMPTY_FILENAME_ARG = "REPORTER_TARGET_FILESYSTEM_EMPTY_FILENAME_ARG"
+    """The filename argument passed to the Reporter.target_filesystem() method cannot be an empty string"""
 
     # reporters.ReporterManager() tags
     REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG = "REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG"
@@ -993,6 +1036,16 @@ class ErrorTag(str, Enum):
     """The figures argument was not an int"""
     UTILS_SIGFIGS_INVALID_FIGURES_ARG_VALUE = "UTILS_SIGFIGS_INVALID_FIGURES_ARG_VALUE"
     """The figures argument was less than 1"""
+    UTILS_FLAG_TO_ARG_INVALID_FLAG_ARG_TYPE = "UTILS_FLAG_TO_ARG_INVALID_FLAG_ARG_TYPE"
+    """The flag argument was not a str"""
+    UTILS_FLAG_TO_ARG_EMPTY_FLAG_ARG = "UTILS_FLAG_TO_ARG_EMPTY_FLAG_ARG"
+    """The flag argument was an empty str"""
+    UTILS_FLAG_TO_ARG_INVALID_FLAG_ARG_VALUE = "UTILS_FLAG_TO_ARG_INVALID_FLAG_ARG_VALUE"
+    """The flag argument did not start with '--'"""
+    UTILS_ARG_TO_FLAG_INVALID_FLAG_ARG_TYPE = "UTILS_ARG_TO_FLAG_INVALID_FLAG_ARG_TYPE"
+    """The arg argument was not a str"""
+    UTILS_ARG_TO_FLAG_EMPTY_FLAG_ARG = "UTILS_ARG_TO_FLAG_EMPTY_FLAG_ARG"
+    """The arg argument was an empty str"""
 
     SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE = "SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE"
     """The rounds argument was not an int"""
@@ -1001,6 +1054,28 @@ class ErrorTag(str, Enum):
 
     RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED = "RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED"
     """Failed to create the timers module spec"""
+
+    # validate.py - validate_reporter_callback() tags
+    VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE = "VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE"
+    """The reporter callback is neither a callable nor None"""
+    VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS = (
+        "VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS")
+    """The reporter callback does not have the correct number of parameters"""
+
+    # validate.py - validate_callback() tags
+    VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS = "VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS"
+    """The type hints for the callback function could not be resolved"""
+
+    # validate.py - validate_callback_parameter() tags
+    VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER = (
+        "VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER")
+    """The callback function is missing a required parameter"""
+    VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE = (
+        "VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE")
+    """The callback function has a parameter with an incorrect type annotation"""
+    VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY = (
+        "VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY")
+    """The callback function has a parameter that is not keyword-only"""
 
 
 E = TypeVar('E', bound=Exception)

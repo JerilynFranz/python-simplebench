@@ -212,3 +212,69 @@ def kwargs_variations(kwargs: dict[str, Sequence[Any]]) -> list[dict[str, Any]]:
         return [{}]
     values = [kwargs[key] for key in keys]
     return [dict(zip(keys, v)) for v in itertools.product(*values)]
+
+
+def flag_to_arg(flag: str) -> str:
+    """Convert a command-line flag to a valid Python argument name.
+
+    This function takes a command-line flag (e.g., '--my-flag') and converts it
+    to a valid Python argument name (e.g., 'my_flag') as expected in a Namespace
+    result by removing leading dashes and replacing hyphens with underscores.
+
+    Args:
+        flag (str): The command-line flag to convert.
+
+    Returns:
+        str: The corresponding Python argument name.
+
+    Raises:
+        SimpleBenchTypeError: If the flag arg is not a str.
+        SimpleBenchValueError: If the flag arg is an empty string or does not start with '--'.
+    """
+    if not isinstance(flag, str):
+        raise SimpleBenchTypeError(
+            "flag arg must be a str",
+            tag=ErrorTag.UTILS_FLAG_TO_ARG_INVALID_FLAG_ARG_TYPE)
+    if flag == '':
+        raise SimpleBenchValueError(
+            "flag arg must not be an empty string",
+            tag=ErrorTag.UTILS_FLAG_TO_ARG_EMPTY_FLAG_ARG)
+    if not (flag.startswith('--') and len(flag) > 2):
+        raise SimpleBenchValueError(
+            "flag arg must start with '--' and have additional characters",
+            tag=ErrorTag.UTILS_FLAG_TO_ARG_INVALID_FLAG_ARG_VALUE)
+
+    arg_name: str = '--' + flag.replace('_', '-')
+
+    return arg_name
+
+
+def arg_to_flag(arg: str) -> str:
+    """Convert a Python argument name to a command-line flag.
+
+    This function takes a Python argument name (e.g., 'my_flag') and converts it
+    to a command-line flag (e.g., '--my-flag') by adding leading dashes and
+    replacing underscores with hyphens.
+
+    Args:
+        arg (str): The Python argument name to convert.
+
+    Returns:
+        str: The corresponding command-line flag.
+
+    Raises:
+        SimpleBenchTypeError: If the arg argument is not a str.
+        SimpleBenchValueError: If the arg argument is an empty string.
+    """
+    if not isinstance(arg, str):
+        raise SimpleBenchTypeError(
+            "arg arg must be a str",
+            tag=ErrorTag.UTILS_ARG_TO_FLAG_INVALID_FLAG_ARG_TYPE)
+    if arg == '':
+        raise SimpleBenchValueError(
+            "arg arg must not be an empty string",
+            tag=ErrorTag.UTILS_ARG_TO_FLAG_EMPTY_FLAG_ARG)
+
+    flag_name: str = '--' + arg.replace('_', '-')
+
+    return flag_name

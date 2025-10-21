@@ -4,20 +4,22 @@ from __future__ import annotations
 from copy import copy
 import inspect
 import itertools
-from typing import Any, Callable, Optional, TYPE_CHECKING, get_type_hints
+from typing import Any, Optional, TYPE_CHECKING
 
 from .defaults import (DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME,
                        DEFAULT_MAX_TIME, DEFAULT_ROUNDS)
 from .exceptions import (SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchRuntimeError, ErrorTag)
 from .metaclasses import ICase
-from .protocols import ActionRunner, ReporterCallback
-from .reporters.reporter_option import ReporterOption
+from .protocols import ActionRunner
 from .results import Results
 from .runners import SimpleRunner
-from .enums import Section, Format, Color
+from .enums import Section, Color
 from .tasks import ProgressTracker
 from .validators import (validate_non_blank_string, validate_positive_int,
                          validate_non_negative_int, validate_positive_float)
+from .reporters.protocols import ReporterCallback
+from .reporters.reporter_option import ReporterOption
+from .reporters.validators import validate_reporter_callback
 
 
 if TYPE_CHECKING:
@@ -147,7 +149,7 @@ class Case(ICase):
             It may also accept additional parameters to the run method as needed. If additional
             parameters are required, they must be specified in the `action` function signature.
         callback (Optional[ReporterCallback]): A callback function to be called with the benchmark
-            results. This function should accept four arguments: the Case instance, the Section,
+            results in a reporter. This function should accept four arguments: the Case instance, the Section,
             the ReporterOption, and the output object. Leave as None if no callback is needed.
             (default: None)
         results (list[Results]): The benchmark results for the case. This is populated by the
@@ -289,7 +291,7 @@ class Case(ICase):
         self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
         self._variation_cols = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
         self._runner = Case.validate_runner(runner)
-        self._callback = Case.validate_callback(callback)
+        self._callback = validate_reporter_callback(callback)
         self._options = Case.validate_options(options)
         self._results: list[Results] = []  # No validation needed here
         self.validate_time_range(self._min_time, self._max_time)
@@ -355,105 +357,6 @@ class Case(ICase):
                 tag=ErrorTag.CASE_INVALID_ACTION_PARAMETER_COUNT
             )
         return action
-
-    @staticmethod
-    def resolve_callback_type_hints(callback: Callable) -> dict[str, type]:
-        """Resolve the type hints for a callback function.
-
-        Args:
-            callback (Callable): The callback function to resolve type hints for.
-
-        Returns:
-            dict[str, type]: A dictionary mapping parameter names to their resolved types.
-
-        Raises:
-            SimpleBenchTypeError: If the type hints cannot be resolved.
-        """
-        try:
-            resolved_hints = get_type_hints(
-                callback, globalns=callback.__globals__)  # pyright: ignore[reportAttributeAccessIssue]
-        except (NameError, TypeError) as e:
-            # This can happen if an annotation refers to a type that doesn't exist.
-            raise SimpleBenchTypeError(
-                f"Invalid callback: {callback}. Could not resolve type hints. Original error: {e}",
-                tag=ErrorTag.CASE_INVALID_CALLBACK_UNRESOLVABLE_HINTS
-            ) from e
-        return resolved_hints
-
-    @staticmethod
-    def validate_callback_parameter(callback: Callable,
-                                    expected_type: type | Any,
-                                    param_name: str) -> None:
-        """Validate a parameter of the callback function.
-
-        The parameter must exist, be of the expected type, and be a keyword-only parameter.
-
-        Args:
-            callback (Callable): The callback function to validate.
-            expected_type (type | Any): The expected type of the parameter.
-            param_name (str): The name of the parameter to validate.
-
-        Raises:
-            SimpleBenchTypeError: If the parameter is invalid.
-        """
-        resolved_hints = Case.resolve_callback_type_hints(callback)
-        callback_signature = inspect.signature(callback)
-        if param_name not in callback_signature.parameters:
-            raise SimpleBenchTypeError(
-                f'Invalid callback: {callback}. Must accept an "{param_name}" parameter.',
-                tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)
-        param_type = resolved_hints.get(param_name)
-        if param_type is not expected_type:
-            raise SimpleBenchTypeError(
-                f"Invalid callback: {callback}. '{param_name}' parameter must be of type "
-                f"'{expected_type}', not '{param_type}'.",
-                tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)
-
-        param = callback_signature.parameters[param_name]
-        if param.kind is not inspect.Parameter.KEYWORD_ONLY:
-            raise SimpleBenchTypeError(
-                f'Invalid callback: {callback}. "{param_name}" parameter must be a keyword-only parameter.',
-                tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)
-
-    @staticmethod
-    def validate_callback(callback: Optional[ReporterCallback]) -> ReporterCallback | None:
-        """Validate the callback function.
-
-        It must be a callable or None. If callable, it must have the correct signature.
-
-        A callback function must accept the following four keyword-only parameters:
-            - case: Case
-            - section: Section
-            - output_format: Format
-            - output: Any
-
-        Args:
-            callback (Optional[ReporterCallback]): The callback function to validate.
-
-        Returns:
-            ReporterCallback | None: The validated callback function or None.
-
-        Raises:
-            SimpleBenchTypeError: If the callback is invalid.
-        """
-        if callback is None:
-            return None
-        if not callable(callback):
-            raise SimpleBenchTypeError(
-                f'Invalid callback: {callback}. Must be a callable or None.',
-                tag=ErrorTag.CASE_INVALID_CALLBACK_NOT_CALLABLE_OR_NONE)
-        callback_signature = inspect.signature(callback)
-        Case.validate_callback_parameter(callback, Case, 'case')
-        Case.validate_callback_parameter(callback, Section, 'section')
-        Case.validate_callback_parameter(callback, Format, 'output_format')
-        Case.validate_callback_parameter(callback, Any, 'output')
-        params = list(callback_signature.parameters.values())
-        if len(params) != 4:
-            raise SimpleBenchTypeError(
-                f'Invalid callback: {callback}. Must accept exactly four keyword-only parameters with the following '
-                'names and types: case: Case, section: Section, output_format: Format, output: Any',
-                tag=ErrorTag.CASE_INVALID_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
-        return callback
 
     @staticmethod
     def validate_kwargs_variations(value: dict[str, list[Any]] | None) -> dict[str, list[Any]]:

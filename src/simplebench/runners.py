@@ -12,6 +12,7 @@ from .defaults import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERAT
 from .enums import Color
 from .exceptions import ErrorTag, SimpleBenchImportError
 from .iteration import Iteration
+from .metaclasses import ISimpleRunner
 from .results import Results
 from .tasks import ProgressTracker
 from .validators import validate_positive_int
@@ -56,7 +57,7 @@ def _mock_action(**kwargs) -> None:  # pylint: disable=unused-argument
     return None
 
 
-class SimpleRunner():
+class SimpleRunner(ISimpleRunner):
     """A class to run benchmarks for various actions.
 
     Args:

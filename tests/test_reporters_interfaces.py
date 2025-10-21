@@ -1,16 +1,16 @@
 """Test simplebench/reporters/interfaces.py module"""
 from __future__ import annotations
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import Any, Optional, Sequence
 
 import pytest
 
 from simplebench.case import Case
-from simplebench.enums import Section, Target, Format
+from simplebench.enums import Section, Target, Format, FlagType
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
 from simplebench.iteration import Iteration
-from simplebench.protocols import ReporterCallback
+from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.choices import Choice, Choices
 from simplebench.reporters.interfaces import Reporter
 from simplebench.results import Results
@@ -46,11 +46,13 @@ class MockChoice(Choice):
         super().__init__(
             reporter=MockReporter(),
             flags=flags or ['--dummy'],
+            flag_type=FlagType.BOOLEAN,
             name=name or 'dummy',
             description=description or 'A dummy choice for testing.',
             sections=sections or [Section.OPS],
             targets=targets or [Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM],
             formats=formats or [Format.RICH_TEXT],
+            options=None,
             extra=None)
 
 
@@ -107,6 +109,7 @@ class MockReporterInit(Reporter):
 
     def run_report(self,
                    *,
+                   args: Namespace,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
@@ -133,6 +136,7 @@ class MockReporter(MockReporterInit):
             Choice(
                 reporter=self,
                 flags=['--dummy'],
+                flag_type=FlagType.BOOLEAN,
                 name='dummy',
                 description='A dummy choice for testing.',
                 sections=[Section.OPS],
@@ -143,6 +147,7 @@ class MockReporter(MockReporterInit):
 
     def run_report(self,
                    *,
+                   args: Namespace,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
@@ -168,6 +173,7 @@ class BadSuperMockReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--dummy'],
+                    flag_type=FlagType.BOOLEAN,
                     name='dummy',
                     description='A dummy choice for testing.',
                     sections=[Section.OPS],
@@ -179,13 +185,16 @@ class BadSuperMockReporter(Reporter):
 
     def run_report(self,  # pylint: disable=useless-parent-delegation
                    *,
+                   args: Namespace,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
         """Incorrectly calls super().run_report(), which should raise NotImplementedError."""
-        return super().run_report(case=case,
+        return super().run_report(
+                                  args=args,
+                                  case=case,
                                   choice=choice,
                                   path=path,
                                   session=session,
@@ -204,18 +213,21 @@ class BadSuperMockReporter(Reporter):
     idspec('REPORTER_003', TestAction(
         name=("calling run_report() on BadSuperMockReporter with bad run_report() super() delegation "
               "raises SimpleBenchNotImplementedError"),
-        action=lambda: BadSuperMockReporter().run_report(case=MockCase(), choice=MockChoice()),
+        action=lambda: BadSuperMockReporter().run_report(
+            args=namespace_instance(), case=MockCase(), choice=MockChoice()),
         exception=SimpleBenchNotImplementedError,
         exception_tag=ErrorTag.REPORTER_RUN_REPORT_NOT_IMPLEMENTED)),
     idspec('REPORTER_004', TestAction(
         name=("calling report() on Reporter with bad run_report() super() delegation "
               "raises SimpleBenchNotImplementedError"),
-        action=lambda: BadSuperMockReporter().report(case=MockCase(), choice=MockChoice(), path=mock_path()),
+        action=lambda: BadSuperMockReporter().report(
+            args=namespace_instance(), case=MockCase(), choice=MockChoice(), path=mock_path()),
         exception=SimpleBenchNotImplementedError,
         exception_tag=ErrorTag.REPORTER_RUN_REPORT_NOT_IMPLEMENTED)),
     idspec('REPORTER_005', TestAction(
         name="Correctly configured subclass of Reporter() can call report() successfully",
-        action=lambda: MockReporter().report(case=MockCase(), choice=MockChoice(), path=mock_path()),
+        action=lambda: MockReporter().report(
+            args=namespace_instance(), case=MockCase(), choice=MockChoice(), path=mock_path()),
         validate_result=lambda result: result is None)),
     idspec('REPORTER_006', TestAction(
         name="Init of Reporter with missing name raises SimpleBenchNotImplementedError/REPORTER_NAME_NOT_IMPLEMENTED",
@@ -398,10 +410,17 @@ def test_reporter_init(testspec: TestSpec) -> None:
     testspec.run()
 
 
+def namespace_instance() -> Namespace:
+    """Return an ArgumentParser instance for testing purposes."""
+    arg_parser = ArgumentParser(prog='simplebench')
+    args = arg_parser.parse_args([])
+    return args
+
 @pytest.mark.parametrize('testspec', [
     idspec('REPORT_001', TestAction(
         name="report() with non-Case arg raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CASE_ARG",
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case="not_a_case_instance",  # type: ignore[arg-type]
                         choice=MockChoice()),
         exception=SimpleBenchTypeError,
@@ -409,6 +428,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_002', TestAction(
         name="report() with non-Choice arg raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG",
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice="not_a_choice_instance"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
@@ -416,6 +436,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_003', TestAction(
         name="report() with non-Choice choise arg raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG",
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice=Choices()),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
@@ -424,10 +445,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name=("report() with Section not in Reporter's sections raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_SECTION"),
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice=Choice(
                             reporter=MockReporter(),
                             flags=['--not-registered'],
+                            flag_type=FlagType.BOOLEAN,
                             name='not_registered',
                             description='A choice not registered with the reporter.',
                             sections=[Section.NULL],
@@ -440,10 +463,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name=("report() with Target not in Reporter's targets raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_TARGET"),
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice=Choice(
                             reporter=MockReporter(),
                             flags=['--not-registered'],
+                            flag_type=FlagType.BOOLEAN,
                             name='not_registered',
                             description='A choice not registered with the reporter.',
                             sections=[Section.OPS],
@@ -456,10 +481,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name=("report() with Format not in Reporter's formats raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_FORMAT"),
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice=Choice(
                             reporter=MockReporter(),
                             flags=['--not-registered'],
+                            flag_type=FlagType.BOOLEAN,
                             name='not_registered',
                             description='A choice not registered with the reporter.',
                             sections=[Section.OPS],
@@ -471,10 +498,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_007', TestAction(
         name="report() with valid Case and Choice runs successfully",
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice=Choice(
                             reporter=MockReporter(),
                             flags=['--not-registered'],
+                            flag_type=FlagType.BOOLEAN,
                             name='not_registered',
                             description='A choice not registered with the reporter.',
                             sections=[Section.OPS],
@@ -485,10 +514,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_008', TestAction(
         name="report() with valid callback runs successfully",
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice=Choice(
                             reporter=MockReporter(),
                             flags=['--not-registered'],
+                            flag_type=FlagType.BOOLEAN,
                             name='not_registered',
                             description='A choice not registered with the reporter.',
                             sections=[Section.OPS],
@@ -500,10 +531,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_009', TestAction(
         name=("report() with invalid callback raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CALLBACK_ARG"),
         action=lambda: MockReporter().report(
+            args=namespace_instance(),
             case=MockCase(),
             choice=Choice(
                 reporter=MockReporter(),
                 flags=['--not-registered'],
+                flag_type=FlagType.BOOLEAN,
                 name='not_registered',
                 description='A choice not registered with the reporter.',
                 sections=[Section.OPS],
@@ -516,10 +549,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_010', TestAction(
         name="report() with valid path runs successfully",
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice=Choice(
                             reporter=MockReporter(),
                             flags=['--not-registered'],
+                            flag_type=FlagType.BOOLEAN,
                             name='not_registered',
                             description='A choice not registered with the reporter.',
                             sections=[Section.OPS],
@@ -531,10 +566,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_011', TestAction(
         name=("report() with invalid path raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_PATH_ARG"),
         action=lambda: MockReporter().report(
+            args=namespace_instance(),
             case=MockCase(),
             choice=Choice(
                 reporter=MockReporter(),
                 flags=['--not-registered'],  # type: ignore[arg-type]
+                flag_type=FlagType.BOOLEAN,
                 name='not_registered',
                 description='A choice not registered with the reporter.',
                 sections=[Section.OPS],
@@ -547,10 +584,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_012', TestAction(
         name=("report() with valid session runs successfully"),
         action=lambda: MockReporter().report(
+                        args=namespace_instance(),
                         case=MockCase(),
                         choice=Choice(
                             reporter=MockReporter(),
                             flags=['--not-registered'],
+                            flag_type=FlagType.BOOLEAN,
                             name='not_registered',
                             description='A choice not registered with the reporter.',
                             sections=[Section.OPS],
@@ -562,10 +601,12 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_013', TestAction(
         name=("report() with invalid session raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_SESSION_ARG"),
         action=lambda: MockReporter().report(
+            args=namespace_instance(),
             case=MockCase(),
             choice=Choice(
                 reporter=MockReporter(),
                 flags=['--not-registered'],
+                flag_type=FlagType.BOOLEAN,
                 name='not_registered',
                 description='A choice not registered with the reporter.',
                 sections=[Section.OPS],

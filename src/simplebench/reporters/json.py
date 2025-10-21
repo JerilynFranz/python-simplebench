@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using JSON files."""
 from __future__ import annotations
+from argparse import Namespace
 from dataclasses import dataclass
 import json
 from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from ..enums import Section, FlagType
+from ..utils import sanitize_filename, get_machine_info, sigfigs
 from .interfaces import Reporter
 from .choices import Choice, Choices, Target, Format
-from ..enums import Section
-from ..protocols import ReporterCallback
-from ..utils import sanitize_filename, get_machine_info, sigfigs
+from .protocols import ReporterCallback
 
 if TYPE_CHECKING:
     from ..case import Case
@@ -60,6 +61,7 @@ class JSONReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--json'],
+                    flag_type=FlagType.BOOLEAN,
                     name='json',
                     description='statistical results to JSON',
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
@@ -69,6 +71,7 @@ class JSONReporter(Reporter):
                 Choice(
                     reporter=self,
                     flags=['--json-data'],
+                    flag_type=FlagType.BOOLEAN,
                     name='json-data',
                     description='statistical results to JSON + full data',
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
@@ -80,6 +83,7 @@ class JSONReporter(Reporter):
 
     def run_report(self,
                    *,
+                   args: Namespace,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,
@@ -94,6 +98,7 @@ class JSONReporter(Reporter):
         loading of the reporter classes, so subclasses can assume any required imports are available
 
         Args:
+            args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
             path (Path | None, default=None): The path to the directory where the JSON file(s) will be saved.
