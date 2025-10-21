@@ -9,7 +9,7 @@ from typing import Sequence, Any, Optional
 import pytest
 
 from simplebench.case import Case
-from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
+from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchKeyError, ErrorTag
 from simplebench.session import Session
 from simplebench.reporters.interfaces import ReporterCallback
 from simplebench.enums import Section, Target, Format
@@ -768,4 +768,109 @@ def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
     ])
 def test_choices_extend(testspec: TestSpec) -> None:
     """Test the Choices extend() method."""
+    testspec.run()
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec("REMOVE_001", TestAction(
+            name="Remove existing Choice from Choices",
+            obj=choices_instance("REMOVE_001", choices=(
+                choice_instance('REMOVE_001', name='choice_to_remove', flags=('--remove-me',)),
+            )),
+            action=choices_instance("REMOVE_001", choices=(
+                choice_instance('REMOVE_001', name='choice_to_remove', flags=('--remove-me',)),
+            )).remove,
+            args=['choice_to_remove'],
+            validate_obj=lambda choices: (
+                len(choices) == 0
+            ),
+        )),
+        idspec("REMOVE_002", TestAction(
+            name="Remove non-existing Choice from Choices (raises SimpleBenchKeyError)",
+            obj=choices_instance("REMOVE_002", choices=(
+                choice_instance('REMOVE_002', name='existing_choice', flags=('--i-exist',)),
+            )),
+            action=choices_instance("REMOVE_002", choices=(
+                choice_instance('REMOVE_002', name='existing_choice', flags=('--i-exist',)),
+            )).remove,
+            args=['non_existing_choice'],
+            exception=SimpleBenchKeyError,
+            exception_tag=ErrorTag.CHOICES_DELITEM_UNKNOWN_CHOICE_NAME
+        )),
+    ])
+def test_choices_remove(testspec: TestSpec) -> None:
+    """Test the Choices.remove() method."""
+    testspec.run()
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec("SETITEM_001", TestAction(
+            name="Set item via __setitem__ method with valid Choice",
+            obj=choices_instance("SETITEM_001"),
+            action=choices_instance("SETITEM_001").__setitem__,
+            args=['new_choice', choice_instance(
+                'SETITEM_001', name='new_choice', flags=('--new-choice',))],
+            validate_obj=lambda choices: (
+                len(choices) == 1 and
+                choices['new_choice'] is choice_instance(
+                    'SETITEM_001', name='new_choice', flags=('--new-choice',))
+            ),
+        )),
+        idspec("SETITEM_002", TestAction(
+            name="Set item via __setitem__ method with invalid key type (raises SimpleBenchTypeError)",
+            obj=choices_instance("SETITEM_002"),
+            action=choices_instance("SETITEM_002").__setitem__,
+            args=[123, choice_instance(
+                'SETITEM_002', name='some_choice', flags=('--some-choice',))],
+            exception=SimpleBenchTypeError,
+            exception_tag=ErrorTag.CHOICES_SETITEM_INVALID_KEY_TYPE,
+        )),
+        idspec("SETITEM_003", TestAction(
+            name="Set item via __setitem__ method with invalid type (raises SimpleBenchTypeError)",
+            obj=choices_instance("SETITEM_003"),
+            action=choices_instance("SETITEM_003").__setitem__,
+            args=['invalid_choice', 'not_a_choice_instance'],
+            exception=SimpleBenchTypeError,
+            exception_tag=ErrorTag.CHOICES_SETITEM_INVALID_VALUE_TYPE,
+        )),
+        idspec("SETITEM_004", TestAction(
+            name="Set item via __setitem__ method with mismatched choice name (raises SimpleBenchValueError)",
+            obj=choices_instance("SETITEM_004"),
+            action=choices_instance("SETITEM_004").__setitem__,
+            args=['mismatched_name', choice_instance(
+                'SETITEM_004', name='actual_name', flags=('--some-flag',))],
+            exception=SimpleBenchValueError,
+            exception_tag=ErrorTag.CHOICES_SETITEM_KEY_NAME_MISMATCH,
+        )),
+        idspec("SETITEM_005", TestAction(
+            name="Set item via __setitem__ method with duplicate choice name (raises SimpleBenchValueError)",
+            obj=choices_instance("SETITEM_005", choices=(
+                choice_instance('SETITEM_005', name='duplicate_choice', flags=('--dup-flag',)),
+            )),
+            action=choices_instance("SETITEM_005", choices=(
+                choice_instance('SETITEM_005', name='duplicate_choice', flags=('--dup-flag',)),
+            )).__setitem__,
+            args=['duplicate_choice', choice_instance(
+                'SETITEM_005', name='duplicate_choice', flags=('--another-flag',))],
+            exception=SimpleBenchValueError,
+            exception_tag=ErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_NAME,
+        )),
+        idspec("SETITEM_006", TestAction(
+            name="Set item via __setitem__ method with duplicate flag (across choices) (raises SimpleBenchValueError)",
+            obj=choices_instance("SETITEM_006", choices=(
+                choice_instance('SETITEM_006', name='existing_choice', flags=('--common-flag',)),
+            )),
+            action=choices_instance("SETITEM_006", choices=(
+                choice_instance('SETITEM_006', name='existing_choice', flags=('--common-flag',)),
+            )).__setitem__,
+            args=['new_choice', choice_instance(
+                'SETITEM_006', name='new_choice', flags=('--common-flag',))],
+            exception=SimpleBenchValueError,
+            exception_tag=ErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_FLAG,
+        )),
+    ])
+def test_setitem_dunder_method(testspec: TestSpec) -> None:
+    """Test that the __setitem__ dunder method of Choices works correctly."""
     testspec.run()

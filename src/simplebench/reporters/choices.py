@@ -6,7 +6,7 @@ from typing import Any, Optional, Sequence, TYPE_CHECKING
 
 from .metaclasses import IChoice, IChoices, IReporter
 from ..enums import Section, Target, Format
-from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError, ErrorTag
 from ..validators import validate_sequence_of_str, validate_non_blank_string, validate_sequence_of_type
 
 
@@ -355,28 +355,39 @@ class Choices(UserDict[str, Choice], IChoices):
 
         Args:
             name (str): The name of the Choice instance to remove.
+        Raises:
+            SimpleBenchKeyError: If no Choice under the given name exists in the container.
+        """
+        del self[name]
+
+    # custom __delitem__ method to maintain indexes
+    def __delitem__(self, key: str) -> None:
+        """Remove a Choice instance from the container by its name.
+
+        Args:
+            name (str): The name of the Choice instance to remove.
 
         Raises:
-            SimpleBenchValueError: If no Choice with the given name exists in the container.
+            SimpleBenchKeyError: If no Choice under the given name exists in the container.
         """
-        if name not in self.data:
-            raise SimpleBenchValueError(
-                f"No Choice with the name '{name}' exists",
-                tag=ErrorTag.CHOICES_REMOVE_UNKNOWN_CHOICE_NAME)
-        choice = self.data[name]
-        del self.data[name]
+        if key not in self.data:
+            raise SimpleBenchKeyError(
+                f"No Choice key with the name '{key}' exists",
+                tag=ErrorTag.CHOICES_DELITEM_UNKNOWN_CHOICE_NAME)
+        choice = self[key]
         for arg in choice.flags:
             if arg in self._flags_index:
                 del self._flags_index[arg]
             arg_key = arg.replace('--', '', 1).replace('-', '_')
             if arg_key in self._args_index:
                 del self._args_index[arg_key]
+        super().__delitem__(key)
 
     # custom __setitem__ method to make Choices into a type restricted dict
-    def __setitem__(self, key: str, item: Choice) -> None:
+    def __setitem__(self, key: str, value: Choice) -> None:
         """Set a value in the Choices container.
 
-        This restricts setting items to only Choice instances with string keys
+        This restricts setting values to only Choice instances with string keys
         and raises an error otherwise. It also prevents duplicate Choice names.
 
         It also restricts the key to match the Choice.name attribute and updates
@@ -389,10 +400,10 @@ class Choices(UserDict[str, Choice], IChoices):
 
         Args:
             key (str): The key under which to store the Choice instance.
-            item (Choice): The Choice instance to store.
+            value (Choice): The Choice instance to store.
 
         Raises:
-            SimpleBenchTypeError: If the key is not a string or the item is not a Choice instance.
+            SimpleBenchTypeError: If the key is not a string or the value is not a Choice instance.
             SimpleBenchValueError: If a Choice with the same name already exists
                 in the container; if the key does not match the Choice.name attribute;
                 or if a Choice with the same flag already exists in the container.
@@ -401,24 +412,24 @@ class Choices(UserDict[str, Choice], IChoices):
             raise SimpleBenchTypeError(
                 "Choice key must be a string",
                 tag=ErrorTag.CHOICES_SETITEM_INVALID_KEY_TYPE)
-        if not isinstance(item, Choice):
+        if not isinstance(value, Choice):
             raise SimpleBenchTypeError(
                 "Only Choice instances can be added to Choices",
-                tag=ErrorTag.CHOICES_SETITEM_INVALID_ITEM_TYPE)
-        if key != item.name:
+                tag=ErrorTag.CHOICES_SETITEM_INVALID_VALUE_TYPE)
+        if key != value.name:
             raise SimpleBenchValueError(
                 "Choice key must match the Choice.name attribute",
                 tag=ErrorTag.CHOICES_SETITEM_KEY_NAME_MISMATCH)
-        if item.name in self.data:
+        if value.name in self.data:
             raise SimpleBenchValueError(
-                f"A Choice with the name '{item.name}' already exists",
+                f"A Choice with the name '{value.name}' already exists",
                 tag=ErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_NAME)
 
-        self._args_index.update({arg.replace('--', '', 1).replace('-', '_'): item for arg in item.flags})
-        for flag in item.flags:
+        self._args_index.update({flag.replace('--', '', 1).replace('-', '_'): value for flag in value.flags})
+        for flag in value.flags:
             if flag in self._flags_index:
                 raise SimpleBenchValueError(
                     f"A Choice with the flag '{flag}' already exists",
-                    tag=ErrorTag.CHOICES_ADD_DUPLICATE_CHOICE_FLAG)
-            self._flags_index[flag] = item
-        super().__setitem__(key, item)
+                    tag=ErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_FLAG)
+            self._flags_index[flag] = value
+        super().__setitem__(key, value)
