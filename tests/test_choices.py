@@ -716,3 +716,56 @@ def test_choices_all_choice_flags_method(testspec: TestSpec) -> None:
 def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
     """Test the Choices.get_choice_for_arg() method."""
     testspec.run()
+
+
+@pytest.mark.parametrize(
+    "testspec", [
+        idspec("EXTENDS_001", TestAction(
+            name="Choices extend - add two choices via extend([<choice1>, <choice2>]) and access them via dict key",
+            obj=choices_instance("EXTENDS_001"),
+            action=choices_instance("EXTENDS_001").extend,
+            args=[[
+                choice_instance('EXTENDS_001', name='choice_one', flags=('--one',)),
+                choice_instance('EXTENDS_001', name='choice_two', flags=('--two',))]],
+            validate_obj=lambda choices: (
+                len(choices) == 2 and
+                choices['choice_one'] is choice_instance('EXTENDS_001', name='choice_one', flags=('--one',)) and
+                choices['choice_two'] is choice_instance('EXTENDS_001', name='choice_two', flags=('--two',))
+            ),
+        )),
+        idspec("EXTENDS_002", TestAction(
+            name="Choices extend - add two choices via extend(<choices>]) and access them via dict key",
+            obj=choices_instance("EXTENDS_002"),
+            action=choices_instance("EXTENDS_002").extend,
+            args=[Choices(choices=[
+                choice_instance('EXTENDS_002', name='choice_three', flags=('--three',)),
+                choice_instance('EXTENDS_002', name='choice_four', flags=('--four',)),
+            ])],
+            validate_obj=lambda choices: (
+                len(choices) == 2 and
+                choices['choice_three'] is choice_instance('EXTENDS_002', name='choice_three', flags=('--three',)) and
+                choices['choice_four'] is choice_instance('EXTENDS_002', name='choice_four', flags=('--four',))
+            ),
+        )),
+        idspec("EXTENDS_003", TestAction(
+            name="Choices extend - add invalid type (raises SimpleBenchTypeError)",
+            obj=choices_instance("EXTENDS_003"),
+            action=choices_instance("EXTENDS_003").extend,
+            args=['not_a_sequence'],  # type: ignore[arg-type]
+            exception=SimpleBenchTypeError,
+            exception_tag=ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+        )),
+        idspec("EXTENDS_004", TestAction(
+            name="Choices extend - add two choices via extend([<choice1>, <choice2>]) and access them via dict key",
+            obj=choices_instance("EXTENDS_001"),
+            action=choices_instance("EXTENDS_001").extend,
+            args=[[
+                choice_instance('EXTENDS_001', name='choice_one', flags=('--one',)),
+                'something_invalid']],
+            exception=SimpleBenchTypeError,
+            exception_tag=ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+        )),
+    ])
+def test_choices_extend(testspec: TestSpec) -> None:
+    """Test the Choices extend() method."""
+    testspec.run()

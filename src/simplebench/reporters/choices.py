@@ -271,7 +271,7 @@ class Choices(UserDict[str, Choice], IChoices):
                     f"Expected a Sequence of Choice instances or a Choices instance but got {type(choices)}",
                     tag=ErrorTag.CHOICES_INVALID_CHOICES_ARG_TYPE)
 
-        if choices:
+        if choices_list:
             self.extend(choices_list)
 
     def add(self, choice: Choice) -> None:
@@ -320,7 +320,6 @@ class Choices(UserDict[str, Choice], IChoices):
 
         Raises:
             SimpleBenchTypeError: If the arg is not a string.
-            SimpleBenchValueError: If the arg is not formatted as a valid Python identifier.
         """
         if not isinstance(arg, str):
             raise SimpleBenchTypeError(
@@ -328,22 +327,28 @@ class Choices(UserDict[str, Choice], IChoices):
                 tag=ErrorTag.CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
         return self._args_index.get(arg, None)
 
-    def extend(self, choices: Sequence[Choice] | Choices) -> None:
-        """Add multiple Choice instances to the container.
+    def extend(self, choices: Sequence[Choice]) -> None:
+        """Add Choice instances to the container.
 
-        This method accepts either a sequence of Choice instances or a Choices
-        instance and adds each Choice to the container.
+        Args:
+            choices (Sequence[Choice] | Choices): A sequence of Choice instances or an instance of Choices.
+
+        Raises:
+            SimpleBenchTypeError: If the choices argument is not a Sequence of Choice instances or a Choices instance.
+            SimpleBenchValueError: If any Choice in the sequence has a duplicate name that already exists in
+                the container.
         """
         if isinstance(choices, Choices):
             for choice in choices.values():
                 self.add(choice)
-        elif isinstance(choices, Sequence):
-            for choice in choices:
-                self.add(choice)
         else:
-            raise SimpleBenchTypeError(
-                "Expected a Sequence of Choice instances or a Choices instance",
-                tag=ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG)
+            choices_list = validate_sequence_of_type(
+                choices, Choice, "choices",
+                ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+                ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ITEM_VALUE,
+                allow_empty=True)
+            for choice in choices_list:
+                self.add(choice)
 
     def remove(self, name: str) -> None:
         """Remove a Choice instance from the container by its name.

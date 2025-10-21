@@ -12,7 +12,7 @@ from .defaults import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERAT
 from .exceptions import ErrorTag, SimpleBenchImportError
 from .iteration import Iteration
 from .results import Results
-from .validators import validate_non_negative_int
+from .validators import validate_positive_int
 
 
 if TYPE_CHECKING:
@@ -168,7 +168,7 @@ class SimpleRunner():
             Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]:
                 A function that returns the elapsed time for the benchmark as a float.
         """
-        rounds = validate_non_negative_int(
+        rounds = validate_positive_int(
             rounds, 'rounds',
             ErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE,
             ErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE)
