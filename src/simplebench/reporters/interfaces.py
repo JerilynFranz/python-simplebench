@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import Optional, Iterable, Sequence, TYPE_CHECKING
+from typing import Optional, Iterable, TYPE_CHECKING
 
 from rich.console import Console
 
@@ -12,7 +12,7 @@ from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, BASE_MEMO
 from ..enums import Section, Target, Format, FlagType
 from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
 from ..metaclasses import ICase, ISession
-from ..utils import flag_to_arg
+from ..utils import collect_arg_list
 from .metaclasses import IReporter, IChoices, IChoice
 from .protocols import ReporterCallback
 
@@ -191,7 +191,7 @@ class Reporter(ABC, IReporter):
             args: Namespace, choice: Choice, default_targets: Iterable[Target]) -> set[Target]:
         """Select the output targets based on command-line arguments and choice configuration.
 
-        It checks the command-line arguments for flags corresponding to the choice
+        It checks the command-line arguments for any flags corresponding to the choice
         and collects the specified targets. The default target(s) are any Target enums defined
         in the arg values for the flags. They are discarded if there are explicit targets specified
         in the args as strings. Finally, it ensures that the selected targets are valid for the
@@ -214,16 +214,14 @@ class Reporter(ABC, IReporter):
         """
         selected_targets: set[Target] = set()
         target_members = Target.__members__
+        reverse_target_map = {v.value: v for k, v in target_members.items()}
         for flag in choice.flags:
-            arg_value = getattr(args, flag_to_arg(flag), NO_ATTRIBUTE)
-            if arg_value is NO_ATTRIBUTE:
-                continue
-            if not isinstance(arg_value, Sequence):
-                raise SimpleBenchTypeError(
-                    f"Expected a sequence for argument {flag}, got {type(arg_value)}",
-                    tag=ErrorTag.REPORTER_SELECT_TARGETS_INVALID_ARG_VALUE_TYPE)
-            for target in arg_value:
-                target_enum = target_members.get(target, None)
+            target_names = collect_arg_list(
+                args=args, flag=flag, include_comma_separated=True)
+            if not target_names:
+                continue  # No targets specified for this flag, skip to next flag
+            for target in target_names:
+                target_enum = reverse_target_map.get(target, None)
                 if target_enum is not None:
                     if target_enum in choice.targets:
                         selected_targets.add(target_enum)
@@ -483,8 +481,10 @@ class Reporter(ABC, IReporter):
             raise SimpleBenchTypeError(
                 "filename arg must be a string",
                 tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_INVALID_FILENAME_ARG_TYPE)
+        output_path = path / subdir / filename
+        output_path.parent.mkdir(parents=True, exist_ok=True)
         mode = 'wb' if isinstance(output, bytes) else 'w'
-        with (path / subdir / filename).open(mode) as f:
+        with output_path.open(mode) as f:
             f.write(output)
 
     def target_callback(self,

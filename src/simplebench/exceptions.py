@@ -1046,6 +1046,14 @@ class ErrorTag(str, Enum):
     """The arg argument was not a str"""
     UTILS_ARG_TO_FLAG_EMPTY_FLAG_ARG = "UTILS_ARG_TO_FLAG_EMPTY_FLAG_ARG"
     """The arg argument was an empty str"""
+    UTILS_COLLECT_ARG_LIST_INVALID_ARG_VALUE_ITEM_TYPE = "UTILS_COLLECT_ARG_LIST_INVALID_ARG_VALUE_ITEM_TYPE"
+    """An item in the arg_value list of lists was not a str"""
+    UTILS_COLLECT_ARG_LIST_INVALID_ARG_VALUE_TYPE = "UTILS_COLLECT_ARG_LIST_INVALID_ARG_VALUE_TYPE"
+    """The arg_value argument was not a list of lists"""
+
+    # utils.collect_arg_list() tags
+    UTILS_COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE = "UTILS_COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE"
+    """The args argument was not a Namespace instance"""
 
     SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE = "SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE"
     """The rounds argument was not an int"""

@@ -152,7 +152,6 @@ class CSVReporter(Reporter):
 
         targets: set[Target] = self.select_targets_from_args(
             args=args, choice=choice, default_targets=default_targets)
-
         for section in choice.sections:
             base_unit: str = self.get_base_unit_for_section(section=section)
             csv_output = self._to_csv(case=case, section=section, base_unit=base_unit)

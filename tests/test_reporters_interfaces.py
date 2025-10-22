@@ -416,6 +416,7 @@ def namespace_instance() -> Namespace:
     args = arg_parser.parse_args([])
     return args
 
+
 @pytest.mark.parametrize('testspec', [
     idspec('REPORT_001', TestAction(
         name="report() with non-Case arg raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CASE_ARG",

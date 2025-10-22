@@ -1,14 +1,16 @@
 """"Protocols for reporters stuff."""
 from __future__ import annotations
-from typing import Any, Protocol
+from typing import Any, Protocol, TYPE_CHECKING
 
 from ..enums import Format, Section
-from ..metaclasses import ICase
+
+if TYPE_CHECKING:
+    from ..case import Case
 
 
 class ReporterCallback(Protocol):
     """A protocol for callback functions used by Case and Reporters."""
-    def __call__(self, *, case: ICase, section: Section, output_format: Format, output: Any) -> None:
+    def __call__(self, *, case: Case, section: Section, output_format: Format, output: Any) -> None:
         """A callback function to handle benchmark results from a Reporter.
 
         This function is called with the results of a benchmark run, and is responsible for
