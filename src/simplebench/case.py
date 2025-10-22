@@ -707,10 +707,8 @@ class Case(ICase):
         """
         results = []
         for result in self.results:
-            if full_data:  # full data if requested
-                results.append(result.as_dict)
-            else:  # otherwise only stats
-                results.append(result.as_dict_with_data)
+            results.append(result.as_dict(full_data=full_data))
+
         return {
             'type': self.__class__.__name__,
             'group': self.group,

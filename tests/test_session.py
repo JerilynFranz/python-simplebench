@@ -14,6 +14,7 @@ from simplebench.exceptions import (SimpleBenchTypeError, ErrorTag)
 from simplebench.protocols import ActionRunner
 from simplebench.reporters.reporter_option import ReporterOption
 from simplebench.reporters.protocols import ReporterCallback
+from simplebench.utils import collect_arg_list
 
 
 from .testspec import TestAction, idspec, Assert, TestSpec, NO_EXPECTED_VALUE
@@ -401,6 +402,9 @@ def session_with_reporters() -> Session:
     return session
 
 
+NO_ATTRIBUTE = object()
+
+
 @pytest.mark.parametrize("testspec", [
     idspec("PARSE_ARGS_001", TestAction(
             name="Parse '--help' with initialized argparser",
@@ -408,18 +412,18 @@ def session_with_reporters() -> Session:
             args=[["--help"]],
             exception=SystemExit)),  # argparse throws SystemExit on --help
     idspec("PARSE_ARGS_002", TestAction(
-            name="Parse '--json' with initialized argparser (.json should be True)",
+            name="Parse '--json' with initialized argparser (.json should be [['console']])",
             action=session_with_reporters().parse_args,
             obj=session_with_reporters(),
-            args=[["--json"]],
-            validate_obj=lambda obj: obj.args.json is True,
+            args=[["--json", "console"]],
+            validate_obj=lambda obj: collect_arg_list(obj.args, "--json") == ["console"],
             expected=NO_EXPECTED_VALUE)),
     idspec("PARSE_ARGS_003", TestAction(
             name="Parse no arguments with initialized argparser (.json should be False)",
             action=session_with_reporters().parse_args,
             obj=session_with_reporters(),
             args=[[]],
-            validate_obj=lambda obj: obj.args.json is False,
+            validate_obj=lambda obj: not obj.args.json,
             expected=NO_EXPECTED_VALUE)),
 ])
 def test_parse_args(testspec: TestAction) -> None:

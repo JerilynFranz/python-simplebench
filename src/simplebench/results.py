@@ -2,7 +2,7 @@
 """Container for the results of a single benchmark test."""
 from __future__ import annotations
 from copy import copy, deepcopy
-from typing import Any, Optional, Sequence, Mapping
+from typing import Any, Optional, Sequence
 from types import MappingProxyType
 
 from simplebench.exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
@@ -544,16 +544,15 @@ class Results:
                     tag=ErrorTag.RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
                 )
 
-    @property
-    def as_dict(self) -> dict[str, str | float | Mapping[int, float] | Mapping[str, Any]]:
+    def as_dict(self, full_data: bool = False) -> dict[str, Any]:
         '''Returns the benchmark results and statistics as a JSON-serializable dictionary.'''
-        return {
+        results_dict: dict[str, Any] = {
             'type': self.__class__.__name__,
             'group': self.group,
             'title': self.title,
             'description': self.description,
             'n': self.n,
-            'variation_cols': self.variation_cols,
+            'variation_cols': dict(self.variation_cols),  # convert MappingProxyType to dict
             'interval_unit': self.interval_unit,
             'interval_scale': self.interval_scale,
             'ops_per_interval_unit': self.ops_per_interval_unit,
@@ -567,20 +566,12 @@ class Results:
             'memory': self.memory.stats_summary.as_dict,
             'peak_memory': self.peak_memory.stats_summary.as_dict,
         }
-
-    @property
-    def as_dict_with_data(self) -> dict[str, str | float | Mapping[int, float] | Mapping[str, Any]]:
-        '''Returns the benchmark results, statistics and raw data as a JSON-serializable dictionary.
-
-        Includes all statistics PLUS raw data for per-round timings, operations per second,
-        memory usage, and peak memory usage.
-        '''
-        results = self.as_dict
-        results['per_round_timings'] = self.per_round_timings.as_dict
-        results['ops_per_second'] = self.ops_per_second.as_dict
-        results['memory'] = self.memory.as_dict
-        results['peak_memory'] = self.peak_memory.as_dict
-        return results
+        if full_data:
+            results_dict['per_round_timings'] = self.per_round_timings.as_dict
+            results_dict['ops_per_second'] = self.ops_per_second.as_dict
+            results_dict['memory'] = self.memory.as_dict
+            results_dict['peak_memory'] = self.peak_memory.as_dict
+        return results_dict
 
     def __repr__(self) -> str:
         """Return a string representation of the Results object."""

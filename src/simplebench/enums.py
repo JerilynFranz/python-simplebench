@@ -68,10 +68,10 @@ def enum_docstrings(enum: type[E]) -> type[E]:
 
 @enum_docstrings
 class Section(str, Enum):
-    """Categories for case sections.
+    """Categories for case results sections in reporters.
 
-    The string values are used to load the data accessor methods by attribute name in the Results class
-    and name generated files."""
+    This is used by reporters to specify which sections of benchmark results to include in their output.
+    """
     OPS = 'operations per second'
     """Operations per second section."""
     TIMING = 'per round timings'
@@ -81,7 +81,7 @@ class Section(str, Enum):
     PEAK_MEMORY = 'peak memory usage'
     """Peak memory usage section."""
     NULL = 'null section'
-    """No section."""
+    """No section. This is used when a reporter does not specify a section."""
 
     def __contains__(self, item: Any) -> bool:
         """Check if the item is a valid Section."""

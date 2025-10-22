@@ -34,7 +34,7 @@ class CSVChoiceOptions(ChoiceOptions):
         default_targets (frozenset[Target]): The default targets for the CSV reporter choice.
         subdir (str): The subdirectory to output CSV files to.
     """
-    def __init__(self, default_targets: Iterable[Target], subdir: str = 'str') -> None:
+    def __init__(self, default_targets: Iterable[Target], subdir: str = 'csv') -> None:
         """Initialize CSVChoiceOptions with default targets and subdirectory.
 
         Args:
@@ -58,8 +58,9 @@ class CSVChoiceOptions(ChoiceOptions):
 class CSVReporter(Reporter):
     """Class for outputting benchmark results to CSV files.
 
-    It supports reporting operations per second and per round timing results,
-    either separately or together, to the filesystem or via a callback function.
+    It supports reporting statistics for various sections,
+    either separately or together, to the filesystem, via a callback function,
+    or to the console in CSV format.
 
     The CSV files are tagged with metadata comments including the case title,
     description, and units for clarity.
@@ -80,12 +81,12 @@ class CSVReporter(Reporter):
         choices (Choices): A collection of Choices instances defining
             the reporter instance, CLI flags, Choice name, supported Result Sections,
             supported output Targets, and supported output Formats for the reporter.
+        targets (set[Target]): The supported output targets for the reporter.
+        formats (set[Format]): The supported output formats for the reporter.
+        choices (Choices): The supported Choices for the reporter.
     """
-
-    DEFAULT_TARGETS = [Target.FILESYSTEM]
-    """Default targets for CSVReporter choices."""
-
     def __init__(self) -> None:
+        """Initialize the CSVReporter with its name, description, choices, targets, and formats."""
         super().__init__(
             name='csv',
             description='Outputs benchmark results to CSV files.',
@@ -99,11 +100,48 @@ class CSVReporter(Reporter):
                     flag_type=FlagType.TARGET_LIST,
                     name='csv',
                     description=(
-                        'Output results to CSV (file, console, callback, default=file)'),
+                        'Output all results to CSV (filesystem, console, callback, default=filesystem)'),
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     formats=[Format.CSV],
-                    options=CSVChoiceOptions(default_targets=self.DEFAULT_TARGETS)),
+                    options=CSVChoiceOptions(default_targets=[Target.FILESYSTEM])
+                ),
+                Choice(
+                    reporter=self,
+                    flags=['--csv.ops'],
+                    flag_type=FlagType.TARGET_LIST,
+                    name='csv-ops',
+                    description=(
+                        'Output ops/second results to CSV (filesystem, console, callback, default=filesystem)'),
+                    sections=[Section.OPS],
+                    targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
+                    formats=[Format.CSV],
+                    options=CSVChoiceOptions(default_targets=[Target.FILESYSTEM])
+                ),
+                Choice(
+                    reporter=self,
+                    flags=['--csv.timing'],
+                    flag_type=FlagType.TARGET_LIST,
+                    name='csv-timing',
+                    description=(
+                        'Output timing results to CSV (filesystem, console, callback, default=filesystem)'),
+                    sections=[Section.TIMING],
+                    targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
+                    formats=[Format.CSV],
+                    options=CSVChoiceOptions(default_targets=[Target.FILESYSTEM])
+                ),
+                Choice(
+                    reporter=self,
+                    flags=['--csv.memory'],
+                    flag_type=FlagType.TARGET_LIST,
+                    name='csv-memory',
+                    description=(
+                        'Output memory results to CSV (filesystem, console, callback, default=filesystem)'),
+                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
+                    formats=[Format.CSV],
+                    options=CSVChoiceOptions(default_targets=[Target.FILESYSTEM])
+                ),
             ])
         )
 
@@ -163,8 +201,6 @@ class CSVReporter(Reporter):
                         self.target_filesystem(
                             path=path, subdir=subdir, filename=filename, output=csv_output)
 
-                        # with file.open(mode='w', encoding='utf-8', newline='') as csvfile:
-                        #     self._to_csv(case=case, section=section, csvfile=csvfile, base_unit=base_unit)
                     case Target.CALLBACK:
                         self.target_callback(
                             callback=callback, case=case, section=section, output_format=Format.CSV, output=csv_output)

@@ -21,5 +21,5 @@ def string_concatenation_benchmark():
 
 
 if __name__ == '__main__':
-    extra_args = ['--progress', '--rich-table.console']
+    extra_args = ['--progress']
     simplebench.main(extra_args=extra_args)

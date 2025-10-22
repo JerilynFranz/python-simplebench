@@ -645,6 +645,25 @@ class ErrorTag(str, Enum):
     """Something other than a Path instance was passed to the RichTableReporter.report() method"""
     RICH_TABLE_REPORTER_REPORT_INVALID_CALLBACK_ARG = "RICH_TABLE_REPORTER_REPORT_INVALID_CALLBACK_ARG"
     """Something other than a callable was passed to the RichTableReporter.report() method as the callback argument"""
+    RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE = (
+        "RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE")
+    """The default targets specified in the RichTableChoiceOptions are not valid Target enum members."""
+    RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_VALUE = (
+        "RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_VALUE")
+    """The default targets specified in the RichTableChoiceOptions cannot be empty."""
+    RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_TYPE = "RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_TYPE"
+    """The subdir specified in the RichTableChoiceOptions must be a string."""
+    RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_VALUE = "RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_VALUE"
+    """The subdir specified in the RichTableChoiceOptions cannot be an empty string."""
+    RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_TYPE = "RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_TYPE"
+    """The width specified in the RichTableChoiceOptions must be an integer."""
+    RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_VALUE = "RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_VALUE"
+    """The width specified in the RichTableChoiceOptions must be greater than zero."""
+    RICH_TABLE_REPORTER_CHOICE_OPTIONS_DEFAULT_TARGETS_NOT_ITERABLE = (
+        "RICH_TABLE_REPORTER_CHOICE_OPTIONS_DEFAULT_TARGETS_NOT_ITERABLE")
+    """The default targets specified in the RichTableChoiceOptions must be an iterable of Target enum members."""
+    REPORTER_RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE = "REPORTER_RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE"
+    """Something other than a RichTableChoiceOptions instance was set for a choice option"""
 
     # CSVReporter() tags
     CSV_REPORTER_INIT_INVALID_CASE_ARG = "CSV_REPORTER_INIT_INVALID_CASE_ARG"
@@ -725,6 +744,8 @@ class ErrorTag(str, Enum):
     # JSONReporter() tags
     JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION = "JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION"
     """An unsupported Section was passed to the JSONReporter.run_report() method in the choice.sections"""
+    REPORTER_JSON_OUTPUT_ERROR = "REPORTER_JSON_OUTPUT_ERROR"
+    """An error occurred while serializing the JSON output."""
 
     # RichTask() tags
     RICH_TASK_INIT_INVALID_NAME_ARG = "RICH_TASK_INIT_INVALID_NAME_ARG"
@@ -947,6 +968,11 @@ class ErrorTag(str, Enum):
     """Something other than a string was passed to the Reporter._target_filesystem() method as the filename argument"""
     REPORTER_TARGET_FILESYSTEM_EMPTY_FILENAME_ARG = "REPORTER_TARGET_FILESYSTEM_EMPTY_FILENAME_ARG"
     """The filename argument passed to the Reporter.target_filesystem() method cannot be an empty string"""
+    REPORTER_TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS = (
+        "REPORTER_TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS")
+    """The append and unique options are not compatible when writing to the filesystem"""
+    REPORTER_TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS = "REPORTER_TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS"
+    """The output file already exists and the append or unique options were not specified"""
 
     # reporters.ReporterManager() tags
     REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG = "REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG"

@@ -120,7 +120,7 @@ class Stats:
     def relative_standard_deviation(self) -> float:
         '''The relative standard deviation of the data.'''
         if self._relative_standard_deviation is None:
-            self._relative_standard_deviation = self.standard_deviation / self.mean * 100 if self.mean else 0.0
+            self._relative_standard_deviation = abs(self.standard_deviation / self.mean * 100) if self.mean else 0.0
         return self._relative_standard_deviation
 
     @property
@@ -464,7 +464,7 @@ class StatsSummary(Stats):
         '''
         # Immutability is preserved because all values are primitives or copies already
         return {
-            'type': f'{self.__class__.__name__}:statistics',
+            'type': f'{self.__class__.__name__}',
             'unit': si_unit_base(self.unit),
             'scale': 1.0,
             'mean': self.mean / self.scale,

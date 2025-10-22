@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Optional, Iterable, TYPE_CHECKING
 
 from rich.console import Console
+from rich.table import Table
+from rich.text import Text
 
 from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, BASE_MEMORY_UNIT
 from ..enums import Section, Target, Format, FlagType
@@ -449,10 +451,24 @@ class Reporter(ABC, IReporter):
         """
         return self._formats
 
-    def target_filesystem(self, path: Path | None, subdir: str, filename: str, output: str | bytes) -> None:
+    def target_filesystem(self,
+                          path: Path | None,
+                          subdir: str,
+                          filename: str,
+                          output: str | bytes,
+                          unique: bool = False,
+                          append: bool = False) -> None:
         """Helper method to output report data to the filesystem.
 
         path, subdir, and filename are combined to form the full path to the output file.
+
+        If unique is True, the filename will be made unique by prepending a counter
+        starting from 001 to the filename and counting up until a unique filename is found.
+        E.g. 001_filename.txt, 002_filename.txt, etc.
+
+        If append is True, the output will be appended to the file if it already exists.
+        Otherwise, an exception will be raised if the file already exists. Note that
+        append mode is not compatible with unique mode.
 
         The type signature for path is Path | None because the overall report() method
         accepts path as Optional[Path] because it is not always required. However,
@@ -464,10 +480,13 @@ class Reporter(ABC, IReporter):
             subdir (str): The subdirectory within the path to save the file to.
             filename (str): The filename to save the output as.
             output (str | bytes): The report data to write to the file.
+            unique (bool): If True, ensure the filename is unique by prepending a counter as needed.
+            append (bool): If True, append to the file if it already exists. Otherwise, raise an error.
 
         Raises:
             SimpleBenchTypeError: If path is not a Path instance,
                 or if subdir or filename are not strings.
+            SimpleBenchValueError: If both append and unique are True.
         """
         if not isinstance(path, Path):
             raise SimpleBenchTypeError(
@@ -481,10 +500,25 @@ class Reporter(ABC, IReporter):
             raise SimpleBenchTypeError(
                 "filename arg must be a string",
                 tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_INVALID_FILENAME_ARG_TYPE)
+        if append and unique:
+            raise SimpleBenchValueError(
+                "append and unique options are not compatible when writing to filesystem",
+                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS)
+        if unique:
+            counter = 1
+            while (path / subdir / f"{counter:03d}_{filename}").exists():
+                counter += 1
+            filename = f"{counter:03d}_{filename}"
         output_path = path / subdir / filename
         output_path.parent.mkdir(parents=True, exist_ok=True)
         mode = 'wb' if isinstance(output, bytes) else 'w'
-        with output_path.open(mode) as f:
+        if append:
+            mode = 'ab' if isinstance(output, bytes) else 'a'
+        if output_path.exists() and not append:
+            raise SimpleBenchValueError(
+                f"Output file already exists and neither append nor unique options were specified: {output_path}",
+                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS)
+        with output_path.open(mode=mode) as f:
             f.write(output)
 
     def target_callback(self,
@@ -508,11 +542,16 @@ class Reporter(ABC, IReporter):
         if callback is not None:
             callback(case=case, section=section, output_format=output_format, output=output)
 
-    def target_console(self, session: Session | None, output: str) -> None:
+    def target_console(self, session: Session | None, output: str | Text | Table) -> None:
         """Helper method to output report data to the console.
 
+        It uses the Rich Console instance from the Session if provided, otherwise
+        it creates a new Console instance.
+
+        It can accept output as a string, Rich Text, or Rich Table.
+
         Args:
-            output (str): The report data to print to the console.
+            output (str| rich.Text | rich.Table): The report data to print to the console.
 
         Returns:
             None
