@@ -5,7 +5,8 @@ from math import isclose
 import statistics
 from typing import Any, Sequence
 
-from ..exceptions import GlobalErrorTag, SimpleBenchKeyError, SimpleBenchTypeError
+from .exceptions.stats import StatsErrorTag, StatsSummaryErrorTag
+from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError
 from ..si_units import si_unit_base, si_scale_to_unit
 from ..validators import (validate_non_blank_string, validate_float, validate_non_negative_float,
                           validate_positive_float, validate_sequence_of_numbers)
@@ -43,19 +44,19 @@ class Stats:
         """
         self._unit: str = validate_non_blank_string(
                                 unit, 'unit',
-                                GlobalErrorTag.STATS_INVALID_UNIT_ARG_TYPE,
-                                GlobalErrorTag.STATS_INVALID_UNIT_ARG_VALUE)
+                                StatsErrorTag.INVALID_UNIT_ARG_TYPE,
+                                StatsErrorTag.INVALID_UNIT_ARG_VALUE)
         self._scale: float = validate_positive_float(
                                 scale, 'scale',
-                                GlobalErrorTag.STATS_INVALID_SCALE_ARG_TYPE,
-                                GlobalErrorTag.STATS_INVALID_SCALE_ARG_VALUE)
+                                StatsErrorTag.INVALID_SCALE_ARG_TYPE,
+                                StatsErrorTag.INVALID_SCALE_ARG_VALUE)
         # data is left unsorted to allow for time series data to be preserved
         self._data: tuple[int | float, ...] = tuple(validate_sequence_of_numbers(
                                             value=data,
                                             field_name='data',
                                             allow_empty=False,
-                                            type_tag=GlobalErrorTag.STATS_INVALID_DATA_ARG_TYPE,
-                                            value_tag=GlobalErrorTag.STATS_INVALID_DATA_ARG_ITEM_TYPE))
+                                            type_tag=StatsErrorTag.INVALID_DATA_ARG_TYPE,
+                                            value_tag=StatsErrorTag.INVALID_DATA_ARG_ITEM_TYPE))
         self._percentiles: tuple[float, ...] | None = None
         self._mean: float | None = None
         self._median: float | None = None
@@ -206,16 +207,16 @@ class Stats:
         """
         if not isinstance(data, dict):
             raise SimpleBenchTypeError('The data argument must be a dictionary.',
-                                       tag=GlobalErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE)
+                                       tag=StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)
         if 'unit' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "unit" key.',
-                                      tag=GlobalErrorTag.STATS_FROM_DICT_MISSING_UNIT_KEY)
+                                      tag=StatsErrorTag.FROM_DICT_MISSING_UNIT_KEY)
         if 'scale' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "scale" key.',
-                                      tag=GlobalErrorTag.STATS_FROM_DICT_MISSING_SCALE_KEY)
+                                      tag=StatsErrorTag.FROM_DICT_MISSING_SCALE_KEY)
         if 'data' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "data" key.',
-                                      tag=GlobalErrorTag.STATS_FROM_DICT_MISSING_DATA_KEY)
+                                      tag=StatsErrorTag.FROM_DICT_MISSING_DATA_KEY)
 
         return cls(unit=data['unit'], scale=data['scale'], data=data['data'])  # type: ignore[arg-type]
 
@@ -325,37 +326,37 @@ class StatsSummary(Stats):
         """
         self._unit = validate_non_blank_string(
                         unit, 'unit',
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_UNIT_ARG_TYPE,
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_UNIT_ARG_VALUE)
+                        StatsSummaryErrorTag.INVALID_UNIT_ARG_TYPE,
+                        StatsSummaryErrorTag.INVALID_UNIT_ARG_VALUE)
         self._scale = validate_positive_float(
                         scale, 'scale',
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_SCALE_ARG_TYPE,
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_SCALE_ARG_VALUE)
+                        StatsSummaryErrorTag.INVALID_SCALE_ARG_TYPE,
+                        StatsSummaryErrorTag.INVALID_SCALE_ARG_VALUE)
         self._mean = validate_float(
                         mean, 'mean',
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_MEAN_ARG_TYPE)
+                        StatsSummaryErrorTag.INVALID_MEAN_ARG_TYPE)
         self._median = validate_float(
                         median, 'median',
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_MEDIAN_ARG_TYPE)
+                        StatsSummaryErrorTag.INVALID_MEDIAN_ARG_TYPE)
         self._minimum = validate_float(
                         minimum, 'minimum',
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_MINIMUM_ARG_TYPE)
+                        StatsSummaryErrorTag.INVALID_MINIMUM_ARG_TYPE)
         self._maximum = validate_float(
                         maximum, 'maximum',
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_MAXIMUM_ARG_TYPE)
+                        StatsSummaryErrorTag.INVALID_MAXIMUM_ARG_TYPE)
         self._standard_deviation = validate_non_negative_float(
                         standard_deviation, 'standard_deviation',
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_STANDARD_DEVIATION_ARG_TYPE,
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_STANDARD_DEVIATION_ARG_VALUE)
+                        StatsSummaryErrorTag.INVALID_STANDARD_DEVIATION_ARG_TYPE,
+                        StatsSummaryErrorTag.INVALID_STANDARD_DEVIATION_ARG_VALUE)
         self._relative_standard_deviation = validate_non_negative_float(
                         relative_standard_deviation, 'relative_standard_deviation',
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_RELATIVE_STANDARD_DEVIATION_ARG_TYPE,
-                        GlobalErrorTag.STATS_SUMMARY_INVALID_RELATIVE_STANDARD_DEVIATION_ARG_VALUE)
+                        StatsSummaryErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_ARG_TYPE,
+                        StatsSummaryErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_ARG_VALUE)
         self._percentiles = tuple(validate_sequence_of_numbers(
                         percentiles, 'percentiles',
                         allow_empty=False,
-                        type_tag=GlobalErrorTag.STATS_SUMMARY_INVALID_PERCENTILES_ARG_TYPE,
-                        value_tag=GlobalErrorTag.STATS_SUMMARY_INVALID_PERCENTILES_ARG_VALUE))
+                        type_tag=StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_TYPE,
+                        value_tag=StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_VALUE))
         self._statistics_as_dict = None
         self._statistics_and_data_as_dict = None
 
@@ -383,7 +384,7 @@ class StatsSummary(Stats):
         if not isinstance(stats, Stats):
             raise SimpleBenchTypeError(
                 "The stats argument must be a Stats object.",
-                tag=GlobalErrorTag.STATS_SUMMARY_FROM_STATS_INVALID_STATS_ARG_TYPE)
+                tag=StatsSummaryErrorTag.FROM_STATS_INVALID_STATS_ARG_TYPE)
         return cls(
             unit=stats.unit,
             scale=stats.scale,
@@ -432,7 +433,7 @@ class StatsSummary(Stats):
         """
         if not isinstance(data, dict):
             raise SimpleBenchTypeError('The data argument must be a dictionary.',
-                                       tag=GlobalErrorTag.STATS_FROM_DICT_INVALID_DATA_ARG_TYPE)
+                                       tag=StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)
 
         required_keys = [
             'unit', 'scale', 'mean', 'median', 'minimum', 'maximum',
@@ -442,7 +443,7 @@ class StatsSummary(Stats):
         for key in required_keys:
             if key not in data:
                 raise SimpleBenchKeyError(f"The data dictionary is missing the required '{key}' key.",
-                                          tag=GlobalErrorTag.STATS_SUMMARY_FROM_DICT_MISSING_KEY)
+                                          tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)
             keys_for_construction[key] = data[key]
         return cls(**keys_for_construction)  # type: ignore[arg-type]  # pylint: disable=missing-kwoa
 
