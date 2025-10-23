@@ -112,3 +112,7 @@ class ReportersInterfacesErrorTag(ErrorTag):
     """Something other than a RichTableChoiceOptions instance was set for a choice option"""
     RUN_REPORT_UNSUPPORTED_TARGET = "RUN_REPORT_UNSUPPORTED_TARGET"
     """An unsupported Target was passed to the reporter's run_report() method"""
+    UNKNOWN_TARGET_IN_ARGS = "UNKNOWN_TARGET_IN_ARGS"
+    """An unknown target string was specified in the command-line arguments"""
+    UNSUPPORTED_TARGET_IN_ARGS = "UNSUPPORTED_TARGET_IN_ARGS"
+    """An unsupported target string was specified in the command-line arguments"""

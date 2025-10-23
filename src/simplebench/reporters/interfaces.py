@@ -12,7 +12,7 @@ from rich.text import Text
 
 from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, BASE_MEMORY_UNIT
 from ..enums import Section, Target, Format, FlagType
-from ..exceptions import GlobalErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
+from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
 from ..metaclasses import ICase, ISession
 from ..utils import collect_arg_list
 from .exceptions import ReportersInterfacesErrorTag
@@ -231,11 +231,11 @@ class Reporter(ABC, IReporter):
                     else:
                         raise SimpleBenchValueError(
                             f"Output target {target} is not supported by {flag}.",
-                            tag=GlobalErrorTag.UNSUPPORTED_TARGET_IN_ARGS)
+                            tag=ReportersInterfacesErrorTag.UNSUPPORTED_TARGET_IN_ARGS)
                 else:
                     raise SimpleBenchValueError(
                         f"Unknown output target specified for {flag}: {target}",
-                        tag=GlobalErrorTag.UNKNOWN_TARGET_IN_ARGS)
+                        tag=ReportersInterfacesErrorTag.UNKNOWN_TARGET_IN_ARGS)
 
         return set(default_targets) if not selected_targets else selected_targets
 
