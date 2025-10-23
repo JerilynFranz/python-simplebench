@@ -12,7 +12,7 @@ from typing import Any, Sequence, TypedDict
 from cpuinfo import get_cpu_info  # type: ignore[import-untyped]
 
 from .defaults import DEFAULT_SIGNIFICANT_FIGURES
-from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, ErrorTag
+from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, UtilsErrorTag
 
 
 class MachineInfo(TypedDict):
@@ -115,11 +115,11 @@ def sanitize_filename(name: str) -> str:
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
             "name arg must be a str",
-            tag=ErrorTag.UTILS_SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE)
+            tag=UtilsErrorTag.SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE)
     if name == '':
         raise SimpleBenchValueError(
             "name arg must not be an empty string",
-            tag=ErrorTag.UTILS_SANITIZE_FILENAME_EMPTY_NAME_ARG)
+            tag=UtilsErrorTag.SANITIZE_FILENAME_EMPTY_NAME_ARG)
     first_pass: str = re.sub(r'[^a-zA-Z0-9_-]+', '_', name)
     return re.sub(r'_+', '_', first_pass)
 
@@ -150,15 +150,15 @@ def sigfigs(number: float, figures: int = DEFAULT_SIGNIFICANT_FIGURES) -> float:
     if not isinstance(number, float):
         raise SimpleBenchTypeError(
             "number arg must be a float",
-            tag=ErrorTag.UTILS_SIGFIGS_INVALID_NUMBER_ARG_TYPE)
+            tag=UtilsErrorTag.SIGFIGS_INVALID_NUMBER_ARG_TYPE)
     if not isinstance(figures, int):
         raise SimpleBenchTypeError(
             "figures arg must be an int",
-            tag=ErrorTag.UTILS_SIGFIGS_INVALID_FIGURES_ARG_TYPE)
+            tag=UtilsErrorTag.SIGFIGS_INVALID_FIGURES_ARG_TYPE)
     if figures < 1:
         raise SimpleBenchValueError(
             "figures arg must be at least 1",
-            tag=ErrorTag.UTILS_SIGFIGS_INVALID_FIGURES_ARG_VALUE)
+            tag=UtilsErrorTag.SIGFIGS_INVALID_FIGURES_ARG_VALUE)
 
     if number == 0.0:
         return 0.0
@@ -198,14 +198,14 @@ def kwargs_variations(kwargs: dict[str, Sequence[Any]]) -> list[dict[str, Any]]:
     if not isinstance(kwargs, dict):
         raise SimpleBenchTypeError(
             "kwargs arg must be a dict or dict sub-class",
-            tag=ErrorTag.UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE
+            tag=UtilsErrorTag.KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE
         )
     for key, value in kwargs.items():
         if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
             raise SimpleBenchTypeError(
                 ("kwargs arg values must be a Sequence (not str or bytes); "
                  f"key '{key}' has invalid value type {type(value)}"),
-                tag=ErrorTag.UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE
+                tag=UtilsErrorTag.KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE
             )
 
     keys = kwargs.keys()
@@ -235,15 +235,15 @@ def flag_to_arg(flag: str) -> str:
     if not isinstance(flag, str):
         raise SimpleBenchTypeError(
             "flag arg must be a str",
-            tag=ErrorTag.UTILS_FLAG_TO_ARG_INVALID_FLAG_ARG_TYPE)
+            tag=UtilsErrorTag.FLAG_TO_ARG_INVALID_FLAG_ARG_TYPE)
     if flag == '':
         raise SimpleBenchValueError(
             "flag arg must not be an empty string",
-            tag=ErrorTag.UTILS_FLAG_TO_ARG_EMPTY_FLAG_ARG)
+            tag=UtilsErrorTag.FLAG_TO_ARG_EMPTY_FLAG_ARG)
     if not (flag.startswith('--') and len(flag) > 2):
         raise SimpleBenchValueError(
             "flag arg must start with '--' and have additional characters",
-            tag=ErrorTag.UTILS_FLAG_TO_ARG_INVALID_FLAG_ARG_VALUE)
+            tag=UtilsErrorTag.FLAG_TO_ARG_INVALID_FLAG_ARG_VALUE)
 
     arg_name: str = flag.replace('--', '', 1).replace('-', '_')
     return arg_name
@@ -269,11 +269,11 @@ def arg_to_flag(arg: str) -> str:
     if not isinstance(arg, str):
         raise SimpleBenchTypeError(
             "arg arg must be a str",
-            tag=ErrorTag.UTILS_ARG_TO_FLAG_INVALID_FLAG_ARG_TYPE)
+            tag=UtilsErrorTag.ARG_TO_FLAG_INVALID_FLAG_ARG_TYPE)
     if arg == '':
         raise SimpleBenchValueError(
             "arg arg must not be an empty string",
-            tag=ErrorTag.UTILS_ARG_TO_FLAG_EMPTY_FLAG_ARG)
+            tag=UtilsErrorTag.ARG_TO_FLAG_EMPTY_FLAG_ARG)
 
     flag_name: str = '--' + arg.replace('_', '-')
 
@@ -313,7 +313,7 @@ def collect_arg_list(args: Namespace, flag: str, include_comma_separated: bool =
     if not isinstance(args, Namespace):
         raise SimpleBenchTypeError(
             "args arg must be an argparse.Namespace instance",
-            tag=ErrorTag.UTILS_COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE)
+            tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE)
 
     arg_name = flag_to_arg(flag)
     arg_value = getattr(args, arg_name, NO_ATTRIBUTE)
@@ -330,11 +330,11 @@ def collect_arg_list(args: Namespace, flag: str, include_comma_separated: bool =
             else:
                 raise SimpleBenchTypeError(
                     "Argument value items must be str or bytes",
-                    tag=ErrorTag.UTILS_COLLECT_ARG_LIST_INVALID_ARG_VALUE_ITEM_TYPE)
+                    tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARG_VALUE_ITEM_TYPE)
     else:
         raise SimpleBenchTypeError(
             "Argument value must be a Sequence ",
-            tag=ErrorTag.UTILS_COLLECT_ARG_LIST_INVALID_ARG_VALUE_TYPE)
+            tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARG_VALUE_TYPE)
 
     # process intermediate values and handle comma-separated strings if needed
     unique_values: set[str] = set()

@@ -2,7 +2,7 @@
 """Iteration class"""
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from .enums import Section
-from .exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
+from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, IterationErrorTag
 from .validators import (validate_non_blank_string, validate_int, validate_positive_int,
                          validate_positive_float, validate_non_negative_float)
 
@@ -50,26 +50,26 @@ class Iteration:
         """
         self._n = validate_positive_int(
                     n, 'n',
-                    ErrorTag.ITERATION_N_ARG_TYPE,
-                    ErrorTag.ITERATION_N_ARG_VALUE)
+                    IterationErrorTag.N_ARG_TYPE,
+                    IterationErrorTag.N_ARG_VALUE)
         self._unit = validate_non_blank_string(
                     unit, 'unit',
-                    ErrorTag.ITERATION_UNIT_ARG_TYPE,
-                    ErrorTag.ITERATION_UNIT_ARG_VALUE)
+                    IterationErrorTag.UNIT_ARG_TYPE,
+                    IterationErrorTag.UNIT_ARG_VALUE)
         self._scale = validate_positive_float(
                     scale, 'scale',
-                    ErrorTag.ITERATION_SCALE_ARG_TYPE,
-                    ErrorTag.ITERATION_SCALE_ARG_VALUE)
+                    IterationErrorTag.SCALE_ARG_TYPE,
+                    IterationErrorTag.SCALE_ARG_VALUE)
         self._elapsed = validate_non_negative_float(
             elapsed, 'elapsed',
-            ErrorTag.ITERATION_ELAPSED_ARG_TYPE,
-            ErrorTag.ITERATION_ELAPSED_ARG_VALUE)
+            IterationErrorTag.ELAPSED_ARG_TYPE,
+            IterationErrorTag.ELAPSED_ARG_VALUE)
         self._memory = validate_int(
             memory, 'memory',
-            ErrorTag.ITERATION_MEMORY_ARG_TYPE)
+            IterationErrorTag.MEMORY_ARG_TYPE)
         self._peak_memory = validate_int(
             peak_memory, 'peak_memory',
-            ErrorTag.ITERATION_PEAK_MEMORY_ARG_TYPE)
+            IterationErrorTag.PEAK_MEMORY_ARG_TYPE)
 
     def __eq__(self, other: object) -> bool:
         """Check equality between two Iteration instances.
@@ -165,7 +165,7 @@ class Iteration:
         if not isinstance(section, Section):
             raise SimpleBenchTypeError(
                 f'Invalid section type: {type(section)}. Must be of type Section.',
-                tag=ErrorTag.ITERATION_ITERATION_SECTION_INVALID_SECTION_ARG_TYPE
+                tag=IterationErrorTag.ITERATION_SECTION_INVALID_SECTION_ARG_TYPE
             )
         match section:
             case Section.OPS:
@@ -179,7 +179,7 @@ class Iteration:
             case _:  # needed for mypy
                 raise SimpleBenchValueError(
                     f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
-                    tag=ErrorTag.ITERATION_ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
+                    tag=IterationErrorTag.ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
                 )
 
     def __repr__(self) -> str:

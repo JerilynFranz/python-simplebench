@@ -8,7 +8,7 @@ from simplebench.defaults import (
     DEFAULT_ITERATIONS, DEFAULT_ROUNDS, DEFAULT_MIN_TIME, DEFAULT_MAX_TIME,
     DEFAULT_WARMUP_ITERATIONS)
 from simplebench.enums import Verbosity
-from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import CaseErrorTag, DecoratorsErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.session import Session
 
 
@@ -127,8 +127,8 @@ def test_decorator_invalid_title_type() -> None:
         @benchmark('test', title=123)  # type: ignore
         def invalid_title_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_TITLE_TYPE, (
-        f"Wrong tag code: Expected {ErrorTag.BENCHMARK_DECORATOR_TITLE_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_TITLE_TYPE, (
+        f"Wrong tag code: Expected {DecoratorsErrorTag.BENCHMARK_TITLE_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -141,8 +141,8 @@ def test_decorator_blank_title() -> None:
         @benchmark('test', title='   ')
         def empty_title_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_TITLE_VALUE, (
-        f"Wrong tag code: Expected {ErrorTag.BENCHMARK_DECORATOR_TITLE_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_TITLE_VALUE, (
+        f"Wrong tag code: Expected {DecoratorsErrorTag.BENCHMARK_TITLE_VALUE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -155,8 +155,8 @@ def test_decorator_invalid_description_type() -> None:
         @benchmark('test', title='Valid Title', description=456)  # type: ignore
         def invalid_description_type():    # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_TYPE, (
-        f"Wrong tag code: Expected {ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_DESCRIPTION_TYPE, (
+        f"Wrong tag code: Expected {DecoratorsErrorTag.BENCHMARK_DESCRIPTION_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -169,8 +169,8 @@ def test_decorator_blank_description() -> None:
         @benchmark('test', title='Valid Title', description='   ')
         def empty_description_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_VALUE, (
-        f"Wrong tag code: Expected {ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_DESCRIPTION_VALUE, (
+        f"Wrong tag code: Expected {DecoratorsErrorTag.BENCHMARK_DESCRIPTION_VALUE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -183,8 +183,8 @@ def test_decorator_invalid_iterations_type() -> None:
         @benchmark('test', title='Valid Title', iterations='ten')  # type: ignore
         def invalid_iterations_type():   # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE, (
-        f"Wrong tag code: Expected {ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_ITERATIONS_TYPE, (
+        f"Wrong tag code: Expected {DecoratorsErrorTag.BENCHMARK_ITERATIONS_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -197,8 +197,8 @@ def test_decorator_invalid_iterations_value() -> None:
         @benchmark('test', title='Valid Title', iterations=0)
         def non_positive_iterations_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE, (
-        f"Wrong tag code: Expected {ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_ITERATIONS_VALUE, (
+        f"Wrong tag code: Expected {DecoratorsErrorTag.BENCHMARK_ITERATIONS_VALUE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -211,8 +211,8 @@ def test_decorator_invalid_warmup_iterations_type() -> None:
         @benchmark('test', title='Valid Title', warmup_iterations='five')  # type: ignore
         def invalid_warmup_iterations_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_TYPE, (
-        f"Wrong tag code: Expected {ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_TYPE, (
+        f"Wrong tag code: Expected {DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -225,8 +225,8 @@ def test_decorator_invalid_warmup_iterations_value() -> None:
         @benchmark('test', title='Valid Title', warmup_iterations=-1)
         def negative_warmup_iterations_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_VALUE, (
-        f"Wrong tag code: Expected {ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE, (
+        f"Wrong tag code: Expected {DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -243,8 +243,8 @@ def test_decorator_invalid_use_field_for_n_type() -> None:
                    use_field_for_n=123)  # type: ignore
         def use_field_not_a_string():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_TYPE, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_TYPE, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -260,8 +260,8 @@ def test_decorator_use_field_for_n_not_in_kwargs_variations() -> None:
                    kwargs_variations={'length': [10, 100, 1000]})
         def use_field_for_n_not_in_kwargs_variations():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -276,8 +276,8 @@ def test_decorator_non_positive_use_field_for_n_values() -> None:
                    use_field_for_n='size')
         def non_positive_use_field_for_n_values():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -293,8 +293,8 @@ def test_decorator_invalid_n_type() -> None:
                    n='ten')  # type: ignore
         def invalid_n_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_N_TYPE, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_N_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_N_TYPE, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_N_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -311,8 +311,8 @@ def test_decorator_invalid_n_value() -> None:
                    n=0)
         def non_positive_n_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_N_VALUE, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_N_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_N_VALUE, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_N_VALUE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -327,8 +327,8 @@ def test_decorator_missing_kwargs_variations_with_use_field_for_n() -> None:
                    use_field_for_n='size')
         def missing_kwargs_variations():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS.name}, "
         f"Got {excinfo.value.tag_code}")
 
 
@@ -341,8 +341,8 @@ def test_decorator_invalid_group_type() -> None:
         @benchmark(123, title='Valid Title')  # type: ignore
         def invalid_group_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_GROUP_TYPE, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_GROUP_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -355,8 +355,8 @@ def test_decorator_invalid_group_value() -> None:
         @benchmark('    ', title='Valid Title', description='Valid Description')
         def empty_group_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE, (
-        f"Expected: {ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_GROUP_VALUE, (
+        f"Expected: {DecoratorsErrorTag.BENCHMARK_GROUP_VALUE.name}, "
         f"Got: {excinfo.value.tag_code.name}")
 
 
@@ -369,8 +369,8 @@ def test_decorator_invalid_min_time_type() -> None:
         @benchmark('test', title='Valid Title', min_time='zero')  # type: ignore
         def invalid_min_time_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE, (
-        f"Expecgted {ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_MIN_TIME_TYPE, (
+        f"Expecgted {DecoratorsErrorTag.BENCHMARK_MIN_TIME_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -383,8 +383,8 @@ def test_decorator_invalid_min_time_value() -> None:
         @benchmark('test', title='Valid Title', min_time=0.0)
         def negative_min_time_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_VALUE, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_MIN_TIME_VALUE, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_MIN_TIME_VALUE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -397,8 +397,8 @@ def test_decorator_invalid_max_time_type() -> None:
         @benchmark('test', title='Valid Title', max_time='ten')  # type: ignore
         def invalid_max_time_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_MAX_TIME_TYPE, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_MAX_TIME_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -411,8 +411,8 @@ def test_decorator_invalid_max_time_value() -> None:
         @benchmark('test', title='Valid Title', max_time=-1.0)
         def negative_max_time_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_VALUE, (
-        f"Expected {ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_VALUE.name}, "
+    assert excinfo.value.tag_code == DecoratorsErrorTag.BENCHMARK_MAX_TIME_VALUE, (
+        f"Expected {DecoratorsErrorTag.BENCHMARK_MAX_TIME_VALUE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -425,8 +425,8 @@ def test_decorator_invalid_kwargs_variations_type() -> None:
         @benchmark('test', title='Valid Title', kwargs_variations='not_a_dict')  # type: ignore
         def invalid_kwargs_variations_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT, (
-        f"Expected {ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT, (
+        f"Expected {CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -439,8 +439,8 @@ def test_decorator_invalid_kwargs_variations_keys_types() -> None:
         @benchmark('test', title='Valid Title', kwargs_variations={123: [1, 2, 3]})  # type: ignore
         def invalid_kwargs_variations_keys_types():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE, (
-        f"Expected {ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE, (
+        f"Expected {CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -453,8 +453,8 @@ def test_decorator_invalid_kwargs_variations_key_value() -> None:
         @benchmark('test', title='Valid Title', kwargs_variations={' ': [1, 2, 3]})
         def empty_kwargs_variations_key_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER, (
-        f"Expected {ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER, (
+        f"Expected {CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -467,8 +467,8 @@ def test_decorator_invalid_kwargs_variations_values_types() -> None:
         @benchmark('test', title='Valid Title', kwargs_variations={'param': 'not_a_list'})  # type: ignore
         def invalid_kwargs_variations_values():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST, (
-        f"Expected {ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST, (
+        f"Expected {CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -481,8 +481,8 @@ def test_decorator_invalid_kwargs_variations_values_value() -> None:
         @benchmark('test', title='Valid Title', kwargs_variations={'param': []})
         def empty_kwargs_variations_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST, (
-        f"Expected {ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST, (
+        f"Expected {CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -495,8 +495,8 @@ def test_decorator_invalid_variation_cols_type() -> None:
         @benchmark('test', title='Valid Title', variation_cols='not_a_dict', kwargs_variations={})  # type: ignore
         def invalid_variation_cols_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT, (
-        f"Expected {ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT, (
+        f"Expected {CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT.name}, "
         f"Got {excinfo.value.tag_code.name}"
     )
 
@@ -509,8 +509,8 @@ def test_decorator_invalid_variation_cols_key_not_in_kwargs() -> None:
                    variation_cols={123: 'Length', 'kwargs_variations': {}})  # type: ignore
         def invalid_variation_cols_keys():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS, (
-        f"Expected {ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS, (
+        f"Expected {CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -525,8 +525,8 @@ def test_decorator_invalid_variation_cols_value_type() -> None:
                    kwargs_variations={'length': [10, 100, 1000]})
         def invalid_variation_cols_values():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING, (
-        f"Expected {ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING, (
+        f"Expected {CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -542,7 +542,7 @@ def test_decorator_invalid_variation_cols_values() -> None:
                    variation_cols={'length': '   '})
         def empty_variation_cols_value():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK, (
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK, (
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -555,8 +555,8 @@ def test_decorator_invalid_options_type() -> None:
         @benchmark('test', title='Valid Title', options='not_a_list')  # type: ignore
         def invalid_options_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST, (
-        f"Expected {ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_OPTIONS_NOT_LIST, (
+        f"Expected {CaseErrorTag.INVALID_OPTIONS_NOT_LIST.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 
@@ -569,8 +569,8 @@ def test_decorator_invalid_options_values() -> None:
         @benchmark('test', title='Valid Title', options=['invalid_option'])  # type: ignore
         def invalid_options_values():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION, (
-        f"Expected {ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION, (
+        f"Expected {CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 

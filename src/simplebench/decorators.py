@@ -7,7 +7,7 @@ from .case import Case
 from .defaults import (DEFAULT_WARMUP_ITERATIONS, DEFAULT_ROUNDS, DEFAULT_MIN_TIME,
                        DEFAULT_MAX_TIME, DEFAULT_ITERATIONS)
 from .runners import SimpleRunner
-from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, DecoratorsErrorTag
 from .validators import (validate_positive_int, validate_non_negative_int, validate_positive_float,
                          validate_non_blank_string)
 
@@ -141,44 +141,44 @@ def benchmark(
         group = 'default'
 
     group = validate_non_blank_string(group, 'group',
-                                      ErrorTag.BENCHMARK_DECORATOR_GROUP_TYPE,
-                                      ErrorTag.BENCHMARK_DECORATOR_GROUP_VALUE)
+                                      DecoratorsErrorTag.BENCHMARK_GROUP_TYPE,
+                                      DecoratorsErrorTag.BENCHMARK_GROUP_VALUE)
 
     # we can't fully validate title and description yet if they are None
     # because they will be inferred later from the function being decorated
     if title is not None:
         title = validate_non_blank_string(title, 'title',
-                                          ErrorTag.BENCHMARK_DECORATOR_TITLE_TYPE,
-                                          ErrorTag.BENCHMARK_DECORATOR_TITLE_VALUE)
+                                          DecoratorsErrorTag.BENCHMARK_TITLE_TYPE,
+                                          DecoratorsErrorTag.BENCHMARK_TITLE_VALUE)
 
     if description is not None:
         description = validate_non_blank_string(description, 'description',
-                                                ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_TYPE,
-                                                ErrorTag.BENCHMARK_DECORATOR_DESCRIPTION_VALUE)
+                                                DecoratorsErrorTag.BENCHMARK_DESCRIPTION_TYPE,
+                                                DecoratorsErrorTag.BENCHMARK_DESCRIPTION_VALUE)
 
     iterations = validate_positive_int(iterations, 'iterations',
-                                       ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_TYPE,
-                                       ErrorTag.BENCHMARK_DECORATOR_ITERATIONS_VALUE)
+                                       DecoratorsErrorTag.BENCHMARK_ITERATIONS_TYPE,
+                                       DecoratorsErrorTag.BENCHMARK_ITERATIONS_VALUE)
 
     warmup_iterations = validate_non_negative_int(warmup_iterations, 'warmup_iterations',
-                                                  ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_TYPE,
-                                                  ErrorTag.BENCHMARK_DECORATOR_WARMUP_ITERATIONS_VALUE)
+                                                  DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_TYPE,
+                                                  DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE)
 
     rounds = validate_positive_int(rounds, 'rounds',
-                                   ErrorTag.BENCHMARK_DECORATOR_ROUNDS_TYPE,
-                                   ErrorTag.BENCHMARK_DECORATOR_ROUNDS_VALUE)
+                                   DecoratorsErrorTag.BENCHMARK_ROUNDS_TYPE,
+                                   DecoratorsErrorTag.BENCHMARK_ROUNDS_VALUE)
 
     min_time = validate_positive_float(min_time, 'min_time',
-                                       ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_TYPE,
-                                       ErrorTag.BENCHMARK_DECORATOR_MIN_TIME_VALUE)
+                                       DecoratorsErrorTag.BENCHMARK_MIN_TIME_TYPE,
+                                       DecoratorsErrorTag.BENCHMARK_MIN_TIME_VALUE)
 
     max_time = validate_positive_float(max_time, 'max_time',
-                                       ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_TYPE,
-                                       ErrorTag.BENCHMARK_DECORATOR_MAX_TIME_VALUE)
+                                       DecoratorsErrorTag.BENCHMARK_MAX_TIME_TYPE,
+                                       DecoratorsErrorTag.BENCHMARK_MAX_TIME_VALUE)
 
     n = validate_positive_int(n, 'n',
-                              ErrorTag.BENCHMARK_DECORATOR_N_TYPE,
-                              ErrorTag.BENCHMARK_DECORATOR_N_VALUE)
+                              DecoratorsErrorTag.BENCHMARK_N_TYPE,
+                              DecoratorsErrorTag.BENCHMARK_N_VALUE)
 
     kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
     variation_cols = Case.validate_variation_cols(variation_cols=variation_cols,
@@ -188,19 +188,19 @@ def benchmark(
     if not isinstance(use_field_for_n, str) and use_field_for_n is not None:
         raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator "
                                    "must be a string if passed.",
-                                   tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_TYPE)
+                                   tag=DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_TYPE)
 
     if (isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict)):
         if use_field_for_n not in kwargs_variations:
             raise SimpleBenchValueError(
                 "The 'use_field_for_n' parameter to the @benchmark decorator must "
                 f"match one of the kwargs_variations keys: {list(kwargs_variations.keys())}",
-                tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
+                tag=DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
         if not all(isinstance(v, int) and v > 0 for v in kwargs_variations[use_field_for_n]):
             raise SimpleBenchValueError(
                 f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
                 "must all be positive integers when used with 'use_field_for_n'.",
-                tag=ErrorTag.BENCHMARK_DECORATOR_USE_FIELD_FOR_N_INVALID_VALUE)
+                tag=DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE)
 
     def decorator(func):
         """The actual decorator that wraps the user's function."""

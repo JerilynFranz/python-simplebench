@@ -5,16 +5,48 @@ import argparse
 from enum import Enum
 from typing import Any, Generic, TypeVar
 
-from .enums import enum_docstrings
+from ..enums import enum_docstrings
+from .base import ErrorTag
+from .case import CaseErrorTag
+from .cli import CLIErrorTag
+from .decorators import DecoratorsErrorTag
+from .iteration import IterationErrorTag
+from .results import ResultsErrorTag
+from .runners import RunnersErrorTag
+from .session import SessionErrorTag
+from .si_units import SIUnitsErrorTag
+from .utils import UtilsErrorTag
+from .validators import ValidatorsErrorTag
+
+__all__ = [
+    "TaggedException",
+    "SimpleBenchTypeError",
+    "SimpleBenchValueError",
+    "SimpleBenchKeyError",
+    "SimpleBenchRuntimeError",
+    "SimpleBenchNotImplementedError",
+    "SimpleBenchAttributeError",
+    "SimpleBenchArgumentError",
+    "SimpleBenchImportError",
+    "ErrorTag",
+    "GlobalErrorTag",
+    "CaseErrorTag",
+    "CLIErrorTag",
+    "DecoratorsErrorTag",
+    "IterationErrorTag",
+    "ResultsErrorTag",
+    "RunnersErrorTag",
+    "SessionErrorTag",
+    "SIUnitsErrorTag",
+    "UtilsErrorTag",
+    "ValidatorsErrorTag",
+]
 
 
 @enum_docstrings
-class ErrorTag(str, Enum):
-    """Tags for error path identification for tests for the simplebench packages.
+class GlobalErrorTag(ErrorTag):
+    """Global collection of ErrorTags in SimpleBench."""
 
-    ErrorTags' are used to identify specific error conditions in the simplebench package.
-    Tests use these tags to assert specific error condition paths.
-    """
     CLI_INVALID_EXTRA_ARGS_TYPE = "CLI_INVALID_EXTRA_ARGS_TYPE"
     """Something other than a list of strings was passed to the CLI as the extra_args argument"""
     CLI_INVALID_EXTRA_ARGS_ITEM_TYPE = "CLI_INVALID_EXTRA_ARGS_ITEM_TYPE"
@@ -693,33 +725,62 @@ class ErrorTag(str, Enum):
     REPORTER_RUN_REPORT_UNSUPPORTED_TARGET = "REPORTER_RUN_REPORT_UNSUPPORTED_TARGET"
     """An unsupported Target was passed to the reporter's run_report() method"""
 
-    # GraphReporter() tags
+    # ScatterGraphReporter() tags
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_DEFAULT_TARGETS_NOT_ITERABLE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_DEFAULT_TARGETS_NOT_ITERABLE")
+    """The default targets specified in the ScatterGraphChoiceOptions must be an iterable of Target enum members."""
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE")
+    """The default targets specified in the ScatterGraphChoiceOptions are not valid Target enum members."""
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_VALUE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_VALUE")
+    """The default targets specified in the ScatterGraphChoiceOptions cannot be empty."""
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_TYPE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_TYPE")
+    """The subdir specified in the ScatterGraphChoiceOptions must be a string."""
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_VALUE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_VALUE")
+    """The subdir specified in the ScatterGraphChoiceOptions cannot be an empty string."""
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_TYPE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_TYPE")
+    """The width specified in the ScatterGraphChoiceOptions must be an integer."""
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_VALUE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_VALUE")
+    """The width specified in the ScatterGraphChoiceOptions must be greater than zero."""
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_HEIGHT_TYPE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_HEIGHT_TYPE")
+    """The height specified in the ScatterGraphChoiceOptions must be an integer."""
+    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_HEIGHT_VALUE = (
+        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_HEIGHT_VALUE")
+    """The height specified in the ScatterGraphChoiceOptions must be greater than zero."""
+
+    # ScatterGraphReporter() tags
     GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE = "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE"
     """The theme specified in the GraphOptions has an invalid type. It must be a dict or None."""
     GRAPH_REPORTER_INIT_INVALID_CASE_ARG = "GRAPH_REPORTER_INIT_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the GraphReporter() constructor"""
+    """Something other than a Case instance was passed to the ScatterGraphReporter() constructor"""
     GRAPH_REPORTER_INIT_INVALID_SESSION_ARG = "GRAPH_REPORTER_INIT_INVALID_SESSION_ARG"
-    """Something other than a Session instance was passed to the GraphReporter() constructor"""
+    """Something other than a Session instance was passed to the ScatterGraphReporter() constructor"""
     GRAPH_REPORTER_REPORT_INVALID_CASE_ARG = "GRAPH_REPORTER_REPORT_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the GraphReporter.report() method"""
+    """Something other than a Case instance was passed to the ScatterGraphReporter.report() method"""
     GRAPH_REPORTER_REPORT_INVALID_SESSION_ARG = "GRAPH_REPORTER_REPORT_INVALID_SESSION_ARG"
-    """Something other than a Session instance was passed to the GraphReporter.report() method"""
+    """Something other than a Session instance was passed to the ScatterGraphReporter.report() method"""
     GRAPH_REPORTER_REPORT_INVALID_CHOICE_ARG = "GRAPH_REPORTER_REPORT_INVALID_CHOICE_ARG"
-    """Something other than a Choice instance was passed to the GraphReporter.report() method"""
+    """Something other than a Choice instance was passed to the ScatterGraphReporter.report() method"""
     GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION = "GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION"
-    """An unsupported Section was passed to the GraphReporter.report() method in the Choice.sections"""
+    """An unsupported Section was passed to the ScatterGraphReporter.report() method in the Choice.sections"""
     GRAPH_REPORTER_REPORT_UNSUPPORTED_TARGET = "GRAPH_REPORTER_REPORT_UNSUPPORTED_TARGET"
-    """An unsupported Target was passed to the GraphReporter.report() method in the Choice.targets"""
+    """An unsupported Target was passed to the ScatterGraphReporter.report() method in the Choice.targets"""
     GRAPH_REPORTER_REPORT_UNSUPPORTED_FORMAT = "GRAPH_REPORTER_REPORT_UNSUPPORTED_FORMAT"
-    """An unsupported Format was passed to the GraphReporter.report() method in the Choice.formats"""
+    """An unsupported Format was passed to the ScatterGraphReporter.report() method in the Choice.formats"""
     GRAPH_REPORTER_REPORT_MISSING_PATH_ARG = "GRAPH_REPORTER_REPORT_MISSING_PATH_ARG"
-    """The required 'path' argument was not passed to the GraphReporter.report() method"""
+    """The required 'path' argument was not passed to the ScatterGraphReporter.report() method"""
     GRAPH_REPORTER_REPORT_INVALID_PATH_ARG = "GRAPH_REPORTER_REPORT_INVALID_PATH_ARG"
-    """Something other than a Path instance was passed to the GraphReporter.report() method"""
+    """Something other than a Path instance was passed to the ScatterGraphReporter.report() method"""
     GRAPH_REPORTER_REPORT_INVALID_CALLBACK_ARG = "GRAPH_REPORTER_REPORT_INVALID_CALLBACK_ARG"
-    """Something other than a callable was passed to the GraphReporter.report() method as the callback argument"""
+    """Something other than a callable was passed to the ScatterGraphReporter.report() method as the callback argument"""
     GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG = "GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG"
-    """Something other than a Path instance was passed to the GraphReporter.run_report() method as the path arg"""
+    """Something other than a Path instance was passed to the ScatterGraphReporter.run_report() method as the path arg"""
     GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT = "GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT"
     """The output format specified in the GraphOptions is not supported. Supported formats are 'svg' and 'png'"""
     GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE = "GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE"
@@ -735,11 +796,11 @@ class ErrorTag(str, Enum):
         "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE")
     """The y_starts_at_zero value specified in the GraphOptions has an invalid type. It must be a bool."""
     GRAPH_REPORTER_PLOT_INVALID_CASE_ARG = "GRAPH_REPORTER_PLOT_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the GraphReporter.plot() method"""
+    """Something other than a Case instance was passed to the ScatterGraphReporter.plot() method"""
     GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG = "GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG"
-    """Something other than a Path instance was passed to the GraphReporter.plot() method"""
+    """Something other than a Path instance was passed to the ScatterGraphReporter.plot() method"""
     GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG = "GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG"
-    """Something other than a valid Section was passed to the GraphReporter.plot() method"""
+    """Something other than a valid Section was passed to the ScatterGraphReporter.plot() method"""
 
     # JSONReporter() tags
     JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION = "JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION"
@@ -1111,6 +1172,16 @@ class ErrorTag(str, Enum):
         "VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY")
     """The callback function has a parameter that is not keyword-only"""
 
+    # validate.py - internal tags
+    VALIDATORS_INVALID_FIELD_NAME_TYPE = "VALIDATORS_INVALID_FIELD_NAME_TYPE"
+    """The field name provided is not a string"""
+    VALIDATORS_INVALID_MIN_VALUE_TYPE = "VALIDATORS_INVALID_MIN_VALUE_TYPE"
+    """The min value provided is not of the expected type"""
+    VALIDATORS_INVALID_MAX_VALUE_TYPE = "VALIDATORS_INVALID_MAX_VALUE_TYPE"
+    """The max value provided is not of the expected type"""
+    VALIDATORS_INVALID_RANGE = "VALIDATORS_INVALID_RANGE"
+    """The range provided is invalid (min is greater than max)"""
+
 
 E = TypeVar('E', bound=Exception)
 
@@ -1417,3 +1488,4 @@ class SimpleBenchImportError(TaggedException[ImportError]):
         else:
             message = f"{msg}: {tag.__doc__}"
         super().__init__(message, tag=tag)
+

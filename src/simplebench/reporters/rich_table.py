@@ -11,12 +11,13 @@ from rich.table import Table
 
 from ..defaults import DEFAULT_INTERVAL_SCALE
 from ..enums import Section, Target, Format, FlagType
-from ..exceptions import SimpleBenchValueError, ErrorTag
+from ..exceptions import SimpleBenchValueError
 from ..results import Results
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename, sigfigs
 from ..validators import validate_sequence_of_type, validate_non_blank_string, validate_positive_int
 from .choices import Choice, Choices, ChoiceOptions
+from .exceptions import ReportersInterfacesErrorTag, RichTableReporterErrorTag
 from .interfaces import Reporter
 from .protocols import ReporterCallback
 
@@ -51,21 +52,21 @@ class RichTableChoiceOptions(ChoiceOptions):
         if not isinstance(default_targets, Iterable):
             raise SimpleBenchValueError(
                 'RichTableChoiceOptions.default_targets must be an iterable of Target values.',
-                tag=ErrorTag.RICH_TABLE_REPORTER_CHOICE_OPTIONS_DEFAULT_TARGETS_NOT_ITERABLE)
+                tag=RichTableReporterErrorTag.CHOICE_OPTIONS_DEFAULT_TARGETS_NOT_ITERABLE)
         default_targets = validate_sequence_of_type(
                 list(default_targets), Target, 'RichTableChoiceOptions.default_targets',
-                ErrorTag.RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE,
-                ErrorTag.RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_VALUE,
+                RichTableReporterErrorTag.CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE,
+                RichTableReporterErrorTag.CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_VALUE,
                 allow_empty=False)
         self._default_targets: frozenset[Target] = frozenset(default_targets)
         self._subdir: str = validate_non_blank_string(
                 subdir, 'RichTableChoiceOptions.subdir',
-                ErrorTag.RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_TYPE,
-                ErrorTag.RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_VALUE)
+                RichTableReporterErrorTag.CHOICE_OPTIONS_INVALID_SUBDIR_TYPE,
+                RichTableReporterErrorTag.CHOICE_OPTIONS_INVALID_SUBDIR_VALUE)
         self._width: int = validate_positive_int(
                 width, 'RichTableChoiceOptions.width',
-                ErrorTag.RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_TYPE,
-                ErrorTag.RICH_TABLE_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_VALUE)
+                RichTableReporterErrorTag.CHOICE_OPTIONS_INVALID_WIDTH_TYPE,
+                RichTableReporterErrorTag.CHOICE_OPTIONS_INVALID_WIDTH_VALUE)
 
     @property
     def default_targets(self) -> frozenset[Target]:
@@ -232,7 +233,7 @@ class RichTableReporter(Reporter):
         if choice.options is not None and not isinstance(choice.options, RichTableChoiceOptions):
             raise SimpleBenchValueError(
                 'RichTableReporter requires a RichTableChoiceOptions instance for its Choice().options if set.',
-                tag=ErrorTag.REPORTER_RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE)
+                tag=ReportersInterfacesErrorTag.RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE)
         if isinstance(choice.options, RichTableChoiceOptions):
             default_targets = choice.options.default_targets
             subdir = choice.options.subdir
@@ -266,7 +267,7 @@ class RichTableReporter(Reporter):
                     case _:
                         raise SimpleBenchValueError(
                             f'Unsupported target for RichTableReporter: {output_target}',
-                            tag=ErrorTag.REPORTER_RUN_REPORT_UNSUPPORTED_TARGET)
+                            tag=ReportersInterfacesErrorTag.RUN_REPORT_UNSUPPORTED_TARGET)
 
     def _to_rich_table(self,
                        case: Case,

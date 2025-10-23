@@ -4,16 +4,16 @@ from __future__ import annotations
 from argparse import ArgumentParser
 
 from ..enums import Section, Target, Format
-from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError, GlobalErrorTag
 from .choices import Choices, Choice
 from .csv import CSVReporter
-from .graph import GraphReporter
+from .graph.scatter import ScatterGraphReporter
 from .interfaces import Reporter
 from .json import JSONReporter
 from .rich_table import RichTableReporter
 
 
-_PREDEFINED_REPORTERS = [CSVReporter, GraphReporter, RichTableReporter, JSONReporter]
+_PREDEFINED_REPORTERS = [CSVReporter, ScatterGraphReporter, RichTableReporter, JSONReporter]
 """Container for all predefined Reporter classes."""
 
 
@@ -24,7 +24,7 @@ class ReporterManager():
     CLI arguments. It allows for the registration, retrieval, and unregistration of
     Reporters.
 
-    Initially, it registers a set of built-in Reporters: CSVReporter, GraphReporter, and RichTableReporter.
+    Initially, it registers a set of built-in Reporters: CSVReporter, ScatterGraphReporter, and RichTableReporter.
 
     New Reporters can be added using the `register` method, and existing ones can be
     removed using the `unregister` or `unregister_by_name` methods.
@@ -77,13 +77,13 @@ class ReporterManager():
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
                 "reporter must be an instance of Reporter",
-                tag=ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG
+                tag=GlobalErrorTag.REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG
             )
         choices: Choices = reporter.choices
         if not isinstance(choices, Choices):
             raise SimpleBenchTypeError(
                 "reporter.choices must return a Choices instance",
-                tag=ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_RETURNED
+                tag=GlobalErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_RETURNED
             )
         all_choice_flags: set[str] = self._registered_reporter_choices.all_choice_flags()
         for choice in choices.values():
@@ -92,18 +92,18 @@ class ReporterManager():
                 raise SimpleBenchTypeError((
                     "reporter.choices must return a Choices instance containing only Choice instances: "
                     f'Found {choices} {type(choice)} from reporter {reporter.name!r}'),
-                    tag=ErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT
+                    tag=GlobalErrorTag.REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT
                 )
             if choice.name in self._registered_reporter_choices:
                 raise SimpleBenchValueError(
                     f"A reporter with the name '{choice.name}' is already registered.",
-                    tag=ErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_NAME
+                    tag=GlobalErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_NAME
                 )
             for flag in choice.flags:
                 if flag in all_choice_flags:
                     raise SimpleBenchValueError(
                         f"A reporter with the same CLI argument '{flag}' is already registered.",
-                        tag=ErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_CLI_ARG
+                        tag=GlobalErrorTag.REPORTER_MANAGER_REGISTER_DUPLICATE_CLI_ARG
                     )
         self._registered_reporter_choices.extend(choices)
         self._registered_reporters[reporter.name] = reporter
@@ -135,12 +135,12 @@ class ReporterManager():
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
                 "reporter must be an instance of Reporter",
-                tag=ErrorTag.REPORTER_MANAGER_UNREGISTER_INVALID_REPORTER_ARG
+                tag=GlobalErrorTag.REPORTER_MANAGER_UNREGISTER_INVALID_REPORTER_ARG
             )
         if reporter.name not in self._registered_reporters:
             raise SimpleBenchKeyError(
                 f"No reporter with the name '{reporter.name}' is registered.",
-                tag=ErrorTag.REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME
+                tag=GlobalErrorTag.REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME
             )
         for choice in reporter.choices.values():
             del self._registered_reporter_choices[choice.name]
@@ -157,7 +157,7 @@ class ReporterManager():
         if name not in self._registered_reporters:
             raise SimpleBenchKeyError(
                 f"No reporter with the name '{name}' is registered.",
-                tag=ErrorTag.REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME
+                tag=GlobalErrorTag.REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME
             )
         self.unregister(self._registered_reporters[name])
 
@@ -174,7 +174,7 @@ class ReporterManager():
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 f'parser must be an ArgumentParser instance - cannot be a {type(parser)}',
-                tag=ErrorTag.REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG
+                tag=GlobalErrorTag.REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG
             )
         # Add flags for each registered reporter
         # The reporter is responsible for adding its own flags, so we just call its method
@@ -190,7 +190,7 @@ __all__ = [
     'Choice',
     'CSVReporter',
     'Format',
-    'GraphReporter',
+    'ScatterGraphReporter',
     'Reporter',
     'RichTableReporter',
     'Section',

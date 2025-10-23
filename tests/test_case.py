@@ -12,7 +12,7 @@ from rich.console import Console
 from simplebench import Case, SimpleRunner, Iteration, Results, Session, Verbosity
 from simplebench.enums import Format, Section
 from simplebench.exceptions import (SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchRuntimeError,
-                                    ErrorTag)
+                                    GlobalErrorTag, CaseErrorTag)
 from simplebench.protocols import ActionRunner
 from simplebench.reporters.reporter_option import ReporterOption
 from simplebench.reporters.protocols import ReporterCallback
@@ -490,7 +490,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(title='benchcase', description='Benchmark case', action=benchcase,
                           group=123),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_GROUP_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_GROUP_TYPE)),
     idspec("INIT_008", TestAction(
         name="Invalid (blank) value for group parameter",
         action=Case,
@@ -498,119 +498,119 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
                           group=' '),  # Invalid blank string
 
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_GROUP_VALUE)),
+        exception_tag=CaseErrorTag.INVALID_GROUP_VALUE)),
     idspec("INIT_009", TestAction(
         name="Wrong type for title parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', description='Benchmark case', action=benchcase,
                           title=123),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_TITLE_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_TITLE_TYPE)),
     idspec("INIT_010", TestAction(
         name="Invalid (blank) value for title parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', description='Benchmark case', action=benchcase,
                           title=' '),  # Invalid blank string
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_TITLE_VALUE)),
+        exception_tag=CaseErrorTag.INVALID_TITLE_VALUE)),
     idspec("INIT_011", TestAction(
         name="Wrong type for description parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', action=benchcase,
                           description=123),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_DESCRIPTION_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_DESCRIPTION_TYPE)),
     idspec("INIT_012", TestAction(
         name="Invalid (blank) value for description parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', action=benchcase,
                           description=' '),  # Invalid blank string
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_DESCRIPTION_VALUE)),
+        exception_tag=CaseErrorTag.INVALID_DESCRIPTION_VALUE)),
     idspec("INIT_013", TestAction(
         name="Wrong type for 'action' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
                           action='not_a_function'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE)),
+        exception_tag=CaseErrorTag.INVALID_ACTION_NOT_CALLABLE)),
     idspec("INIT_014", TestAction(
         name="'action' function does not accept required argument 'bench'",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
                           action=broken_benchcase_missing_bench),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_ACTION_MISSING_BENCH_PARAMETER)),
+        exception_tag=CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER)),
     idspec("INIT_015", TestAction(
         name="'action' function does not accept required argument '**kwargs'",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
                           action=broken_benchcase_missing_kwargs),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_ACTION_MISSING_KWARGS_PARAMETER)),
+        exception_tag=CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER)),
     idspec("INIT_016", TestAction(
         name="'action' function is using wrong form for kwargs: Should specifically be '**kwargs'",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
                           action=broken_benchcase_wrong_kwargs_kind),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_ACTION_MISSING_KWARGS_PARAMETER)),
+        exception_tag=CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER)),
     idspec("INIT_017", TestAction(
         name="Wrong type for iterations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           iterations='not_an_int'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_ITERATIONS_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_ITERATIONS_TYPE)),
     idspec("INIT_018", TestAction(
         name="Invalid (non-positive) value for iterations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           iterations=0),  # Invalid non-positive value
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_ITERATIONS_VALUE)),
+        exception_tag=CaseErrorTag.INVALID_ITERATIONS_VALUE)),
     idspec("INIT_019", TestAction(
         name="Wrong type for warmup_iterations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           warmup_iterations='not_an_int'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_WARMUP_ITERATIONS_TYPE)),
     idspec("INIT_020", TestAction(
         name="Invalid (negative) value for warmup_iterations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           warmup_iterations=-1),  # Invalid negative value
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_VALUE)),
+        exception_tag=CaseErrorTag.INVALID_WARMUP_ITERATIONS_VALUE)),
     idspec("INIT_021", TestAction(
         name="Wrong type for min_time parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           min_time='not_a_float'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_MIN_TIME_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_MIN_TIME_TYPE)),
     idspec("INIT_022", TestAction(
         name="Invalid (non-positive) value for min_time parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           min_time=0.0),  # Invalid non-positive value
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_MIN_TIME_VALUE)),
+        exception_tag=CaseErrorTag.INVALID_MIN_TIME_VALUE)),
     idspec("INIT_023", TestAction(
         name="Wrong type for max_time parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           max_time='not_a_float'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_MAX_TIME_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_MAX_TIME_TYPE)),
     idspec("INIT_024", TestAction(
         name="Invalid (non-positive) value for max_time parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           max_time=0.0),  # Invalid non-positive value
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_MAX_TIME_VALUE)),
+        exception_tag=CaseErrorTag.INVALID_MAX_TIME_VALUE)),
     idspec("INIT_025", TestAction(
         name="Invalid (max_time < min_time) values for time parameters",
         action=Case,
@@ -618,28 +618,28 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
                           min_time=5.0,
                           max_time=1.0),  # Invalid: max_time < min_time
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_TIME_RANGE)),
+        exception_tag=CaseErrorTag.INVALID_TIME_RANGE)),
     idspec("INIT_026", TestAction(
         name="Invalid (not a SimpleRunner subclass) type for runner option",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           runner=BadRunner),  # type: ignore[arg-type]  # Invalid: Not a SimpleRunner subclass
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS)),
+        exception_tag=CaseErrorTag.INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS)),
     idspec("INIT_027", TestAction(
         name="Invalid (not a dict) type for variation_cols parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           variation_cols='not_a_dict'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT)),
+        exception_tag=CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT)),
     idspec("INIT_028", TestAction(
         name="Invalid (contains key that is not type str) type for variation_cols parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           variation_cols={123: 'value'}),  # type: ignore[dict-item]  # Invalid key type
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)),
+        exception_tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)),
     idspec("INIT_029", TestAction(
         name="Invalid (contains key not in kwargs_variations) value for variation_cols parameter",
         action=Case,
@@ -647,7 +647,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
                           variation_cols={'param1': 'value'},  # Key not in kwargs_variations
                           kwargs_variations={'param2': [1, 2, 3]}),
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)),
+        exception_tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)),
     idspec("INIT_030", TestAction(
         name="Invalid (contains value that is not type str) type for variation_cols parameter",
         action=Case,
@@ -655,7 +655,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
                           variation_cols={'param1': 123},  # type: ignore[dict-item]  # Invalid value type (not str)
                           kwargs_variations={'param1': [1, 2, 3]}),
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING)),
+        exception_tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING)),
     idspec("INIT_031", TestAction(
         name="Invalid (contains a blank string) value for variation_cols parameter",
         action=Case,
@@ -663,42 +663,42 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
                           variation_cols={'param1': ' '},  # Invalid blank string value
                           kwargs_variations={'param1': [1, 2, 3]}),
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK)),
+        exception_tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK)),
     idspec("INIT_032", TestAction(
         name="Invalid (not a dict) type for kwargs_variations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           kwargs_variations='not_a_dict'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT)),
+        exception_tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT)),
     idspec("INIT_033", TestAction(
         name="Invalid (contains key that is not type str) type for kwargs_variations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           kwargs_variations={123: [1, 2, 3]}),  # type: ignore[dict-item]  # Invalid key type (not str)
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE)),
     idspec("INIT_034", TestAction(
         name="Invalid (contains key that is not a valid Python identifier) key for kwargs_variations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           kwargs_variations={'invalid-key': [1, 2, 3]}),  # Invalid key format
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER)),
+        exception_tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER)),
     idspec("INIT_035", TestAction(
         name="'action' function has an extra parameter (should only have 'bench' and '**kwargs')",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
                           action=broken_benchcase_extra_param),  # type: ignore[arg-type]
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_ACTION_PARAMETER_COUNT)),
+        exception_tag=CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT)),
     idspec("INIT_036", TestAction(
         name="Invalid (not a list) type for options parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           options='not_a_list'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST)),
+        exception_tag=CaseErrorTag.INVALID_OPTIONS_NOT_LIST)),
     idspec("INIT_037", TestAction(
         name="Invalid (contains item that is not a ReporterOption) type for options parameter",
         action=Case,
@@ -707,7 +707,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
                               MockReporterOption('valid_option'),
                               'not_a_reporter_option']),  # type: ignore[list-item]  # Invalid item type
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION)),
+        exception_tag=CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION)),
     idspec("INIT_038", TestAction(
         name="Valid (empty) list for options parameter",
         action=Case,
@@ -730,21 +730,21 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           kwargs_variations={'size': []}),  # Invalid empty list for a parameter
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST)),
+        exception_tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST)),
     idspec("INIT_041", TestAction(
         name="Invalid (contains item that is not a list) type for kwargs_variations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           kwargs_variations={'size': 'not_a_list'}),  # type: ignore[dict-item]  # Invalid item type
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST)),
+        exception_tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST)),
     idspec("INIT_042", TestAction(
         name="Invalid type for callback parameter(str instead of callable)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback='not_a_function'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)),
     idspec("INIT_043", TestAction(
         name="Good callback function for callback parameter",
         action=Case,
@@ -758,126 +758,126 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_case),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_045", TestAction(
         name="Callback function missing required 'section' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_section),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_046", TestAction(
         name="Callback function missing required 'output_format' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_format),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_047", TestAction(
         name="Callback function missing required 'output' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_output),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_048", TestAction(
         name="Callback function has wrong type for 'case' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_case_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_049", TestAction(
         name="Callback function has wrong type for 'section' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_section_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_050", TestAction(
         name="Callback function has wrong type for 'output_format' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_format_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_051", TestAction(
         name="Callback function has wrong type for 'output' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_output_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_052", TestAction(
         name="Callback function has an extra parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_extra_param),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)),
     idspec("INIT_053", TestAction(
         name="Callback function has unresolvable type hint for a parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_case_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_054", TestAction(
         name="Callback function has unresolvable type hint for section parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_section_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_055", TestAction(
         name="Callback function has unresolvable type hint for output_format parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_format_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_056", TestAction(
         name="Callback function has unresolvable type hint for output parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_output_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_057", TestAction(
         name="Callback function has no type hint for case parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_no_type_hints),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_058", TestAction(
         name="Callback function allows case parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_case_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_059", TestAction(
         name="Callback function allows section parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_section_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_060", TestAction(
         name="Callback function allows output_format parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_output_format_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_061", TestAction(
         name="Callback function allows output parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_output_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_062", TestAction(
         name="results attribute is initialized to empty list",
         action=Case,
@@ -909,13 +909,13 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         action=Case,
         kwargs=CaseKWArgs(rounds='not_an_int', action=benchcase),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.CASE_INVALID_ROUNDS_TYPE)),
+        exception_tag=CaseErrorTag.INVALID_ROUNDS_TYPE)),
     idspec("INIT_067", TestAction(
         name="Invalid rounds parameter (zero value)",
         action=Case,
         kwargs=CaseKWArgs(rounds=0, action=benchcase),
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.CASE_INVALID_ROUNDS_VALUE)),
+        exception_tag=CaseErrorTag.INVALID_ROUNDS_VALUE)),
 ])
 def test_case_init(testspec: TestAction) -> None:
     """Test the initialization of the Case class."""
@@ -1142,7 +1142,7 @@ def test_getting_attributes(testspec: TestSpec) -> None:
         action=broken_benchcase_action_that_raises,
         kwargs={},
         exception=SimpleBenchRuntimeError,
-        exception_tag=ErrorTag.CASE_BENCHMARK_ACTION_RAISED_EXCEPTION,
+        exception_tag=CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION,
         extra={
             'output_expected': False,
             'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',

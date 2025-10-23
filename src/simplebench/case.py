@@ -8,7 +8,8 @@ from typing import Any, Optional, TYPE_CHECKING
 
 from .defaults import (DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME,
                        DEFAULT_MAX_TIME, DEFAULT_ROUNDS)
-from .exceptions import (SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchRuntimeError, ErrorTag)
+from .exceptions import (SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchRuntimeError,
+                         CaseErrorTag)
 from .metaclasses import ICase
 from .protocols import ActionRunner
 from .results import Results
@@ -254,40 +255,40 @@ class Case(ICase):
         """
         self._group = validate_non_blank_string(
                         group, "group",
-                        ErrorTag.CASE_INVALID_GROUP_TYPE,
-                        ErrorTag.CASE_INVALID_GROUP_VALUE)
+                        CaseErrorTag.INVALID_GROUP_TYPE,
+                        CaseErrorTag.INVALID_GROUP_VALUE)
         self._action = Case.validate_action_signature(action)
         title = action.__name__ if title is None else title  # type: ignore[attr-defined]
         self._title = validate_non_blank_string(
                         title, "title",
-                        ErrorTag.CASE_INVALID_TITLE_TYPE,
-                        ErrorTag.CASE_INVALID_TITLE_VALUE)
+                        CaseErrorTag.INVALID_TITLE_TYPE,
+                        CaseErrorTag.INVALID_TITLE_VALUE)
         if description is None:
             description = action.__doc__ if action.__doc__ else '(no description)'
         self._description = validate_non_blank_string(
                         description, "description",
-                        ErrorTag.CASE_INVALID_DESCRIPTION_TYPE,
-                        ErrorTag.CASE_INVALID_DESCRIPTION_VALUE)
+                        CaseErrorTag.INVALID_DESCRIPTION_TYPE,
+                        CaseErrorTag.INVALID_DESCRIPTION_VALUE)
         self._iterations = validate_positive_int(
                         iterations, "iterations",
-                        ErrorTag.CASE_INVALID_ITERATIONS_TYPE,
-                        ErrorTag.CASE_INVALID_ITERATIONS_VALUE)
+                        CaseErrorTag.INVALID_ITERATIONS_TYPE,
+                        CaseErrorTag.INVALID_ITERATIONS_VALUE)
         self._warmup_iterations = validate_non_negative_int(
                         warmup_iterations, "warmup_iterations",
-                        ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_TYPE,
-                        ErrorTag.CASE_INVALID_WARMUP_ITERATIONS_VALUE)
+                        CaseErrorTag.INVALID_WARMUP_ITERATIONS_TYPE,
+                        CaseErrorTag.INVALID_WARMUP_ITERATIONS_VALUE)
         self._rounds = validate_positive_int(
                         rounds, "rounds",
-                        ErrorTag.CASE_INVALID_ROUNDS_TYPE,
-                        ErrorTag.CASE_INVALID_ROUNDS_VALUE)
+                        CaseErrorTag.INVALID_ROUNDS_TYPE,
+                        CaseErrorTag.INVALID_ROUNDS_VALUE)
         self._min_time = validate_positive_float(
                         min_time, "min_time",
-                        ErrorTag.CASE_INVALID_MIN_TIME_TYPE,
-                        ErrorTag.CASE_INVALID_MIN_TIME_VALUE)
+                        CaseErrorTag.INVALID_MIN_TIME_TYPE,
+                        CaseErrorTag.INVALID_MIN_TIME_VALUE)
         self._max_time = validate_positive_float(
                         max_time, "max_time",
-                        ErrorTag.CASE_INVALID_MAX_TIME_TYPE,
-                        ErrorTag.CASE_INVALID_MAX_TIME_VALUE)
+                        CaseErrorTag.INVALID_MAX_TIME_TYPE,
+                        CaseErrorTag.INVALID_MAX_TIME_VALUE)
         self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
         self._variation_cols = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
         self._runner = Case.validate_runner(runner)
@@ -313,7 +314,7 @@ class Case(ICase):
         if min_time > max_time:
             raise SimpleBenchValueError(
                 f'Invalid time range: min_time {min_time} > max_time {max_time}.',
-                tag=ErrorTag.CASE_INVALID_TIME_RANGE)
+                tag=CaseErrorTag.INVALID_TIME_RANGE)
 
     @staticmethod
     def validate_action_signature(action: ActionRunner) -> ActionRunner:
@@ -337,24 +338,24 @@ class Case(ICase):
         if not callable(action):
             raise SimpleBenchTypeError(
                 f'Invalid action: {action}. Must be a callable.',
-                tag=ErrorTag.CASE_INVALID_ACTION_NOT_CALLABLE
+                tag=CaseErrorTag.INVALID_ACTION_NOT_CALLABLE
                 )
         action_signature = inspect.signature(action)
         if 'bench' not in action_signature.parameters:
             raise SimpleBenchTypeError(
                 f'Invalid action: {action}. Must accept a "bench" parameter.',
-                tag=ErrorTag.CASE_INVALID_ACTION_MISSING_BENCH_PARAMETER
+                tag=CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER
                 )
         kwargs_param = action_signature.parameters.get('kwargs')
         if kwargs_param is None or kwargs_param.kind not in (inspect.Parameter.VAR_KEYWORD,):
             raise SimpleBenchTypeError(
                 f'Invalid action: {action}. Must accept "**kwargs" parameter.',
-                tag=ErrorTag.CASE_INVALID_ACTION_MISSING_KWARGS_PARAMETER
+                tag=CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER
                 )
         if len(action_signature.parameters) != 2:
             raise SimpleBenchValueError(
                 f'Invalid action: {action}. Must accept exactly 2 parameters: bench and **kwargs.',
-                tag=ErrorTag.CASE_INVALID_ACTION_PARAMETER_COUNT
+                tag=CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT
             )
         return action
 
@@ -387,30 +388,30 @@ class Case(ICase):
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid kwargs_variations: {value}. Must be a dictionary.',
-                tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_NOT_DICT
+                tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT
                 )
         validated_dict = {}
         for key, kw_value in value.items():
             if not isinstance(key, str):
                 raise SimpleBenchTypeError(
                     f'Invalid kwargs_variations entry key: {key}. Keys must be of type str.',
-                    tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE
+                    tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE
                     )
             if not key.isidentifier():
                 raise SimpleBenchValueError(
                     f'Invalid kwargs_variations entry key: {key}. Keys must be valid Python identifiers.',
-                    tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER
+                    tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER
                     )
             if not isinstance(kw_value, list):
                 raise SimpleBenchTypeError(
                     f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. Values must be in a list.',
-                    tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST
+                    tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST
                     )
             if not kw_value:
                 raise SimpleBenchValueError(
                     (f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. '
                      'Values cannot be empty lists.'),
-                    tag=ErrorTag.CASE_INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST
+                    tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST
                     )
             validated_dict[key] = copy(kw_value)
         return validated_dict
@@ -439,24 +440,24 @@ class Case(ICase):
         if not isinstance(variation_cols, dict):
             raise SimpleBenchTypeError(
                 f'Invalid variation_cols: {variation_cols}. Must be a dictionary.',
-                tag=ErrorTag.CASE_INVALID_VARIATION_COLS_NOT_DICT
+                tag=CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT
                 )
         validated_dict: dict[str, str] = {}
         for key, vc_value in variation_cols.items():
             if key not in kwargs_variations:
                 raise SimpleBenchValueError(
                     f'Invalid variation_cols entry key: {key}. Key not found in kwargs_variations.',
-                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
+                    tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
             if not isinstance(vc_value, str):
                 raise SimpleBenchTypeError(
                     f'Invalid variation_cols entry value for entry "{key}": "{vc_value}". Values must be of type str.',
-                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING
+                    tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING
                     )
             stripped_value = vc_value.strip()
             if stripped_value == '':
                 raise SimpleBenchValueError(
                     f'Invalid variation_cols entry value: "{vc_value}". Values cannot be blank strings.',
-                    tag=ErrorTag.CASE_INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK
+                    tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK
                     )
             validated_dict[key] = stripped_value
         return validated_dict
@@ -477,7 +478,7 @@ class Case(ICase):
         if not (isinstance(value, type) and issubclass(value, SimpleRunner)):
             raise SimpleBenchTypeError(
                 f'Invalid runner: {value}. Must be a subclass of SimpleRunner or None.',
-                tag=ErrorTag.CASE_INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS
+                tag=CaseErrorTag.INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS
                 )
         return value
 
@@ -499,13 +500,13 @@ class Case(ICase):
         if not isinstance(value, list):
             raise SimpleBenchTypeError(
                 f'Invalid options: {value}. Must be a list.',
-                tag=ErrorTag.CASE_INVALID_OPTIONS_NOT_LIST
+                tag=CaseErrorTag.INVALID_OPTIONS_NOT_LIST
                 )
         for option in value:
             if not isinstance(option, ReporterOption):
                 raise SimpleBenchTypeError(
                     f'Invalid option: {option}. Must be of type ReporterOption or a sub-class.',
-                    tag=ErrorTag.CASE_INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
+                    tag=CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
                     )
         return copy(value)
 
@@ -683,7 +684,7 @@ class Case(ICase):
                 raise SimpleBenchRuntimeError(
                     f'Error running benchmark action {str(self.action)} for case '
                     f'"{self.title}" with kwargs {kwargs}: {e}, {type(e)}',
-                    tag=ErrorTag.CASE_BENCHMARK_ACTION_RAISED_EXCEPTION
+                    tag=CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION
                     ) from e
             self._results.append(results)
             progress_tracker.update(
@@ -741,12 +742,12 @@ class Case(ICase):
         if not isinstance(section, Section):
             raise SimpleBenchTypeError(
                 f'Invalid section type: {type(section)}. Must be of type Section.',
-                tag=ErrorTag.CASE_SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT
+                tag=CaseErrorTag.SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT
                 )
         if section not in (Section.OPS, Section.TIMING):
             raise SimpleBenchValueError(
                 f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
-                tag=ErrorTag.CASE_SECTION_MEAN_INVALID_SECTION_ARGUMENT
+                tag=CaseErrorTag.SECTION_MEAN_INVALID_SECTION_ARGUMENT
                 )
 
         if not self.results:

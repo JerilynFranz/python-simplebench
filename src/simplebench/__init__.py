@@ -10,7 +10,7 @@ from .defaults import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
                        BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT)
 from .decorators import benchmark, clear_registered_cases, get_registered_cases
 from .enums import Section, Verbosity
-from .exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from .exceptions import GlobalErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from .runners import SimpleRunner
 from .results import Results
 from .iteration import Iteration
@@ -25,7 +25,7 @@ from .reporters.json import JSONReporter
 from .reporters.reporter_option import ReporterOption
 from .reporters.rich_table import RichTableReporter
 from .reporters.csv import CSVReporter
-from .reporters.graph import GraphReporter
+from .reporters.graph.scatter import ScatterGraphReporter
 from .session import Session
 from .cli import main
 
@@ -37,7 +37,7 @@ __all__ = [
     'Choices',
     'CSVReporter',
     'Format',
-    'GraphReporter',
+    'ScatterGraphReporter',
     'Iteration',
     'JSONReporter',
     'OperationsPerInterval',
@@ -67,7 +67,7 @@ __all__ = [
     'get_registered_cases',
 
     # Exceptions
-    'ErrorTag',
+    'GlobalErrorTag',
     'SimpleBenchKeyError',
     'SimpleBenchTypeError',
     'SimpleBenchValueError',

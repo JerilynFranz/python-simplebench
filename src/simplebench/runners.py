@@ -10,7 +10,7 @@ from types import ModuleType
 
 from .defaults import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERATIONS
 from .enums import Color
-from .exceptions import ErrorTag, SimpleBenchImportError
+from .exceptions import RunnersErrorTag, SimpleBenchImportError
 from .iteration import Iteration
 from .metaclasses import ISimpleRunner
 from .results import Results
@@ -40,7 +40,7 @@ def _create_timers_module() -> ModuleType:
     if spec is None:
         raise SimpleBenchImportError(
             'Could not create spec for simplebench._timers module',
-            tag=ErrorTag.RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED)
+            tag=RunnersErrorTag.RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED)
     if 'simplebench._timers' in sys.modules:
         return sys.modules['simplebench._timers']
     timers_module = importlib.util.module_from_spec(spec)
@@ -126,8 +126,8 @@ class SimpleRunner(ISimpleRunner):
         """
         rounds = validate_positive_int(
             rounds, 'rounds',
-            ErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE,
-            ErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE)
+            RunnersErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE,
+            RunnersErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE)
 
         # If the timer function for the specified rounds does not exist, create it.
         # We create a new function for each rounds value to avoid the overhead of a loop

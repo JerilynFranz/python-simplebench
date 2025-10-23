@@ -4,9 +4,10 @@ from __future__ import annotations
 from collections import UserDict
 from typing import Any, Optional, Sequence, TYPE_CHECKING
 
+from .exceptions.choices import ChoicesErrorTag
 from .metaclasses import IChoice, IChoices, IReporter
 from ..enums import Section, Target, Format, FlagType
-from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError, ErrorTag
+from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError
 from ..validators import validate_sequence_of_str, validate_non_blank_string, validate_sequence_of_type
 
 
@@ -124,14 +125,14 @@ class Choice(IChoice):
         if not isinstance(reporter, IReporter):
             raise SimpleBenchTypeError(
                 "reporter must implement the Reporter interface",
-                tag=ErrorTag.CHOICE_INVALID_REPORTER_ARG_TYPE)
+                tag=ChoicesErrorTag.CHOICE_INVALID_REPORTER_ARG_TYPE)
         self._reporter: Reporter = reporter
         """The Reporter subclass instance associated with the choice"""
 
         self._flags: frozenset[str] = frozenset(validate_sequence_of_str(
             flags, "flags",
-            ErrorTag.CHOICE_INVALID_FLAGS_ARG_TYPE,
-            ErrorTag.CHOICE_INVALID_FLAGS_ARGS_VALUE,
+            ChoicesErrorTag.CHOICE_INVALID_FLAGS_ARG_TYPE,
+            ChoicesErrorTag.CHOICE_INVALID_FLAGS_ARGS_VALUE,
             allow_empty=False, allow_blank=False, allow_whitespace=False))
         """Flags associated with the choice. These are used for command-line selection.
         They must be unique across all choices for all reporters. This is enforced
@@ -149,50 +150,50 @@ class Choice(IChoice):
         if not isinstance(flag_type, FlagType):
             raise SimpleBenchTypeError(
                 "flag_type must be a FlagType enum value",
-                tag=ErrorTag.CHOICE_INVALID_FLAG_TYPE_ARG_TYPE)
+                tag=ChoicesErrorTag.CHOICE_INVALID_FLAG_TYPE_ARG_TYPE)
         self._flag_type: FlagType = flag_type
         """The type of command-line flag (e.g., FlagType.BOOLEAN, FlagType.TARGET_LIST, etc.)."""
 
         self._name: str = validate_non_blank_string(
             name, "name",
-            ErrorTag.CHOICE_INVALID_NAME_ARG_TYPE,
-            ErrorTag.CHOICE_EMPTY_NAME_ARG_VALUE)
+            ChoicesErrorTag.CHOICE_INVALID_NAME_ARG_TYPE,
+            ChoicesErrorTag.CHOICE_EMPTY_NAME_ARG_VALUE)
         """Name of the choice"""
 
         self._description: str = validate_non_blank_string(
             description, "description",
-            ErrorTag.CHOICE_INVALID_DESCRIPTION_ARG_TYPE,
-            ErrorTag.CHOICE_EMPTY_DESCRIPTION_ARG_VALUE)
+            ChoicesErrorTag.CHOICE_INVALID_DESCRIPTION_ARG_TYPE,
+            ChoicesErrorTag.CHOICE_EMPTY_DESCRIPTION_ARG_VALUE)
         """Description of the choice"""
 
         self._sections: frozenset[Section] = frozenset(validate_sequence_of_type(
             sections, Section,
             "sections",
-            ErrorTag.CHOICE_INVALID_SECTIONS_ARG_TYPE,
-            ErrorTag.CHOICE_EMPTY_SECTIONS_ARG_VALUE,
+            ChoicesErrorTag.CHOICE_INVALID_SECTIONS_ARG_TYPE,
+            ChoicesErrorTag.CHOICE_EMPTY_SECTIONS_ARG_VALUE,
             allow_empty=False))
         """Sections included in the choice"""
 
         self._targets: frozenset[Target] = frozenset(validate_sequence_of_type(
             targets, Target,
             "targets",
-            ErrorTag.CHOICE_INVALID_TARGETS_ARG_TYPE,
-            ErrorTag.CHOICE_EMPTY_TARGETS_ARG_VALUE,
+            ChoicesErrorTag.CHOICE_INVALID_TARGETS_ARG_TYPE,
+            ChoicesErrorTag.CHOICE_EMPTY_TARGETS_ARG_VALUE,
             allow_empty=False))
         """Output targets for the choice"""
 
         self._formats: frozenset[Format] = frozenset(validate_sequence_of_type(
             formats, Format,
             "formats",
-            ErrorTag.CHOICE_INVALID_FORMATS_ARG_TYPE,
-            ErrorTag.CHOICE_EMPTY_FORMATS_ARG_VALUE,
+            ChoicesErrorTag.CHOICE_INVALID_FORMATS_ARG_TYPE,
+            ChoicesErrorTag.CHOICE_EMPTY_FORMATS_ARG_VALUE,
             allow_empty=False))
         """Output formats for the choice"""
 
         if options is not None and not isinstance(options, ChoiceOptions):
             raise SimpleBenchTypeError(
                 "options arg must be a ChoiceOptions instance or None",
-                tag=ErrorTag.CHOICE_INVALID_OPTIONS_ARG_TYPE)
+                tag=ChoicesErrorTag.CHOICE_INVALID_OPTIONS_ARG_TYPE)
         self._options: ChoiceOptions | None = options
         """An optional ChoiceOptions instance for additional configuration."""
 
@@ -300,8 +301,8 @@ class Choices(UserDict[str, Choice], IChoices):
         if isinstance(choices, Sequence) and not isinstance(choices, str):
             choices_list = validate_sequence_of_type(
                 choices, Choice, "choices",
-                ErrorTag.CHOICES_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
-                ErrorTag.CHOICES_INVALID_CHOICES_ITEM_VALUE,
+                ChoicesErrorTag.CHOICES_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+                ChoicesErrorTag.CHOICES_INVALID_CHOICES_ITEM_VALUE,
                 allow_empty=True)
         elif choices is not None:
             if isinstance(choices, Choices):
@@ -309,7 +310,7 @@ class Choices(UserDict[str, Choice], IChoices):
             else:
                 raise SimpleBenchTypeError(
                     f"Expected a Sequence of Choice instances or a Choices instance but got {type(choices)}",
-                    tag=ErrorTag.CHOICES_INVALID_CHOICES_ARG_TYPE)
+                    tag=ChoicesErrorTag.CHOICES_INVALID_CHOICES_ARG_TYPE)
 
         if choices_list:
             self.extend(choices_list)
@@ -329,7 +330,7 @@ class Choices(UserDict[str, Choice], IChoices):
         if not isinstance(choice, Choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
-                tag=ErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG_TYPE)
+                tag=ChoicesErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG_TYPE)
         self[choice.name] = choice
 
     def all_choice_args(self) -> set[str]:
@@ -364,7 +365,7 @@ class Choices(UserDict[str, Choice], IChoices):
         if not isinstance(arg, str):
             raise SimpleBenchTypeError(
                 "arg must be a string",
-                tag=ErrorTag.CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
+                tag=ChoicesErrorTag.CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
         return self._args_index.get(arg, None)
 
     def extend(self, choices: Sequence[Choice] | Choices) -> None:
@@ -384,8 +385,8 @@ class Choices(UserDict[str, Choice], IChoices):
         else:
             choices_list = validate_sequence_of_type(
                 choices, Choice, "choices",
-                ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
-                ErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ITEM_VALUE,
+                ChoicesErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+                ChoicesErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ITEM_VALUE,
                 allow_empty=True)
             for choice in choices_list:
                 self.add(choice)
@@ -413,7 +414,7 @@ class Choices(UserDict[str, Choice], IChoices):
         if key not in self.data:
             raise SimpleBenchKeyError(
                 f"No Choice key with the name '{key}' exists",
-                tag=ErrorTag.CHOICES_DELITEM_UNKNOWN_CHOICE_NAME)
+                tag=ChoicesErrorTag.CHOICES_DELITEM_UNKNOWN_CHOICE_NAME)
         choice = self[key]
         for arg in choice.flags:
             if arg in self._flags_index:
@@ -451,25 +452,25 @@ class Choices(UserDict[str, Choice], IChoices):
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
                 "Choice key must be a string",
-                tag=ErrorTag.CHOICES_SETITEM_INVALID_KEY_TYPE)
+                tag=ChoicesErrorTag.CHOICES_SETITEM_INVALID_KEY_TYPE)
         if not isinstance(value, Choice):
             raise SimpleBenchTypeError(
                 "Only Choice instances can be added to Choices",
-                tag=ErrorTag.CHOICES_SETITEM_INVALID_VALUE_TYPE)
+                tag=ChoicesErrorTag.CHOICES_SETITEM_INVALID_VALUE_TYPE)
         if key != value.name:
             raise SimpleBenchValueError(
                 "Choice key must match the Choice.name attribute",
-                tag=ErrorTag.CHOICES_SETITEM_KEY_NAME_MISMATCH)
+                tag=ChoicesErrorTag.CHOICES_SETITEM_KEY_NAME_MISMATCH)
         if value.name in self.data:
             raise SimpleBenchValueError(
                 f"A Choice with the name '{value.name}' already exists",
-                tag=ErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_NAME)
+                tag=ChoicesErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_NAME)
 
         self._args_index.update({flag.replace('--', '', 1).replace('-', '_'): value for flag in value.flags})
         for flag in value.flags:
             if flag in self._flags_index:
                 raise SimpleBenchValueError(
                     f"A Choice with the flag '{flag}' already exists",
-                    tag=ErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_FLAG)
+                    tag=ChoicesErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_FLAG)
             self._flags_index[flag] = value
         super().__setitem__(key, value)

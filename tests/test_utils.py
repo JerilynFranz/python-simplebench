@@ -2,7 +2,7 @@
 
 import pytest
 
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, UtilsErrorTag
 from simplebench import utils
 import simplebench.defaults as defaults
 
@@ -42,19 +42,19 @@ defaults.DEFAULT_SIGNIFICANT_FIGURES = 3  # Ensure default is as expected for te
         args=["not_a_dict"],
         action=utils.kwargs_variations,
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE)),
+        exception_tag=UtilsErrorTag.KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE)),
     idspec("KWARGS_VARIATIONS_007", TestAction(
         name="invalid kwargs value type (str)",
         kwargs={'kwargs': {"a": 1, "b": "not_"}},
         action=utils.kwargs_variations,
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE)),
+        exception_tag=UtilsErrorTag.KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE)),
     idspec("KWARGS_VARIATIONS_008", TestAction(
         name="invalid kwargs value type (bytes)",
         kwargs={'kwargs': {"a": 1, "b": b"not_"}},
         action=utils.kwargs_variations,
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE)),
+        exception_tag=UtilsErrorTag.KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE)),
     idspec("KWARGS_VARIATIONS_009", TestAction(
         name="Two keys with multiple values each",
         kwargs={'kwargs': {"a": [1, 2], "b": ['x', 'y']}},
@@ -68,7 +68,7 @@ defaults.DEFAULT_SIGNIFICANT_FIGURES = 3  # Ensure default is as expected for te
         kwargs={'kwargs': {"a": 1, "b": 2}},
         action=utils.kwargs_variations,
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.UTILS_KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE)),
+        exception_tag=UtilsErrorTag.KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE)),
 ])
 def test_kwargs_variations(testspec: TestAction) -> None:
     """Test utils.kwargs_variations() function."""
@@ -92,13 +92,13 @@ def test_kwargs_variations(testspec: TestAction) -> None:
         kwargs={'number': 'not_a_float', 'figures': 3},
         action=utils.sigfigs,
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.UTILS_SIGFIGS_INVALID_NUMBER_ARG_TYPE)),
+        exception_tag=UtilsErrorTag.SIGFIGS_INVALID_NUMBER_ARG_TYPE)),
     idspec("SIGFIGS_004", TestAction(
         name="Invalid figures arg type (str)",
         kwargs={'number': 1.2345, 'figures': 'not_an_int'},
         action=utils.sigfigs,
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.UTILS_SIGFIGS_INVALID_FIGURES_ARG_TYPE)),
+        exception_tag=UtilsErrorTag.SIGFIGS_INVALID_FIGURES_ARG_TYPE)),
     idspec("SIGFIGS_005", TestAction(
         name="Invalid figures arg value (0 < 1)",
         kwargs={'number': 1.2345, 'figures': 0},
@@ -136,7 +136,7 @@ def test_sigfigs(testspec: TestAction) -> None:
         args=[1],
         action=utils.sanitize_filename,
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.UTILS_SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE)),
+        exception_tag=UtilsErrorTag.SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE)),
     idspec("SANITIZE_FILENAME_003", TestAction(
         name="Filename with only valid characters",
         args=['valid_filename-123.txt'],
@@ -152,7 +152,7 @@ def test_sigfigs(testspec: TestAction) -> None:
         args=[''],
         action=utils.sanitize_filename,
         exception=SimpleBenchValueError,
-        exception_tag=ErrorTag.UTILS_SANITIZE_FILENAME_EMPTY_NAME_ARG)),
+        exception_tag=UtilsErrorTag.SANITIZE_FILENAME_EMPTY_NAME_ARG)),
 ])
 def test_sanitize_filename(testspec: TestAction) -> None:
     """Test utils.sanitize_filename() function."""

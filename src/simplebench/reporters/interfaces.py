@@ -12,9 +12,10 @@ from rich.text import Text
 
 from ..defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, BASE_MEMORY_UNIT
 from ..enums import Section, Target, Format, FlagType
-from ..exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
+from ..exceptions import GlobalErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
 from ..metaclasses import ICase, ISession
 from ..utils import collect_arg_list
+from .exceptions import ReportersInterfacesErrorTag
 from .metaclasses import IReporter, IChoices, IChoice
 from .protocols import ReporterCallback
 
@@ -126,67 +127,67 @@ class Reporter(ABC, IReporter):
         if not isinstance(name, str):
             raise SimpleBenchNotImplementedError(
                 "Reporter subclasses must provide a non-empty string for the name",
-                tag=ErrorTag.REPORTER_NAME_NOT_IMPLEMENTED)
+                tag=ReportersInterfacesErrorTag.NAME_NOT_IMPLEMENTED)
 
         if name.strip() == '':
             raise SimpleBenchValueError(
                 "Reporter subclasses must provide a unique non-empty string for the name",
-                tag=ErrorTag.REPORTER_NAME_INVALID_VALUE)
+                tag=ReportersInterfacesErrorTag.NAME_INVALID_VALUE)
 
         if not isinstance(description, str):
             raise SimpleBenchNotImplementedError(
                 "Reporter subclasses must provide a non-empty string for the description",
-                tag=ErrorTag.REPORTER_DESCRIPTION_NOT_IMPLEMENTED)
+                tag=ReportersInterfacesErrorTag.DESCRIPTION_NOT_IMPLEMENTED)
 
         if description.strip() == '':
             raise SimpleBenchValueError(
                 "Reporter subclasses must provide a non-empty string for the description",
-                tag=ErrorTag.REPORTER_DESCRIPTION_INVALID_VALUE)
+                tag=ReportersInterfacesErrorTag.DESCRIPTION_INVALID_VALUE)
 
         if not isinstance(sections, set) or len(sections) == 0:
             raise SimpleBenchNotImplementedError(
                 "Reporter subclasses must provide a non-empty set of Sections",
-                tag=ErrorTag.REPORTER_SECTIONS_NOT_IMPLEMENTED)
+                tag=ReportersInterfacesErrorTag.SECTIONS_NOT_IMPLEMENTED)
 
         if not all(isinstance(section, Section) for section in sections):
             raise SimpleBenchTypeError(
                 "All items in sections must be of type Section",
-                tag=ErrorTag.REPORTER_INVALID_SECTIONS_ENTRY_TYPE)
+                tag=ReportersInterfacesErrorTag.INVALID_SECTIONS_ENTRY_TYPE)
 
         if not isinstance(targets, set) or len(targets) == 0:
             raise SimpleBenchNotImplementedError(
                 "Reporter subclasses must provide a non-empty set of Targets",
-                tag=ErrorTag.REPORTER_TARGETS_NOT_IMPLEMENTED)
+                tag=ReportersInterfacesErrorTag.TARGETS_NOT_IMPLEMENTED)
 
         if not all(isinstance(target, Target) for target in targets):
             raise SimpleBenchTypeError(
                 "All items in targets must be of type Target",
-                tag=ErrorTag.REPORTER_INVALID_TARGETS_ENTRY_TYPE)
+                tag=ReportersInterfacesErrorTag.INVALID_TARGETS_ENTRY_TYPE)
 
         if not isinstance(formats, set) or len(formats) == 0:
             raise SimpleBenchNotImplementedError(
                 "Reporter subclasses must provide a non-empty set of Formats",
-                tag=ErrorTag.REPORTER_FORMATS_NOT_IMPLEMENTED)
+                tag=ReportersInterfacesErrorTag.FORMATS_NOT_IMPLEMENTED)
 
         if not all(isinstance(output_format, Format) for output_format in formats):
             raise SimpleBenchTypeError(
                 "All items in formats must be of type Format",
-                tag=ErrorTag.REPORTER_INVALID_FORMATS_ENTRY_TYPE)
+                tag=ReportersInterfacesErrorTag.INVALID_FORMATS_ENTRY_TYPE)
 
         if choices is None:
             raise SimpleBenchNotImplementedError(
                 "Reporter subclasses must provide a Choices instance with at least one Choice",
-                tag=ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED)
+                tag=ReportersInterfacesErrorTag.CHOICES_NOT_IMPLEMENTED)
 
         if not isinstance(choices, IChoices):
             raise SimpleBenchTypeError(
                 f"choices must be a Choices instance: cannot be a {type(choices)}",
-                tag=ErrorTag.REPORTER_INVALID_CHOICES_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.INVALID_CHOICES_ARG_TYPE)
 
         if len(choices) == 0:
             raise SimpleBenchNotImplementedError(
                 "Reporter subclasses must initialize the Choices with at least one Choice",
-                tag=ErrorTag.REPORTER_CHOICES_NOT_IMPLEMENTED)
+                tag=ReportersInterfacesErrorTag.CHOICES_NOT_IMPLEMENTED)
 
     def select_targets_from_args(
             self, *,
@@ -230,11 +231,11 @@ class Reporter(ABC, IReporter):
                     else:
                         raise SimpleBenchValueError(
                             f"Output target {target} is not supported by {flag}.",
-                            tag=ErrorTag.UNSUPPORTED_TARGET_IN_ARGS)
+                            tag=GlobalErrorTag.UNSUPPORTED_TARGET_IN_ARGS)
                 else:
                     raise SimpleBenchValueError(
                         f"Unknown output target specified for {flag}: {target}",
-                        tag=ErrorTag.UNKNOWN_TARGET_IN_ARGS)
+                        tag=GlobalErrorTag.UNKNOWN_TARGET_IN_ARGS)
 
         return set(default_targets) if not selected_targets else selected_targets
 
@@ -264,44 +265,44 @@ class Reporter(ABC, IReporter):
         if not isinstance(args, Namespace):
             raise SimpleBenchTypeError(
                 "args argument must be an argparse.Namespace instance",
-                tag=ErrorTag.REPORTER_REPORT_INVALID_ARGS_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.REPORT_INVALID_ARGS_ARG_TYPE)
         if not isinstance(case, ICase):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
-                tag=ErrorTag.REPORTER_REPORT_INVALID_CASE_ARG)
+                tag=ReportersInterfacesErrorTag.REPORT_INVALID_CASE_ARG)
         if not isinstance(choice, IChoice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
-                tag=ErrorTag.REPORTER_REPORT_INVALID_CHOICE_ARG)
+                tag=ReportersInterfacesErrorTag.REPORT_INVALID_CHOICE_ARG)
         for section in choice.sections:
             if section not in self.supported_sections():
                 raise SimpleBenchValueError(
                     f"Unsupported Section in Choice: {section}",
-                    tag=ErrorTag.REPORTER_REPORT_UNSUPPORTED_SECTION)
+                    tag=ReportersInterfacesErrorTag.REPORT_UNSUPPORTED_SECTION)
         for target in choice.targets:
             if target not in self.supported_targets():
                 raise SimpleBenchValueError(
                     f"Unsupported Target in Choice: {target}",
-                    tag=ErrorTag.REPORTER_REPORT_UNSUPPORTED_TARGET)
+                    tag=ReportersInterfacesErrorTag.REPORT_UNSUPPORTED_TARGET)
         if Target.CALLBACK in choice.targets:  # pylint: disable=used-before-assignment
             if callback is not None and not callable(callback):
                 raise SimpleBenchTypeError(
                     "Callback function must be callable if provided",
-                    tag=ErrorTag.REPORTER_REPORT_INVALID_CALLBACK_ARG)
+                    tag=ReportersInterfacesErrorTag.REPORT_INVALID_CALLBACK_ARG)
         if Target.FILESYSTEM in choice.targets and not isinstance(path, Path):
             raise SimpleBenchTypeError(
                 "Path must be a pathlib.Path instance when using FILESYSTEM target",
-                tag=ErrorTag.REPORTER_REPORT_INVALID_PATH_ARG)
+                tag=ReportersInterfacesErrorTag.REPORT_INVALID_PATH_ARG)
         for output_format in choice.formats:
             if output_format not in self.supported_formats():
                 raise SimpleBenchValueError(
                     f"Unsupported Format in Choice: {output_format}",
-                    tag=ErrorTag.REPORTER_REPORT_UNSUPPORTED_FORMAT)
+                    tag=ReportersInterfacesErrorTag.REPORT_UNSUPPORTED_FORMAT)
 
         if session is not None and not isinstance(session, ISession):
             raise SimpleBenchTypeError(
                 "session must be a Session instance if provided",
-                tag=ErrorTag.REPORTER_REPORT_INVALID_SESSION_ARG)
+                tag=ReportersInterfacesErrorTag.REPORT_INVALID_SESSION_ARG)
 
         # Only proceed if there are results to report
         # TODO: THINK ABOUT THIS MORE
@@ -363,7 +364,7 @@ class Reporter(ABC, IReporter):
         """
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the report method",
-            tag=ErrorTag.REPORTER_RUN_REPORT_NOT_IMPLEMENTED)
+            tag=ReportersInterfacesErrorTag.RUN_REPORT_NOT_IMPLEMENTED)
 
     def add_choice(self, choice: Choice) -> None:
         """Add a Choice to the reporter's Choices.
@@ -379,23 +380,23 @@ class Reporter(ABC, IReporter):
         if not isinstance(choice, IChoice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
-                tag=ErrorTag.REPORTER_ADD_CHOICE_INVALID_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
 
         for section in choice.sections:
             if section not in self.supported_sections():
                 raise SimpleBenchValueError(
                     f"Unsupported Section in Choice: {section}",
-                    tag=ErrorTag.REPORTER_ADD_CHOICE_UNSUPPORTED_SECTION)
+                    tag=ReportersInterfacesErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)
         for target in choice.targets:
             if target not in self.supported_targets():
                 raise SimpleBenchValueError(
                     f"Unsupported Target in Choice: {target}",
-                    tag=ErrorTag.REPORTER_ADD_CHOICE_UNSUPPORTED_TARGET)
+                    tag=ReportersInterfacesErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)
         for output_format in choice.formats:
             if output_format not in self.supported_formats():
                 raise SimpleBenchValueError(
                     f"Unsupported Format in Choice: {output_format}",
-                    tag=ErrorTag.REPORTER_ADD_CHOICE_UNSUPPORTED_FORMAT)
+                    tag=ReportersInterfacesErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)
 
         self.choices.add(choice)
 
@@ -491,19 +492,19 @@ class Reporter(ABC, IReporter):
         if not isinstance(path, Path):
             raise SimpleBenchTypeError(
                 "path arg must be a pathlib.Path instance",
-                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
         if not isinstance(subdir, str):
             raise SimpleBenchTypeError(
                 "subdir arg must be a string",
-                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE)
         if not isinstance(filename, str):
             raise SimpleBenchTypeError(
                 "filename arg must be a string",
-                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_INVALID_FILENAME_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.TARGET_FILESYSTEM_INVALID_FILENAME_ARG_TYPE)
         if append and unique:
             raise SimpleBenchValueError(
                 "append and unique options are not compatible when writing to filesystem",
-                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS)
+                tag=ReportersInterfacesErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS)
         if unique:
             counter = 1
             while (path / subdir / f"{counter:03d}_{filename}").exists():
@@ -517,7 +518,7 @@ class Reporter(ABC, IReporter):
         if output_path.exists() and not append:
             raise SimpleBenchValueError(
                 f"Output file already exists and neither append nor unique options were specified: {output_path}",
-                tag=ErrorTag.REPORTER_TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS)
+                tag=ReportersInterfacesErrorTag.TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS)
         with output_path.open(mode=mode) as f:
             f.write(output)
 
@@ -580,7 +581,7 @@ class Reporter(ABC, IReporter):
             case _:
                 raise SimpleBenchValueError(
                     f"Unsupported section: {section} (this should never happen)",
-                    tag=ErrorTag.REPORTER_RUN_REPORT_UNSUPPORTED_SECTION)
+                    tag=ReportersInterfacesErrorTag.RUN_REPORT_UNSUPPORTED_SECTION)
 
     def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
         """Add the reporter's command-line flags to an ArgumentParser.
@@ -597,7 +598,7 @@ class Reporter(ABC, IReporter):
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 "parser arg must be an argparse.ArgumentParser instance",
-                tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
         for choice in self.choices.values():
             match choice.flag_type:
                 case FlagType.BOOLEAN:
@@ -607,7 +608,7 @@ class Reporter(ABC, IReporter):
                 case _:
                     raise SimpleBenchValueError(
                         f"Unsupported flag type: {choice.flag_type}",
-                        tag=ErrorTag.REPORTER_ADD_FLAGS_UNSUPPORTED_FLAG_TYPE)
+                        tag=ReportersInterfacesErrorTag.ADD_FLAGS_UNSUPPORTED_FLAG_TYPE)
 
     def add_list_of_targets_flags_to_argparse(self, parser: ArgumentParser, choice: Choice) -> None:
         """Add a Choice's command-line flags to an ArgumentParser.
@@ -636,11 +637,11 @@ class Reporter(ABC, IReporter):
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 "parser arg must be an argparse.ArgumentParser instance",
-                tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
         if not isinstance(choice, IChoice):
             raise SimpleBenchTypeError(
                 "choice arg must be a Choice instance",
-                tag=ErrorTag.REPORTER_ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE)
         targets = [target.value for target in choice.targets]
         for flag in choice.flags:
             parser.add_argument(flag,
@@ -663,10 +664,10 @@ class Reporter(ABC, IReporter):
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 "parser arg must be an argparse.ArgumentParser instance",
-                tag=ErrorTag.REPORTER_ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
         if not isinstance(choice, IChoice):
             raise SimpleBenchTypeError(
                 "choice arg must be a Choice instance",
-                tag=ErrorTag.REPORTER_ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE)
+                tag=ReportersInterfacesErrorTag.ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE)
         for flag in choice.flags:
             parser.add_argument(flag, action='store_true', help=choice.description)

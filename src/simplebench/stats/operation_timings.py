@@ -5,7 +5,7 @@ from typing import Optional, Sequence
 
 from . import Stats, StatsSummary
 from ..defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
-from ..exceptions import SimpleBenchTypeError, ErrorTag
+from ..exceptions import SimpleBenchTypeError, GlobalErrorTag
 from ..validators import validate_sequence_of_numbers
 from ..iteration import Iteration
 
@@ -46,24 +46,24 @@ class OperationTimings(Stats):
         if iterations is None and data is None:
             raise SimpleBenchTypeError(
                 "either iterations or data must be provided",
-                tag=ErrorTag.STATS_TIMINGS_NO_DATA_OR_ITERATIONS_PROVIDED)
+                tag=GlobalErrorTag.STATS_TIMINGS_NO_DATA_OR_ITERATIONS_PROVIDED)
         if data is None:
             data = []
         imported_data: list[int | float] = list(validate_sequence_of_numbers(
                 data, 'data',
-                type_tag=ErrorTag.STATS_TIMINGS_INVALID_DATA_ARG_TYPE,
-                value_tag=ErrorTag.STATS_TIMINGS_INVALID_DATA_ARG_VALUE))
+                type_tag=GlobalErrorTag.STATS_TIMINGS_INVALID_DATA_ARG_TYPE,
+                value_tag=GlobalErrorTag.STATS_TIMINGS_INVALID_DATA_ARG_VALUE))
 
         if iterations is not None:
             if not isinstance(iterations, Sequence):
                 raise SimpleBenchTypeError(
                     "passed iterations arg is not a Sequence",
-                    tag=ErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ARG_TYPE)
+                    tag=GlobalErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ARG_TYPE)
 
             if not all(isinstance(iteration, Iteration) for iteration in iterations):
                 raise SimpleBenchTypeError(
                     "There are items in the iterations arg sequence that are not Iteration objects",
-                    tag=ErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ITEM_ARG_TYPE)
+                    tag=GlobalErrorTag.STATS_TIMINGS_INVALID_ITERATIONS_ITEM_ARG_TYPE)
             imported_data.extend(iteration.per_round_elapsed for iteration in iterations)
 
         super().__init__(unit=unit, scale=scale, data=imported_data)

@@ -5,7 +5,7 @@ and return the validated and/or normalized value.
 """
 from typing import Any, Sequence, TypeVar, overload
 
-from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag, ValidatorsErrorTag
 
 
 T = TypeVar('T')
@@ -465,3 +465,108 @@ def validate_sequence_of_str(
                     tag=value_tag
                 )
     return list_of_str
+
+
+def validate_int_range(number: int,
+                       field_name: str,
+                       type_tag: ErrorTag,
+                       value_tag: ErrorTag,
+                       min_value: int,
+                       max_value: int) -> int:
+    """Validate that a value is an integer within a specified range.
+
+    Args:
+        number (Any): The value to validate.
+        field_name (str): The name of the field being validated (for error messages).
+        type_tag (ErrorTag): The error tag to use for type errors.
+        value_tag (ErrorTag): The error tag to use for value errors.
+        min_value (int): The minimum value of the range.
+        max_value (int): The maximum value of the range.
+
+    Raises:
+        SimpleBenchValueError: If min_value is greater than max_value.
+        SimpleBenchTypeError: If field_name is not a str.
+        SimpleBenchTypeError: If type_tag or value_tag is not an ErrorTag.
+        SimpleBenchTypeError: If number, min_value, or max_value is not an int.
+        SimpleBenchValueError: If number is not within the specified range.
+    """
+    if not isinstance(field_name, str):
+        raise SimpleBenchTypeError(
+            f'Invalid call to validate_int_range: field_name type: {type(field_name)}. Must be a str.',
+            tag=ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
+    if not isinstance(min_value, int):
+        raise SimpleBenchTypeError(
+            f'Invalid call to validate_int_range: min_value type {type(min_value)}. Must be an int.',
+            tag=ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE)
+    if not isinstance(max_value, int):
+        raise SimpleBenchTypeError(
+            f'Invalid call to validate_int_range: max_value type {type(max_value)}. Must be an int.',
+            tag=ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE)
+    if min_value > max_value:
+        raise SimpleBenchValueError(
+            f'Invalid call to validate_int_range: min_value ({min_value}) '
+            f'cannot be greater than max_value ({max_value}).',
+            tag=ValidatorsErrorTag.INVALID_RANGE)
+    if not isinstance(number, int):
+        raise SimpleBenchTypeError(
+            f'Invalid {field_name} type: {type(number)}. Must be an int.',
+            tag=type_tag)
+    if not min_value <= number <= max_value:
+        raise SimpleBenchValueError(
+            f'Invalid {field_name}: {number}. Must be an int between {min_value} and {max_value}, inclusive.',
+            tag=value_tag)
+
+    return number
+
+
+def validate_float_range(
+        number: float,
+        field_name: str,
+        type_tag: ErrorTag,
+        value_tag: ErrorTag,
+        min_value: float,
+        max_value: float) -> float:
+    """Validate that a value is a float within a specified range.
+
+    Args:
+        number (float): The value to validate.
+        field_name (str): The name of the field being validated (for error messages).
+        type_tag (ErrorTag): The error tag to use for type errors.
+        value_tag (ErrorTag): The error tag to use for value errors.
+        min_value (float): The minimum value of the range.
+        max_value (float): The maximum value of the range.
+
+    Raises:
+        SimpleBenchValueError: If min_value is greater than max_value.
+        SimpleBenchTypeError: If field_name is not a str.
+        SimpleBenchTypeError: If type_tag or value_tag is not an ErrorTag.
+        SimpleBenchTypeError: If number, min_value, or max_value is not a float..
+        SimpleBenchValueError: If number is not within the specified range.
+    """
+    if not isinstance(field_name, str):
+        raise SimpleBenchTypeError(
+            f'Invalid call to validate_float_range: field_name type: {type(field_name)}. Must be a str.',
+            tag=ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
+    if not isinstance(min_value, float):
+        raise SimpleBenchTypeError(
+            f'Invalid call to validate_float_range: min_value type {type(min_value)}. Must be a float.',
+            tag=ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE)
+    if not isinstance(max_value, float):
+        raise SimpleBenchTypeError(
+            f'Invalid call to validate_float_range: max_value type {type(max_value)}. Must be a float.',
+            tag=ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE)
+    if min_value > max_value:
+        raise SimpleBenchValueError(
+            f'Invalid call to validate_float_range: min_value ({min_value}) '
+            f'cannot be greater than max_value ({max_value}).',
+            tag=ValidatorsErrorTag.INVALID_RANGE)
+    if not isinstance(number, float):
+        raise SimpleBenchTypeError(
+            f'Invalid {field_name} type: {type(number)}. Must be a float.',
+            tag=type_tag)
+    if not min_value <= number <= max_value:
+        raise SimpleBenchValueError(
+            f'Invalid {field_name}: {number}. Must be a float between {min_value} and {max_value}, inclusive.',
+            tag=value_tag)
+
+    return number

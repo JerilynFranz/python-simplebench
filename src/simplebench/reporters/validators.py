@@ -4,7 +4,7 @@ import inspect
 from typing import Any, Callable, get_type_hints
 
 
-from ..exceptions import SimpleBenchTypeError, ErrorTag
+from ..exceptions import SimpleBenchTypeError, GlobalErrorTag
 from ..enums import Section, Format
 from .protocols import ReporterCallback
 
@@ -42,7 +42,7 @@ def resolve_callback_type_hints(callback: Callable) -> dict[str, type]:
         # This can happen if an annotation refers to a type that doesn't exist.
         raise SimpleBenchTypeError(
             f"Invalid callback: {callback}. Could not resolve type hints. Original error: {e}",
-            tag=ErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS
+            tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS
         ) from e
     return resolved_hints
 
@@ -67,19 +67,19 @@ def validate_callback_parameter(callback: Callable,
     if param_name not in callback_signature.parameters:
         raise SimpleBenchTypeError(
             f'Invalid callback: {callback}. Must accept an "{param_name}" parameter.',
-            tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)
+            tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)
     param_type = resolved_hints.get(param_name)
     if param_type is not expected_type:
         raise SimpleBenchTypeError(
             f"Invalid callback: {callback}. '{param_name}' parameter must be of type "
             f"'{expected_type}', not '{param_type}'.",
-            tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)
+            tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)
 
     param = callback_signature.parameters[param_name]
     if param.kind is not inspect.Parameter.KEYWORD_ONLY:
         raise SimpleBenchTypeError(
             f'Invalid callback: {callback}. "{param_name}" parameter must be a keyword-only parameter.',
-            tag=ErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)
+            tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)
 
 
 def validate_reporter_callback(callback: ReporterCallback | None) -> ReporterCallback | None:
@@ -109,7 +109,7 @@ def validate_reporter_callback(callback: ReporterCallback | None) -> ReporterCal
     if not callable(callback):
         raise SimpleBenchTypeError(
             f'Invalid callback: {callback}. Must be a callable or None.',
-            tag=ErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)
+            tag=GlobalErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)
     callback_signature = inspect.signature(callback)
     validate_callback_parameter(callback, Case, 'case')
     validate_callback_parameter(callback, Section, 'section')
@@ -120,5 +120,5 @@ def validate_reporter_callback(callback: ReporterCallback | None) -> ReporterCal
         raise SimpleBenchTypeError(
             f'Invalid callback: {callback}. Must accept exactly four keyword-only parameters with the following '
             'names and types: case: Case, section: Section, output_format: Format, output: Any',
-            tag=ErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
+            tag=GlobalErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
     return callback

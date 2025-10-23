@@ -10,7 +10,7 @@ import pytest
 from rich.console import Console
 
 from simplebench import Case, SimpleRunner, Results, Session, Verbosity
-from simplebench.exceptions import (SimpleBenchTypeError, ErrorTag)
+from simplebench.exceptions import SimpleBenchTypeError, SessionErrorTag
 from simplebench.protocols import ActionRunner
 from simplebench.reporters.reporter_option import ReporterOption
 from simplebench.reporters.protocols import ReporterCallback
@@ -222,7 +222,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
             cases="not a sequence of cases",  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
     )),
     idspec("INIT_004", TestAction(
         name="Invalid type for 'cases' parameter (not a sequence)",
@@ -232,7 +232,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
             cases=12345,  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_CASES_ARG
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_CASES_ARG
     )),
     idspec("INIT_005", TestAction(
         name="Invalid type for 'verbosity' parameter (string instead of Verbosity)",
@@ -240,7 +240,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
         kwargs=SessionKWArgs(
             verbosity="not a Verbosity instance"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_VERBOSITY_ARG
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_VERBOSITY_ARG
     )),
     idspec("INIT_006", TestAction(
         name="Invalid type for 'default_runner' parameter (string instead of type[SimpleRunner])",
@@ -248,14 +248,14 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
         kwargs=SessionKWArgs(
             default_runner="not a runner class"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_DEFAULT_RUNNER_ARG
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
     )),
     idspec("INIT_007", TestAction(
         name="Invalid type for 'default_runner' parameter (not a SimpleRunner subclass type but is a type)",
         action=Session,
         kwargs=SessionKWArgs(default_runner=Case),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_DEFAULT_RUNNER_ARG
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
     )),
     idspec("INIT_008", TestAction(
         name="Invalid type for 'args_parser' parameter (string instead of ArgumentParser)",
@@ -263,7 +263,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
         kwargs=SessionKWArgs(
             args_parser="not an ArgumentParser"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_ARGSPARSER_ARG
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_ARGSPARSER_ARG
     )),
     idspec("INIT_009", TestAction(
         name="Invalid type for 'progress' parameter (string instead of bool)",
@@ -271,7 +271,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
         kwargs=SessionKWArgs(
             progress="not a bool"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_PROGRESS_ARG
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_PROGRESS_ARG
     )),
     idspec("INIT_010", TestAction(
         name="Invalid type for 'output_path' parameter (string instead of Path)",
@@ -279,7 +279,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
         kwargs=SessionKWArgs(
             output_path="not a Path"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_OUTPUT_PATH_ARG
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_OUTPUT_PATH_ARG
     )),
     idspec("INIT_011", TestAction(
         name="Invalid type for 'console' parameter (string instead of Console)",
@@ -287,7 +287,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
         kwargs=SessionKWArgs(
             console="not a Console"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PROPERTY_INVALID_CONSOLE_ARG
+        exception_tag=SessionErrorTag.PROPERTY_INVALID_CONSOLE_ARG
     )),
 ])
 def test_session_init(testspec: TestSpec) -> None:
@@ -379,13 +379,13 @@ def session_instance() -> Session:
         action=Session().parse_args,
         kwargs={"args": 123},  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)),
+        exception_tag=SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)),
     idspec("PARSE_ARGS_UNINIT_006", TestAction(
         name="Parse args - invalid type (list with non-str) with uninitialized argparser",
         action=Session().parse_args,
         kwargs={"args": ["--json", 123]},  # type: ignore[list-item]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
-        exception_tag=ErrorTag.SESSION_PARSE_ARGS_INVALID_ARGS_TYPE)),
+        exception_tag=SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)),
 ])
 def test_uninitialized_parse_args(testspec: TestAction) -> None:
     """Tests the parse_args method of the Session class."""

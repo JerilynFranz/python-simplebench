@@ -5,7 +5,7 @@ from copy import copy, deepcopy
 from typing import Any, Optional, Sequence
 from types import MappingProxyType
 
-from simplebench.exceptions import ErrorTag, SimpleBenchValueError, SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError, ResultsErrorTag
 
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
 from .enums import Section
@@ -127,55 +127,55 @@ class Results:
         """
         self._group: str = validate_non_blank_string(
             group, 'group',
-            ErrorTag.RESULTS_GROUP_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_GROUP_INVALID_ARG_VALUE)
+            ResultsErrorTag.GROUP_INVALID_ARG_TYPE,
+            ResultsErrorTag.GROUP_INVALID_ARG_VALUE)
         self._title: str = validate_non_blank_string(
             title, 'title',
-            ErrorTag.RESULTS_TITLE_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_TITLE_INVALID_ARG_VALUE)
+            ResultsErrorTag.TITLE_INVALID_ARG_TYPE,
+            ResultsErrorTag.TITLE_INVALID_ARG_VALUE)
         self._description: str = validate_non_blank_string(
             description, 'description',
-            ErrorTag.RESULTS_DESCRIPTION_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_DESCRIPTION_INVALID_ARG_VALUE)
+            ResultsErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
+            ResultsErrorTag.DESCRIPTION_INVALID_ARG_VALUE)
         self._n: int = validate_positive_int(
             n, 'n',
-            ErrorTag.RESULTS_N_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_N_INVALID_ARG_VALUE)
+            ResultsErrorTag.N_INVALID_ARG_TYPE,
+            ResultsErrorTag.N_INVALID_ARG_VALUE)
         self._iterations: tuple[Iteration, ...] = self._validate_iterations(iterations)
         self._variation_cols: dict[str, str] = self._validate_variation_cols(variation_cols)
         self._variation_marks: dict[str, Any] = self._validate_variation_marks(variation_marks)
         self._interval_unit: str = validate_non_blank_string(
             interval_unit, 'interval_unit',
-            ErrorTag.RESULTS_INTERVAL_UNIT_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_INTERVAL_UNIT_INVALID_ARG_VALUE)
+            ResultsErrorTag.INTERVAL_UNIT_INVALID_ARG_TYPE,
+            ResultsErrorTag.INTERVAL_UNIT_INVALID_ARG_VALUE)
         self._interval_scale: float = validate_positive_float(
             interval_scale, 'interval_scale',
-            ErrorTag.RESULTS_INTERVAL_SCALE_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_INTERVAL_SCALE_INVALID_ARG_VALUE)
+            ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_TYPE,
+            ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_VALUE)
         self._ops_per_interval_unit: str = validate_non_blank_string(
             ops_per_interval_unit, 'ops_per_interval_unit',
-            ErrorTag.RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE)
+            ResultsErrorTag.OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE,
+            ResultsErrorTag.OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE)
         self._ops_per_interval_scale: float = validate_positive_float(
             ops_per_interval_scale, 'ops_per_interval_scale',
-            ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)
+            ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE,
+            ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)
         self._memory_unit: str = validate_non_blank_string(
             memory_unit, 'memory_unit',
-            ErrorTag.RESULTS_MEMORY_UNIT_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_MEMORY_UNIT_INVALID_ARG_VALUE)
+            ResultsErrorTag.MEMORY_UNIT_INVALID_ARG_TYPE,
+            ResultsErrorTag.MEMORY_UNIT_INVALID_ARG_VALUE)
         self._memory_scale: float = validate_positive_float(
             memory_scale, 'memory_scale',
-            ErrorTag.RESULTS_MEMORY_SCALE_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_MEMORY_SCALE_INVALID_ARG_VALUE)
+            ResultsErrorTag.MEMORY_SCALE_INVALID_ARG_TYPE,
+            ResultsErrorTag.MEMORY_SCALE_INVALID_ARG_VALUE)
         self._memory: MemoryUsage = self._validate_memory(memory)
         self._peak_memory: PeakMemoryUsage = self._validate_peak_memory(peak_memory)
         self._ops_per_second: OperationsPerInterval = self._validate_ops_per_second(ops_per_second)
         self._per_round_timings: OperationTimings = self._validate_per_round_timings(per_round_timings)
         self._total_elapsed: float = validate_positive_float(
             total_elapsed, 'total_elapsed',
-            ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_TYPE,
-            ErrorTag.RESULTS_TOTAL_ELAPSED_INVALID_ARG_VALUE)
+            ResultsErrorTag.TOTAL_ELAPSED_INVALID_ARG_TYPE,
+            ResultsErrorTag.TOTAL_ELAPSED_INVALID_ARG_VALUE)
         self._extra_info = self._validate_extra_info(extra_info)
         self._repr_cache: Optional[str] = None  # cache for __repr__
 
@@ -198,24 +198,24 @@ class Results:
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid variation_cols: {value}. Must be a dictionary.',
-                tag=ErrorTag.RESULTS_VARIATION_COLS_INVALID_ARG_TYPE
+                tag=ResultsErrorTag.VARIATION_COLS_INVALID_ARG_TYPE
                 )
 
         for key, val in value.items():
             if not isinstance(key, str):
                 raise SimpleBenchTypeError(
                     f'Invalid variation_cols key type: {type(key)}. Must be of type str.',
-                    tag=ErrorTag.RESULTS_VARIATION_COLS_INVALID_ARG_KEY_TYPE
+                    tag=ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_TYPE
                 )
             if key == '':
                 raise SimpleBenchValueError(
                     'Invalid variation_cols key value: empty string. Keys must be non-empty strings.',
-                    tag=ErrorTag.RESULTS_VARIATION_COLS_INVALID_ARG_KEY_VALUE
+                    tag=ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_VALUE
                 )
             if not isinstance(val, str):
                 raise SimpleBenchTypeError(
                     f'Invalid variation_cols value type: {type(val)}. Must be of type str.',
-                    tag=ErrorTag.RESULTS_VARIATION_COLS_INVALID_ARG_VALUE_TYPE
+                    tag=ResultsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE
                 )
         # shallow copy to prevent external mutation
         return copy(value)
@@ -232,13 +232,13 @@ class Results:
         if not isinstance(value, Sequence):
             raise SimpleBenchTypeError(
                 f'Invalid iterations type: {type(value)}. Must be of type list.',
-                tag=ErrorTag.RESULTS_ITERATIONS_INVALID_ARG_TYPE
+                tag=ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE
             )
         for iteration in value:
             if not isinstance(iteration, Iteration):
                 raise SimpleBenchTypeError(
                     f'Invalid iteration element type: {type(iteration)}. Must be of type Iteration.',
-                    tag=ErrorTag.RESULTS_ITERATIONS_INVALID_ARG_IN_SEQUENCE
+                    tag=ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE
                 )
         # shallow copy to prevent external mutation of iterations sequence itself
         return tuple(value)
@@ -265,7 +265,7 @@ class Results:
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid variation_marks: {value}. Must be a dictionary.',
-                tag=ErrorTag.RESULTS_VARIATION_MARKS_INVALID_ARG_TYPE
+                tag=ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE
             )
 
         # shallow copy to prevent external mutation
@@ -276,13 +276,13 @@ class Results:
             if not isinstance(key, str):
                 raise SimpleBenchTypeError(
                     f'Invalid variation_marks key type: {type(key)}. Must be of type str.',
-                    tag=ErrorTag.RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_TYPE
+                    tag=ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_TYPE
                 )
             stripped_key = key.strip()
             if stripped_key == '':
                 raise SimpleBenchValueError(
                     'Invalid variation_marks key value: blank string. Keys must be non-blank strings.',
-                    tag=ErrorTag.RESULTS_VARIATION_MARKS_INVALID_ARG_KEY_VALUE
+                    tag=ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE
                 )
             return_value[stripped_key] = value[key]
         return return_value
@@ -309,7 +309,7 @@ class Results:
         if not isinstance(value, PeakMemoryUsage):
             raise SimpleBenchTypeError(
                 f'Invalid peak_memory type: {type(value)}. Must be of type PeakMemoryUsage.',
-                tag=ErrorTag.RESULTS_PEAK_MEMORY_INVALID_ARG_TYPE
+                tag=ResultsErrorTag.PEAK_MEMORY_INVALID_ARG_TYPE
             )
         return value
 
@@ -335,7 +335,7 @@ class Results:
         if not isinstance(value, MemoryUsage):
             raise SimpleBenchTypeError(
                 f'Invalid memory type: {type(value)}. Must be of type MemoryUsage.',
-                tag=ErrorTag.RESULTS_MEMORY_INVALID_ARG_TYPE
+                tag=ResultsErrorTag.MEMORY_INVALID_ARG_TYPE
             )
         return value
 
@@ -362,7 +362,7 @@ class Results:
         if not isinstance(value, OperationsPerInterval):
             raise SimpleBenchTypeError(
                 f'Invalid ops_per_second type: {type(value)}. Must be of type OperationsPerInterval.',
-                tag=ErrorTag.RESULTS_OPS_PER_SECOND_INVALID_ARG_TYPE
+                tag=ResultsErrorTag.OPS_PER_SECOND_INVALID_ARG_TYPE
             )
         return value
 
@@ -388,7 +388,7 @@ class Results:
         if not isinstance(value, OperationTimings):
             raise SimpleBenchTypeError(
                 f'Invalid per_round_timings type: {type(value)}. Must be of type OperationTimings.',
-                tag=ErrorTag.RESULTS_PER_ROUND_TIMINGS_INVALID_ARG_TYPE
+                tag=ResultsErrorTag.PER_ROUND_TIMINGS_INVALID_ARG_TYPE
             )
         return value
 
@@ -413,7 +413,7 @@ class Results:
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid extra_info type: {type(value)}. Must be of type dict[str, Any].',
-                tag=ErrorTag.RESULTS_EXTRA_INFO_INVALID_ARG_TYPE
+                tag=ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE
             )
 
         # Perform deep copy to prevent external mutation
@@ -526,7 +526,7 @@ class Results:
         if not isinstance(section, Section):
             raise SimpleBenchTypeError(
                 f'Invalid section type: {type(section)}. Must be of type Section.',
-                tag=ErrorTag.RESULTS_RESULTS_SECTION_INVALID_SECTION_ARG_TYPE
+                tag=ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE
             )
         match section:
             case Section.OPS:
@@ -541,7 +541,7 @@ class Results:
                 raise SimpleBenchValueError(
                     (f'Invalid section: {section}. Must be Section.OPS, Section.TIMING, '
                      'Section.MEMORY, or Section.PEAK_MEMORY.'),
-                    tag=ErrorTag.RESULTS_RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
+                    tag=ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
                 )
 
     def as_dict(self, full_data: bool = False) -> dict[str, Any]:
