@@ -10,11 +10,12 @@ from typing import Optional, Iterable, TYPE_CHECKING
 
 from ..defaults import DEFAULT_INTERVAL_SCALE
 from ..enums import Section, Target, Format, FlagType
-from ..exceptions import SimpleBenchValueError, GlobalErrorTag
+from ..exceptions import SimpleBenchValueError
 from ..results import Results
 from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename, sigfigs
 from .choices import Choice, Choices, ChoiceOptions
+from .exceptions.csv import CSVReporterErrorTag
 from .interfaces import Reporter
 from .protocols import ReporterCallback
 
@@ -212,7 +213,7 @@ class CSVReporter(Reporter):
                     case _:
                         raise SimpleBenchValueError(
                             f'Unsupported target for CSVReporter: {output_target}',
-                            tag=GlobalErrorTag.REPORTER_RUN_REPORT_UNSUPPORTED_TARGET)
+                            tag=CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET)
 
     def _to_csv(self, case: Case, section: Section, base_unit: str) -> str:
         """Return the benchmark results as tagged CSV data.

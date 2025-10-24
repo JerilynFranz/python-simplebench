@@ -22,3 +22,25 @@ class ValidatorsErrorTag(ErrorTag):
     """The 'max_value' argument has an invalid type."""
     INVALID_RANGE = "INVALID_RANGE"
     """The 'min_value' cannot be greater than 'max_value'."""
+
+    # validate.py - validate_reporter_callback() tags
+    INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE = "INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE"
+    """The reporter callback is neither a callable nor None"""
+    INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS = (
+        "INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS")
+    """The reporter callback does not have the correct number of parameters"""
+
+    # validate.py - validate_callback() tags
+    INVALID_CALLBACK_UNRESOLVABLE_HINTS = "INVALID_CALLBACK_UNRESOLVABLE_HINTS"
+    """The type hints for the callback function could not be resolved"""
+
+    # validate.py - validate_callback_parameter() tags
+    INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER = (
+        "INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER")
+    """The callback function is missing a required parameter"""
+    INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE = (
+        "INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE")
+    """The callback function has a parameter with an incorrect type annotation"""
+    INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY = (
+        "INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY")
+    """The callback function has a parameter that is not keyword-only"""

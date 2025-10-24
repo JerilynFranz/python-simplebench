@@ -11,8 +11,9 @@ from rich.console import Console
 
 from simplebench import Case, SimpleRunner, Iteration, Results, Session, Verbosity
 from simplebench.enums import Format, Section
-from simplebench.exceptions import (SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchRuntimeError,
-                                    GlobalErrorTag, CaseErrorTag)
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchRuntimeError
+from simplebench.exceptions.case import CaseErrorTag
+from simplebench.exceptions.validators import ValidatorsErrorTag
 from simplebench.protocols import ActionRunner
 from simplebench.reporters.reporter_option import ReporterOption
 from simplebench.reporters.protocols import ReporterCallback
@@ -744,7 +745,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback='not_a_function'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)),
+        exception_tag=ValidatorsErrorTag.INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)),
     idspec("INIT_043", TestAction(
         name="Good callback function for callback parameter",
         action=Case,
@@ -758,126 +759,126 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_case),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_045", TestAction(
         name="Callback function missing required 'section' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_section),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_046", TestAction(
         name="Callback function missing required 'output_format' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_format),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_047", TestAction(
         name="Callback function missing required 'output' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_output),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_048", TestAction(
         name="Callback function has wrong type for 'case' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_case_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_049", TestAction(
         name="Callback function has wrong type for 'section' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_section_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_050", TestAction(
         name="Callback function has wrong type for 'output_format' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_format_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_051", TestAction(
         name="Callback function has wrong type for 'output' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_wrong_output_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_052", TestAction(
         name="Callback function has an extra parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_extra_param),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)),
+        exception_tag=ValidatorsErrorTag.INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)),
     idspec("INIT_053", TestAction(
         name="Callback function has unresolvable type hint for a parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_case_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_054", TestAction(
         name="Callback function has unresolvable type hint for section parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_section_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_055", TestAction(
         name="Callback function has unresolvable type hint for output_format parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_format_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_056", TestAction(
         name="Callback function has unresolvable type hint for output parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_output_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_057", TestAction(
         name="Callback function has no type hint for case parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_no_type_hints),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_058", TestAction(
         name="Callback function allows case parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_case_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_059", TestAction(
         name="Callback function allows section parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_section_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_060", TestAction(
         name="Callback function allows output_format parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_output_format_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_061", TestAction(
         name="Callback function allows output parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_output_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=GlobalErrorTag.VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=ValidatorsErrorTag.INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_062", TestAction(
         name="results attribute is initialized to empty list",
         action=Case,

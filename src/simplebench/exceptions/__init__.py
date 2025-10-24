@@ -15,6 +15,7 @@ from .runners import RunnersErrorTag
 from .session import SessionErrorTag
 from .si_units import SIUnitsErrorTag
 from .utils import UtilsErrorTag
+from .tasks import RichTaskErrorTag, RichProgressTasksErrorTag
 from .validators import ValidatorsErrorTag
 
 __all__ = [
@@ -33,6 +34,8 @@ __all__ = [
     "CLIErrorTag",
     "DecoratorsErrorTag",
     "IterationErrorTag",
+    "RichProgressTasksErrorTag",
+    "RichTaskErrorTag",
     "ResultsErrorTag",
     "RunnersErrorTag",
     "SessionErrorTag",
@@ -45,210 +48,6 @@ __all__ = [
 @enum_docstrings
 class GlobalErrorTag(ErrorTag):
     """Global collection of ErrorTags in SimpleBench."""
-
-    # CSVReporter() tags
-    CSV_REPORTER_INIT_INVALID_CASE_ARG = "CSV_REPORTER_INIT_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the CSVReporter() constructor"""
-    CSV_REPORTER_INIT_INVALID_SESSION_ARG = "CSV_REPORTER_INIT_INVALID_SESSION_ARG"
-    """Something other than a Session instance was passed to the CSVReporter() constructor"""
-    CSV_REPORTER_RUN_REPORT_INVALID_CASE_ARG = "CSV_REPORTER_RUN_REPORT_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the CSVReporter.run_report() method"""
-    CSV_REPORTER_RUN_REPORT_INVALID_SESSION_ARG = "CSV_REPORTER_RUN_REPORT_INVALID_SESSION_ARG"
-    """Something other than a Session instance was passed to the CSVReporter.run_report() method"""
-    CSV_REPORTER_RUN_REPORT_INVALID_CHOICE_ARG = "CSV_REPORTER_RUN_REPORT_INVALID_CHOICE_ARG"
-    """Something other than a Choice instance was passed to the CSVReporter.run_report() method"""
-    CSV_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION = "CSV_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION"
-    """An unsupported Section was passed to the CSVReporter.run_report() method in the choice.sections"""
-    CSV_REPORTER_TO_CSV_INVALID_CASE_ARG = "CSV_REPORTER_TO_CSV_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the CSVReporter.to_csv() method"""
-    CSV_REPORTER_TO_CSV_INVALID_CSVFILE_ARG = "CSV_REPORTER_TO_CSV_INVALID_CSVFILE_ARG"
-    """Something other than a file-like object was passed to the CSVReporter.to_csv() method"""
-    CSV_REPORTER_TO_CSV_INVALID_BASE_UNIT_ARG = "CSV_REPORTER_TO_CSV_INVALID_BASE_UNIT_ARG"
-    """Something other than a non-empty string was passed to the CSVReporter.to_csv() method"""
-    CSV_REPORTER_TO_CSV_INVALID_TARGET_ARG = "CSV_REPORTER_TO_CSV_INVALID_TARGET_ARG"
-    """Something other than a valid target string was passed to the CSVReporter.to_csv() method"""
-    CSV_REPORTER_RUN_REPORT_INVALID_PATH_ARG_TYPE = "CSV_REPORTER_RUN_REPORT_INVALID_PATH_ARG_TYPE"
-    """Something other than a Path instance was passed to the CSVReporter.run_report() method as the path arg"""
-    CSV_REPORTER_RUN_REPORT_INVALID_CALLBACK_ARG_TYPE = "CSV_REPORTER_RUN_REPORT_INVALID_CALLBACK_ARG_TYPE"
-    """Something other than a callable was passed to the CSVReporter.run_report() method as the callback arg"""
-    REPORTER_RUN_REPORT_UNSUPPORTED_TARGET = "REPORTER_RUN_REPORT_UNSUPPORTED_TARGET"
-    """An unsupported Target was passed to the reporter's run_report() method"""
-
-    # ScatterGraphReporter() tags
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_DEFAULT_TARGETS_NOT_ITERABLE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_DEFAULT_TARGETS_NOT_ITERABLE")
-    """The default targets specified in the ScatterGraphChoiceOptions must be an iterable of Target enum members."""
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE")
-    """The default targets specified in the ScatterGraphChoiceOptions are not valid Target enum members."""
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_VALUE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_VALUE")
-    """The default targets specified in the ScatterGraphChoiceOptions cannot be empty."""
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_TYPE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_TYPE")
-    """The subdir specified in the ScatterGraphChoiceOptions must be a string."""
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_VALUE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_SUBDIR_VALUE")
-    """The subdir specified in the ScatterGraphChoiceOptions cannot be an empty string."""
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_TYPE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_TYPE")
-    """The width specified in the ScatterGraphChoiceOptions must be an integer."""
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_VALUE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_WIDTH_VALUE")
-    """The width specified in the ScatterGraphChoiceOptions must be greater than zero."""
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_HEIGHT_TYPE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_HEIGHT_TYPE")
-    """The height specified in the ScatterGraphChoiceOptions must be an integer."""
-    SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_HEIGHT_VALUE = (
-        "SCATTER_GRAPH_REPORTER_CHOICE_OPTIONS_INVALID_HEIGHT_VALUE")
-    """The height specified in the ScatterGraphChoiceOptions must be greater than zero."""
-
-    # ScatterGraphReporter() tags
-    GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE = "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_THEME_TYPE"
-    """The theme specified in the GraphOptions has an invalid type. It must be a dict or None."""
-    GRAPH_REPORTER_INIT_INVALID_CASE_ARG = "GRAPH_REPORTER_INIT_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the ScatterGraphReporter() constructor"""
-    GRAPH_REPORTER_INIT_INVALID_SESSION_ARG = "GRAPH_REPORTER_INIT_INVALID_SESSION_ARG"
-    """Something other than a Session instance was passed to the ScatterGraphReporter() constructor"""
-    GRAPH_REPORTER_REPORT_INVALID_CASE_ARG = "GRAPH_REPORTER_REPORT_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the ScatterGraphReporter.report() method"""
-    GRAPH_REPORTER_REPORT_INVALID_SESSION_ARG = "GRAPH_REPORTER_REPORT_INVALID_SESSION_ARG"
-    """Something other than a Session instance was passed to the ScatterGraphReporter.report() method"""
-    GRAPH_REPORTER_REPORT_INVALID_CHOICE_ARG = "GRAPH_REPORTER_REPORT_INVALID_CHOICE_ARG"
-    """Something other than a Choice instance was passed to the ScatterGraphReporter.report() method"""
-    GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION = "GRAPH_REPORTER_REPORT_UNSUPPORTED_SECTION"
-    """An unsupported Section was passed to the ScatterGraphReporter.report() method in the Choice.sections"""
-    GRAPH_REPORTER_REPORT_UNSUPPORTED_TARGET = "GRAPH_REPORTER_REPORT_UNSUPPORTED_TARGET"
-    """An unsupported Target was passed to the ScatterGraphReporter.report() method in the Choice.targets"""
-    GRAPH_REPORTER_REPORT_UNSUPPORTED_FORMAT = "GRAPH_REPORTER_REPORT_UNSUPPORTED_FORMAT"
-    """An unsupported Format was passed to the ScatterGraphReporter.report() method in the Choice.formats"""
-    GRAPH_REPORTER_REPORT_MISSING_PATH_ARG = "GRAPH_REPORTER_REPORT_MISSING_PATH_ARG"
-    """The required 'path' argument was not passed to the ScatterGraphReporter.report() method"""
-    GRAPH_REPORTER_REPORT_INVALID_PATH_ARG = "GRAPH_REPORTER_REPORT_INVALID_PATH_ARG"
-    """Something other than a Path instance was passed to the ScatterGraphReporter.report() method"""
-    GRAPH_REPORTER_REPORT_INVALID_CALLBACK_ARG = "GRAPH_REPORTER_REPORT_INVALID_CALLBACK_ARG"
-    """Something other than a callable was passed to the ScatterGraphReporter.report() method as the callback argument"""
-    GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG = "GRAPH_REPORTER_RUN_REPORT_INVALID_PATH_ARG"
-    """Something other than a Path instance was passed to the ScatterGraphReporter.run_report() method as the path arg"""
-    GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT = "GRAPH_REPORTER_RUN_REPORT_UNSUPPORTED_OUTPUT_FORMAT"
-    """The output format specified in the GraphOptions is not supported. Supported formats are 'svg' and 'png'"""
-    GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE = "GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_STYLE"
-    """The style specified in the GraphOptions is not supported. Supported styles are 'darkgrid' and 'default'"""
-    GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT = "GRAPH_REPORTER_GRAPH_OPTIONS_UNSUPPORTED_OUTPUT_FORMAT"
-    """The output format specified in the GraphOptions is not supported. Supported formats are 'svg' and 'png'"""
-    GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO = "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_ASPECT_RATIO"
-    """The aspect ratio specified in the GraphOptions is invalid. It must be a positive number."""
-    GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE = (
-        "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_X_LABELS_ROTATION_TYPE")
-    """The x_labels_rotation specified in the GraphOptions has an invalid type. It must be a float."""
-    GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE = (
-        "GRAPH_REPORTER_GRAPH_OPTIONS_INVALID_Y_STARTS_AT_ZERO_TYPE")
-    """The y_starts_at_zero value specified in the GraphOptions has an invalid type. It must be a bool."""
-    GRAPH_REPORTER_PLOT_INVALID_CASE_ARG = "GRAPH_REPORTER_PLOT_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed to the ScatterGraphReporter.plot() method"""
-    GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG = "GRAPH_REPORTER_PLOT_INVALID_GRAPHPATH_ARG"
-    """Something other than a Path instance was passed to the ScatterGraphReporter.plot() method"""
-    GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG = "GRAPH_REPORTER_PLOT_INVALID_SECTION_ARG"
-    """Something other than a valid Section was passed to the ScatterGraphReporter.plot() method"""
-
-    # JSONReporter() tags
-    JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION = "JSON_REPORTER_RUN_REPORT_UNSUPPORTED_SECTION"
-    """An unsupported Section was passed to the JSONReporter.run_report() method in the choice.sections"""
-    REPORTER_JSON_OUTPUT_ERROR = "REPORTER_JSON_OUTPUT_ERROR"
-    """An error occurred while serializing the JSON output."""
-
-    # RichTask() tags
-    RICH_TASK_INIT_INVALID_NAME_ARG = "RICH_TASK_INIT_INVALID_NAME_ARG"
-    """Something other than a string was passed to the RichTask() constructor"""
-    RICH_TASK_INIT_INVALID_DESCRIPTION_ARG = "RICH_TASK_INIT_INVALID_DESCRIPTION_ARG"
-    """Something other than a string or rich.Text was passed to the RichTask() constructor"""
-    RICH_TASK_INIT_INVALID_PROGRESS_ARG = "RICH_TASK_INIT_INVALID_PROGRESS_ARG"
-    """Something other than a Progress instance was passed to the RichTask() constructor"""
-    RICH_TASK_INIT_EMPTY_STRING_NAME = "RICH_TASK_INIT_EMPTY_STRING_NAME"
-    """The name arg cannot be an empty string"""
-    RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION = "RICH_TASK_INIT_EMPTY_STRING_DESCRIPTION"
-    """The description arg cannot be an empty string"""
-    RICH_TASK_UPDATE_INVALID_COMPLETED_ARG = "RICH_TASK_UPDATE_INVALID_COMPLETED_ARG"
-    """Something other than an int was passed to the RichTask() update method"""
-    RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG = "RICH_TASK_UPDATE_INVALID_DESCRIPTION_ARG"
-    """Something other than a string was passed to the RichTask() update method"""
-    RICH_TASK_UPDATE_INVALID_REFRESH_ARG = "RICH_TASK_UPDATE_INVALID_REFRESH_ARG"
-    """Something other than a bool was passed to the RichTask() update method"""
-    RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK = "RICH_TASK_UPDATE_ALREADY_TERMINATED_TASK"
-    """The task has already been terminated"""
-    RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK = "RICH_TASK_TERMINATE_AND_REMOVE_ALREADY_TERMINATED_TASK"
-    """The task has already been terminated"""
-
-    # Rich ProgressTask() tags
-    RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG = "RICH_PROGRESS_TASK_DELITEM_INVALID_NAME_ARG"
-    """Something other than a string was passed to the RichProgressTask() __delitem__ method"""
-    RICH_PROGRESS_TASK_DELITEM_NOT_FOUND = "RICH_PROGRESS_TASK_DELITEM_NOT_FOUND"
-    """The requested task was not found"""
-    RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG = "RICH_PROGRESS_TASK_GETITEM_INVALID_NAME_ARG"
-    """Something other than a string was passed to the RichProgressTask() __getitem__ method"""
-    RICH_PROGRESS_TASK_GETITEM_NOT_FOUND = "RICH_PROGRESS_TASK_GETITEM_NOT_FOUND"
-    """The requested task was not found"""
-    RICH_PROGRESS_TASK_NEW_TASK_INVALID_NAME_ARG = "RICH_PROGRESS_TASK_NEW_TASK_INVALID_NAME_ARG"
-    """Something other than a string was passed to the RichProgressTask() new_task method"""
-    RICH_PROGRESS_TASK_NEW_TASK_INVALID_DESCRIPTION_ARG = "RICH_PROGRESS_TASK_NEW_TASK_INVALID_DESCRIPTION_ARG"
-    """Something other than a string was passed to the RichProgressTask() new_task method"""
-    RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_NAME = "RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_NAME"
-    """The name arg cannot be an empty string"""
-    RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_DESCRIPTION = "RICH_PROGRESS_TASK_NEW_TASK_EMPTY_STRING_DESCRIPTION"
-    """The description arg cannot be an empty string"""
-    RICH_PROGRESS_TASKS_INIT_INVALID_VERBOSITY_ARG = "RICH_PROGRESS_TASKS_INIT_INVALID_VERBOSITY_ARG"
-    """Something other than a Verbosity instance was passed to the RichProgressTasks()
-    constructor as the verbosity arg"""
-    RICH_PROGRESS_TASKS_INIT_INVALID_PROGRESS_ARG = "RICH_PROGRESS_TASKS_INIT_INVALID_PROGRESS_ARG"
-    """Something other than a Progress instance was passed to the RichProgressTasks() constructor as the progress arg"""
-    RICH_PROGRESS_TASKS_INIT_INVALID_CONSOLE_ARG = "RICH_PROGRESS_TASKS_INIT_INVALID_CONSOLE_ARG"
-    """Something other than a Console instance was passed to the RichProgressTasks() constructor as the console arg"""
-
-    # reporters.ReporterManager() tags
-    REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG = "REPORTER_MANAGER_REGISTER_INVALID_REPORTER_ARG"
-    """Something other than a Reporter instance was passed to the ReporterManager.register() method"""
-    REPORTER_MANAGER_REGISTER_INVALID_CHOICES_RETURNED = "REPORTER_MANAGER_REGISTER_INVALID_CHOICES_RETURNED"
-    """Something other than a Choices instance was returned from the reporter.choices property"""
-    REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT = "REPORTER_MANAGER_REGISTER_INVALID_CHOICES_CONTENT"
-    """Something other than a Choice instance was found in the Choices instance returned
-    from the reporter.choices property"""
-    REPORTER_MANAGER_REGISTER_DUPLICATE_NAME = "REPORTER_MANAGER_REGISTER_DUPLICATE_NAME"
-    """A Reporter with the same name already exists in the ReporterManager instance"""
-    REPORTER_MANAGER_REGISTER_DUPLICATE_CLI_ARG = "REPORTER_MANAGER_REGISTER_DUPLICATE_CLI_ARG"
-    """A Reporter with the same CLI argument already exists in the ReporterManager instance"""
-    REPORTER_MANAGER_UNREGISTER_INVALID_REPORTER_ARG = "REPORTER_MANAGER_UNREGISTER_INVALID_REPORTER_ARG"
-    """Something other than a Reporter instance was passed to the ReporterManager.unregister() method"""
-    REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME = "REPORTER_MANAGER_UNREGISTER_UNKNOWN_NAME"
-    """No Reporter with the given name is registered in the ReporterManager instance"""
-    REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG = (
-        "REPORTER_MANAGER_ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG"
-    )
-    """Something other than an ArgumentParser instance was passed to the
-    ReporterManager.add_reporters_to_argparse() method"""
-    REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS = "REPORTER_MANAGER_ARGUMENT_ERROR_ADDING_FLAGS"
-    """An ArgumentError was raised when adding reporter flags to the ArgumentParser instance"""
-
-    # validate.py - validate_reporter_callback() tags
-    VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE = "VALIDATE_INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE"
-    """The reporter callback is neither a callable nor None"""
-    VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS = (
-        "VALIDATE_INVALID_REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS")
-    """The reporter callback does not have the correct number of parameters"""
-
-    # validate.py - validate_callback() tags
-    VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS = "VALIDATE_INVALID_CALLBACK_UNRESOLVABLE_HINTS"
-    """The type hints for the callback function could not be resolved"""
-
-    # validate.py - validate_callback_parameter() tags
-    VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER = (
-        "VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER")
-    """The callback function is missing a required parameter"""
-    VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE = (
-        "VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE")
-    """The callback function has a parameter with an incorrect type annotation"""
-    VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY = (
-        "VALIDATE_INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY")
-    """The callback function has a parameter that is not keyword-only"""
 
 
 E = TypeVar('E', bound=Exception)

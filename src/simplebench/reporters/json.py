@@ -7,8 +7,9 @@ from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterable
 
+from .exceptions.json import JSONReporterErrorTag
 from ..enums import Section, FlagType
-from ..exceptions import SimpleBenchValueError, SimpleBenchTypeError, GlobalErrorTag
+from ..exceptions import SimpleBenchValueError, SimpleBenchTypeError
 from ..utils import sanitize_filename, get_machine_info, sigfigs
 from .interfaces import Reporter
 from .choices import Choice, Choices, ChoiceOptions, Target, Format
@@ -212,7 +213,7 @@ class JSONReporter(Reporter):
                 case _:
                     raise SimpleBenchValueError(
                         f'Unsupported target for JSONReporter: {output_target}',
-                        tag=GlobalErrorTag.REPORTER_RUN_REPORT_UNSUPPORTED_TARGET)
+                        tag=JSONReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET)
 
     def _to_json(self, *, case: Case, choice: Choice) -> str:
         """Convert the Case data for a given section to a JSON string.
@@ -235,7 +236,7 @@ class JSONReporter(Reporter):
             except Exception as exc:
                 raise SimpleBenchTypeError(
                     f'Error generating JSON output for case {case.title}: {exc}',
-                    tag=GlobalErrorTag.REPORTER_JSON_OUTPUT_ERROR) from exc
+                    tag=JSONReporterErrorTag.JSON_OUTPUT_ERROR) from exc
             return jsonfile.read()
 
     def mean_change(self, first: Case, second: Case, section: Section) -> float | None:

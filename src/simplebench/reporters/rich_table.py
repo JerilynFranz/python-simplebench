@@ -17,7 +17,7 @@ from ..si_units import si_scale_for_smallest
 from ..utils import sanitize_filename, sigfigs
 from ..validators import validate_sequence_of_type, validate_non_blank_string, validate_positive_int
 from .choices import Choice, Choices, ChoiceOptions
-from .exceptions import ReportersInterfacesErrorTag, RichTableReporterErrorTag
+from .exceptions import RichTableReporterErrorTag
 from .interfaces import Reporter
 from .protocols import ReporterCallback
 
@@ -233,7 +233,7 @@ class RichTableReporter(Reporter):
         if choice.options is not None and not isinstance(choice.options, RichTableChoiceOptions):
             raise SimpleBenchValueError(
                 'RichTableReporter requires a RichTableChoiceOptions instance for its Choice().options if set.',
-                tag=ReportersInterfacesErrorTag.RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE)
+                tag=RichTableReporterErrorTag.RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE)
         if isinstance(choice.options, RichTableChoiceOptions):
             default_targets = choice.options.default_targets
             subdir = choice.options.subdir
@@ -267,7 +267,7 @@ class RichTableReporter(Reporter):
                     case _:
                         raise SimpleBenchValueError(
                             f'Unsupported target for RichTableReporter: {output_target}',
-                            tag=ReportersInterfacesErrorTag.RUN_REPORT_UNSUPPORTED_TARGET)
+                            tag=RichTableReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET)
 
     def _to_rich_table(self,
                        case: Case,
