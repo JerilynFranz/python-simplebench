@@ -5,7 +5,7 @@ from typing import Any
 
 from simplebench import Case, main
 from simplebench.decorators import benchmark
-from simplebench.reporters.graph.scatter import ScatterGraphOptions
+from simplebench.reporters.graph.scatter import ScatterPlotOptions
 from simplebench.reporters.graph.enums import ImageType
 from simplebench.results import Results
 from simplebench.runners import SimpleRunner
@@ -51,14 +51,14 @@ def benchmark_cases_list_factory() -> list[Case]:
              description='A simple benchmark case function.',
              variation_cols={},
              kwargs_variations={},
-             options=[ScatterGraphOptions(output_format=ImageType.PNG)]),
+             options=[ScatterPlotOptions(output_format=ImageType.PNG)]),
         Case(group='example2',
              title='benchcase_two',
              action=benchcase_one,
              description='A simple benchmark case function (fake second).',
              variation_cols={},
              kwargs_variations={},
-             options=[ScatterGraphOptions(style='default', output_format=ImageType.SVG)]),
+             options=[ScatterPlotOptions(style='default', output_format=ImageType.SVG)]),
         Case(group='example4',
              title='benchcase_four',
              action=benchcase_four,

@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 from simplebench import main, benchmark
-from simplebench.reporters.graph.scatter import ScatterGraphOptions
+from simplebench.reporters.graph.scatter import ScatterPlotOptions
 from simplebench.reporters.graph.enums import ImageType
 
 
 @benchmark(
     'example',
     n=100,
-    options=[ScatterGraphOptions(output_format=ImageType.PNG)]
+    options=[ScatterPlotOptions(output_format=ImageType.PNG)]
 )
 def benchcase_one():
     """A simple benchmark case function via decorators."""
@@ -22,7 +22,7 @@ def benchcase_one():
     title='benchcase_two',
     description='A simple benchmark case function (fake second) via decorators.',
     n=100,
-    options=[ScatterGraphOptions(style='default', output_format=ImageType.SVG)]
+    options=[ScatterPlotOptions(style='default', output_format=ImageType.SVG)]
 )
 def benchcase_two_action():
     """This just re-uses the same operation for demonstration."""
