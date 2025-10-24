@@ -4,7 +4,6 @@ import argparse
 from enum import Enum
 from typing import Any, Generic, TypeVar
 
-from ..enums import enum_docstrings
 from .base import ErrorTag
 from .case import CaseErrorTag
 from .cli import CLIErrorTag
@@ -29,7 +28,6 @@ __all__ = [
     "SimpleBenchArgumentError",
     "SimpleBenchImportError",
     "ErrorTag",
-    "GlobalErrorTag",
     "CaseErrorTag",
     "CLIErrorTag",
     "DecoratorsErrorTag",
@@ -43,11 +41,6 @@ __all__ = [
     "UtilsErrorTag",
     "ValidatorsErrorTag",
 ]
-
-
-@enum_docstrings
-class GlobalErrorTag(ErrorTag):
-    """Global collection of ErrorTags in SimpleBench."""
 
 
 E = TypeVar('E', bound=Exception)
