@@ -2,7 +2,7 @@
 """Reporters for benchmark results."""
 from .choices import Choices, Choice
 from .csv import CSVReporter, CSVChoiceOptions
-from .graph.scatter import ScatterGraphReporter, ScatterGraphChoiceOptions, ScatterGraphOptions
+from .graph.scatter import ScatterPlotReporter, ScatterPlotChoiceOptions, ScatterPlotOptions
 from .interfaces import Reporter
 from .json import JSONReporter
 from .reporter_manager import ReporterManager
@@ -15,9 +15,9 @@ __all__ = [
     'CSVReporter',
     'CSVChoiceOptions',
     'JSONReporter',
-    'ScatterGraphReporter',
-    'ScatterGraphChoiceOptions',
-    'ScatterGraphOptions',
+    'ScatterPlotReporter',
+    'ScatterPlotChoiceOptions',
+    'ScatterPlotOptions',
     'Reporter',
     'RichTableReporter',
     'RichTableChoiceOptions',

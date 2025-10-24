@@ -2,7 +2,7 @@
 
 from .choices import ChoicesErrorTag
 from .csv import CSVReporterErrorTag
-from .graph.scatter import ScatterGraphChoiceOptionsErrorTag, ScatterGraphOptionsErrorTag
+from .graph.scatter import ScatterPlotChoiceOptionsErrorTag, ScatterPlotOptionsErrorTag
 from .interfaces import ReportersInterfacesErrorTag
 from .json import JSONReporterErrorTag
 from .reporter_manager import ReporterManagerErrorTag
@@ -15,6 +15,6 @@ __all__ = [
     "ReporterManagerErrorTag",
     "ReportersInterfacesErrorTag",
     "RichTableReporterErrorTag",
-    "ScatterGraphOptionsErrorTag",
-    "ScatterGraphChoiceOptionsErrorTag"
+    "ScatterPlotOptionsErrorTag",
+    "ScatterPlotChoiceOptionsErrorTag"
 ]

@@ -1,8 +1,8 @@
 """ErrorTags for the simplebench.reporters.graph.scatter package."""
-from .scatter import ScatterGraphChoiceOptionsErrorTag, ScatterGraphReporterErrorTag, ScatterGraphOptionsErrorTag
+from .scatter import ScatterPlotChoiceOptionsErrorTag, ScatterPlotReporterErrorTag, ScatterPlotOptionsErrorTag
 
 __all__ = [
-    "ScatterGraphChoiceOptionsErrorTag",
-    "ScatterGraphReporterErrorTag",
-    "ScatterGraphOptionsErrorTag"
+    "ScatterPlotChoiceOptionsErrorTag",
+    "ScatterPlotReporterErrorTag",
+    "ScatterPlotOptionsErrorTag"
 ]

@@ -7,13 +7,13 @@ from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, Si
 from .choices import Choices, Choice
 from .csv import CSVReporter
 from .exceptions.reporter_manager import ReporterManagerErrorTag
-from .graph.scatter import ScatterGraphReporter
+from .graph.scatter import ScatterPlotReporter
 from .interfaces import Reporter
 from .json import JSONReporter
 from .rich_table import RichTableReporter
 
 
-_PREDEFINED_REPORTERS = [CSVReporter, ScatterGraphReporter, RichTableReporter, JSONReporter]
+_PREDEFINED_REPORTERS = [CSVReporter, ScatterPlotReporter, RichTableReporter, JSONReporter]
 """Container for all predefined Reporter classes."""
 
 
