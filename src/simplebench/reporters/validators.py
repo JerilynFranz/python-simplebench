@@ -3,9 +3,9 @@ from __future__ import annotations
 import inspect
 from typing import Any, Callable, get_type_hints
 
+from simplebench.enums import Section, Format
+from simplebench.exceptions import SimpleBenchTypeError, ValidatorsErrorTag
 
-from ..exceptions import SimpleBenchTypeError, ValidatorsErrorTag
-from ..enums import Section, Format
 from .protocols import ReporterCallback
 
 _CASE_IMPORTED: bool = False

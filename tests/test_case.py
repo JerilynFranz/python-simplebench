@@ -15,7 +15,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, 
 from simplebench.exceptions.case import CaseErrorTag
 from simplebench.exceptions.validators import ValidatorsErrorTag
 from simplebench.protocols import ActionRunner
-from simplebench.reporters.reporter_option import ReporterOption
+from simplebench.reporters.options.options import ReporterOption
 from simplebench.reporters.protocols import ReporterCallback
 
 

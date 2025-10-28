@@ -7,12 +7,15 @@ import math
 import platform
 import re
 import sys
-from typing import Any, Sequence, TypedDict
+from typing import Any, Sequence, TypedDict, TypeVar
 
 from cpuinfo import get_cpu_info  # type: ignore[import-untyped]
 
 from .defaults import DEFAULT_SIGNIFICANT_FIGURES
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, UtilsErrorTag
+
+
+T = TypeVar('T')
 
 
 class MachineInfo(TypedDict):
@@ -100,11 +103,11 @@ def platform_id() -> str:
 
 
 def sanitize_filename(name: str) -> str:
-    """Sanitizes a filename by replacing invalid characters with _.
+    """Sanitizes a filename by replacing invalid characters with _ (underline).
 
-    Only 'a-z', 'A-Z', '0-9', '_', and '-' are allowed. All other characters
-    are replaced with '_' and multiple sequential '_' characters are then collapsed to
-    single '_' characters.
+    Only a-z, A-Z, 0-9, _  (underline), and - (dash) characters are allowed. All other
+    characters are replaced with _ and multiple sequential _ characters are then
+    collapsed to single _ characters.
 
     Args:
         name (str): The filename to sanitize.
@@ -348,3 +351,21 @@ def collect_arg_list(args: Namespace, flag: str, include_comma_separated: bool =
             unique_values.add(str(item))
 
     return list(unique_values)
+
+
+def first_not_none(items: Sequence[T]) -> T | None:
+    """Return the first not None element from a sequence of items. If all are None, return None.
+
+    This utility method is used to prioritize non-None values when determining
+    configuration settings, such as default options or targets.
+
+    Args:
+        items (Sequence[T]): The sequence of items to check.
+
+    Returns:
+        T | None: The first not None element from items, or None if all are None.
+    """
+    for element in items:
+        if element is not None:
+            return element
+    return None

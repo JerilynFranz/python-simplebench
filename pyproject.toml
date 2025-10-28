@@ -7,9 +7,9 @@ authors = [
 maintainers = [
     {name = "Jerilyn Franz", email = "opensource@snowhare.com"}
 ]
-description = "A simple pytest plugin for benchmarking"
+description = "A simple suite for benchmarking"
 readme = "README.md"
-keywords = ["pytest", "benchmark", "performance"]
+keywords = ["benchmark", "performance"]
 license = { file = "LICENSE" }
 version = "0.0.1"
 classifiers = [
@@ -102,7 +102,7 @@ max-line-length = 120
 suggestion-mode = 'yes'
 
 [tool.pytest.ini_options]
-filterwarnings = ["ignore:cannot collect test class 'TestSpec':UserWarning"]
+testpaths = 'tests'
 
 [tool.coverage.run]
 branch = true

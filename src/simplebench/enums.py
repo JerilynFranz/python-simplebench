@@ -124,10 +124,6 @@ class Target(str, Enum):
     """Output to console."""
     FILESYSTEM = 'filesystem'
     """Output to filesystem."""
-    HTTP = 'http'
-    """Output to HTTP endpoint."""
-    DISPLAY = 'display'
-    """Output to display device."""
     CALLBACK = 'callback'
     """Pass generated output to a callback function."""
     CUSTOM = 'custom'

@@ -19,7 +19,7 @@ from .tasks import ProgressTracker
 from .validators import (validate_non_blank_string, validate_positive_int,
                          validate_non_negative_int, validate_positive_float)
 from .reporters.protocols import ReporterCallback
-from .reporters.reporter_option import ReporterOption
+from .reporters.reporter.options import ReporterOptions
 from .reporters.validators import validate_reporter_callback
 
 
@@ -175,7 +175,7 @@ class Case(ICase):
                  kwargs_variations: Optional[dict[str, list[Any]]] = None,
                  runner: Optional[type[SimpleRunner]] = None,
                  callback: Optional[ReporterCallback] = None,
-                 options: Optional[list[ReporterOption]] = None) -> None:
+                 options: Optional[list[ReporterOptions]] = None) -> None:
         """Constructor for Case. This defines a benchmark case.
 
         The only REQUIRED parameter is `action`.
@@ -483,7 +483,7 @@ class Case(ICase):
         return value
 
     @staticmethod
-    def validate_options(value: list[ReporterOption] | None) -> list[ReporterOption]:
+    def validate_options(value: list[ReporterOptions] | None) -> list[ReporterOptions]:
         """Validate the options list.
 
         Args:
@@ -503,7 +503,7 @@ class Case(ICase):
                 tag=CaseErrorTag.INVALID_OPTIONS_NOT_LIST
                 )
         for option in value:
-            if not isinstance(option, ReporterOption):
+            if not isinstance(option, ReporterOptions):
                 raise SimpleBenchTypeError(
                     f'Invalid option: {option}. Must be of type ReporterOption or a sub-class.',
                     tag=CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
@@ -630,7 +630,7 @@ class Case(ICase):
         return copy(self._results)
 
     @property
-    def options(self) -> list[ReporterOption]:
+    def options(self) -> list[ReporterOptions]:
         '''A list of additional options for the benchmark case.'''
         # shallow copy to prevent external modification of internal list
         return copy(self._options) if self._options is not None else []

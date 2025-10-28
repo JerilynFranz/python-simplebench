@@ -12,7 +12,7 @@ from rich.console import Console
 from simplebench import Case, SimpleRunner, Results, Session, Verbosity
 from simplebench.exceptions import SimpleBenchTypeError, SessionErrorTag
 from simplebench.protocols import ActionRunner
-from simplebench.reporters.reporter_option import ReporterOption
+from simplebench.reporters.options.options import ReporterOption
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.utils import collect_arg_list
 

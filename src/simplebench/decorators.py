@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Decorators for simplifying benchmark case creation."""
 from __future__ import annotations
-from typing import Any, Callable, TYPE_CHECKING, TypeVar, ParamSpec
+from typing import Any, Callable, TypeVar, ParamSpec
 
 from .case import Case
 from .defaults import (DEFAULT_WARMUP_ITERATIONS, DEFAULT_ROUNDS, DEFAULT_MIN_TIME,
@@ -11,9 +11,8 @@ from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, DecoratorsE
 from .validators import (validate_positive_int, validate_non_negative_int, validate_positive_float,
                          validate_non_blank_string)
 
-
-if TYPE_CHECKING:
-    from .reporters.reporter_option import ReporterOption
+# simplebench.reporters.reporter
+from .reporters.reporter.options import ReporterOptions
 
 # A global registry to hold benchmark cases created by the decorator.
 _DECORATOR_CASES: list[Case] = []
@@ -35,7 +34,7 @@ def benchmark(
     max_time: float = DEFAULT_MAX_TIME,
     variation_cols: dict[str, str] | None = None,
     kwargs_variations: dict[str, list[Any]] | None = None,
-    options: list[ReporterOption] | None = None,
+    options: list[ReporterOptions] | None = None,
     n: int = 1,
     use_field_for_n: str | None = None
         ) -> Callable[[Callable[P, R]], Callable[P, R]]:
@@ -119,10 +118,10 @@ def benchmark(
                 keyword arguments for the current variation.
 
                 If None, an empty dict is used.
-        options (Optional[list[ReporterOption], default=None): A list of additional options for the benchmark case.
-                Each option is an instance of ReporterOption or a subclass of ReporterOption.
+        options (Optional[list[ReporterOptions], default=None): A list of additional options for the benchmark case.
+                Each option is an instance of ReporterOptions or a subclass of ReporterOptions.
                 Reporter options can be used to customize the output of the benchmark reports for
-                specific reporters. Reporters are responsible for extracting applicable ReporterOptions
+                specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
                 from the list of options themselves.
         n (int, default=1): The 'n' weighting of the benchmark case. Must be a positive integer.
         use_field_for_n (Optional[str], default=None): If provided, use the value of this field from kwargs_variations

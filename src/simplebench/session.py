@@ -8,19 +8,20 @@ from typing import Optional, Sequence, TYPE_CHECKING
 from rich.console import Console
 from rich.progress import Progress
 
-from .enums import Verbosity, Target, Color
-from .exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, SessionErrorTag
-from .metaclasses import ISession
-from .reporters.protocols import ReporterCallback
-from .reporters import ReporterManager
-from .reporters.choices import Choice, Choices
-from .runners import SimpleRunner
-from .tasks import RichProgressTasks, ProgressTracker
-from .case import Case
-from .utils import sanitize_filename, platform_id
+from simplebench.enums import Verbosity, Target, Color
+from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, SessionErrorTag
+from simplebench.metaclasses import ISession
+from simplebench.reporters.protocols import ReporterCallback
+from simplebench.reporters.reporter_manager import ReporterManager
+from simplebench.reporters.choice import Choice
+from simplebench.reporters.choices import Choices
+from simplebench.runners import SimpleRunner
+from simplebench.tasks import RichProgressTasks, ProgressTracker
+from simplebench.case import Case
+from simplebench.utils import sanitize_filename, platform_id
 
 if TYPE_CHECKING:
-    from .reporters import Reporter
+    from simplebench.reporters.reporter import Reporter
 
 
 class Session(ISession):

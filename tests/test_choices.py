@@ -10,11 +10,11 @@ import pytest
 from simplebench.case import Case
 from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchKeyError
 from simplebench.session import Session
-from simplebench.reporters.exceptions.choices import ChoicesErrorTag
-from simplebench.reporters.interfaces import ReporterCallback
+from simplebench.reporters.protocols import ReporterCallback
 from simplebench.enums import Section, Target, Format, FlagType
-from simplebench.reporters import Reporter
-from simplebench.reporters.choices import Choices, Choice, ChoiceOptions
+from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.reporters.choice import Choice, ChoiceErrorTag
+from simplebench.reporters.choices import Choices, ChoicesErrorTag
 
 from .testspec import TestSpec, TestAction, TestGet, idspec, Assert, NO_EXPECTED_VALUE
 
@@ -41,10 +41,15 @@ class ChoiceKWArgs(dict):
             flag_type: FlagType | NoDefaultValue = NoDefaultValue(),
             name: str | NoDefaultValue = NoDefaultValue(),
             description: str | NoDefaultValue = NoDefaultValue(),
+            subdir: str | NoDefaultValue = NoDefaultValue(),
             sections: Sequence[Section] | NoDefaultValue = NoDefaultValue(),
             targets: Sequence[Target] | NoDefaultValue = NoDefaultValue(),
-            formats: Sequence[Format] | NoDefaultValue = NoDefaultValue(),
-            options: ChoiceOptions | NoDefaultValue = NoDefaultValue(),
+            default_targets: Sequence[Target] | NoDefaultValue = NoDefaultValue(),
+            output_format: Format | NoDefaultValue = NoDefaultValue(),
+            file_suffix: str | NoDefaultValue = NoDefaultValue(),
+            file_unique: bool | NoDefaultValue = NoDefaultValue(),
+            file_append: bool | NoDefaultValue = NoDefaultValue(),
+            options: ReporterOptions | NoDefaultValue = NoDefaultValue(),
             extra: Any | NoDefaultValue = NoDefaultValue()) -> None:
         """Constructs a ChoiceKWArgs instance. This class is used to hold keyword arguments for
         initializing a Choice instance in tests.
@@ -60,20 +65,31 @@ class ChoiceKWArgs(dict):
                 A unique name for the choice.
             description (str | NoDefaultValue, default=NoDefaultValue()):
                 A brief description of the choice.
+            subdir (str | NoDefaultValue, default=NoDefaultValue()):
+                The subdirectory for output files.
             sections (Sequence[Section] | NoDefaultValue, default=NoDefaultValue()):
                 A sequence of Section enums to include in the report.
             targets (Sequence[Target] | NoDefaultValue, default=NoDefaultValue()):
                 A sequence of Target enums for output.
-            formats (Sequence[Format] | NoDefaultValue, default=NoDefaultValue()):
-                A sequence of Format enums for output.
-            options (ChoiceOptions | NoDefaultValue, default=NoDefaultValue()):
+            default_targets (Sequence[Target] | NoDefaultValue, default=NoDefaultValue()):
+                A sequence of default Target enums for output.
+            file_suffix (str | NoDefaultValue, default=NoDefaultValue()):
+                The file suffix for output files.
+            file_unique (bool | NoDefaultValue, default=NoDefaultValue()):
+                Whether the output files should be unique.
+            file_append (bool | NoDefaultValue, default=NoDefaultValue()):
+                Whether to append to existing output files.
+            output_format (Format | NoDefaultValue, default=NoDefaultValue()):
+                A Format enums for output.
+            options (ReporterOptions | NoDefaultValue, default=NoDefaultValue()):
                 Options for the choice.
             extra (Any | NoDefaultValue, default=NoDefaultValue()):
                 Any additional metadata associated with the choice. Defaults to None.
         """
         kwargs = {}
-        for key in ('reporter', 'flags', 'flag_type', 'name', 'description',
-                    'sections', 'targets', 'formats', 'options', 'extra'):
+        for key in ('reporter', 'flags', 'flag_type', 'name', 'description', 'subdir',
+                    'sections', 'targets', 'default_targets', 'output_format', 'options', 'extra',
+                    'file_suffix', 'file_unique', 'file_append'):
             value = locals()[key]
             if not isinstance(value, NoDefaultValue):
                 kwargs[key] = value
@@ -162,7 +178,13 @@ class MockReporter(Reporter):
             name='mock',
             description='Mock reporter.',
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
+            default_targets={Target.CONSOLE},
             targets={Target.FILESYSTEM, Target.CALLBACK},
+            subdir='mockreports',
+            options_type=ReporterOptions,
+            file_suffix='mock',
+            file_unique=True,
+            file_append=False,
             formats={Format.JSON},
             choices=Choices([
                 Choice(
@@ -173,7 +195,11 @@ class MockReporter(Reporter):
                     description='statistical results to mock',
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
-                    formats=[Format.JSON],
+                    output_format=Format.JSON,
+                    file_suffix='mock',
+                    file_unique=True,
+                    file_append=False,
+                    options=ReporterOptions(),
                     extra=MockReporterExtras(full_data=False)),
             ]))
 
@@ -186,6 +212,9 @@ class MockReporter(Reporter):
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
         """Mock implementation of run_report."""
+
+    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+        return "mocked_rendered_output"
 
 
 @cache
@@ -201,8 +230,8 @@ def sample_reporter() -> Reporter:
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
-                description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON], extra={'key': 'value'}),
+                description='A sample choice', file_suffix='sample', file_unique=True, file_append=False,
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON, extra={'key': 'value'}),
             assertion=Assert.ISINSTANCE,
             expected=Choice,
         )),
@@ -212,7 +241,7 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             assertion=Assert.ISINSTANCE,
             expected=Choice,
         )),
@@ -225,36 +254,15 @@ def sample_reporter() -> Reporter:
                 sections=[Section.OPS], targets=[Target.CONSOLE]),
             exception=TypeError,
         )),
-        idspec("INIT_004", TestAction(
-            name="Choice with empty list formats argument - raises SimpleBenchValueError",
-            action=Choice,
-            kwargs=ChoiceKWArgs(
-                reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN,
-                name='sample', description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[]),
-            exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICE_EMPTY_FORMATS_ARG_VALUE,
-        )),
         idspec("INIT_005", TestAction(
-            name="Choice with wrong type formats argument - raises SimpleBenchTypeError",
+            name="Choice with wrong type output_format argument - raises SimpleBenchTypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats={}),  # type: ignore[arg-type]
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=''),  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_FORMATS_ARG_TYPE,
-        )),
-        idspec("INIT_006", TestAction(
-            name="Choice with incorrect formats list item type - raises SimpleBenchTypeError",
-            action=Choice,
-            kwargs=ChoiceKWArgs(
-                reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
-                description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE],
-                formats=['invalid_format']),  # type: ignore[list-item]
-            exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_FORMATS_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_OUTPUT_FORMAT_ARG_TYPE,
         )),
         idspec("INIT_007", TestAction(
             name="Choice with missing targets argument - raises TypeError",
@@ -262,7 +270,7 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                sections=[Section.OPS], formats=[Format.JSON]),
+                sections=[Section.OPS], output_format=Format.JSON),
             exception=TypeError,
         )),
         idspec("INIT_008", TestAction(
@@ -271,9 +279,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                sections=[Section.OPS], targets=[], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[], output_format=Format.JSON),
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICE_EMPTY_TARGETS_ARG_VALUE,
+            exception_tag=ChoiceErrorTag.EMPTY_TARGETS_ARG_VALUE,
         )),
         idspec("INIT_009", TestAction(
             name="Choice with wrong type targets argument - raises SimpleBenchTypeError",
@@ -281,9 +289,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                sections=[Section.OPS], targets={}, formats=[Format.JSON]),  # type: ignore[arg-type]
+                sections=[Section.OPS], targets={}, output_format=Format.JSON),  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_TARGETS_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_TARGETS_ARG_TYPE,
         )),
         idspec("INIT_010", TestAction(
             name="Choice with incorrect targets list item type - raises SimpleBenchTypeError",
@@ -292,9 +300,9 @@ def sample_reporter() -> Reporter:
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
                 sections=[Section.OPS], targets=['invalid_target'],  # type: ignore[list-item]
-                formats=[Format.JSON]),
+                output_format=Format.JSON),
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_TARGETS_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_TARGETS_ARG_TYPE,
         )),
         idspec("INIT_011", TestAction(
             name="Choice with missing sections argument - raises TypeError",
@@ -302,7 +310,7 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                targets=[Target.CONSOLE], formats=[Format.JSON]),
+                targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=TypeError,
         )),
         idspec("INIT_012", TestAction(
@@ -311,9 +319,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                sections=[], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICE_EMPTY_SECTIONS_ARG_VALUE,
+            exception_tag=ChoiceErrorTag.EMPTY_SECTIONS_ARG_VALUE,
         )),
         idspec("INIT_013", TestAction(
             name="Choice with wrong type sections argument - raises SimpleBenchTypeError",
@@ -321,9 +329,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                sections={}, targets=[Target.CONSOLE], formats=[Format.JSON]),  # type: ignore[arg-type]
+                sections={}, targets=[Target.CONSOLE], output_format=Format.JSON),  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_SECTIONS_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_SECTIONS_ARG_TYPE,
         )),
         idspec("INIT_014", TestAction(
             name="Choice with incorrect sections list item type - raises SimpleBenchTypeError",
@@ -332,16 +340,16 @@ def sample_reporter() -> Reporter:
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
                 sections=['invalid_section'], targets=[Target.CONSOLE],  # type: ignore[list-item]
-                formats=[Format.JSON]),
+                output_format=Format.JSON),
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_SECTIONS_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_SECTIONS_ARG_TYPE,
         )),
         idspec("INIT_015", TestAction(
             name="Choice with missing description argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=TypeError,
         )),
         idspec("INIT_016", TestAction(
@@ -350,9 +358,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample',
                 description='   ',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICE_EMPTY_DESCRIPTION_ARG_VALUE,
+            exception_tag=ChoiceErrorTag.EMPTY_DESCRIPTION_ARG_VALUE,
         )),
         idspec("INIT_017", TestAction(
             name="Choice with wrong type description argument - raises SimpleBenchTypeError",
@@ -360,9 +368,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN,
                 name='sample', description=123,  # type: ignore[arg-type]
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_DESCRIPTION_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_DESCRIPTION_ARG_TYPE,
         )),
         idspec("INIT_018", TestAction(
             name="Choice with missing name argument - raises TypeError",
@@ -370,7 +378,7 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN,
                 description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=TypeError,
         )),
         idspec("INIT_019", TestAction(
@@ -379,9 +387,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN, name='   ',
                 description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICE_EMPTY_NAME_ARG_VALUE,
+            exception_tag=ChoiceErrorTag.EMPTY_NAME_ARG_VALUE,
         )),
         idspec("INIT_020", TestAction(
             name="Choice with wrong type name argument - raises SimpleBenchTypeError",
@@ -390,16 +398,16 @@ def sample_reporter() -> Reporter:
                 reporter=MockReporter(), flags=['--sample'], flag_type=FlagType.BOOLEAN,
                 name=123,  # type: ignore[arg-type]
                 description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_NAME_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_NAME_ARG_TYPE,
         )),
         idspec("INIT_021", TestAction(
             name="Choice with missing flags argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flag_type=FlagType.BOOLEAN, name='sample', description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=TypeError,
         )),
         idspec("INIT_022", TestAction(
@@ -408,9 +416,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=[], flag_type=FlagType.BOOLEAN, name='sample',
                 description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_FLAGS_ARGS_VALUE,
+            exception_tag=ChoiceErrorTag.INVALID_FLAGS_ARGS_VALUE,
         )),
         idspec("INIT_023", TestAction(
             name="Choice with flag with whitespace - raises SimpleBenchValueError",
@@ -418,9 +426,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags=['--valid', '--bad flag'], flag_type=FlagType.BOOLEAN,
                 name='sample', description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_FLAGS_ARGS_VALUE,
+            exception_tag=ChoiceErrorTag.INVALID_FLAGS_ARGS_VALUE,
         )),
         idspec("INIT_024", TestAction(
             name="Choice with wrong type flags argument - raises SimpleBenchTypeError",
@@ -428,16 +436,16 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter=MockReporter(), flags='--sample', flag_type=FlagType.BOOLEAN,  # type: ignore[arg-type]
                 name='sample', description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_FLAGS_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_FLAGS_ARG_TYPE,
         )),
         idspec("INIT_025", TestAction(
             name="Choice with missing reporter argument - raises TypeError",
             action=Choice,
             kwargs=ChoiceKWArgs(
                 flags=['--sample'], name='sample', flag_type=FlagType.BOOLEAN, description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=TypeError,
         )),
         idspec("INIT_026", TestAction(
@@ -446,9 +454,9 @@ def sample_reporter() -> Reporter:
             kwargs=ChoiceKWArgs(
                 reporter='not_a_reporter',  # type: ignore[arg-type]
                 flags=['--sample'], flag_type=FlagType.BOOLEAN, name='sample', description='A sample choice',
-                sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON]),
+                sections=[Section.OPS], targets=[Target.CONSOLE], output_format=Format.JSON),
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICE_INVALID_REPORTER_ARG_TYPE,
+            exception_tag=ChoiceErrorTag.INVALID_REPORTER_ARG_TYPE,
         )),
     ]
 )
@@ -473,7 +481,8 @@ def choice_instance(cache_id: str = 'default', *,  # pylint: disable=unused-argu
         flag_type=FlagType.BOOLEAN,
         name=name,
         description='A mock choice.',
-        sections=[Section.OPS], targets=[Target.CONSOLE], formats=[Format.JSON],
+        sections=[Section.OPS], targets=[Target.CONSOLE],
+        output_format=Format.JSON,
         extra='mock_extra')
 
 
@@ -523,10 +532,10 @@ def choice_instance(cache_id: str = 'default', *,  # pylint: disable=unused-argu
         )),
         idspec("PROPS_007", TestGet(
             name="Choice formats property",
-            attribute="formats",
+            attribute="output_format",
             obj=choice_instance(),
             assertion=Assert.EQUAL,
-            expected=frozenset([Format.JSON]),
+            expected=Format.JSON,
         )),
         idspec("PROPS_008", TestGet(
             name="Choice extra property",
@@ -573,7 +582,7 @@ def test_choice_properties(testspec: TestSpec):
             action=Choices,
             kwargs=ChoicesKWArgs(choices='not_a_sequence'),  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_INVALID_CHOICES_ARG_TYPE,
+            exception_tag=ChoicesErrorTag.INVALID_CHOICES_ARG_TYPE,
         )),
     ]
 )
@@ -626,7 +635,7 @@ def choices_instance(cache_id: str = "default", *,  # pylint: disable=unused-arg
             action=choices_instance('ADD_003').add,
             args=['not_a_choice'],  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_ADD_INVALID_CHOICE_ARG_TYPE,
+            exception_tag=ChoicesErrorTag.ADD_INVALID_CHOICE_ARG_TYPE,
         )),
         idspec("ADD_004", TestAction(
             name="Add different Choice name to Choices",
@@ -650,7 +659,7 @@ def choices_instance(cache_id: str = "default", *,  # pylint: disable=unused-arg
             action=choices_instance('ADD_005', choices=(choice_instance(),)).add,
             args=[choice_instance()],
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_NAME)
+            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME)
         ),
     ]
 )
@@ -739,7 +748,7 @@ def test_choices_all_choice_flags_method(testspec: TestSpec) -> None:
             ]).get_choice_for_arg,
             args=[123],  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE,
+            exception_tag=ChoicesErrorTag.GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE,
         )),
     ])
 def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
@@ -782,7 +791,7 @@ def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
             action=choices_instance("EXTENDS_003").extend,
             args=['not_a_sequence'],  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+            exception_tag=ChoicesErrorTag.EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
         )),
         idspec("EXTENDS_004", TestAction(
             name="Choices extend - add two choices via extend([<choice1>, <choice2>]) and access them via dict key",
@@ -792,7 +801,7 @@ def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
                 choice_instance('EXTENDS_001', name='choice_one', flags=('--one',)),
                 'something_invalid']],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+            exception_tag=ChoicesErrorTag.EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
         )),
     ])
 def test_choices_extend(testspec: TestSpec) -> None:
@@ -825,7 +834,7 @@ def test_choices_extend(testspec: TestSpec) -> None:
             )).remove,
             args=['non_existing_choice'],
             exception=SimpleBenchKeyError,
-            exception_tag=ChoicesErrorTag.CHOICES_DELITEM_UNKNOWN_CHOICE_NAME
+            exception_tag=ChoicesErrorTag.DELITEM_UNKNOWN_CHOICE_NAME
         )),
     ])
 def test_choices_remove(testspec: TestSpec) -> None:
@@ -854,7 +863,7 @@ def test_choices_remove(testspec: TestSpec) -> None:
             args=[123, choice_instance(
                 'SETITEM_002', name='some_choice', flags=('--some-choice',))],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_SETITEM_INVALID_KEY_TYPE,
+            exception_tag=ChoicesErrorTag.SETITEM_INVALID_KEY_TYPE,
         )),
         idspec("SETITEM_003", TestAction(
             name="Set item via __setitem__ method with invalid type (raises SimpleBenchTypeError)",
@@ -862,7 +871,7 @@ def test_choices_remove(testspec: TestSpec) -> None:
             action=choices_instance("SETITEM_003").__setitem__,
             args=['invalid_choice', 'not_a_choice_instance'],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_SETITEM_INVALID_VALUE_TYPE,
+            exception_tag=ChoicesErrorTag.SETITEM_INVALID_VALUE_TYPE,
         )),
         idspec("SETITEM_004", TestAction(
             name="Set item via __setitem__ method with mismatched choice name (raises SimpleBenchValueError)",
@@ -871,7 +880,7 @@ def test_choices_remove(testspec: TestSpec) -> None:
             args=['mismatched_name', choice_instance(
                 'SETITEM_004', name='actual_name', flags=('--some-flag',))],
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICES_SETITEM_KEY_NAME_MISMATCH,
+            exception_tag=ChoicesErrorTag.SETITEM_KEY_NAME_MISMATCH,
         )),
         idspec("SETITEM_005", TestAction(
             name="Set item via __setitem__ method with duplicate choice name (raises SimpleBenchValueError)",
@@ -884,7 +893,7 @@ def test_choices_remove(testspec: TestSpec) -> None:
             args=['duplicate_choice', choice_instance(
                 'SETITEM_005', name='duplicate_choice', flags=('--another-flag',))],
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_NAME,
+            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
         )),
         idspec("SETITEM_006", TestAction(
             name="Set item via __setitem__ method with duplicate flag (across choices) (raises SimpleBenchValueError)",
@@ -897,7 +906,7 @@ def test_choices_remove(testspec: TestSpec) -> None:
             args=['new_choice', choice_instance(
                 'SETITEM_006', name='new_choice', flags=('--common-flag',))],
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.CHOICES_SETITEM_DUPLICATE_CHOICE_FLAG,
+            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_FLAG,
         )),
     ])
 def test_setitem_dunder_method(testspec: TestSpec) -> None:
