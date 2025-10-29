@@ -1,6 +1,6 @@
 """Rich Table Reporter Module"""
-from simplebench.reporters.rich_table.reporter import RichTableReporter, RichTableReporterErrorTag
-from simplebench.reporters.rich_table.options import RichTableOptions, RichTableOptionsErrorTag
+from simplebench.reporters.rich_table.reporter.reporter import RichTableReporter, RichTableReporterErrorTag
+from simplebench.reporters.rich_table.reporter.options import RichTableOptions, RichTableOptionsErrorTag
 
 __all__ = [
     "RichTableReporter",

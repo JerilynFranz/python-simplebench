@@ -12,37 +12,88 @@ from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag, V
 T = TypeVar('T')
 
 
-def validate_type(*, value: Any, expected: type[T], name: str, error_tag: ErrorTag) -> T:
+@overload
+def validate_type(
+        *,
+        value: Any,
+        expected: type[T],
+        name: str,
+        error_tag: ErrorTag) -> T:
+    """single type overload"""
+
+
+@overload
+def validate_type(
+        *,
+        value: Any,
+        expected: tuple[type, ...],
+        name: str,
+        error_tag: ErrorTag) -> Any:
+    """tuple of types overload"""
+
+
+def validate_type(
+        *,
+        value: Any,
+        expected: type[T] | tuple[type, ...],
+        name: str,
+        error_tag: ErrorTag) -> T | Any:
     """Validate that a value is of the expected type.
 
     The returned value is guaranteed to be of type expected and acts to type-narrow
-    the returned value.
+    the returned value for static type checking if a single type is provided.
+
+    If multiple types are provided in a tuple for the expected type, the caller can
+    type-narrow the type of the returned type by declaring the untupled types by
+    assigning the return value to a variable with an explicit type annotation.
+
+    The value itself is always returned unchanged if it passes the validation.
+
+    Example:
+
+        mixed: str | int = validate_type(
+            value=some_value,
+            expected=(str, int),
+            name='mixed',
+            error_tag=ErrorTag.INVALID_EXPECTED_ARG_TYPE)
 
     Args:
         value (Any): The value to validate.
-        expected (type[T]): The expected type of the value.
+        expected (type[T] | tuple[type, ...]): The expected type of the value.
         name (str): The name of the field being validated (for error messages).
         error_tag (ErrorTag): The error tag to use for type errors.
 
     Returns:
-        T: The validated value of type T.
+        T | Any: The validated (unmodifed) value.
 
     Raises:
         SimpleBenchTypeError: If the value is not of the expected type.
     """
-    if not isinstance(expected, type):
+    if not isinstance(expected, type) and not isinstance(expected, tuple):
         raise SimpleBenchTypeError(
-            f'Invalid expected argument type: {type(expected)}. Must be a type.',
+            f'Invalid expected argument type: {type(expected)}. Must be a type or tuple of types.',
             tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE
         )
+    if isinstance(expected, tuple):
+        for item in expected:
+            if not isinstance(item, type):
+                raise SimpleBenchTypeError(
+                    f'Invalid expected argument item type in tuple: {type(item)}. Must be a type.',
+                    tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE
+                )
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
             f'Invalid name argument type: {type(name)}. Must be a str.',
             tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE
         )
+    if not isinstance(error_tag, ErrorTag):
+        raise SimpleBenchTypeError(
+            f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
+            tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)
+
     if not isinstance(value, expected):
         raise SimpleBenchTypeError(
-            f'Invalid "{name}" type: {type(value)}. Must be {expected.__name__}.',
+            f'Invalid "{name}" type: {type(value)}. Must be {repr(expected)}.',
             tag=error_tag
         )
     return cast(T, value)
@@ -52,8 +103,8 @@ def validate_string(
         value: Any,
         field_name: str,
         type_error_tag: ErrorTag,
-        value_error_tag: ErrorTag,
-        strip: bool = True,
+        value_error_tag: ErrorTag, *,
+        strip: bool = False,
         allow_empty: bool = True,
         allow_blank: bool = True,
         alphanumeric_only: bool = False) -> str:
@@ -65,38 +116,44 @@ def validate_string(
     The returned value is guaranteed to be of type str and acts to type-narrow
     the returned value.
 
-    The following combinations of options conflict with each other and will raise a
-    SimpleBenchValueError if set together:
-
-    - `strip=True, allow_blank=True, allow_empty=False`
-        This conflicts because stripping leading/trailing whitespace turns blank strings
-        into empty strings - and allow_empty=False forbids empty strings.
-
-        This implies that any string that consists only of whitespace
-        would be invalid, which contradicts the allow_blank=True option.
-    - `strip=False, allow_blank=True, alphanumeric_only=True`
-        Allowing unstripped blank strings while requiring alphanumeric-only is contradictory.
-        Blank strings contain no alphanumeric characters. Without stripping, blank strings
-        consisting only of whitespace will still contain that whitespace and so cannot satisfy both
-        the alphanumeric only condition AND the allow blank condition.
-
-        This could result in subtle bugs.
+    Following the principle of 'least astonishment', the validator does not modify
+    the input string unless strip=True is set. If strip=True is set, the string is
+    stripped of leading and trailing whitespace before other checks are applied.
 
     Explanation of options:
         strip=True means leading/trailing whitespace is removed before other checks.
-        allow_empty=False means the string cannot be empty ("").
-        allow_blank=False means the string cannot be empty or consist only of whitespace.
+        allow_empty=True means the string cannot be empty ("").
+        allow_blank=True means the string can contain only whitespace characters.
         alphanumeric_only=True means the string only contain alphanumeric characters (a-z, A-Z, 0-9).
+
+    Interaction of options:
+
+    If `strip=True, allow_empty=True, allow_blank=False` is provided, `allow_empty=False`
+    takes precedence over `allow_blank=True` as the more specific check. Therefore '   ' would be
+    stripped to '' and then accepted as empty.
+
+    If `strip=True, allow_blank=True, allow_empty=False` is provided, `allow_empty=False`
+    takes precedence over `allow_blank=True` because after stripping a blank string becomes
+    an empty string and `allow_empty=False` is the more specific check.
+    Therefore ' ' would be stripped to '' and then rejected as empty.
+
+    If `strip=False, allow_blank=True, alphanumeric_only=True` is provided, `alphanumeric_only=True`
+    takes precedence over `allow_blank=True` because a blank string with whitespace is not alphanumeric
+    by definition.
+
+    `alphanumeric_only=True` behaves differently than `str().isalnum()` in that it allows empty strings if
+    `allow_empty=True` is also provided.
 
     Args:
         value (Any): The value to validate as being a string.
-        field_name (str): The name of the field being validated (for error messages).
-        type_error_tag (ErrorTag): The error tag to use for type errors.
-        value_error_tag (ErrorTag): The error tag to use for value errors.
-        strip (bool, default=True): Whether to strip leading/trailing whitespace.
-        allow_empty (bool, default=True): Whether to allow empty strings.
-        allow_blank (bool, default=True): Whether to allow blank strings (strings that consist only of whitespace).
-        alphanumeric_only (bool, default=False): Whether to allow only alphanumeric characters.
+        field_name (str, positional or kwarg): The name of the field being validated (for error messages).
+        type_error_tag (ErrorTag, positional or kwarg): The error tag to use for type errors.
+        value_error_tag (ErrorTag, positional or kwarg): The error tag to use for value errors.
+        strip (bool, default=False, kwarg only): Whether to strip leading/trailing whitespace.
+        allow_empty (bool, default=True, kwarg only): Whether to allow empty strings.
+        allow_blank (bool, default=True, kwarg only): Whether to allow blank strings (strings that consist
+            only of whitespace).
+        alphanumeric_only (bool, default=False, kwarg only): Whether to allow only alphanumeric characters.
 
     Raises:
         SimpleBenchTypeError: If the value is not a str.
@@ -122,44 +179,32 @@ def validate_string(
             f'Invalid alphanumeric_only type: {type(alphanumeric_only)}. Must be a bool.',
             tag=ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE
         )
-    if allow_blank:
-        if strip and not allow_empty:
-            raise SimpleBenchValueError(
-                'Conflicting options: cannot have strip=True, allow_blank=True, and allow_empty=False together.',
-                tag=ValidatorsErrorTag.CONFLICTING_STRING_VALIDATION_OPTIONS_ALLOW_EMPTY
-            )
-        if alphanumeric_only and not strip:
-            raise SimpleBenchValueError(
-                'Conflicting options: cannot have strip=False, allow_blank=True, and alphanumeric_only=True together.',
-                tag=ValidatorsErrorTag.CONFLICTING_STRING_VALIDATION_OPTIONS_ALPHANUMERIC_ONLY
-            )
     if not isinstance(value, str):
         raise SimpleBenchTypeError(
             f'Invalid {field_name} type: {type(value)}. Must be a str.',
             tag=type_error_tag
         )
+
     if strip:
         value = value.strip()
 
-    if not allow_empty and value == '':
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: cannot be empty string.',
-            tag=value_error_tag
-        )
+    if value == '':  # Empty string
+        if allow_empty:
+            return value
+        raise SimpleBenchValueError(f'Invalid {field_name}: cannot be empty string.', tag=value_error_tag)
 
-    if not allow_blank and value.strip() == '':
+    if value.strip() == '':  # Blank string (only whitespace)
+        if allow_blank and not alphanumeric_only:
+            return value
         raise SimpleBenchValueError(
-            f'Invalid {field_name}: cannot be blank string (consist only of whitespace).',
-            tag=value_error_tag
-        )
+            f'Invalid {field_name}: cannot be blank string (consist only of whitespace).', tag=value_error_tag)
 
-    # isalnum returns False for empty strings, so we only check it if not allow_empty
-    # or the string is not empty
-    if (not allow_empty or value != '') and alphanumeric_only and not value.isalnum():
+    if alphanumeric_only:
+        if value.isalnum():
+            return value
         raise SimpleBenchValueError(
             f'Invalid {field_name}: must consist only of alphanumeric characters [A-Za-z0-9]: "{value}".',
-            tag=value_error_tag
-        )
+            tag=value_error_tag)
 
     return value
 
@@ -969,3 +1014,23 @@ def validate_filename(filename: Any) -> str:
             f"Filename cannot be longer than 255 characters (passed filename was '{filename}')",
             tag=ValidatorsErrorTag.VALIDATE_FILENAME_TOO_LONG)
     return filename
+
+
+__all__ = [
+    'validate_non_blank_string',
+    'validate_non_blank_string_or_is_none',
+    'validate_int',
+    'validate_float',
+    'validate_positive_int',
+    'validate_non_negative_int',
+    'validate_positive_float',
+    'validate_non_negative_float',
+    'validate_sequence_of_type',
+    'validate_iterable_of_type',
+    'validate_frozenset_of_type',
+    'validate_sequence_of_numbers',
+    'validate_sequence_of_str',
+    'validate_int_range',
+    'validate_float_range',
+    'validate_filename',
+]

@@ -241,7 +241,7 @@ class Reporter(ABC, IReporter):
             subdir, 'subdir',
             ReporterErrorTag.INVALID_SUBDIR_ARG_TYPE,
             ReporterErrorTag.INVALID_SUBDIR_ARG_VALUE,
-            strip=False, allow_empty=False, allow_blank=False, alphanumeric_only=True)
+            strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
         """The subdirectory where report files will be saved.
         (private backing field)"""
         if len(self._subdir) > 64:

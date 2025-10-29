@@ -16,7 +16,7 @@ from ..csv.reporter import CSVReporter
 from ..graph.scatterplot.reporter import ScatterPlotReporter
 from ..reporter import Reporter
 from ..json import JSONReporter
-from ..rich_table import RichTableReporter
+from ..rich_table.reporter import RichTableReporter
 
 from .exceptions import ReporterManagerErrorTag
 

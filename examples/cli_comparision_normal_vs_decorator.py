@@ -3,8 +3,11 @@
 from __future__ import annotations
 from typing import Any
 
-from simplebench import main, benchmark, Case, SimpleRunner
-from simplebench.reporters.graph.scatter import ScatterPlotOptions
+from simplebench.cli import main
+from simplebench.decorators import benchmark
+from simplebench.case import Case
+from simplebench.runners import SimpleRunner
+from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
 from simplebench.reporters.graph.enums import ImageType
 from simplebench.results import Results
 
@@ -15,7 +18,7 @@ from simplebench.results import Results
     description='A simple benchmark case function via decorators.',
     n=100,
     warmup_iterations=10,
-    options=[ScatterPlotOptions(output_format=ImageType.PNG)]
+    options=[ScatterPlotOptions(image_type=ImageType.PNG)]
 )
 def benchcase_one():
     """A simple benchmark case function via decorators."""
@@ -40,7 +43,7 @@ def benchmark_cases_list_factory() -> list[Case]:
              description='A simple benchmark case function without decorators.',
              variation_cols={},
              kwargs_variations={},
-             options=[ScatterPlotOptions(output_format=ImageType.PNG)]),
+             options=[ScatterPlotOptions(image_type=ImageType.PNG)]),
     ]
 
 

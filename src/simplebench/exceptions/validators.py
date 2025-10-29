@@ -30,6 +30,8 @@ class ValidatorsErrorTag(ErrorTag):
     """An item in the expected argument tuple was not a type."""
     VALIDATE_TYPE_INVALID_NAME_ARG_TYPE = "VALIDATE_TYPE_INVALID_NAME_ARG_TYPE"
     """The name argument was not a str."""
+    VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE = "VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE"
+    """The error_tag argument was not an ErrorTag."""
 
     # validate.py - validate_reporter_callback() tags
     INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE = "INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE"

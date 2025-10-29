@@ -16,12 +16,12 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 # simplebench.reporters imports
-from ..choices import Choices
-from ..choice import Choice
+from simplebench.reporters.choices import Choices
+from simplebench.reporters.choice import Choice
 
 # simplebench.reporters.rich_table imports
-from .options import RichTableOptions
-from .exceptions import RichTableReporterErrorTag
+from simplebench.reporters.rich_table.reporter.options import RichTableOptions
+from simplebench.reporters.rich_table.reporter.exceptions import RichTableReporterErrorTag
 
 if TYPE_CHECKING:
     from simplebench.case import Case

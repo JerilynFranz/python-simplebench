@@ -6,18 +6,19 @@ from typing import Any, Optional, Sequence
 
 import pytest
 
+from tests.testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE
+
 from simplebench.case import Case
 from simplebench.enums import Section, Target, Format, FlagType
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchValueError, SimpleBenchTypeError
 from simplebench.iteration import Iteration
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.choices import Choice, Choices
-from simplebench.reporters.exceptions import ReportersInterfacesErrorTag
-from simplebench.reporters.interfaces import Reporter
+from simplebench.reporters.choice import Choice
+from simplebench.reporters.choices import Choices
+from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter import Reporter
 from simplebench.results import Results
 from simplebench.session import Session
-
-from .testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE
 
 
 def mock_path() -> Path:
@@ -85,6 +86,7 @@ class MockSession(Session):
     def __init__(self) -> None:
 
         super().__init__(cases=[MockCase()])
+
 
 
 class MockReporterInit(Reporter):
@@ -217,14 +219,14 @@ class BadSuperMockReporter(Reporter):
         action=lambda: BadSuperMockReporter().run_report(
             args=namespace_instance(), case=MockCase(), choice=MockChoice()),
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.RUN_REPORT_NOT_IMPLEMENTED)),
+        exception_tag=ReporterErrorTag.RUN_REPORT_NOT_IMPLEMENTED)),
     idspec('REPORTER_004', TestAction(
         name=("calling report() on Reporter with bad run_report() super() delegation "
               "raises SimpleBenchNotImplementedError"),
         action=lambda: BadSuperMockReporter().report(
             args=namespace_instance(), case=MockCase(), choice=MockChoice(), path=mock_path()),
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.RUN_REPORT_NOT_IMPLEMENTED)),
+        exception_tag=ReporterErrorTag.RUN_REPORT_NOT_IMPLEMENTED)),
     idspec('REPORTER_005', TestAction(
         name="Correctly configured subclass of Reporter() can call report() successfully",
         action=lambda: MockReporter().report(
@@ -234,7 +236,7 @@ class BadSuperMockReporter(Reporter):
         name="Init of Reporter with missing name raises SimpleBenchNotImplementedError/REPORTER_NAME_NOT_IMPLEMENTED",
         action=MockReporterInit,
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.NAME_NOT_IMPLEMENTED,
+        exception_tag=ReporterErrorTag.NAME_NOT_IMPLEMENTED,
         kwargs={
             'description': 'A dummy reporter for testing.',
             'sections': {Section.OPS},
@@ -246,7 +248,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchNotImplementedError/REPORTER_DESCRIPTION_NOT_IMPLEMENTED"),
         action=MockReporterInit,
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.DESCRIPTION_NOT_IMPLEMENTED,
+        exception_tag=ReporterErrorTag.DESCRIPTION_NOT_IMPLEMENTED,
         kwargs={
             'name': 'dummy',
             'sections': {Section.OPS},
@@ -258,7 +260,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchNotImplementedError/REPORTER_SECTIONS_NOT_IMPLEMENTED"),
         action=MockReporterInit,
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.SECTIONS_NOT_IMPLEMENTED,
+        exception_tag=ReporterErrorTag.SECTIONS_NOT_IMPLEMENTED,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -271,7 +273,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchNotImplementedError/REPORTER_TARGETS_NOT_IMPLEMENTED"),
         action=MockReporterInit,
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.TARGETS_NOT_IMPLEMENTED,
+        exception_tag=ReporterErrorTag.TARGETS_NOT_IMPLEMENTED,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -284,7 +286,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchNotImplementedError/REPORTER_FORMATS_NOT_IMPLEMENTED"),
         action=MockReporterInit,
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.FORMATS_NOT_IMPLEMENTED,
+        exception_tag=ReporterErrorTag.FORMATS_NOT_IMPLEMENTED,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -297,7 +299,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchNotImplementedError/REPORTER_CHOICES_NOT_IMPLEMENTED"),
         action=MockReporterInit,
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.CHOICES_NOT_IMPLEMENTED,
+        exception_tag=ReporterErrorTag.CHOICES_NOT_IMPLEMENTED,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -309,7 +311,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchTypeError/REPORTER_INVALID_CHOICES_ARG_TYPE"),
         action=MockReporterInit,
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.INVALID_CHOICES_ARG_TYPE,
+        exception_tag=ReporterErrorTag.INVALID_CHOICES_ARG_TYPE,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -322,7 +324,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchTypeError/REPORTER_INVALID_SECTIONS_ENTRY_TYPE"),
         action=MockReporterInit,
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.INVALID_SECTIONS_ENTRY_TYPE,
+        exception_tag=ReporterErrorTag.INVALID_SECTIONS_ENTRY_TYPE,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -335,7 +337,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchTypeError/REPORTER_INVALID_TARGETS_ENTRY_TYPE"),
         action=MockReporterInit,
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.INVALID_TARGETS_ENTRY_TYPE,
+        exception_tag=ReporterErrorTag.INVALID_TARGETS_ENTRY_TYPE,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -348,7 +350,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchTypeError/REPORTER_INVALID_FORMATS_ENTRY_TYPE"),
         action=MockReporterInit,
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.INVALID_FORMATS_ENTRY_TYPE,
+        exception_tag=ReporterErrorTag.INVALID_FORMATS_ENTRY_TYPE,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -360,7 +362,7 @@ class BadSuperMockReporter(Reporter):
         name="Init of Report with empty name raises SimpleBenchValueError/REPORTER_NAME_INVALID_VALUE",
         action=MockReporterInit,
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.NAME_INVALID_VALUE,
+        exception_tag=ReporterErrorTag.NAME_INVALID_VALUE,
         kwargs={
             'name': '',
             'description': 'A dummy reporter for testing.',
@@ -372,7 +374,7 @@ class BadSuperMockReporter(Reporter):
         name="Init of Report with empty name raises SimpleBenchValueError/REPORTER_NAME_INVALID_VALUE",
         action=MockReporterInit,
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.NAME_INVALID_VALUE,
+        exception_tag=ReporterErrorTag.NAME_INVALID_VALUE,
         kwargs={
             'name': '',
             'description': 'A dummy reporter for testing.',
@@ -384,7 +386,7 @@ class BadSuperMockReporter(Reporter):
         name="Init of Report with empty description raises SimpleBenchValueError/REPORTER_DESCRIPTION_INVALID_VALUE",
         action=MockReporterInit,
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.DESCRIPTION_INVALID_VALUE,
+        exception_tag=ReporterErrorTag.DESCRIPTION_INVALID_VALUE,
         kwargs={
             'name': 'dummy',
             'description': '',
@@ -397,7 +399,7 @@ class BadSuperMockReporter(Reporter):
               "SimpleBenchNotImplementedError/REPORTER_CHOICES_NOT_IMPLEMENTED"),
         action=MockReporterInit,
         exception=SimpleBenchNotImplementedError,
-        exception_tag=ReportersInterfacesErrorTag.CHOICES_NOT_IMPLEMENTED,
+        exception_tag=ReporterErrorTag.CHOICES_NOT_IMPLEMENTED,
         kwargs={
             'name': 'dummy',
             'description': 'A dummy reporter for testing.',
@@ -426,7 +428,7 @@ def namespace_instance() -> Namespace:
                         case="not_a_case_instance",  # type: ignore[arg-type]
                         choice=MockChoice()),
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_INVALID_CASE_ARG)),
+        exception_tag=ReporterErrorTag.REPORT_INVALID_CASE_ARG)),
     idspec('REPORT_002', TestAction(
         name="report() with non-Choice arg raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG",
         action=lambda: MockReporter().report(
@@ -434,7 +436,7 @@ def namespace_instance() -> Namespace:
                         case=MockCase(),
                         choice="not_a_choice_instance"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_INVALID_CHOICE_ARG)),
+        exception_tag=ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_003', TestAction(
         name="report() with non-Choice choise arg raises SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG",
         action=lambda: MockReporter().report(
@@ -442,7 +444,7 @@ def namespace_instance() -> Namespace:
                         case=MockCase(),
                         choice=Choices()),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_INVALID_CHOICE_ARG)),
+        exception_tag=ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_004', TestAction(
         name=("report() with Section not in Reporter's sections raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_SECTION"),
@@ -460,7 +462,7 @@ def namespace_instance() -> Namespace:
                             formats=[Format.RICH_TEXT],
                             extra=None)),
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_UNSUPPORTED_SECTION)),
+        exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)),
     idspec('REPORT_005', TestAction(
         name=("report() with Target not in Reporter's targets raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_TARGET"),
@@ -478,7 +480,7 @@ def namespace_instance() -> Namespace:
                             formats=[Format.RICH_TEXT],
                             extra=None)),
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_UNSUPPORTED_TARGET)),
+        exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)),
     idspec('REPORT_006', TestAction(
         name=("report() with Format not in Reporter's formats raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_FORMAT"),
@@ -496,7 +498,7 @@ def namespace_instance() -> Namespace:
                             formats=[Format.CUSTOM],
                             extra=None)),
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_UNSUPPORTED_FORMAT)),
+        exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)),
     idspec('REPORT_007', TestAction(
         name="report() with valid Case and Choice runs successfully",
         action=lambda: MockReporter().report(
@@ -547,7 +549,7 @@ def namespace_instance() -> Namespace:
                 extra=None),
             callback="not_a_callback"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_INVALID_CALLBACK_ARG)),
+        exception_tag=ReporterErrorTag.REPORT_INVALID_CALLBACK_ARG)),
     idspec('REPORT_010', TestAction(
         name="report() with valid path runs successfully",
         action=lambda: MockReporter().report(
@@ -582,7 +584,7 @@ def namespace_instance() -> Namespace:
                 extra=None),
             path="not_a_path"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_INVALID_PATH_ARG)),
+        exception_tag=ReporterErrorTag.REPORT_INVALID_PATH_ARG)),
     idspec('REPORT_012', TestAction(
         name=("report() with valid session runs successfully"),
         action=lambda: MockReporter().report(
@@ -617,7 +619,7 @@ def namespace_instance() -> Namespace:
                 extra=None),
             session="not_a_session"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.REPORT_INVALID_SESSION_ARG)),
+        exception_tag=ReporterErrorTag.REPORT_INVALID_SESSION_ARG)),
 ])
 def test_reporter_report(testspec: TestSpec) -> None:
     """Test Reporter.report() method."""
@@ -634,28 +636,28 @@ def test_reporter_report(testspec: TestSpec) -> None:
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_CHOICE_ARG"),
         action=lambda: MockReporter().add_choice(choice="not_a_choice_instance"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)),
+        exception_tag=ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)),
     idspec('REPORTER_ADD_CHOICE_003', TestAction(
         name=("Passing Choice with a section not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_SECTION_ARG"),
         action=lambda: MockReporter().add_choice(
             choice=MockChoice(name='dummy2', flags=['--dummy2'], sections=[Section.NULL])),
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)),
+        exception_tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)),
     idspec('REPORTER_ADD_CHOICE_004', TestAction(
         name=("Passing Choice with a target not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_TARGET_ARG"),
         action=lambda: MockReporter().add_choice(
             choice=MockChoice(name='dummy2', flags=['--dummy2'], targets=[Target.CUSTOM])),
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)),
+        exception_tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)),
     idspec('REPORTER_ADD_CHOICE_005', TestAction(
         name=("Passing Choice with a format not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_FORMAT_ARG"),
         action=lambda: MockReporter().add_choice(
             choice=MockChoice(name='dummy2', flags=['--dummy2'], formats=[Format.CUSTOM])),
         exception=SimpleBenchValueError,
-        exception_tag=ReportersInterfacesErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)),
+        exception_tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)),
 ])
 def test_add_choice(testspec: TestSpec) -> None:
     """Test Reporter.add_choice() method."""
@@ -688,7 +690,7 @@ class MockReporterForChoices(MockReporterInit):
                 MockChoice(),
             ])).add_flags_to_argparse("not_an_argument_parser"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersInterfacesErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)),
+        exception_tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)),
 ])
 def test_reporter_add_flags_to_argparse(testspec: TestSpec) -> None:
     """Test Reporter.add_flags_to_argparse() method."""

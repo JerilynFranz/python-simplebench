@@ -46,7 +46,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
             targets={Target.FILESYSTEM, Target.CALLBACK},
             formats={Format.GRAPH},
-            file_suffix='.svg',
+            file_suffix='svg',
             file_unique=True,
             file_append=False,
             choices=Choices([
@@ -64,7 +64,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     reporter=self,
                     flags=['--scatter-plot.ops'],
                     flag_type=FlagType.TARGET_LIST,
-                    name='scatter-plot',
+                    name='scatter-plot-ops',
                     description='Create scatter plots of operations per second results.',
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
