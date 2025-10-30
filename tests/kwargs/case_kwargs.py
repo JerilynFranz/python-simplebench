@@ -1,5 +1,6 @@
 """simplebench.cases.Case KWArgs package for SimpleBench tests."""
 from __future__ import annotations
+import inspect
 from typing import Any, TYPE_CHECKING
 
 from tests.kwargs.helpers import NoDefaultValue
@@ -24,20 +25,20 @@ class CaseKWArgs(dict):
     """
     def __init__(  # pylint: disable=unused-argument
             self, *,
-            group: str | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            title: str | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            description: str | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            action: ActionRunner | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            iterations: int | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            warmup_iterations: int | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            rounds: int | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            min_time: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            max_time: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            variation_cols: dict[str, str] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            kwargs_variations: dict[str, list[Any]] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument  # noqa: E501
-            runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-            options: list[ReporterOptions] | NoDefaultValue = NoDefaultValue()  # pylint: disable=unused-argument
+            group: str | NoDefaultValue = NoDefaultValue(),
+            title: str | NoDefaultValue = NoDefaultValue(),
+            description: str | NoDefaultValue = NoDefaultValue(),
+            action: ActionRunner | NoDefaultValue = NoDefaultValue(),
+            iterations: int | NoDefaultValue = NoDefaultValue(),
+            warmup_iterations: int | NoDefaultValue = NoDefaultValue(),
+            rounds: int | NoDefaultValue = NoDefaultValue(),
+            min_time: float | NoDefaultValue = NoDefaultValue(),
+            max_time: float | NoDefaultValue = NoDefaultValue(),
+            variation_cols: dict[str, str] | NoDefaultValue = NoDefaultValue(),
+            kwargs_variations: dict[str, list[Any]] | NoDefaultValue = NoDefaultValue(),
+            runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),
+            callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),
+            options: list[ReporterOptions] | NoDefaultValue = NoDefaultValue()
     ) -> None:
         """Constructs a CaseKWArgs instance. This class is used to hold keyword arguments for
         initializing a Case instance in tests.
@@ -108,11 +109,10 @@ class CaseKWArgs(dict):
                 specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
                 from the list of options themselves.
         """
-        kwargs = {}
-        for key in (
-                'group', 'title', 'description', 'action', 'iterations', 'warmup_iterations', 'rounds',
-                'min_time', 'max_time', 'variation_cols', 'kwargs_variations', 'runner',
-                'callback', 'options'):
+        kwargs_sig = inspect.signature(self.__init__)  # type: ignore[misc]
+        params = set(kwargs_sig.parameters.keys()) - {'self'}
+        kwargs: dict[str, Any] = {}
+        for key in params:
             value = locals()[key]
             if not isinstance(value, NoDefaultValue):
                 kwargs[key] = value

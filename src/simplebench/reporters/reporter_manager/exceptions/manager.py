@@ -6,6 +6,7 @@ from simplebench.enums import enum_docstrings
 @enum_docstrings
 class ReporterManagerErrorTag(ErrorTag):
     """ErrorTags for the ReporterManager class."""
+
     REGISTER_INVALID_REPORTER_ARG = "REGISTER_INVALID_REPORTER_ARG"
     """Something other than a Reporter instance was passed to the ReporterManager.register() method"""
     REGISTER_INVALID_CHOICES_RETURNED = "REGISTER_INVALID_CHOICES_RETURNED"

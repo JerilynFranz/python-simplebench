@@ -28,7 +28,8 @@ from simplebench.validators import (validate_iterable_of_type, validate_string,
 # simplebench.reporters
 from simplebench.reporters.choices.metaclasses import IChoices
 from simplebench.reporters.choice.metaclasses import IChoice
-from simplebench.reporters.protocols import ReporterCallback
+from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
+from simplebench.reporters.validators import validate_report_renderer, validate_reporter_callback
 
 # simplebench.reporters.reporter
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
@@ -42,9 +43,6 @@ if TYPE_CHECKING:
     from simplebench.reporters.choices import Choices
 
 T = TypeVar('T')
-
-NO_ATTRIBUTE = object()
-"""Sentinel value for no attribute."""
 
 
 class Reporter(ABC, IReporter):
@@ -985,6 +983,7 @@ class Reporter(ABC, IReporter):
         return self._file_append
 
     def render_by_section(self, *,
+                          renderer: ReportRenderer,
                           args: Namespace,
                           case: Case,
                           choice: Choice,
@@ -999,6 +998,7 @@ class Reporter(ABC, IReporter):
         It calls the subclass's render() method to actually generate the report output.
 
         Args:
+            renderer (ReportRenderer): The method to be used for actually rendering the report.
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
@@ -1019,6 +1019,37 @@ class Reporter(ABC, IReporter):
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        renderer = validate_report_renderer(renderer)
+
+        args = validate_type(
+            value=args, expected=Namespace, name='args',
+            error_tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE)
+
+        # We validate for Case using ICase to prevent circular import issues
+        if not isinstance(case, ICase):
+            raise SimpleBenchTypeError(
+                "Expected a Case instance",
+                tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_CASE_ARG)
+
+        # We validate for Choice using IChoice to prevent circular import issues
+        if not isinstance(choice, IChoice):
+            raise SimpleBenchTypeError(
+                "Expected a Choice instance",
+                tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_CHOICE_ARG_TYPE)
+
+        if path is not None:
+            path = validate_type(
+                value=path, expected=Path, name='path',
+                error_tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_PATH_ARG_TYPE)
+
+        # We validate for Session using ISession to prevent circular import issues
+        if not isinstance(session, ISession) and session is not None:
+            raise SimpleBenchTypeError(
+                "session must be a Session instance if provided",
+                tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_SESSION_ARG_TYPE)
+
+        callback = validate_reporter_callback(callback, allow_none=True)
+
         default_targets = self.get_prioritized_default_targets(choice=choice)
         subdir = self.get_prioritized_subdir(choice=choice)
         options = self.get_prioritized_options(case=case, choice=choice)
@@ -1026,7 +1057,7 @@ class Reporter(ABC, IReporter):
         targets: set[Target] = self.select_targets_from_args(
             args=args, choice=choice, default_targets=default_targets)
         for section in choice.sections:
-            output = self.render(case=case, section=section, options=options)
+            output = renderer(case=case, section=section, options=options)
 
             for output_target in targets:
                 match output_target:
@@ -1063,6 +1094,7 @@ class Reporter(ABC, IReporter):
                             tag=ReporterErrorTag.RENDER_BY_SECTION_UNSUPPORTED_TARGET)
 
     def render_by_case(self, *,
+                       renderer: ReportRenderer,
                        args: Namespace,
                        case: Case,
                        choice: Choice,
@@ -1077,6 +1109,7 @@ class Reporter(ABC, IReporter):
         It calls the subclass's render() method to actually generate the report output.
 
         Args:
+            renderer (ReportRenderer): The method to be used for actually rendering the report.
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
@@ -1097,6 +1130,37 @@ class Reporter(ABC, IReporter):
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        renderer = validate_report_renderer(renderer)
+
+        args = validate_type(
+            value=args, expected=Namespace, name='args',
+            error_tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_ARGS_ARG_TYPE)
+
+        # We validate for Case using ICase to prevent circular import issues
+        if not isinstance(case, ICase):
+            raise SimpleBenchTypeError(
+                "Expected a Case instance",
+                tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_CASE_ARG)
+
+        # We validate for Choice using IChoice to prevent circular import issues
+        if not isinstance(choice, IChoice):
+            raise SimpleBenchTypeError(
+                "Expected a Choice instance",
+                tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_CHOICE_ARG_TYPE)
+
+        if path is not None:
+            path = validate_type(
+                value=path, expected=Path, name='path',
+                error_tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_PATH_ARG_TYPE)
+
+        # We validate for Session using ISession to prevent circular import issues
+        if not isinstance(session, ISession) and session is not None:
+            raise SimpleBenchTypeError(
+                "session must be a Session instance if provided",
+                tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_SESSION_ARG_TYPE)
+
+        callback = validate_reporter_callback(callback, allow_none=True)
+
         default_targets = self.get_prioritized_default_targets(choice=choice)
         subdir = self.get_prioritized_subdir(choice=choice)
         file_suffix = self.get_prioritized_file_suffix(choice=choice)
@@ -1106,7 +1170,7 @@ class Reporter(ABC, IReporter):
 
         targets: set[Target] = self.select_targets_from_args(
             args=args, choice=choice, default_targets=default_targets)
-        output = self.render(case=case, section=Section.NULL, options=options)
+        output = renderer(case=case, section=Section.NULL, options=options)
 
         for output_target in targets:
             match output_target:
@@ -1137,26 +1201,6 @@ class Reporter(ABC, IReporter):
                     raise SimpleBenchValueError(
                         f'Unsupported target for {type(self).__name__}: {output_target}',
                         tag=ReporterErrorTag.RENDER_BY_CASE_UNSUPPORTED_TARGET)
-
-    @abstractmethod
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str | bytes | Text | Table:
-        """Renders the benchmark results for one section and returns the result as a str, bytes,
-        rich.Text, or rich.Table.
-
-        While required in the interface, the value of the section argument shouldbe ignored by reporters that do not
-        render reports by section. It will be set to Section.NULL by the render_by_case() method.
-
-        Args:
-            case (Case): The Case instance representing the benchmarked code.
-            section (Section): The Section of the report to render (ignore value if not applicable to reporter).
-            options (ReporterOptions): The reporter-specific options.
-
-        Returns:
-            str | bytes | Text | Table: The rendered report data as a str, bytes, rich.Text, or rich.Table.
-        """
-        raise SimpleBenchNotImplementedError(
-            "Reporter subclasses must implement the render method",
-            tag=ReporterErrorTag.RENDER_NOT_IMPLEMENTED)
 
     def rich_text_to_plain_text(self, rich_text: Text | Table) -> str:
         """Convert Rich Text or Table to plain text by stripping formatting.

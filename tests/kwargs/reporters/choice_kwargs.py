@@ -1,5 +1,6 @@
 """simplebench.reporters.choice.Choice KWArgs package for SimpleBench tests."""
 from __future__ import annotations
+import inspect
 from typing import Any, Sequence, TYPE_CHECKING
 
 from tests.kwargs.helpers import NoDefaultValue
@@ -74,10 +75,10 @@ class ChoiceKWArgs(dict):
             extra (Any | NoDefaultValue, default=NoDefaultValue()):
                 Any additional metadata associated with the choice. Defaults to None.
         """
-        kwargs = {}
-        for key in ('reporter', 'flags', 'flag_type', 'name', 'description', 'subdir',
-                    'sections', 'targets', 'default_targets', 'output_format', 'options', 'extra',
-                    'file_suffix', 'file_unique', 'file_append'):
+        kwargs_sig = inspect.signature(self.__init__)  # type: ignore[misc]
+        params = set(kwargs_sig.parameters.keys()) - {'self'}
+        kwargs: dict[str, Any] = {}
+        for key in params:
             value = locals()[key]
             if not isinstance(value, NoDefaultValue):
                 kwargs[key] = value

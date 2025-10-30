@@ -142,7 +142,10 @@ class CSVReporter(Reporter):
         are valid without a large amount of boilerplate code. The base class also handles lazy
         loading of the reporter classes, so subclasses can assume any required imports are available.
 
-        It just calls the Reporter.render_by_section() method to generate the report output.
+        It calls the Reporter.render_by_section() method to generate the report output.
+
+        It passes the actual method to be used for rendering in the renderer parameter and that
+        rendering method must conform with the ReportRenderer protocol.
 
         Args:
             args (Namespace): The parsed command-line arguments.
@@ -165,14 +168,10 @@ class CSVReporter(Reporter):
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
-        self.render_by_section(args=args,
-                               case=case,
-                               choice=choice,
-                               path=path,
-                               session=session,
-                               callback=callback)
+        self.render_by_section(
+            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Renders the benchmark results as tagged CSV data and returns it as a string.
 
         Args:

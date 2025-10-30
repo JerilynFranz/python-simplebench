@@ -1,10 +1,14 @@
 """Test simplebench/reporters/interfaces.py module"""
 from __future__ import annotations
 from argparse import ArgumentParser, Namespace
+import inspect
 from pathlib import Path
 from typing import Any, Optional, Sequence
 
 import pytest
+
+from tests.kwargs import ChoicesKWArgs, ReporterKWArgs
+from tests.kwargs.helpers import NoDefaultValue
 
 from tests.testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE
 
@@ -16,7 +20,7 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
-from simplebench.reporters.reporter import Reporter
+from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.results import Results
 from simplebench.session import Session
 
@@ -32,6 +36,133 @@ def mock_callback(
     return None  # pragma: no cover
 
 
+def default_sections_list() -> list[Section]:
+    """Return a default listof Sections for testing purposes."""
+    return [Section.OPS]
+
+
+def default_targets_list() -> list[Target]:
+    """Return a default list of Targets for testing purposes."""
+    return [Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM]
+
+
+def default_output_format() -> Format:
+    """Return a default Format for testing purposes."""
+    return Format.RICH_TEXT
+
+
+def default_description() -> str:
+    """Return a default description string for testing purposes."""
+    return "A default description for testing."
+
+
+def default_name() -> str:
+    """Return a default name string for testing purposes."""
+    return "default_name"
+
+
+def default_flags() -> list[str]:
+    """Return a default list of flags for testing purposes."""
+    return ['--default']
+
+
+def default_flag_type() -> FlagType:
+    """Return a default FlagType for testing purposes."""
+    return FlagType.TARGET_LIST
+
+
+def default_choices_instance(reporter: Reporter) -> Choices:
+    """Return a default Choices instance for testing purposes.
+
+    This has to be called from inside a Reporter init method to pass the reporter instance.
+    """
+    choices = Choices()
+    choices.add(
+        Choice(
+            reporter=reporter,
+            flags=default_flags(),
+            flag_type=default_flag_type(),
+            name=default_name(),
+            description=default_description(),
+            sections=default_sections_list(),
+            targets=default_targets_list(),
+            output_format=default_output_format()))
+    return choices
+
+
+class MockReporterInit(Reporter):
+    """A dummy Reporter subclass for testing init parameters.
+
+    This class provides a testbed for testing initialization parameters.
+    """
+    def __init__(  # type: ignore[reportArgumentType, arg-type]
+            self,
+            *,
+            name: Optional[str] = None,
+            description: Optional[str] = None,
+            sections: Optional[set[Section]] = None,
+            targets: Optional[set[Target]] = None,
+            formats: Optional[set[Format]] = None,
+            choices: Optional[Choices] = None) -> None:
+        super().__init__(
+            name=name,
+            description=description,
+            sections=sections,
+            targets=targets,
+            formats=formats,
+            choices=choices)
+
+    def run_report(self,
+                   *,
+                   args: Namespace,
+                   case: Case,
+                   choice: Choice,
+                   path: Optional[Path] = None,
+                   session: Optional[Session] = None,
+                   callback: Optional[ReporterCallback] = None) -> None:
+        return None  # pragma: no cover (not actually used)
+
+
+class MockReporter(Reporter):
+    """A Reporter subclass for testing purposes."""
+    def __init__(  # pylint: disable=unused-argument
+            self,
+            *,
+            name: str | NoDefaultValue = NoDefaultValue(),
+            description: str | NoDefaultValue = NoDefaultValue(),
+            options_type: type[ReporterOptions] | NoDefaultValue = NoDefaultValue(),
+            sections: set[Section] | NoDefaultValue = NoDefaultValue(),
+            targets: set[Target] | NoDefaultValue = NoDefaultValue(),
+            default_targets: set[Target] | NoDefaultValue = NoDefaultValue(),
+            subdir: str | NoDefaultValue = NoDefaultValue(),
+            file_suffix: str | NoDefaultValue = NoDefaultValue(),
+            file_unique: bool | NoDefaultValue = NoDefaultValue(),
+            file_append: bool | NoDefaultValue = NoDefaultValue(),
+            formats: set[Format] | NoDefaultValue = NoDefaultValue(),
+            choices: ChoicesKWArgs | NoDefaultValue = NoDefaultValue()) -> None:
+        kwargs_sig = inspect.signature(self.__init__)  # type: ignore[misc]
+        params = set(kwargs_sig.parameters.keys()) - {'self'}
+        if isinstance(choices, ChoicesKWArgs):
+            choices['reporter'] = self
+        kwargs: dict[str, Any] = {}
+        for key in params:
+            value = locals()[key]
+            if not isinstance(value, NoDefaultValue):
+                kwargs[key] = value
+        super().__init__(**kwargs)  # pylint: disable=missing-kwoa
+
+    def run_report(self,
+                   *,
+                   args: Namespace,
+                   case: Case,
+                   choice: Choice,
+                   path: Optional[Path] = None,
+                   session: Optional[Session] = None,
+                   callback: Optional[ReporterCallback] = None) -> None:
+        return None
+
+
+
 class MockChoice(Choice):
     """A dummy Choice subclass for testing purposes.
 
@@ -39,21 +170,23 @@ class MockChoice(Choice):
 
     """
     def __init__(self,
+                 reporter: Reporter = MockReporter(),
                  flags: Optional[list[str]] = None,
-                 name: Optional[str] = None,
-                 description: Optional[str] = None,
+                 flag_type: FlagType = FlagType.BOOLEAN,
+                 name: str = 'dummy',
+                 description: str = 'A dummy choice for testing.',
                  sections: Optional[Sequence[Section]] = None,
                  targets: Optional[Sequence[Target]] = None,
-                 formats: Optional[Sequence[Format]] = None) -> None:
+                 output_format: Format = None) -> None:
         super().__init__(
-            reporter=MockReporter(),
+            reporter=reporter or MockReporter(),
             flags=flags or ['--dummy'],
             flag_type=FlagType.BOOLEAN,
             name=name or 'dummy',
-            description=description or 'A dummy choice for testing.',
-            sections=sections or [Section.OPS],
+            description=description,
+            sections=sections or DEFAULT_SECTIONS,
             targets=targets or [Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM],
-            formats=formats or [Format.RICH_TEXT],
+            output_format=output_format or Format.RICH_TEXT,
             options=None,
             extra=None)
 
@@ -87,76 +220,6 @@ class MockSession(Session):
 
         super().__init__(cases=[MockCase()])
 
-
-
-class MockReporterInit(Reporter):
-    """A dummy Reporter subclass for testing init parameters.
-
-    This class provides a testbed for testing initialization parameters.
-    """
-    def __init__(self,
-                 *,
-                 name: Optional[str] = None,
-                 description: Optional[str] = None,
-                 sections: Optional[set[Section]] = None,
-                 targets: Optional[set[Target]] = None,
-                 formats: Optional[set[Format]] = None,
-                 choices: Optional[Choices] = None) -> None:
-        super().__init__(
-            name=name,  # type: ignore[reportArgumentType, arg-type]
-            description=description,  # type: ignore[reportArgumentType, arg-type]
-            sections=sections,  # type: ignore[reportArgumentType, arg-type]
-            targets=targets,  # type: ignore[reportArgumentType, arg-type]
-            formats=formats,  # type: ignore[reportArgumentType, arg-type]
-            choices=choices)  # type: ignore[reportArgumentType, arg-type]
-
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,
-                   callback: Optional[ReporterCallback] = None) -> None:
-        return None  # pragma: no cover (not actually used)
-
-
-class MockReporter(MockReporterInit):
-    """A dummy Reporter subclass for testing purposes."""
-    def __init__(self) -> None:
-        super().__init__(
-            name='dummy',
-            description='A dummy reporter for testing.',
-            sections={Section.OPS},
-            targets={Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM},
-            formats={Format.RICH_TEXT},
-            choices=self._load_choices())
-
-    def _load_choices(self) -> Choices:
-        """Load the Choices instance for the reporter, including sections, output targets, and formats."""
-        choices: Choices = Choices()
-        choices.add(
-            Choice(
-                reporter=self,
-                flags=['--dummy'],
-                flag_type=FlagType.BOOLEAN,
-                name='dummy',
-                description='A dummy choice for testing.',
-                sections=[Section.OPS],
-                targets=[Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM],
-                formats=[Format.RICH_TEXT],
-                extra=None))
-        return choices
-
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,
-                   callback: Optional[ReporterCallback] = None) -> None:
-        return None
 
 
 class BadSuperMockReporter(Reporter):

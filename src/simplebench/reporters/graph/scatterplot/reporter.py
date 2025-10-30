@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using graphs."""
 from __future__ import annotations
+from argparse import Namespace
 from io import BytesIO
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import matplotlib as mpl
@@ -17,6 +19,7 @@ from simplebench.validators import validate_type
 
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
+from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import ReporterOptions
 
 from ..matplotlib import MatPlotLibReporter
@@ -25,6 +28,7 @@ from .options import ScatterPlotOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.session import Session
 
 Options = ScatterPlotOptions
 
@@ -89,6 +93,18 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     output_format=Format.GRAPH),
             ])
         )
+
+    def run_report(self,
+                   *,
+                   args: Namespace,
+                   case: Case,
+                   choice: Choice,
+                   path: Path | None = None,
+                   session: Session | None = None,
+                   callback: ReporterCallback | None = None) -> None:
+        """Output the benchmark results as individual graphs for each case and section."""
+        self.render_by_section(
+            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
         """Render the scatter plot graph and return it as bytes.

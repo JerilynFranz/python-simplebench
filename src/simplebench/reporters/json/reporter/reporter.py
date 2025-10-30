@@ -111,16 +111,17 @@ class JSONReporter(Reporter):
                    ) -> None:
         """Output the benchmark results to a file as tagged JSON if available.
 
-        This method is called by the base class's report() method after validation. The base class
+        This method is called by the base class's `report()` method after validation. The base class
         handles validation of the arguments, so subclasses can assume the arguments
         are valid without a large amount of boilerplate code. The base class also handles lazy
         loading of the reporter classes, so subclasses can assume any required imports are available
 
-        The run_report() method's main responsibility it to select the appropriate output method
-        (render_by_case() in this case) based on the provided arguments.
+        The run_report() method's main responsibilities are to select the appropriate output method
+        (`render_by_case()` in this case) based on the provided arguments and to pass the
+        actual rendering method to be used (the render() method in this case). The rendering method
+        must conform with the `ReportRenderer` protocol.
 
-        The actual rendering of the JSON data is handled by the render() method.
-
+        Args:
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
@@ -132,16 +133,10 @@ class JSONReporter(Reporter):
                 Leave as None if no callback is needed.
 
         Return:
-            None.
+            None
         """
         self.render_by_case(
-            args=args,
-            case=case,
-            choice=choice,
-            path=path,
-            session=session,
-            callback=callback
-        )
+            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Convert the Case data for all sections to a JSON string.

@@ -126,15 +126,16 @@ class RichTableReporter(Reporter):
                    ) -> None:
         """Output the benchmark results to a file as tagged RichTable if available.
 
-        This method is called by the base class's report() method after validation. The base class
+        This method is called by the base class's `report()` method after validation. The base class
         handles validation of the arguments, so subclasses can assume the arguments
         are valid without a large amount of boilerplate code. The base class also handles lazy
         loading of the reporter classes, so subclasses can assume any required imports are available.
 
-        The run_report() method's main responsibility it to select the appropriate output method
+        The run_report() method's main responsibilities are to select the appropriate output method
         (render_by_case() in this case) based on the provided arguments.
 
-        The actual rendering of the Rich Table data is handled by the render() method.
+        It passes the actual rendering method to be used (the `render()` method in this case) to `render_by_case()`.
+        The rendering method must conform with the ReportRenderer protocol.
 
         Args:
             args (Namespace): The parsed command-line arguments.
@@ -158,12 +159,7 @@ class RichTableReporter(Reporter):
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
         self.render_by_case(
-            args=args,
-            case=case,
-            choice=choice,
-            path=path,
-            session=session,
-            callback=callback)
+            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> Table:
         """Prints the benchmark results in a rich table format if available.

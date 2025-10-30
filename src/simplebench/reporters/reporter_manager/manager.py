@@ -10,17 +10,16 @@ from __future__ import annotations
 from argparse import ArgumentParser
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from ..choice import Choice
-from ..choices import Choices
-from ..csv.reporter import CSVReporter
-from ..graph.scatterplot.reporter import ScatterPlotReporter
-from ..reporter import Reporter
-from ..json import JSONReporter
-from ..rich_table.reporter import RichTableReporter
+from simplebench.reporters.choice import Choice
+from simplebench.reporters.choices import Choices
+from simplebench.reporters.csv.reporter import CSVReporter
+from simplebench.reporters.graph.scatterplot.reporter import ScatterPlotReporter
+from simplebench.reporters.reporter import Reporter
+from simplebench.reporters.json import JSONReporter
+from simplebench.reporters.rich_table.reporter import RichTableReporter
 
+from .decorators.register_reporter import get_registered_reporters
 from .exceptions import ReporterManagerErrorTag
-
-# TODO: Implement global registry for reporters for use with @register_reporter decorator
 
 _PREDEFINED_REPORTERS = [CSVReporter, ScatterPlotReporter, RichTableReporter, JSONReporter]
 """Container for all predefined Reporter classes."""
@@ -46,12 +45,30 @@ class ReporterManager():
         my_custom_reporter = CustomReporter()
         reporter_manager.register(my_custom_reporter)
     """
-    def __init__(self) -> None:
+
+    def __init__(self, load_defaults: bool = True) -> None:
+        """Initialize the ReporterManager.
+
+        By default, this loads a set of predefined Reporters and then any reporters
+        registered via the `@register_reporter` decorator.
+
+        If desired, this can be skipped by setting `load_defaults` to False. In
+        which case, the manager starts with an empty registry and Reporters
+        can be added via the `register()` method.
+
+
+        Args:
+            load_defaults (bool, default=True): Whether to load the predefined reporters.
+        """
         self._registered_reporter_choices: Choices = Choices()
         self._registered_reporters: dict[str, Reporter] = {}
 
+        if not load_defaults:
+            return
         for reporter in _PREDEFINED_REPORTERS:
             self.register(reporter())
+        for reporter in get_registered_reporters():
+            self.register(reporter)
 
     @property
     def choices(self) -> Choices:
@@ -169,6 +186,14 @@ class ReporterManager():
                 tag=ReporterManagerErrorTag.UNREGISTER_UNKNOWN_NAME
             )
         self.unregister(self._registered_reporters[name])
+
+    def unregister_all(self) -> None:
+        """Unregister all Reporters.
+
+        This clears the entire registry of Reporters.
+        """
+        self._registered_reporter_choices.clear()
+        self._registered_reporters.clear()
 
     def add_reporters_to_argparse(self, parser: ArgumentParser) -> None:
         """Add all registered reporter choices to an ArgumentParser.

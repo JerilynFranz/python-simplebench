@@ -1,0 +1,198 @@
+"""Validators for reporters stuff."""
+from __future__ import annotations
+import inspect
+from typing import Any, Callable, get_type_hints, TypeVar, overload, cast
+
+from rich.table import Table
+from rich.text import Text
+
+from simplebench.enums import Section, Format
+from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
+from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
+
+_CASE_IMPORTED: bool = False
+"""Indicates whether Case has been imported yet."""
+# Placeholder for deferred import of Case
+Case = None   # pylint: disable=invalid-name
+
+T = TypeVar('T')
+
+
+def deferred_case_import() -> None:
+    """Deferrred import of Case to avoid circular imports during initialization."""
+    global Case, _CASE_IMPORTED  # pylint: disable=global-statement
+    if _CASE_IMPORTED:
+        return
+    from ...case import Case  # pylint: disable=redefined-outer-name,import-outside-toplevel
+    _CASE_IMPORTED = True
+
+
+def resolve_type_hints(callback: Callable) -> dict[str, type]:
+    """Resolve the type hints for a callback function.
+
+    Args:
+        callback (Callable): The callback function to resolve type hints for.
+
+    Returns:
+        dict[str, type]: A dictionary mapping parameter names to their resolved types.
+
+    Raises:
+        SimpleBenchTypeError: If the type hints cannot be resolved.
+    """
+    try:
+        resolved_hints = get_type_hints(
+            callback, globalns=callback.__globals__)  # pyright: ignore[reportAttributeAccessIssue]
+    except (NameError, TypeError) as e:
+        # This can happen if an annotation refers to a type that doesn't exist.
+        raise SimpleBenchTypeError(
+            f"Invalid callback: {callback}. Could not resolve type hints. Original error: {e}",
+            tag=ReportersValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS
+        ) from e
+    return resolved_hints
+
+
+def validate_call_parameter(call: Callable,
+                            expected_type: type | Any,
+                            param_name: str) -> None:
+    """Validate a parameter of the callback function.
+
+    The parameter must exist, be of the expected type, and be a keyword-only parameter.
+
+    Args:
+        callback (Callable): The callback function to validate.
+        expected_type (type | Any): The expected type of the parameter.
+        param_name (str): The name of the parameter to validate.
+
+    Raises:
+        SimpleBenchTypeError: If the parameter is invalid.
+    """
+    resolved_hints = resolve_type_hints(call)
+    callback_signature = inspect.signature(call)
+    if param_name not in callback_signature.parameters:
+        raise SimpleBenchTypeError(
+            f'Invalid callback: {call}. Must accept an "{param_name}" parameter.',
+            tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)
+    param_type = resolved_hints.get(param_name)
+    if param_type is not expected_type:
+        raise SimpleBenchTypeError(
+            f"Invalid callback: {call}. '{param_name}' parameter must be of type "
+            f"'{expected_type}', not '{param_type}'.",
+            tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)
+
+    param = callback_signature.parameters[param_name]
+    if param.kind is not inspect.Parameter.KEYWORD_ONLY:
+        raise SimpleBenchTypeError(
+            f'Invalid callback: {call}. "{param_name}" parameter must be a keyword-only parameter.',
+            tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)
+
+
+@overload
+def validate_reporter_callback(callback: Any) -> ReporterCallback: ...
+
+
+@overload
+def validate_reporter_callback(callback: Any, *, allow_none: bool) -> ReporterCallback | None: ...
+
+
+def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> ReporterCallback | None:
+    """Validate the reporter callback function.
+
+    Verifies the callback function has the correct signature.
+
+    If called without an allow_none parameter, the returned value will be guaranteed to conform
+    to the ReporterCallback protocol and type checkers will automatically type-narrow it.
+
+    If called with an allow_none=True parameter, the validator will accept **either**
+    a ReporterCallback conformant method or None as valid.
+
+    If an explicit allow_none parameter is passed, regardless of whether allow_none=True
+    or allow_none=False, the return type determined by static type checkers will be
+    ReporterCallback | None.
+
+    A callback function must accept the following four keyword-only parameters:
+        - case: Case
+        - section: Section
+        - output_format: Format
+        - output: Any
+
+    Args:
+        callback (ReporterCallback | None): The callback function to validate.
+        allow_none (bool, default=False): Whether to allow None as a valid value for the callback.
+
+    Returns:
+        ReporterCallback | None: The validated callback function or None.
+
+    Raises:
+        SimpleBenchTypeError: If the callback is invalid.
+    """
+    deferred_case_import()
+    if callback is None and allow_none:
+        return None
+    if not callable(callback):
+        raise SimpleBenchTypeError(
+            f'Invalid callback: {callback}. Must be a callable or None.',
+            tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)
+    callback_signature = inspect.signature(callback)
+    validate_call_parameter(callback, Case, 'case')
+    validate_call_parameter(callback, Section, 'section')
+    validate_call_parameter(callback, Format, 'output_format')
+    validate_call_parameter(callback, Any, 'output')
+    params = list(callback_signature.parameters.values())
+    if len(params) != 4:
+        raise SimpleBenchTypeError(
+            f'Invalid callback: {callback}. Must accept exactly four keyword-only parameters with the following '
+            'names and types: case: Case, section: Section, output_format: Format, output: Any',
+            tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
+    signature = inspect.signature(callback)
+    return_annotation = signature.return_annotation
+    if return_annotation is not None:
+        raise SimpleBenchTypeError(
+            f'Invalid return type. Must return None not {return_annotation}.',
+            tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE)
+    return cast(ReporterCallback, callback)
+
+
+def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
+    """Validate the report renderer method.
+
+    Verifies the renderer method has the correct signature.
+    This is functionally equivalent to the ReportRenderer protocol.
+
+    A renderer function must accept the following three keyword-only parameters:
+        - case: Case
+        - section: Section
+        - options: ReporterOptions
+
+    Args:
+        renderer (ReporterRenderer): The renderer function to validate.
+
+    Returns:
+        Any: The validated renderer function.
+
+    Raises:
+        SimpleBenchTypeError: If the renderer is invalid.
+    """
+    deferred_case_import()
+    if not callable(renderer):
+        raise SimpleBenchTypeError(
+            f'Invalid renderer: {renderer}. Must be a callable.',
+            tag=ReportersValidatorsErrorTag.REPORT_RENDERER_NOT_CALLABLE)
+    signature = inspect.signature(renderer)
+    validate_call_parameter(renderer, Case, 'case')
+    validate_call_parameter(renderer, Section, 'section')
+    validate_call_parameter(renderer, ReporterOptions, 'options')
+    params = list(signature.parameters.values())
+    if len(params) != 3:
+        raise SimpleBenchTypeError(
+            f'Invalid renderer: {renderer}. Must accept exactly three keyword-only parameters with the following '
+            'names and types: case: Case, section: Section, options: ReporterOptions',
+            tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS)
+
+    return_annotation = signature.return_annotation
+    if not issubclass(return_annotation, (str, bytes, Text, Table)):
+        raise SimpleBenchTypeError(
+            f'Invalid return type. Must match (str | bytes | Text | Table), not {return_annotation}.',
+            tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE)
+    return renderer

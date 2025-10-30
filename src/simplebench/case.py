@@ -20,7 +20,7 @@ from .validators import (validate_non_blank_string, validate_positive_int,
                          validate_non_negative_int, validate_positive_float)
 from .reporters.protocols import ReporterCallback
 from .reporters.reporter.options import ReporterOptions
-from .reporters.validators import validate_reporter_callback
+from .reporters.validators.validators import validate_reporter_callback
 
 
 if TYPE_CHECKING:

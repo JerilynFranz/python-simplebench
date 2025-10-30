@@ -2,14 +2,21 @@
 from __future__ import annotations
 from typing import Any, Protocol, TYPE_CHECKING
 
-from simplebench.enums import Format, Section
-
+# Disconnects any possible circular imports
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.enums import Format, Section
 
 
 class ReporterCallback(Protocol):
-    """A protocol for callback functions used by Case and Reporters."""
+    """A protocol for callback functions used by Case and Reporters.
+
+    Defines a method signature for a reporter callback function.
+
+    The method's signature must match the following:
+
+    `def method_name(self, *, case: Case, section: Section, output_format: Format, output: Any) -> None:`
+    """
     def __call__(self, *, case: Case, section: Section, output_format: Format, output: Any) -> None:
         """A callback function to handle benchmark results from a Reporter.
 
