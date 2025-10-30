@@ -649,28 +649,28 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_case),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
+        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_045", TestAction(
         name="Callback function missing required 'section' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_section),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
+        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_046", TestAction(
         name="Callback function missing required 'output_format' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_format),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
+        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_047", TestAction(
         name="Callback function missing required 'output' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_missing_output),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
+        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_048", TestAction(
         name="Callback function has wrong type for 'case' parameter",
         action=Case,
@@ -733,7 +733,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           callback=broken_callback_invalid_output_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION)),
+        exception_tag=ReportersValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_057", TestAction(
         name="Callback function has no type hint for case parameter",
         action=Case,
