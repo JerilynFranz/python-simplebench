@@ -16,6 +16,8 @@ class ReportersValidatorsErrorTag(ErrorTag):
     # validate_callback() tags
     INVALID_CALLBACK_UNRESOLVABLE_HINTS = "INVALID_CALLBACK_UNRESOLVABLE_HINTS"
     """The type hints for the callback function could not be resolved"""
+    REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION = "REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION"
+    """The reporter callback is missing a return type annotation"""
     REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE = "REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE"
     """The reporter callback has an incorrect return annotation type"""
 
@@ -23,6 +25,9 @@ class ReportersValidatorsErrorTag(ErrorTag):
     INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER = (
         "INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER")
     """The callback function is missing a required parameter"""
+    INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT = (
+        "INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT")
+    """The callback function is missing a required parameter type hint"""
     INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE = (
         "INVALID_CALLBACK_INCORRECT_SIGNATURE_PARAMETER_TYPE")
     """The callback function has a parameter with an incorrect type annotation"""
@@ -37,3 +42,7 @@ class ReportersValidatorsErrorTag(ErrorTag):
     """The renderer does not have the correct number of parameters"""
     REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE = "REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE"
     """The renderer has an incorrect return annotation type"""
+    REPORT_RENDERER_MISSING_RETURN_ANNOTATION = "REPORT_RENDERER_MISSING_RETURN_ANNOTATION"
+    """The renderer is missing a return type annotation"""
+    REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE = "REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE"
+    """The renderer has an unexpected return annotation type"""

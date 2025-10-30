@@ -2,6 +2,7 @@
 from __future__ import annotations
 import inspect
 from typing import Any, Callable, get_type_hints, TypeVar, overload, cast
+from types import UnionType
 
 from rich.table import Table
 from rich.text import Text
@@ -68,12 +69,16 @@ def validate_call_parameter(call: Callable,
     Raises:
         SimpleBenchTypeError: If the parameter is invalid.
     """
-    resolved_hints = resolve_type_hints(call)
-    callback_signature = inspect.signature(call)
-    if param_name not in callback_signature.parameters:
+    signature = inspect.signature(call)
+    if param_name not in signature.parameters:
         raise SimpleBenchTypeError(
             f'Invalid callback: {call}. Must accept an "{param_name}" parameter.',
             tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)
+    resolved_hints = resolve_type_hints(call)
+    if param_name not in resolved_hints:
+        raise SimpleBenchTypeError(
+            f'Invalid callback: {call}. "{param_name}" parameter does not have a type hint',
+            tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)
     param_type = resolved_hints.get(param_name)
     if param_type is not expected_type:
         raise SimpleBenchTypeError(
@@ -81,10 +86,11 @@ def validate_call_parameter(call: Callable,
             f"'{expected_type}', not '{param_type}'.",
             tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)
 
+    callback_signature = inspect.signature(call)
     param = callback_signature.parameters[param_name]
     if param.kind is not inspect.Parameter.KEYWORD_ONLY:
         raise SimpleBenchTypeError(
-            f'Invalid callback: {call}. "{param_name}" parameter must be a keyword-only parameter.',
+            f'Invalid call: {call}. "{param_name}" parameter must be a keyword-only parameter.',
             tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)
 
 
@@ -145,12 +151,22 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
             f'Invalid callback: {callback}. Must accept exactly four keyword-only parameters with the following '
             'names and types: case: Case, section: Section, output_format: Format, output: Any',
             tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
-    signature = inspect.signature(callback)
-    return_annotation = signature.return_annotation
-    if return_annotation is not None:
+
+    resolved_hints = resolve_type_hints(callback)
+    if 'return' not in resolved_hints:
         raise SimpleBenchTypeError(
-            f'Invalid return type. Must return None not {return_annotation}.',
+            'Invalid call argument. Must have a return type annotation.',
+            tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION)
+    actual_type = resolved_hints.get('return')
+
+    # Normalize NoneType to None for comparison
+    if actual_type is type(None):
+        actual_type = None
+    if actual_type is not None:
+        raise SimpleBenchTypeError(
+            f"Invalid call argument. Return type must be None, not '{actual_type}'.",
             tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE)
+
     return cast(ReporterCallback, callback)
 
 
@@ -190,9 +206,30 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
             'names and types: case: Case, section: Section, options: ReporterOptions',
             tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS)
 
-    return_annotation = signature.return_annotation
-    if not issubclass(return_annotation, (str, bytes, Text, Table)):
+    resolved_hints = resolve_type_hints(renderer)
+    if 'return' not in resolved_hints:
         raise SimpleBenchTypeError(
-            f'Invalid return type. Must match (str | bytes | Text | Table), not {return_annotation}.',
+            'Invalid renderer return type: Must have a return type annotation.',
+            tag=ReportersValidatorsErrorTag.REPORT_RENDERER_MISSING_RETURN_ANNOTATION)
+    actual_return_type: type | Any = resolved_hints['return']
+    allowed_return_types: set[type | Any] = set([str, bytes, Text, Table])
+
+    # just a simple type in the allowed set
+    if actual_return_type in allowed_return_types:
+        return renderer
+
+    # A Union type, e.g., Union[str, bytes] or str | bytes
+    if isinstance(actual_return_type, UnionType):
+        return_types = set(actual_return_type.__args__)
+        if allowed_return_types.issuperset(return_types):
+            return renderer
+        raise SimpleBenchTypeError(
+            f"Invalid renderer return type: Return type must only include types '{allowed_return_types}, '"
+            f"actual return type of '{actual_return_type} includes other types'.",
             tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE)
-    return renderer
+
+    # Something else entirely. Whatever it is, it is not valid.
+    raise SimpleBenchTypeError(
+        f"Unexpected renderer return type: Return type must be one of types "
+        f"'{allowed_return_types}', but found '{actual_return_type}'.",
+        tag=ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE)

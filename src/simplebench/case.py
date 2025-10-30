@@ -292,7 +292,7 @@ class Case(ICase):
         self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
         self._variation_cols = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
         self._runner = Case.validate_runner(runner)
-        self._callback = validate_reporter_callback(callback)
+        self._callback = validate_reporter_callback(callback, allow_none=True)
         self._options = Case.validate_options(options)
         self._results: list[Results] = []  # No validation needed here
         self.validate_time_range(self._min_time, self._max_time)
