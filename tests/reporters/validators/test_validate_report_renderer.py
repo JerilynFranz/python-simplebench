@@ -187,7 +187,7 @@ class MockReporter(Reporter):
             self, *,
             case: Case,
             section: Section,
-            options: ReporterOptions) -> T:  # type: ignore[reportInvalidTypeVarUse]
+            options: ReporterOptions) -> T:  # type: ignore[reportInvalidTypeVarUse, type-var]
         """An invalid render method that declares a TypeVar return type."""
         return "Invalid"  # type: ignore[return-value]  # pragma: no cover
 

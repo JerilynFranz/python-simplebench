@@ -1,10 +1,10 @@
 """simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
 from __future__ import annotations
-import inspect
-from typing import Any, TYPE_CHECKING
+from typing import Iterable, TYPE_CHECKING
 
-from tests.kwargs.helpers import NoDefaultValue
+from tests.kwargs.kwargs import KWArgs, NoDefaultValue
 
+from simplebench.reporters.reporter import Reporter
 
 if TYPE_CHECKING:
     from simplebench.enums import Section, Target, Format
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.reporter import ReporterOptions
 
 
-class ReporterKWArgs(dict):
+class ReporterKWArgs(KWArgs):
     """A class to hold keyword arguments for initializing a Reporter instance.
 
     This class is primarily used to facilitate testing of the Reporter class initialization
@@ -29,14 +29,14 @@ class ReporterKWArgs(dict):
             name: str | NoDefaultValue = NoDefaultValue(),
             description: str | NoDefaultValue = NoDefaultValue(),
             options_type: type[ReporterOptions] | NoDefaultValue = NoDefaultValue(),
-            sections: set[Section] | NoDefaultValue = NoDefaultValue(),
-            targets: set[Target] | NoDefaultValue = NoDefaultValue(),
-            default_targets: set[Target] | NoDefaultValue = NoDefaultValue(),
+            sections: Iterable[Section] | NoDefaultValue = NoDefaultValue(),
+            targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
+            default_targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
             subdir: str | NoDefaultValue = NoDefaultValue(),
             file_suffix: str | NoDefaultValue = NoDefaultValue(),
             file_unique: bool | NoDefaultValue = NoDefaultValue(),
             file_append: bool | NoDefaultValue = NoDefaultValue(),
-            formats: set[Format] | NoDefaultValue = NoDefaultValue(),
+            formats: Iterable[Format] | NoDefaultValue = NoDefaultValue(),
             choices: Choices | NoDefaultValue = NoDefaultValue()) -> None:
         """Constructs a ReporterKWArgs instance. This class is used to hold keyword arguments for
         initializing a Reporter instance in tests.
@@ -59,11 +59,4 @@ class ReporterKWArgs(dict):
             formats (set[Format]): The set of Formats supported by the reporter.
             choices (Choices): A Choices instance defining the sections, output targets,
                 and formats supported by the reporter. Must have at least one Choice."""
-        kwargs_sig = inspect.signature(self.__init__)  # type: ignore[misc]
-        params = set(kwargs_sig.parameters.keys()) - {'self'}
-        kwargs: dict[str, Any] = {}
-        for key in params:
-            value = locals()[key]
-            if not isinstance(value, NoDefaultValue):
-                kwargs[key] = value
-        super().__init__(**kwargs)
+        super().__init__(base_class=Reporter, kwargs=locals())

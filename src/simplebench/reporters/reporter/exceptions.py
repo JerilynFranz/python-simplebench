@@ -6,6 +6,23 @@ from simplebench.enums import enum_docstrings
 @enum_docstrings
 class ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the reporters.interfaces module."""
+    # __init__()
+    SECTIONS_ITEMS_ARG_VALUE = "SECTIONS_ITEMS_ARG_VALUE"
+    """sections is an empty iterable"""
+    INVALID_TARGETS_ARG_TYPE = "INVALID_TARGETS_ARG_TYPE"
+    """Something other than an iterable of Target enums was passed as the targets arg"""
+    TARGETS_ITEMS_ARG_VALUE = "TARGETS_ITEMS_ARG_VALUE"
+    """targets is an empty iterable"""
+    INVALID_FORMATS_ARG_TYPE = "INVALID_FORMATS_ARG_TYPE"
+    """Something other than an iterable of Format enums was passed as the formats arg"""
+    FORMATS_ITEMS_ARG_VALUE = "FORMATS_ITEMS_ARG_VALUE"
+    """formats is an empty iterable"""
+    DEFAULT_TARGETS_ITEMS_ARG_VALUE = "DEFAULT_TARGETS_ITEMS_ARG_VALUE"
+    """Placeholder for empty default targets - not used in practice"""
+    FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED = (
+        "FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED")
+    """Exactly one of file_unique or file_append must be True"""
+
     # render_by_section()
     RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE = "RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE"
     """Something other than a Namespace instance was passed as the args argument"""

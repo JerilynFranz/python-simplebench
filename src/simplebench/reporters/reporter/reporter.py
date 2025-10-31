@@ -1,8 +1,9 @@
 """Reporter base class.
 
 This module defines the Reporter abstract base class, which serves as the foundation
-for all reporter implementations in the SimpleBench benchmarking framework. A Reporter
-is responsible for generating reports based on benchmark results from a Session and Case.
+for all reporter implementations in the SimpleBench benchmarking framework.
+
+A Reporter is responsible for generating reports based on benchmark results from a Session and Case.
 Reporters can produce reports in various formats and output them to different targets.
 """
 from __future__ import annotations
@@ -126,60 +127,68 @@ class Reporter(ABC, IReporter):
                  name: str,
                  description: str,
                  options_type: type[ReporterOptions],
-                 sections: set[Section],
-                 targets: set[Target],
-                 default_targets: set[Target] | None = None,
+                 sections: Iterable[Section],
+                 targets: Iterable[Target],
+                 default_targets: Iterable[Target] | None = None,
                  subdir: str = '',
                  file_suffix: str,
                  file_unique: bool,
                  file_append: bool,
-                 formats: set[Format],
+                 formats: Iterable[Format],
                  choices: Choices) -> None:
         """
         Initialize the Reporter instance.
 
         Note:
-
-            file_append and file_unique are mutually exclusive options. They cannot both be True.
+            Exactly one of `file_unique` or `file_append` must be `True`. If both are `False`,
+            or if both are `True`, an exception will be raised.
 
         Args:
             name (str): The unique identifying name of the reporter. Must be a non-empty string.
             description (str): A brief description of the reporter. Must be a non-empty string.
             options_type (type[ReporterOptions] | None): The specific ReporterOptions subclass
                 associated with this reporter, or None if no specific options are defined.
-            sections (set[Section]): The set of all Sections supported by the reporter.
-            targets (set[Target]): The set of all Targets supported by the reporter.
-            default_targets (set[Target] | None, default=None): The default set of Targets for the reporter.
-            subdir (str, default=''): The subdirectory where report files will be saved.
+            sections (Iterable[Section]): An iterable of all Sections supported by the reporter.
+                - Must include at least one Section.
+            targets (Iterable[Target]): An iterable of all Targets supported by the reporter.
+                - Must include at least one Target.
+            default_targets (Iterable[Target] | None, default=None): An iterable of default Targets for the reporter.
+            subdir (str, default=''): The subdirectory where report files will be saved. 
+                - May be an empty string ('')
+                - Cannot contain non-alphanumeric characters (characters other than A-Z, a-z, 0-9).
+                - Cannot be longer than 64 characters.
+                - If empty, reports will be saved in the base output directory.
             file_suffix (str): An optional file suffix for reporter output files.
                 - May be an empty string ('')
                 - Cannot contain non-alphanumeric characters (characters other than A-Z, a-z, 0-9).
                 - Cannot be longer than 10 characters.
             file_unique (bool): Whether output files should have unique names.
             file_append (bool): Whether output files should be appended to.
-            formats (set[Format]): The set of Formats supported by the reporter.
+            formats (Iterable[Format]): An iterable of all Formats supported by the reporter.
+                - Must include at least one Format.
             choices (Choices): A Choices instance defining the sections, output targets,
-                and formats supported by the reporter. Must have at least one Choice.
+                and formats supported by the reporter.
+                - Must have at least one Choice.
 
         Raises:
-            SimpleBenchNotImplementedError: If any of the required attributes
-                are not provided
-            SimpleBenchValueError: If any of the provided attributes have invalid values.
-            SimpleBenchTypeError: If any of the provided attributes are of incorrect types.
+            SimpleBenchNotImplementedError: If any of the required parameters are not provided.
+                This includes missing name, description, sections, targets, formats, or choices.
+                This is an implementation error indicating that the subclass has not properly
+                initialized the required items. It should never occur in normal usage.
+            SimpleBenchValueError: If any of the provided parameters have invalid values.
+            SimpleBenchTypeError: If any of the provided parameters are of incorrect types.
         """
         self._name: str = validate_string(
             name, 'name',
             ReporterErrorTag.NAME_INVALID_ARG_TYPE,
             ReporterErrorTag.NAME_INVALID_ARG_VALUE)
-        """The unique identifying name of the reporter.
-        (private backing field)"""
+        """The unique identifying name of the reporter (private backing field)"""
 
         self._description: str = validate_string(
             description, 'description',
             ReporterErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
             ReporterErrorTag.DESCRIPTION_INVALID_ARG_VALUE)
-        """A brief description of the reporter.
-        (private backing field)"""
+        """A brief description of the reporter (private backing field)"""
 
         if not issubclass(options_type, ReporterOptions):
             raise SimpleBenchTypeError(
@@ -189,65 +198,44 @@ class Reporter(ABC, IReporter):
         """The specific ReporterOptions subclass associated with this reporter.
         (private backing field)"""
 
-        if not isinstance(sections, set):
-            raise SimpleBenchTypeError(
-                "sections must be a set of Section enums and cannot be empty",
-                tag=ReporterErrorTag.INVALID_SECTIONS_ARG_TYPE)
-        if len(sections) == 0:
-            raise SimpleBenchTypeError(
-                "sections cannot be an empty set",
-                tag=ReporterErrorTag.EMPTY_SECTIONS_ARG_VALUE)
-        if not all(isinstance(section, Section) for section in sections):
-            raise SimpleBenchTypeError(
-                "All items in sections must be of type Section",
-                tag=ReporterErrorTag.INVALID_SECTIONS_ENTRY_TYPE)
-        self._sections: frozenset[Section] = frozenset(sections)
-        """The set of supported Sections for the reporter.
-        (private backing field)"""
+        self._sections: frozenset[Section] = frozenset(
+            validate_iterable_of_type(
+                sections, Section, 'sections',
+                ReporterErrorTag.INVALID_SECTIONS_ARG_TYPE,
+                ReporterErrorTag.SECTIONS_ITEMS_ARG_VALUE,
+                allow_empty=False))
+        """The set of supported Sections for the reporter (private backing field)"""
 
-        if not isinstance(targets, set):
-            raise SimpleBenchTypeError(
-                "Reporter subclasses must provide a non-empty set of Targets",
-                tag=ReporterErrorTag.TARGETS_NOT_IMPLEMENTED)
-        if len(targets) == 0:
-            raise SimpleBenchTypeError(
-                "targets cannot be an empty set",
-                tag=ReporterErrorTag.EMPTY_TARGETS_ARG_VALUE)
-        if not all(isinstance(target, Target) for target in targets):
-            raise SimpleBenchTypeError(
-                "All items in targets must be of type Target",
-                tag=ReporterErrorTag.INVALID_TARGETS_ENTRY_TYPE)
-        self._targets: frozenset[Target] = frozenset(targets)
-        """The set of supported Targets for the reporter.
-        (private backing field)"""
+        self._targets: frozenset[Target] = frozenset(
+            validate_iterable_of_type(
+                targets, Target, 'targets',
+                ReporterErrorTag.INVALID_TARGETS_ARG_TYPE,
+                ReporterErrorTag.TARGETS_ITEMS_ARG_VALUE,
+                allow_empty=False))
+        """The set of supported Targets for the reporter (private backing field)"""
 
-        if default_targets is None:
-            default_targets = set()
-        if not isinstance(default_targets, set):
-            raise SimpleBenchTypeError(
-                "default_targets must be a set of Target enums",
-                tag=ReporterErrorTag.INVALID_DEFAULT_TARGETS_ARG_TYPE)
-        if not all(isinstance(target, Target) for target in default_targets):
-            raise SimpleBenchTypeError(
-                "All items in default_targets must be of type Target",
-                tag=ReporterErrorTag.INVALID_DEFAULT_TARGETS_ENTRY_TYPE)
-        self._default_targets: frozenset[Target] = frozenset(default_targets)
-        """The default set of Targets for the reporter.
-        (private backing field)"""
+        self._default_targets: frozenset[Target] = frozenset(
+            validate_iterable_of_type(
+                default_targets if default_targets is not None else set(),
+                Target, 'default_targets',
+                ReporterErrorTag.INVALID_DEFAULT_TARGETS_ARG_TYPE,
+                ReporterErrorTag.DEFAULT_TARGETS_ITEMS_ARG_VALUE,  # errortag not used
+                allow_empty=True))
+        """The default set of Targets for the reporter (private backing field)"""
 
-        self._subdir: str = validate_string(
+        subdir = validate_string(
             subdir, 'subdir',
             ReporterErrorTag.INVALID_SUBDIR_ARG_TYPE,
             ReporterErrorTag.INVALID_SUBDIR_ARG_VALUE,
             strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
-        """The subdirectory where report files will be saved.
-        (private backing field)"""
-        if len(self._subdir) > 64:
+        if len(subdir) > 64:
             raise SimpleBenchValueError(
                 "subdir cannot be longer than 64 characters (passed subdir was '{subdir}')",
                 tag=ReporterErrorTag.SUBDIR_TOO_LONG)
+        self._subdir: str = subdir
+        """The subdirectory where report files will be saved (private backing field)"""
 
-        validate_string(
+        file_suffix = validate_string(
             file_suffix, 'file_suffix',
             ReporterErrorTag.FILE_SUFFIX_INVALID_ARG_TYPE,
             ReporterErrorTag.FILE_SUFFIX_INVALID_ARG_VALUE,
@@ -257,34 +245,32 @@ class Reporter(ABC, IReporter):
                 f"file_suffix cannot be longer than 10 characters (passed suffix was '{file_suffix}')",
                 tag=ReporterErrorTag.FILE_SUFFIX_ARG_TOO_LONG)
         self._file_suffix: str = file_suffix
-        """The file suffix for reporter output files.
-        (private backing field)"""
+        """The file suffix for reporter output files (private backing field)"""
 
         self._file_unique: bool = validate_type(
             value=file_unique, expected=bool, name='file_unique',
             error_tag=ReporterErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE)
-        """Whether output files should have unique names.
-        (private backing field)"""
+        """Whether output files should have unique names (private backing field)"""
 
         self._file_append: bool = validate_type(
             value=file_append, expected=bool, name='file_append',
             error_tag=ReporterErrorTag.FILE_APPEND_INVALID_ARG_TYPE)
-        """Whether output files should be appended to.
-        (private backing field)"""
+        """Whether output files should be appended to private backing field)"""
 
-        if not isinstance(formats, set) or len(formats) == 0:
-            raise SimpleBenchNotImplementedError(
-                "Reporter subclasses must provide a non-empty set of Formats",
-                tag=ReporterErrorTag.FORMATS_NOT_IMPLEMENTED)
-        if not all(isinstance(output_format, Format) for output_format in formats):
-            raise SimpleBenchTypeError(
-                "All items in formats must be of type Format",
-                tag=ReporterErrorTag.INVALID_FORMATS_ENTRY_TYPE)
-        self._formats: frozenset[Format] = frozenset(formats)
-        """The set of supported Formats for the reporter.
-        (private backing field)"""
+        if self._file_unique == self._file_append:
+            raise SimpleBenchValueError(
+                "Exactly one of file_unique or file_append must be True",
+                tag=ReporterErrorTag.FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED)
 
-        if not isinstance(choices, IChoices):
+        self._formats: frozenset[Format] = frozenset(
+            validate_iterable_of_type(
+                formats, Format, 'formats',
+                ReporterErrorTag.INVALID_FORMATS_ARG_TYPE,
+                ReporterErrorTag.FORMATS_ITEMS_ARG_VALUE,
+                allow_empty=False))
+        """The set of supported Formats for the reporter (private backing field)"""
+
+        if not isinstance(choices, IChoices):  # IChoices is the metaclass for Choices
             raise SimpleBenchTypeError(
                 f"choices must be a Choices instance: cannot be a {type(choices)}",
                 tag=ReporterErrorTag.INVALID_CHOICES_ARG_TYPE)
@@ -294,8 +280,7 @@ class Reporter(ABC, IReporter):
                 tag=ReporterErrorTag.INVALID_CHOICES_ARG_VALUE)
         self._choices: Choices = choices
         """The Choices instance defining the sections, output targets,
-        and formats supported by the reporter.
-        (private backing field)"""
+        and formats supported by the reporter (private backing field)"""
 
     @staticmethod
     def find_options_by_type(options: Iterable[ReporterOptions] | None, cls: type[T]) -> T | None:

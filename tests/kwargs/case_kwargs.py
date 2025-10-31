@@ -1,9 +1,10 @@
 """simplebench.cases.Case KWArgs package for SimpleBench tests."""
 from __future__ import annotations
-import inspect
 from typing import Any, TYPE_CHECKING
 
-from tests.kwargs.helpers import NoDefaultValue
+from tests.kwargs import NoDefaultValue
+
+from simplebench.case import Case
 
 if TYPE_CHECKING:
     from simplebench.runners import SimpleRunner
@@ -109,11 +110,4 @@ class CaseKWArgs(dict):
                 specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
                 from the list of options themselves.
         """
-        kwargs_sig = inspect.signature(self.__init__)  # type: ignore[misc]
-        params = set(kwargs_sig.parameters.keys()) - {'self'}
-        kwargs: dict[str, Any] = {}
-        for key in params:
-            value = locals()[key]
-            if not isinstance(value, NoDefaultValue):
-                kwargs[key] = value
-        super().__init__(**kwargs)
+        super().__init__(base_class=Case, kwargs=locals())

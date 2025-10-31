@@ -66,7 +66,7 @@ def mock_callback_wrong_type_section(  # pylint: disable=unused-argument
 
 def mock_callback_missing_section_type_hint(  # pylint: disable=unused-argument
         *, case: Case, section, output_format: Format, output: Any) -> None:
-    """A mock callback function missing the type hint for 'section' parameter."""   
+    """A mock callback function missing the type hint for 'section' parameter."""
 
 
 def mock_callback_missing_case(  # pylint: disable=unused-argument
@@ -200,12 +200,12 @@ def test_validate_reporter_callback(testspec: TestSpec) -> None:
     testspec.run()
 
 
-def checking_type_narrowing() -> None:
+def checking_type_narrowing() -> None:  # pragma: no cover
     """Function to check type narrowing behavior of validate_reporter_callback.
 
     These are not actual tests but are here to ensure that type checkers
     correctly narrow the types based on the presence or absence of the
-    allow_none parameter.
+    allow_none parameter. It is not even run as part of the test suite.
 
     There is literally no runtime effect of this function and the only effect
     is to allow visual inspection of the type narrowing behavior in IDEs

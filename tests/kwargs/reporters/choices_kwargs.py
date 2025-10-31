@@ -2,11 +2,12 @@
 from __future__ import annotations
 from typing import Sequence, TYPE_CHECKING
 
-from tests.kwargs.helpers import NoDefaultValue
+from tests.kwargs import NoDefaultValue
+
+from simplebench.reporters.choices import Choices
 
 if TYPE_CHECKING:
     from simplebench.reporters.choice import Choice
-    from simplebench.reporters.choices import Choices
 
 
 class ChoicesKWArgs(dict):
@@ -30,9 +31,4 @@ class ChoicesKWArgs(dict):
             choices (Sequence[Choice] | NoDefaultValue, default=NoDefaultValue()):
                 A sequence of Choice instances.
         """
-        kwargs = {}
-        for key in ('choices',):
-            value = locals()[key]
-            if not isinstance(value, NoDefaultValue):
-                kwargs[key] = value
-        super().__init__(**kwargs)
+        super().__init__(base_class=Choices, kwargs=locals())

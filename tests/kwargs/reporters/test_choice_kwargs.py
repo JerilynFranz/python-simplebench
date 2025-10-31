@@ -1,12 +1,18 @@
 """simplebench.reporters.choice.Choice KWArgs package for SimpleBench tests."""
 from __future__ import annotations
 
-from tests.kwargs.helpers import kwargclass_matches_modeledclass
+from tests.kwargs import kwargclass_matches_modeledclass
 
-from simplebench.reporters.choice import Choice
-from .choice_kwargs import ChoiceKWArgs
+from simplebench.reporters.choice import Choice as _MODELED_CLASS
+from .choice_kwargs import ChoiceKWArgs as _KWARGS_CLASS
 
 
-def test_choicekwargs_matches_choice_signature():
-    """Test that ChoiceKWArgs __init__ signature matches Choice __init__ signature."""
-    kwargclass_matches_modeledclass(kwargs_class=ChoiceKWArgs, modeled_class=Choice)
+def test_kwargs_matches_signature():
+    """Test that KWargs sublass __init__ signature matches the modeled class __init__ signature."""
+    kwargclass_matches_modeledclass(kwargs_class=_KWARGS_CLASS, modeled_class=_MODELED_CLASS)
+
+
+def test_can_instantiate():
+    """Test that the KWArgs subclass can be instantiated."""
+    kwargs_instance = _KWARGS_CLASS()
+    assert isinstance(kwargs_instance, _KWARGS_CLASS)

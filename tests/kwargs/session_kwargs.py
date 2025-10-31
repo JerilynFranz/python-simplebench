@@ -1,10 +1,10 @@
 """simplebench.session KWArgs package for SimpleBench tests."""
 from __future__ import annotations
-import inspect
-from typing import Any, Sequence, TYPE_CHECKING
+from typing import Sequence, TYPE_CHECKING
 
-from tests.kwargs.helpers import NoDefaultValue
+from tests.kwargs import NoDefaultValue
 
+from simplebench.session import Session
 
 if TYPE_CHECKING:
     from argparse import ArgumentParser
@@ -45,11 +45,4 @@ class SessionKWArgs(dict):
             output_path (Path): The output path for the session results.
             console (Console): The console instance to use for the session.
         """
-        kwargs_sig = inspect.signature(self.__init__)  # type: ignore[misc]
-        params = set(kwargs_sig.parameters.keys()) - {'self'}
-        kwargs: dict[str, Any] = {}
-        for key in params:
-            value = locals()[key]
-            if not isinstance(value, NoDefaultValue):
-                kwargs[key] = value
-        super().__init__(**kwargs)
+        super().__init__(base_class=Session, kwargs=locals())

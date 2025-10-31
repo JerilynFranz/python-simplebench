@@ -1,14 +1,12 @@
 """Test simplebench/reporters/interfaces.py module"""
 from __future__ import annotations
 from argparse import ArgumentParser, Namespace
-import inspect
 from pathlib import Path
 from typing import Any, Optional, Sequence
 
 import pytest
 
 from tests.kwargs import ChoicesKWArgs, ReporterKWArgs
-from tests.kwargs.helpers import NoDefaultValue
 
 from tests.testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE
 
@@ -46,6 +44,11 @@ def default_targets_list() -> list[Target]:
     return [Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM]
 
 
+def default_formats_list() -> list[Format]:
+    """Return a default list of Formats for testing purposes."""
+    return [Format.RICH_TEXT]
+
+
 def default_output_format() -> Format:
     """Return a default Format for testing purposes."""
     return Format.RICH_TEXT
@@ -71,6 +74,21 @@ def default_flag_type() -> FlagType:
     return FlagType.TARGET_LIST
 
 
+def default_file_suffix() -> str:
+    """Return a default file suffix string for testing purposes."""
+    return "default"
+
+
+def default_file_unique() -> bool:
+    """Return a default file unique boolean for testing purposes."""
+    return True
+
+
+def default_file_append() -> bool:
+    """Return a default file append boolean for testing purposes."""
+    return False
+
+
 def default_choices_instance(reporter: Reporter) -> Choices:
     """Return a default Choices instance for testing purposes.
 
@@ -90,66 +108,90 @@ def default_choices_instance(reporter: Reporter) -> Choices:
     return choices
 
 
-class MockReporterInit(Reporter):
-    """A dummy Reporter subclass for testing init parameters.
+class DummyReporterOptions(ReporterOptions):
+    """A dummy ReporterOptions subclass for testing purposes."""
 
-    This class provides a testbed for testing initialization parameters.
+
+class DummyReporter(Reporter):
+    """A dummy reporter subclass for testing purposes.
+
+    Provides a shim implementation of run_report() and render() methods to allow
+    instantiation and testing of the Reporter base class functionality with
+    both good and bad parameters.
+
+    Args:
+        reporter_kwargs (ReporterKWArgs): Keyword arguments for Reporter initialization.
     """
-    def __init__(  # type: ignore[reportArgumentType, arg-type]
-            self,
-            *,
-            name: Optional[str] = None,
-            description: Optional[str] = None,
-            sections: Optional[set[Section]] = None,
-            targets: Optional[set[Target]] = None,
-            formats: Optional[set[Format]] = None,
-            choices: Optional[Choices] = None) -> None:
-        super().__init__(
-            name=name,
-            description=description,
-            sections=sections,
-            targets=targets,
-            formats=formats,
-            choices=choices)
+    def __init__(self, reporter_kwargs: ReporterKWArgs) -> None:
+        super().__init__(**reporter_kwargs)
 
-    def run_report(self,
-                   *,
+    def run_report(self, *,
                    args: Namespace,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
-        return None  # pragma: no cover (not actually used)
+        """Run the report with the given arguments, case, and choice."""
+        self.render_by_case(
+            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
+
+    def render(self, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
+        """Render the report for the given case, section, and options."""
+        return "Rendered Report"
+
+
+def reporter_kwargs() -> ReporterKWArgs:
+    """A preconfigured ReporterKWArgs instance for testing purposes.
+
+    Returns:
+        ReporterKWArgs: A preconfigured instance with default values for testing.
+    """
+    return ReporterKWArgs(
+        name=default_name(),
+        description=default_description(),
+        sections=default_sections_list(),
+        targets=default_targets_list(),
+        formats=default_formats_list(),
+        choices=default_choices_instance(reporter=MockReporter()),
+        file_suffix=default_file_suffix(),
+        file_unique=default_file_unique(),
+        file_append=default_file_append()
+    )
+
+
+class MockReporterOptions(ReporterOptions):
+    """A mock ReporterOptions subclass for testing purposes."""
 
 
 class MockReporter(Reporter):
-    """A Reporter subclass for testing purposes."""
-    def __init__(  # pylint: disable=unused-argument
-            self,
-            *,
-            name: str | NoDefaultValue = NoDefaultValue(),
-            description: str | NoDefaultValue = NoDefaultValue(),
-            options_type: type[ReporterOptions] | NoDefaultValue = NoDefaultValue(),
-            sections: set[Section] | NoDefaultValue = NoDefaultValue(),
-            targets: set[Target] | NoDefaultValue = NoDefaultValue(),
-            default_targets: set[Target] | NoDefaultValue = NoDefaultValue(),
-            subdir: str | NoDefaultValue = NoDefaultValue(),
-            file_suffix: str | NoDefaultValue = NoDefaultValue(),
-            file_unique: bool | NoDefaultValue = NoDefaultValue(),
-            file_append: bool | NoDefaultValue = NoDefaultValue(),
-            formats: set[Format] | NoDefaultValue = NoDefaultValue(),
-            choices: ChoicesKWArgs | NoDefaultValue = NoDefaultValue()) -> None:
-        kwargs_sig = inspect.signature(self.__init__)  # type: ignore[misc]
-        params = set(kwargs_sig.parameters.keys()) - {'self'}
-        if isinstance(choices, ChoicesKWArgs):
-            choices['reporter'] = self
-        kwargs: dict[str, Any] = {}
-        for key in params:
-            value = locals()[key]
-            if not isinstance(value, NoDefaultValue):
-                kwargs[key] = value
-        super().__init__(**kwargs)  # pylint: disable=missing-kwoa
+    """A mock reporter subclass with default options already set for testing purposes.
+
+        - name=default_name(),
+        - description=default_description(),
+        - options_type=MockReporterOptions,
+        - sections=default_sections_list(),
+        - targets=default_targets_list(),
+        - formats=default_formats_list(),
+        - choices=default_choices_instance(reporter=self),
+        - file_suffix=default_file_suffix(),
+        - file_unique=default_file_unique(),
+        -file_append=default_file_append()
+
+    """
+    def __init__(self) -> None:
+        super().__init__(
+            name=default_name(),
+            description=default_description(),
+            options_type=MockReporterOptions,
+            sections=default_sections_list(),
+            targets=default_targets_list(),
+            formats=default_formats_list(),
+            choices=default_choices_instance(reporter=self),
+            file_suffix=default_file_suffix(),
+            file_unique=default_file_unique(),
+            file_append=default_file_append()
+        )
 
     def run_report(self,
                    *,
@@ -159,8 +201,13 @@ class MockReporter(Reporter):
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
-        return None
+        """Run the report with the given arguments, case, and choice."""
+        self.render_by_case(
+            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
+    def render(self, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
+        """Render the report for the given case, section, and options."""
+        return "Rendered Report"
 
 
 class MockChoice(Choice):
@@ -169,26 +216,25 @@ class MockChoice(Choice):
     Creates a Choice with default parameters for testing that can be overridden as needed.
 
     """
-    def __init__(self,
-                 reporter: Reporter = MockReporter(),
-                 flags: Optional[list[str]] = None,
-                 flag_type: FlagType = FlagType.BOOLEAN,
-                 name: str = 'dummy',
-                 description: str = 'A dummy choice for testing.',
-                 sections: Optional[Sequence[Section]] = None,
-                 targets: Optional[Sequence[Target]] = None,
-                 output_format: Format = None) -> None:
+    def __init__(
+            self, *,
+            reporter: Reporter | None = None,
+            flags: list[str] | None = None,
+            name: str = 'dummy',
+            description: str = 'A dummy choice for testing.',
+            flag_type: FlagType = FlagType.BOOLEAN,
+            sections: Sequence[Section] | None = None,
+            targets: Sequence[Target] | None = None,
+            output_format: Format | None = None) -> None:
         super().__init__(
             reporter=reporter or MockReporter(),
-            flags=flags or ['--dummy'],
-            flag_type=FlagType.BOOLEAN,
-            name=name or 'dummy',
+            flags=flags if flags is not None else ['--dummy'],
+            flag_type=flag_type,
+            name=name,
             description=description,
-            sections=sections or DEFAULT_SECTIONS,
-            targets=targets or [Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM],
-            output_format=output_format or Format.RICH_TEXT,
-            options=None,
-            extra=None)
+            sections=sections if sections is not None else default_sections_list(),
+            targets=targets if targets is not None else default_targets_list(),
+            output_format=output_format if output_format is not None else default_output_format())
 
 
 class MockChoices(Choices):
@@ -221,7 +267,6 @@ class MockSession(Session):
         super().__init__(cases=[MockCase()])
 
 
-
 class BadSuperMockReporter(Reporter):
     """A dummy Reporter subclass for testing purposes.
 
@@ -230,24 +275,16 @@ class BadSuperMockReporter(Reporter):
     """
     def __init__(self) -> None:
         super().__init__(
-            name='dummy',
-            description='A dummy reporter for testing.',
-            sections={Section.OPS},
-            targets={Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM},
-            formats={Format.RICH_TEXT},
-            choices=Choices([
-                Choice(
-                    reporter=self,
-                    flags=['--dummy'],
-                    flag_type=FlagType.BOOLEAN,
-                    name='dummy',
-                    description='A dummy choice for testing.',
-                    sections=[Section.OPS],
-                    targets=[Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM],
-                    formats=[Format.RICH_TEXT],
-                    extra=None)
-            ])
-        )
+            name=default_name(),
+            description=default_description(),
+            options_type=ReporterOptions,
+            sections=default_sections_list(),
+            targets=default_targets_list(),
+            formats=default_formats_list(),
+            file_suffix=default_file_suffix(),
+            file_unique=default_file_unique(),
+            file_append=default_file_append(),
+            choices=default_choices_instance(reporter=self))
 
     def run_report(self,  # pylint: disable=useless-parent-delegation
                    *,
@@ -297,78 +334,57 @@ class BadSuperMockReporter(Reporter):
         validate_result=lambda result: result is None)),
     idspec('REPORTER_006', TestAction(
         name="Init of Reporter with missing name raises SimpleBenchNotImplementedError/REPORTER_NAME_NOT_IMPLEMENTED",
-        action=MockReporterInit,
+        action=MockReporter,
         exception=SimpleBenchNotImplementedError,
         exception_tag=ReporterErrorTag.NAME_NOT_IMPLEMENTED,
-        kwargs={
-            'description': 'A dummy reporter for testing.',
-            'sections': {Section.OPS},
-            'targets': {Target.CONSOLE},
-            'formats': {Format.RICH_TEXT},
-            'choices': MockChoices()})),
+        kwargs=reporter_kwargs() - ['name'])),
     idspec('REPORTER_007', TestAction(
         name=("Init of Reporter with missing description raises "
               "SimpleBenchNotImplementedError/REPORTER_DESCRIPTION_NOT_IMPLEMENTED"),
-        action=MockReporterInit,
+        action=MockReporter,
         exception=SimpleBenchNotImplementedError,
         exception_tag=ReporterErrorTag.DESCRIPTION_NOT_IMPLEMENTED,
-        kwargs={
-            'name': 'dummy',
-            'sections': {Section.OPS},
-            'targets': {Target.CONSOLE},
-            'formats': {Format.RICH_TEXT},
-            'choices': MockChoices()})),
+        kwargs=reporter_kwargs() - ['description'])),
     idspec('REPORTER_008', TestAction(
         name=("Init of Reporter with empty sections raises "
               "SimpleBenchNotImplementedError/REPORTER_SECTIONS_NOT_IMPLEMENTED"),
-        action=MockReporterInit,
+        action=MockReporter,
         exception=SimpleBenchNotImplementedError,
         exception_tag=ReporterErrorTag.SECTIONS_NOT_IMPLEMENTED,
-        kwargs={
-            'name': 'dummy',
-            'description': 'A dummy reporter for testing.',
-            'sections': set(),
-            'targets': {Target.CONSOLE},
-            'formats': {Format.RICH_TEXT},
-            'choices': MockChoices()})),
+        kwargs=ReporterKWArgs(
+            name='dummy',
+            description='A dummy reporter for testing.',
+            sections=set(),
+            targets={Target.CONSOLE},
+            formats={Format.RICH_TEXT},
+            choices=MockChoices()))),
     idspec('REPORTER_009', TestAction(
         name=("Init of Reporter with empty targets raises "
               "SimpleBenchNotImplementedError/REPORTER_TARGETS_NOT_IMPLEMENTED"),
-        action=MockReporterInit,
+        action=MockReporter,
         exception=SimpleBenchNotImplementedError,
         exception_tag=ReporterErrorTag.TARGETS_NOT_IMPLEMENTED,
-        kwargs={
-            'name': 'dummy',
-            'description': 'A dummy reporter for testing.',
-            'sections': {Section.OPS},
-            'targets': set(),
-            'formats': {Format.RICH_TEXT},
-            'choices': MockChoices()})),
+        kwargs=reporter_kwargs().replace(targets=set()))),
     idspec('REPORTER_010', TestAction(
         name=("Init of Reporter with empty formats raises "
               "SimpleBenchNotImplementedError/REPORTER_FORMATS_NOT_IMPLEMENTED"),
-        action=MockReporterInit,
+        action=MockReporter,
         exception=SimpleBenchNotImplementedError,
         exception_tag=ReporterErrorTag.FORMATS_NOT_IMPLEMENTED,
-        kwargs={
-            'name': 'dummy',
-            'description': 'A dummy reporter for testing.',
-            'sections': {Section.OPS},
-            'targets': {Target.CONSOLE},
-            'formats': set(),
-            'choices': MockChoices()})),
+        kwargs=ReporterKWArgs(
+            name='dummy',
+            description='A dummy reporter for testing.',
+            sections={Section.OPS},
+            targets={Target.CONSOLE},
+            formats=set(),
+            choices=MockChoices()))),
     idspec('REPORTER_011', TestAction(
         name=("Init of Reporter with missing choices raises "
               "SimpleBenchNotImplementedError/REPORTER_CHOICES_NOT_IMPLEMENTED"),
-        action=MockReporterInit,
+        action=MockReporter,
         exception=SimpleBenchNotImplementedError,
         exception_tag=ReporterErrorTag.CHOICES_NOT_IMPLEMENTED,
-        kwargs={
-            'name': 'dummy',
-            'description': 'A dummy reporter for testing.',
-            'sections': {Section.OPS},
-            'targets': {Target.CONSOLE},
-            'formats': {Format.RICH_TEXT}})),
+        kwargs=reporter_kwargs() - ['choices'])),
     idspec('REPORTER_012', TestAction(
         name=("Init of Reporter with choices not a Choices instance raises "
               "SimpleBenchTypeError/REPORTER_INVALID_CHOICES_ARG_TYPE"),
