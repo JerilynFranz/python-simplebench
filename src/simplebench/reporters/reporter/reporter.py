@@ -153,7 +153,7 @@ class Reporter(ABC, IReporter):
             targets (Iterable[Target]): An iterable of all Targets supported by the reporter.
                 - Must include at least one Target.
             default_targets (Iterable[Target] | None, default=None): An iterable of default Targets for the reporter.
-            subdir (str, default=''): The subdirectory where report files will be saved. 
+            subdir (str, default=''): The subdirectory where report files will be saved.
                 - May be an empty string ('')
                 - Cannot contain non-alphanumeric characters (characters other than A-Z, a-z, 0-9).
                 - Cannot be longer than 64 characters.
@@ -171,23 +171,21 @@ class Reporter(ABC, IReporter):
                 - Must have at least one Choice.
 
         Raises:
-            SimpleBenchNotImplementedError: If any of the required parameters are not provided.
-                This includes missing name, description, sections, targets, formats, or choices.
-                This is an implementation error indicating that the subclass has not properly
-                initialized the required items. It should never occur in normal usage.
             SimpleBenchValueError: If any of the provided parameters have invalid values.
             SimpleBenchTypeError: If any of the provided parameters are of incorrect types.
         """
         self._name: str = validate_string(
             name, 'name',
             ReporterErrorTag.NAME_INVALID_ARG_TYPE,
-            ReporterErrorTag.NAME_INVALID_ARG_VALUE)
+            ReporterErrorTag.NAME_INVALID_ARG_VALUE,
+            allow_empty=False, allow_blank=False)
         """The unique identifying name of the reporter (private backing field)"""
 
         self._description: str = validate_string(
             description, 'description',
             ReporterErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
-            ReporterErrorTag.DESCRIPTION_INVALID_ARG_VALUE)
+            ReporterErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
+            allow_empty=False, allow_blank=False)
         """A brief description of the reporter (private backing field)"""
 
         if not issubclass(options_type, ReporterOptions):
@@ -201,7 +199,7 @@ class Reporter(ABC, IReporter):
         self._sections: frozenset[Section] = frozenset(
             validate_iterable_of_type(
                 sections, Section, 'sections',
-                ReporterErrorTag.INVALID_SECTIONS_ARG_TYPE,
+                ReporterErrorTag.SECTIONS_INVALID_ARG_TYPE,
                 ReporterErrorTag.SECTIONS_ITEMS_ARG_VALUE,
                 allow_empty=False))
         """The set of supported Sections for the reporter (private backing field)"""
@@ -209,7 +207,7 @@ class Reporter(ABC, IReporter):
         self._targets: frozenset[Target] = frozenset(
             validate_iterable_of_type(
                 targets, Target, 'targets',
-                ReporterErrorTag.INVALID_TARGETS_ARG_TYPE,
+                ReporterErrorTag.TARGETS_INVALID_ARG_TYPE,
                 ReporterErrorTag.TARGETS_ITEMS_ARG_VALUE,
                 allow_empty=False))
         """The set of supported Targets for the reporter (private backing field)"""
@@ -218,15 +216,15 @@ class Reporter(ABC, IReporter):
             validate_iterable_of_type(
                 default_targets if default_targets is not None else set(),
                 Target, 'default_targets',
-                ReporterErrorTag.INVALID_DEFAULT_TARGETS_ARG_TYPE,
+                ReporterErrorTag.DEFAULT_TARGETS_INVALID_ARG_TYPE,
                 ReporterErrorTag.DEFAULT_TARGETS_ITEMS_ARG_VALUE,  # errortag not used
                 allow_empty=True))
         """The default set of Targets for the reporter (private backing field)"""
 
         subdir = validate_string(
             subdir, 'subdir',
-            ReporterErrorTag.INVALID_SUBDIR_ARG_TYPE,
-            ReporterErrorTag.INVALID_SUBDIR_ARG_VALUE,
+            ReporterErrorTag.SUBDIR_INVALID_ARG_TYPE,
+            ReporterErrorTag.SUBDIR_INVALID_ARG_VALUE,
             strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
         if len(subdir) > 64:
             raise SimpleBenchValueError(
@@ -265,7 +263,7 @@ class Reporter(ABC, IReporter):
         self._formats: frozenset[Format] = frozenset(
             validate_iterable_of_type(
                 formats, Format, 'formats',
-                ReporterErrorTag.INVALID_FORMATS_ARG_TYPE,
+                ReporterErrorTag.FORMATS_INVALID_ARG_TYPE,
                 ReporterErrorTag.FORMATS_ITEMS_ARG_VALUE,
                 allow_empty=False))
         """The set of supported Formats for the reporter (private backing field)"""
@@ -273,11 +271,11 @@ class Reporter(ABC, IReporter):
         if not isinstance(choices, IChoices):  # IChoices is the metaclass for Choices
             raise SimpleBenchTypeError(
                 f"choices must be a Choices instance: cannot be a {type(choices)}",
-                tag=ReporterErrorTag.INVALID_CHOICES_ARG_TYPE)
+                tag=ReporterErrorTag.CHOICES_INVALID_ARG_TYPE)
         if len(choices) == 0:
-            raise SimpleBenchNotImplementedError(
+            raise SimpleBenchValueError(
                 "Reporter subclasses must initialize the Choices with at least one Choice",
-                tag=ReporterErrorTag.INVALID_CHOICES_ARG_VALUE)
+                tag=ReporterErrorTag.CHOICES_INVALID_ARG_VALUE)
         self._choices: Choices = choices
         """The Choices instance defining the sections, output targets,
         and formats supported by the reporter (private backing field)"""
@@ -399,16 +397,26 @@ class Reporter(ABC, IReporter):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
                 tag=ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)
-        for section in choice.sections:
-            if section not in self.supported_sections():
-                raise SimpleBenchValueError(
-                    f"Unsupported Section in Choice: {section}",
-                    tag=ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)
-        for target in choice.targets:
-            if target not in self.supported_targets():
-                raise SimpleBenchValueError(
-                    f"Unsupported Target in Choice: {target}",
-                    tag=ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)
+
+        unsupported_sections = choice.sections - self.supported_sections()
+        if unsupported_sections:
+            sections_error = f"Unsupported Section(s) in Choice().sections: {unsupported_sections}"
+            raise SimpleBenchValueError(
+                sections_error,
+                tag=ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)
+
+        unsupported_targets = choice.targets - self.supported_targets()
+        if unsupported_targets:
+            targets_error = f"Unsupported Target(s) in Choice().targets: {unsupported_targets}"
+            raise SimpleBenchValueError(
+                targets_error,
+                tag=ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)
+
+        if choice.output_format not in self.supported_formats():
+            raise SimpleBenchValueError(
+                f"Unsupported Format in Choice().output_format: {choice.output_format}",
+                tag=ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)
+
         if Target.CALLBACK in choice.targets:  # pylint: disable=used-before-assignment
             if callback is not None and not callable(callback):
                 raise SimpleBenchTypeError(
@@ -532,6 +540,12 @@ class Reporter(ABC, IReporter):
                 raise SimpleBenchValueError(
                     f"Unsupported Target in Choice: {target}",
                     tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)
+
+        if choice.output_format not in self.supported_formats():
+            raise SimpleBenchValueError(
+                f"Unsupported Format in Choice: {choice.output_format}",
+                tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)
+
         self.choices.add(choice)
 
     @property

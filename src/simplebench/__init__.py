@@ -2,6 +2,7 @@
 from simplebench.cli import main
 from simplebench.decorators import benchmark
 from simplebench.case import Case
+from simplebench.enums import Verbosity
 from simplebench.reporters.csv.reporter.options import CSVOptions
 from simplebench.reporters.graph.enums import ImageType
 from simplebench.reporters.graph.matplotlib import Style, Theme
@@ -28,5 +29,6 @@ __all__ = [
     "ScatterPlotOptions",
     "Session",
     "Results",
+    "Verbosity",
 ]
 """Simple benchmarking framework public API."""

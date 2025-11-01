@@ -51,7 +51,7 @@ class NoDefaultValue:
     """A sentinel class to indicate no default value is provided."""
 
 
-def iskwarg(obj: object) -> TypeGuard[KWArgs]:
+def is_kwargs(obj: object) -> TypeGuard[KWArgs]:
     """Checks a passed object is a valid KWArgs instance and
     returns true if so, false otherwise.
 
@@ -182,7 +182,7 @@ class KWArgs(dict):
         """
         if not isinstance(kwargs, dict):
             raise TypeError("new_kwargs must be provided as keyword arguments.")
-        if not iskwarg(self):
+        if not is_kwargs(self):
             raise TypeError("replace() can only be called on KWArgs and its subclasses instances.")
         cls = type(self)
         params = cast(set[str], getattr(cls, '_INIT_KWARG_PARAMS'))
@@ -192,12 +192,12 @@ class KWArgs(dict):
             raise KeyError(bad_keys)
         updated_kwargs: dict[str, Any] = {}
         for key in params:
-            if key == 'self' or key == '__class__' or key not in self:
+            if key not in self:  # type: ignore[operator]
                 continue
             if key in kwargs:
                 updated_kwargs[key] = kwargs[key]
             else:
-                updated_kwargs[key] = self[key]
+                updated_kwargs[key] = self[key]  # type: ignore[index]
         return cls(**updated_kwargs)  # type: ignore[return-value]
 
     def __sub__(self: T, other: Iterable[str]) -> T:
@@ -226,7 +226,7 @@ class KWArgs(dict):
         Raises:
             KeyError: If any key in other is not a valid KWArgs key.
         """
-        if not iskwarg(self):
+        if not is_kwargs(self):
             raise TypeError("replace() can only be called on KWArgs instances and subclasses.")
         if not isinstance(other, Iterable):
             raise TypeError("other must be an iterable of strings.")
@@ -240,9 +240,9 @@ class KWArgs(dict):
             raise KeyError("One or more keys to remove are not valid keys.")
         for_copying = params - for_removal
         for key in for_copying:
-            if key == 'self' or key == '__class__' or key not in self:
+            if key not in self:  # type: ignore[operator]
                 continue
-            new_kwargs[key] = self[key]
+            new_kwargs[key] = self[key]  # type: ignore[index]
         return cls(**new_kwargs)  # type: ignore[return-value]
 
 
@@ -284,4 +284,3 @@ def kwargclass_matches_modeledclass(kwargs_class: type, modeled_class: type) -> 
     error = "\n".join(error_messages)
 
     assert modeled_params == kwargs_params, error
-
