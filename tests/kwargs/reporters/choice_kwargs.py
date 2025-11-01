@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import Any, Sequence, TYPE_CHECKING
 
-from tests.kwargs import NoDefaultValue
+from tests.kwargs import NoDefaultValue, KWArgs
 
 from simplebench.reporters.choice import Choice
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.reporter import ReporterOptions
 
 
-class ChoiceKWArgs(dict):
+class ChoiceKWArgs(KWArgs):
     """A class to hold keyword arguments for initializing a Choice instance.
 
     This class is primarily used to facilitate testing of the Choice class initialization

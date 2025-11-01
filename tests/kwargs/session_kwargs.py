@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import Sequence, TYPE_CHECKING
 
-from tests.kwargs import NoDefaultValue
+from tests.kwargs import NoDefaultValue, KWArgs
 
 from simplebench.session import Session
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from simplebench.runners import SimpleRunner
 
 
-class SessionKWArgs(dict):
+class SessionKWArgs(KWArgs):
     """A class to hold keyword arguments for initializing a Session instance.
 
     This class is used to facilitate testing of the Session class initialization

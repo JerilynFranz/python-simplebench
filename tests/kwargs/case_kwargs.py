@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
-from tests.kwargs import NoDefaultValue
+from tests.kwargs import NoDefaultValue, KWArgs
 
 from simplebench.case import Case
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.protocols import ReporterCallback
 
 
-class CaseKWArgs(dict):
+class CaseKWArgs(KWArgs):
     """A class to hold keyword arguments for initializing a Case instance.
 
     This class is primarily used to facilitate testing of the Case class initialization

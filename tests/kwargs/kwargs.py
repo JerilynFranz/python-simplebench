@@ -1,6 +1,7 @@
 """simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
+from __future__ import annotations
 import inspect
-from typing import Any, Iterable, cast
+from typing import Any, Iterable, cast, TypeVar, TypeGuard
 
 # TODO: Create a new PyPi python-testkwargs package to implement a generic KWArgs class
 # using decorators to generate subclasses for specific modeled classes automatically
@@ -43,9 +44,27 @@ from typing import Any, Iterable, cast
 # This would allow flexibility in testing scenarios while reducing boilerplate
 # and maintenance overhead for KWArgs subclasses.
 
+T = TypeVar('T')
+
 
 class NoDefaultValue:
     """A sentinel class to indicate no default value is provided."""
+
+
+def iskwarg(obj: object) -> TypeGuard[KWArgs]:
+    """Checks a passed object is a valid KWArgs instance and
+    returns true if so, false otherwise.
+
+    This function can be used in type checking to narrow
+    the type of an object to KWArgs when the check passes.
+
+    Args:
+        obj (object): The object to check.
+
+    Returns:
+        bool: True if the object is a KWArgs instance, False otherwise.
+    """
+    return isinstance(obj, KWArgs)
 
 
 class KWArgs(dict):
@@ -102,8 +121,6 @@ class KWArgs(dict):
             AssertionError: If the resulting KWArgs does not match the base class signature parameter names.
 
         """
-        if not isinstance(self, KWArgs):
-            raise TypeError("KWArgs must be subclassed.")
         if not isinstance(base_class, type):
             raise TypeError("base_class must be a class type.")
         if not isinstance(kwargs, dict):
@@ -129,11 +146,16 @@ class KWArgs(dict):
             if not hasattr(base_class, '__init__'):
                 raise ValueError("base_class must have an __init__ method.")
             kwargs_sig = inspect.signature(base_class.__init__)  # type: ignore[name-defined, misc]
-            params = set(kwargs_sig.parameters.keys()) - {'self'}
+            params = set(kwargs_sig.parameters.keys()) - set(['self', '__class__'])
             setattr(cls, '_INIT_KWARG_PARAMS', params)
-        super().__init__(kwargs)
+        params = cast(set[str], getattr(cls, '_INIT_KWARG_PARAMS'))
+        pass_through_kwargs = {}
+        for key, value in kwargs.items():
+            if key in params and not isinstance(value, NoDefaultValue):
+                pass_through_kwargs[key] = value
+        super().__init__(pass_through_kwargs)
 
-    def replace(self, **kwargs: Any) -> 'KWArgs':
+    def replace(self: T, **kwargs: Any) -> T:
         """Creates a new KWArgs instance with specified keys replaced by new values.
 
         Example (illustrative only; actual parameters will vary by subclass):
@@ -160,19 +182,25 @@ class KWArgs(dict):
         """
         if not isinstance(kwargs, dict):
             raise TypeError("new_kwargs must be provided as keyword arguments.")
+        if not iskwarg(self):
+            raise TypeError("replace() can only be called on KWArgs and its subclasses instances.")
         cls = type(self)
         params = cast(set[str], getattr(cls, '_INIT_KWARG_PARAMS'))
-        updated_kwargs: dict[str, Any] = {}
         if not all(key in params for key in kwargs):
-            raise KeyError("One or more keys to replace are not valid keys.")
+            invalid_keys = [key for key in kwargs if key not in params]
+            bad_keys = f"One or more keys to replace are not valid keys: {invalid_keys}"
+            raise KeyError(bad_keys)
+        updated_kwargs: dict[str, Any] = {}
         for key in params:
+            if key == 'self' or key == '__class__' or key not in self:
+                continue
             if key in kwargs:
                 updated_kwargs[key] = kwargs[key]
             else:
                 updated_kwargs[key] = self[key]
-        return cls(**updated_kwargs)
+        return cls(**updated_kwargs)  # type: ignore[return-value]
 
-    def __sub__(self, other: Iterable[str]) -> 'KWArgs':
+    def __sub__(self: T, other: Iterable[str]) -> T:
         """Subtracts the keys listed in an iterable from this KWArgs instance
         and returns a new KWArgs instance with those keys removed.
 
@@ -198,6 +226,12 @@ class KWArgs(dict):
         Raises:
             KeyError: If any key in other is not a valid KWArgs key.
         """
+        if not iskwarg(self):
+            raise TypeError("replace() can only be called on KWArgs instances and subclasses.")
+        if not isinstance(other, Iterable):
+            raise TypeError("other must be an iterable of strings.")
+        if not all(isinstance(key, str) for key in other):
+            raise TypeError("All keys in other must be strings.")
         cls = type(self)
         params = cast(set[str], getattr(cls, '_INIT_KWARG_PARAMS'))
         new_kwargs: dict[str, Any] = {}
@@ -206,8 +240,10 @@ class KWArgs(dict):
             raise KeyError("One or more keys to remove are not valid keys.")
         for_copying = params - for_removal
         for key in for_copying:
+            if key == 'self' or key == '__class__' or key not in self:
+                continue
             new_kwargs[key] = self[key]
-        return cls(**new_kwargs)
+        return cls(**new_kwargs)  # type: ignore[return-value]
 
 
 def kwargclass_matches_modeledclass(kwargs_class: type, modeled_class: type) -> None:
@@ -248,3 +284,4 @@ def kwargclass_matches_modeledclass(kwargs_class: type, modeled_class: type) -> 
     error = "\n".join(error_messages)
 
     assert modeled_params == kwargs_params, error
+
