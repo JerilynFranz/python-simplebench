@@ -18,8 +18,6 @@ _CASE_IMPORTED: bool = False
 # Placeholder for deferred import of Case
 Case = None   # pylint: disable=invalid-name
 
-T = TypeVar('T')
-
 
 def deferred_case_import() -> None:
     """Deferrred import of Case to avoid circular imports during initialization."""
@@ -28,6 +26,9 @@ def deferred_case_import() -> None:
         return
     from ...case import Case  # pylint: disable=redefined-outer-name,import-outside-toplevel
     _CASE_IMPORTED = True
+
+
+T = TypeVar('T')
 
 
 def resolve_type_hints(callback: Callable) -> dict[str, type]:

@@ -4,39 +4,149 @@ These functions raise appropriate exceptions with error tags from exceptions.py
 and return the validated and/or normalized value.
 """
 from pathlib import Path
-from typing import Any, cast, TypeVar, Sequence, Iterable, overload
+from typing import Any, cast, TypeVar, Sequence, overload
 
-from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag, ValidatorsErrorTag
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from simplebench.validators.exceptions import ValidatorsErrorTag
 
 
 T = TypeVar('T')
 
 
 @overload
-def validate_type(
-        *,
+def validate_bool(
         value: Any,
-        expected: type[T],
         name: str,
-        error_tag: ErrorTag) -> T:
-    """single type overload"""
+        error_tag: ErrorTag) -> bool:
+    """Validate that the passed value is either a boolean (bool) value.
+
+    If the value passes, type checkers will annotate the returned value
+    as `bool`.
+
+    Args:
+        value: The value being validated
+        name (str): The field name for the value
+        error_tag (ErrorTag): The ErrorTag to be used if it fails the validation
+
+    Returns:
+        bool: The validated boolean value.
+
+    Raises:
+        SimpleBenchTypeError: If the value is not a boolean.
+    """
+
+
+@overload
+def validate_bool(
+        value: Any,
+        name: str,
+        error_tag: ErrorTag,
+        *,
+        allow_none: bool) -> bool | None:
+    """Validate that the passed value is either a bool or None.
+
+    If the value passes, type checkers will annotate the returned value
+    as `bool | None`.
+
+    Args:
+        value: The value being validated
+        name (str): The field name for the value
+        error_tag (ErrorTag): The ErrorTag to be used if it fails the validation
+        allow_none (bool, keyword-only): If None should be allowed.
+
+    Returns:
+        (bool | None): The validated boolean value or None.
+
+    Raises:
+        SimpleBenchTypeError: If the value is not a boolean or None.
+    """
+
+
+def validate_bool(
+        value: Any,
+        name: str,
+        error_tag: ErrorTag,
+        *,
+        allow_none: bool = False) -> bool | None:
+    """Validate that a value is a boolean.
+
+    If allow_none is True, None is also accepted.
+
+    If the allow_none parameter is not provided, it defaults to False and
+    only boolean values are accepted. In that case, the return type is guaranteed
+    to be bool and type checkers will accept it as bool for type narrowing.
+
+    Args:
+        value (Any): The value to validate.
+        name (str): The name of the field being validated (for error messages).
+        error_tag (ErrorTag): The error tag to use for type errors.
+        allow_none (bool, default=False, kwarg only): Whether to allow None as a valid value.
+
+    Returns:
+        (bool | None): The validated boolean or None if allowed and provided.
+
+    Raises:
+        SimpleBenchTypeError:
+            - If the value is not a boolean and allow_none==False
+            - If the value is not a boolean or None and allow_none==True
+            - If name is not a str
+            - If error_tag is not an ErrorTag
+            - If allow_none is not a bool
+    """
+    if not isinstance(name, str):
+        raise SimpleBenchTypeError(
+            f'Invalid name argument type: {type(name)}. Must be a str.',
+            tag=ValidatorsErrorTag.VALIDATE_BOOL_INVALID_NAME_ARG_TYPE
+        )
+    if not isinstance(error_tag, ErrorTag):
+        raise SimpleBenchTypeError(
+            f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
+            tag=ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ERROR_TAG_TYPE
+        )
+    if not isinstance(allow_none, bool):
+        raise SimpleBenchTypeError(
+            f'Invalid allow_none argument type: {type(allow_none)}. Must be a bool.',
+            tag=ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ALLOW_NONE_ARG_TYPE
+        )
+
+    if not isinstance(value, bool):
+        if allow_none:  # bool | None branch for not a bool
+            if value is None:
+                return None
+            raise SimpleBenchTypeError(
+                f'Invalid {name} type: {type(value)}. Must be a bool or None.',
+                tag=error_tag)
+        # bool-only branch for not a bool
+        raise SimpleBenchTypeError(
+            f'Invalid {name} type: {type(value)}. Must be a bool.',
+            tag=error_tag
+        )
+
+    return value
 
 
 @overload
 def validate_type(
-        *,
         value: Any,
-        expected: tuple[type, ...],
-        name: str,
+        types: tuple[type, ...],
+        field_name: str,
         error_tag: ErrorTag) -> Any:
-    """tuple of types overload"""
+    ...
+
+
+@overload
+def validate_type(
+        value: Any,
+        types: type[T],
+        field_name: str,
+        error_tag: ErrorTag) -> T:
+    ...
 
 
 def validate_type(
-        *,
         value: Any,
-        expected: type[T] | tuple[type, ...],
-        name: str,
+        types: type[T] | tuple[type, ...],
+        field_name: str,
         error_tag: ErrorTag) -> T | Any:
     """Validate that a value is of the expected type.
 
@@ -59,8 +169,8 @@ def validate_type(
 
     Args:
         value (Any): The value to validate.
-        expected (type[T] | tuple[type, ...]): The expected type of the value.
-        name (str): The name of the field being validated (for error messages).
+        types (type[T] | tuple[type, ...]): The expected type of the value.
+        field_name (str): The name of the field being validated (for error messages).
         error_tag (ErrorTag): The error tag to use for type errors.
 
     Returns:
@@ -69,21 +179,21 @@ def validate_type(
     Raises:
         SimpleBenchTypeError: If the value is not of the expected type.
     """
-    if not isinstance(expected, type) and not isinstance(expected, tuple):
+    if not isinstance(types, type) and not isinstance(types, tuple):
         raise SimpleBenchTypeError(
-            f'Invalid expected argument type: {type(expected)}. Must be a type or tuple of types.',
+            f'Invalid expected argument type: {type(types)}. Must be a type or tuple of types.',
             tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE
         )
-    if isinstance(expected, tuple):
-        for item in expected:
+    if isinstance(types, tuple):
+        for item in types:
             if not isinstance(item, type):
                 raise SimpleBenchTypeError(
                     f'Invalid expected argument item type in tuple: {type(item)}. Must be a type.',
                     tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE
                 )
-    if not isinstance(name, str):
+    if not isinstance(field_name, str):
         raise SimpleBenchTypeError(
-            f'Invalid name argument type: {type(name)}. Must be a str.',
+            f'Invalid name argument type: {type(field_name)}. Must be a str.',
             tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE
         )
     if not isinstance(error_tag, ErrorTag):
@@ -91,9 +201,9 @@ def validate_type(
             f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
             tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)
 
-    if not isinstance(value, expected):
+    if not isinstance(value, types):
         raise SimpleBenchTypeError(
-            f'Invalid "{name}" type: {type(value)}. Must be {repr(expected)}.',
+            f'Invalid "{field_name}" type: {type(value)}. Must be {repr(types)}.',
             tag=error_tag
         )
     return cast(T, value)
@@ -460,30 +570,33 @@ def validate_non_negative_float(
 
 @overload
 def validate_sequence_of_type(
-        value: Sequence[Any],
+        value: Any,
         types: type[T],
         field_name: str,
         type_tag: ErrorTag,
         value_tag: ErrorTag,
+        *,
         allow_empty: bool = True) -> list[T]: ...
 
 
 @overload
 def validate_sequence_of_type(
-        value: Sequence[Any],
+        value: Any,
         types: tuple[type, ...],
         field_name: str,
         type_tag: ErrorTag,
         value_tag: ErrorTag,
+        *,
         allow_empty: bool = True) -> list[Any]: ...
 
 
 def validate_sequence_of_type(
-        value: Sequence[Any],
+        value: Any,
         types: type[T] | tuple[type, ...],
         field_name: str,
         type_tag: ErrorTag,
         value_tag: ErrorTag,
+        *,
         allow_empty: bool = True) -> list[T] | list[Any]:
     """Validate that a value is a sequence of specified type(s).
 
@@ -497,7 +610,7 @@ def validate_sequence_of_type(
         field_name (str): The name of the field being validated (for error messages).
         type_tag (ErrorTag): The error tag to use for type errors.
         value_tag (ErrorTag): The error tag to use for value errors.
-        allow_empty (bool): Whether to allow an empty sequence. Defaults to True.
+        allow_empty (bool, keyword-only): Whether to allow an empty sequence. Defaults to True.
 
     Returns:
         list[T] | list[Any]: For single type, returns list[T]. For multiple types,
@@ -524,100 +637,6 @@ def validate_sequence_of_type(
             f'Must be a sequence (list, tuple, etc.).',
             tag=type_tag
         )
-
-    if len(value) == 0 and not allow_empty:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: sequence cannot be empty.',
-            tag=value_tag
-        )
-
-    # Format type names for error messages
-    if isinstance(types, tuple):
-        type_names = ' or '.join(t.__name__ for t in types)
-    else:
-        type_names = types.__name__
-
-    result: list[Any] = []
-    for i, item in enumerate(value):
-        if not isinstance(item, types):
-            raise SimpleBenchTypeError(
-                f'Invalid {field_name} element at index {i}: {type(item).__name__}. '
-                f'Must be {type_names}.',
-                tag=type_tag
-            )
-        result.append(item)
-
-    return result
-
-
-@overload
-def validate_iterable_of_type(
-        value: Iterable[Any],
-        types: type[T],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        allow_empty: bool = True) -> list[T]: ...
-
-
-@overload
-def validate_iterable_of_type(
-        value: Iterable[Any],
-        types: tuple[type, ...],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        allow_empty: bool = True) -> list[Any]: ...
-
-
-def validate_iterable_of_type(
-        value: Iterable[Any],
-        types: type[T] | tuple[type, ...],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        allow_empty: bool = True) -> list[T] | list[Any]:
-    """Validate that a value is an iterable of specified type(s).
-
-    When a single type is provided, the return type is automatically inferred as list[T].
-    When multiple types are provided, the return type is list[Any], which allows the
-    caller to narrow the type with an explicit annotation.
-
-    Args:
-        value (Iterable[Any]): The iterable of values to validate.
-        types (type[T] | tuple[type, ...]): A single type or tuple of allowed types.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-        allow_empty (bool): Whether to allow an empty iterable. Defaults to True.
-
-    Returns:
-        list[T] | list[Any]: For single type, returns list[T]. For multiple types,
-            returns list[Any] which can be narrowed with explicit type annotation.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not an iterable or contains invalid types.
-        SimpleBenchValueError: If the iterable is empty and allow_empty is False.
-
-    Examples:
-        Single type (automatic inference):
-            names = validate_iterable_of_type(['Alice'], str, 'names', ...)
-            # Type: list[str]
-
-        Multiple types (manual narrowing):
-            mixed: list[str | int] = validate_iterable_of_type(
-                ['a', 1], (str, int), 'items', ...
-            )
-            # Type: list[str | int]
-    """
-    if not isinstance(value, Iterable) or isinstance(value, str):
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value).__name__}. '
-            f'Must be an iterable (list, tuple, etc.).',
-            tag=type_tag
-        )
-
-    value = list(value)  # Convert to list for length check and indexing
 
     if len(value) == 0 and not allow_empty:
         raise SimpleBenchValueError(
@@ -810,6 +829,7 @@ def validate_sequence_of_str(
         field_name: str,
         type_tag: ErrorTag,
         value_tag: ErrorTag,
+        *,
         allow_empty: bool = True,
         allow_blank: bool = True,
         allow_whitespace: bool = True) -> list[str]:
@@ -839,11 +859,9 @@ def validate_sequence_of_str(
                 blank and allow_blank is False.
     """
     list_of_str: list[str] = validate_sequence_of_type(
-                                value, str,
-                                field_name,
-                                type_tag,
-                                value_tag,
-                                allow_empty)
+                                value, str, field_name,
+                                type_tag, value_tag,
+                                allow_empty=allow_empty)
     if not allow_blank:
         for i, item in enumerate(list_of_str):
             if item.strip() == '':
@@ -986,8 +1004,8 @@ def validate_filename(filename: Any) -> str:
         SimpleBenchValueError: If the filename is invalid.
     """
     filename = validate_type(
-        value=filename, expected=str, name='filename',
-        error_tag=ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE)
+        filename, str, 'filename',
+        ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE)
 
     file = Path(filename)
     file_suffix = file.suffix.replace('.', '')
@@ -1026,7 +1044,6 @@ __all__ = [
     'validate_positive_float',
     'validate_non_negative_float',
     'validate_sequence_of_type',
-    'validate_iterable_of_type',
     'validate_frozenset_of_type',
     'validate_sequence_of_numbers',
     'validate_sequence_of_str',

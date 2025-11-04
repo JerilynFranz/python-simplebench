@@ -24,11 +24,12 @@ from simplebench.metaclasses import ICase, ISession
 from simplebench.results import Results
 from simplebench.utils import collect_arg_list, first_not_none, sanitize_filename
 from simplebench.validators import (validate_iterable_of_type, validate_string,
-                                    validate_type, validate_filename)
+                                    validate_type, validate_filename, validate_bool)
 
 # simplebench.reporters
-from simplebench.reporters.choices.metaclasses import IChoices
+from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choice.metaclasses import IChoice
+from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.validators import validate_report_renderer, validate_reporter_callback
 
@@ -37,13 +38,25 @@ from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.metaclasses import IReporter
 from simplebench.reporters.reporter.options import ReporterOptions
 
+T = TypeVar('T')
+
+_CHOICE_IMPORTED: bool = False
+"""Indicates whether Choice has been imported yet."""
+
+
+def deferred_choice_import() -> None:
+    """Deferred import of Choice to avoid circular imports during initialization."""
+    global Choice, _CHOICE_IMPORTED  # pylint: disable=global-statement
+    if _CHOICE_IMPORTED:
+        return
+    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
+    _CHOICE_IMPORTED = True
+
+
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
-    from simplebench.reporters.choice import Choice
-    from simplebench.reporters.choices import Choices
-
-T = TypeVar('T')
 
 
 class Reporter(ABC, IReporter):
@@ -135,7 +148,7 @@ class Reporter(ABC, IReporter):
                  file_unique: bool,
                  file_append: bool,
                  formats: Iterable[Format],
-                 choices: Choices) -> None:
+                 choices: Iterable[ChoiceConf]) -> None:
         """
         Initialize the Reporter instance.
 
@@ -144,36 +157,57 @@ class Reporter(ABC, IReporter):
             or if both are `True`, an exception will be raised.
 
         Args:
-            name (str): The unique identifying name of the reporter. Must be a non-empty string.
-            description (str): A brief description of the reporter. Must be a non-empty string.
-            options_type (type[ReporterOptions] | None): The specific ReporterOptions subclass
-                associated with this reporter, or None if no specific options are defined.
-            sections (Iterable[Section]): An iterable of all Sections supported by the reporter.
+            name (str):
+                The unique identifying name of the reporter.
+
+                - must be a non-empty string.
+            description (str):
+                A brief description of the reporter.
+
+                - must be a non-empty string.
+            options_type (type[ReporterOptions] | None):
+                The specific ReporterOptions subclass associated with this reporter.
+
+                - `None` if no specific options are defined.
+            sections (Iterable[Section]):
+                An iterable of all Sections supported by the reporter.
+
                 - Must include at least one Section.
-            targets (Iterable[Target]): An iterable of all Targets supported by the reporter.
+            targets (Iterable[Target]):
+                An iterable of all Targets supported by the reporter.
+
                 - Must include at least one Target.
-            default_targets (Iterable[Target] | None, default=None): An iterable of default Targets for the reporter.
-            subdir (str, default=''): The subdirectory where report files will be saved.
-                - May be an empty string ('')
+            default_targets (Iterable[Target] | None, default=None):
+                An iterable of default Targets for the reporter.
+            subdir (str, default=''):
+                The subdirectory where report files will be saved.
+                - May be an empty string (''), which indicates the base output directory.
                 - Cannot contain non-alphanumeric characters (characters other than A-Z, a-z, 0-9).
                 - Cannot be longer than 64 characters.
                 - If empty, reports will be saved in the base output directory.
-            file_suffix (str): An optional file suffix for reporter output files.
+            file_suffix (str):
+                An optional file suffix for reporter output files.
                 - May be an empty string ('')
                 - Cannot contain non-alphanumeric characters (characters other than A-Z, a-z, 0-9).
                 - Cannot be longer than 10 characters.
-            file_unique (bool): Whether output files should have unique names.
-            file_append (bool): Whether output files should be appended to.
-            formats (Iterable[Format]): An iterable of all Formats supported by the reporter.
+            file_unique (bool):
+                Whether output files should have unique names by default.
+            file_append (bool):
+                Whether output files should be appended to by default.
+            formats (Iterable[Format]):
+                An iterable of all Formats supported by the reporter.
                 - Must include at least one Format.
-            choices (Choices): A Choices instance defining the sections, output targets,
+            choices (Iterable[ChoiceConf]):
+                An iterable of ChoicesConf instances defining the sections, output targets,
                 and formats supported by the reporter.
-                - Must have at least one Choice.
+                - Must have at least one ChoiceConf.
 
         Raises:
             SimpleBenchValueError: If any of the provided parameters have invalid values.
             SimpleBenchTypeError: If any of the provided parameters are of incorrect types.
         """
+        deferred_choice_import()
+
         self._name: str = validate_string(
             name, 'name',
             ReporterErrorTag.NAME_INVALID_ARG_TYPE,
@@ -245,14 +279,14 @@ class Reporter(ABC, IReporter):
         self._file_suffix: str = file_suffix
         """The file suffix for reporter output files (private backing field)"""
 
-        self._file_unique: bool = validate_type(
-            value=file_unique, expected=bool, name='file_unique',
-            error_tag=ReporterErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE)
+        self._file_unique: bool = validate_bool(
+            file_unique, 'file_unique',
+            ReporterErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE)
         """Whether output files should have unique names (private backing field)"""
 
-        self._file_append: bool = validate_type(
-            value=file_append, expected=bool, name='file_append',
-            error_tag=ReporterErrorTag.FILE_APPEND_INVALID_ARG_TYPE)
+        self._file_append: bool = validate_bool(
+            file_append, 'file_append',
+            ReporterErrorTag.FILE_APPEND_INVALID_ARG_TYPE)
         """Whether output files should be appended to private backing field)"""
 
         if self._file_unique == self._file_append:
@@ -268,17 +302,26 @@ class Reporter(ABC, IReporter):
                 allow_empty=False))
         """The set of supported Formats for the reporter (private backing field)"""
 
-        if not isinstance(choices, IChoices):  # IChoices is the metaclass for Choices
-            raise SimpleBenchTypeError(
-                f"choices must be a Choices instance: cannot be a {type(choices)}",
-                tag=ReporterErrorTag.CHOICES_INVALID_ARG_TYPE)
-        if len(choices) == 0:
-            raise SimpleBenchValueError(
-                "Reporter subclasses must initialize the Choices with at least one Choice",
-                tag=ReporterErrorTag.CHOICES_INVALID_ARG_VALUE)
-        self._choices: Choices = choices
-        """The Choices instance defining the sections, output targets,
-        and formats supported by the reporter (private backing field)"""
+        choices = validate_iterable_of_type(
+            choices, ChoiceConf, 'choices',
+            ReporterErrorTag.CHOICES_INVALID_ARG_TYPE,
+            ReporterErrorTag.CHOICES_INVALID_ARG_VALUE,
+            allow_empty=False)
+
+        choices_list: list[Choice] = []
+        choice_conf_names: set[str] = set()
+        for item in choices:
+            if item.name in choice_conf_names:
+                raise SimpleBenchValueError(
+                    f"Duplicate Choice().name found in choices: {item.name}",
+                    tag=ReporterErrorTag.DUPLICATE_CHOICE_NAMES_IN_CHOICES)
+            choice_conf_names.add(item.name)
+            choices_list.append(Choice(reporter=self, choice_conf=item))  # pylint: disable=used-before-assignment
+
+        self._choices = Choices(choices_list)
+        """An instance of `Choices` containing the `Choice` instances for the `Reporter`.
+
+        This is constructed from an iterable of `Choice` instances (private backing field)"""
 
     @staticmethod
     def find_options_by_type(options: Iterable[ReporterOptions] | None, cls: type[T]) -> T | None:
@@ -518,32 +561,33 @@ class Reporter(ABC, IReporter):
         """Add a Choice to the reporter's Choices.
 
         Args:
-            choice (Choice): The Choice instance to add.
+            choice (ChoiceConf):
+                The Choice instance to add.
 
         Raises:
             SimpleBenchTypeError: If the provided choice is not a Choice instance.
             SimpleBenchValueError: If the choice's sections, targets, or formats
                 are not supported by the reporter.
         """
-        if not isinstance(choice, IChoice):
-            raise SimpleBenchTypeError(
-                "Expected a Choice instance",
-                tag=ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
+        choice = validate_type(
+            choice, Choice, 'choice',
+            ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
 
-        for section in choice.sections:
-            if section not in self.supported_sections():
-                raise SimpleBenchValueError(
-                    f"Unsupported Section in Choice: {section}",
-                    tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)
-        for target in choice.targets:
-            if target not in self.supported_targets():
-                raise SimpleBenchValueError(
-                    f"Unsupported Target in Choice: {target}",
-                    tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)
+        unsupported_sections = choice.sections - self.supported_sections()
+        if unsupported_sections:
+            raise SimpleBenchValueError(
+                f"Unsupported Section(s) in Choice().sections: {unsupported_sections}",
+                tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)
+
+        unsupported_targets = choice.targets - self.supported_targets()
+        if unsupported_targets:
+            raise SimpleBenchValueError(
+                f"Unsupported Target(s) in Choice().targets: {unsupported_targets}",
+                tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)
 
         if choice.output_format not in self.supported_formats():
             raise SimpleBenchValueError(
-                f"Unsupported Format in Choice: {choice.output_format}",
+                f"Unsupported Format in Choice().output_format: {choice.output_format}",
                 tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)
 
         self.choices.add(choice)
@@ -645,8 +689,8 @@ class Reporter(ABC, IReporter):
                 already exists and neither append nor unique options were specified.
         """
         path = validate_type(
-            value=path, expected=Path, name='path',
-            error_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
+            path, Path, 'path',
+            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
         subdir = validate_string(
             subdir, 'subdir',
             ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE,
@@ -654,10 +698,10 @@ class Reporter(ABC, IReporter):
             strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
         filename = validate_filename(filename)
         append = validate_type(
-            value=append, expected=bool, name='append',
-            error_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE)
+            append, bool, 'append',
+            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE)
         unique = validate_type(
-            value=unique, expected=bool, name='unique',
+            unique, bool, 'unique',
             error_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE)
         if not isinstance(output, (str, bytes, Text, Table)):
             raise SimpleBenchTypeError(
@@ -1021,8 +1065,8 @@ class Reporter(ABC, IReporter):
         renderer = validate_report_renderer(renderer)
 
         args = validate_type(
-            value=args, expected=Namespace, name='args',
-            error_tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE)
+            args, Namespace, 'args',
+            ReporterErrorTag.RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE)
 
         # We validate for Case using ICase to prevent circular import issues
         if not isinstance(case, ICase):
@@ -1038,8 +1082,8 @@ class Reporter(ABC, IReporter):
 
         if path is not None:
             path = validate_type(
-                value=path, expected=Path, name='path',
-                error_tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_PATH_ARG_TYPE)
+                path, Path, 'path',
+                ReporterErrorTag.RENDER_BY_SECTION_INVALID_PATH_ARG_TYPE)
 
         # We validate for Session using ISession to prevent circular import issues
         if not isinstance(session, ISession) and session is not None:
@@ -1132,8 +1176,8 @@ class Reporter(ABC, IReporter):
         renderer = validate_report_renderer(renderer)
 
         args = validate_type(
-            value=args, expected=Namespace, name='args',
-            error_tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_ARGS_ARG_TYPE)
+            args, Namespace, 'args',
+            ReporterErrorTag.RENDER_BY_CASE_INVALID_ARGS_ARG_TYPE)
 
         # We validate for Case using ICase to prevent circular import issues
         if not isinstance(case, ICase):
@@ -1149,8 +1193,8 @@ class Reporter(ABC, IReporter):
 
         if path is not None:
             path = validate_type(
-                value=path, expected=Path, name='path',
-                error_tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_PATH_ARG_TYPE)
+                path, Path, 'path',
+                ReporterErrorTag.RENDER_BY_CASE_INVALID_PATH_ARG_TYPE)
 
         # We validate for Session using ISession to prevent circular import issues
         if not isinstance(session, ISession) and session is not None:

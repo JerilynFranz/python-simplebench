@@ -1,0 +1,139 @@
+"""TestSpec testing framework - test actions."""
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any, Callable, NoReturn, Optional
+
+import pytest
+
+from .assertions import Assert, validate_assertion
+from .base import TestSpec
+from .constants import NO_EXPECTED_VALUE
+from .deferred import Deferred, _resolve_deferred_value
+from .helpers import _process_exception, no_assigned_action
+
+
+@dataclass
+class TestAction(TestSpec):
+    """A generic unit test specification class.
+
+    It allow tests to be specified declaratively while providing a large amount
+    of flexibility.
+
+    Args:
+        name (str):
+            Identifying name for the test.
+        action (Callable[..., Any] | Deferred, default = no_assigned_action):
+            A reference to a callable function or method to be invoked for the test. If no
+            action is assigned, the special function `no_assigned_action` is used which
+            raises NotImplementedError when called.
+        args (Sequence[Any] | Deferred, default = []):
+            Sequence of positional arguments to be passed to the `action` function or method.
+        kwargs (dict[str, Any] | Deferred, default = {}):
+            Dictionary containing keyword arguments to be passed to the `action` function or method.
+        assertion (Assert, default=Assert.EQUAL):
+            The assertion operator to use when comparing the expected and found values.
+        expected (Any, default=NO_EXPECTED_VALUE ):
+            Expected value (if any) for the `action` function or method.
+            This is used with the `assertion` operator to validate the return value of the function or method.
+
+            If there is no expected value, the special class NoExpectedValue is used to flag it.
+            This is used so that the specific return value of None can be distinguished from no
+            particular value or any value at all is expected to be returned from the function or method.
+        obj: Optional[Any] = None
+        validate_obj: Optional[Callable[[Any], bool] | Deferred] = None
+        validate_result: Optional[Callable[[Any], bool] | Deferred] = None
+        exception: Optional[type[BaseException]] = None
+        exception_tag: Optional[str] = None
+        on_fail: Callable[[str], NoReturn] = pytest.fail
+            Function to call on test failure. (default is pytest.fail)
+        extra (Any): Extra data for use by test frameworks. It is not used by the TestAction class itself.
+            Default is None.
+    """
+    __test__ = False  # Prevent pytest from trying to collect this class as a test case
+
+    name: str
+    """Identifying name for the test."""
+    action: Callable[..., Any] | Deferred = no_assigned_action
+    """A reference to a callable function or method to be invoked for the test."""
+    args: Optional[list[Any]] | Deferred = None
+    """Sequence of positional arguments to be passed to the `action` function or method."""
+    kwargs: Optional[dict[str, Any]] | Deferred = None
+    """Dictionary containing keyword arguments to be passed to the `action` function or method."""
+    assertion: Assert = Assert.EQUAL
+    """The assertion operator to use when comparing the expected and found values. (default is Assert.EQUAL)"""
+    expected: Any = NO_EXPECTED_VALUE
+    """Expected value (if any) that is associated with the `action` function or method.
+
+    This is used with the `assertion` operator to validate the return value of the function or method.
+    """
+    obj: Optional[Any] = None
+    """Optional object to be validated."""
+    validate_obj: Optional[Callable[[Any], bool] | Deferred] = None
+    """Function to validate the optional object."""
+    validate_result: Optional[Callable[[Any], bool] | Deferred] = None
+    """Function to validate the result of the action."""
+    exception: Optional[type[BaseException]] = None
+    """Expected exception type (if any) to be raised by the action."""
+    exception_tag: Optional[str | Enum] = None
+    """Expected tag (if any) to be found in the exception message."""
+    display_on_fail: str | Callable[[], str] = ""
+    """String or function to display additional information on test failure."""
+    on_fail: Callable[[str], NoReturn] = pytest.fail
+    """Function to call on test failure. (default is pytest.fail)
+
+    The function must accept a single string argument containing the failure message
+    and must not return (i.e., it should raise an exception or terminate the test).
+    """
+    extra: Any = None
+    """Extra data for use by test frameworks. It is not used by the TestAction class itself. Default is None."""
+
+    def run(self) -> None:  # pylint: disable=too-many-branches
+        """Run the test based on the provided TestSpec entry.
+
+        This function executes the action specified in the entry, checks the result against
+        the expected value, and reports any errors.
+
+        Args:
+            self (TestSpec): The test configuration entry containing all necessary information for the test.
+        """
+        # hide traceback for this function in pytest output
+        __tracebackhide__ = True  # pylint: disable=unused-variable
+        test_description: str = f"{self.name}"
+        errors: list[str] = []
+        try:
+            # Use empty list/dict if the self field is None
+            action = _resolve_deferred_value(self.action)
+            pos_args = _resolve_deferred_value(self.args, [])
+            kw_args = _resolve_deferred_value(self.kwargs, {})
+            obj = _resolve_deferred_value(self.obj)
+            expected = _resolve_deferred_value(self.expected)
+            validate_result = _resolve_deferred_value(self.validate_result)
+            validate_obj = _resolve_deferred_value(self.validate_obj)
+            found: Any = action(*pos_args, **kw_args)
+            if self.exception:
+                errors.append("returned result instead of raising exception")
+
+            else:
+                if validate_result and not validate_result(found):
+                    errors.append(f"failed result validation: found={found}")
+                if validate_obj and not validate_obj(obj):
+                    errors.append(f"failed object validation: obj={obj}")
+                if expected is not NO_EXPECTED_VALUE:
+                    assertion_result = validate_assertion(self.assertion, expected, found)
+                    if assertion_result:
+                        errors.append(assertion_result)
+                        if callable(self.display_on_fail):
+                            errors.append(self.display_on_fail())
+                        elif isinstance(self.display_on_fail, str):
+                            errors.append(self.display_on_fail)
+        except BaseException as err:  # pylint: disable=broad-exception-caught
+            new_errors = _process_exception(
+                err=err,
+                exception=self.exception,
+                exception_tag=self.exception_tag,
+                label="running test"
+            )
+            errors.extend(new_errors)
+
+        if errors:
+            self.on_fail(test_description + ": " + "\n".join(errors))

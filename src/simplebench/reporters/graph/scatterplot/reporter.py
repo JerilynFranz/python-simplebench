@@ -17,8 +17,7 @@ from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.validators import validate_type
 
-from simplebench.reporters.choice import Choice
-from simplebench.reporters.choices import Choices
+from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import ReporterOptions
 
@@ -28,6 +27,7 @@ from .options import ScatterPlotOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
 
 Options = ScatterPlotOptions
@@ -53,9 +53,8 @@ class ScatterPlotReporter(MatPlotLibReporter):
             file_suffix='svg',
             file_unique=True,
             file_append=False,
-            choices=Choices([
-                Choice(
-                    reporter=self,
+            choices=[
+                ChoiceConf(
                     flags=['--scatter-plot'],
                     flag_type=FlagType.TARGET_LIST,
                     name='scatter-plot',
@@ -64,8 +63,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     default_targets=[Target.FILESYSTEM],
                     output_format=Format.GRAPH),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--scatter-plot.ops'],
                     flag_type=FlagType.TARGET_LIST,
                     name='scatter-plot-ops',
@@ -73,8 +71,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.GRAPH),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--scatter-plot.timings'],
                     flag_type=FlagType.TARGET_LIST,
                     name='scatter-plot-timings',
@@ -82,8 +79,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     sections=[Section.TIMING],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.GRAPH),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--scatter-plot.memory'],
                     flag_type=FlagType.TARGET_LIST,
                     name='scatter-plot-memory',
@@ -91,7 +87,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.GRAPH),
-            ])
+            ]
         )
 
     def run_report(self,
@@ -121,13 +117,13 @@ class ScatterPlotReporter(MatPlotLibReporter):
             SimpleBenchTypeError: If the provided arguments are not of the expected types or values.
             SimpleBenchValueError: If the provided values are not valid.
         """
-        case = validate_type(value=case, expected=Case, name='case',
-                             error_tag=ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(value=section, expected=Section, name='section',
-                                error_tag=ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
+        case = validate_type(case, Case, 'case',
+                             ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
+        section = validate_type(section, Section, 'section',
+                                ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(
-                value=options, expected=Options, name='options',
-                error_tag=ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
+                options, Options, 'options',
+                ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         base_unit = self.get_base_unit_for_section(section=section)
         results: list[Results] = case.results

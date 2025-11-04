@@ -1,8 +1,9 @@
 """Tests for simplebench.reporters.choices module."""
+# pylint: disable=unnecessary-direct-lambda-call
 from argparse import Namespace
-from functools import cache
+from functools import lru_cache
 from pathlib import Path
-from typing import Sequence, Optional
+from typing import Optional, Any
 
 import pytest
 
@@ -12,11 +13,119 @@ from simplebench.session import Session
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.enums import Section, Target, Format, FlagType
 from simplebench.reporters.reporter import Reporter, ReporterOptions
-from simplebench.reporters.choice import Choice
+from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesErrorTag
 
 from ..kwargs import ChoicesKWArgs
-from ..testspec import TestSpec, TestAction, idspec, Assert, NO_EXPECTED_VALUE
+from ..testspec import TestSpec, TestAction, TestGet, idspec, Assert
+
+
+@lru_cache(typed=True)
+def choice_conf_instance(cache_id: str = 'default',  # pylint: disable=unused-argument
+                         name: str = 'mock', flags: tuple[str, ...] = ('--mock',)) -> ChoiceConf:
+    """Factory function to return the same mock ChoiceConf instance for testing.
+
+    It caches the instance based on the cache_id so that multiple calls with the same
+    cache_id return the same instance.
+
+    Args:
+        cache_id (str, default='default'):
+            An identifier to cache different ChoiceConf instances if needed.
+        name (str, default='mock'):
+            The name of the ChoiceConf instance.
+        flags (tuple[str, ...], default=('--mock',)):
+            The flags associated with the ChoiceConf instance.
+    """
+    return ChoiceConf(
+        flags=flags,
+        flag_type=FlagType.BOOLEAN,
+        name=name,
+        description='A mock choice.',
+        sections=[Section.OPS], targets=[Target.CONSOLE],
+        output_format=Format.JSON,
+        file_suffix='mock',
+        file_unique=True,
+        file_append=False,
+        options=ReporterOptions(),
+        extra='mock_extra')
+
+
+@lru_cache(typed=True)
+def choice_instance(cache_id: str = 'default',
+                    name: str = 'mock',
+                    flags: tuple[str, ...] = ('--mock',)) -> Choice:
+    """Factory function to return a single cached Choice instance for testing.
+
+    The caching ensures *identity* of the Choice instance across multiple calls.
+    Because Choice instances are immutable, this is safe to do. It effectively
+    makes the Choice instance a singleton per cache_id, name, and flags.
+
+    The choice instance is created using MockReporter() and is
+    extracted from the MockReporter.choices attribute.
+
+    It is cached based on the cache_id so that multiple calls with the same
+    cache_id, name, and flags return the same instance.
+
+    The default Choice instance has the name 'mock' and flag '--mock'.
+
+    Args:
+        cache_id (str, default="default"):
+            An identifier to cache different Choice instances if needed.
+        name (str, default='mock'):
+            The name of the Choice instance.
+        flags (tuple[str, ...], default=('--mock',)):
+            The flags associated with the Choice instance.
+    """
+    choice_conf = choice_conf_instance(cache_id, name=name, flags=flags)
+    reporter = reporter_instance(cache_id, choice_confs=(choice_conf,))
+    return reporter.choices[name]
+
+
+@lru_cache(typed=True)
+def reporter_instance(cache_id: str = "default",  # pylint: disable=unused-argument
+                      choice_confs: tuple[ChoiceConf, ...] | None = None) -> Reporter:
+    """Factory function to return a cached Reporter instance for testing.
+
+    The instance is a MockReporter. It is cached based on the cache_id.
+    This makes it possible to have multiple cached instances and for
+    each to retain its own state if needed.
+
+    Args:
+        cache_id (str, default="default"):
+            An identifier to cache different Reporter instances if needed.
+        choice_confs (tuple[ChoiceConf, ...] | None, default=None):
+            A tuple of ChoiceConf instances to initialize the Reporter with.
+    """
+    return MockReporter(choice_confs=choice_confs)
+
+
+@lru_cache(typed=True)
+def choices_instance(cache_id: str = "default", *,  # pylint: disable=unused-argument
+                     choices: tuple[Choice, ...] | Choices | None = None) -> Choices:
+    """Factory function to return a cached Choices instance for testing.
+
+    Args:
+        cache_id (str, default="default"):
+            An identifier to cache different Choices instances if needed.
+        choices (tuple[Choice, ...] | Choices | None, default=None):
+            A sequence of Choice instances or a Choices instance to initialize the Choices instance.
+    """
+    if choices is None:
+        result = Choices()
+        if not isinstance(result, Choices):
+            raise TypeError(f"{cache_id}: Invalid type for choices instance: {result!r}")
+        return result
+    if isinstance(choices, Choices):
+        result = Choices(choices)
+        if not isinstance(result, Choices):
+            raise TypeError(f"{cache_id}: Invalid type for choices instance: {result!r}")
+        return result
+    if isinstance(choices, tuple) and all(isinstance(c, Choice) for c in choices):
+        result = Choices(choices=choices)
+        if not isinstance(result, Choices):
+            raise TypeError(f"{cache_id}: Invalid type for choices instance: {result!r}")
+        return result
+    raise TypeError(f"Invalid type for choices argument: {choices!r}")
 
 
 class MockReporterExtras:
@@ -26,8 +135,34 @@ class MockReporterExtras:
 
 
 class MockReporter(Reporter):
-    """A mock Reporter subclass for testing Choice initialization."""
-    def __init__(self) -> None:  # pylint: disable=useless-parent-delegation
+    """A mock Reporter subclass for testing Choice initialization.
+
+    It provides a minimal implementation of the abstract methods required by the Reporter base class.
+
+    It initializes with a single ChoiceConf instance for testing purposes by default.
+    This can be overridden by providing a different list of ChoiceConf instances.
+
+    The default ChoiceConf instance is created using the choice_conf_instance factory function and
+    has the name 'mock' and flag '--mock'.
+
+    Args
+    """
+    def __init__(  # pylint: disable=useless-parent-delegation
+            self, choice_confs: tuple[ChoiceConf, ...] | None = None) -> None:
+        """Constructs a MockReporter instance for testing.
+
+        A single ChoiceConf instance is used by default for testing purposes.
+        This can be overridden by providing a different list of ChoiceConf instances.
+
+        The default ChoiceConf instance is created using the choice_conf_instance
+        factory function and has the name 'mock' and flag '--mock'.
+
+        Args:
+            choice_confs (tuple[ChoiceConf, ...] | None, default=None):
+                A tuple of ChoiceConf instances to initialize the Reporter with.
+                If None, a single default ChoiceConf instance is used.
+        """
+        choice_confs = choice_confs or (choice_conf_instance(),)
         super().__init__(
             name='mock',
             description='Mock reporter.',
@@ -40,22 +175,8 @@ class MockReporter(Reporter):
             file_unique=True,
             file_append=False,
             formats={Format.JSON},
-            choices=Choices([
-                Choice(
-                    reporter=self,
-                    flags=['--mock'],
-                    flag_type=FlagType.BOOLEAN,
-                    name='mock',
-                    description='statistical results to mock',
-                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
-                    output_format=Format.JSON,
-                    file_suffix='mock',
-                    file_unique=True,
-                    file_append=False,
-                    options=ReporterOptions(),
-                    extra=MockReporterExtras(full_data=False)),
-            ]))
+            choices=choice_confs
+        )
 
     def run_report(self,
                    *,
@@ -67,63 +188,75 @@ class MockReporter(Reporter):
                    callback: Optional[ReporterCallback] = None) -> None:
         """Mock implementation of run_report."""
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+    def render(
+            self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
+        """Mock implementation of render method."""
         return "mocked_rendered_output"
 
 
-@cache
+@lru_cache(typed=True)
 def sample_reporter() -> Reporter:
     """Factory function to return a sample MockReporter instance for testing."""
     return MockReporter()
 
 
-@cache
-def choice_instance(cache_id: str = 'default', *,  # pylint: disable=unused-argument
-                    name: str = 'mock', flags: Sequence[str] = ('--mock',)) -> Choice:
-    """Factory function to return the same mock Choice instance for testing."""
-    return Choice(
-        reporter=sample_reporter(),
-        flags=flags,
-        flag_type=FlagType.BOOLEAN,
-        name=name,
-        description='A mock choice.',
-        sections=[Section.OPS], targets=[Target.CONSOLE],
-        output_format=Format.JSON,
-        extra='mock_extra')
+def assert_helper(testspec: TestSpec, result: Any, msg: str | None = None) -> None:
+    """Helper function to perform assertions in tests."""
+    if not isinstance(testspec, TestSpec):
+        raise TypeError(f"Invalid testspec type in validation: {type(testspec)}")
+    if not result:
+        if msg is None:
+            msg = "Validation assertion failed."
+        pytest.fail(f"validate assertion failed for testspec: {testspec}: {msg}")
 
 
 @pytest.mark.parametrize(
     "testspec", [
-        idspec('INIT_001', TestAction(
-            name="Choices with a list of Choice instances",
-            action=Choices,
-            kwargs=ChoicesKWArgs(
-                choices=[
-                    choice_instance(),
-                ]),
-            validate_result=lambda result: len(result) == 1 and result['mock'] is choice_instance(),
+        idspec('INIT_001', TestGet(
+            name="Choices with a list of Choice instances from a MockReporter",
+            obj=MockReporter(),
+            attribute='choices',
             assertion=Assert.ISINSTANCE,
             expected=Choices)),
-        idspec('INIT_002', TestAction(
-            name="Missing choices argument - creates default empty Choices",
+        idspec('INIT_002', TestGet(
+            name="Get Choice instance from Choices using dict key access",
+            obj=reporter_instance('INIT_002'),
+            attribute='choices',
+            validate=lambda testspec, obj: assert_helper(
+                testspec, 'mock' in obj.choices, 'Expected "mock" key in Choices instance.'))),
+        idspec('INIT_003', TestAction(
+            name="No arguments - creates default empty Choices",
             action=Choices,
-            kwargs=ChoicesKWArgs(),
             validate_result=lambda result: len(result) == 0,
             assertion=Assert.ISINSTANCE,
             expected=Choices)),
-        idspec('INIT_003', TestAction(
-            name="Choices initialized using a different Choices instance",
+        idspec('INIT_004', TestAction(
+            name="Choices initialized using from a different Choices instance",
             action=Choices,
-            kwargs=ChoicesKWArgs(choices=Choices(choices=[choice_instance()])),
-            validate_result=lambda result: len(result) == 1 and result['mock'] is choice_instance(),
+            kwargs=ChoicesKWArgs(choices=MockReporter().choices),
+            validate_result=lambda result: len(result) == 1 and 'mock' in result,
             assertion=Assert.ISINSTANCE,
             expected=Choices)),
-        idspec('INIT_004', TestAction(
+        idspec("INIT_005", TestAction(
+            name="Choices initialized from an Iterable of Choice instances",
+            action=Choices,
+            kwargs=ChoicesKWArgs(choices=list(MockReporter().choices.values())),
+            validate_result=lambda result: len(result) == 1 and 'mock' in result,
+            assertion=Assert.ISINSTANCE,
+            expected=Choices)),
+        idspec('INIT_006', TestAction(
             name="Choices with invalid choices argument type - raises SimpleBenchTypeError",
             action=Choices,
             kwargs=ChoicesKWArgs(choices='not_a_sequence'),  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.INVALID_CHOICES_ARG_TYPE,
+            exception_tag=ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE,
+        )),
+        idspec('INIT_007', TestAction(
+            name="Choices with invalid item in choices argument - raises SimpleBenchTypeError",
+            action=Choices,
+            kwargs=ChoicesKWArgs(choices=[choice_conf_instance(), 'not_a_choice']),  # type: ignore[list-item]
+            exception=SimpleBenchTypeError,
+            exception_tag=ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE
         )),
     ]
 )
@@ -138,72 +271,78 @@ def test_choices_init(testspec: TestSpec):
     testspec.run()
 
 
-@cache
-def choices_instance(cache_id: str = "default", *,  # pylint: disable=unused-argument
-                     choices: Sequence[Choice] | Choices | None = None) -> Choices:
-    """Factory function to return a cached Choices instance for testing.
+def choices_add_testspecs() -> list[TestSpec]:
+    """Returns a list of TestSpec instances for testing Choices add()"""
+    testspecs: list[TestSpec] = []
 
-    Args:
-        cache_id (str, default="default"):
-            An identifier to cache different Choices instances if needed.
-        choices (Sequence[Choice] | Choices | None, default=None):
-            A sequence of Choice instances or a Choices instance to initialize the Choices instance.
-    """
-    return Choices() if choices is None else Choices(choices=choices)
-
-
-@pytest.mark.parametrize(
-    "testspec", [
+    def add_choice_to_empty_choices_with_keyword_arg() -> None:
+        cache_id = f'{__name__}:ADD_001'
+        choices = choices_instance(cache_id)
+        choice = choice_instance(cache_id)
+        choices.add(choice=choice)
+        assert len(choices) == 1 and choices['mock'] is choice
+    testspecs.append(
         idspec("ADD_001", TestAction(
-            name="Add valid Choice instance to Choices via choices.add(<keyword-argument>)",
-            obj=choices_instance('ADD_001'),
-            action=choices_instance('ADD_001').add,
-            kwargs={'choice': choice_instance()},
-            validate_obj=lambda choices: len(choices) == 1 and choices['mock'] is choice_instance(),
-            expected=NO_EXPECTED_VALUE,
-        )),
+            name="Add valid Choice instance to empty Choices via add(<keyword-argument>)",
+            action=add_choice_to_empty_choices_with_keyword_arg,
+        )))
+
+    def add_choice_to_empty_choices_with_positional_arg() -> None:
+        cache_id = f'{__name__}:ADD_002'
+        choices = choices_instance(cache_id)
+        choice = choice_instance(cache_id)
+        choices.add(choice)
+        assert len(choices) == 1 and choices['mock'] is choice
+    testspecs.append(
         idspec("ADD_002", TestAction(
-            name="Add valid Choice instance to Choices via choices.add(<positional-argument>)",
-            obj=choices_instance('ADD_002'),
-            action=choices_instance('ADD_002').add,
-            args=[choice_instance()],
-            validate_obj=lambda choices: len(choices) == 1 and choices['mock'] is choice_instance(),
-            expected=NO_EXPECTED_VALUE,
-        )),
+            name="Add valid Choice instance to empty Choices via add(<positional-argument>)",
+            action=add_choice_to_empty_choices_with_positional_arg
+        )))
+
+    testspecs.append(
         idspec("ADD_003", TestAction(
-            name="Add invalid type of object to Choices - raises SimpleBenchTypeError",
-            obj=choices_instance('ADD_003'),
-            action=choices_instance('ADD_003').add,
-            args=['not_a_choice'],  # type: ignore[arg-type]
+            name="Add invalid type of object to Choices with add() - raises SimpleBenchTypeError",
+            action=choices_instance(f'{__name__}:ADD_003').add,
+            args=['not_a_choice'],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.ADD_INVALID_CHOICE_ARG_TYPE,
-        )),
+            exception_tag=ChoicesErrorTag.ADD_CHOICE_INVALID_ARG_TYPE,
+        )))
+
+    def add_second_unique_choice_to_choices() -> None:
+        cache_id = f'{__name__}:ADD_004'
+        choices = choices_instance(cache_id)
+        choice1 = choice_instance(cache_id, name='unique_choice', flags=('--unique-choice',))
+        choice2 = choice_instance(cache_id, name='another_unique_choice', flags=('--another-unique-choice',))
+        choices.add(choice1)
+        choices.add(choice2)
+        assert (len(choices) == 2 and
+                choices['unique_choice'] is choice1 and
+                choices['another_unique_choice'] is choice2)
+    testspecs.append(
         idspec("ADD_004", TestAction(
-            name="Add different Choice name to Choices",
-            obj=choices_instance("ADD_004", choices=(choice_instance(
-                "ADD_004", name='unique_choice', flags=('--unique-choice',)),)),
-            action=choices_instance("ADD_004", choices=(choice_instance(
-                "ADD_004", name='unique_choice', flags=('--unique-choice',)),)).add,
-            args=[choice_instance(
-                "ADD_004", name='another_unique_choice', flags=('--another-unique-choice',))],
-            validate_obj=lambda choices: (
-                len(choices) == 2 and
-                choices['unique_choice'] is choice_instance(
-                    "ADD_004", name='unique_choice', flags=('--unique-choice',)) and
-                choices['another_unique_choice'] is choice_instance(
-                    "ADD_004", name='another_unique_choice', flags=('--another-unique-choice',))),
-            expected=NO_EXPECTED_VALUE,
-        )),
+            name="Add second (different) Choice name/flag to Choices using add()",
+            action=add_second_unique_choice_to_choices,
+        )))
+
+    def add_duplicate_name_choice_to_choices_raises() -> None:
+        cache_id = f'{__name__}:ADD_005'
+        choices = choices_instance(cache_id)
+        choice1 = choice_instance(cache_id, name='duplicate_choice', flags=('--unique-choice1',))
+        choice2 = choice_instance(cache_id, name='duplicate_choice', flags=('--unique-choice2',))
+        choices.add(choice1)
+        choices.add(choice2)  # This should raise
+    testspecs.append(
         idspec("ADD_005", TestAction(
-            name="Add duplicate Choice to Choices - raises SimpleBenchValueError",
-            obj=choices_instance('ADD_005', choices=(choice_instance(),)),
-            action=choices_instance('ADD_005', choices=(choice_instance(),)).add,
-            args=[choice_instance()],
+            name="Add duplicate name Choice to Choices - raises SimpleBenchValueError",
+            action=add_duplicate_name_choice_to_choices_raises,
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME)
-        ),
-    ]
-)
+            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
+        )))
+
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec", choices_add_testspecs())
 def test_choices_add_method(testspec: TestSpec) -> None:
     """Test the Choices.add() method."""
     testspec.run()
@@ -332,7 +471,7 @@ def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
             action=choices_instance("EXTENDS_003").extend,
             args=['not_a_sequence'],  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+            exception_tag=ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
         )),
         idspec("EXTENDS_004", TestAction(
             name="Choices extend - add two choices via extend([<choice1>, <choice2>]) and access them via dict key",
@@ -342,7 +481,7 @@ def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
                 choice_instance('EXTENDS_001', name='choice_one', flags=('--one',)),
                 'something_invalid']],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.EXTEND_INVALID_CHOICES_ARG_SEQUENCE_TYPE,
+            exception_tag=ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
         )),
     ])
 def test_choices_extend(testspec: TestSpec) -> None:

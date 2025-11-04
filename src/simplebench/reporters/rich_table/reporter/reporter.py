@@ -16,8 +16,7 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 # simplebench.reporters imports
-from simplebench.reporters.choices import Choices
-from simplebench.reporters.choice import Choice
+from simplebench.reporters.choice import ChoiceConf
 
 # simplebench.reporters.rich_table imports
 from simplebench.reporters.rich_table.reporter.options import RichTableOptions
@@ -25,6 +24,7 @@ from simplebench.reporters.rich_table.reporter.exceptions import RichTableReport
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
 
 Options = RichTableOptions
@@ -71,9 +71,8 @@ class RichTableReporter(Reporter):
             file_suffix='txt',
             file_unique=False,
             file_append=True,
-            choices=Choices([
-                 Choice(
-                    reporter=self,
+            choices=[
+                 ChoiceConf(
                     flags=['--rich-table'],
                     flag_type=FlagType.TARGET_LIST,
                     name='rich-table',
@@ -82,8 +81,7 @@ class RichTableReporter(Reporter):
                     sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.RICH_TEXT),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--rich-table.ops'],
                     flag_type=FlagType.TARGET_LIST,
                     name='rich-table-ops',
@@ -92,8 +90,7 @@ class RichTableReporter(Reporter):
                     sections=[Section.OPS],
                     targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.RICH_TEXT),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--rich-table.timing'],
                     flag_type=FlagType.TARGET_LIST,
                     name='rich-table-timing',
@@ -102,8 +99,7 @@ class RichTableReporter(Reporter):
                     sections=[Section.TIMING],
                     targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.RICH_TEXT),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--rich-table.memory'],
                     flag_type=FlagType.TARGET_LIST,
                     name='rich-table-memory',
@@ -112,7 +108,7 @@ class RichTableReporter(Reporter):
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.RICH_TEXT),
-            ])
+            ]
         )
 
     def run_report(self,

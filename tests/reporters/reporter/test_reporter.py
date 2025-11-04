@@ -1,13 +1,13 @@
 """Test simplebench/reporters/interfaces.py module"""
 from __future__ import annotations
 from argparse import ArgumentParser, Namespace
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Optional, Sequence, Iterable
 
 import pytest
 
-from tests.kwargs import ChoicesKWArgs, ReporterKWArgs, ChoiceKWArgs
-
+from tests.kwargs import ChoicesKWArgs, ReporterKWArgs, ChoiceConfKWArgs, ChoiceKWArgs
 from tests.testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE, Assert
 
 from simplebench.case import Case
@@ -15,8 +15,8 @@ from simplebench.enums import Section, Target, Format, FlagType
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchValueError, SimpleBenchTypeError
 from simplebench.iteration import Iteration
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.choice import Choice
-from simplebench.reporters.choices import Choices
+from simplebench.reporters.choice import Choice, ChoiceConf
+from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.results import Results
@@ -73,14 +73,18 @@ def default_callback(  # pylint: disable=unused-argument
     return None  # pragma: no cover
 
 
-def default_sections_list() -> list[Section]:
+def default_sections() -> list[Section]:
     """Return a default list of Sections for testing purposes."""
     return [Section.OPS]
 
 
-def default_targets_list() -> list[Target]:
+def default_targets() -> list[Target]:
     """Return a default list of Targets for testing purposes."""
     return [Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM]
+
+def default_default_targets() -> list[Target]:
+    """Return a default list for default_targets for testing purposes."""
+    return [Target.CONSOLE]
 
 
 def default_formats_list() -> list[Format]:
@@ -103,9 +107,9 @@ def default_name() -> str:
     return "default_name"
 
 
-def default_flags() -> list[str]:
-    """Return a default list of flags for testing purposes."""
-    return ['--default']
+def default_flags() -> tuple[str, ...]:
+    """Return a default tuple of flags for testing purposes."""
+    return ('--default-flag',)
 
 
 def default_flag_type() -> FlagType:
@@ -115,7 +119,7 @@ def default_flag_type() -> FlagType:
 
 def default_file_suffix() -> str:
     """Return a default file suffix string for testing purposes."""
-    return "default"
+    return "default_suffix"
 
 
 def default_file_unique() -> bool:
@@ -128,30 +132,14 @@ def default_file_append() -> bool:
     return False
 
 
-def default_choice_instance(reporter: Reporter) -> Choice:
-    """Return a default Choice instance for testing purposes.
-
-    This has to be called from inside a Reporter init method to pass the reporter instance.
-    """
-    return Choice(
-        reporter=reporter,
-        flags=default_flags(),
-        flag_type=default_flag_type(),
-        name=default_name(),
-        description=default_description(),
-        sections=default_sections_list(),
-        targets=default_targets_list(),
-        output_format=default_output_format())
+def default_choice_conf_instance() -> ChoiceConf:
+    """Return a default Choice conf instance for testing purposes."""
+    return choice_conf_instance()
 
 
-def default_choices_instance(reporter: Reporter) -> Choices:
-    """Return a default Choices instance for testing purposes.
-
-    This has to be called from inside a Reporter init method to pass the reporter instance.
-    """
-    choices = Choices()
-    choices.add(default_choice_instance(reporter=reporter))
-    return choices
+def default_choice_confs() -> tuple[ChoiceConf, ...]:
+    """Return a default tuple of ChoiceConf instances for testing purposes."""
+    return tuple([default_choice_conf_instance()])
 
 
 def default_report_output() -> str:
@@ -169,7 +157,7 @@ def default_report_parameters() -> dict[str, Any]:
     return {
         'args': namespace_instance(),
         'case': ConfiguredCase(),
-        'choice': ConfiguredChoice(),
+        'choice': ConfiguredChoiceConf(),
         'path': default_path(),
         'session': ConfiguredSession(),
         'callback': default_callback
@@ -181,6 +169,211 @@ def namespace_instance() -> Namespace:
     arg_parser = ArgumentParser(prog='simplebench')
     args = arg_parser.parse_args([])
     return args
+
+
+@lru_cache(typed=True)
+def choice_conf_instance(cache_id: str = 'default',  # pylint: disable=unused-argument
+                         name: str = 'mock', flags: tuple[str, ...] = ('--mock',)) -> ChoiceConf:
+    """Factory function to return the same mock ChoiceConf instance for testing.
+
+    It caches the instance based on the cache_id so that multiple calls with the same
+    cache_id return the same instance.
+
+    Args:
+        cache_id (str, default='default'):
+            An identifier to cache different ChoiceConf instances if needed.
+        name (str, default='mock'):
+            The name of the ChoiceConf instance.
+        flags (tuple[str, ...], default=('--mock',)):
+            The flags associated with the ChoiceConf instance.
+    """
+    return ChoiceConf(
+        flags=default_flags(),
+        flag_type=default_flag_type(),
+        name=default_name(),
+        description=default_description(),
+        sections=default_sections(),
+        targets=default_targets(),
+        output_format=default_output_format(),
+        file_suffix=default_file_suffix(),
+        file_unique=default_file_unique(),
+        file_append=default_file_append(),
+        options=None,
+        extra='mock_extra')
+
+
+@lru_cache(typed=True)
+def choice_instance(cache_id: str = 'default',
+                    name: str | None = None,
+                    flags: tuple[str, ...] | None = None) -> Choice:
+    """Factory function to return a single cached Choice instance for testing.
+
+    The choice instance is created using MockReporter() and is
+    extracted from the MockReporter.choices attribute.
+
+    It is cached based on the cache_id so that multiple calls with the same
+    cache_id, name, and flags return the same instance.
+
+    Args:
+        cache_id (str, default="default"):
+            An identifier to cache different Choice instances if needed.
+        name (str | None, default=None):
+            The name of the Choice instance.
+
+            If None, the default name from default_name() is used.
+
+        flags (tuple[str, ...] | None, default=None):
+            The flags associated with the Choice instance.
+
+            If None, the default flags from default_flags() are used.
+
+            Tuple is used to ensure hashability for caching.
+    """
+    if name is None:
+        name = default_name()
+    if flags is None:
+        flags = default_flags()
+    if not isinstance(name, str):
+        raise TypeError(f"Invalid type for name argument: {name!r}")
+    if not isinstance(flags, tuple) or not all(isinstance(f, str) for f in flags):
+        raise TypeError(f"Invalid type for flags argument: {flags!r}")
+    choice_conf = choice_conf_instance(cache_id, name=name, flags=flags)
+    reporter = reporter_instance(cache_id, choices_conf=(choice_conf,))
+    return reporter.choices[name]
+
+@lru_cache(typed=True)
+def choices_conf_instance(cache_id: str = "default",
+                          choices: tuple[ChoiceConf, ...] | None = None) -> ChoicesConf:
+    """Factory function to return a cached ChoicesConf instance for testing.
+    
+    Args:
+        cache_id (str, default="default"):
+            An identifier to cache different ChoicesConf instances if needed.
+        choices (tuple[ChoiceConf, ...] | None, default=None):
+            A tuple of ChoiceConf instances to initialize the ChoicesConf with.
+
+            If None, a default ChoicesConf instance with a single ChoiceConf
+            instance created by default_choice_conf() is returned.
+
+            Tuple is used to ensure hashability for caching.
+    """
+    if not isinstance(cache_id, str):
+        raise TypeError(f"Invalid type for cache_id argument (should be str): {cache_id!r}")
+    if choices is None:
+        choices = (default_choice_conf(),)
+
+    if not isinstance(choices, tuple) or not all(isinstance(c, ChoiceConf) for c in choices):
+        raise TypeError(f"Invalid type for choices argument (should be tuple[ChoiceConf, ...]): {choices!r}")
+  
+    return ChoicesConf(choices)
+
+@lru_cache(typed=True)
+def reporter_instance(cache_id: str = "default",  # pylint: disable=unused-argument
+                      choice_confs: ChoicesConf | None = None) -> Reporter:
+    """Factory function to return a cached Reporter instance for testing.
+
+    The instance is a MockReporter. It is cached based on the cache_id.
+    This makes it possible to have multiple cached instances and for
+    each to retain its own state if needed.
+
+    Args:
+        cache_id (str, default="default"):
+            An identifier to cache different Reporter instances if needed.
+        choice_confs (tuple[ChoiceConf, ...] | None, default=None):
+            A tuple of ChoiceConf instances to initialize the Reporter with.
+    """
+    return MockReporter(choice_confs=choice_confs)
+
+
+@lru_cache(typed=True)
+def choices_instance(cache_id: str = "default", *,  # pylint: disable=unused-argument
+                     choices: tuple[Choice, ...] | Choices | None = None) -> Choices:
+    """Factory function to return a cached Choices instance for testing.
+
+    Args:
+        cache_id (str, default="default"):
+            An identifier to cache different Choices instances if needed.
+        choices (tuple[Choice, ...] | Choices | None, default=None):
+            A sequence of Choice instances or a Choices instance to initialize the Choices instance.
+    """
+    if choices is None:
+        result = Choices()
+        if not isinstance(result, Choices):
+            raise TypeError(f"{cache_id}: Invalid type for choices instance: {result!r}")
+        return result
+    if isinstance(choices, Choices):
+        result = Choices(choices)
+        if not isinstance(result, Choices):
+            raise TypeError(f"{cache_id}: Invalid type for choices instance: {result!r}")
+        return result
+    if isinstance(choices, tuple) and all(isinstance(c, Choice) for c in choices):
+        result = Choices(choices=choices)
+        if not isinstance(result, Choices):
+            raise TypeError(f"{cache_id}: Invalid type for choices instance: {result!r}")
+        return result
+    raise TypeError(f"Invalid type for choices argument: {choices!r}")
+
+
+class MockReporterExtras:
+    """A mock ReporterExtras subclass for testing Choice initialization."""
+    def __init__(self, full_data: bool = False) -> None:
+        self.full_data = full_data
+
+
+class MockReporter(Reporter):
+    """A mock Reporter subclass for testing Choice initialization.
+
+    It provides a minimal implementation of the abstract methods required by the Reporter base class.
+
+    It initializes with a single ChoiceConf instance for testing purposes by default.
+    This can be overridden by providing a different list of ChoiceConf instances.
+
+    The default ChoiceConf instance is created using the choice_conf_instance factory function and
+    has the name 'mock' and flag '--mock'.
+
+    Args
+    """
+    def __init__(
+            self, choices_conf: ChoicesConf | None = None) -> None:
+        """Constructs a MockReporter instance for testing.
+
+        Args:
+            choices_conf (ChoicesConf | None, default=None):
+               A `ChoicesConf` instance to initialize the `Reporter` with.
+               If None, a default instance will be used.
+        """
+        if not isinstance(choices_conf, ChoicesConf) and choices_conf is not None:
+            raise TypeError(f'choices_conf must be a ChoicesConf instance or None, got {choices_conf!r}')
+        choices_conf =  choices_conf_instance() if choices_conf is None else choices_conf
+        super().__init__(
+            name=default_name(),
+            description=default_description(),
+            sections=default_sections(),
+            default_targets=default_default_targets(),
+            targets=default_targets(),
+            subdir='mockreports',
+            options_type=ReporterOptions,
+            file_suffix='mock',
+            file_unique=True,
+            file_append=False,
+            formats={Format.JSON},
+            choices=choices_conf
+        )
+
+    def run_report(self,
+                   *,
+                   args: Namespace,
+                   case: Case,
+                   choice: Choice,
+                   path: Optional[Path] = None,
+                   session: Optional[Session] = None,
+                   callback: Optional[ReporterCallback] = None) -> None:
+        """Mock implementation of run_report."""
+
+    def render(
+            self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
+        """Mock implementation of render method."""
+        return "mocked_rendered_output"
 
 
 class UnconfiguredReporterOptions(ReporterOptions):
@@ -250,14 +443,33 @@ class UnconfiguredReporter(Reporter):
             file_append=file_append  # type: ignore[arg-type,reportArgumentType]
         )
 
-    def run_report(self, *,
+    def run_report(self,
+                   *,
                    args: Namespace,
                    case: Case,
                    choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,
-                   callback: Optional[ReporterCallback] = None) -> None:
-        """Run the report with the given arguments, case, and choice."""
+                   path: Path | None = None,
+                   session: Session | None = None,
+                   callback: ReporterCallback | None = None) -> None:
+        """Run the report with the given arguments, case, and choice.
+
+        Args:
+            args (Namespace):
+            Parsed command-line arguments.
+            case (Case):
+                The benchmark `Case` to report on.
+            choice (Choice):
+                The `Choice` configuration for the report.
+            path (Path | None, default=None):
+                Optional file `Path` for the report output.
+            session (Session | None, default=None):
+                Optional `Session` context for the report.
+            callback (ReporterCallback | None, default=None):
+                Optional `ReporterCallback` function for the report.
+
+        Return:
+            None
+        """
         self.render_by_case(
             renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
@@ -284,13 +496,13 @@ class ConfiguredReporter(Reporter):
         - name=default_name(),
         - description=default_description(),
         - options_type=ConfiguredReporterOptions,
-        - sections=default_sections_list(),
-        - targets=default_targets_list(),
+        - sections=default_sections(),
+        - targets=default_targets(),
         - formats=default_formats_list(),
-        - choices=default_choices_instance(reporter=self),
+        - choices=default_choice_confs(),
         - file_suffix=default_file_suffix(),
         - file_unique=default_file_unique(),
-        -file_append=default_file_append()
+        - file_append=default_file_append()
 
     """
     def __init__(self) -> None:
@@ -298,10 +510,10 @@ class ConfiguredReporter(Reporter):
             - name=default_name(),
             - description=default_description(),
             - options_type=ConfiguredReporterOptions,
-            - sections=default_sections_list(),
-            - targets=default_targets_list(),
+            - sections=default_sections(),
+            - targets=default_targets(),
             - formats=default_formats_list(),
-            - choices=default_choices_instance(reporter=self),
+            - choices=default_choice_confs(),
             - file_suffix=default_file_suffix(),
             - file_unique=default_file_unique(),
             - file_append=default_file_append()
@@ -311,10 +523,10 @@ class ConfiguredReporter(Reporter):
             name=default_name(),
             description=default_description(),
             options_type=default_options_type(),
-            sections=default_sections_list(),
-            targets=default_targets_list(),
+            sections=default_sections(),
+            targets=default_targets(),
             formats=default_formats_list(),
-            choices=default_choices_instance(reporter=self),
+            choices=default_choice_confs(),
             file_suffix=default_file_suffix(),
             file_unique=default_file_unique(),
             file_append=default_file_append())
@@ -343,8 +555,8 @@ def reporter_kwargs() -> ReporterKWArgs:
     ReporterKWArgs(
         name=default_name(),
         description=default_description(),
-        sections=default_sections_list(),
-        targets=default_targets_list(),
+        sections=default_sections(),
+        targets=default_targets(),
         formats=default_formats_list(),
         choices=default_choices_instance(reporter=ConfiguredReporter()),
         file_suffix=default_file_suffix(),
@@ -359,10 +571,10 @@ def reporter_kwargs() -> ReporterKWArgs:
         name=default_name(),
         description=default_description(),
         options_type=default_options_type(),
-        sections=default_sections_list(),
-        targets=default_targets_list(),
+        sections=default_sections(),
+        targets=default_targets(),
         formats=default_formats_list(),
-        choices=default_choices_instance(reporter=ConfiguredReporter()),
+        choices=default_choice_confs(),
         file_suffix=default_file_suffix(),
         file_unique=default_file_unique(),
         file_append=default_file_append()
@@ -372,76 +584,48 @@ def reporter_kwargs() -> ReporterKWArgs:
 reporter_kwargs_instance = reporter_kwargs()
 
 
-class ConfiguredChoice(Choice):
+class ConfiguredChoiceConf(ChoiceConf):
     """A dummy Choice subclass for testing purposes.
 
     Creates a Choice with default parameters for testing that can be overridden as needed.
 
     """
     def __init__(
-            self, *,
-            reporter: Reporter | None = None,
+            self,
+            *,
             flags: list[str] | None = None,
-            name: str = 'dummy',
-            description: str = 'A dummy choice for testing.',
-            flag_type: FlagType = FlagType.BOOLEAN,
+            name: str | None = None,
+            description: str | None = None,
+            flag_type: FlagType | None = None,
             sections: Sequence[Section] | None = None,
             targets: Sequence[Target] | None = None,
-            output_format: Format | None = None) -> None:
+            output_format: Format | None = None,
+            ) -> None:
         super().__init__(
-            reporter=reporter or ConfiguredReporter(),
-            flags=flags if flags is not None else ['--dummy'],
-            flag_type=flag_type,
-            name=name,
-            description=description,
-            sections=sections if sections is not None else default_sections_list(),
-            targets=targets if targets is not None else default_targets_list(),
-            output_format=output_format if output_format is not None else default_output_format())
+            flags=flags if flags is not None else default_flags(),
+            flag_type=flag_type if flag_type is not None else default_flag_type(),
+            name=name if name is not None else default_name(),
+            description=description if description is not None else default_description(),
+            sections=sections if sections is not None else default_sections(),
+            targets=targets if targets is not None else default_targets(),
+            output_format=output_format if output_format is not None else default_output_format()
+        )
 
 
-choice_instance = ConfiguredChoice()
-"""A preconfigured ConfiguredChoice instance for testing purposes
-
-Used to avoid re-instantiating multiple times in tests in
-test that need multiple access to the same Choice instance."""
-
-
-def default_choice_kwargs() -> ChoiceKWArgs:
-    """Return default ChoiceKWArgs for testing purposes."""
-    return ChoiceKWArgs(
-        reporter=ConfiguredReporter(),
-        flags=['--dummy'],
-        flag_type=FlagType.BOOLEAN,
-        name='dummy',
-        description='A dummy choice for testing.',
-        sections=default_sections_list(),
-        targets=default_targets_list(),
+def default_choice_conf_kwargs() -> ChoiceConfKWArgs:
+    """Return default ChoiceConKWArgs for testing purposes."""
+    return ChoiceConfKWArgs(
+        flags=default_flags(),
+        flag_type=default_flag_type(),
+        name=default_name(),
+        description=default_description(),
+        sections=default_sections(),
+        targets=default_targets(),
         output_format=default_output_format()
     )
 
 
-default_choice_kwargs_instance = default_choice_kwargs()
-
-
-def default_choices_kwargs() -> ChoicesKWArgs:
-    """Return default ChoicesKWArgs for testing purposes."""
-    return ChoicesKWArgs(
-        choices=[ConfiguredChoice()]
-    )
-
-
-class ConfiguredChoices(Choices):
-    """A dummy Choices subclass for testing purposes."""
-    def __init__(self) -> None:
-        super().__init__()
-        self.add(ConfiguredChoice())
-
-
-choices_instance = ConfiguredChoices()
-"""A preconfigured ConfiguredChoices instance for testing purposes.
-
-Used to avoid re-instantiating multiple times in tests
-that need multiple access to the same Choices instance."""
+default_choice_conf_kwargs_instance = default_choice_conf_kwargs()
 
 
 class ConfiguredCase(Case):
@@ -508,14 +692,6 @@ class BadSuperConfiguredReporter(Reporter):
                                   callback=callback)
 
 
-reporter_instance = ConfiguredReporter()
-"""A preconfigured ConfiguredReporter instance for testing purposes.
-
-Used to avoid re-instantiating multiple times in tests
-that need multiple access to the same Reporter instance.
-"""
-
-
 @pytest.mark.parametrize('testspec', [
     idspec('REPORTER_001', TestAction(
         name="abstract base class Reporter() cannot be instantiated directly",
@@ -530,7 +706,7 @@ that need multiple access to the same Reporter instance.
         name=("calling run_report() on BadSuperConfiguredReporter with bad run_report() super() delegation "
               "raises SimpleBenchNotImplementedError"),
         action=BadSuperConfiguredReporter().run_report,
-        kwargs={'args': namespace_instance(), 'case': ConfiguredCase(), 'choice': ConfiguredChoice()},
+        kwargs={'args': namespace_instance(), 'case': ConfiguredCase(), 'choice': ConfiguredChoiceConf()},
         exception=SimpleBenchNotImplementedError,
         exception_tag=ReporterErrorTag.RUN_REPORT_NOT_IMPLEMENTED)),
     idspec('REPORTER_004', TestAction(
@@ -672,7 +848,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         action=ConfiguredReporter().report,
         kwargs={'args': namespace_instance(),
                 'case': "not_a_case_instance",
-                'choice': ConfiguredChoice()},
+                'choice': ConfiguredChoiceConf()},
         exception=SimpleBenchTypeError,
         exception_tag=ReporterErrorTag.REPORT_INVALID_CASE_ARG)),
     idspec('REPORT_002', TestAction(
@@ -681,7 +857,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         action=ConfiguredReporter().report,
         kwargs={'args': namespace_instance(),
                 'case': ConfiguredCase(),
-                'choice': "not_a_choice_instance"},
+                'choice': "not_a_choice_conf_instance"},
         exception=SimpleBenchTypeError,
         exception_tag=ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_003', TestAction(
@@ -699,8 +875,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         action=ConfiguredReporter().report,
         kwargs={'args': namespace_instance(),
                 'case': ConfiguredCase(),
-                'choice': Choice(
-                    **default_choice_kwargs_instance.replace(sections=[Section.NULL]))},
+                'choice': Choice(**choice_kwargs_instance().replace(sections=[Section.NULL]))},
         exception=SimpleBenchValueError,
         exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)),
     idspec('REPORT_005', TestAction(
@@ -720,7 +895,8 @@ def test_reporter_init(testspec: TestSpec) -> None:
         kwargs={'args': namespace_instance(),
                 'case': ConfiguredCase(),
                 'choice': Choice(
-                    **default_choice_kwargs().replace(output_format=Format.CUSTOM))},
+                    reporter=default_reporter(),
+                    choice_conf=**default_choice_kwargs().replace(output_format=Format.CUSTOM))},
         exception=SimpleBenchValueError,
         exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)),
     idspec('REPORT_007', TestAction(
@@ -804,7 +980,7 @@ def test_reporter_report(testspec: TestSpec) -> None:
         name=("Passing wrong type object to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_CHOICE_ARG"),
         action=ConfiguredReporter().add_choice,
-        args=["not_a_choice_instance"],
+        args=["not_a_choice_conf_instance"],
         exception=SimpleBenchTypeError,
         exception_tag=ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)),
     idspec('REPORTER_ADD_CHOICE_003', TestAction(
@@ -854,14 +1030,14 @@ class ConfiguredReporterForChoices(ConfiguredReporterInit):
     idspec('REPORTER_ADD_FLAGS_001', TestAction(
         name="Adding a valid flag to an ArgumentParser",
         action=lambda: ConfiguredReporterForChoices(
-            choices=Choices(choices=[ConfiguredChoice()])).add_flags_to_argparse(ArgumentParser()),
+            choices=Choices(choices=[ConfiguredChoiceConf()])).add_flags_to_argparse(ArgumentParser()),
         expected=NO_EXPECTED_VALUE)),
     idspec('REPORTER_ADD_FLAGS_002', TestAction(
         name=("Passing a non-ArgumentParser to add_flags_to_argparse raises "
               "SimpleBenchTypeError/REPORTER_ADD_FLAGS_INVALID_PARSER_ARG"),
         action=lambda: ConfiguredReporterForChoices(
             choices=Choices(choices=[
-                ConfiguredChoice(),
+                ConfiguredChoiceConf(),
             ])).add_flags_to_argparse("not_an_argument_parser"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)),
@@ -887,4 +1063,4 @@ def test_attributes() -> None:
     with pytest.raises(AttributeError):
         reporter.description = "new_description"  # type: ignore[assignment,misc]
     with pytest.raises(AttributeError):
-        reporter.choices = Choices(choices=[ConfiguredChoice()])  # type: ignore[assignment,misc]
+        reporter.choices = Choices(choices=[ConfiguredChoiceConf()])  # type: ignore[assignment,misc]

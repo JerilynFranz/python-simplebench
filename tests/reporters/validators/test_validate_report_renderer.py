@@ -18,8 +18,7 @@ from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
 from simplebench.reporters.validators import validate_report_renderer
-from simplebench.reporters.choice import Choice
-from simplebench.reporters.choices import Choices
+from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.session import Session
 
 
@@ -40,9 +39,11 @@ class MockReporter(Reporter):
             sections={Section.NULL},
             targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
             formats={Format.JSON},
-            choices=Choices([
-                Choice(
-                    reporter=self,
+            file_suffix='mock',
+            file_unique=True,
+            file_append=False,
+            choices=[
+                ChoiceConf(
                     flags=['--mock-options'],
                     flag_type=FlagType.TARGET_LIST,
                     name='mock-options',
@@ -50,12 +51,11 @@ class MockReporter(Reporter):
                     sections=[Section.NULL],  # All sections are always included
                     targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
                     output_format=Format.RICH_TEXT,
-                    options=MockReporterOptions()),
-            ]),
-            file_suffix='mock',
-            file_unique=True,
-            file_append=False
-        )
+                    file_suffix='mock',
+                    file_unique=True,
+                    file_append=False,
+                    options=MockReporterOptions())],
+            )
 
     def run_report(self,
                    *,

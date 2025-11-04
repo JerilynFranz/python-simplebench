@@ -15,8 +15,7 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 # simplebench.reporters imports
-from simplebench.reporters.choice import Choice
-from simplebench.reporters.choices import Choices
+from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
@@ -27,6 +26,7 @@ from .exceptions import CSVReporterErrorTag
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
 
 
@@ -53,12 +53,11 @@ class CSVReporter(Reporter):
     Attributes:
         name (str): The unique identifying name of the reporter.
         description (str): A brief description of the reporter.
-        choices (Choices): A collection of Choices instances defining
-            the reporter instance, CLI flags, Choice name, supported Result Sections,
+        choices (Iterable[ChoicesConf]): Iterable of ChoicesConf instances defining
+            the reporter instance, CLI flags, ChoiceConf  name, supported Result Sections,
             supported output Targets, and supported output Formats for the reporter.
         targets (set[Target]): The supported output targets for the reporter.
         formats (set[Format]): The supported output formats for the reporter.
-        choices (Choices): The supported Choices for the reporter.
     """
     _HARDCODED_DEFAULT_OPTIONS = CSVOptions()
     """Built-in default CSVOptions instance for the reporter used if none is specified
@@ -78,9 +77,8 @@ class CSVReporter(Reporter):
             file_suffix='csv',
             file_unique=True,
             file_append=False,
-            choices=Choices([
-                Choice(
-                    reporter=self,
+            choices=[
+                ChoiceConf(
                     flags=['--csv'],
                     flag_type=FlagType.TARGET_LIST,
                     name='csv',
@@ -90,8 +88,7 @@ class CSVReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV,
                 ),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--csv.ops'],
                     flag_type=FlagType.TARGET_LIST,
                     name='csv-ops',
@@ -101,8 +98,7 @@ class CSVReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV,
                 ),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--csv.timing'],
                     flag_type=FlagType.TARGET_LIST,
                     name='csv-timing',
@@ -112,8 +108,7 @@ class CSVReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV,
                 ),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--csv.memory'],
                     flag_type=FlagType.TARGET_LIST,
                     name='csv-memory',
@@ -123,7 +118,7 @@ class CSVReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV,
                 ),
-            ])
+            ]
         )
 
     def run_report(self,
@@ -150,7 +145,7 @@ class CSVReporter(Reporter):
         Args:
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
+            choice (Choice): The ChoiceConf  instance specifying the report configuration.
             path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
             callback (Optional[ReporterCallback]):
@@ -185,12 +180,12 @@ class CSVReporter(Reporter):
         Raises:
             SimpleBenchValueError: If the specified section is unsupported.
         """
-        case = validate_type(value=case, expected=Case, name='case',
-                             error_tag=CSVReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(value=section, expected=Section, name='section',
-                                error_tag=CSVReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(value=options, expected=self.options_type, name='options',
-                                error_tag=CSVReporterErrorTag.RENDER_INVALID_OPTIONS)
+        case = validate_type(case, Case, 'case',
+                             CSVReporterErrorTag.RENDER_INVALID_CASE)
+        section = validate_type(section, Section, 'section',
+                                CSVReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(options, self.options_type, 'options',
+                                CSVReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         base_unit: str = self.get_base_unit_for_section(section=section)
         results: list[Results] = case.results

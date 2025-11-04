@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Custom exceptions for the simplebench package."""
 import argparse
+from textwrap import dedent
 from enum import Enum
+import re
 from typing import Any, Generic, TypeVar
 
 from .base import ErrorTag
@@ -15,7 +17,6 @@ from .session import SessionErrorTag
 from .si_units import SIUnitsErrorTag
 from .utils import UtilsErrorTag
 from .tasks import RichTaskErrorTag, RichProgressTasksErrorTag
-from .validators import ValidatorsErrorTag
 
 __all__ = [
     "TaggedException",
@@ -39,11 +40,46 @@ __all__ = [
     "SessionErrorTag",
     "SIUnitsErrorTag",
     "UtilsErrorTag",
-    "ValidatorsErrorTag",
 ]
 
 
 E = TypeVar('E', bound=Exception)
+
+
+def dedent_and_normalize_whitespace(text: str) -> str:
+    """Dedent and and normalize whitespace.
+
+    * \\n and \\t characters are removed.
+    * Leading and trailing whitespace is removed.
+    * Multiple consecutive whitespace characters are reduced to a single space.
+
+    Args:
+        text (str): The text to dedent and strip.
+
+    Returns:
+        str: The dedented and normalized text.
+    """
+    dedented_text = dedent(text)
+    no_newlines_tabs = dedented_text.replace('\n', ' ').replace('\t', ' ')
+    normalized_whitespace = re.sub(re.compile(r'\s+'), ' ', no_newlines_tabs)
+    return normalized_whitespace.strip()
+
+
+def generate_message(msg: str, tag: ErrorTag) -> str:
+    """Generate an error message with the given tag.
+
+    Args:
+        msg (str): The base error message.
+        tag (ErrorTag): The error tag.
+
+    Returns:
+        str: The generated error message.
+    """
+    if tag.__doc__ is None:
+        message = f"{msg}: {tag.value}"
+    else:
+        message = f"{msg}: {dedent_and_normalize_whitespace(tag.__doc__)}"
+    return message.replace('\n', '')
 
 
 class TaggedException(Exception, Generic[E]):
@@ -118,10 +154,7 @@ class SimpleBenchTypeError(TaggedException[ValueError]):
             msg (str): The error message.
             tag (ErrorTag): The tag code.
         """
-        if tag.__doc__ is None:
-            message = f"{msg}: {tag.value}"
-        else:
-            message = f"{msg}: {tag.__doc__}"
+        message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
 
 
@@ -143,10 +176,13 @@ class SimpleBenchValueError(TaggedException[ValueError]):
         tag (ErrorTag): The tag code.
     """
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        if tag.__doc__ is None:
-            message = f"{msg}: {tag.value}"
-        else:
-            message = f"{msg}: {tag.__doc__}"
+        """Raises a SimpleBenchValueError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
 
 
@@ -174,10 +210,7 @@ class SimpleBenchKeyError(TaggedException[KeyError]):
             msg (str): The error message.
             tag (ErrorTag): The tag code.
         """
-        if tag.__doc__ is None:
-            message = f"{msg}: {tag.value}"
-        else:
-            message = f"{msg}: {tag.__doc__}"
+        message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
 
 
@@ -205,10 +238,7 @@ class SimpleBenchRuntimeError(TaggedException[RuntimeError]):
             msg (str): The error message.
             tag (ErrorTag): The tag code.
         """
-        if tag.__doc__ is None:
-            message = f"{msg}: {tag.value}"
-        else:
-            message = f"{msg}: {tag.__doc__}"
+        message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
 
 
@@ -236,10 +266,7 @@ class SimpleBenchNotImplementedError(TaggedException[NotImplementedError]):
             msg (str): The error message.
             tag (ErrorTag): The tag code.
         """
-        if tag.__doc__ is None:
-            message = f"{msg}: {tag.value}"
-        else:
-            message = f"{msg}: {tag.__doc__}"
+        message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
 
 
@@ -271,10 +298,7 @@ class SimpleBenchAttributeError(TaggedException[AttributeError]):
             obj (object): The object the attribute was not found on.
             tag (ErrorTag): The tag code.
         """
-        if tag.__doc__ is None:
-            message = f"{msg}: {tag.value}"
-        else:
-            message = f"{msg}: {tag.__doc__}"
+        message = generate_message(msg, tag)
         super().__init__(message, tag=tag, name=name, obj=obj)
 
 
@@ -311,10 +335,7 @@ class SimpleBenchArgumentError(TaggedException[argparse.ArgumentError]):
         # to get an argparse.Action instance as the first argument to infer the
         # argument_name from, which we don't have here, and so must backfill the argument_name
         # after initialization.
-        if tag.__doc__ is None:
-            message = f"{message}: {tag.value}"
-        else:
-            message = f"{message}: {tag.__doc__}"
+        message = generate_message(message, tag)
         super().__init__(None, message, tag=tag)
         self.argument_name = argument_name
 
@@ -343,8 +364,5 @@ class SimpleBenchImportError(TaggedException[ImportError]):
             msg (str): The error message.
             tag (ErrorTag): The tag code.
         """
-        if tag.__doc__ is None:
-            message = f"{msg}: {tag.value}"
-        else:
-            message = f"{msg}: {tag.__doc__}"
+        message = generate_message(msg, tag)
         super().__init__(message, tag=tag)

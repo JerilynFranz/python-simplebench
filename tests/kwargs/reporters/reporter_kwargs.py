@@ -4,6 +4,7 @@ from typing import Iterable, TYPE_CHECKING
 
 from tests.kwargs.kwargs import KWArgs, NoDefaultValue
 
+from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.reporter import Reporter
 
 if TYPE_CHECKING:
@@ -37,26 +38,38 @@ class ReporterKWArgs(KWArgs):
             file_unique: bool | NoDefaultValue = NoDefaultValue(),
             file_append: bool | NoDefaultValue = NoDefaultValue(),
             formats: Iterable[Format] | NoDefaultValue = NoDefaultValue(),
-            choices: Choices | NoDefaultValue = NoDefaultValue()) -> None:
+            choices: Iterable[ChoiceConf] | Choices | NoDefaultValue = NoDefaultValue()) -> None:
         """Constructs a ReporterKWArgs instance. This class is used to hold keyword arguments for
         initializing a Reporter instance in tests.
 
         Args:
-            name (str): The unique identifying name of the reporter. Must be a non-empty string.
-            description (str): A brief description of the reporter. Must be a non-empty string.
-            options_type (type[ReporterOptions] | None): The specific ReporterOptions subclass
-                associated with this reporter, or None if no specific options are defined.
-            sections (set[Section]): The set of all Sections supported by the reporter.
-            targets (set[Target]): The set of all Targets supported by the reporter.
-            default_targets (set[Target] | None, default=None): The default set of Targets for the reporter.
-            subdir (str, default=''): The subdirectory where report files will be saved.
-            file_suffix (str): An optional file suffix for reporter output files.
+            name (str):
+                The unique identifying name of the reporter. Must be a non-empty string.
+            description (str):
+                A brief description of the reporter. Must be a non-empty string.
+            options_type (type[ReporterOptions] | None):
+                The specific ReporterOptions subclass associated with this reporter,
+                or None if no specific options are defined.
+            sections (set[Section]):
+                The set of all Sections supported by the reporter.
+            targets (set[Target]):
+                The set of all Targets supported by the reporter.
+            default_targets (set[Target] | None, default=None):
+                The default set of Targets for the reporter.
+            subdir (str, default=''):
+                The subdirectory where report files will be saved.
+            file_suffix (str):
+                An optional file suffix for reporter output files.
                 - May be an empty string ('')
                 - Cannot contain non-alphanumeric characters (characters other than A-Z, a-z, 0-9).
                 - Cannot be longer than 10 characters.
-            file_unique (bool): Whether output files should have unique names.
-            file_append (bool): Whether output files should be appended to.
-            formats (set[Format]): The set of Formats supported by the reporter.
-            choices (Choices): A Choices instance defining the sections, output targets,
+            file_unique (bool):
+                Whether output files should have unique names.
+            file_append (bool):
+                Whether output files should be appended to.
+            formats (set[Format]):
+                The set of Formats supported by the reporter.
+            choices (Iterable[ChoiceConf] | Choices):
+                A Choices instance defining the sections, output targets,
                 and formats supported by the reporter. Must have at least one Choice."""
         super().__init__(base_class=Reporter, kwargs=locals())

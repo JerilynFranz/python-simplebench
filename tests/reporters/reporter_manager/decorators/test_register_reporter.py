@@ -10,8 +10,7 @@ from simplebench.enums import Section, Target, Format, FlagType
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.reporters.choice import Choice
-from simplebench.reporters.choices import Choices
+from simplebench.reporters.choice import ChoiceConf, Choice
 from simplebench.session import Session
 
 from simplebench.reporters.reporter_manager.decorators import (
@@ -32,9 +31,11 @@ class MockReporter(Reporter):
             sections={Section.NULL},
             targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
             formats={Format.JSON},
-            choices=Choices([
-                Choice(
-                    reporter=self,
+            file_suffix='mock',
+            file_unique=True,
+            file_append=False,
+            choices=[
+                ChoiceConf(
                     flags=['--mock-options'],
                     flag_type=FlagType.TARGET_LIST,
                     name='mock-options',
@@ -43,11 +44,7 @@ class MockReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
                     output_format=Format.RICH_TEXT,
                     options=MockReporterOptions()),
-            ]),
-            file_suffix='mock',
-            file_unique=True,
-            file_append=False
-        )
+            ])
 
     def run_report(self,
                    *,

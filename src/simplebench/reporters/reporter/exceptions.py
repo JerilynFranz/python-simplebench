@@ -22,6 +22,8 @@ class ReporterErrorTag(ErrorTag):
     FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED = (
         "FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED")
     """Exactly one of file_unique or file_append must be True"""
+    DUPLICATE_CHOICE_NAMES_IN_CHOICES = "DUPLICATE_CHOICE_NAMES_IN_CHOICES"
+    """Duplicate Choice names were found in the choices argument"""
 
     # render_by_section()
     RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE = "RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE"

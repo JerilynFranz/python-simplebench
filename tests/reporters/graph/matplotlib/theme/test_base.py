@@ -10,6 +10,7 @@ from simplebench.reporters.graph.matplotlib.theme.base import Theme
     idspec('INIT_001', TestAction(
         name="no_params",
         action=Theme,
+        args=[],
         assertion=Assert.ISINSTANCE,
         expected=Theme
     )),

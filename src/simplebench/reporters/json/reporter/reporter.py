@@ -11,8 +11,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.utils import get_machine_info, sigfigs
 from simplebench.validators import validate_type
 
-from simplebench.reporters.choice import Choice
-from simplebench.reporters.choices import Choices
+from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 
@@ -21,6 +20,7 @@ from .options import JSONOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
 
 Options = JSONOptions
@@ -72,9 +72,11 @@ class JSONReporter(Reporter):
             sections={Section.NULL},
             targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
             formats={Format.JSON},
-            choices=Choices([
-                Choice(
-                    reporter=self,
+            file_suffix='json',
+            file_unique=True,
+            file_append=False,
+            choices=[
+                ChoiceConf(
                     flags=['--json'],
                     flag_type=FlagType.TARGET_LIST,
                     name='json',
@@ -83,8 +85,7 @@ class JSONReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
                     output_format=Format.JSON,
                     options=Options(full_data=False)),
-                Choice(
-                    reporter=self,
+                ChoiceConf(
                     flags=['--json-data'],
                     flag_type=FlagType.TARGET_LIST,
                     name='json-data',
@@ -94,10 +95,7 @@ class JSONReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
                     output_format=Format.JSON,
                     options=Options(full_data=True)),
-            ]),
-            file_suffix='json',
-            file_unique=True,
-            file_append=False
+            ],
         )
 
     def run_report(self,
@@ -151,12 +149,12 @@ class JSONReporter(Reporter):
         Returns:
             str: The JSON string representation of the Case data.
         """
-        case = validate_type(value=case, expected=Case, name='case',
-                             error_tag=JSONReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(value=section, expected=Section, name='section',
-                                error_tag=JSONReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(value=options, expected=Options, name='options',
-                                error_tag=JSONReporterErrorTag.RENDER_INVALID_OPTIONS)
+        case = validate_type(case, Case, 'case',
+                             JSONReporterErrorTag.RENDER_INVALID_CASE)
+        section = validate_type(section, Section, 'section',
+                                JSONReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(options, Options, 'options',
+                                JSONReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         full_data: bool = options.full_data if isinstance(options, Options) else False
         with StringIO() as jsonfile:

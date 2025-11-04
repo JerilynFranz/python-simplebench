@@ -1,11 +1,20 @@
 """ErrorTags for simplebench.validators in SimpleBench."""
-from .base import ErrorTag
-from ..enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
+from simplebench.enums import enum_docstrings
 
 
 @enum_docstrings
 class ValidatorsErrorTag(ErrorTag):
     """ErrorTags for validator-related exceptions."""
+
+    # validate_bool() tags
+    VALIDATE_BOOL_INVALID_NAME_ARG_TYPE = "VALIDATE_BOOL_INVALID_NAME_ARG_TYPE"
+    """The 'name' argument must be a str."""
+    VALIDATE_BOOL_INVALID_ERROR_TAG_TYPE = "VALIDATE_BOOL_INVALID_ERROR_TAG_TYPE"
+    """The 'error_tag' argument must be an ErrorTag."""
+    VALIDATE_BOOL_INVALID_ALLOW_NONE_ARG_TYPE = "VALIDATE_BOOL_INVALID_ALLOW_NONE_ARG_TYPE"
+    """The 'allow_none' argument must be a bool."""
+
     INVALID_PATH_TYPE = "INVALID_PATH_TYPE"
     """A non-str, non-pathlib.Path type was passed as a path."""
     PATH_DOES_NOT_EXIST = "PATH_DOES_NOT_EXIST"
@@ -64,3 +73,31 @@ class ValidatorsErrorTag(ErrorTag):
     VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC = "VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC"
     """The stem (name without suffix) of the filename argument passed to validate_filename()
     contains non-alphanumeric characters"""
+
+    # validate_iterable_of_type() tags
+    VALIDATE_ITERABLE_OF_TYPE_INVALID_TYPES_ARG = "VALIDATE_ITERABLE_OF_TYPE_INVALID_TYPES_ARG"
+    """The 'types' argument must be a type or a tuple of types."""
+    VALIDATE_ITERABLE_OF_TYPE_INVALID_FIELD_NAME_ARG_TYPE = "VALIDATE_ITERABLE_OF_TYPE_INVALID_FIELD_NAME_ARG_TYPE"
+    """The 'field_name' argument must be a str."""
+    VALIDATE_ITERABLE_OF_TYPE_INVALID_TYPE_TAG_TYPE = "VALIDATE_ITERABLE_OF_TYPE_INVALID_TYPE_TAG_TYPE"
+    """The 'type_tag' argument must be an ErrorTag."""
+    VALIDATE_ITERABLE_OF_TYPE_INVALID_VALUE_TAG_TYPE = "VALIDATE_ITERABLE_OF_TYPE_INVALID_VALUE_TAG_TYPE"
+    """The 'value_tag' argument must be an ErrorTag."""
+    VALIDATE_ITERABLE_OF_TYPE_INVALID_ALLOW_EMPTY_ARG_TYPE = "VALIDATE_ITERABLE_OF_TYPE_INVALID_ALLOW_EMPTY_ARG_TYPE"
+    """The 'allow_empty' argument must be a bool."""
+    VALIDATE_ITERABLE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE = "VALIDATE_ITERABLE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE"
+    """The 'exact_type' argument must be a bool."""
+
+    # validate_sequence_of_type() tags
+    VALIDATE_SEQUENCE_OF_TYPE_INVALID_TYPES_ARG = "VALIDATE_SEQUENCE_OF_TYPE_INVALID_TYPES_ARG"
+    """The 'types' argument must be a type or a tuple of types."""
+    VALIDATE_SEQUENCE_OF_TYPE_INVALID_FIELD_NAME_ARG_TYPE = "VALIDATE_SEQUENCE_OF_TYPE_INVALID_FIELD_NAME_ARG_TYPE"
+    """The 'field_name' argument must be a str."""
+    VALIDATE_SEQUENCE_OF_TYPE_INVALID_TYPE_TAG_TYPE = "VALIDATE_SEQUENCE_OF_TYPE_INVALID_TYPE_TAG_TYPE"
+    """The 'type_tag' argument must be an ErrorTag."""
+    VALIDATE_SEQUENCE_OF_TYPE_INVALID_VALUE_TAG_TYPE = "VALIDATE_SEQUENCE_OF_TYPE_INVALID_VALUE_TAG_TYPE"
+    """The 'value_tag' argument must be an ErrorTag."""
+    VALIDATE_SEQUENCE_OF_TYPE_INVALID_ALLOW_EMPTY_ARG_TYPE = "VALIDATE_SEQUENCE_OF_TYPE_INVALID_ALLOW_EMPTY_ARG_TYPE"
+    """The 'allow_empty' argument must be a bool."""
+    VALIDATE_SEQUENCE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE = "VALIDATE_SEQUENCE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE"
+    """The 'exact_type' argument must be a bool."""

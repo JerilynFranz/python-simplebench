@@ -18,56 +18,45 @@ TEST_STRING: str = 'asbc'
 
 @pytest.mark.parametrize('testspec', [
     idspec("PARAM_001", TestAction(
-        name="Attempt to pass value as positional argument raises TypeError",
-        action=validate_type,
-        args=[TEST_STRING],
-        kwargs={
-            "expected": str,
-            "name": "test_field",
-            "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
-        },
-        exception=TypeError,
-    )),
-    idspec("PARAM_002", TestAction(
         name="Attempt to pass expected as NOT a type or tuple of types raises correct SimpleBenchTypeError",
         action=validate_type,
         kwargs={
             "value": TEST_STRING,
-            "expected": "not_a_type",
-            "name": "test_field",
+            "types": "not_a_type",
+            "field_name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
         exception_tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE)),
-    idspec("PARAM_003", TestAction(
+    idspec("PARAM_002", TestAction(
         name="Attempt to pass expected as a tuple with a non-type item raises correct SimpleBenchTypeError",
         action=validate_type,
         kwargs={
             "value": TEST_STRING,
-            "expected": (str, 123),
-            "name": "test_field",
+            "types": (str, 123),
+            "field_name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
         exception_tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE)),
-    idspec("PARAM_004", TestAction(
+    idspec("PARAM_003", TestAction(
         name="Attempt to pass name as non-str raises correct SimpleBenchTypeError",
         action=validate_type,
         kwargs={
             "value": TEST_STRING,
-            "expected": str,
-            "name": 123,
+            "types": str,
+            "field_name": 123,
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
         exception_tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE)),
-    idspec("PARAM_005", TestAction(
+    idspec("PARAM_004", TestAction(
         name="Attempt to pass error_tag as non-ErrorTag raises correct SimpleBenchTypeError",
         action=validate_type,
         kwargs={
             "value": TEST_STRING,
-            "expected": str,
-            "name": "test_field",
+            "types": str,
+            "field_name": "test_field",
             "error_tag": "not_an_errortag",
         },
         exception=SimpleBenchTypeError,
@@ -84,8 +73,8 @@ def test_param(testspec: TestSpec):
         action=validate_type,
         kwargs={
             "value": "a string",
-            "expected": str,
-            "name": "test_field",
+            "types": str,
+            "field_name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         assertion=Assert.ISINSTANCE,
@@ -95,8 +84,8 @@ def test_param(testspec: TestSpec):
         action=validate_type,
         kwargs={
             "value": 123,
-            "expected": str,
-            "name": "test_field",
+            "types": str,
+            "field_name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
@@ -106,8 +95,8 @@ def test_param(testspec: TestSpec):
         action=validate_type,
         kwargs={
             "value": 123,
-            "expected": (str, int),
-            "name": "test_field",
+            "types": (str, int),
+            "field_name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         assertion=Assert.ISINSTANCE,
@@ -117,8 +106,8 @@ def test_param(testspec: TestSpec):
         action=validate_type,
         kwargs={
             "value": 12.3,
-            "expected": (str, int),
-            "name": "test_field",
+            "types": (str, int),
+            "field_name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
@@ -128,8 +117,8 @@ def test_param(testspec: TestSpec):
         action=validate_type,
         kwargs={
             "value": TEST_STRING,
-            "expected": str,
-            "name": "test_field",
+            "types": str,
+            "field_name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         assertion=Assert.IS,

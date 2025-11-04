@@ -3,7 +3,7 @@
 These options are used to configure the behavior of a MatPlotLib reporter
 when generating graph reports for benchmark test cases."""
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.validators import validate_int_range, validate_type, validate_float
+from simplebench.validators import validate_int_range, validate_type, validate_float, validate_bool
 
 # simplebench.reporters.graph imports
 from simplebench.reporters.graph.options import GraphOptions
@@ -518,9 +518,10 @@ class MatPlotLibOptions(GraphOptions):
                     min_value=50, max_value=400)
         """The DPI (dots per inch) of the graph when rendered (private instance attribute)"""
 
-        self._y_starts_at_zero: bool | None = None if y_starts_at_zero is None else validate_type(
-            value=y_starts_at_zero, expected=bool, name='y_starts_at_zero',
-            error_tag=MatPlotLibOptionsErrorTag.INVALID_Y_STARTS_AT_ZERO_ARG_TYPE)
+        self._y_starts_at_zero: bool | None = validate_bool(
+            y_starts_at_zero, 'y_starts_at_zero',
+            MatPlotLibOptionsErrorTag.INVALID_Y_STARTS_AT_ZERO_ARG_TYPE,
+            allow_none=True)
         """Whether the Y-axis should start at zero (private instance attribute)"""
 
         self._x_labels_rotation: float | None = None if x_labels_rotation is None else validate_float(
@@ -529,18 +530,18 @@ class MatPlotLibOptions(GraphOptions):
         """Rotation angle in degrees for X-axis labels (private instance attribute)"""
 
         self._style: Style | None = None if style is None else validate_type(
-            value=style, expected=Style, name='style',
-            error_tag=MatPlotLibOptionsErrorTag.INVALID_STYLE_ARG_TYPE)
+            style, Style, 'style',
+            MatPlotLibOptionsErrorTag.INVALID_STYLE_ARG_TYPE)
         """Style to use for the MatPlotLib graphs (private instance attribute)"""
 
         self._theme: Theme | None = None if theme is None else validate_type(
-            value=theme, expected=Theme, name='theme',
-            error_tag=MatPlotLibOptionsErrorTag.INVALID_THEME_ARG_TYPE)
+            theme, Theme, 'theme',
+            MatPlotLibOptionsErrorTag.INVALID_THEME_ARG_TYPE)
         """Theme to use for the MatPlotLib graphs (private instance attribute)"""
 
         self._image_type: ImageType | None = None if image_type is None else validate_type(
-            value=image_type, expected=ImageType, name='image_type',
-            error_tag=MatPlotLibOptionsErrorTag.INVALID_IMAGE_TYPE_ARG_TYPE)
+            image_type, ImageType, 'image_type',
+            MatPlotLibOptionsErrorTag.INVALID_IMAGE_TYPE_ARG_TYPE)
         """Type of image to use for the output graph files (private instance attribute)"""
 
     @property

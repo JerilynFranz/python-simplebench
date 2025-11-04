@@ -21,7 +21,7 @@ from simplebench.reporters.rich_table.reporter import RichTableReporter
 from .decorators.register_reporter import get_registered_reporters
 from .exceptions import ReporterManagerErrorTag
 
-_PREDEFINED_REPORTERS = [CSVReporter, ScatterPlotReporter, RichTableReporter, JSONReporter]
+_PREDEFINED_REPORTERS: list[type[Reporter]] = [CSVReporter, ScatterPlotReporter, RichTableReporter, JSONReporter]
 """Container for all predefined Reporter classes."""
 
 
@@ -66,7 +66,7 @@ class ReporterManager():
         if not load_defaults:
             return
         for reporter in _PREDEFINED_REPORTERS:
-            self.register(reporter())
+            self.register(reporter())  # type: ignore[reportCallIssue]
         for reporter in get_registered_reporters():
             self.register(reporter)
 
@@ -93,6 +93,13 @@ class ReporterManager():
     def register(self, reporter: Reporter) -> None:
         """Register a new Reporter.
 
+        This method adds a new Reporter to the registry. Unlike the predefined reporters
+        and the @register_reporter decorator which both register by class,  this method
+        requires an instance of the Reporter.
+
+        This allows for more flexibility, such as registering Reporters with custom
+        initialization parameters.
+
         Args:
             reporter (Reporter): The Reporter to register.
 
@@ -100,6 +107,11 @@ class ReporterManager():
             SimpleBenchValueError: If a Reporter with the same name or CLI argument is already registered.
             SimpleBenchTypeError: If the provided reporter is not an instance of Reporter.
         """
+        if type(reporter) is Reporter:  # pylint: disable=unidiomatic-typecheck
+            raise SimpleBenchValueError(
+                "Cannot register the base Reporter class itself, please register a subclass instead.",
+                tag=ReporterManagerErrorTag.CANNOT_REGISTER_BASE_CLASS
+            )
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
                 "reporter must be an instance of Reporter",
