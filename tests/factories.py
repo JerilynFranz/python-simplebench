@@ -52,6 +52,7 @@ reset the cached instances.
 """
 from __future__ import annotations
 from argparse import ArgumentParser, Namespace
+from enum import Enum
 from pathlib import Path
 from typing import Any, Optional, Sequence, Iterable, TypeVar
 
@@ -369,9 +370,9 @@ def default_file_suffix() -> str:
             If None, caching is disabled for this call.
 
     Returns:
-        str: `"default_suffix"`
+        str: `"suffix"`
     """
-    return "default_suffix"
+    return "suffix"
 
 
 def default_file_unique() -> bool:
@@ -775,7 +776,7 @@ class MockReporter(Reporter):
         """Mock implementation of run_report."""
 
     def render(
-            self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+            self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
         """Mock implementation of render method."""
         return "mocked_rendered_output"
 

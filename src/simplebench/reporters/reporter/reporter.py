@@ -27,9 +27,9 @@ from simplebench.validators import (validate_iterable_of_type, validate_string,
                                     validate_type, validate_filename, validate_bool)
 
 # simplebench.reporters
-from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choice.metaclasses import IChoice
 from simplebench.reporters.choices.choices import Choices
+from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.validators import validate_report_renderer, validate_reporter_callback
 
@@ -148,7 +148,7 @@ class Reporter(ABC, IReporter):
                  file_unique: bool,
                  file_append: bool,
                  formats: Iterable[Format],
-                 choices: Iterable[ChoiceConf]) -> None:
+                 choices: ChoicesConf) -> None:
         """
         Initialize the Reporter instance.
 
@@ -197,7 +197,7 @@ class Reporter(ABC, IReporter):
             formats (Iterable[Format]):
                 An iterable of all Formats supported by the reporter.
                 - Must include at least one Format.
-            choices (Iterable[ChoiceConf]):
+            choices (ChoicesConf):
                 An iterable of ChoicesConf instances defining the sections, output targets,
                 and formats supported by the reporter.
                 - Must have at least one ChoiceConf.
@@ -302,15 +302,13 @@ class Reporter(ABC, IReporter):
                 allow_empty=False))
         """The set of supported Formats for the reporter (private backing field)"""
 
-        choices = validate_iterable_of_type(
-            choices, ChoiceConf, 'choices',
-            ReporterErrorTag.CHOICES_INVALID_ARG_TYPE,
-            ReporterErrorTag.CHOICES_INVALID_ARG_VALUE,
-            allow_empty=False)
+        choices = validate_type(
+            choices, ChoicesConf, 'choices',
+            ReporterErrorTag.CHOICES_INVALID_ARG_TYPE)
 
         choices_list: list[Choice] = []
         choice_conf_names: set[str] = set()
-        for item in choices:
+        for item in choices.values():
             if item.name in choice_conf_names:
                 raise SimpleBenchValueError(
                     f"Duplicate Choice().name found in choices: {item.name}",

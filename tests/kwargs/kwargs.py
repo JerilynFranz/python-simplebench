@@ -1,7 +1,7 @@
 """simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
 from __future__ import annotations
 import inspect
-from typing import Any, Iterable, cast, TypeVar, TypeGuard
+from typing import Any, Iterable, cast, TypeVar, TypeGuard, Hashable
 
 # TODO: Create a new PyPi python-testkwargs package to implement a generic KWArgs class
 # using decorators to generate subclasses for specific modeled classes automatically
@@ -67,7 +67,7 @@ def is_kwargs(obj: object) -> TypeGuard[KWArgs]:
     return isinstance(obj, KWArgs)
 
 
-class KWArgs(dict):
+class KWArgs(dict[str, Any], Hashable):
     """A base class to hold keyword arguments for instance initialization.
 
     This class is primarily used to facilitate testing of class initialization
@@ -112,11 +112,21 @@ class KWArgs(dict):
         and  cache the set of all possible parameter names for efficient use in other
         methods like `__sub__` and `replace`.
 
+        Because it is a UserDict, the KWArgs instance behaves like a standard dictionary,
+        allowing access to its items via standard dictionary methods and syntax.
+
+        This has the effect of filtering out any parameters that were not defined
+        in the modeled class's __init__ method, as well as any parameters that
+        were not provided (i.e., those still set to NoDefaultValue).
+
         Args:
             base_class (type): The class that this KWArgs instance is modeling.
             kwargs (dict[str, Any]): A dictionary of arguments, typically from a
                 call to `locals()` in a subclass's `__init__` method.
         Raises:
+            ValueError:
+                - If base_class does not have an __init__ method.
+                - If the modeled class's __init__ method has a parameter named 'data'.
             TypeError: If the provided arguments are not of the expected types.
             AssertionError: If the resulting KWArgs does not match the base class signature parameter names.
 
@@ -149,11 +159,38 @@ class KWArgs(dict):
             params = set(kwargs_sig.parameters.keys()) - set(['self', '__class__'])
             setattr(cls, '_INIT_KWARG_PARAMS', params)
         params = cast(set[str], getattr(cls, '_INIT_KWARG_PARAMS'))
+
         pass_through_kwargs = {}
         for key, value in kwargs.items():
             if key in params and not isinstance(value, NoDefaultValue):
                 pass_through_kwargs[key] = value
         super().__init__(pass_through_kwargs)
+
+    def __hash__(self) -> int:  # type: ignore[override]
+        """Computes a hash value for the KWArgs instance based on its items.
+
+        A KWArgs instance is Hashable if all its items are hashable.
+
+        Returns:
+            int: The hash value of the KWArgs instance.
+        """
+        return hash(frozenset(self.items()))
+
+    def __eq__(self, other):
+        """Checks equality between this KWArgs instance and another object.
+
+        Args:
+            other (object):
+                The object to compare against.
+        Returns:
+            bool: True if the other object is a KWArgs subclass instance with the same items and type,
+                False otherwise.
+        """
+        if not is_kwargs(other):
+            return False
+        if type(self) is not type(other):
+            return False
+        return hash(self) == hash(other)
 
     def replace(self: T, **kwargs: Any) -> T:
         """Creates a new KWArgs instance with specified keys replaced by new values.

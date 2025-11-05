@@ -5,11 +5,11 @@ from typing import Iterable, TYPE_CHECKING
 from tests.kwargs.kwargs import KWArgs, NoDefaultValue
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter import Reporter
 
 if TYPE_CHECKING:
     from simplebench.enums import Section, Target, Format
-    from simplebench.reporters.choices import Choices
     from simplebench.reporters.reporter import ReporterOptions
 
 
@@ -38,7 +38,7 @@ class ReporterKWArgs(KWArgs):
             file_unique: bool | NoDefaultValue = NoDefaultValue(),
             file_append: bool | NoDefaultValue = NoDefaultValue(),
             formats: Iterable[Format] | NoDefaultValue = NoDefaultValue(),
-            choices: Iterable[ChoiceConf] | Choices | NoDefaultValue = NoDefaultValue()) -> None:
+            choices: Iterable[ChoiceConf] | ChoicesConf | NoDefaultValue = NoDefaultValue()) -> None:
         """Constructs a ReporterKWArgs instance. This class is used to hold keyword arguments for
         initializing a Reporter instance in tests.
 

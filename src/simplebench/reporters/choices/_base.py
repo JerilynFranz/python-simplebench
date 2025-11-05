@@ -1,5 +1,6 @@
 """Choices for reporters."""
 from __future__ import annotations
+from collections.abc import Hashable
 from collections import UserDict
 from typing import Iterable, TypeVar, Generic, Type
 
@@ -13,7 +14,7 @@ T_Item = TypeVar('T_Item', bound=ChoiceProtocol)  # pylint: disable=invalid-name
 T_Error = TypeVar('T_Error', bound=ErrorTag)  # pylint: disable=invalid-name
 
 
-class _BaseChoices(UserDict[str, T_Item], Generic[T_Item, T_Error]):
+class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
     """A generic dictionary-like container for Choice-like instances.
 
     This class enforces that only Choice-like instances can be added to it,
@@ -198,3 +199,32 @@ class _BaseChoices(UserDict[str, T_Item], Generic[T_Item, T_Error]):
                     tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG)  # type: ignore[attributeAccessIssue]
             self._flags_index[flag] = value
         super().__setitem__(key, value)
+
+    def __hash__(self) -> int:
+        """Compute a hash value for the Choices container based on its id.
+
+        This makes Choices instances hashable and usable in sets or as dictionary keys
+        or by lru_cache.
+
+        However, since the container is mutable, the hash value is based on its id
+        and no two instances will have the same hash value.
+
+        Returns:
+            int: The computed hash value.
+        """
+        return id(self)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two Choices containers.
+
+        This check is based on identity; two containers are considered equal
+        if they are the same instance. Effectively, this means that no two distinct
+        instances will be considered equal, even if they contain the same items.
+
+        Args:
+            other (object): The other Choices container to compare against.
+
+        Returns:
+            bool: True if the containers are equal, False otherwise.
+        """
+        return id(self) == id(other)

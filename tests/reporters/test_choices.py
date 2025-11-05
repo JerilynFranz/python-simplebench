@@ -1,4 +1,4 @@
-"""Tests for simplebench.reporters.choices module."""
+"""Tests for simplebench.reporters.choices_conf module."""
 # pylint: disable=unnecessary-direct-lambda-call
 from argparse import Namespace
 from functools import lru_cache
@@ -16,12 +16,14 @@ from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesErrorTag
 
-from ..kwargs import ChoicesKWArgs
+from ..factories import (choices_conf_instance, choice_conf_instance, reporter_instance, default_reporter_name,
+                         clear_cache)
+from ..kwargs import ChoicesConfKWArgs, ChoiceConfKWArgs
 from ..testspec import TestSpec, TestAction, TestGet, idspec, Assert
 
-
+'''
 @lru_cache(typed=True)
-def choice_conf_instance(cache_id: str = 'default',  # pylint: disable=unused-argument
+def choice_conf_instance1(cache_id: str = 'default',  # pylint: disable=unused-argument
                          name: str = 'mock', flags: tuple[str, ...] = ('--mock',)) -> ChoiceConf:
     """Factory function to return the same mock ChoiceConf instance for testing.
 
@@ -51,7 +53,7 @@ def choice_conf_instance(cache_id: str = 'default',  # pylint: disable=unused-ar
 
 
 @lru_cache(typed=True)
-def choice_instance(cache_id: str = 'default',
+def choice_instance1(cache_id: str = 'default',
                     name: str = 'mock',
                     flags: tuple[str, ...] = ('--mock',)) -> Choice:
     """Factory function to return a single cached Choice instance for testing.
@@ -82,7 +84,7 @@ def choice_instance(cache_id: str = 'default',
 
 
 @lru_cache(typed=True)
-def reporter_instance(cache_id: str = "default",  # pylint: disable=unused-argument
+def reporter_instance1(cache_id: str = "default",  # pylint: disable=unused-argument
                       choice_confs: tuple[ChoiceConf, ...] | None = None) -> Reporter:
     """Factory function to return a cached Reporter instance for testing.
 
@@ -100,8 +102,8 @@ def reporter_instance(cache_id: str = "default",  # pylint: disable=unused-argum
 
 
 @lru_cache(typed=True)
-def choices_instance(cache_id: str = "default", *,  # pylint: disable=unused-argument
-                     choices: tuple[Choice, ...] | Choices | None = None) -> Choices:
+def choices_instance1(cache_id: str = "default", *,  # pylint: disable=unused-argument
+                      choices: tuple[Choice, ...] | Choices | None = None) -> Choices:
     """Factory function to return a cached Choices instance for testing.
 
     Args:
@@ -128,13 +130,13 @@ def choices_instance(cache_id: str = "default", *,  # pylint: disable=unused-arg
     raise TypeError(f"Invalid type for choices argument: {choices!r}")
 
 
-class MockReporterExtras:
+class MockReporterExtras1:
     """A mock ReporterExtras subclass for testing Choice initialization."""
     def __init__(self, full_data: bool = False) -> None:
         self.full_data = full_data
 
 
-class MockReporter(Reporter):
+class MockReporter1(Reporter):
     """A mock Reporter subclass for testing Choice initialization.
 
     It provides a minimal implementation of the abstract methods required by the Reporter base class.
@@ -162,7 +164,7 @@ class MockReporter(Reporter):
                 A tuple of ChoiceConf instances to initialize the Reporter with.
                 If None, a single default ChoiceConf instance is used.
         """
-        choice_confs = choice_confs or (choice_conf_instance(),)
+        choice_confs = choice_confs or (choices_conf_instance(),)
         super().__init__(
             name='mock',
             description='Mock reporter.',
@@ -195,9 +197,10 @@ class MockReporter(Reporter):
 
 
 @lru_cache(typed=True)
-def sample_reporter() -> Reporter:
+def sample_reporter1() -> Reporter:
     """Factory function to return a sample MockReporter instance for testing."""
     return MockReporter()
+'''
 
 
 def assert_helper(testspec: TestSpec, result: Any, msg: str | None = None) -> None:
@@ -214,7 +217,7 @@ def assert_helper(testspec: TestSpec, result: Any, msg: str | None = None) -> No
     "testspec", [
         idspec('INIT_001', TestGet(
             name="Choices with a list of Choice instances from a MockReporter",
-            obj=MockReporter(),
+            obj=reporter_instance(),
             attribute='choices',
             assertion=Assert.ISINSTANCE,
             expected=Choices)),
@@ -223,7 +226,7 @@ def assert_helper(testspec: TestSpec, result: Any, msg: str | None = None) -> No
             obj=reporter_instance('INIT_002'),
             attribute='choices',
             validate=lambda testspec, obj: assert_helper(
-                testspec, 'mock' in obj.choices, 'Expected "mock" key in Choices instance.'))),
+                testspec, default_reporter_name() in obj.choices, 'Expected "mock" key in Choices instance.'))),
         idspec('INIT_003', TestAction(
             name="No arguments - creates default empty Choices",
             action=Choices,
@@ -233,7 +236,7 @@ def assert_helper(testspec: TestSpec, result: Any, msg: str | None = None) -> No
         idspec('INIT_004', TestAction(
             name="Choices initialized using from a different Choices instance",
             action=Choices,
-            kwargs=ChoicesKWArgs(choices=MockReporter().choices),
+            kwargs=ChoicesConfKWArgs(choices=MockReporter().choices),
             validate_result=lambda result: len(result) == 1 and 'mock' in result,
             assertion=Assert.ISINSTANCE,
             expected=Choices)),

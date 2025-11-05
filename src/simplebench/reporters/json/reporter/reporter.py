@@ -12,6 +12,7 @@ from simplebench.utils import get_machine_info, sigfigs
 from simplebench.validators import validate_type
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 
@@ -75,7 +76,7 @@ class JSONReporter(Reporter):
             file_suffix='json',
             file_unique=True,
             file_append=False,
-            choices=[
+            choices=ChoicesConf([
                 ChoiceConf(
                     flags=['--json'],
                     flag_type=FlagType.TARGET_LIST,
@@ -95,7 +96,7 @@ class JSONReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
                     output_format=Format.JSON,
                     options=Options(full_data=True)),
-            ],
+            ]),
         )
 
     def run_report(self,

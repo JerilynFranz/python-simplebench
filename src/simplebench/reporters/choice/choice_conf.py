@@ -1,4 +1,5 @@
 """Choice() for reporters."""
+from collections.abc import Hashable
 from typing import Any, Iterable, Sequence
 
 from simplebench.enums import Section, Target, Format, FlagType
@@ -12,7 +13,7 @@ from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.choice.exceptions import ChoiceConfErrorTag
 
 
-class ChoiceConf(ChoiceProtocol):
+class ChoiceConf(Hashable, ChoiceProtocol):
     """Definition of a Choice configuration for reporters.
 
     A ChoiceConf represents a specific configuration of an implied Choice
@@ -387,3 +388,53 @@ class ChoiceConf(ChoiceProtocol):
     def extra(self) -> Any:
         """Any additional metadata associated with the choice."""
         return self._extra
+
+    def __hash__(self) -> int:
+        """Compute a hash value for the ChoiceConf instance.
+
+        Returns:
+            int: The computed hash value.
+        """
+        return hash((
+            self.flags,
+            self.flag_type,
+            self.name,
+            self.description,
+            self.sections,
+            self.targets,
+            self.default_targets,
+            self.subdir,
+            self.file_suffix,
+            self.file_unique,
+            self.file_append,
+            self.output_format,
+            self.options,
+            self.extra
+        ))
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two ChoiceConf instances.
+
+        Args:
+            other (object): The other ChoiceConf instance to compare against.
+
+        Returns:
+            bool: True if the ChoiceConf instances are equal, False otherwise.
+        """
+        if not isinstance(other, ChoiceConf):
+            return False
+
+        return (self.flags == other.flags and
+                self.flag_type == other.flag_type and
+                self.name == other.name and
+                self.description == other.description and
+                self.sections == other.sections and
+                self.targets == other.targets and
+                self.default_targets == other.default_targets and
+                self.subdir == other.subdir and
+                self.file_suffix == other.file_suffix and
+                self.file_unique == other.file_unique and
+                self.file_append == other.file_append and
+                self.output_format == other.output_format and
+                self.options == other.options and
+                self.extra == other.extra)

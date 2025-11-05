@@ -16,7 +16,8 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 # simplebench.reporters imports
-from simplebench.reporters.choice import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
+from simplebench.reporters.choice.choice_conf import ChoiceConf
 
 # simplebench.reporters.rich_table imports
 from simplebench.reporters.rich_table.reporter.options import RichTableOptions
@@ -71,7 +72,7 @@ class RichTableReporter(Reporter):
             file_suffix='txt',
             file_unique=False,
             file_append=True,
-            choices=[
+            choices=ChoicesConf([
                  ChoiceConf(
                     flags=['--rich-table'],
                     flag_type=FlagType.TARGET_LIST,
@@ -108,7 +109,7 @@ class RichTableReporter(Reporter):
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.RICH_TEXT),
-            ]
+            ])
         )
 
     def run_report(self,
@@ -171,12 +172,12 @@ class RichTableReporter(Reporter):
         Returns:
             Table: A tuple containing the Rich Table instance and its plain string representation.
         """
-        case = validate_type(value=case, expected=Case, name='case',
-                             error_tag=RichTableReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(value=section, expected=Section, name='section',
-                                error_tag=RichTableReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(value=options, expected=Options, name='options',
-                                error_tag=RichTableReporterErrorTag.RENDER_INVALID_OPTIONS)
+        case = validate_type(case, Case, 'case',
+                             RichTableReporterErrorTag.RENDER_INVALID_CASE)
+        section = validate_type(section, Section, 'section',
+                                RichTableReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(options, Options, 'options',
+                                RichTableReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         base_unit: str = self.get_base_unit_for_section(section=section)
         results: list[Results] = case.results

@@ -3,7 +3,7 @@ from __future__ import annotations
 from argparse import ArgumentParser, Namespace
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Optional, Sequence, Iterable
+from typing import Any, Optional, Sequence, Iterable, Hashable
 
 import pytest
 
@@ -884,8 +884,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         action=ConfiguredReporter().report,
         kwargs={'args': namespace_instance(),
                 'case': ConfiguredCase(),
-                'choice': Choice(
-                    **default_choice_kwargs().replace(targets=[Target.CUSTOM]))},
+                'choice': Choice(**default_choice_kwargs().replace(targets=[Target.CUSTOM]))},
         exception=SimpleBenchValueError,
         exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)),
     idspec('REPORT_006', TestAction(
@@ -894,11 +893,13 @@ def test_reporter_init(testspec: TestSpec) -> None:
         action=ConfiguredReporter().report,
         kwargs={'args': namespace_instance(),
                 'case': ConfiguredCase(),
-                'choice': Choice(
-                    reporter=default_reporter(),
-                    choice_conf=**default_choice_kwargs().replace(output_format=Format.CUSTOM))},
+                'choice': Choice(reporter=default_reporter(),
+                                choice_conf=**default_choice_kwargs().replace(output_format=Format.CUSTOM)
+                )
+                },
         exception=SimpleBenchValueError,
         exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)),
+
     idspec('REPORT_007', TestAction(
         name="report() with valid Case and Choice runs successfully",
         action=ConfiguredReporter().report,

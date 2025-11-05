@@ -16,6 +16,7 @@ from simplebench.validators import validate_type
 
 # simplebench.reporters imports
 from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
@@ -77,7 +78,7 @@ class CSVReporter(Reporter):
             file_suffix='csv',
             file_unique=True,
             file_append=False,
-            choices=[
+            choices=ChoicesConf([
                 ChoiceConf(
                     flags=['--csv'],
                     flag_type=FlagType.TARGET_LIST,
@@ -118,7 +119,7 @@ class CSVReporter(Reporter):
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV,
                 ),
-            ]
+            ])
         )
 
     def run_report(self,

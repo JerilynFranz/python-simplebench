@@ -18,6 +18,7 @@ from simplebench.si_units import si_scale_for_smallest
 from simplebench.validators import validate_type
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import ReporterOptions
 
@@ -53,7 +54,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
             file_suffix='svg',
             file_unique=True,
             file_append=False,
-            choices=[
+            choices=ChoicesConf([
                 ChoiceConf(
                     flags=['--scatter-plot'],
                     flag_type=FlagType.TARGET_LIST,
@@ -87,7 +88,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     sections=[Section.MEMORY, Section.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.GRAPH),
-            ]
+            ])
         )
 
     def run_report(self,
