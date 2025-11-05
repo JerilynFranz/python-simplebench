@@ -92,8 +92,13 @@ class DefaultExtra:
 
 
 @cache_factory
-def default_extra() -> DefaultExtra:  # pylint: disable=unused-argument
+def default_extra() -> DefaultExtra:
     """Return a default ReporterExtras instance for testing purposes.
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
 
     Returns:
         DefaultExtra: `DefaultExtra(full_data=False)`
@@ -102,7 +107,7 @@ def default_extra() -> DefaultExtra:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_path() -> Path:  # pylint: disable=unused-argument
+def default_path() -> Path:
     """Return a default Path instance for testing purposes.
 
     Args:
@@ -136,7 +141,7 @@ def default_benchcase(bench: SimpleRunner, **kwargs) -> Results:
 
 
 @cache_factory
-def default_case_group() -> str:  # pylint: disable=unused-argument
+def default_case_group() -> str:
     """Return a default group string for testing purposes.
 
     Args:
@@ -152,7 +157,7 @@ def default_case_group() -> str:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_title() -> str:  # pylint: disable=unused-argument
+def default_title() -> str:
     """Return a default title string for testing purposes.
 
     Args:
@@ -166,8 +171,8 @@ def default_title() -> str:  # pylint: disable=unused-argument
     return "Default Title"
 
 
-def default_reporter_callback(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: Format, output: Any) -> None:
+def default_reporter_callback(
+        *, case: Case, section: Section, output_format: Format, output: Any) -> None:  # pylint: disable=unused-argument
     """A default ReporterCallback conformant callback function for testing purposes.
 
     ```python
@@ -190,7 +195,7 @@ def default_reporter_options_type() -> type[ReporterOptions]:
 
 
 @cache_factory
-def default_subdir() -> str:  # pylint: disable=unused-argument
+def default_subdir() -> str:
     """Return a default subdir string for testing purposes.
 
     Args:
@@ -205,7 +210,7 @@ def default_subdir() -> str:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_sections() -> tuple[Section, ...]:  # pylint: disable=unused-argument
+def default_sections() -> tuple[Section, ...]:
     """Return a default tuple of Sections for testing purposes.
 
     Args:
@@ -221,7 +226,7 @@ def default_sections() -> tuple[Section, ...]:  # pylint: disable=unused-argumen
 
 
 @cache_factory
-def default_targets() -> tuple[Target, ...]:  # pylint: disable=unused-argument
+def default_targets() -> tuple[Target, ...]:
     """Return a default tuple of Targets for testing purposes.
 
     Args:
@@ -236,7 +241,7 @@ def default_targets() -> tuple[Target, ...]:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_default_targets() -> tuple[Target]:  # pylint: disable=unused-argument
+def default_default_targets() -> tuple[Target]:
     """Return a default tuple for default_targets for testing purposes.
 
     Args:
@@ -251,7 +256,7 @@ def default_default_targets() -> tuple[Target]:  # pylint: disable=unused-argume
 
 
 @cache_factory
-def default_formats() -> tuple[Format]:  # pylint: disable=unused-argument
+def default_formats() -> tuple[Format]:
     """Return a default tuple of Formats for testing purposes.
 
     Args:
@@ -265,7 +270,7 @@ def default_formats() -> tuple[Format]:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_output_format() -> Format:  # pylint: disable=unused-argument
+def default_output_format() -> Format:
     """Return a default Format for testing purposes.
 
     Args:
@@ -280,7 +285,7 @@ def default_output_format() -> Format:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_description() -> str:  # pylint: disable=unused-argument
+def default_description() -> str:
     """Return a default description string for testing purposes.
 
     Args:
@@ -295,7 +300,7 @@ def default_description() -> str:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_reporter_name() -> str:  # pylint: disable=unused-argument
+def default_reporter_name() -> str:
     """Return a default reporter name string for testing purposes.
 
     Args:
@@ -310,7 +315,7 @@ def default_reporter_name() -> str:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_choice_name() -> str:  # pylint: disable=unused-argument
+def default_choice_name() -> str:
     """Return a default choice name string for testing purposes.
 
     Args:
@@ -325,7 +330,7 @@ def default_choice_name() -> str:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_choice_flags() -> tuple[str, ...]:  # pylint: disable=unused-argument
+def default_choice_flags() -> tuple[str, ...]:
     """Return a default tuple of flags for testing purposes.
 
     Args:
@@ -340,7 +345,7 @@ def default_choice_flags() -> tuple[str, ...]:  # pylint: disable=unused-argumen
 
 
 @cache_factory
-def default_flag_type() -> FlagType:  # pylint: disable=unused-argument
+def default_flag_type() -> FlagType:
     """Return a default FlagType for testing purposes.
 
     Args:
@@ -355,7 +360,7 @@ def default_flag_type() -> FlagType:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_file_suffix() -> str:  # pylint: disable=unused-argument
+def default_file_suffix() -> str:
     """Return a default file suffix string for testing purposes.
 
     Args:
@@ -398,7 +403,7 @@ def default_file_append() -> bool:
 
 
 @cache_factory
-def default_choice_conf_instance() -> ChoiceConf:  # pylint: disable=unused-argument
+def default_choice_conf_instance() -> ChoiceConf:
     """Return a default Choice conf instance for testing purposes.
 
     It is created by calling `choice_conf_instance()` with default parameters.
@@ -414,8 +419,7 @@ def default_choice_conf_instance() -> ChoiceConf:  # pylint: disable=unused-argu
 
 
 @cache_factory
-def default_choice_confs(
-        cache_id: CacheId = CACHE_DEFAULT) -> tuple[ChoiceConf, ...]:  # pylint: disable=unused-argument
+def default_choice_confs(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[ChoiceConf, ...]:
     """Return a default tuple of ChoiceConf instances for testing purposes.
 
     It contains a single ChoiceConf instance created by default_choice_conf_instance().
@@ -428,11 +432,11 @@ def default_choice_confs(
     Returns:
         tuple[ChoiceConf, ...]: A tuple containing default ChoiceConf instances.
     """
-    return tuple([default_choice_conf_instance()])
+    return tuple([default_choice_conf_instance(cache_id=cache_id)])
 
 
 @cache_factory
-def default_report_output() -> str:  # pylint: disable=unused-argument
+def default_report_output() -> str:
     """Return a default report output string for testing purposes.
 
     Args:
@@ -447,7 +451,7 @@ def default_report_output() -> str:  # pylint: disable=unused-argument
 
 
 @cache_factory
-def default_report_parameters() -> dict[str, Any]:  # pylint: disable=unused-argument
+def default_report_parameters(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, Any]:
     """Return default report parameters for testing purposes.
 
     Args:
@@ -459,17 +463,17 @@ def default_report_parameters() -> dict[str, Any]:  # pylint: disable=unused-arg
         dict[str, Any]: A dictionary of default report parameters.
     """
     return {
-        'args': default_namespace(),
-        'case': default_case_instance(),
-        'choice': choice_instance(),
-        'path': default_path(),
-        'session': default_session_instance(),
+        'args': default_namespace(cache_id=cache_id),
+        'case': default_case_instance(cache_id=cache_id),
+        'choice': choice_instance(cache_id=cache_id),
+        'path': default_path(cache_id=cache_id),
+        'session': default_session_instance(cache_id=cache_id),
         'callback': default_reporter_callback
     }
 
 
 @cache_factory
-def minimal_case_kwargs() -> CaseKWArgs:  # pylint: disable=unused-argument
+def minimal_case_kwargs() -> CaseKWArgs:
     """Return a minimally configured CaseKWArgs for testing purposes.
 
     Only the required attribute `action`is set to an explict value.
@@ -553,7 +557,7 @@ def default_max_time() -> float:
 
 
 @cache_factory
-def default_variation_cols() -> dict[str, str]:  # pylint: disable=unused-argument
+def default_variation_cols() -> dict[str, str]:
     """Return a default dictionary of variation columns for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -572,8 +576,7 @@ def default_variation_cols() -> dict[str, str]:  # pylint: disable=unused-argume
 
 
 @cache_factory
-def default_kwargs_variations(
-        cache_id: CacheId = CACHE_DEFAULT) -> dict[str, list[Any]]:  # pylint: disable=unused-argument
+def default_kwargs_variations() -> dict[str, list[Any]]:
     """Return a default set of kwargs variations for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -603,7 +606,7 @@ def default_runner() -> type[SimpleRunner]:
 
 
 @cache_factory
-def default_reporter_options() -> ReporterOptions:  # pylint: disable=unused-argument
+def default_reporter_options() -> ReporterOptions:
     """Return a default ReporterOptions instance for testing purposes.
 
     Args:
@@ -618,7 +621,7 @@ def default_reporter_options() -> ReporterOptions:  # pylint: disable=unused-arg
 
 
 @cache_factory
-def default_case_kwargs(cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
+def default_case_kwargs(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     """Return a default configured CaseKWargs for testing purposes.
 
     The following parameters are all set to explicit values for testing purposes:
@@ -666,7 +669,7 @@ def default_case_kwargs(cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
 
 
 @cache_factory
-def default_case_instance(cache_id: CacheId = CACHE_DEFAULT) -> Case:
+def default_case_instance(*, cache_id: CacheId = CACHE_DEFAULT) -> Case:
     """Return a default Case instance for testing purposes.
 
     This is a 'pre-benchmarking' Case with default attributes set.
@@ -684,7 +687,7 @@ def default_case_instance(cache_id: CacheId = CACHE_DEFAULT) -> Case:
 
 
 @cache_factory
-def default_session_instance(cache_id: CacheId = CACHE_DEFAULT) -> Session:
+def default_session_instance(*, cache_id: CacheId = CACHE_DEFAULT) -> Session:
     """Return a default Session instance for testing purposes.
 
     The Session is initialized with default attributes.
@@ -700,7 +703,7 @@ def default_session_instance(cache_id: CacheId = CACHE_DEFAULT) -> Session:
 
 
 @cache_factory
-def default_namespace() -> Namespace:  # pylint: disable=unused-argument
+def default_namespace() -> Namespace:
     """Return a default ArgumentParser instance for testing purposes.
 
     It is minimally configured with the program name 'simplebench'.
@@ -772,7 +775,7 @@ class MockReporter(Reporter):
         """Mock implementation of run_report."""
 
     def render(
-            self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
+            self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Mock implementation of render method."""
         return "mocked_rendered_output"
 
@@ -951,7 +954,7 @@ class ConfiguredReporter(Reporter):
 
 
 @cache_factory
-def default_reporter_kwargs() -> ReporterKWArgs:
+def default_reporter_kwargs(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWArgs:
     """A preconfigured ReporterKWArgs instance for testing purposes.
 
     ReporterKWArgs(
@@ -975,14 +978,14 @@ def default_reporter_kwargs() -> ReporterKWArgs:
         ReporterKWArgs: A preconfigured instance with default values for testing.
     """
     return ReporterKWArgs(
-        name=default_reporter_name(),
-        description=default_description(),
+        name=default_reporter_name(cache_id=cache_id),
+        description=default_description(cache_id=cache_id),
         options_type=default_options_type(),
-        sections=default_sections(),
-        targets=default_targets(),
-        formats=default_formats(),
-        choices=default_choices_conf(),
-        file_suffix=default_file_suffix(),
+        sections=default_sections(cache_id=cache_id),
+        targets=default_targets(cache_id=cache_id),
+        formats=default_formats(cache_id=cache_id),
+        choices=default_choices_conf(cache_id=cache_id),
+        file_suffix=default_file_suffix(cache_id=cache_id),
         file_unique=default_file_unique(),
         file_append=default_file_append()
     )
@@ -1017,8 +1020,7 @@ class ConfiguredChoiceConf(ChoiceConf):
 
 
 @cache_factory
-def default_choice_conf_kwargs(
-        cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConfKWArgs:  # pylint: disable=unused-argument
+def default_choice_conf_kwargs(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConfKWArgs:
     """Return default ChoiceConfKWArgs for testing purposes.
 
     Args:
@@ -1030,19 +1032,18 @@ def default_choice_conf_kwargs(
         ChoiceConfKWArgs: A default ChoiceConfKWArgs instance.
     """
     return ChoiceConfKWArgs(
-        flags=default_choice_flags(),
-        flag_type=default_flag_type(),
-        name=default_choice_name(),
-        description=default_description(),
-        sections=default_sections(),
-        targets=default_targets(),
-        output_format=default_output_format()
+        flags=default_choice_flags(cache_id=cache_id),
+        flag_type=default_flag_type(cache_id=cache_id),
+        name=default_choice_name(cache_id=cache_id),
+        description=default_description(cache_id=cache_id),
+        sections=default_sections(cache_id=cache_id),
+        targets=default_targets(cache_id=cache_id),
+        output_format=default_output_format(cache_id=cache_id)
     )
 
 
 @cache_factory
-def default_choices_conf_kwargs(
-        cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConfKWArgs:  # pylint: disable=unused-argument
+def default_choices_conf_kwargs() -> ChoicesConfKWArgs:
     """Return default ChoicesConfKWArgs for testing purposes.
 
     It contains a single ChoiceConf created by default_choice_conf_kwargs().
@@ -1058,8 +1059,7 @@ def default_choices_conf_kwargs(
 
 
 @cache_factory
-def default_choices_conf(
-        cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConf:  # pylint: disable=unused-argument
+def default_choices_conf(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConf:
     """Return a default ChoicesConf instance for testing purposes.
 
     It contains a single ChoiceConf created using default_choice_conf_kwargs().
@@ -1072,7 +1072,7 @@ def default_choices_conf(
     Returns:
         ChoicesConf: A default ChoicesConf instance.
     """
-    return ChoicesConf([ChoiceConf(**default_choices_conf_kwargs())])
+    return ChoicesConf([ChoiceConf(**default_choices_conf_kwargs(cache_id=cache_id))])
 
 
 class ConfiguredCase(Case):
@@ -1119,7 +1119,8 @@ that need multiple access to the same Session instance.
 
 
 @cache_factory
-def choice_conf_instance(cache_id: CacheId = CACHE_DEFAULT,  # pylint: disable=unused-argument
+def choice_conf_instance(*,
+                         cache_id: CacheId = CACHE_DEFAULT,
                          name: str | None = None, flags: tuple[str, ...] | None = None) -> ChoiceConf:
     """Factory function to return the same mock ChoiceConf instance for testing.
 
@@ -1154,7 +1155,8 @@ def choice_conf_instance(cache_id: CacheId = CACHE_DEFAULT,  # pylint: disable=u
 
 
 @cache_factory
-def choice_instance(cache_id: CacheId = CACHE_DEFAULT,
+def choice_instance(*,
+                    cache_id: CacheId = CACHE_DEFAULT,
                     name: str | None = None,
                     flags: tuple[str, ...] | None = None) -> Choice:
     """Factory function to return a single cached Choice instance for testing.
@@ -1187,9 +1189,9 @@ def choice_instance(cache_id: CacheId = CACHE_DEFAULT,
             Tuple is used to ensure hashability for caching.
     """
     if name is None:
-        name = default_choice_name()
+        name = default_choice_name(cache_id=cache_id)
     if flags is None:
-        flags = default_choice_flags()
+        flags = default_choice_flags(cache_id=cache_id)
     if not isinstance(name, str):
         raise TypeError(f"Invalid type for name argument: {name!r}")
     if not isinstance(flags, tuple) or not all(isinstance(f, str) for f in flags):
@@ -1199,14 +1201,14 @@ def choice_instance(cache_id: CacheId = CACHE_DEFAULT,
             cache_id=cache_id,
             choices=(choice_conf_instance(cache_id=cache_id, name=name, flags=flags),))
     else:
-        choices_conf = default_choices_conf()
+        choices_conf = default_choices_conf(cache_id=cache_id)
     kwargs = default_reporter_kwargs().replace(choices=choices_conf)
     reporter = reporter_instance(cache_id=cache_id, reporter_kwargs=kwargs)
     return reporter.choices[name]
 
 
 @cache_factory
-def default_choice_conf() -> ChoiceConf:
+def default_choice_conf(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConf:
     """Return a default ChoiceConf instance for testing purposes.
 
     It is created by calling choice_conf_instance() with default parameters.
@@ -1219,11 +1221,12 @@ def default_choice_conf() -> ChoiceConf:
     Returns:
         ChoiceConf: A default ChoiceConf instance.
     """
-    return choice_conf_instance()
+    return choice_conf_instance(cache_id=cache_id)
 
 
 @cache_factory
-def choices_conf_instance(cache_id: CacheId = CACHE_DEFAULT,  # pylint: disable=unused-argument
+def choices_conf_instance(*,
+                          cache_id: CacheId = CACHE_DEFAULT,
                           choices: tuple[ChoiceConf, ...] | None = None) -> ChoicesConf:
     """Factory function to return a cached ChoicesConf instance for testing.
 
@@ -1249,7 +1252,10 @@ def choices_conf_instance(cache_id: CacheId = CACHE_DEFAULT,  # pylint: disable=
 
 
 @cache_factory
-def reporter_instance(reporter_kwargs: ReporterKWArgs | None = None) -> UnconfiguredReporter:
+def reporter_instance(
+        *,
+        cache_id: CacheId = CACHE_DEFAULT,
+        reporter_kwargs: ReporterKWArgs | None = None) -> UnconfiguredReporter:
     """Factory function to return a cached UnconfiguredReporter instance for testing.
 
     Args:
@@ -1263,12 +1269,13 @@ def reporter_instance(reporter_kwargs: ReporterKWArgs | None = None) -> Unconfig
     """
     if reporter_kwargs is not None and not isinstance(reporter_kwargs, ReporterKWArgs):
         raise TypeError(f"Invalid type for reporter_kwargs argument: {reporter_kwargs!r}")
-    kwargs = default_reporter_kwargs() if reporter_kwargs is None else reporter_kwargs
+    kwargs = default_reporter_kwargs(cache_id=cache_id) if reporter_kwargs is None else reporter_kwargs
     return UnconfiguredReporter(**kwargs)
 
 
 @cache_factory
-def choices_instance(cache_id: CacheId = CACHE_DEFAULT, *,  # pylint: disable=unused-argument
+def choices_instance(*,
+                     cache_id: CacheId = CACHE_DEFAULT,
                      choices: tuple[ChoiceConf, ...] | ChoicesConf | None = None) -> Choices:
     """Factory function to return a cached Choices instance for testing.
 

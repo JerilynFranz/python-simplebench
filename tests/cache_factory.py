@@ -27,6 +27,9 @@ Note:
     which includes the `cache_id` parameter. The `...` in the parameters means that
     the original parameters are preserved, but not explicitly shown in the tooltip.
 
+    This is a limitation of how decorators and type hinting interact in Python,
+    rather than an error in the implementation.
+
 Public API:
     - cache_factory: The main decorator.
     - CacheId: A type alias for the types allowed as cache identifiers.
