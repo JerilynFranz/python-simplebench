@@ -218,7 +218,7 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         """Check equality between two Choices containers.
 
         This check is based on identity; two containers are considered equal
-        if they are the same instance. Effectively, this means that no two distinct
+        if they are the same instance. Effectively this means that no two distinct
         instances will be considered equal, even if they contain the same items.
 
         Args:

@@ -52,7 +52,6 @@ reset the cached instances.
 """
 from __future__ import annotations
 from argparse import ArgumentParser, Namespace
-from enum import Enum
 from pathlib import Path
 from typing import Any, Optional, Sequence, Iterable, TypeVar
 
@@ -87,24 +86,52 @@ def clear_cache() -> None:
 
 
 class DefaultExtra:
-    """A mock ReporterExtra subclass for testing ChoiceConf initialization."""
+    """An immutable ReporterExtra subclass for testing ChoiceConf initialization."""
     def __init__(self, full_data: bool = False) -> None:
-        self.full_data = full_data
+        """Constructs a DefaultExtra instance.
+
+        Args:
+            full_data (bool, default=False):
+                Indicates whether the extra data is full or minimal.
+
+        Raises:
+            TypeError: If full_data is not a bool.
+        """
+        if not isinstance(full_data, bool):
+            raise TypeError(f'full_data must be a bool, got {full_data!r}')
+        self._full_data = full_data
+
+    @property
+    def full_data(self) -> bool:
+        """Indicates whether the extra data is full or minimal."""
+        return self._full_data
 
 
 @cache_factory
-def default_extra() -> DefaultExtra:
-    """Return a default ReporterExtras instance for testing purposes.
+def extra_instance(full_data: bool = True) -> DefaultExtra:
+    """Return a default DefaultExtra instance for testing purposes.
 
     Args:
+        full_data (bool, default=True):
+            Indicates whether the extra data is full or minimal.
         cache_id (CacheId, default=CACHE_DEFAULT):
             An optional identifier to distinguish different cached instances.
             If None, caching is disabled for this call.
+    Returns:
+        DefaultExtra: `DefaultExtra(full_data=True)`
+    """
+    return DefaultExtra(full_data=full_data)
+
+
+def default_extra() -> DefaultExtra:
+    """Return a default ReporterExtras instance for testing purposes.
+
+    It always returns the same DefaultExtra instance created by extra_instance().
 
     Returns:
         DefaultExtra: `DefaultExtra(full_data=False)`
     """
-    return DefaultExtra(full_data=False)
+    return extra_instance(full_data=False, cache_id=f'{__name__}.default_extra:singleton')
 
 
 @cache_factory
@@ -205,9 +232,9 @@ def default_subdir() -> str:
             If None, caching is disabled for this call.
 
     Returns:
-        str: `"default_reports"`
+        str: `"asubdir"`
     """
-    return "default_reports"
+    return "asubdir"
 
 
 @cache_factory
@@ -1021,26 +1048,62 @@ class ConfiguredChoiceConf(ChoiceConf):
 
 
 @cache_factory
-def default_choice_conf_kwargs(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConfKWArgs:
+def choice_conf_kwargs_instance() -> ChoiceConfKWArgs:
     """Return default ChoiceConfKWArgs for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    It contains all parameters set to explicit default values for testing purposes.
+    Because ChoiceConfKWArgs has many parameters, they are listed here for clarity:
 
+    ```python
+       ChoiceConfKWArgs(
+        flags=default_choice_flags(cache_id=None),
+        flag_type=default_flag_type(cache_id=None),
+        name=default_choice_name(cache_id=None),
+        description=default_description(cache_id=None),
+        subdir=default_subdir(cache_id=None),
+        sections=default_sections(cache_id=None),
+        targets=default_targets(cache_id=None),
+        default_targets=default_default_targets(cache_id=None),
+        output_format=default_output_format(cache_id=None),
+        file_suffix=default_file_suffix(cache_id=None),
+        file_unique=default_file_unique(),
+        file_append=default_file_append(),
+        options=default_reporter_options(cache_id=None),
+        extra=default_extra(cache_id=None)
+       )
+    ```
     Returns:
         ChoiceConfKWArgs: A default ChoiceConfKWArgs instance.
     """
     return ChoiceConfKWArgs(
-        flags=default_choice_flags(cache_id=cache_id),
-        flag_type=default_flag_type(cache_id=cache_id),
-        name=default_choice_name(cache_id=cache_id),
-        description=default_description(cache_id=cache_id),
-        sections=default_sections(cache_id=cache_id),
-        targets=default_targets(cache_id=cache_id),
-        output_format=default_output_format(cache_id=cache_id)
+        flags=default_choice_flags(cache_id=None),
+        flag_type=default_flag_type(cache_id=None),
+        name=default_choice_name(cache_id=None),
+        description=default_description(cache_id=None),
+        subdir=default_subdir(cache_id=None),
+        sections=default_sections(cache_id=None),
+        targets=default_targets(cache_id=None),
+        default_targets=default_default_targets(cache_id=None),
+        output_format=default_output_format(cache_id=None),
+        file_suffix=default_file_suffix(cache_id=None),
+        file_unique=default_file_unique(),
+        file_append=default_file_append(),
+        options=default_reporter_options(cache_id=None),
+        extra=default_extra()
     )
+
+
+def default_choice_conf_kwargs() -> ChoiceConfKWArgs:
+    """Return default ChoicesConfKWArgs for testing purposes.
+
+    It always returns the same ChoiceConf instance created by choice_conf_kwargs_instance().
+    It is safe to cache this instance because ChoiceConfKWArgs is immutable. It will always
+    return the same values for the same attributes and behaves consistently across tests.
+
+    Returns:
+        ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
+    """
+    return choice_conf_kwargs_instance(cache_id=f'{__name__}.default_choice_conf_kwargs:singleton')
 
 
 @cache_factory
@@ -1208,27 +1271,22 @@ def choice_instance(*,
     return reporter.choices[name]
 
 
-@cache_factory
-def default_choice_conf(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConf:
+def default_choice_conf() -> ChoiceConf:
     """Return a default ChoiceConf instance for testing purposes.
 
-    It is created by calling choice_conf_instance() with default parameters.
+    It is created by calling ChoiceConf with default_choice_conf_kwargs().
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    It always returns the same instance for consistency in tests. Because
+    ChoiceConf instances are immutable after creation, this is safe.
 
     Returns:
         ChoiceConf: A default ChoiceConf instance.
     """
-    return choice_conf_instance(cache_id=cache_id)
+    return choice_conf_instance(cache_id=f'{__name__}.default_choice_conf:singleton')
 
 
 @cache_factory
-def choices_conf_instance(*,
-                          cache_id: CacheId = CACHE_DEFAULT,
-                          choices: tuple[ChoiceConf, ...] | None = None) -> ChoicesConf:
+def choices_conf_instance(*, choices: tuple[ChoiceConf, ...] | None = None) -> ChoicesConf:
     """Factory function to return a cached ChoicesConf instance for testing.
 
     Args:
@@ -1244,7 +1302,7 @@ def choices_conf_instance(*,
             Tuple is used to ensure hashability for caching.
     """
     if choices is None:
-        choices = (default_choice_conf(cache_id=cache_id),)
+        choices = (default_choice_conf(),)
 
     if not isinstance(choices, tuple) or not all(isinstance(c, ChoiceConf) for c in choices):
         raise TypeError(f"Invalid type for choices argument (should be tuple[ChoiceConf, ...]): {choices!r}")
