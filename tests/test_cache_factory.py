@@ -3,7 +3,7 @@
 import pytest
 
 from .testspec import TestSpec, TestAction, idspec
-from .cache_factory import uncached_factory, cached_factory, CACHE_DEFAULT
+from .cache_factory import uncached_factory, cached_factory, CACHE_DEFAULT, clear_cache
 
 
 # TODO: Add tests for passthrough of additional arguments to the decorated factory functions
@@ -15,6 +15,8 @@ def uncached_factory_testspecs() -> list[TestSpec]:
 
     def uncached_factory_does_not_cache_by_default() -> None:
         """Tests that uncached_factory does not cache by default."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         @uncached_factory
         def dummy_factory() -> object:
             return object()
@@ -28,6 +30,8 @@ def uncached_factory_testspecs() -> list[TestSpec]:
 
     def uncached_factory_honors_same_cache_id() -> None:
         """Tests that uncached_factory produces the same object for the same cache_id."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         call_count = 0
 
         @uncached_factory
@@ -46,6 +50,8 @@ def uncached_factory_testspecs() -> list[TestSpec]:
 
     def uncached_factory_different_cache_ids() -> None:
         """Tests that uncached_factory produces different objects for different cache_ids."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         @uncached_factory
         def dummy_factory() -> object:
             return object()
@@ -59,6 +65,8 @@ def uncached_factory_testspecs() -> list[TestSpec]:
 
     def uncached_factory_none_cache_id() -> None:
         """Tests that uncached_factory produces different objects when cache_id is None."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         @uncached_factory
         def dummy_factory() -> object:
             return object()
@@ -72,6 +80,8 @@ def uncached_factory_testspecs() -> list[TestSpec]:
 
     def uncached_factory_cache_default() -> None:
         """Tests that uncached_factory produces same objects when cache_id is CACHE_DEFAULT."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         @uncached_factory
         def dummy_factory() -> object:
             return object()
@@ -98,6 +108,8 @@ def cached_factory_testspecs() -> list[TestSpec]:
 
     def cached_factory_does_cache_by_default() -> None:
         """Tests that cached_factory caches by default."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         @cached_factory
         def dummy_factory() -> object:
             return object()
@@ -111,6 +123,8 @@ def cached_factory_testspecs() -> list[TestSpec]:
 
     def cached_factory_honors_same_cache_id() -> None:
         """Tests that cached_factory produces the same object for the same cache_id."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         call_count = 0
 
         @cached_factory
@@ -122,13 +136,15 @@ def cached_factory_testspecs() -> list[TestSpec]:
         obj1 = dummy_factory(cache_id="test")
         obj2 = dummy_factory(cache_id="test")
         assert obj1 is obj2, "Cached factory should produce the same object for the same cache_id."
-        assert call_count == 1, "Factory should have been called once."
+        assert call_count == 1, f"Factory should have been called once, actually called {call_count} times."
     testspecs.append(idspec('CACHED_FACTORY_002', TestAction(
         name="cached_factory() honors cache_id parameter",
         action=cached_factory_honors_same_cache_id)))
 
     def cached_factory_different_cache_ids() -> None:
         """Tests that cached_factory produces different objects for different cache_ids."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         @cached_factory
         def dummy_factory() -> object:
             return object()
@@ -142,6 +158,8 @@ def cached_factory_testspecs() -> list[TestSpec]:
 
     def cached_factory_none_cache_id() -> None:
         """Tests that uncached_factory produces different objects when cache_id is None."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         @cached_factory
         def dummy_factory() -> object:
             return object()
@@ -155,6 +173,8 @@ def cached_factory_testspecs() -> list[TestSpec]:
 
     def cached_factory_cache_default() -> None:
         """Tests that cached_factory produces same objects when cache_id is CACHE_DEFAULT."""
+        clear_cache()  # Ensure cache is clear before running tests
+
         @cached_factory
         def dummy_factory() -> object:
             return object()
