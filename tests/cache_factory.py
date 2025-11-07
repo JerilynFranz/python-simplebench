@@ -31,15 +31,25 @@ Note:
     rather than an error in the implementation.
 
 Public API:
-    - cache_factory: The main decorator.
-    - CacheId: A type alias for the types allowed as cache identifiers.
-    - CACHE_DEFAULT: A sentinel object used as the default cache ID.
-    - clear_cache: A function to clear all cached results, useful for test cleanup.
+    - `cached_factory`: Decorator for creating cached factory functions.
+    - `uncached_factory`: Decorator for creating uncached factory functions.
+    - `clear_cache`: Function to clear the global factory cache.
+    - `CACHE_DEFAULT`: Sentinel value for the default cache ID.
+    - `CacheDefault`: Type alias for the type of `CACHE_DEFAULT`.
+    - `CacheId`: Type alias for the allowed cache ID types.
+    - `CachedFactory`: Protocol describing the signature of a decorated factory.
 
-Basic Usage:
-    Decorate a factory function to cache its return value. Subsequent calls with
-    the same arguments will return the cached object without re-executing the
-    factory.
+Keep in mind that this module is highly dynamic and relies on `inspect` to
+rewrite function signatures on the fly. While it uses advanced `typing` concepts
+like `Protocol` and `ParamSpec` to provide the best possible static analysis
+experience, some tools may still struggle to perfectly understand the modified
+signatures. The runtime behavior, however, is correct and predictable.
+
+Basic @cached_factory Usage:
+
+    Decorate a factory function to cache its return value by default.
+    Subsequent calls with the same arguments will return the cached object
+    without re-executing the factory.
 
     .. code-block:: python
 
@@ -54,9 +64,27 @@ Basic Usage:
         obj2 = my_factory()  # Factory is NOT executed, returns cached object
         assert obj1 is obj2
 
+Basic @uncached_factory Usage:
+
+    Decorate a factory function to NOT cache its return value by default.
+    Subsequent calls with the same arguments will re-execute the factory
+    unless a `cache_id` is provided.
+
+    .. code-block:: python
+        from .cache_factory import uncached_factory
+        @uncached_factory
+        def my_factory():
+            print("Executing factory...")
+            return "my_object"
+        obj1 = my_factory()  # "Executing factory..." is printed
+        obj2 = my_factory()  # "Executing factory..." is printed again
+        assert obj1 is not obj2
+
 Advanced Usage:
+
     1. Controlling the Cache with `cache_id`:
-       Pass the `cache_id` keyword argument to create and retrieve distinct
+
+       Pass the `cache_id` keyword argument to explicitly control the creation and retrieval of distinct
        cached instances. This is useful for creating different variations of a
        mock object within the same test.
 
@@ -74,7 +102,7 @@ Advanced Usage:
            assert obj_a is obj_a2
 
     2. Disabling Caching:
-       Pass `cache_id=None` to bypass the cache entirely for a single call,
+       Pass `cache_id=None` to explictly bypass the cache entirely for a single call,
        forcing the factory function to execute.
 
        .. code-block:: python
@@ -102,11 +130,24 @@ Raises:
                or if the provided `cache_id` is not a valid type (str,
                CacheDefault, or None).
 """
-from typing import (Any, NamedTuple, TypeAlias, Final, Callable,
-                    TypeVar, ParamSpec, Protocol)
-from functools import wraps
+# --- Imports ---
+from __future__ import annotations
 import inspect
+from functools import wraps
 import threading
+from typing import (Any, Callable, Final, NamedTuple, Protocol,
+                    TypeAlias, TypeVar, ParamSpec)
+
+# --- Exports ---
+__all__ = [
+    'cached_factory',
+    'uncached_factory',
+    'clear_cache',
+    'CACHE_DEFAULT',
+    'CacheDefault',
+    'CacheId',
+]
+
 
 P = ParamSpec('P')
 R_co = TypeVar('R_co', covariant=True)
@@ -182,95 +223,144 @@ _CACHE_LOCK = threading.Lock()
 
 
 # --- Main Implementation ---
-def cache_factory(
-    func: Callable[P, R_co]
-) -> CachedFactory[R_co]:
-    """A decorator to automatically cache the result of a factory function.
+class FactoryDecorator:
+    """A class-based decorator that provides factory caching features.
 
-    It supports a `cache_id` keyword argument for fine-grained cache control.
+    This class is not intended to be used directly. Use the singleton instances
+    `cached_factory` or `uncached_factory` instead.
+    """
+    def __init__(self, default_cache_id_value: CacheId):
+        self.default_cache_id_value = default_cache_id_value
+
+    def __call__(self, func: Callable[P, R_co]) -> CachedFactory[R_co]:
+        # --- DECORATOR SETUP ---
+        func_sig = inspect.signature(func)
+        has_explicit_cache_id = 'cache_id' in func_sig.parameters
+
+        # The signature for our wrapper will be the function's own signature,
+        # unless we need to add the implicit cache_id parameter.
+        wrapper_sig = func_sig
+        if not has_explicit_cache_id:
+            cache_id_param = inspect.Parameter('cache_id',
+                                               inspect.Parameter.KEYWORD_ONLY,
+                                               default=self.default_cache_id_value)
+            params = list(func_sig.parameters.values())
+            params.append(cache_id_param)
+            wrapper_sig = inspect.Signature(params)
+
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R_co:
+            # Bind the incoming arguments to the correct signature
+            bound_args = wrapper_sig.bind(*args, **kwargs)
+            bound_args.apply_defaults()
+
+            if has_explicit_cache_id:
+                cache_id = bound_args.arguments['cache_id']
+            else:
+                cache_id = bound_args.arguments.pop('cache_id')
+
+            if cache_id is None:
+                # Caching is disabled. Call the original function with its arguments.
+                return func(*bound_args.args, **bound_args.kwargs)
+
+            if not isinstance(cache_id, (str, CacheDefault)):
+                raise TypeError("cache_id must be a string, None, or CacheDefault")
+
+            # Hash the actual arguments that will be passed to the function.
+            try:
+                hashed_args = hash(bound_args.args)
+                hashed_kwargs = hash(frozenset(bound_args.kwargs.items()))
+            except TypeError as e:
+                raise TypeError(
+                    f"All arguments to a cached factory must be hashable. "
+                    f"Factory '{func.__name__}' was called with an unhashable argument."
+                ) from e
+
+            hash_combined = hash((hashed_args, hashed_kwargs))
+
+            cache_key = CacheKey(package_name=func.__module__,
+                                 factory_name=func.__name__,
+                                 calling_signature_hash=hash_combined,
+                                 cache_id=cache_id)
+
+            with _CACHE_LOCK:
+                cached_value = _CACHE.get(cache_key, _CACHE_MISS)
+
+            if cached_value is not _CACHE_MISS:
+                return cached_value
+
+            # Run the function with the correct arguments and store the result.
+            result = func(*bound_args.args, **bound_args.kwargs)
+
+            with _CACHE_LOCK:
+                _CACHE[cache_key] = result
+
+            return result
+
+        # THIS IS THE MOST IMPORTANT PART FOR THE IDE TOOLTIP
+        wrapper.__signature__ = wrapper_sig  # type: ignore[attr-defined]
+        return wrapper  # type: ignore[return-value]
+
+
+cached_factory: Final[FactoryDecorator] = FactoryDecorator(default_cache_id_value=CACHE_DEFAULT)
+"""A decorator to automatically cache the result of a factory function.
+
+    By default, this decorator caches results. Caching can be disabled on a
+    per-call basis by passing `cache_id=None`.
+
+    The `cache_id` keyword argument provides fine-grained cache control.
     By default, the decorator consumes this argument, but if the wrapped
     function explicitly includes `cache_id` in its signature, the value is
     passed through.
 
+    To enable caching for a specific call, use a string for the cache_id.
+
+    To use the standard shared cache common to other factories, you can explicitly
+    pass cache_id=CACHE_DEFAULT. It is guaranteed to be different from `None` or
+    any other values that may be used and will not ever conflict with other cache IDs.
+
     Args:
-        func (Callable[P, R_co]): The factory function to be decorated.
+        func (Callable[P, R_co]):
+            The factory function to be decorated.
 
     Returns:
-        CachedFactory[P, R_co]: The wrapped function with caching capabilities
-        and an added `cache_id` keyword argument.
+        (CachedFactory[P, R_co]):
+            The wrapped function with caching capabilities and an added `cache_id` keyword argument.
 
     Raises:
         TypeError: If any arguments passed to the decorated function are not hashable,
                    or if the provided `cache_id` is not a valid type.
-    """
-    # --- DECORATOR SETUP ---
-    func_sig = inspect.signature(func)
-    has_explicit_cache_id = 'cache_id' in func_sig.parameters
+"""
 
-    # The signature for our wrapper will be the function's own signature,
-    # unless we need to add the implicit cache_id parameter.
-    wrapper_sig = func_sig
-    if not has_explicit_cache_id:
-        cache_id_param = inspect.Parameter('cache_id',
-                                           inspect.Parameter.KEYWORD_ONLY,
-                                           default=CACHE_DEFAULT)
-        params = list(func_sig.parameters.values())
-        params.append(cache_id_param)
-        wrapper_sig = inspect.Signature(params)
+uncached_factory: Final[FactoryDecorator] = FactoryDecorator(default_cache_id_value=None)
+"""A decorator that provides factory features without caching by default.
 
-    @wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R_co:
-        # Bind the incoming arguments to the correct signature
-        bound_args = wrapper_sig.bind(*args, **kwargs)
-        bound_args.apply_defaults()
+    By default, this decorator does NOT cache results. Caching can be enabled on a
+    per-call basis by passing a string to the `cache_id` argument.
 
-        if has_explicit_cache_id:
-            cache_id = bound_args.arguments['cache_id']
-        else:
-            cache_id = bound_args.arguments.pop('cache_id')
+    The `cache_id` keyword argument provides fine-grained cache control of
+    the caching behavior.
 
-        if cache_id is None:
-            # Caching is disabled. Call the original function with its arguments.
-            # bound_args now contains the correct set of arguments for either case.
-            return func(*bound_args.args, **bound_args.kwargs)
+    By default, the decorator consumes this argument, but if the wrapped
+    function explicitly includes `cache_id` in its signature, the value is
+    passed through.
 
-        if not isinstance(cache_id, (str, CacheDefault)):
-            raise TypeError("cache_id must be a string, None, or CacheDefault")
+    The standard cache_id for collision avoidance with explictly set cache_ids
+    is `CACHE_DEFAULT`. It is guaranteed to be different from `None` or any other values
+    that may be used.
 
-        # Hash the actual arguments that will be passed to the function.
-        try:
-            hashed_args = hash(bound_args.args)
-            hashed_kwargs = hash(frozenset(bound_args.kwargs.items()))
-        except TypeError as e:
-            raise TypeError(
-                f"All arguments to a cached factory must be hashable. "
-                f"Factory '{func.__name__}' was called with an unhashable argument."
-            ) from e
+    Args:
+        func (Callable[P, R_co]):
+            The factory function to be decorated.
 
-        hash_combined = hash((hashed_args, hashed_kwargs))
+    Returns:
+        (CachedFactory[P, R_co]):
+            The wrapped function with caching capabilities and an added `cache_id` keyword argument.
 
-        cache_key = CacheKey(package_name=func.__module__,
-                             factory_name=func.__name__,
-                             calling_signature_hash=hash_combined,
-                             cache_id=cache_id)
-
-        with _CACHE_LOCK:
-            cached_value = _CACHE.get(cache_key, _CACHE_MISS)
-
-        if cached_value is not _CACHE_MISS:
-            return cached_value
-
-        # Run the function with the correct arguments and store the result.
-        result = func(*bound_args.args, **bound_args.kwargs)
-
-        with _CACHE_LOCK:
-            _CACHE[cache_key] = result
-
-        return result
-
-    # THIS IS THE MOST IMPORTANT PART FOR THE IDE TOOLTIP
-    wrapper.__signature__ = wrapper_sig  # type: ignore[attr-defined]
-    return wrapper  # type: ignore[return-value]
+    Raises:
+        TypeError: If any arguments passed to the decorated function are not hashable,
+                   or if the provided `cache_id` is not a valid type.
+"""
 
 
 def clear_cache() -> None:
