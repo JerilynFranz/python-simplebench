@@ -8,6 +8,7 @@ from rich.text import Text
 
 import pytest
 
+from tests.factories import reporter_kwargs_factory
 from tests.testspec import TestSpec, TestAction, idspec, Assert
 
 from simplebench.case import Case
@@ -32,30 +33,7 @@ class MockReporterOptions(ReporterOptions):
 class MockReporter(Reporter):
     """A mock reporter subclass for testing purposes."""
     def __init__(self):
-        super().__init__(
-            name='json',
-            description='Outputs benchmark results to mock renderer.',
-            options_type=MockReporterOptions,
-            sections={Section.NULL},
-            targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
-            formats={Format.JSON},
-            file_suffix='mock',
-            file_unique=True,
-            file_append=False,
-            choices=[
-                ChoiceConf(
-                    flags=['--mock-options'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='mock-options',
-                    description='statistical results to JSON (filesystem, console, callback, default=filesystem)',
-                    sections=[Section.NULL],  # All sections are always included
-                    targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
-                    output_format=Format.RICH_TEXT,
-                    file_suffix='mock',
-                    file_unique=True,
-                    file_append=False,
-                    options=MockReporterOptions())],
-            )
+        super().__init__(**reporter_kwargs_factory(cache_id=None))
 
     def run_report(self,
                    *,

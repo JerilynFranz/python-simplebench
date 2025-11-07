@@ -5,6 +5,9 @@ from pathlib import Path
 
 import pytest
 
+from tests.factories import reporter_kwargs_factory
+
+
 from simplebench.case import Case
 from simplebench.enums import Section, Target, Format, FlagType
 from simplebench.reporters.protocols import ReporterCallback
@@ -24,27 +27,7 @@ class MockReporterOptions(ReporterOptions):
 class MockReporter(Reporter):
     """A mock reporter subclass for testing purposes."""
     def __init__(self, name: str = 'mock') -> None:
-        super().__init__(
-            name=name,
-            description='Outputs benchmark results to mock renderer.',
-            options_type=MockReporterOptions,
-            sections={Section.NULL},
-            targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
-            formats={Format.JSON},
-            file_suffix='mock',
-            file_unique=True,
-            file_append=False,
-            choices=[
-                ChoiceConf(
-                    flags=['--mock-options'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='mock-options',
-                    description='statistical results to Mock(filesystem, console, callback, default=filesystem)',
-                    sections=[Section.NULL],  # All sections are always included
-                    targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
-                    output_format=Format.RICH_TEXT,
-                    options=MockReporterOptions()),
-            ])
+        super().__init__(**reporter_kwargs_factory(cache_id=None))
 
     def run_report(self,
                    *,
@@ -69,6 +52,7 @@ def test_register_reporter():
     @register_reporter
     class TestReporter(MockReporter):  # pylint: disable=unused-variable
         """A test reporter subclass for testing purposes."""
+
     registered_reporters = get_registered_reporters()
     assert len(registered_reporters) == 1, (
         "REGISTER_001 - There should be exactly one registered reporter.")

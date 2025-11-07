@@ -555,8 +555,8 @@ def test_decorator_invalid_options_type() -> None:
         @benchmark('test', title='Valid Title', options='not_a_list')  # type: ignore
         def invalid_options_type():  # pragma: no cover
             pass
-    assert excinfo.value.tag_code == CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE, (
-        f"Expected {CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE.name}, "
+    assert excinfo.value.tag_code == CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION, (
+        f"Expected {CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION.name}, "
         f"Got {excinfo.value.tag_code.name}")
 
 

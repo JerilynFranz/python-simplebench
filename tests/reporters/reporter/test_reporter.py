@@ -7,6 +7,7 @@ from typing import Any, Optional, Sequence, Iterable, Hashable
 
 import pytest
 
+from tests.factories import choice_factory, choice_conf_factory
 from tests.kwargs import ChoicesKWArgs, ReporterKWArgs, ChoiceConfKWArgs, ChoiceKWArgs
 from tests.testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE, Assert
 

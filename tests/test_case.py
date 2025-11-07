@@ -589,7 +589,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           options='not_a_list'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE)),
+        exception_tag=CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION)),
     idspec("INIT_037", TestAction(
         name="Invalid (contains item that is not a ReporterOptions) type for options parameter",
         action=Case,
