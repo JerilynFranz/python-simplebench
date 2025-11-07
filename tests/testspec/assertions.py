@@ -20,6 +20,7 @@ class Assert(str, Enum):
         - IS_NONE ('is None'): Checks if a reference is None.
         - IS_NOT_NONE ('is not None'): Checks if a reference is not None.
         - ISINSTANCE ('isinstance'): Checks if an object is an instance of a specified class or tuple of classes.
+        - LEN ('len'): Checks the length of a collection against an expected value.
     """
     EQUAL = '=='
     NOT_EQUAL = '!='
@@ -34,6 +35,8 @@ class Assert(str, Enum):
     IS_NONE = 'is None'
     IS_NOT_NONE = 'is not None'
     ISINSTANCE = 'isinstance'
+    ISSUBCLASS = 'issubclass'
+    LEN = 'len'
 
 
 def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
@@ -76,10 +79,10 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
             if not found >= expected:
                 return f"assertion failed: (found={found}) >= (expected={expected})"
         case Assert.IN:
-            if not (found in expected):  # pylint: disable=superfluous-parens  # for clarity
+            if not (expected in found):  # pylint: disable=superfluous-parens  # for clarity
                 return f"assertion failed: (found={found}) in (expected={expected})"
         case Assert.NOT_IN:
-            if not (found not in expected):  # pylint: disable=superfluous-parens  # for clarity
+            if not (expected not in found):  # pylint: disable=superfluous-parens  # for clarity
                 return f"assertion failed: (found={found}) not in (expected={expected})"
         case Assert.IS:
             if not (found is expected):  # pylint: disable=superfluous-parens  # for clarity
@@ -90,12 +93,18 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
         case Assert.ISINSTANCE:
             if not isinstance(found, expected):
                 return f"assertion failed: (found={type(found)}) isinstance (expected={expected})"
+        case Assert.ISSUBCLASS:
+            if not issubclass(found, expected):
+                return f"assertion failed: (found={found}) issubclass (expected={expected})"
         case Assert.IS_NONE:
             if found is not None:
                 return f"assertion failed: (found={found}) is None"
         case Assert.IS_NOT_NONE:
             if found is None:
                 return f"assertion failed: (found={found}) is not None"
+        case Assert.LEN:
+            if not len(found) == expected:
+                return f"assertion failed: len(found={len(found)}) == (expected={expected})"
         case _:
             return f"Unsupported assertion operator '{assertion}'"
     return ""

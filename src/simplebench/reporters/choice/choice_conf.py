@@ -206,7 +206,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         self._default_targets: frozenset[Target] = frozenset()
         """Default output targets for the choice (private backing field for attribute)"""
         if default_targets is not None:
-            self._default_targets: frozenset[Target] = frozenset(validate_iterable_of_type(
+            self._default_targets = frozenset(validate_iterable_of_type(
                 default_targets, Target, "default_targets",
                 ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_TYPE,
                 ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_VALUE,

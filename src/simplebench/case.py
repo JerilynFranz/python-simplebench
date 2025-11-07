@@ -4,7 +4,7 @@ from __future__ import annotations
 from copy import copy
 import inspect
 import itertools
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, Iterable
 
 from .defaults import (DEFAULT_ITERATIONS, DEFAULT_WARMUP_ITERATIONS, DEFAULT_MIN_TIME,
                        DEFAULT_MAX_TIME, DEFAULT_ROUNDS)
@@ -175,7 +175,7 @@ class Case(ICase):
                  kwargs_variations: Optional[dict[str, list[Any]]] = None,
                  runner: Optional[type[SimpleRunner]] = None,
                  callback: Optional[ReporterCallback] = None,
-                 options: Optional[list[ReporterOptions]] = None) -> None:
+                 options: Optional[Iterable[ReporterOptions]] = None) -> None:
         """Constructor for Case. This defines a benchmark case.
 
         The only REQUIRED parameter is `action`.
@@ -483,32 +483,32 @@ class Case(ICase):
         return value
 
     @staticmethod
-    def validate_options(value: list[ReporterOptions] | None) -> list[ReporterOptions]:
+    def validate_options(value: Iterable[ReporterOptions] | None) -> list[ReporterOptions]:
         """Validate the options list.
 
         Args:
-            value (list[ReporterOption] | None): The options list to validate or None.
+            value (Iterable[ReporterOption] | None): The options iterable to validate or None.
 
         Returns:
-            A shallow copy of the validated options list or an empty list if not provided.
+            A shallow copy of the validated options as a list or an empty list if not provided.
 
         Raises:
             SimpleBenchTypeError: If options is not a list or if any entry is not a ReporterOption.
         """
         if value is None:
             return []
-        if not isinstance(value, list):
+        if not isinstance(value, Iterable):
             raise SimpleBenchTypeError(
-                f'Invalid options: {value}. Must be a list.',
-                tag=CaseErrorTag.INVALID_OPTIONS_NOT_LIST
-                )
-        for option in value:
+                f'Invalid options: {value}. Must be an iterable.',
+                tag=CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE)
+        options_list: list[ReporterOptions] = list(value)
+        for option in options_list:
             if not isinstance(option, ReporterOptions):
                 raise SimpleBenchTypeError(
                     f'Invalid option: {option}. Must be of type ReporterOption or a sub-class.',
                     tag=CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
                     )
-        return copy(value)
+        return options_list
 
     @property
     def group(self) -> str:

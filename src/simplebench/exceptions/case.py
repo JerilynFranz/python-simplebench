@@ -57,10 +57,10 @@ class CaseErrorTag(ErrorTag):
     the Case() constructor as the variation_cols arg"""
     INVALID_KWARGS_VARIATIONS_NOT_DICT = "INVALID_KWARGS_VARIATIONS_NOT_DICT"
     """Something other than a dictionary was passed to the Case() constructor as the kwargs_variations arg"""
-    INVALID_OPTIONS_NOT_LIST = "INVALID_OPTIONS_NOT_LIST"
-    """Something other than a list was passed to the Case() constructor as the options arg"""
+    INVALID_OPTIONS_NOT_ITERABLE = "INVALID_OPTIONS_NOT_ITERABLE"
+    """Something other than an iterable was passed to the Case() constructor as the options arg"""
     INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION = "INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION"
-    """Something other than a ReporterOptions instance was found in the list passed to the Case() constructor
+    """Something other than a ReporterOptions instance was found in the iterable passed to the Case() constructor
     as the options arg"""
     INVALID_CALLBACK_NOT_CALLABLE_OR_NONE = "INVALID_CALLBACK_NOT_CALLABLE_OR_NONE"
     """Something other than a callable (function or method) or None was passed to the Case() constructor as
