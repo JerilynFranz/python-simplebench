@@ -227,7 +227,7 @@ class FactoryDecorator:
     """A class-based decorator that provides factory caching features.
 
     This class is not intended to be used directly. Use the singleton instances
-    `cached_factory` or `uncached_factory` instead.
+    `_CACHED_FACTORY` or `_UNCACHED_FACTORY` instead.
     """
     def __init__(self, default_cache_id_value: CacheId):
         self.default_cache_id_value = default_cache_id_value
@@ -302,8 +302,12 @@ class FactoryDecorator:
         return wrapper  # type: ignore[return-value]
 
 
-cached_factory: Final[FactoryDecorator] = FactoryDecorator(default_cache_id_value=CACHE_DEFAULT)
-"""A decorator to automatically cache the result of a factory function.
+_CACHED_FACTORY: Final[FactoryDecorator] = FactoryDecorator(default_cache_id_value=CACHE_DEFAULT)
+_UNCACHED_FACTORY: Final[FactoryDecorator] = FactoryDecorator(default_cache_id_value=None)
+
+
+def cached_factory(func: Callable[P, R_co]) -> CachedFactory[R_co]:
+    """A decorator to automatically cache the result of a factory function.
 
     By default, this decorator caches results. Caching can be disabled on a
     per-call basis by passing `cache_id=None`.
@@ -330,10 +334,12 @@ cached_factory: Final[FactoryDecorator] = FactoryDecorator(default_cache_id_valu
     Raises:
         TypeError: If any arguments passed to the decorated function are not hashable,
                    or if the provided `cache_id` is not a valid type.
-"""
+    """
+    return _CACHED_FACTORY(func)  # type: ignore[return-value]
 
-uncached_factory: Final[FactoryDecorator] = FactoryDecorator(default_cache_id_value=None)
-"""A decorator that provides factory features without caching by default.
+
+def uncached_factory(func: Callable[P, R_co]) -> CachedFactory[R_co]:
+    """A decorator that provides factory features without caching by default.
 
     By default, this decorator does NOT cache results. Caching can be enabled on a
     per-call basis by passing a string to the `cache_id` argument.
@@ -360,10 +366,11 @@ uncached_factory: Final[FactoryDecorator] = FactoryDecorator(default_cache_id_va
     Raises:
         TypeError: If any arguments passed to the decorated function are not hashable,
                    or if the provided `cache_id` is not a valid type.
-"""
+    """
+    return _UNCACHED_FACTORY(func)  # type: ignore[return-value]
 
 
 def clear_cache() -> None:
-    """Clear all cached instances in this module."""
+    """Clears all cached factory results."""
     with _CACHE_LOCK:
         _CACHE.clear()

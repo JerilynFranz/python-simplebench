@@ -47,7 +47,7 @@ def uncached_factory_testspecs() -> list[TestSpec]:
     def uncached_factory_different_cache_ids() -> None:
         """Tests that uncached_factory produces different objects for different cache_ids."""
         @uncached_factory
-        def dummy_factory(cache_id: str | None = None) -> object:
+        def dummy_factory() -> object:
             return object()
 
         obj1 = dummy_factory(cache_id="test1")
@@ -60,7 +60,7 @@ def uncached_factory_testspecs() -> list[TestSpec]:
     def uncached_factory_none_cache_id() -> None:
         """Tests that uncached_factory produces different objects when cache_id is None."""
         @uncached_factory
-        def dummy_factory(cache_id: str | None = None) -> object:
+        def dummy_factory() -> object:
             return object()
 
         obj1 = dummy_factory(cache_id=None)
