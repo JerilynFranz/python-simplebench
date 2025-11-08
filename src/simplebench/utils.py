@@ -286,25 +286,21 @@ def arg_to_flag(arg: str) -> str:
 NO_ATTRIBUTE = object()
 
 
-def collect_arg_list(args: Namespace, flag: str, include_comma_separated: bool = True) -> list[str]:
+def collect_arg_list(*, args: Namespace, flag: str) -> list[str]:
     """Collects a list of argument values from a Namespace for a given flag.
 
-    This function retrieves the value associated with the specified flag from
+    This function retrieves the values associated with the specified flag from
     the provided Namespace object. If the value is a sequence (excluding str and bytes),
-    it returns the value as a list. If the value is a single item, it returns a list
+    it returns the values as a list. If the value is a single item, it returns a list
     containing that single item. If the flag does not exist in the Namespace,
     it returns an empty list.
 
     argparse lists consist of lists of lists of strings and so they have to be flattened
     to be processed.
 
-    If include_comma_separated is True , comma-separated strings are split into multiple values.
-
     Args:
         args (Namespace): The Namespace object containing argument values.
         flag (str): The command-line flag whose value is to be collected.
-        include_comma_separated (bool): If True, splits comma-separated strings
-                into multiple values.
 
     Returns:
         list[str]: A list of unique argument values associated with the specified flag.
@@ -318,39 +314,42 @@ def collect_arg_list(args: Namespace, flag: str, include_comma_separated: bool =
             "args arg must be an argparse.Namespace instance",
             tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE)
 
+    if not isinstance(flag, str):
+        raise SimpleBenchTypeError(
+            "flag arg must be a str",
+            tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_FLAG_ARG_TYPE)
+
+    if not re.match(r'^--[A-Za-z0-9\-_.]+$', flag):
+        raise SimpleBenchValueError((
+            "flag arg contains invalid characters for a command-line flag. "
+            "It must be prefixed with '--' and only letters, numbers, hyphens, underscores, "
+            "and periods are allowed after the prefix."),
+            tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_FLAG_ARG_VALUE)
+
     arg_name = flag_to_arg(flag)
     arg_value = getattr(args, arg_name, NO_ATTRIBUTE)
 
     if arg_value is NO_ATTRIBUTE:
         return []
 
-    # flatten the argparse list structure
-    intermediate_values: list[str] = []
+    # flatten the argparse list of lists structure
+    intermediate_values: set[str] = set()
     if isinstance(arg_value, Sequence) and not isinstance(arg_value, (str, bytes)):
         for item in arg_value:
-            if isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
-                intermediate_values.extend(item)
+            if isinstance(item, str):
+                intermediate_values.add(item)
+            elif isinstance(item, Sequence) and all(isinstance(subitem, str) for subitem in item):
+                intermediate_values.update(item)
             else:
                 raise SimpleBenchTypeError(
-                    "Argument value items must be str or bytes",
+                    "Argument value items must be str or sequence of str",
                     tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARG_VALUE_ITEM_TYPE)
     else:
         raise SimpleBenchTypeError(
-            "Argument value must be a Sequence ",
+            f"Argument value must be a Sequence (but not str or bytes): found: {arg_value} ",
             tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARG_VALUE_TYPE)
 
-    # process intermediate values and handle comma-separated strings if needed
-    unique_values: set[str] = set()
-    for item in intermediate_values:
-        if include_comma_separated and isinstance(item, str):
-            for sub_item in item.split(','):
-                stripped_item = sub_item.strip()
-                if stripped_item:
-                    unique_values.add(stripped_item)
-        else:
-            unique_values.add(str(item))
-
-    return list(unique_values)
+    return list(intermediate_values)
 
 
 def first_not_none(items: Sequence[T]) -> T | None:

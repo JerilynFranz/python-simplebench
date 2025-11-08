@@ -1,11 +1,11 @@
 """Tests for the simplebench/utils.py module."""
-
 import pytest
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, UtilsErrorTag
 from simplebench import utils
 import simplebench.defaults as defaults
 
+from .factories import namespace_factory, argument_parser_factory, list_of_strings_flag_factory
 from .testspec import TestAction, idspec
 
 defaults.DEFAULT_SIGNIFICANT_FIGURES = 3  # Ensure default is as expected for tests
@@ -156,4 +156,71 @@ def test_sigfigs(testspec: TestAction) -> None:
 ])
 def test_sanitize_filename(testspec: TestAction) -> None:
     """Test utils.sanitize_filename() function."""
+    testspec.run()
+
+
+def collect_arg_list_testspecs() -> list[TestAction]:
+    """Collect test specs for utils.collect_arg_list function."""
+    testspecs: list[TestAction] = []
+
+    testspecs.extend([
+        idspec("COLLECT_ARG_LIST_001", TestAction(
+            name="Missing 'args' argument raises TypeError",
+            kwargs={
+                'flag': '--test-flag',
+            },
+            action=utils.collect_arg_list,
+            exception=TypeError)),
+        idspec("COLLECT_ARG_LIST_002", TestAction(
+            name="Missing 'flag' argument raises TypeError",
+            kwargs={
+                'args': namespace_factory(),
+            },
+            action=utils.collect_arg_list,
+            exception=TypeError)),
+        idspec("COLLECT_ARG_LIST_003", TestAction(
+            name="Missing 'include_comma_separated' argument does not raise",
+            kwargs={
+                'args': namespace_factory(),
+                'flag': '--test-flag',
+            },
+            action=utils.collect_arg_list)),
+        idspec("COLLECT_ARG_LIST_004", TestAction(
+            name="Invalid 'args' argument type (int) raises SimpleBenchTypeError",
+            kwargs={
+                'args': 123,
+                'flag': '--test-flag',
+            },
+            action=utils.collect_arg_list,
+            exception=SimpleBenchTypeError,
+            exception_tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE)),
+        idspec("COLLECT_ARG_LIST_005", TestAction(
+            name="Invalid 'flag' argument type (int) raises SimpleBenchTypeError",
+            kwargs={
+                'args': namespace_factory(),
+                'flag': 123,
+            },
+            action=utils.collect_arg_list,
+            exception=SimpleBenchTypeError,
+            exception_tag=UtilsErrorTag.COLLECT_ARG_LIST_INVALID_FLAG_ARG_TYPE)),
+        idspec("COLLECT_ARG_LIST_006", TestAction(
+            name="Collect list of strings flag with specific values",
+            kwargs={
+                'args': argument_parser_factory(
+                            arguments=[list_of_strings_flag_factory(
+                                            flag='--test-flag',
+                                            choices=['value1', 'value2', 'value3'])]
+                        ).parse_args(['--test-flag', 'value1', 'value2', 'value3']),
+                'flag': '--test-flag',
+            },
+            action=utils.collect_arg_list,
+            validate_result=lambda result: set(result) == set(['value1', 'value2', 'value3']))),
+    ])
+
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec", collect_arg_list_testspecs())
+def test_collect_arg_list(testspec: TestAction) -> None:
+    """Test utils.collect_arg_list() function."""
     testspec.run()

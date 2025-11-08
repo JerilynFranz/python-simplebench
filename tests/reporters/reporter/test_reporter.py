@@ -1,4 +1,4 @@
-"""Test simplebench/reporters/interfaces.py module"""
+"""Test simplebench/reporters/reporter/reporter.py module"""
 from __future__ import annotations
 from argparse import Namespace
 from pathlib import Path
@@ -23,7 +23,8 @@ from ...factories import (
     choice_factory, choice_conf_factory, reporter_kwargs_factory, default_reporter_callback,
     case_factory, namespace_factory, reporter_factory, FactoryReporter, path_factory,
     default_description, report_parameters_factory, choice_conf_kwargs_factory,
-    session_factory, default_reporter_name, choices_factory)
+    session_factory, default_reporter_name, choices_factory,
+    reporter_namespace_factory, flag_name_factory)
 from ...testspec import TestAction, TestGet, TestSet, TestSpec, idspec, NO_EXPECTED_VALUE, Assert
 
 
@@ -43,7 +44,7 @@ def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable
 
 def broken_benchcase_missing_kwargs(
         bench: SimpleRunner) -> Results:  # pylint: disable=unused-argument  # pragma: no cover
-    """A broken benchmark case function that is missing the required 'bench' parameter.
+    """A broken benchmark case function that is missing the required 'kwargs' parameter.
 
     The function signature is intentionally incorrect for testing purposes.
     """
@@ -103,7 +104,7 @@ class BadSuperReporter(Reporter):
         exception=SimpleBenchNotImplementedError,
         exception_tag=ReporterErrorTag.RUN_REPORT_NOT_IMPLEMENTED)),
     idspec('REPORTER_004', TestAction(
-        name="configured subclass of Reporter() can be instantiated",
+        name="reporter_factory() is creating valid FactoryReporter instances",
         action=reporter_factory,
         assertion=Assert.ISINSTANCE,
         expected=FactoryReporter)),
@@ -113,7 +114,7 @@ class BadSuperReporter(Reporter):
         kwargs=report_parameters_factory(),
         validate_result=lambda result: result is None)),
     idspec('REPORTER_006', TestAction(
-        name="Correctly configured Reporter() can be instantated",
+        name="FactoryReporter() can be instantiated with parameters from reporter_kwargs_factory()",
         action=FactoryReporter,
         kwargs=reporter_kwargs_factory(),
         assertion=Assert.ISINSTANCE,
@@ -221,6 +222,86 @@ class BadSuperReporter(Reporter):
         kwargs=reporter_kwargs_factory().replace(description='   '),
         exception=SimpleBenchValueError,
         exception_tag=ReporterErrorTag.DESCRIPTION_INVALID_ARG_VALUE)),
+    idspec('REPORTER_022', TestAction(
+        name="Attempt to directly instantiate Reporter raises TypeError",
+        action=Reporter,
+        kwargs=reporter_kwargs_factory(),
+        exception=TypeError)),
+    idspec('REPORTER_023', TestAction(
+        name=("Init of FactoryReporter with an options_type that is not "
+              "a ReporterOptions subclass raises SimpleBenchTypeError"),
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(options_type=str),
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.OPTIONS_TYPE_INVALID_VALUE)),
+    idspec('REPORTER_024', TestAction(
+        name="Init of FactoryReporter with subdir name longer than 64 characters raises SimpleBenchValueError",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(subdir='a' * 65),
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.SUBDIR_TOO_LONG)),
+    idspec('REPORTER_025', TestAction(
+        name=("Init of FactoryReporter with subdir name containing "
+              "non-alphanumeric characters raises SimpleBenchValueError"),
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(subdir='invalid/subdir!'),
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.SUBDIR_INVALID_ARG_VALUE)),
+    idspec('REPORTER_026', TestAction(
+        name="Init of FactoryReporter with file_suffix as non-string raises SimpleBenchTypeError",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_suffix=123),
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.FILE_SUFFIX_INVALID_ARG_TYPE)),
+    idspec('REPORTER_027', TestAction(
+        name="Init of FactoryReporter with file_suffix longer than 10 characters raises SimpleBenchValueError",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_suffix='a' * 11),
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.FILE_SUFFIX_ARG_TOO_LONG)),
+    idspec('REPORTER_028', TestAction(
+        name=("Init of FactoryReporter with file_suffix containing "
+              "non-alphanumeric characters raises SimpleBenchValueError"),
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_suffix='invalid!'),
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.FILE_SUFFIX_INVALID_ARG_VALUE)),
+    idspec('REPORTER_029', TestAction(
+        name="Init of FactoryReporter with file_unique as a non-boolean raises SimpleBenchTypeError",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_unique='not_a_bool'),
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE)),
+    idspec('REPORTER_030', TestAction(
+        name="Init of FactoryReporter with file_append as a non-boolean raises SimpleBenchTypeError",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_append='not_a_bool'),
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.FILE_APPEND_INVALID_ARG_TYPE)),
+    idspec('REPORTER_031', TestAction(
+        name="Init of FactoryReporter with file_unique and file_append both True raises SimpleBenchValueError",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_unique=True, file_append=True),
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED)),
+    idspec('REPORTER_032', TestAction(
+        name="Init of FactoryReporter with file_unique and file_append both False raises SimpleBenchValueError",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_unique=False, file_append=False),
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED)),
+    idspec('REPORTER_033', TestAction(
+        name="Init of FactoryReporter with file_append as True and file_unique as False works",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_append=True, file_unique=False),
+        assertion=Assert.ISINSTANCE,
+        expected=FactoryReporter)),
+    idspec('REPORTER_034', TestAction(
+        name="Init of FactoryReporter with file_unique as False and file_append as True works",
+        action=FactoryReporter,
+        kwargs=reporter_kwargs_factory().replace(file_unique=False, file_append=True),
+        assertion=Assert.ISINSTANCE,
+        expected=FactoryReporter)),
 ])
 def test_reporter_init(testspec: TestSpec) -> None:
     """Test Reporter init parameters."""
@@ -656,4 +737,87 @@ def find_options_by_type_testspecs() -> list[TestSpec]:
 @pytest.mark.parametrize('testspec', find_options_by_type_testspecs())
 def test_find_options_by_type(testspec: TestSpec) -> None:
     """Test Reporter.find_options_by_type() method."""
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    idspec('SELECT_TARGETS_FROM_ARGS_001', TestAction(
+        name="select_targets_from_args() with args specifying console target returns console target",
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': reporter_namespace_factory([flag_name_factory(), Target.CONSOLE.value]),
+                'choice': choice_factory(),
+                'default_targets': {Target.FILESYSTEM}},
+        assertion=Assert.EQUAL,
+        expected={Target.CONSOLE})),
+    idspec('SELECT_TARGETS_FROM_ARGS_002', TestAction(
+        name="select_targets_from_args() with no specified target returns default targets",
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': reporter_namespace_factory([flag_name_factory()]),
+                'choice': choice_factory(),
+                'default_targets': {Target.FILESYSTEM}},
+        assertion=Assert.EQUAL,
+        expected={Target.FILESYSTEM})),
+    idspec('SELECT_TARGETS_FROM_ARGS_004', TestAction(
+        name="select_targets_from_args() with args specifying multiple targets returns all specified targets",
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': reporter_namespace_factory(
+                            [flag_name_factory(), Target.CONSOLE.value, Target.FILESYSTEM.value]),
+                'choice': choice_factory(),
+                'default_targets': {Target.FILESYSTEM}},
+        assertion=Assert.EQUAL,
+        expected={Target.CONSOLE, Target.FILESYSTEM})),
+    idspec('SELECT_TARGETS_FROM_ARGS_005', TestAction(
+        name=("select_targets_from_args() incorrect args type raises SimpleBenchTypeError"),
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': "not_a_namespace", 'choice': choice_factory(), 'default_targets': {Target.FILESYSTEM}},
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)),
+    idspec('SELECT_TARGETS_FROM_ARGS_006', TestAction(
+        name=("select_targets_from_args() incorrect choice type raises SimpleBenchTypeError"),
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': reporter_namespace_factory([flag_name_factory()]),
+                'choice': "not_a_choice_instance",
+                'default_targets': {Target.FILESYSTEM}},
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)),
+    idspec('SELECT_TARGETS_FROM_ARGS_007', TestAction(
+        name=("select_targets_from_args() incorrect default_targets type raises SimpleBenchTypeError"),
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': reporter_namespace_factory([flag_name_factory()]),
+                'choice': choice_factory(),
+                'default_targets': "not_a_set_of_targets"},
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG)),
+    idspec('SELECT_TARGETS_FROM_ARGS_008', TestAction(
+        name="select_targets_from_args() with args including unsupported target raises SimpleBenchValueError",
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': reporter_namespace_factory(
+                            args=[flag_name_factory(), Target.CUSTOM.value],
+                            choices=[Target.CUSTOM.value, Target.FILESYSTEM.value]),
+                'choice': choice_factory(),
+                'default_targets': {Target.FILESYSTEM}},
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)),
+    idspec('SELECT_TARGETS_FROM_ARGS_009', TestAction(
+        name=("select_targets_from_args() with an arg that does not match any "
+              "Target enums raises SimpleBenchValueError"),
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': reporter_namespace_factory(
+                            args=[flag_name_factory(), "non_existent_target"],
+                            choices=["non_existent_target"]),
+                'choice': choice_factory(),
+                'default_targets': {Target.FILESYSTEM}},
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)),
+    idspec('SELECT_TARGETS_FROM_ARGS_010', TestAction(
+        name="select_targets_from_args() with default target not supported by choice raises SimpleBenchValueError",
+        action=reporter_factory().select_targets_from_args,
+        kwargs={'args': reporter_namespace_factory([flag_name_factory()]),
+                'choice': choice_factory(),
+                'default_targets': {Target.CUSTOM}},
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)),
+])
+def test_select_targets_from_args(testspec: TestSpec) -> None:
+    """Test Reporter.select_targets_from_args() method."""
     testspec.run()

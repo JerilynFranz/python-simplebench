@@ -3,7 +3,14 @@
 This module defines the Reporter abstract base class, which serves as the foundation
 for all reporter implementations in the SimpleBench benchmarking framework.
 
-A Reporter is responsible for generating reports based on benchmark results from a Session and Case.
+It handles common functionality such as validating input arguments, configuring argparse CLI arguments,
+managing default options, sending reports to various targets, orchestrating report generation
+for `Session` and `Case`, and providing utility methods for working with reporter options.
+
+Currently, the only required method to implement is `run_report()`, which is responsible
+for generating the reports based on the benchmark results.
+
+A `Reporter` is responsible for generating reports based on benchmark results from a `Session` and `Case`.
 Reporters can produce reports in various formats and output them to different targets.
 """
 from __future__ import annotations
@@ -134,7 +141,6 @@ class Reporter(ABC, IReporter):
             return cls.get_hardcoded_default_options()
         return cls._DEFAULT_OPTIONS
 
-    @abstractmethod
     def __init__(self,
                  *,
                  name: str,
@@ -307,13 +313,7 @@ class Reporter(ABC, IReporter):
             ReporterErrorTag.CHOICES_INVALID_ARG_TYPE)
 
         choices_list: list[Choice] = []
-        choice_conf_names: set[str] = set()
         for item in choices.values():
-            if item.name in choice_conf_names:
-                raise SimpleBenchValueError(
-                    f"Duplicate Choice().name found in choices: {item.name}",
-                    tag=ReporterErrorTag.DUPLICATE_CHOICE_NAMES_IN_CHOICES)
-            choice_conf_names.add(item.name)
             choices_list.append(Choice(reporter=self, choice_conf=item))  # pylint: disable=used-before-assignment
 
         self._choices = Choices(choices_list)
@@ -383,27 +383,41 @@ class Reporter(ABC, IReporter):
             SimpleBenchTypeError: If args is not an argparse.Namespace instance.
             SimpleBenchValueError: If an unsupported target is specified in the arguments.
         """
+        args = validate_type(args, Namespace, 'args',
+                             ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)
+        choice = validate_type(choice, Choice, 'choice',
+                               ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)
+        default_targets = validate_iterable_of_type(
+            default_targets, Target, 'default_targets',
+            ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG,
+            ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG,
+            allow_empty=True)
+
+        for target in default_targets:
+            if target not in choice.targets:
+                raise SimpleBenchValueError(
+                    f"Default target {target} is not supported by the choice.",
+                    tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)
+
         selected_targets: set[Target] = set()
         target_members = Target.__members__
         reverse_target_map = {v.value: v for k, v in target_members.items()}
         for flag in choice.flags:
-            target_names = collect_arg_list(
-                args=args, flag=flag, include_comma_separated=True)
+            target_names = collect_arg_list(args=args, flag=flag)
             if not target_names:
                 continue  # No targets specified for this flag, skip to next flag
             for target in target_names:
                 target_enum = reverse_target_map.get(target, None)
-                if target_enum is not None:
-                    if target_enum in choice.targets:
-                        selected_targets.add(target_enum)
-                    else:
-                        raise SimpleBenchValueError(
-                            f"Output target {target} is not supported by {flag}.",
-                            tag=ReporterErrorTag.UNSUPPORTED_TARGET_IN_ARGS)
+                if target_enum is None:
+                    raise SimpleBenchValueError(
+                        f"Unknown output target {target} specified for {flag}.",
+                        tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)
+                if target_enum in choice.targets:
+                    selected_targets.add(target_enum)
                 else:
                     raise SimpleBenchValueError(
-                        f"Unknown output target specified for {flag}: {target}",
-                        tag=ReporterErrorTag.UNKNOWN_TARGET_IN_ARGS)
+                        f"Output target {target} is not supported by {flag}.",
+                        tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)
 
         return set(default_targets) if not selected_targets else selected_targets
 
@@ -840,6 +854,13 @@ class Reporter(ABC, IReporter):
         Subclasses can override this method if they need custom behavior such as adding
         arguments with different types or more complex logic.
 
+        The added argument will use the 'append' action to allow multiple occurrences
+        of the flag, each potentially specifying multiple targets, and uses the choices
+        option to restrict the allowed target values to only those supported by the Choice.
+
+        This will be enforced during argument parsing, so invalid target values will
+        result in an error.
+
         Args:
             parser (ArgumentParser): The ArgumentParser to add the flags to.
             choice (Choice): The Choice instance for which to add the flags.
@@ -857,6 +878,12 @@ class Reporter(ABC, IReporter):
                 tag=ReporterErrorTag.ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE)
         targets = [target.value for target in choice.targets]
         for flag in choice.flags:
+            # Add an argument that accepts multiple target values
+            # for each occurrence of the flag, restricts the choices
+            # to only those supported by the Choice. Zero or more
+            # targets can be specified for each flag occurrence.
+            # Zero is allowed so that the default targets can be used
+            # when no targets are explicitly specified.
             parser.add_argument(flag,
                                 action='append',
                                 nargs='*',

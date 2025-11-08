@@ -12,6 +12,7 @@ from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.runners import SimpleRunner
 from simplebench.session import Session
+from simplebench import utils
 
 from . import factories
 from .kwargs import ReporterKWArgs, ChoiceConfKWArgs, CaseKWArgs, ChoicesConfKWArgs
@@ -265,4 +266,36 @@ from .testspec import TestSpec, TestAction, idspec, Assert
 ])
 def test_factories(testspec: TestSpec) -> None:
     """Test the various factories."""
+    testspec.run()
+
+
+@pytest.mark.parametrize("testspec", [
+    idspec("LIST_OF_STRINGS_001", TestAction(
+        name="Collect list of strings flag with specific values",
+        kwargs={
+            'args': factories.argument_parser_factory(
+                        arguments=[factories.list_of_strings_flag_factory(
+                                        flag='--test-flag',
+                                        choices=['value1', 'value2', 'value3'])]
+                    ).parse_args(['--test-flag', 'value1', 'value2', 'value3']),
+            'flag': '--test-flag',
+        },
+        action=utils.collect_arg_list,
+        validate_result=lambda result: set(result) == set(['value1', 'value2', 'value3']))),
+    idspec("LIST_OF_STRINGS_002", TestAction(
+        name="Verify allowed zero entries",
+        action=utils.collect_arg_list,
+        kwargs={
+            'flag': '--test-flag',
+            'args': factories.argument_parser_factory(
+                        arguments=[factories.list_of_strings_flag_factory(
+                                        flag='--test-flag',
+                                        choices=['value1', 'value2', 'value3'])]
+                    ).parse_args(['--test-flag']),
+        },
+        assertion=Assert.LEN,
+        expected=0)),
+])
+def test_list_of_strings_flag_factory(testspec: TestSpec) -> None:
+    """Test the list_of_strings_flag_factory function."""
     testspec.run()

@@ -43,3 +43,10 @@ class UtilsErrorTag(ErrorTag):
     # utils.collect_arg_list() tags
     COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE = "COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE"
     """The args argument was not a Namespace instance"""
+    COLLECT_ARG_LIST_INVALID_FLAG_ARG_TYPE = "COLLECT_ARG_LIST_INVALID_FLAG_ARG_TYPE"
+    """The flag argument was not a str"""
+    COLLECT_ARG_LIST_INVALID_INCLUDE_COMMA_SEPARATED_ARG_TYPE = (
+        "COLLECT_ARG_LIST_INVALID_INCLUDE_COMMA_SEPARATED_ARG_TYPE")
+    """The include_comma_separated argument was not a bool"""
+    COLLECT_ARG_LIST_INVALID_FLAG_ARG_VALUE = "COLLECT_ARG_LIST_INVALID_FLAG_ARG_VALUE"
+    """The flag argument contained invalid characters for a command-line flag"""

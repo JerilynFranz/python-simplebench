@@ -267,7 +267,7 @@ NO_ATTRIBUTE = object()
             action=session_with_reporters().parse_args,
             obj=session_with_reporters(),
             args=[["--json", "console"]],
-            validate_obj=lambda obj: collect_arg_list(obj.args, "--json") == ["console"],
+            validate_obj=lambda obj: collect_arg_list(args=obj.args, flag="--json") == ["console"],
             expected=NO_EXPECTED_VALUE)),
     idspec("PARSE_ARGS_003", TestAction(
             name="Parse no arguments with initialized argparser (.json should be False)",

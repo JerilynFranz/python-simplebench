@@ -6,6 +6,17 @@ from simplebench.enums import enum_docstrings
 @enum_docstrings
 class ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the reporters.interfaces module."""
+
+    # select_targets_from_args()
+    SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED = "SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED"
+    """A default target specified is not supported by the choice in select_targets_from_args()"""
+    SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG = "SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG"
+    """Invalid type for args argument in select_targets_from_args()"""
+    SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG = "SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG"
+    """Invalid type for choice argument in select_targets_from_args()"""
+    SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG = "SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG"
+    """Invalid type or value for default_targets argument in select_targets_from_args()"""
+
     # find_options_by_type()
     FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG = "FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG"
     """Invalid type for options argument in find_options_by_type()
@@ -18,6 +29,8 @@ class ReporterErrorTag(ErrorTag):
     """Invalid type for options argument in set_default_options()"""
 
     # __init__()
+    REPORTER_ABSTRACT_BASE_CLASS_INSTANTIATION = "REPORTER_ABSTRACT_BASE_CLASS_INSTANTIATION"
+    """The Reporter class is an abstract base class and cannot be instantiated directly"""
     SECTIONS_ITEMS_ARG_VALUE = "SECTIONS_ITEMS_ARG_VALUE"
     """sections is an empty iterable"""
     TARGETS_INVALID_ARG_TYPE = "INVALID_TARGETS_ARG_TYPE"
@@ -66,14 +79,14 @@ class ReporterErrorTag(ErrorTag):
 
     EMPTY_TARGETS_ARG_VALUE = "EMPTY_TARGETS_ARG_VALUE"
     """The targets arg cannot be an empty sequence"""
-    DEFAULT_TARGETS_INVALID_ARG_TYPE = "INVALID_DEFAULT_TARGETS_ARG_TYPE"
+    DEFAULT_TARGETS_INVALID_ARG_TYPE = "DEFAULT_TARGETS_INVALID_ARG_TYPE"
     """Something other than a set of Target enums or None was passed as the default_targets arg"""
-    INVALID_DEFAULT_TARGETS_ENTRY_TYPE = "INVALID_DEFAULT_TARGETS_ENTRY_TYPE"
+    DEFAULT_TARGETS_INVALID_ENTRY_TYPE = "DEFAULT_TARGETS_INVALID_ENTRY_TYPE"
     """Something other than a Target enum was found in the default_targets arg"""
-    SUBDIR_INVALID_ARG_TYPE = "INVALID_SUBDIR_ARG_TYPE"
-    """Something other than a string was passed as the default_subdir arg"""
-    SUBDIR_INVALID_ARG_VALUE = "INVALID_SUBDIR_ARG_VALUE"
-    """The default_subdir arg must be an alphanumeric string (a-z, A-Z, 0-9) or an empty string"""
+    SUBDIR_INVALID_ARG_TYPE = "SUBDIR_INVALID_ARG_TYPE"
+    """Something other than a string was passed as the default subdir arg"""
+    SUBDIR_INVALID_ARG_VALUE = "SUBDIR_INVALID_ARG_VALUE"
+    """The default subdir arg must be an alphanumeric string (a-z, A-Z, 0-9) or an empty string"""
     SUBDIR_TOO_LONG = "SUBDIR_TOO_LONG"
     """The subdir arg cannot be longer than 64 characters."""
     NAME_INVALID_ARG_TYPE = "NAME_INVALID_ARG_TYPE"
@@ -84,7 +97,7 @@ class ReporterErrorTag(ErrorTag):
     """Something other than a string was passed as the description arg"""
     DESCRIPTION_INVALID_ARG_VALUE = "DESCRIPTION_INVALID_ARG_VALUE"
     """The description arg cannot be an empty string"""
-    SECTIONS_INVALID_ARG_TYPE = "INVALID_SECTIONS_ARG_TYPE"
+    SECTIONS_INVALID_ARG_TYPE = "SECTIONS_INVALID_ARG_TYPE"
     """Something other than a sequence of Section enums was passed as the sections arg"""
     EMPTY_SECTIONS_ARG_VALUE = "EMPTY_SECTIONS_ARG_VALUE"
     """The sections arg cannot be an empty sequence (can be Section.NULL if needed)"""
@@ -195,10 +208,10 @@ class ReporterErrorTag(ErrorTag):
     """An unsupported Section was passed to the reporter's run_report() method"""
     RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE = "RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE"
     """Something other than a RichTableChoiceOptions instance was set for a choice option"""
-    UNKNOWN_TARGET_IN_ARGS = "UNKNOWN_TARGET_IN_ARGS"
-    """An unknown target string was specified in the command-line arguments"""
-    UNSUPPORTED_TARGET_IN_ARGS = "UNSUPPORTED_TARGET_IN_ARGS"
-    """An unsupported target string was specified in the command-line arguments"""
+    SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS = "SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS"
+    """An unknown target string was specified in the command-line arguments passed to select_targets_from_args()"""
+    SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET = "SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET"
+    """An unsupported target string was specified in the command-line arguments passed to select_targets_from_args()"""
     SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE = "SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE"
     """Invalid targets argument type:
     - must be of type `frozenset[Target]` or `None.`"""
