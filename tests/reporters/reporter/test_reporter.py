@@ -14,7 +14,7 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
-from simplebench.reporters.reporter import Reporter
+from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.results import Results
 from simplebench.runners import SimpleRunner
 from simplebench.session import Session
@@ -24,7 +24,7 @@ from ...factories import (
     case_factory, namespace_factory, reporter_factory, FactoryReporter, path_factory,
     default_description, report_parameters_factory, choice_conf_kwargs_factory,
     session_factory, default_reporter_name, choices_factory)
-from ...testspec import TestAction, TestSpec, idspec, NO_EXPECTED_VALUE, Assert
+from ...testspec import TestAction, TestGet, TestSet, TestSpec, idspec, NO_EXPECTED_VALUE, Assert
 
 
 def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable=unused-argument  # pragma: no cover
@@ -419,21 +419,241 @@ def test_add_choice(testspec: TestSpec) -> None:
     testspec.run()
 
 
-def test_attributes() -> None:
-    """Test Reporter attributes.
+@pytest.mark.parametrize('testspec', [
+    idspec('INSTANCE_ATTRIBUTES_001', TestGet(
+        name="Reporter().name attribute has the expected default value",
+        obj=reporter_factory(),
+        attribute='name',
+        assertion=Assert.EQUAL,
+        expected=default_reporter_name())),
+    idspec('INSTANCE_ATTRIBUTES_002', TestSet(
+        name="Reporter().name attribute is immutable",
+        obj=reporter_factory(),
+        attribute='name',
+        value='new_name',
+        exception=AttributeError)),
+    idspec('INSTANCE_ATTRIBUTES_003', TestGet(
+        name="Reporter().description attribute has the expected default value",
+        obj=reporter_factory(),
+        attribute='description',
+        assertion=Assert.EQUAL,
+        expected=default_description())),
+    idspec('INSTANCE_ATTRIBUTES_004', TestSet(
+        name="Reporter().description attribute is immutable",
+        obj=reporter_factory(),
+        attribute='description',
+        value='new_description',
+        exception=AttributeError)),
+    idspec('INSTANCE_ATTRIBUTES_005', TestGet(
+        name="Reporter().choices attribute is a Choices instance",
+        obj=reporter_factory(),
+        attribute='choices',
+        assertion=Assert.ISINSTANCE,
+        expected=Choices)),
+    idspec('INSTANCE_ATTRIBUTES_006', TestSet(
+        name="Reporter().choices attribute is immutable",
+        obj=reporter_factory(),
+        attribute='choices',
+        value=choices_factory(),
+        exception=AttributeError)),
+])
+def test_reporter_instance_attributes(testspec: TestSpec) -> None:
+    """Test Reporter attributes."""
+    testspec.run()
 
-    Verify that Reporter attributes are correctly set and immutable.
-    """
+
+def reporter_class_methods_testspecs() -> list[TestSpec]:
+    """Generate TestSpecs for Reporter class methods."""
+    testspec: list[TestSpec] = [
+        idspec('CLASS_METHODS_001', TestAction(
+            name="Reporter.get_hardcoded_default_options() class method returns expected value with expected type",
+            action=Reporter.get_hardcoded_default_options,
+            assertion=Assert.ISINSTANCE,
+            expected=ReporterOptions)),
+        idspec('CLASS_METHODS_002', TestAction(
+            name="Reporter.get_default_options() class method returns ReporterOptions with expected type",
+            action=Reporter.get_default_options,
+            assertion=Assert.ISINSTANCE,
+            expected=ReporterOptions)),
+        idspec('CLASS_METHODS_003', TestAction(
+            name="Reporter.set_default_options() sets default options",
+            action=Reporter.set_default_options,
+            args=[ReporterOptions()],
+            expected=NO_EXPECTED_VALUE)),
+        idspec('CLASS_METHODS_004', TestAction(
+            name=("Reporter.set_default_options() with bad type raises "
+                  "SimpleBenchTypeError/SET_DEFAULT_OPTIONS_INVALID_ARG_TYPE"),
+            action=Reporter.set_default_options,
+            args=["not_a_reporter_options_instance"],
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE)),
+    ]
+
+    def vanilla_default_options_is_hardcoded_default_options() -> None:
+        """Validate that get_default_options() returns the same value as get_hardcoded_default_options().
+
+        After resetting the default options by calling set_default_options(None),
+        the get_default_options() class method should return the same object instance as
+        returned by the get_hardcoded_default_options() class method.
+
+        Returns:
+            None
+        Raises:
+            AssertionError if the test fails.
+        """
+        Reporter.set_default_options(None)  # Reset to hard coded defaults
+        hard_coded_options = Reporter.get_hardcoded_default_options()
+        original_default_options = Reporter.get_default_options()
+        assert hard_coded_options is original_default_options, (
+            "get_default_options() does not return the hard coded instance after reset with None")
+    testspec.append(idspec(
+        'CLASS_METHODS_005', TestAction(
+            name=("Reporter.get_default_options() returns hard coded default options by default"),
+            action=vanilla_default_options_is_hardcoded_default_options)))
+
+    def default_options_changes_after_set() -> None:
+        """Validate that get_default_options() returns a different instance after set_default_options().
+
+        After calling set_default_options() with a new ReporterOptions instance,
+        the get_default_options() class method should return a different instance
+        than it did before the set_default_options() call.
+
+        Additionally, after resetting the default options by calling set_default_options(None),
+        get_default_options() should again return the original hard coded instance.
+
+        Returns:
+            None
+        Raises:
+            AssertionError if the test fails.
+        """
+        Reporter.set_default_options(None)  # Reset to hard coded defaults
+        hardcoded_options: ReporterOptions = Reporter.get_default_options()
+        new_options = ReporterOptions()
+        Reporter.set_default_options(new_options)
+        post_set_options = Reporter.get_default_options()
+
+        assert hardcoded_options is not post_set_options, (
+            "get_default_options() did not return a different instance after set_default_options()")
+        assert new_options is post_set_options, (
+            "get_default_options() does not return the new ReporterOptions instance after set_default_options()")
+    testspec.append(idspec(
+        'CLASS_METHODS_006', TestAction(
+            name=("Reporter.get_default_options() returns different instance after set_default_options()"),
+            action=default_options_changes_after_set)))
+
+    def default_options_sets_and_resets() -> None:
+        """Validate that default options set and reset correctly).
+
+        Validate that after calling set_default_options() with a new ReporterOptions instance,
+        the get_default_options() class method returns a different instance
+        than it did before the set_default_options() call and that after resetting the default options
+        by calling set_default_options(None), get_default_options() again returns the original hard coded instance
+
+        Returns:
+            None
+        Raises:
+            AssertionError if the test fails.
+        """
+        Reporter.set_default_options(None)  # Reset to hard coded defaults
+        hardcoded_options: ReporterOptions = Reporter.get_hardcoded_default_options()
+        new_options = ReporterOptions()
+        Reporter.set_default_options(new_options)
+        post_set_options = Reporter.get_default_options()
+
+        assert hardcoded_options is not post_set_options, (
+            "get_default_options() did not return a different instance after set_default_options()")
+        assert new_options is post_set_options, (
+            "get_default_options() does not return the new ReporterOptions instance after set_default_options()")
+
+        Reporter.set_default_options(None)  # Reset to hard coded defaults
+        reset_options = Reporter.get_default_options()
+        assert hardcoded_options is reset_options, (
+            "get_default_options() does not return the hard coded instance after reset with None")
+    testspec.append(idspec(
+        'CLASS_METHODS_007', TestAction(
+            name=("default options can be set and reset correctly"),
+            action=default_options_sets_and_resets)))
+
+    return testspec
+
+
+@pytest.mark.parametrize('testspec', reporter_class_methods_testspecs())
+def test_reporter_class_methods(testspec: TestSpec) -> None:
+    """Test Reporter class methods and properties."""
+    testspec.run()
+
+
+def find_options_by_type_testspecs() -> list[TestSpec]:
+    """Generate TestSpecs the find_options_by_type instance method."""
+
+    class ReporterOptionsOne(ReporterOptions):
+        """A dummy ReporterOptions subclass for testing purposes."""
+
+    class ReporterOptionsTwo(ReporterOptions):
+        """A second dummy ReporterOptions subclass for testing purposes."""
+
+    options_one = ReporterOptionsOne()
+    options_two = ReporterOptionsTwo()
+    empty_options_list: list[ReporterOptions] = []
+    options_two_only_list: list[ReporterOptions] = [options_two]
+    fully_populated_options_list: list[ReporterOptions] = [options_one, options_two]
     reporter = reporter_factory()
-    assert reporter.name == default_reporter_name(), "Failed to get Reporter.name"
-    assert reporter.description == default_description(), "Failed to get Reporter.description"
-    choices = reporter.choices
-    assert isinstance(choices, Choices), "Failed to get Reporter.choices"
 
-    # Verify immutability of attributes
-    with pytest.raises(AttributeError):
-        reporter.name = default_reporter_name()  # type: ignore[assignment,misc]
-    with pytest.raises(AttributeError):
-        reporter.description = default_description()  # type: ignore[assignment,misc]
-    with pytest.raises(AttributeError):
-        reporter.choices = choices_factory()  # type: ignore[assignment,misc]
+    testspecs: list[TestSpec] = [
+        idspec('FIND_OPTIONS_BY_TYPE_001', TestAction(
+            name="find_options_by_type() with empty list returns None",
+            action=reporter.find_options_by_type,
+            kwargs={'options': empty_options_list, 'cls': ReporterOptionsOne},
+            assertion=Assert.IS_NONE)),
+        idspec('FIND_OPTIONS_BY_TYPE_002', TestAction(
+            name="find_options_by_type() full list with single matching type returns correct item",
+            action=reporter.find_options_by_type,
+            kwargs={'options': fully_populated_options_list, 'cls': ReporterOptionsTwo},
+            assertion=Assert.IS,
+            expected=options_two)),
+        idspec('FIND_OPTIONS_BY_TYPE_003', TestAction(
+            name="find_options_by_type() list with only one matching type returns correct item",
+            action=reporter.find_options_by_type,
+            kwargs={'options': options_two_only_list, 'cls': ReporterOptionsTwo},
+            assertion=Assert.IS,
+            expected=options_two)),
+        idspec('FIND_OPTIONS_BY_TYPE_004', TestAction(
+            name="find_options_by_type() with options but no matching type returns None",
+            action=reporter.find_options_by_type,
+            kwargs={'options': options_two_only_list, 'cls': ReporterOptionsOne},
+            assertion=Assert.IS_NONE)),
+        idspec('FIND_OPTIONS_BY_TYPE_005', TestAction(
+            name=("find_options_by_type() with invalid cls arg raises "
+                  "SimpleBenchTypeError/FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE"),
+            action=reporter.find_options_by_type,
+            kwargs={'options': fully_populated_options_list, 'cls': "not_a_reporter_options_type"},
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE)),
+        idspec('FIND_OPTIONS_BY_TYPE_006', TestAction(
+            name=("find_options_by_type() with invalid options arg raises "
+                  "SimpleBenchTypeError/FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG"),
+            action=reporter.find_options_by_type,
+            kwargs={'options': "not_a_list", 'cls': ReporterOptionsOne},
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG)),
+        idspec('FIND_OPTIONS_BY_TYPE_007', TestAction(
+            name=("find_options_by_type() with options arg containing invalid item type raises "
+                  "SimpleBenchTypeError/FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG"),
+            action=reporter.find_options_by_type,
+            kwargs={'options': [options_one, "not_a_reporter_options_instance"], 'cls': ReporterOptionsOne},
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG)),
+        idspec('FIND_OPTIONS_BY_TYPE_008', TestAction(
+            name="find_options_by_type() with None options arg returns None",
+            action=reporter.find_options_by_type,
+            kwargs={'options': None, 'cls': ReporterOptionsOne},
+            assertion=Assert.IS_NONE)),
+    ]
+
+    return testspecs
+
+
+@pytest.mark.parametrize('testspec', find_options_by_type_testspecs())
+def test_find_options_by_type(testspec: TestSpec) -> None:
+    """Test Reporter.find_options_by_type() method."""
+    testspec.run()

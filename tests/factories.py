@@ -72,7 +72,7 @@ reset the cached instances.
 from __future__ import annotations
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import Any, Optional, Sequence, Iterable, TypeVar
+from typing import Any, Iterable, TypeVar
 
 
 from tests.kwargs import ReporterKWArgs, ChoiceConfKWArgs, CaseKWArgs, ChoicesConfKWArgs
@@ -81,7 +81,6 @@ from tests.cache_factory import clear_cache as _clear_cache
 
 from simplebench.case import Case
 from simplebench.enums import Section, Target, Format, FlagType, Verbosity
-from simplebench.iteration import Iteration
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
@@ -1101,84 +1100,6 @@ def namespace_factory(*,
     return args
 
 
-class MockReporterExtras:
-    """A mock ReporterExtras subclass for testing Choice initialization."""
-    def __init__(self, full_data: bool = False) -> None:
-        self.full_data = full_data
-
-
-class MockReporter(Reporter):
-    """A mock Reporter subclass for testing Choice initialization.
-
-    It provides a minimal implementation of the abstract methods required by the Reporter base class.
-
-    It initializes with a single ChoiceConf instance for testing purposes by default.
-    This can be overridden by providing a different list of ChoiceConf instances.
-
-    The default ChoiceConf instance is created using the choice_conf_factory factory function and
-    has the name 'mock' and flag '--mock'.
-
-    Args
-    """
-    def __init__(
-            self, choices_conf: ChoicesConf | None = None) -> None:
-        """Constructs a MockReporter instance for testing.
-
-        Args:
-            choices_conf (ChoicesConf | None, default=None):
-               A `ChoicesConf` instance to initialize the `Reporter` with.
-               If None, a default instance will be used.
-        """
-        if not isinstance(choices_conf, ChoicesConf) and choices_conf is not None:
-            raise TypeError(f'choices_conf must be a ChoicesConf instance or None, got {choices_conf!r}')
-        choices_conf = choices_conf_factory() if choices_conf is None else choices_conf
-        super().__init__(
-            name=default_reporter_name(),
-            description=default_description(),
-            sections=default_sections(),
-            default_targets=default_default_targets(),
-            targets=default_targets(),
-            subdir=default_subdir(),
-            options_type=default_reporter_options_type(),
-            file_suffix=default_file_suffix(),
-            file_unique=default_file_unique(),
-            file_append=default_file_append(),
-            formats=default_formats(),
-            choices=choices_conf
-        )
-
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,
-                   callback: Optional[ReporterCallback] = None) -> None:
-        """Mock implementation of run_report."""
-
-    def render(
-            self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
-        """Mock implementation of render method."""
-        return "mocked_rendered_output"
-
-
-class UnconfiguredReporterOptions(ReporterOptions):
-    """A dummy ReporterOptions subclass for testing purposes.
-
-    The UnconfiguredReporter is preconfigured with no options so all
-    parameters are must be provided at runtime (unless defaults are set elsewhere).
-    """
-
-
-USE_SELF_FOR_REPORTER = object()
-"""Sentinel value to indicate that the reporter parameter should be set to self.
-
-This is used to avoid circular references when initializing UnconfiguredReporter
-while still allowing the testing of reporter parameter handling of the Reporter base class.
-"""
-
-
 class FactoryReporter(Reporter):
     """A dummy reporter subclass for testing purposes.
 
@@ -1275,67 +1196,6 @@ def default_options_type() -> type[ConfiguredReporterOptions]:
     return ConfiguredReporterOptions
 
 
-class ConfiguredReporter(Reporter):
-    """A mock reporter subclass with default options already set for testing purposes.
-
-    Creates a Reporter with default parameters for testing that can be overridden as needed.
-
-        - name=default_name(),
-        - description=default_description(),
-        - options_type=ConfiguredReporterOptions,
-        - sections=default_sections(),
-        - targets=default_targets(),
-        - formats=default_formats(),
-        - choices=default_choice_confs(),
-        - file_suffix=default_file_suffix(),
-        - file_unique=default_file_unique(),
-        - file_append=default_file_append()
-
-    """
-    def __init__(self) -> None:
-        """Preconfigured Reporter for testing purposes.
-            - name=default_name(),
-            - description=default_description(),
-            - options_type=ConfiguredReporterOptions,
-            - sections=default_sections(),
-            - targets=default_targets(),
-            - formats=default_formats(),
-            - choices=default_choice_confs(),
-            - file_suffix=default_file_suffix(),
-            - file_unique=default_file_unique(),
-            - file_append=default_file_append()
-        """
-
-        super().__init__(
-            name=default_reporter_name(),
-            description=default_description(),
-            options_type=default_options_type(),
-            sections=default_sections(),
-            targets=default_targets(),
-            formats=default_formats(),
-            choices=choices_conf_factory(),
-            file_suffix=default_file_suffix(),
-            file_unique=default_file_unique(),
-            file_append=default_file_append())
-
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,
-                   callback: Optional[ReporterCallback] = None) -> None:
-        """Run the report with the given arguments, case, and choice."""
-        self.render_by_case(
-            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
-
-    def render(
-            self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
-        """Render the report for the given case, section, and options."""
-        return default_report_output()
-
-
 @cached_factory
 def reporter_kwargs_factory(
         *,
@@ -1410,34 +1270,6 @@ def default_reporter_kwargs() -> ReporterKWArgs:
         ReporterKWArgs: A preconfigured instance with default values for testing.
     """
     return reporter_kwargs_factory(cache_id=f'{__name__}.default_reporter_kwargs:singleton')
-
-
-class ConfiguredChoiceConf(ChoiceConf):
-    """A dummy Choice subclass for testing purposes.
-
-    Creates a Choice with default parameters for testing that can be overridden as needed.
-
-    """
-    def __init__(
-            self,
-            *,
-            flags: list[str] | None = None,
-            name: str | None = None,
-            description: str | None = None,
-            flag_type: FlagType | None = None,
-            sections: Sequence[Section] | None = None,
-            targets: Sequence[Target] | None = None,
-            output_format: Format | None = None,
-            ) -> None:
-        super().__init__(
-            flags=flags if flags is not None else default_choice_flags(),
-            flag_type=flag_type if flag_type is not None else default_flag_type(),
-            name=name if name is not None else default_choice_name(),
-            description=description if description is not None else default_description(),
-            sections=sections if sections is not None else default_sections(),
-            targets=targets if targets is not None else default_targets(),
-            output_format=output_format if output_format is not None else default_output_format()
-        )
 
 
 @cached_factory
@@ -1549,32 +1381,6 @@ def default_choices_conf_kwargs() -> ChoicesConfKWArgs:
         ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
     """
     return choices_conf_kwargs_factory(cache_id=f'{__name__}.default_choices_conf_kwargs:singleton')
-
-
-class ConfiguredCase(Case):
-    """A dummy Case subclass for testing purposes.
-
-    This Case is preconfigured with default parameters and made-up results
-    to facilitate testing of reporter functionality without needing to
-    run actual benchmarks each time.
-    """
-    def __init__(self) -> None:
-        super().__init__(
-            group='test_case',
-            title='Test Case',
-            description='A test case for testing.',
-            action=default_benchcase)
-        self._results.append(Results(  # made-up results for testing purposes
-            group='test_case', title='Test Case', description='A test case for testing.',
-            n=10, total_elapsed=6.0,
-            iterations=[Iteration(elapsed=1.0), Iteration(elapsed=2.0), Iteration(elapsed=3.0)]))
-
-
-class ConfiguredSession(Session):
-    """A dummy Session subclass for testing purposes."""
-    def __init__(self) -> None:
-
-        super().__init__(cases=[ConfiguredCase()], verbosity=Verbosity.QUIET)
 
 
 @cached_factory

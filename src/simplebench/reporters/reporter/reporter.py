@@ -117,7 +117,7 @@ class Reporter(ABC, IReporter):
             raise SimpleBenchTypeError(
                 f"Invalid type for options argument in set_default_options(). "
                 f"Expected ReporterOptions or None and got {type(options)}.",
-                tag=ReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE)
+                tag=ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE)
 
     @classmethod
     def get_default_options(cls) -> ReporterOptions:
@@ -343,14 +343,18 @@ class Reporter(ABC, IReporter):
         """
         if options is None:
             return None
+        if not isinstance(cls, type):
+            raise SimpleBenchTypeError(
+                "cls argument must be a type",
+                tag=ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE)
         options = validate_iterable_of_type(
             options, ReporterOptions, 'options',
-            ReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE,
-            ReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE,
+            ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG,
+            ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG,
             allow_empty=True)
         for item in options:
             if isinstance(item, cls):
-                return item
+                return item  # type: ignore
         return None
 
     def select_targets_from_args(

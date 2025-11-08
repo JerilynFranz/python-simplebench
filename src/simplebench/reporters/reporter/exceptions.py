@@ -6,6 +6,17 @@ from simplebench.enums import enum_docstrings
 @enum_docstrings
 class ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the reporters.interfaces module."""
+    # find_options_by_type()
+    FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG = "FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG"
+    """Invalid type for options argument in find_options_by_type()
+    - something other than None or an Iterable of ReporterOptions."""
+    FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE = "FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE"
+    """Invalid type for cls argument in find_options_by_type()"""
+
+    # set_default_options()
+    SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE = "SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE"
+    """Invalid type for options argument in set_default_options()"""
+
     # __init__()
     SECTIONS_ITEMS_ARG_VALUE = "SECTIONS_ITEMS_ARG_VALUE"
     """sections is an empty iterable"""
