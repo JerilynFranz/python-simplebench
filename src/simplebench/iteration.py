@@ -1,46 +1,68 @@
-# -*- coding: utf-8 -*-
 """Iteration class"""
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
+from .docs_utils import dynamic_docstring
 from .enums import Section
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, IterationErrorTag
 from .validators import (validate_non_blank_string, validate_int, validate_positive_int,
                          validate_positive_float, validate_non_negative_float)
 
 
+@dynamic_docstring(DEFAULT_INTERVAL_UNIT=DEFAULT_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE=DEFAULT_INTERVAL_SCALE)
 class Iteration:
     '''Container for the results of a single benchmark iteration.
 
-    Properties:
-        n (int): The number of rounds performed in the iteration. (defaults to 1)
-        elapsed (float): The per round elapsed time for the operations. (defaults to 0.0)
-        unit (str): The unit of measurement for the elapsed time. (defaults to DEFAULT_INTERVAL_UNIT: 'ns')
-        scale (float): The scale factor for the elapsed time. (defaults to DEFAULT_INTERVAL_SCALE: 1e-9)
+    An iteration represents a single run of a benchmarked action (a run may consist of multiple rounds
+    and a full benchmark consists of multiple iterations).
+
+    It holds the elapsed time, n weight, unit, scale, memory usage, and peak memory usage for
+    that iteration.
+
+    Elapsed time is the total time taken for the iteration in the specified unit (e.g., nanoseconds)
+    and scale (e.g., 1e-9 to convert nanoseconds to seconds) divided by the number of rounds
+    as measured in the unit and scale specified. It is the average time per round for the iteration.
+
+    So if an iteration with a unit of 'ns' and a scale of 1e-9 had an `elapsed` time of 5000000
+    (5 million nanoseconds) and 20 rounds, then the elapsed time would be equivalent to
+    an average of (5000000 * 1e-9) / 20 = 0.00025 seconds per round.
+
+    The n-weight represents the O(n) type complexity of the action being benchmarked.
+    For example, if the action processes a list of size n, then the n-weight would be n.
+
+    This allows data analysis tools to better understand the performance characteristics of the action
+    being benchmarked when the benchmark data is exported, although it is not used directly in
+    any calculations by SimpleBench itself currently.
+
+    Attributes:
+        n (int): The complexity n-weight for the iteration. (defaults to 1)
+        unit (str, default={DEFAULT_INTERVAL_UNIT}): The unit of measurement for the elapsed time.
+        scale (float, default={DEFAULT_INTERVAL_SCALE}): The scale factor for the elapsed time.
+        elapsed (float): The elapsed time for the iteration. (read only)
         ops_per_second (float): The number of operations per second. (read only)
         per_round_elapsed (float): The mean time for a single round scaled to the base unit. (read only)
-        memory (int): The memory usage in bytes. (defaults to 0)
-        peak_memory (int): The peak memory usage in bytes. (defaults to 0)
+        memory (int): The memory usage in bytes. (defaults to 0) (read only)
+        peak_memory (int): The peak memory usage in bytes. (read only)
     '''
+
     __slots__ = ('_n', '_elapsed', '_unit', '_scale', '_memory', '_peak_memory')
 
     def __init__(self,
                  *,
                  n: int = 1,
-                 elapsed: float = 0.0,
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
+                 elapsed: float = 0.0,
                  memory: int = 0,  # in bytes
                  peak_memory: int = 0,  # in bytes
                  ) -> None:
         """"Initialize an Iteration instance.
 
         Args:
-            n (int): The n weight for the iteration. Must be a positive integer. (default: 1)
-            elapsed (float): The total elapsed time for the iteration in the specified unit.
-                             Must be a non-negative float. (default: 0.0)
+            n (int): The complexity n-weight for the iteration. Must be a positive integer. (default: 1)
             unit (str): The unit of measurement for the elapsed time. Must be a non-empty string.
-                        (default: DEFAULT_INTERVAL_UNIT: 'ns')
+                        (default: `DEFAULT_INTERVAL_UNIT`: 'ns')
             scale (float): The scale factor for the elapsed time. Must be a positive float.
-                           (default: DEFAULT_INTERVAL_SCALE: 1e-9)
+                           (default: `DEFAULT_INTERVAL_SCALE`: 1e-9)
+            elapsed (float): The elapsed time for the iteration. Must be a non-negative float. (default: 0.0)
             memory (int): The memory usage in bytes. Must be an integer. (default: 0)
             peak_memory (int): The peak memory usage in bytes. Must be an integer. (default: 0)
 
