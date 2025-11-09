@@ -1,13 +1,13 @@
 """Iteration class"""
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
-from .docs_utils import dynamic_docstring
+from .doc_utils import format_docstring
 from .enums import Section
 from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, IterationErrorTag
 from .validators import (validate_non_blank_string, validate_int, validate_positive_int,
                          validate_positive_float, validate_non_negative_float)
 
 
-@dynamic_docstring(DEFAULT_INTERVAL_UNIT=DEFAULT_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE=DEFAULT_INTERVAL_SCALE)
+@format_docstring(DEFAULT_INTERVAL_UNIT=DEFAULT_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE=DEFAULT_INTERVAL_SCALE)
 class Iteration:
     '''Container for the results of a single benchmark iteration.
 
@@ -33,9 +33,11 @@ class Iteration:
     any calculations by SimpleBench itself currently.
 
     Attributes:
-        n (int): The complexity n-weight for the iteration. (defaults to 1)
+        n (int): The complexity n-weight for the iteration. (read only)
         unit (str, default={DEFAULT_INTERVAL_UNIT}): The unit of measurement for the elapsed time.
+            It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`. (read only)
         scale (float, default={DEFAULT_INTERVAL_SCALE}): The scale factor for the elapsed time.
+            It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_SCALE`. (read only)
         elapsed (float): The elapsed time for the iteration. (read only)
         ops_per_second (float): The number of operations per second. (read only)
         per_round_elapsed (float): The mean time for a single round scaled to the base unit. (read only)
