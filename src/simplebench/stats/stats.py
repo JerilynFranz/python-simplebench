@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Base benchmark statistics class."""
 from __future__ import annotations
-from math import isclose
+from math import isclose, sqrt
 import statistics
 from typing import Any, Sequence
 
@@ -9,7 +9,8 @@ from .exceptions.stats import StatsErrorTag, StatsSummaryErrorTag
 from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError
 from ..si_units import si_unit_base, si_scale_to_unit
 from ..validators import (validate_non_blank_string, validate_float, validate_non_negative_float,
-                          validate_positive_float, validate_sequence_of_numbers)
+                          validate_positive_float, validate_sequence_of_numbers,
+                          validate_positive_int)
 
 
 class Stats:
@@ -18,26 +19,32 @@ class Stats:
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
         scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        rounds (int): The number of rounds each data point represents. (read only)
         data: (tuple[float | int, ...]) = Tuple of data points. (read only)
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)
         maximum (float): The maximum operations per time interval. (read only)
         standard_deviation (float): The standard deviation of operations per time interval. (read only)
+        adjusted_standard_deviation (float): The standard deviation adjusted for the number of rounds. (read only)
         relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
+        adjusted_relative_standard_deviation (float): The adjusted relative standard deviation of ops per
+            time interval. (read only)
         percentiles (tuple[float, ...]): Percentiles of operations per time interval. (read only)
     '''
-    __slots__ = ('_unit', '_scale', '_data', '_percentiles', '_mean', '_median',
-                 '_minimum', '_maximum', '_standard_deviation', '_relative_standard_deviation',
+    __slots__ = ('_unit', '_scale', '_rounds', '_data', '_percentiles', '_mean', '_median',
+                 '_minimum', '_maximum', '_standard_deviation', '_adjusted_standard_deviation',
+                 '_relative_standard_deviation', '_adjusted_relative_standard_deviation',
                  '_statistics_as_dict', '_statistics_and_data_as_dict')
 
-    def __init__(self, *, unit: str, scale: float, data: Sequence[int | float]) -> None:
+    def __init__(self, *, unit: str, scale: float, data: Sequence[int | float], rounds: int = 1) -> None:
         """Initialize the Stats object.
 
         Args:
             unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
             scale (float): The scale factor for the interval (e.g. 1 for seconds).
             data (Sequence[int | float]): Sequence of data points.
+            rounds (int, default=1): The number of rounds each data point represents.
         Raises:
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
             SimpleBenchValueError: If any of the arguments have invalid values.
@@ -50,6 +57,10 @@ class Stats:
                                 scale, 'scale',
                                 StatsErrorTag.INVALID_SCALE_ARG_TYPE,
                                 StatsErrorTag.INVALID_SCALE_ARG_VALUE)
+        self._rounds: int = validate_positive_int(
+                                rounds, 'rounds',
+                                StatsErrorTag.INVALID_ROUNDS_ARG_TYPE,
+                                StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)
         # data is left unsorted to allow for time series data to be preserved
         self._data: tuple[int | float, ...] = tuple(validate_sequence_of_numbers(
                                             value=data,
@@ -63,7 +74,9 @@ class Stats:
         self._minimum: float | None = None
         self._maximum: float | None = None
         self._standard_deviation: float | None = None
+        self._adjusted_standard_deviation: float | None = None
         self._relative_standard_deviation: float | None = None
+        self._adjusted_relative_standard_deviation: float | None = None
         self._statistics_as_dict: dict[str, str | float | dict[int, float] | list[int | float]] | None = None
         self._statistics_and_data_as_dict: dict[str, str | float | dict[int, float] | list[int | float]] | None = None
 
@@ -76,6 +89,11 @@ class Stats:
     def scale(self) -> float:
         '''The scale of the data.'''
         return self._scale
+
+    @property
+    def rounds(self) -> int:
+        '''The number of rounds each data point represents.'''
+        return self._rounds
 
     @property
     def data(self) -> tuple[int | float, ...]:
@@ -118,11 +136,31 @@ class Stats:
         return self._standard_deviation
 
     @property
+    def adjusted_standard_deviation(self) -> float:
+        '''The standard deviation adjusted for the number of rounds.
+
+        This metric "un-suppresses" the variability that is reduced by averaging
+        across multiple rounds. It is calculated by multiplying the standard
+        deviation by the square root of the number of rounds.
+        '''
+        if self._adjusted_standard_deviation is None:
+            self._adjusted_standard_deviation = self.standard_deviation * sqrt(self.rounds)
+        return self._adjusted_standard_deviation
+
+    @property
     def relative_standard_deviation(self) -> float:
         '''The relative standard deviation of the data.'''
         if self._relative_standard_deviation is None:
             self._relative_standard_deviation = abs(self.standard_deviation / self.mean * 100) if self.mean else 0.0
         return self._relative_standard_deviation
+
+    @property
+    def adjusted_relative_standard_deviation(self) -> float:
+        '''The adjusted relative standard deviation of the data.'''
+        if self._adjusted_relative_standard_deviation is None:
+            self._adjusted_relative_standard_deviation = abs(
+                self.adjusted_standard_deviation / self.mean * 100) if self.mean else 0.0
+        return self._adjusted_relative_standard_deviation
 
     @property
     def percentiles(self) -> tuple[float, ...]:
@@ -136,6 +174,12 @@ class Stats:
 
     def _calculate_percentiles(self) -> tuple[float, ...]:
         """Helper to calculate percentiles.
+
+        Note:
+
+            statistics.quantiles with n=102 and method='inclusive' is used
+            to calculate the percentiles from 0 to 100 inclusive (it generates 101
+            cut points, which correspond to percentiles 0 through 100).
 
         Returns:
             A tuple of percentiles keyed positionally by percent from 0 to 100.
@@ -214,11 +258,17 @@ class Stats:
         if 'scale' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "scale" key.',
                                       tag=StatsErrorTag.FROM_DICT_MISSING_SCALE_KEY)
+        if 'rounds' not in data:
+            raise SimpleBenchKeyError('The data dictionary is missing the required "rounds" key.',
+                                      tag=StatsErrorTag.FROM_DICT_MISSING_ROUNDS_KEY)
         if 'data' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "data" key.',
                                       tag=StatsErrorTag.FROM_DICT_MISSING_DATA_KEY)
 
-        return cls(unit=data['unit'], scale=data['scale'], data=data['data'])  # type: ignore[arg-type]
+        return cls(unit=data['unit'],
+                   scale=data['scale'],
+                   rounds=data['rounds'],
+                   data=data['data'])  # type: ignore[arg-type]
 
     def __eq__(self, other: object) -> bool:
         """Compare two Stats objects for equality.
@@ -242,7 +292,7 @@ class Stats:
         Raises:
             SimpleBenchValueError: If either Stats object has a scale of zero.
         """
-        if not isinstance(other, Stats):
+        if not isinstance(other, (Stats, StatsSummary)):
             return NotImplemented
 
         # this handles scale differences between two Stats objects
@@ -255,6 +305,9 @@ class Stats:
                                            current_unit=other.unit,
                                            target_unit=self.unit)
         relative_scale: float = self.scale / other.scale
+
+        if self.rounds != other.rounds:
+            return False
 
         if not isclose(scale_by, relative_scale):
             return False
@@ -277,16 +330,20 @@ class Stats:
         return si_unit_base(self.unit) == si_unit_base(other.unit)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}(unit='{self.unit}', scale={self.scale}, "
+        return (f"{self.__class__.__name__}(unit='{self.unit}', scale={self.scale}, rounds={self.rounds}, "
                 f"data=[{', '.join(str(d) for d in self.data)}])")
 
 
-class StatsSummary(Stats):
+class StatsSummary:
     '''Container for summary statistics of a benchmark, exclusive of raw data points.
+
+    This is a lightweight, data-only version of the Stats class, suitable for
+    serialization or reporting when raw data points are not needed.
 
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
         scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        rounds (int): The number of rounds each data point represents. (read only)
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)
@@ -297,10 +354,16 @@ class StatsSummary(Stats):
         data (tuple[int | float, ...]): Always an empty tuple as StatsSummary does not contain raw data points.
             (read only)
     '''
-    def __init__(self,  # pylint: disable=super-init-not-called,too-many-arguments
+    __slots__ = ('_unit', '_scale', '_rounds', '_mean', '_median', '_minimum', '_maximum',
+                 '_standard_deviation', '_relative_standard_deviation', '_percentiles',
+                 '_adjusted_standard_deviation', '_adjusted_relative_standard_deviation',
+                 '_statistics_as_dict')
+
+    def __init__(self,  # pylint: disable=too-many-arguments
                  *,
                  unit: str,
                  scale: float,
+                 rounds: int,
                  mean: float,
                  median: float,
                  minimum: float,
@@ -313,6 +376,7 @@ class StatsSummary(Stats):
         Args:
             unit (str): The unit of measurement for the data (e.g., "ops/s").
             scale (float): The scale factor the data (e.g. 1.0 for seconds).
+            rounds (int): The number of rounds each data point represents.
             mean (float): The mean data point.
             median (float): The median data point.
             minimum (float): The minimum data point.
@@ -332,6 +396,10 @@ class StatsSummary(Stats):
                         scale, 'scale',
                         StatsSummaryErrorTag.INVALID_SCALE_ARG_TYPE,
                         StatsSummaryErrorTag.INVALID_SCALE_ARG_VALUE)
+        self._rounds = validate_positive_int(
+                        rounds, 'rounds',
+                        StatsSummaryErrorTag.INVALID_ROUNDS_ARG_TYPE,
+                        StatsSummaryErrorTag.INVALID_ROUNDS_ARG_VALUE)
         self._mean = validate_float(
                         mean, 'mean',
                         StatsSummaryErrorTag.INVALID_MEAN_ARG_TYPE)
@@ -357,8 +425,74 @@ class StatsSummary(Stats):
                         allow_empty=False,
                         type_tag=StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_TYPE,
                         value_tag=StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_VALUE))
+        self._adjusted_standard_deviation: float | None = None
+        self._adjusted_relative_standard_deviation: float | None = None
         self._statistics_as_dict = None
-        self._statistics_and_data_as_dict = None
+
+    @property
+    def unit(self) -> str:
+        '''The unit of the data.'''
+        return self._unit
+
+    @property
+    def scale(self) -> float:
+        '''The scale of the data.'''
+        return self._scale
+
+    @property
+    def rounds(self) -> int:
+        '''The number of rounds each data point represents.'''
+        return self._rounds
+
+    @property
+    def mean(self) -> float:
+        '''The mean of the data.'''
+        return self._mean
+
+    @property
+    def median(self) -> float:
+        '''The median of the data.'''
+        return self._median
+
+    @property
+    def minimum(self) -> float:
+        '''The minimum of the data.'''
+        return self._minimum
+
+    @property
+    def maximum(self) -> float:
+        '''The maximum of the data.'''
+        return self._maximum
+
+    @property
+    def standard_deviation(self) -> float:
+        '''The standard deviation of the data.'''
+        return self._standard_deviation
+
+    @property
+    def adjusted_standard_deviation(self) -> float:
+        '''The standard deviation adjusted for the number of rounds.'''
+        if self._adjusted_standard_deviation is None:
+            self._adjusted_standard_deviation = self.standard_deviation * sqrt(self.rounds)
+        return self._adjusted_standard_deviation
+
+    @property
+    def relative_standard_deviation(self) -> float:
+        '''The relative standard deviation of the data.'''
+        return self._relative_standard_deviation
+
+    @property
+    def adjusted_relative_standard_deviation(self) -> float:
+        '''The adjusted relative standard deviation of the data.'''
+        if self._adjusted_relative_standard_deviation is None:
+            self._adjusted_relative_standard_deviation = abs(
+                self.adjusted_standard_deviation / self.mean * 100) if self.mean else 0.0
+        return self._adjusted_relative_standard_deviation
+
+    @property
+    def percentiles(self) -> tuple[float, ...]:
+        '''Percentiles of the data.'''
+        return self._percentiles
 
     @property
     def data(self) -> tuple[int | float, ...]:
@@ -367,6 +501,59 @@ class StatsSummary(Stats):
         This is always an empty tuple as a StatsSummary does not contain raw data points.
         '''
         return tuple()
+
+    def __eq__(self, other: object) -> bool:
+        """Compare this StatsSummary to another Stats or StatsSummary object.
+
+        Equality is based on stats statistics and not on object identity.
+
+        It handles scale differences between two objects and compares
+        the statistics accordingly using an appropriate tolerance for floating-point comparisons.
+
+        It also verifies that the units are equivalent when converted to their SI base units.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: True if the objects are considered equal, False otherwise.
+        """
+        if not isinstance(other, (Stats, StatsSummary)):
+            return NotImplemented
+
+        # this handles scale differences between two Stats objects
+        self_base_unit: str = si_unit_base(self.unit)
+        other_base_unit: str = si_unit_base(other.unit)
+        if self_base_unit != other_base_unit:
+            return False
+
+        scale_by: float = si_scale_to_unit(base_unit=self_base_unit,
+                                           current_unit=other.unit,
+                                           target_unit=self.unit)
+        relative_scale: float = self.scale / other.scale
+
+        if self.rounds != other.rounds:
+            return False
+
+        if not isclose(scale_by, relative_scale):
+            return False
+
+        if not (isclose(self.mean, other.mean / relative_scale) and
+                isclose(self.median,  other.median / relative_scale) and
+                isclose(self.minimum, other.minimum / relative_scale) and
+                isclose(self.maximum, other.maximum / relative_scale) and
+                isclose(self.standard_deviation, other.standard_deviation / relative_scale) and
+                isclose(self.relative_standard_deviation, other.relative_standard_deviation)):
+            return False
+
+        if len(self.percentiles) != len(other.percentiles):
+            return False
+
+        for self_pct, other_pct in zip(self.percentiles, other.percentiles):
+            if not isclose(self_pct, other_pct / relative_scale):
+                return False
+
+        return True
 
     @classmethod
     def from_stats(cls, stats: Stats) -> StatsSummary:
@@ -388,6 +575,7 @@ class StatsSummary(Stats):
         return cls(
             unit=stats.unit,
             scale=stats.scale,
+            rounds=stats.rounds,
             mean=stats.mean,
             median=stats.median,
             minimum=stats.minimum,
@@ -405,23 +593,25 @@ class StatsSummary(Stats):
             stats_summary_dict = {
                 "unit": "ops/s",
                 "scale": 1.0,
-                "data": [1000, 2000, 1500, 3000, 2500]
+                "rounds": 1,
+                "mean": 2000.0,
+                "median": 2000.0,
+                "minimum": 1000.0,
+                "maximum": 3000.0,
+                "standard_deviation": 790.5694150420949,
+                "relative_standard_deviation": 39.52847075252201,
+                "percentiles": [1000.0, 1300.0, 1600.0, 1900.0, 2200.0,
+                                2500.0, 2800.0, 3000.0, 3000.0]
             }
-            stats_summary = Stats.from_dict(stats_summary_dict)
+            stats_summary = StatsSummary.from_dict(stats_summary_dict)
             print(stats_summary.mean)  # Output: 2000.0
 
         Args:
             data (dict): A dictionary containing the stats data. Must contain 'data' key with a non-empty
                 sequence of data points consisting of integers or floats.
-            unit (Optional[str]): The unit of measurement for the benchmark (e.g., "ops/s").
-                It will be taken from the 'unit' key in the data dictionary by priority and
-                from the unit argument if not present in the data dictionary.
-            scale (Optional[int | float]): The scale factor for the interval (e.g. 1 for seconds).
-                It will be taken from the 'scale' key in the data dictionary by priority and
-                from the scale argument if not present in the data dictionary.
 
         Returns:
-            Stats: A Stats object constructed from the provided dictionary.
+            StatsSummary: A StatsSummary object constructed from the provided dictionary.
 
         Raises:
             SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
@@ -436,7 +626,7 @@ class StatsSummary(Stats):
                                        tag=StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)
 
         required_keys = [
-            'unit', 'scale', 'mean', 'median', 'minimum', 'maximum',
+            'unit', 'scale', 'rounds', 'mean', 'median', 'minimum', 'maximum',
             'standard_deviation', 'relative_standard_deviation', 'percentiles'
         ]
         keys_for_construction = {}
@@ -468,11 +658,20 @@ class StatsSummary(Stats):
             'type': f'{self.__class__.__name__}',
             'unit': si_unit_base(self.unit),
             'scale': 1.0,
+            'rounds': self.rounds,
             'mean': self.mean / self.scale,
             'median': self.median / self.scale,
             'minimum': self.minimum / self.scale,
             'maximum': self.maximum / self.scale,
             'standard_deviation': self.standard_deviation / self.scale,
+            'adjusted_standard_deviation': self.adjusted_standard_deviation / self.scale,
             'relative_standard_deviation': self.relative_standard_deviation,
             'percentiles': tuple(value / self.scale for value in self.percentiles)
         }
+
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}(unit='{self.unit}', scale={self.scale}, rounds={self.rounds}, "
+                f"mean={self.mean}, median={self.median}, minimum={self.minimum}, maximum={self.maximum}, "
+                f"standard_deviation={self.standard_deviation}, "
+                f"relative_standard_deviation={self.relative_standard_deviation}, "
+                f"percentiles=[{', '.join(str(p) for p in self.percentiles)}])")

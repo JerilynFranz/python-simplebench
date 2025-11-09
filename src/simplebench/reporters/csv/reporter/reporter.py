@@ -205,6 +205,7 @@ class CSVReporter(Reporter):
             header: list[str] = [
                 'N',
                 'Iterations',
+                'Rounds',
                 'Elapsed Seconds',
                 f'mean ({common_unit})',
                 f'median ({common_unit})',
@@ -223,6 +224,7 @@ class CSVReporter(Reporter):
                 row: list[str | float | int] = [
                     result.n,
                     len(result.iterations),
+                    result.rounds,
                     result.total_elapsed * DEFAULT_INTERVAL_SCALE,
                     sigfigs(stats_target.mean * common_scale),
                     sigfigs(stats_target.median * common_scale),

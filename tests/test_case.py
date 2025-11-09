@@ -869,6 +869,7 @@ def test_case_init(testspec: TestAction) -> None:
                                 title='new_title',
                                 description='new_description',
                                 n=1,
+                                rounds=1,
                                 total_elapsed=1,
                                 iterations=[Iteration(elapsed=0.1)])],
         obj=base_case(),

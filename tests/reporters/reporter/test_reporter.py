@@ -38,7 +38,7 @@ def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable
     return Results(  # made-up results for testing purposes
             group='test_case', title='Test Case',
             description='A test case for testing.',
-            n=10, total_elapsed=3.0,
+            n=10, rounds=1, total_elapsed=3.0,
             iterations=[Iteration(elapsed=1.0), Iteration(elapsed=2.0)])
 
 
@@ -53,7 +53,7 @@ def broken_benchcase_missing_kwargs(
     return Results(  # made-up results for testing purposes
             group='test_case', title='Test Case',
             description='A test case for testing.',
-            n=10, total_elapsed=3.0,
+            n=10, rounds=1, total_elapsed=3.0,
             iterations=[Iteration(elapsed=1.0), Iteration(elapsed=2.0)])
 
 
@@ -820,4 +820,17 @@ def test_find_options_by_type(testspec: TestSpec) -> None:
 ])
 def test_select_targets_from_args(testspec: TestSpec) -> None:
     """Test Reporter.select_targets_from_args() method."""
+    testspec.run()
+
+
+def report_testspecs() -> list[TestSpec]:
+    """Generate TestSpecs for Reporter.report() method."""
+    testspecs: list[TestSpec] = []
+
+    return testspecs
+
+
+@pytest.mark.parametrize('testspec', report_testspecs())
+def test_report(testspec: TestSpec) -> None:
+    """Test Reporter.report() method."""
     testspec.run()

@@ -17,6 +17,7 @@ class PeakMemoryUsage(Stats):
     Attributes:
         unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
         scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
+        rounds (int): The number of data points in the benchmark. (read only)
         data: tuple[int | float, ...] = Tuple of peak memory usage data points. (read only)
         mean (float): The mean memory usage. (read only)
         median (float): The median memory usage. (read only)
@@ -31,12 +32,14 @@ class PeakMemoryUsage(Stats):
                  iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
+                 rounds: int = 1,
                  data: Optional[Sequence[int | float]] = None):
         """Construct PeakMemoryUsage stats from Iteration or raw memory data.
         Args:
             iterations (Sequence[Iteration] | None): Sequence of Iteration objects to extract peak memory data from.
             unit (str): The unit of measurement for the memory usage (e.g., "MB").
             scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
+            rounds (int): The number of data points in the benchmark.
             data (Optional[Sequence[int | float]]): Optional Sequence of peak memory usage data points. If not provided,
                 peak memory data will be extracted from the iterations if available.
         Raises:
@@ -66,7 +69,7 @@ class PeakMemoryUsage(Stats):
                     tag=PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)
             imported_data.extend(iteration.peak_memory for iteration in iterations)
 
-        super().__init__(unit=unit, scale=scale, data=imported_data)
+        super().__init__(unit=unit, scale=scale, rounds=rounds, data=imported_data)
 
 
 class PeakMemoryUsageSummary(StatsSummary):
@@ -75,6 +78,7 @@ class PeakMemoryUsageSummary(StatsSummary):
     Attributes:
         unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
         scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
+        rounds (int): The number of data points in the benchmark. (read only)
         mean (float): The mean memory usage. (read only)
         median (float): The median memory usage. (read only)
         minimum (float): The minimum memory usage. (read only)

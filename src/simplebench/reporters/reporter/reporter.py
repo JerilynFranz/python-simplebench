@@ -363,12 +363,12 @@ class Reporter(ABC, IReporter):
         """Select the output targets based on command-line arguments and choice configuration.
 
         It checks the command-line arguments for any flags corresponding to the choice
-        and collects the specified targets. The default target(s) are any Target enums defined
-        in the arg values for the flags. They are discarded if there are explicit targets specified
-        in the args as strings. Finally, it ensures that the selected targets are valid for the
-        given choice.
+        and collects the specified targets. It then cross-validates the specified targets
+        against the supported targets for the choice. If no targets are specified in the
+        command-line arguments, the default targets are used instead.
 
-        An exception is raised if an unsupported target is specified in the arguments.
+        An exception is raised if a target is specified in the arguments,
+        or in the default targets, that are not supported by the choice.
 
         Args:
             args (Namespace): The parsed command-line arguments.
@@ -399,6 +399,8 @@ class Reporter(ABC, IReporter):
                     f"Default target {target} is not supported by the choice.",
                     tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)
 
+        # Look for flags specified by choice, collect specified targets from command-line arguments
+        # and cross-validate with supported targets for the choice. Add to selected_targets set.
         selected_targets: set[Target] = set()
         target_members = Target.__members__
         reverse_target_map = {v.value: v for k, v in target_members.items()}
@@ -406,17 +408,17 @@ class Reporter(ABC, IReporter):
             target_names = collect_arg_list(args=args, flag=flag)
             if not target_names:
                 continue  # No targets specified for this flag, skip to next flag
-            for target in target_names:
-                target_enum = reverse_target_map.get(target, None)
+            for name in target_names:
+                target_enum = reverse_target_map.get(name, None)
                 if target_enum is None:
                     raise SimpleBenchValueError(
-                        f"Unknown output target {target} specified for {flag}.",
+                        f"Unknown output target {name} specified for {flag}.",
                         tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)
                 if target_enum in choice.targets:
                     selected_targets.add(target_enum)
                 else:
                     raise SimpleBenchValueError(
-                        f"Output target {target} is not supported by {flag}.",
+                        f"Output target {name} is not supported by {flag}.",
                         tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)
 
         return set(default_targets) if not selected_targets else selected_targets
@@ -916,17 +918,27 @@ class Reporter(ABC, IReporter):
         """Gathers all primary statistical values for a given section across multiple results.
 
         It collects mean, median, minimum, maximum, 5th percentile, 95th percentile,
-        and standard deviation from each Results instance for the specified section.
+        from each Results instance for the specified section.
 
         This method is useful in determining appropriate scaling factors or units
         for reporting by analyzing the range of values across all results.
+
+        Adjusted standard deviation is not included in this collection because it can
+        be NaN for results with insufficient data points, or orders of magnitude different
+        from the other statistics, which can skew scaling calculations.
+        Args:
+            results (list[Results]): A list of Results instances to gather statistics from.
+            section (Section): The section to gather statistics for.
+
+        Returns:
+            list[float]: A list of all gathered statistical values.
         """
         all_numbers = []
         for result in results:
             stats = result.results_section(section)
             all_numbers.extend([
                 stats.mean, stats.median, stats.minimum, stats.maximum,
-                stats.percentiles[5], stats.percentiles[95], stats.standard_deviation
+                stats.percentiles[5], stats.percentiles[95]
             ])
         return all_numbers
 

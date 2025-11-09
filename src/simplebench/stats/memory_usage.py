@@ -17,6 +17,7 @@ class MemoryUsage(Stats):
     Attributes:
         unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
         scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
+        rounds (int): The number of data points in the benchmark. (read only)
         data: tuple[float | int, ...] = Tuple of memory usage data points. (read only)
         mean (float): The mean memory usage. (read only)
         median (float): The median memory usage. (read only)
@@ -31,6 +32,7 @@ class MemoryUsage(Stats):
                  iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_MEMORY_UNIT,
                  scale: float = DEFAULT_MEMORY_SCALE,
+                 rounds: int = 1,
                  data: Sequence[int | float] | None = None):
         """Construct MemoryUsage stats from sequence of Iteration or raw memory data.
 
@@ -44,6 +46,7 @@ class MemoryUsage(Stats):
             iterations (Sequence[Iteration] | None): Optional list of Iteration objects to extract memory data from.
             unit (str): Optional unit of measurement for the memory usage (e.g., "MB"). (default = 'bytes')
             scale (float): Optional scale factor for the memory usage (e.g., "1e6" for megabytes). (default = 1.0)
+            rounds (int): The number of data points in the benchmark. (default = 1)
             data (Sequence[int | float] | None): Optional list of memory usage data points. If not provided,
                 memory data will be extracted from the iterations if available.
         Raises:
@@ -73,7 +76,7 @@ class MemoryUsage(Stats):
                     tag=MemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)
             imported_data.extend(iteration.memory for iteration in iterations)
 
-        super().__init__(unit=unit, scale=scale, data=imported_data)
+        super().__init__(unit=unit, scale=scale, rounds=rounds, data=imported_data)
 
 
 class MemoryUsageSummary(StatsSummary):
@@ -82,6 +85,7 @@ class MemoryUsageSummary(StatsSummary):
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
         scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        rounds (int): The number of data points in the benchmark. (read only)
         data (tuple[int | float, ...]): Always an empty tuple as a StatsSummary object does not
             contain raw data points. (read only)
         mean (float): The mean operations per time interval. (read only)

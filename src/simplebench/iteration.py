@@ -34,6 +34,7 @@ class Iteration:
 
     Attributes:
         n (int): The complexity n-weight for the iteration. (read only)
+        rounds (int): The number of rounds in the iteration. (read only)
         unit (str, default={DEFAULT_INTERVAL_UNIT}): The unit of measurement for the elapsed time.
             It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`. (read only)
         scale (float, default={DEFAULT_INTERVAL_SCALE}): The scale factor for the elapsed time.
@@ -45,11 +46,13 @@ class Iteration:
         peak_memory (int): The peak memory usage in bytes. (read only)
     '''
 
-    __slots__ = ('_n', '_elapsed', '_unit', '_scale', '_memory', '_peak_memory')
+    __slots__ = ('_n', '_rounds', '_elapsed', '_unit', '_scale', '_memory', '_peak_memory')
 
+    @format_docstring(DEFAULT_INTERVAL_UNIT=DEFAULT_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE=DEFAULT_INTERVAL_SCALE)
     def __init__(self,
                  *,
                  n: int = 1,
+                 rounds: int = 1,
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
                  elapsed: float = 0.0,
@@ -59,14 +62,15 @@ class Iteration:
         """"Initialize an Iteration instance.
 
         Args:
-            n (int): The complexity n-weight for the iteration. Must be a positive integer. (default: 1)
-            unit (str): The unit of measurement for the elapsed time. Must be a non-empty string.
-                        (default: `DEFAULT_INTERVAL_UNIT`: 'ns')
-            scale (float): The scale factor for the elapsed time. Must be a positive float.
-                           (default: `DEFAULT_INTERVAL_SCALE`: 1e-9)
-            elapsed (float): The elapsed time for the iteration. Must be a non-negative float. (default: 0.0)
-            memory (int): The memory usage in bytes. Must be an integer. (default: 0)
-            peak_memory (int): The peak memory usage in bytes. Must be an integer. (default: 0)
+            n (int, default=1): The complexity n-weight for the iteration. Must be a positive integer.
+            rounds (int, default=1): The number of rounds in the iteration. Must be a positive integer.
+            unit (str, default={DEFAULT_INTERVAL_UNIT}): The unit of measurement for the elapsed time.
+                It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`.
+            scale (float, default={DEFAULT_INTERVAL_SCALE}): The scale factor for the elapsed time.
+                It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_SCALE`.
+            elapsed (float, default=0.0): The elapsed time for the iteration. Must be a non-negative float.
+            memory (int, default=0): The memory usage in bytes. Must be an integer.
+            peak_memory (int, default=0): The peak memory usage in bytes. Must be an integer.
 
         Raises:
             SimpleBenchTypeError: If any of the arguments are of the wrong type.
@@ -76,6 +80,10 @@ class Iteration:
                     n, 'n',
                     IterationErrorTag.N_ARG_TYPE,
                     IterationErrorTag.N_ARG_VALUE)
+        self._rounds = validate_positive_int(
+                    rounds, 'rounds',
+                    IterationErrorTag.ROUNDS_ARG_TYPE,
+                    IterationErrorTag.ROUNDS_ARG_VALUE)
         self._unit = validate_non_blank_string(
                     unit, 'unit',
                     IterationErrorTag.UNIT_ARG_TYPE,
@@ -115,6 +123,11 @@ class Iteration:
         return self._n
 
     @property
+    def rounds(self) -> int:
+        '''The number of rounds in the iteration'''
+        return self._rounds
+
+    @property
     def unit(self) -> str:
         '''The unit of measurement for the elapsed time.'''
         return self._unit
@@ -151,8 +164,8 @@ class Iteration:
         '''The mean time for a single round scaled to the base unit.
         If elapsed is 0, returns 0.0
 
-        The per round computation is the elapsed time divided by n
-        where n is the number of rounds.
+        The per round computation is the elapsed time divided by the number
+        of rounds in the iteration.
 
         The scaling to the base unit is done using the scale factor.
         This has the effect of converting the elapsed time into the base unit.
@@ -162,7 +175,7 @@ class Iteration:
         Returns:
             The mean time for a single round scaled to the base unit.
         '''
-        return self.elapsed * self.scale / self.n
+        return self._elapsed * self._scale / self._rounds
 
     @property
     def ops_per_second(self) -> float:
@@ -175,7 +188,7 @@ class Iteration:
         '''
         if self._elapsed == 0.0:
             return 0.0
-        return self._n / (self._elapsed * self._scale)
+        return self._rounds / (self._elapsed * self._scale)
 
     def iteration_section(self, section: Section) -> int | float:
         """Returns the requested section of the benchmark results.
@@ -210,4 +223,5 @@ class Iteration:
         """Return a string representation of the Iteration instance."""
         unit = self.unit.replace("'", "\\'")
         return (f"Iteration(n={self.n}, elapsed={self.elapsed}, unit='{unit}', "
-                f"scale={self.scale}, memory={self.memory}, peak_memory={self.peak_memory})")
+                f"scale={self.scale}, rounds={self.rounds}, memory={self.memory}, "
+                f"peak_memory={self.peak_memory})")

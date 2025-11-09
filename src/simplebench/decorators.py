@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Decorators for simplifying benchmark case creation."""
 from __future__ import annotations
 from typing import Any, Callable, TypeVar, ParamSpec

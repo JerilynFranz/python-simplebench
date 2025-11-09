@@ -87,19 +87,23 @@ from .testspec import TestAction, idspec
         name="Good args",
         action=Iteration,
         args=[],
-        kwargs={'n': 5, 'elapsed': 10.0, 'unit': 'ms', 'scale': 1e-3},
-        validate_result=lambda result: (result.n == 5 and
+        kwargs={'n': 5, 'rounds': 1, 'elapsed': 10.0, 'unit': 'ms', 'scale': 1e-3},
+        validate_result=lambda result: (isinstance(result, Iteration) and
+                                        result.n == 5 and
+                                        result.rounds == 1 and
                                         result.elapsed == 10.0 and
                                         result.unit == 'ms' and
                                         result.scale == 1e-3 and
-                                        result.per_round_elapsed == 0.002 and
-                                        result.ops_per_second == 500.0))),
+                                        result.per_round_elapsed == 0.01 and
+                                        result.ops_per_second == 100.0))),
     idspec("ITERATION_012", TestAction(
         name="Good args with zero elapsed time",
         action=Iteration,
         args=[],
-        kwargs={'n': 5, 'elapsed': 0.0, 'unit': 'ms', 'scale': 1e-3},
-        validate_result=lambda result: (result.n == 5 and
+        kwargs={'n': 5, 'rounds': 1, 'elapsed': 0.0, 'unit': 'ms', 'scale': 1e-3},
+        validate_result=lambda result: (isinstance(result, Iteration) and
+                                        result.n == 5 and
+                                        result.rounds == 1 and
                                         result.elapsed == 0.0 and
                                         result.unit == 'ms' and
                                         result.scale == 1e-3 and
@@ -181,7 +185,7 @@ def test_repr() -> None:
     it = Iteration(n=10, elapsed=5.0, unit='ms', scale=1e-3, memory=512, peak_memory=1024)
     repr_str = repr(it)
     expected_str = ("Iteration(n=10, elapsed=5.0, unit='ms', "
-                    "scale=0.001, memory=512, peak_memory=1024)")
+                    "scale=0.001, rounds=1, memory=512, peak_memory=1024)")
     assert repr_str == expected_str, f"Unexpected repr string: {repr_str}"
 
 

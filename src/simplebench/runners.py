@@ -298,7 +298,8 @@ class SimpleRunner(ISimpleRunner):
 
             memory = end_memory_current - start_memory_current - memory_overhead
             peak_memory = end_memory_peak - start_memory_peak - peak_memory_overhead
-            iteration_result = Iteration(n=n, elapsed=elapsed, memory=memory, peak_memory=peak_memory)
+            iteration_result = Iteration(
+                n=n, rounds=self.case.rounds, elapsed=elapsed, memory=memory, peak_memory=peak_memory)
             iterations_list.append(iteration_result)
             total_elapsed += iteration_result.elapsed
             wall_time = float(DEFAULT_TIMER())
@@ -320,6 +321,7 @@ class SimpleRunner(ISimpleRunner):
             description=description,
             variation_marks=self.variation_marks,
             n=n,
+            rounds=self.case.rounds,
             iterations=iterations_list,
             total_elapsed=total_elapsed,
             extra_info={})

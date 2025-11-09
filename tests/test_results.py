@@ -2,8 +2,6 @@
 from __future__ import annotations
 from enum import Enum
 from functools import cache
-import inspect
-from typing import Any
 
 import pytest
 
@@ -15,125 +13,13 @@ from simplebench.results import Results
 from simplebench.enums import Section
 from simplebench.stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
 
+from .kwargs import ResultsKWArgs
 from .testspec import TestAction, TestGet, idspec, Assert
-
-
-class NoDefaultValue:
-    """A class to mark parameters that have no default value."""
-
-
-class ResultsKWArgs(dict):
-    """A class to hold Results keyword arguments for testing."""
-    def __init__(self,  # pylint: disable=too-many-arguments, too-many-locals
-                 *,
-                 group: str | NoDefaultValue = NoDefaultValue(),   # pylint: disable=unused-argument
-                 title: str | NoDefaultValue = NoDefaultValue(),   # pylint: disable=unused-argument
-                 description: str | NoDefaultValue = NoDefaultValue(),   # pylint: disable=unused-argument
-                 n: int | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 total_elapsed: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 iterations: list[Iteration] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 variation_cols: dict[str, str] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 variation_marks: dict[str, Any] | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 interval_unit: str | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 interval_scale: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 ops_per_interval_unit: str | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 ops_per_interval_scale: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 memory_unit: str | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 memory_scale: float | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 ops_per_second: OperationsPerInterval | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument  # noqa: E501
-                 per_round_timings: OperationTimings | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument  # noqa: E501
-                 memory: MemoryUsage | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 peak_memory: PeakMemoryUsage | NoDefaultValue = NoDefaultValue(),  # pylint: disable=unused-argument
-                 extra_info: dict[str, Any] | NoDefaultValue = NoDefaultValue()) -> None:  # pylint: disable=unused-argument  # noqa: E501
-        """Initialize ResultsKWArgs with keyword arguments.
-
-        Args:
-            group (str): The reporting group to which the benchmark case belongs.
-
-            title (str): The name of the benchmark case.
-
-            description (str): A brief description of the benchmark case.
-
-            n (int): The n weighting assigned to the iteration for purposes of Big O analysis.
-
-            total_elapsed (float): The total elapsed time for the benchmark.
-
-            iterations (list[Iteration]): The list of Iteration objects representing each iteration of the benchmark.
-
-            variation_cols (dict[str, str], optional): The columns to use for labelling kwarg variations
-                in the benchmark. Defaults to None, which results in an empty dictionary.
-
-            variation_marks (dict[str, Any], optional): A dictionary of variation marks used to identify
-                the benchmark variation. Defaults to None, which results in an empty dictionary.
-
-            interval_unit (str, optional): The unit of measurement for the interval (e.g. "ns").
-                Defaults to "ns".
-
-            interval_scale (float, optional): The scale factor for the interval (e.g. 1e-9 for nanoseconds).
-                Defaults to 1e-9.
-
-            ops_per_interval_unit (str, optional): The unit of measurement for operations per interval (e.g. "ops/s").
-                Defaults to "ops/s".
-
-            ops_per_interval_scale (float, optional): The scale factor for operations per interval (e.g. 1.0 for ops/s).
-                Defaults to 1.0.
-
-            memory_unit (str, optional): The unit of measurement for memory usage (e.g. "bytes").
-                Defaults to "bytes".
-
-            memory_scale (float, optional): The scale factor for memory usage (e.g. 1.0 for bytes).
-                Defaults to 1.0.
-
-            ops_per_second (Optional[OperationsPerInterval], optional): The operations per second for the benchmark.
-                Defaults to a new OperationsPerInterval object initialized from the benchmark's iterations.
-
-            per_round_timings (Optional[OperationTimings], optional): The per-round timings for the benchmark.
-                Defaults to a new OperationTimings object initialized from the benchmark's iterations.
-
-            memory (Optional[MemoryUsage], optional): The memory usage for the benchmark.
-                Defaults to a new MemoryUsage object initialized from the benchmark's iterations.
-
-            peak_memory (Optional[PeakMemoryUsage], optional): The peak memory usage for the benchmark.
-                Defaults to a new PeakMemoryUsage object initialized from the benchmark's iterations.
-
-            extra_info (Optional[dict[str, Any]], optional): Any extra information to include in the benchmark results.
-                Defaults to None.
-        """
-        kwargs = {}
-        for key in (
-                'group', 'title', 'description', 'n', 'total_elapsed', 'iterations',
-                'variation_cols', 'variation_marks', 'interval_unit', 'interval_scale',
-                'ops_per_interval_unit', 'ops_per_interval_scale', 'memory_unit', 'memory_scale',
-                'ops_per_second', 'per_round_timings', 'memory', 'peak_memory', 'extra_info'):
-            value = locals()[key]
-            if not isinstance(value, NoDefaultValue):
-                kwargs[key] = value
-        super().__init__(**kwargs)
 
 
 class Nonsense(str, Enum):
     """A nonsense enum value for testing."""
     NONSENSE = 'nonsense'
-
-
-def test_resultskwargs_matches_case_signature():
-    """Verify ResultsKWArgs signature matches Results.__init__.
-
-    This test ensures that the ResultsKWArgs class has the same parameters as
-    the Results class's __init__ method. This prevents discrepancies between
-    the two classes that could lead to errors in tests or misunderstandings
-    about the parameters required to initialize a Results instance.
-    """
-    results_sig = inspect.signature(Results.__init__)
-    resultskwargs_sig = inspect.signature(ResultsKWArgs.__init__)
-
-    # Get parameter names (excluding 'self')
-    results_params = set(results_sig.parameters.keys()) - {'self'}
-    resultskwargs_params = set(resultskwargs_sig.parameters.keys()) - {'self'}
-
-    assert results_params == resultskwargs_params, \
-        f"Mismatch: Case has {results_params - resultskwargs_params}, " \
-        f"CaseKWArgs has {resultskwargs_params - results_params}"
 
 
 @cache
@@ -153,6 +39,7 @@ def base_iterations() -> list[Iteration]:
             title='default_title',
             description='default_description',
             n=1,
+            rounds=1,
             total_elapsed=1.0,
             iterations=base_iterations()),
         assertion=Assert.ISINSTANCE,
@@ -167,12 +54,14 @@ def base_iterations() -> list[Iteration]:
             title='default_title',
             description='default_description',
             n=1,
+            rounds=1,
             total_elapsed=1.0,
             iterations=base_iterations()),
         validate_result=lambda result: (result.group == 'default_group' and
                                         result.title == 'default_title' and
                                         result.description == 'default_description' and
                                         result.n == 1 and
+                                        result.rounds == 1 and
                                         result.variation_cols == {} and
                                         result.interval_unit == DEFAULT_INTERVAL_UNIT and
                                         result.interval_scale == DEFAULT_INTERVAL_SCALE and
@@ -202,6 +91,7 @@ def base_iterations() -> list[Iteration]:
             title='default_title',
             description='default_description',
             n=-1,
+            rounds=1,
             total_elapsed=1.0,
             iterations=base_iterations()
         ),
@@ -216,6 +106,7 @@ def base_iterations() -> list[Iteration]:
             title='default_title',
             description='default_description',
             n=1.5,  # type: ignore[arg-type]
+            rounds=1,
             total_elapsed=1.0,
             iterations=base_iterations()
         ),
@@ -230,6 +121,7 @@ def base_iterations() -> list[Iteration]:
             title='default_title',
             description='default_description',
             n=1,
+            rounds=1,
             total_elapsed=1.0,
             iterations=base_iterations()
         ),
@@ -243,6 +135,7 @@ def base_iterations() -> list[Iteration]:
             title=123,  # type: ignore[arg-type]
             description='default_description',
             n=1,
+            rounds=1,
             total_elapsed=1.0,
             iterations=base_iterations()
         ),
@@ -257,6 +150,7 @@ def base_iterations() -> list[Iteration]:
             title='default_title',
             description=123,  # type: ignore[arg-type]
             n=1,
+            rounds=1,
             total_elapsed=1.0,
             iterations=base_iterations()
         ),
@@ -268,7 +162,7 @@ def base_iterations() -> list[Iteration]:
         args=[],
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_cols=[]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -279,7 +173,7 @@ def base_iterations() -> list[Iteration]:
         args=[],
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_cols={1: 'value'}  # type: ignore[dict-item]
         ),
         exception=SimpleBenchTypeError,
@@ -290,7 +184,7 @@ def base_iterations() -> list[Iteration]:
         args=[],
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_cols={'key': 1}  # type: ignore[dict-item]
         ),
         exception=SimpleBenchTypeError,
@@ -300,7 +194,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             interval_unit=123  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -310,7 +204,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             interval_scale='large'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -320,7 +214,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0,
+            n=1, rounds=1, total_elapsed=1.0,
             iterations={}  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -331,7 +225,7 @@ def base_iterations() -> list[Iteration]:
         args=[],
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0,
+            n=1, rounds=1, total_elapsed=1.0,
             iterations='not_a_list'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -341,7 +235,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0,
+            n=1, rounds=1, total_elapsed=1.0,
             iterations=[1.0, 3.0]  # type: ignore[list-item]
         ),
         exception=SimpleBenchTypeError,
@@ -352,7 +246,7 @@ def base_iterations() -> list[Iteration]:
         args=[],
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             ops_per_second={}  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -362,7 +256,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             per_round_timings=[]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -372,7 +266,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             ops_per_interval_unit=123  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -382,7 +276,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             ops_per_interval_scale='large'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -392,7 +286,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, iterations=base_iterations(),
+            n=1, rounds=1, iterations=base_iterations(),
             total_elapsed='fast'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -402,7 +296,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_marks=[]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -412,7 +306,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_marks={1: 'value'}  # type: ignore[dict-item]
         ),
         exception=SimpleBenchTypeError,
@@ -422,7 +316,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_marks=[('key', 1)]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -432,7 +326,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             extra_info=[]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -442,7 +336,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             group=''  # invalid empty string
         ),
         exception=SimpleBenchValueError,
@@ -452,7 +346,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             title='',  # invalid empty string
         ),
         exception=SimpleBenchValueError,
@@ -462,7 +356,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_cols={'': 'value'}  # invalid empty string key
         ),
         exception=SimpleBenchValueError,
@@ -472,7 +366,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             interval_unit=''  # invalid empty string
         ),
         exception=SimpleBenchValueError,
@@ -482,7 +376,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             ops_per_interval_unit=''  # invalid empty string
         ),
         exception=SimpleBenchValueError,
@@ -492,7 +386,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             interval_scale=-1.0  # invalid negative value
         ),
         exception=SimpleBenchValueError,
@@ -502,7 +396,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             interval_scale=0.0  # invalid zero value
         ),
         exception=SimpleBenchValueError,
@@ -512,7 +406,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             ops_per_interval_scale=-1.0  # invalid negative value
         ),
         exception=SimpleBenchValueError,
@@ -522,7 +416,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             ops_per_interval_scale=0.0  # invalid zero value
         ),
         exception=SimpleBenchValueError,
@@ -532,7 +426,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, iterations=base_iterations(),
+            n=1, rounds=1, iterations=base_iterations(),
             total_elapsed=-1.0  # invalid negative value
         ),
         exception=SimpleBenchValueError,
@@ -542,7 +436,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_marks={' ': 'value'}),  # invalid blank string key
         exception=SimpleBenchValueError,
         exception_tag=ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE)),
@@ -551,7 +445,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             peak_memory='invalid_type'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -561,7 +455,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             peak_memory=PeakMemoryUsage(unit='bytes', scale=1.0, data=[150])),
         assertion=Assert.ISINSTANCE,
         expected=Results)),
@@ -570,7 +464,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             memory='invalid_type'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -580,7 +474,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             memory=MemoryUsage(unit='bytes', scale=1.0, data=[150])
         ),
         assertion=Assert.ISINSTANCE,
@@ -590,7 +484,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             per_round_timings='invalid_type'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -600,7 +494,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             per_round_timings=OperationTimings(unit='s', scale=1.0, data=[1.0])
         ),
         assertion=Assert.ISINSTANCE,
@@ -610,7 +504,7 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             ops_per_second='invalid_type'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
@@ -620,11 +514,47 @@ def base_iterations() -> list[Iteration]:
         action=Results,
         kwargs=ResultsKWArgs(
             group='default_group', title='default_title', description='default_description',
-            n=1, total_elapsed=1.0, iterations=base_iterations(),
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             ops_per_second=OperationsPerInterval(unit='ops/s', scale=1.0, data=[1.0])
         ),
         assertion=Assert.ISINSTANCE,
         expected=Results)),
+    idspec("RESULTS_043", TestAction(
+        name="Correct type for rounds argument (int)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations()
+        ),
+        assertion=Assert.ISINSTANCE,
+        expected=Results)),
+    idspec("RESULTS_044", TestAction(
+        name="Wrong type for rounds argument (str instead of int)",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, rounds='invalid_type', total_elapsed=1.0, iterations=base_iterations()  # type: ignore[arg-type]
+        ),
+        exception=SimpleBenchTypeError,
+        exception_tag=ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE)),
+    idspec("RESULTS_045", TestAction(
+        name="Negative value for rounds argument",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, rounds=-1, total_elapsed=1.0, iterations=base_iterations()
+        ),
+        exception=SimpleBenchValueError,
+        exception_tag=ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
+    idspec("RESULTS_046", TestAction(
+        name="Zero value for rounds argument",
+        action=Results,
+        kwargs=ResultsKWArgs(
+            group='default_group', title='default_title', description='default_description',
+            n=1, rounds=0, total_elapsed=1.0, iterations=base_iterations()
+        ),
+        exception=SimpleBenchValueError,
+        exception_tag=ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
 ])
 def test_results_init(testspec: TestAction) -> None:
     """Test Results initialization."""
@@ -639,6 +569,7 @@ def base_results() -> Results:
         title='test_title',
         description='test_description',
         n=1,
+        rounds=1,
         total_elapsed=1.0,
         iterations=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
     )
@@ -652,6 +583,7 @@ def getattribute_results() -> Results:
         title='test_title',
         description='test_description',
         n=1,
+        rounds=1,
         total_elapsed=1.0,
         iterations=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
         variation_cols={'size': 'N', 'type': 'test'},

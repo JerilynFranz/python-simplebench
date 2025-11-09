@@ -201,7 +201,7 @@ class RichTableReporter(Reporter):
             numbers=[result.results_section(section).percentiles[95] for result in results],
             base_unit=base_unit)
         stddev_unit, stddev_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).standard_deviation for result in results],
+            numbers=[result.results_section(section).adjusted_standard_deviation for result in results],
             base_unit=base_unit)
 
         table = Table(title=(case.title + f'\n{section.value}\n\n' + case.description),
@@ -210,6 +210,7 @@ class RichTableReporter(Reporter):
                       header_style='bold magenta')
         table.add_column('N', justify='center')
         table.add_column('Iterations', justify='center')
+        table.add_column('Rounds', justify='center')
         table.add_column('Elapsed Seconds', justify='center', max_width=7)
         table.add_column(f'mean {mean_unit}', justify='center', vertical='bottom', overflow='fold')
         table.add_column(f'median {median_unit}', justify='center', vertical='bottom', overflow='fold')
@@ -226,6 +227,7 @@ class RichTableReporter(Reporter):
             row: list[str] = [
                 f'{result.n:>6d}',
                 f'{len(result.iterations):>6d}',
+                f'{result.rounds:>6d}',
                 f'{result.total_elapsed * DEFAULT_INTERVAL_SCALE:>4.2f}',
                 f'{sigfigs(stats_target.mean * mean_scale):>8.2f}',
                 f'{sigfigs(stats_target.median * median_scale):>8.2f}',
@@ -233,8 +235,8 @@ class RichTableReporter(Reporter):
                 f'{sigfigs(stats_target.maximum * max_scale):>8.2f}',
                 f'{sigfigs(stats_target.percentiles[5] * p5_scale):>8.2f}',
                 f'{sigfigs(stats_target.percentiles[95] * p95_scale):>8.2f}',
-                f'{sigfigs(stats_target.standard_deviation * stddev_scale):>8.2f}',
-                f'{sigfigs(stats_target.relative_standard_deviation):>5.2f}%'
+                f'{sigfigs(stats_target.adjusted_standard_deviation * stddev_scale):>8.2f}',
+                f'{sigfigs(stats_target.adjusted_relative_standard_deviation):>5.2f}%'
             ]
             for value in result.variation_marks.values():
                 row.append(f'{value!s}')

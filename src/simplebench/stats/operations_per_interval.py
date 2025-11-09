@@ -17,6 +17,7 @@ class OperationsPerInterval(Stats):
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
         scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        rounds (int): The number of data points in the benchmark. (read only)
         data: Sequence[int | float] = List of data points. (read only)
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
@@ -31,6 +32,7 @@ class OperationsPerInterval(Stats):
                  iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_OPS_PER_INTERVAL_UNIT,
                  scale: float = DEFAULT_OPS_PER_INTERVAL_SCALE,
+                 rounds: int = 1,
                  data: Optional[Sequence[int | float]] = None) -> None:
         """Construct OperationsPerInterval stats from Iteration or raw ops data.
 
@@ -38,6 +40,7 @@ class OperationsPerInterval(Stats):
             iterations (list[Iteration] | None): List of Iteration objects to extract ops data from.
             unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
             scale (float): The scale factor for the interval (e.g. 1 for seconds).
+            rounds (int): The number of data points in the benchmark.
             data (Optional[list[int | float]]): Optional list of ops data points. If not provided,
                 ops data will be extracted from the iterations if available.
         Raises:
@@ -67,7 +70,7 @@ class OperationsPerInterval(Stats):
                     tag=OperationsPerIntervalErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)
             imported_data.extend(iteration.ops_per_second for iteration in iterations)
 
-        super().__init__(unit=unit, scale=scale, data=imported_data)
+        super().__init__(unit=unit, scale=scale, rounds=rounds, data=imported_data)
 
 
 class OperationsPerIntervalSummary(StatsSummary):
@@ -76,6 +79,7 @@ class OperationsPerIntervalSummary(StatsSummary):
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
         scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        rounds (int): The number of data points in the benchmark. (read only)
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)

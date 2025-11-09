@@ -1,8 +1,9 @@
 """KWArgs for SimpleBench tests."""
 from tests.kwargs.kwargs import KWArgs, NoDefaultValue, kwargclass_matches_modeledclass, is_kwargs
-from tests.kwargs.reporters import ChoiceKWArgs, ChoiceConfKWArgs, ChoicesKWArgs, ChoicesConfKWArgs, ReporterKWArgs
-from tests.kwargs.case_kwargs import CaseKWArgs
-from tests.kwargs.session_kwargs import SessionKWArgs
+from .reporters import ChoiceKWArgs, ChoiceConfKWArgs, ChoicesKWArgs, ChoicesConfKWArgs, ReporterKWArgs
+from .case_kwargs import CaseKWArgs
+from .results_kwargs import ResultsKWArgs
+from .session_kwargs import SessionKWArgs
 
 __all__ = [
     "KWArgs",
@@ -16,4 +17,5 @@ __all__ = [
     "ReporterKWArgs",
     "SessionKWArgs",
     "CaseKWArgs",
+    "ResultsKWArgs",
 ]

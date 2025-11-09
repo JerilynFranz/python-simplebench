@@ -33,39 +33,55 @@ def stats_classes() -> list[type[Stats]]:
 @pytest.mark.parametrize("test", [
     idspec("STATS_001", TestAction(
         name="minimal args",
-        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]})),
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]})),
     idspec("STATS_002", TestAction(
         name="all args",
-        kwargs={'unit': 'a unit', 'scale': 2.0, 'data': [1.0, 2.0, 3.0]})),
+        kwargs={'unit': 'a unit', 'scale': 2.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]})),
     idspec("STATS_003", TestAction(
         name="invalid unit type (int)",
-        kwargs={'unit': 123, 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
+        kwargs={'unit': 123, 'scale': 1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchTypeError,
         exception_tag=StatsErrorTag.INVALID_UNIT_ARG_TYPE)),
     idspec("STATS_004", TestAction(
         name="invalid unit value (empty str)",
-        kwargs={'unit': '', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
+        kwargs={'unit': '', 'scale': 1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
         exception_tag=StatsErrorTag.INVALID_UNIT_ARG_VALUE)),
     idspec("STATS_005", TestAction(
         name="invalid scale type (str)",
-        kwargs={'unit': 'a unit', 'scale': 'not_a_number', 'data': [1.0, 2.0, 3.0]},
+        kwargs={'unit': 'a unit', 'scale': 'not_a_number', 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchTypeError,
         exception_tag=StatsErrorTag.INVALID_SCALE_ARG_TYPE)),
     idspec("STATS_006", TestAction(
         name="invalid scale value (zero)",
-        kwargs={'unit': 'a unit', 'scale': 0, 'data': [1.0, 2.0, 3.0]},
+        kwargs={'unit': 'a unit', 'scale': 0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
         exception_tag=StatsErrorTag.INVALID_SCALE_ARG_VALUE)),
     idspec("STATS_007", TestAction(
         name="invalid scale value (negative)",
-        kwargs={'unit': 'a unit', 'scale': -1.0, 'data': [1.0, 2.0, 3.0]},
+        kwargs={'unit': 'a unit', 'scale': -1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
         exception_tag=StatsErrorTag.INVALID_SCALE_ARG_VALUE)),
+    idspec("STATS_008", TestAction(
+        name="invalid rounds type (str)",
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 'not_a_number', 'data': [1.0, 2.0, 3.0]},
+        exception=SimpleBenchTypeError,
+        exception_tag=StatsErrorTag.INVALID_ROUNDS_ARG_TYPE)),
+    idspec("STATS_009", TestAction(
+        name="invalid rounds value (zero)",
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 0, 'data': [1.0, 2.0, 3.0]},
+        exception=SimpleBenchValueError,
+        exception_tag=StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)),
     idspec("STATS_010", TestAction(
+        name="invalid data type (str)",
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 1, 'data': 'not_a_list'},
+        exception=SimpleBenchTypeError,
+        exception_tag=StatsErrorTag.INVALID_DATA_ARG_TYPE)),
+    idspec("STATS_011", TestAction(
         name="valid initial values, correctly set",
-        kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0]},
-        validate_result=lambda obj: obj.unit == 'a unit' and obj.scale == 1.0 and obj.data == (1.0, 2.0, 3.0))),
+        kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
+        validate_result=lambda obj: (
+            isinstance(obj, Stats) and obj.unit == 'a unit' and obj.scale == 1.0 and obj.data == (1.0, 2.0, 3.0)))),
 ])
 def test_stats_init(stats_classes: list[type[Stats]], test: TestAction) -> None:
     """Test that the stats module is initialized correctly for shared aspects of init."""
@@ -415,14 +431,15 @@ def test_stats_initalization(section: Section) -> None:
 
 @pytest.mark.parametrize("testspec", [
     idspec("STATS_FROM_DICT_001", TestAction(
-        name="Stats - valid input with unit, scale, and data in data dictionary",
+        name="Stats - valid input with unit, scale, rounds, and data in data dictionary",
         action=Stats.from_dict,
         kwargs={
             'data': {
                 'type': 'Stats:statistics',
                 'data': [1.0, 2.0, 3.0],
                 'unit': 's',
-                'scale': 1.0
+                'scale': 1.0,
+                'rounds': 1
             }
         },
         assertion=Assert.ISINSTANCE,
@@ -435,7 +452,8 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'OperationsPerInterval:statistics',
                 'data': [1.0, 2.0, 3.0],
                 'unit': 'ops/s',
-                'scale': 1.0
+                'scale': 1.0,
+                'rounds': 1
             }
         },
         assertion=Assert.ISINSTANCE,
@@ -448,7 +466,8 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'OperationsTiming:statistics',
                 'data': [1.0, 2.0, 3.0],
                 'unit': 's',
-                'scale': 1.0
+                'scale': 1.0,
+                'rounds': 1
             }
         },
         assertion=Assert.ISINSTANCE,
@@ -461,7 +480,8 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'MemoryUsage:statistics',
                 'data': [100, 200, 300],
                 'unit': 'bytes',
-                'scale': 1.0
+                'scale': 1.0,
+                'rounds': 1
             }
         },
         assertion=Assert.ISINSTANCE,
@@ -474,7 +494,8 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'PeakMemoryUsage:statistics',
                 'data': [150, 250, 350],
                 'unit': 'bytes',
-                'scale': 1.0
+                'scale': 1.0,
+                'rounds': 1
             }
         },
         assertion=Assert.ISINSTANCE,
@@ -486,7 +507,8 @@ def test_stats_initalization(section: Section) -> None:
             'data': {
                 'type': 'Stats:statistics',
                 'data': [1.0, 2.0, 3.0],
-                'scale': 1.0
+                'scale': 1.0,
+                'rounds': 1
             }
         },
         exception=SimpleBenchKeyError,
@@ -508,6 +530,7 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'Stats:statistics',
                 'data': [1.0, 2.0, 3.0],
                 'unit': 'unit',
+                'rounds': 1
             }
         },
         exception=SimpleBenchKeyError,
@@ -519,7 +542,8 @@ def test_stats_initalization(section: Section) -> None:
             'data': {
                 'type': 'Stats:statistics',
                 'unit': 'unit',
-                'scale': 1.0
+                'scale': 1.0,
+                'rounds': 1
             }
         },
         exception=SimpleBenchKeyError,
@@ -548,6 +572,7 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'minimum': 0.0,
@@ -568,6 +593,7 @@ def test_stats_initalization(section: Section) -> None:
             'data': {
                 'type': 'StatsSummary:statistics',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'minimum': 0.0,
@@ -588,6 +614,7 @@ def test_stats_initalization(section: Section) -> None:
             'data': {
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'minimum': 0.0,
@@ -608,6 +635,7 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'median': 50.0,
                 'minimum': 0.0,
                 'maximum': 100.0,
@@ -627,6 +655,7 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'minimum': 0.0,
                 'maximum': 100.0,
@@ -646,6 +675,7 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'maximum': 100.0,
@@ -665,6 +695,7 @@ def test_stats_initalization(section: Section) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'minimum': 0.0,
@@ -683,6 +714,7 @@ def test_stats_initalization(section: Section) -> None:
             'data': {
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
+                'rounds': 1,
                 'scale': 1.0,
                 'mean': 50.0,
                 'median': 50.0,
@@ -702,6 +734,7 @@ def test_stats_initalization(section: Section) -> None:
             'data': {
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
+                'rounds': 1,
                 'scale': 1.0,
                 'mean': 50.0,
                 'median': 50.0,
@@ -721,6 +754,7 @@ def test_stats_initalization(section: Section) -> None:
             'data': {
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
+                'rounds': 1,
                 'scale': 1.0,
                 'mean': 50.0,
                 'median': 50.0,
@@ -728,6 +762,41 @@ def test_stats_initalization(section: Section) -> None:
                 'maximum': 100.0,
                 'standard_deviation': 29.300170647967224,
                 'relative_standard_deviation': 58.60034129593445,
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+    idspec("STATS_FROM_DICT_022", TestAction(
+        name="Stats - missing rounds key in data dictionary",
+        action=Stats.from_dict,
+        kwargs={
+            'data': {
+                'type': 'Stats:statistics',
+                'data': [1.0, 2.0, 3.0],
+                'unit': 'unit',
+                'scale': 1.0,
+
+            }
+        },
+        exception=SimpleBenchKeyError,
+        exception_tag=StatsErrorTag.FROM_DICT_MISSING_ROUNDS_KEY)),
+    idspec("STATS_FROM_DICT_023", TestAction(
+        name="StatsSummary - missing rounds key in data dictionary",
+        action=StatsSummary.from_dict,
+        kwargs={
+            'data': {
+                'type': 'StatsSummary:statistics',
+                'unit': 'unit',
+                'scale': 1.0,
+                'mean': 50.0,
+                'median': 50.0,
+                'minimum': 0.0,
+                'maximum': 3.0,
+                'standard_deviation': 29.300170647967224,
+                'relative_standard_deviation': 58.60034129593445,
+                'percentiles': statistics.quantiles(
+                    (float(value) for value in range(0, 101)), n=102, method='inclusive'),
+                'data': tuple(float(value) for value in range(1, 101)),
             }
         },
         exception=SimpleBenchKeyError,
@@ -742,20 +811,20 @@ def test_stats_from_dict(testspec: TestSpec) -> None:
     idspec("STATS_SUMMARY_001", TestAction(
         name="Construct StatsSummary from Stats instance using from_stats() class method",
         action=StatsSummary.from_stats,
-        args=[Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0])],
+        args=[Stats(unit='unit', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0])],
         assertion=Assert.ISINSTANCE,
         expected=StatsSummary
     )),
     idspec("STATS_SUMMARY_002", TestGet(
         name="Get StatsSummary from Stats instance using stats_summary property",
-        obj=Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0]),
+        obj=Stats(unit='unit', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]),
         attribute='stats_summary',
         assertion=Assert.ISINSTANCE,
         expected=StatsSummary
     )),
     idspec("STATS_SUMMARY_003", TestGet(
         name="StatsSummary - data attribute is empty tuple",
-        obj=StatsSummary.from_stats(Stats(unit='unit', scale=1.0, data=(1.0, 2.0, 3.0))),
+        obj=StatsSummary.from_stats(Stats(unit='unit', scale=1.0, rounds=1, data=(1.0, 2.0, 3.0))),
         attribute='data',
         assertion=Assert.EQUAL,
         expected=()
@@ -784,7 +853,8 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
                 'type': 'Stats:statistics',
                 'data': [1.0, 2.0, 3.0],
                 'unit': 's',
-                'scale': 1.0
+                'scale': 1.0,
+                'rounds': 1,
             }
         },
         validate_result=lambda obj: obj == obj.stats_summary
@@ -795,16 +865,17 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
         kwargs={
             'unit': 's',
             'scale': 1.0,
+            'rounds': 1,
             'data': [1.0, 2.0, 3.0]
         },
-        validate_result=lambda obj: obj == Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0])
+        validate_result=lambda obj: obj == Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0])
         )),
     idspec("EQUALITY_003", TestAction(
         name="Stats - equal to Stats with different scales",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='ms', scale=0.001, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats(unit='s', scale=1.0, data=[0.001, 0.002, 0.003])
+            'stats1': Stats(unit='ms', scale=0.001, rounds=1, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='s', scale=1.0, rounds=1, data=[0.001, 0.002, 0.003])
         },
         expected=NO_EXPECTED_VALUE
     )),
@@ -812,31 +883,31 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
         name="Stats - not equal to Stats with different data",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 4.0])
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 4.0])
         },
         exception=AssertionError)),
     idspec("EQUALITY_005", TestAction(
         name="Stats - not equal to Stats because different units",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats(unit='ms', scale=1.0, data=[1.0, 2.0, 3.0])
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='ms', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0])
         },
         exception=AssertionError)),
     idspec("EQUALITY_006", TestAction(
         name="Stats - not equal to Stats because different scales",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats(unit='s', scale=0.001, data=[1.0, 2.0, 3.0])
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='s', scale=0.001, rounds=1, data=[1.0, 2.0, 3.0])
         },
         exception=AssertionError)),
     idspec("EQUALITY_007", TestAction(
         name="Stats - not equal to non-Stats object",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]),
             'stats2': "not_a_stats_object"  # type: ignore[arg-type]
         },
         exception=AttributeError)),
@@ -844,38 +915,38 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
         name="Stats - equal to itself through export as StatsSummary",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).stats_summary
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]).stats_summary
         })),
     idspec("EQUALITY_009", TestAction(
         name="Stats - equal to itself through export to dict and rehydrate",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats.from_dict(data=Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).as_dict)
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats.from_dict(data=Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]).as_dict)
         })),
     idspec("EQUALITY_010", TestAction(
         name="Stats - not equal to Stats with different base unit",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]),
-            'stats2': Stats(unit='min', scale=60.0, data=[1.0, 2.0, 3.0])
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]),
+            'stats2': Stats(unit='min', scale=60.0, rounds=1, data=[1.0, 2.0, 3.0])
         },
         exception=AssertionError)),
     idspec("EQUALITY_011", TestAction(
         name="Stats - equal to Stats with different SI prefix and scale but equivalent data",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[0.001, 0.002, 0.003]),
-            'stats2': Stats(unit='ms', scale=0.001, data=[1.0, 2.0, 3.0])
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[0.001, 0.002, 0.003]),
+            'stats2': Stats(unit='ms', scale=0.001, rounds=1, data=[1.0, 2.0, 3.0])
         })),
     idspec("EQUALITY_012", TestAction(
         name="StatsSummary - not equal to Stats with different percentiles data",
         action=compare_stats,
         kwargs={
-            'stats1': Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).stats_summary,
+            'stats1': Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]).stats_summary,
             'stats2': StatsSummary.from_dict(
-                Stats(unit='s', scale=1.0, data=[1.0, 2.0, 3.0]).as_dict | {'percentiles': (1.0, 2.0, 4.0)})
+                Stats(unit='s', scale=1.0, rounds=1, data=[1.0, 2.0, 3.0]).as_dict | {'percentiles': (1.0, 2.0, 4.0)})
         },
         exception=AssertionError)),
     idspec("EQUALITY_013", TestAction(
@@ -886,6 +957,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'minimum': 0.0,
@@ -899,6 +971,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'minimum': 0.0,
@@ -917,6 +990,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'minimum': 0.0,
@@ -930,6 +1004,7 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
                 'type': 'StatsSummary:statistics',
                 'unit': 'unit',
                 'scale': 1.0,
+                'rounds': 1,
                 'mean': 50.0,
                 'median': 50.0,
                 'minimum': 0.0,

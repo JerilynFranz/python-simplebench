@@ -17,6 +17,7 @@ class OperationTimings(Stats):
     Attributes:
         unit (str): The unit of measurement for the timings (e.g., "ns"). (read only)
         scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds). (read only)
+        rounds (int): The number of data points in the benchmark. (read only)
         data: (tuple[int | float, ...]) = Tuple of timing data points. (read only)
         mean (float): The mean time per operation. (read only)
         median (float): The median time per operation. (read only)
@@ -31,6 +32,7 @@ class OperationTimings(Stats):
                  iterations: Sequence[Iteration] | None = None,
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
+                 rounds: int = 1,
                  data: Optional[Sequence[int | float]] = None):
         """Construct OperationTimings stats from Iteration or raw timing data.
 
@@ -38,6 +40,7 @@ class OperationTimings(Stats):
             iterations (Sequence[Iteration] | None): Sequence of Iteration objects to extract timing data from.
             unit (str): The unit of measurement for the timings (e.g., "ns").
             scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds).
+            rounds (int): The number of data points in the benchmark.
             data (Optional[Sequence[int | float]]): Optional Sequence of timing data points. If not provided,
                 timing data will be extracted from the iterations if available.
         Raises:
@@ -67,7 +70,7 @@ class OperationTimings(Stats):
                     tag=OperationTimingsErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)
             imported_data.extend(iteration.per_round_elapsed for iteration in iterations)
 
-        super().__init__(unit=unit, scale=scale, data=imported_data)
+        super().__init__(unit=unit, scale=scale, rounds=rounds, data=imported_data)
 
 
 class OperationTimingsSummary(StatsSummary):
@@ -76,6 +79,7 @@ class OperationTimingsSummary(StatsSummary):
     Attributes:
         unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
         scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
+        rounds (int): The number of data points in the benchmark. (read only)
         mean (float): The mean operations per time interval. (read only)
         median (float): The median operations per time interval. (read only)
         minimum (float): The minimum operations per time interval. (read only)

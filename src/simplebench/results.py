@@ -25,6 +25,7 @@ class Results:
         title (str): The name of the benchmark case. (read only)
         description (str): A brief description of the benchmark case. (read only)
         n (int): The n weighting the benchmark assigned to the iteration for purposes of Big O analysis. (read only)
+        rounds (int): The number of rounds in the benchmark case. (read only)
         variation_marks (MappingProxyType[str, Any]): A dictionary of variation marks used to identify the
             benchmark variation. (read only)
         variation_cols (MappingProxyType[str, str]): The columns to use for labelling kwarg variations in
@@ -50,6 +51,7 @@ class Results:
         '_title',
         '_description',
         '_n',
+        '_rounds',
         '_variation_cols',
         '_variation_marks',
         '_interval_unit',
@@ -74,6 +76,7 @@ class Results:
                  title: str,
                  description: str,
                  n: int,
+                 rounds: int,
                  total_elapsed: float,
                  iterations: Sequence[Iteration],
                  variation_cols: dict[str, str] | None = None,
@@ -96,6 +99,7 @@ class Results:
             title (str): The name of the benchmark case.
             description (str): A brief description of the benchmark case.
             n (int): The n weighting assigned to the iteration for purposes of Big O analysis.
+            rounds (int): The number of rounds in the benchmark case.
             total_elapsed (float): The total elapsed time for the benchmark.
             iterations (list[Iteration]): The list of Iteration objects representing each iteration of the benchmark.
             variation_cols (dict[str, str], optional): The columns to use for labelling kwarg variations
@@ -141,6 +145,10 @@ class Results:
             n, 'n',
             ResultsErrorTag.N_INVALID_ARG_TYPE,
             ResultsErrorTag.N_INVALID_ARG_VALUE)
+        self._rounds: int = validate_positive_int(
+            rounds, 'rounds',
+            ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE,
+            ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)
         self._iterations: tuple[Iteration, ...] = self._validate_iterations(iterations)
         self._variation_cols: dict[str, str] = self._validate_variation_cols(variation_cols)
         self._variation_marks: dict[str, Any] = self._validate_variation_marks(variation_marks)
@@ -304,7 +312,10 @@ class Results:
             SimpleBenchTypeError: If the value is not None and not of type PeakMemoryUsage
         """
         if value is None:
-            return PeakMemoryUsage(unit=self._memory_unit, scale=self._memory_scale, iterations=self._iterations)
+            return PeakMemoryUsage(unit=self._memory_unit,
+                                   scale=self._memory_scale,
+                                   rounds=self._rounds,
+                                   iterations=self._iterations)
 
         if not isinstance(value, PeakMemoryUsage):
             raise SimpleBenchTypeError(
@@ -330,7 +341,10 @@ class Results:
             SimpleBenchTypeError: If the value is not None and not of type MemoryUsage.
         """
         if value is None:
-            return MemoryUsage(unit=self._memory_unit, scale=self._memory_scale, iterations=self._iterations)
+            return MemoryUsage(unit=self._memory_unit,
+                               scale=self._memory_scale,
+                               rounds=self._rounds,
+                               iterations=self._iterations)
 
         if not isinstance(value, MemoryUsage):
             raise SimpleBenchTypeError(
@@ -357,7 +371,10 @@ class Results:
         """
         if value is None:
             return OperationsPerInterval(
-                unit=self._ops_per_interval_unit, scale=self._ops_per_interval_scale, iterations=self._iterations)
+                unit=self._ops_per_interval_unit,
+                scale=self._ops_per_interval_scale,
+                rounds=self._rounds,
+                iterations=self._iterations)
 
         if not isinstance(value, OperationsPerInterval):
             raise SimpleBenchTypeError(
@@ -383,7 +400,10 @@ class Results:
             SimpleBenchTypeError: If the value is not None and not of type OperationTimings
         """
         if value is None:
-            return OperationTimings(unit=self._interval_unit, scale=self._interval_scale, iterations=self._iterations)
+            return OperationTimings(unit=self._interval_unit,
+                                    scale=self._interval_scale, 
+                                    rounds=self._rounds,
+                                    iterations=self._iterations)
 
         if not isinstance(value, OperationTimings):
             raise SimpleBenchTypeError(
@@ -438,6 +458,11 @@ class Results:
     def n(self) -> int:
         """The number of rounds the benchmark ran per iteration."""
         return self._n
+
+    @property
+    def rounds(self) -> int:
+        """The number of rounds the benchmark ran per iteration."""
+        return self._rounds
 
     @property
     def variation_cols(self) -> MappingProxyType[str, str]:

@@ -82,6 +82,7 @@ from tests.cache_factory import clear_cache as _clear_cache
 
 from simplebench.case import Case
 from simplebench.enums import Section, Target, Format, FlagType, Verbosity
+from simplebench.iteration import Iteration
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
@@ -89,6 +90,7 @@ from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.results import Results
 from simplebench.runners import SimpleRunner
 from simplebench.session import Session
+from simplebench.stats import OperationsPerInterval, MemoryUsage, OperationTimings, PeakMemoryUsage
 
 
 T = TypeVar('T')
@@ -140,6 +142,165 @@ def extra_factory(*, full_data: bool = True) -> DefaultExtra:
         DefaultExtra: `DefaultExtra(full_data=True)`
     """
     return DefaultExtra(full_data=full_data)
+
+
+def results_kwargs_factory() -> Results:
+    """Returns a configured ResultsKWArgs instance for testing purposes.
+
+    It creates a Results instance with default test parameters by calling
+    the various factory functions for each parameter.
+
+    Attributes:
+
+        group = `case_group_factory()`
+        title = `title_factory()`
+        description = `description_factory()`
+        n = `n_factory()`
+        rounds = `rounds_factory()`
+        total_elapsed = `total_elapsed_factory()`
+        iterations = `iterations_sequence_factory()`
+        variation_cols = `variation_cols_factory()`
+        variation_marks = `variation_marks_factory()`
+        interval_unit = `interval_unit_factory()`
+        interval_scale = `interval_scale_factory()`
+        ops_per_interval_unit = `ops_per_interval_unit_factory()`
+        ops_per_interval_scale = `ops_per_interval_scale_factory()`
+        memory_unit = `memory_unit_factory()`
+        memory_scale = `memory_scale_factory()`
+        ops_per_second = `ops_per_second_factory()`
+        per_round_timings = `per_round_timings_factory()`
+        memory = `memory_factory()`
+        peak_memory = `peak_memory_factory()`
+        extra_info = `results_extra_info_factory()`
+
+    Returns:
+        Results: A Results instance with default test parameters.
+    """
+    return Results(
+        group=case_group_factory(),
+        title=title_factory(),
+        description=description_factory(),
+        n=n_factory(),
+        rounds=rounds_factory(),
+        total_elapsed=total_elapsed_factory(),
+        iterations=iterations_sequence_factory(),
+        variation_cols=variation_cols_factory(),
+        variation_marks=variation_marks_factory(),
+        interval_unit=interval_unit_factory(),
+        interval_scale=interval_scale_factory(),
+        ops_per_interval_unit=ops_per_interval_unit_factory(),
+        ops_per_interval_scale=ops_per_interval_scale_factory(),
+        memory_unit=memory_unit_factory(),
+        memory_scale=memory_scale_factory(),
+        ops_per_second=ops_per_interval_factory(),
+        per_round_timings=per_round_timings_factory(),
+        memory=memory_factory(),
+        peak_memory=peak_memory_factory(),
+        extra_info=results_extra_info_factory()
+    )
+
+
+def ops_per_interval_factory() -> OperationsPerInterval:
+    """Return a default ops per second value for testing purposes.
+
+    Returns:
+        OperationsPerInterval: Container for ops per interval data.
+    """
+    return OperationsPerInterval(
+        iterations=[
+           Iteration(
+                n=n_factory(),
+                elapsed=total_elapsed_factory(),
+                scale=ops_per_interval_scale_factory(),
+                unit=ops_per_interval_unit_factory(),
+                memory=2000,
+                peak_memory=3000)
+        ],
+        unit=ops_per_interval_unit_factory(),
+        scale=ops_per_interval_scale_factory(),
+        data=[100, 110, 90, 105, 95]
+    )
+
+
+def memory_unit_factory() -> str:
+    """Return a default memory unit for testing purposes.
+
+    Returns:
+        str: `"bytes"`
+    """
+    return "bytes"
+
+
+def memory_scale_factory() -> float:
+    """Return a default memory scale for testing purposes.
+
+    Returns:
+        float: `1.0`
+    """
+    return 1.0
+
+
+def ops_per_interval_unit_factory() -> str:
+    """Return a default ops per interval unit for testing purposes.
+
+    Returns:
+        str: `Ops/s`
+    """
+    return 'Ops/s'
+
+
+def ops_per_interval_scale_factory() -> float:
+    """Return a default ops per interval scale for testing purposes.
+
+    Returns:
+        float: `1.0`
+    """
+    return 1.0
+
+
+def interval_unit_factory() -> str:
+    """Return a default interval unit for testing purposes.
+
+    Returns:
+        str: `"s"`
+    """
+    return "s"
+
+
+def interval_scale_factory() -> float:
+    """Return a default interval scale for testing purposes.
+
+    Returns:
+        float: `1.0`
+    """
+    return 1.0
+
+
+def variation_marks_factory() -> dict[str, str]:
+    """Return a default dictionary of variation marks for testing purposes.
+
+    Returns:
+        dict[str, str]: `{}`
+    """
+    return {}
+
+
+def total_elapsed_factory() -> float:
+    """Return a default total elapsed time for testing purposes.
+
+    Returns:
+        float: `6.0`
+    """
+    return 6.0
+
+
+def n_factory() -> int:
+    """Return a default number of iterations or rounds for testing purposes.
+
+    Returns:
+        int: `1`
+    """
+    return 1
 
 
 def default_extra() -> DefaultExtra:
