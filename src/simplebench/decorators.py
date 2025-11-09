@@ -61,7 +61,7 @@ def benchmark(
     The arguments to the decorator are largely the same as those for `Case`, with
     the exception of `action`, which is replaced by the decorated function.
 
-    n is included to allow weighting of the benchmark case when using
+    n is included to allow n-weighting the complexity of the benchmark case when using
     runners that support it.
 
     A minimal example:
@@ -80,6 +80,9 @@ def benchmark(
         extra_args = None if len(sys.argv) > 1 else ['--progress', '--rich-table.console']
     main(extra_args=extra_args)
     ```
+
+    You should read the documentation for `Case` for full details on the parameters and their
+    meanings.
 
     Args:
         group (str, positional-only, default='default'): The benchmark reporting group to which the benchmark

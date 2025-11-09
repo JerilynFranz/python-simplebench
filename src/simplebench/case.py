@@ -61,11 +61,21 @@ class Case(ICase):
 
     This helps to reduce the impact of variability in execution time for a single run of the action
     for very fast actions. This suppresses the overhead of the loop and timer quantization in Python
-    during the actual timing benchmark but has the side-effect that the timing statistics will artificially
-    appear to have less variability than they actually do in a single iteration (by roughly variability
-    divided by rounds). This may not matter if your action is very consistent in its execution time for
-    a given set of parameters, but if it is not, you may want to consider using `rounds=1` to get a more
-    accurate picture of the variability of the action.
+    during the actual timing benchmark/measurement phase. Internally, the action is called `rounds` times
+    in an unrolled loop for each iteration, and the average time per call is used for the iteration timing.
+
+    This removes the overhead of the loop and timer quantization in Python during the actual timing
+    benchmark/measurement phase by aggregating multiple calls to the action within a single iteration
+    without the overhead of looping constructs. This allows for more accurate timing of very fast actions
+    by reducing the relative impact of loop overhead and timer resolution limitations.
+
+    The trade-off is that total number of action calls is now `iterations * rounds`, and
+    the reported time per action call is an average over the rounds in each iteration. This can
+    dramatically improve the accuracy of timing measurements for very fast actions, at the cost
+    of increased total execution time for the benchmark due to the additional calls to the action.
+
+    The unrolled loop means that setup and teardown functions (if any) are called only once per iteration,
+    not once per round. All rounds in the same iteration share the same setup/teardown context.
 
     If your action is not extremely fast (~ 10 nanoseconds or faster), it is recommended to leave
     `rounds` at its default value of 1. If you do use it, you may want to run dual benchmarks
