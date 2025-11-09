@@ -31,12 +31,9 @@ requires-python = ">=3.10"
 dependencies = [
     "matplotlib>=3.10.6",
     "pandas>=2.3.2",
-    "pandas-stubs>=2.3.2.250827",
-    "pytest>=8.4.1",
     "py-cpuinfo>=9.0.0",
     "rich>=14.1.0",
     "seaborn>=0.13.2",
-    "types-seaborn>=0.13.2.20250809",
 ]
 
 [build-system]
@@ -85,15 +82,28 @@ Repository = "https://github.com/JerilynFranz/python-simplebench.git"
 Issues = "https://github.com/JerilynFranz/python-simplebench/issues"
 Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGELOG.md"
 
+
 [tool.flake8]
 max-line-length = 120
 extend-ignore = ["E203"]
 max-complexity = 10
 
-[tool.black]
-target-version = ['py310', 'py311', 'py312', 'py313']
-line-length = 120
-include_trailing_comma = false
+[tool.yapf]
+based_on_style = "pep8"
+column_limit = 120
+spaces_before_comment = 2
+allow_multiline_lambdas = true
+allow_split_before_dict_value = false
+split_before_logical_operator = true
+join_multiple_lines = false
+split_arguments_when_comma_terminated = true
+indent_dictionary_value = true
+dedent_closing_brackets = true
+coalese_brackets = true
+split_before_dot = false
+split_before_first_argument = true
+split_before_named_assigns = true
+
 
 [tool.pylint.format]
 max-line-length = 120
@@ -183,12 +193,13 @@ exclude_exact = [
 
 [dependency-groups]
 dev = [
-    "black>=25.1.0",
     "coverage>=7.10.6",
     "flake8>=7.3.0",
     "graphviz>=0.21.1",
     "mypy>=1.17.1",
-    "py-cpuinfo>=9.0.0",
+    "pydeps>=1.23.2",
+    "hatchling>=1.35.3",
+    "pandas-stubs>=2.3.2.250827",
     "pylint>=3.3.8",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
@@ -199,4 +210,6 @@ dev = [
     "sphinx-autodoc-typehints>=3.0.1",
     "sphinx-rtd-theme>=3.0.2",
     "testplan>=25.8.0",
+    "types-seaborn>=0.13.2.20250809",
+    "yapf>=0.40.0",
 ]
