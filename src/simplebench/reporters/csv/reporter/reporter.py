@@ -232,8 +232,8 @@ class CSVReporter(Reporter):
                     sigfigs(stats_target.maximum * common_scale),
                     sigfigs(stats_target.percentiles[5] * common_scale),
                     sigfigs(stats_target.percentiles[95] * common_scale),
-                    sigfigs(stats_target.standard_deviation * common_scale),
-                    sigfigs(stats_target.relative_standard_deviation)
+                    sigfigs(stats_target.adjusted_standard_deviation * common_scale),
+                    sigfigs(stats_target.adjusted_relative_standard_deviation)
                 ]
                 for value in result.variation_marks.values():
                     row.append(value)
