@@ -22,21 +22,20 @@ R = TypeVar('R')
 
 
 def benchmark(
-    group: str | Callable[..., Any] = 'default',  # group can be the function when used without params
-    /, *,  # keyword-only parameters after this point
-    title: str | None = None,
-    description: str | None = None,
-    iterations: int = DEFAULT_ITERATIONS,
-    warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
-    rounds: int = DEFAULT_ROUNDS,
-    min_time: float = DEFAULT_MIN_TIME,
-    max_time: float = DEFAULT_MAX_TIME,
-    variation_cols: dict[str, str] | None = None,
-    kwargs_variations: dict[str, list[Any]] | None = None,
-    options: list[ReporterOptions] | None = None,
-    n: int = 1,
-    use_field_for_n: str | None = None
-        ) -> Callable[[Callable[P, R]], Callable[P, R]]:
+        group: str | Callable[..., Any] = 'default',  # group can be the function when used without params
+        /, *,  # keyword-only parameters after this point
+        title: str | None = None,
+        description: str | None = None,
+        iterations: int = DEFAULT_ITERATIONS,
+        warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
+        rounds: int = DEFAULT_ROUNDS,
+        min_time: float = DEFAULT_MIN_TIME,
+        max_time: float = DEFAULT_MAX_TIME,
+        variation_cols: dict[str, str] | None = None,
+        kwargs_variations: dict[str, list[Any]] | None = None,
+        options: list[ReporterOptions] | None = None,
+        n: int = 1,
+        use_field_for_n: str | None = None) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     A decorator to register a function as a benchmark case.
 
@@ -148,38 +147,46 @@ def benchmark(
     # we can't fully validate title and description yet if they are None
     # because they will be inferred later from the function being decorated
     if title is not None:
-        title = validate_non_blank_string(title, 'title',
-                                          DecoratorsErrorTag.BENCHMARK_TITLE_TYPE,
-                                          DecoratorsErrorTag.BENCHMARK_TITLE_VALUE)
+        title = validate_non_blank_string(
+            title, 'title',
+            DecoratorsErrorTag.BENCHMARK_TITLE_TYPE,
+            DecoratorsErrorTag.BENCHMARK_TITLE_VALUE)
 
     if description is not None:
-        description = validate_non_blank_string(description, 'description',
-                                                DecoratorsErrorTag.BENCHMARK_DESCRIPTION_TYPE,
-                                                DecoratorsErrorTag.BENCHMARK_DESCRIPTION_VALUE)
+        description = validate_non_blank_string(
+            description, 'description',
+            DecoratorsErrorTag.BENCHMARK_DESCRIPTION_TYPE,
+            DecoratorsErrorTag.BENCHMARK_DESCRIPTION_VALUE)
 
-    iterations = validate_positive_int(iterations, 'iterations',
-                                       DecoratorsErrorTag.BENCHMARK_ITERATIONS_TYPE,
-                                       DecoratorsErrorTag.BENCHMARK_ITERATIONS_VALUE)
+    iterations = validate_positive_int(
+        iterations, 'iterations',
+        DecoratorsErrorTag.BENCHMARK_ITERATIONS_TYPE,
+        DecoratorsErrorTag.BENCHMARK_ITERATIONS_VALUE)
 
-    warmup_iterations = validate_non_negative_int(warmup_iterations, 'warmup_iterations',
-                                                  DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_TYPE,
-                                                  DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE)
+    warmup_iterations = validate_non_negative_int(
+        warmup_iterations, 'warmup_iterations',
+        DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_TYPE,
+        DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE)
 
-    rounds = validate_positive_int(rounds, 'rounds',
-                                   DecoratorsErrorTag.BENCHMARK_ROUNDS_TYPE,
-                                   DecoratorsErrorTag.BENCHMARK_ROUNDS_VALUE)
+    rounds = validate_positive_int(
+        rounds, 'rounds',
+        DecoratorsErrorTag.BENCHMARK_ROUNDS_TYPE,
+        DecoratorsErrorTag.BENCHMARK_ROUNDS_VALUE)
 
-    min_time = validate_positive_float(min_time, 'min_time',
-                                       DecoratorsErrorTag.BENCHMARK_MIN_TIME_TYPE,
-                                       DecoratorsErrorTag.BENCHMARK_MIN_TIME_VALUE)
+    min_time = validate_positive_float(
+        min_time, 'min_time',
+        DecoratorsErrorTag.BENCHMARK_MIN_TIME_TYPE,
+        DecoratorsErrorTag.BENCHMARK_MIN_TIME_VALUE)
 
-    max_time = validate_positive_float(max_time, 'max_time',
-                                       DecoratorsErrorTag.BENCHMARK_MAX_TIME_TYPE,
-                                       DecoratorsErrorTag.BENCHMARK_MAX_TIME_VALUE)
+    max_time = validate_positive_float(
+        max_time, 'max_time',
+        DecoratorsErrorTag.BENCHMARK_MAX_TIME_TYPE,
+        DecoratorsErrorTag.BENCHMARK_MAX_TIME_VALUE)
 
-    n = validate_positive_int(n, 'n',
-                              DecoratorsErrorTag.BENCHMARK_N_TYPE,
-                              DecoratorsErrorTag.BENCHMARK_N_VALUE)
+    n = validate_positive_int(
+        n, 'n',
+        DecoratorsErrorTag.BENCHMARK_N_TYPE,
+        DecoratorsErrorTag.BENCHMARK_N_VALUE)
 
     kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
     variation_cols = Case.validate_variation_cols(variation_cols=variation_cols,

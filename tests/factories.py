@@ -69,16 +69,12 @@ caching is disabled for that call, and a new instance is created each time.
 The cache can be cleared calling the `clear_cache()` function if needed to
 reset the cached instances.
 """
+# pylint: disable=too-many-lines
 from __future__ import annotations
 from argparse import ArgumentParser, Namespace
 import re
 from pathlib import Path
 from typing import Any, Iterable, TypeVar, Sequence
-
-
-from tests.kwargs import ReporterKWArgs, ChoiceConfKWArgs, CaseKWArgs, ChoicesConfKWArgs
-from tests.cache_factory import cached_factory, uncached_factory, CacheId, CACHE_DEFAULT
-from tests.cache_factory import clear_cache as _clear_cache
 
 from simplebench.case import Case
 from simplebench.enums import Section, Target, Format, FlagType, Verbosity
@@ -92,6 +88,9 @@ from simplebench.runners import SimpleRunner
 from simplebench.session import Session
 from simplebench.stats import OperationsPerInterval, MemoryUsage, OperationTimings, PeakMemoryUsage
 
+from .kwargs import ReporterKWArgs, ChoiceConfKWArgs, CaseKWArgs, ChoicesConfKWArgs, ResultsKWArgs
+from .cache_factory import cached_factory, uncached_factory, CacheId, CACHE_DEFAULT
+from .cache_factory import clear_cache as _clear_cache
 
 T = TypeVar('T')
 
@@ -108,6 +107,7 @@ def clear_cache() -> None:
 
 class DefaultExtra:
     """An immutable ReporterExtra subclass for testing ChoiceConf initialization."""
+
     def __init__(self, full_data: bool = False) -> None:
         """Constructs a DefaultExtra instance.
 
@@ -144,10 +144,10 @@ def extra_factory(*, full_data: bool = True) -> DefaultExtra:
     return DefaultExtra(full_data=full_data)
 
 
-def results_kwargs_factory() -> Results:
+def results_kwargs_factory() -> ResultsKWArgs:
     """Returns a configured ResultsKWArgs instance for testing purposes.
 
-    It creates a Results instance with default test parameters by calling
+    It creates a ResultsKWArgs instance with default test parameters by calling
     the various factory functions for each parameter.
 
     Attributes:
@@ -174,29 +174,121 @@ def results_kwargs_factory() -> Results:
         extra_info = `results_extra_info_factory()`
 
     Returns:
-        Results: A Results instance with default test parameters.
+        ResultsKWArgs: A ResultsKWArgs instance with default test parameters.
     """
-    return Results(
-        group=case_group_factory(),
-        title=title_factory(),
-        description=description_factory(),
-        n=n_factory(),
-        rounds=rounds_factory(),
-        total_elapsed=total_elapsed_factory(),
-        iterations=iterations_sequence_factory(),
-        variation_cols=variation_cols_factory(),
-        variation_marks=variation_marks_factory(),
-        interval_unit=interval_unit_factory(),
-        interval_scale=interval_scale_factory(),
-        ops_per_interval_unit=ops_per_interval_unit_factory(),
-        ops_per_interval_scale=ops_per_interval_scale_factory(),
-        memory_unit=memory_unit_factory(),
-        memory_scale=memory_scale_factory(),
-        ops_per_second=ops_per_interval_factory(),
-        per_round_timings=per_round_timings_factory(),
-        memory=memory_factory(),
-        peak_memory=peak_memory_factory(),
-        extra_info=results_extra_info_factory()
+    return ResultsKWArgs(group=case_group_factory(),
+                         title=title_factory(),
+                         description=description_factory(),
+                         n=n_factory(),
+                         rounds=rounds_factory(),
+                         total_elapsed=total_elapsed_factory(),
+                         iterations=iterations_sequence_factory(),
+                         variation_cols=variation_cols_factory(),
+                         variation_marks=variation_marks_factory(),
+                         interval_unit=interval_unit_factory(),
+                         interval_scale=interval_scale_factory(),
+                         ops_per_interval_unit=ops_per_interval_unit_factory(),
+                         ops_per_interval_scale=ops_per_interval_scale_factory(),
+                         memory_unit=memory_unit_factory(),
+                         memory_scale=memory_scale_factory(),
+                         ops_per_second=ops_per_interval_factory(),
+                         per_round_timings=per_round_timings_factory(),
+                         memory=memory_factory(),
+                         peak_memory=peak_memory_factory(),
+                         extra_info=results_extra_info_factory())
+
+
+def results_extra_info_factory() -> dict[str, Any]:
+    """Return a default dictionary of extra info for testing purposes.
+
+    Returns:
+        dict[str, Any]: `{'info_key': 'info_value'}`
+    """
+    return {'info_key': 'info_value'}
+
+
+def iterations_sequence_factory() -> Sequence[Iteration]:
+    """Return a default sequence of Iteration instances for testing purposes.
+
+    Returns:
+        Sequence[Iteration]: A sequence containing a single Iteration instance.
+    """
+    return [
+        Iteration(
+            n=n_factory(),
+            rounds=rounds_factory(),
+            elapsed=total_elapsed_factory(),
+            scale=interval_scale_factory(),
+            unit=interval_unit_factory(),
+            memory=1400,
+            peak_memory=2400,
+        )
+    ]
+
+
+def peak_memory_factory() -> PeakMemoryUsage:
+    """Return a default PeakMemoryUsage instance for testing purposes.
+
+    Returns:
+        PeakMemoryUsage: Container for peak memory usage data.
+    """
+    return PeakMemoryUsage(
+        unit=memory_unit_factory(),
+        scale=memory_scale_factory(),
+        data=[2200, 2250, 2150, 2300, 2100],
+        iterations=[
+            Iteration(n=n_factory(),
+                      rounds=rounds_factory(),
+                      elapsed=total_elapsed_factory(),
+                      scale=memory_scale_factory(),
+                      unit=memory_unit_factory(),
+                      memory=1300,
+                      peak_memory=2300)
+        ],
+    )
+
+
+def memory_factory() -> MemoryUsage:
+    """Return a default MemoryUsage instance for testing purposes.
+
+    Returns:
+        MemoryUsage: Container for memory usage data.
+    """
+    return MemoryUsage(
+        unit=memory_unit_factory(),
+        scale=memory_scale_factory(),
+        data=[1200, 1300, 1100, 1250, 1150],
+        iterations=[
+            Iteration(n=n_factory(),
+                      rounds=rounds_factory(),
+                      elapsed=total_elapsed_factory(),
+                      scale=memory_scale_factory(),
+                      unit=memory_unit_factory(),
+                      memory=1200,
+                      peak_memory=2200)
+        ],
+    )
+
+
+def per_round_timings_factory() -> OperationTimings:
+    """Return a default OperationTimings instance for testing purposes.
+
+    Returns:
+        OperationTimings: Container for per-round timing data.
+    """
+    return OperationTimings(
+        unit=interval_unit_factory(),
+        scale=interval_scale_factory(),
+        data=[0.05, 0.06, 0.04, 0.07, 0.05],
+        iterations=[
+            Iteration(n=n_factory(),
+                      rounds=rounds_factory(),
+                      elapsed=total_elapsed_factory(),
+                      scale=interval_scale_factory(),
+                      unit=interval_unit_factory(),
+                      memory=1500,
+                      peak_memory=2500)
+        ],
     )
 
 
@@ -207,18 +299,18 @@ def ops_per_interval_factory() -> OperationsPerInterval:
         OperationsPerInterval: Container for ops per interval data.
     """
     return OperationsPerInterval(
-        iterations=[
-           Iteration(
-                n=n_factory(),
-                elapsed=total_elapsed_factory(),
-                scale=ops_per_interval_scale_factory(),
-                unit=ops_per_interval_unit_factory(),
-                memory=2000,
-                peak_memory=3000)
-        ],
         unit=ops_per_interval_unit_factory(),
         scale=ops_per_interval_scale_factory(),
-        data=[100, 110, 90, 105, 95]
+        data=[100, 110, 90, 105, 95],
+        iterations=[
+            Iteration(n=n_factory(),
+                      rounds=rounds_factory(),
+                      elapsed=total_elapsed_factory(),
+                      scale=ops_per_interval_scale_factory(),
+                      unit=ops_per_interval_unit_factory(),
+                      memory=2000,
+                      peak_memory=3000)
+        ],
     )
 
 
@@ -345,6 +437,7 @@ def default_benchcase(bench: SimpleRunner, **kwargs) -> Results:
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(10))  # Example operation to benchmark
+
     return bench.run(n=10, action=action, **kwargs)
 
 
@@ -401,8 +494,8 @@ def default_title() -> str:
     return title_factory(cache_id=f'{__name__}.default_title:singleton')
 
 
-def default_reporter_callback(
-        *, case: Case, section: Section, output_format: Format, output: Any) -> None:  # pylint: disable=unused-argument
+def default_reporter_callback(  # pylint: disable=unused-argument
+        *, case: Case, section: Section, output_format: Format, output: Any) -> None:
     """A default ReporterCallback conformant callback function for testing purposes.
 
     ```python
@@ -417,8 +510,7 @@ def default_reporter_callback(
 
 @cached_factory
 def reporter_options_type_factory(
-        *,
-        cache_id: CacheId = CACHE_DEFAULT) -> type[ReporterOptions]:   # pylint: disable=unused-argument
+        *, cache_id: CacheId = CACHE_DEFAULT,) -> type[ReporterOptions]:  # pylint: disable=unused-argument
     """Return a default ReporterOptions type for testing purposes.
 
     Returns:
@@ -439,8 +531,7 @@ def default_reporter_options_type() -> type[ReporterOptions]:
 
 
 @cached_factory
-def subdir_factory(*,
-                   cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
+def subdir_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
     """Return a default subdir string for testing purposes.
 
     Args:
@@ -466,8 +557,7 @@ def default_subdir() -> str:
 
 
 @cached_factory
-def sections_factory(*,
-                     cache_id: CacheId = CACHE_DEFAULT) -> tuple[Section, ...]:  # pylint: disable=unused-argument
+def sections_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Section, ...]:  # pylint: disable=unused-argument
     """Return a default tuple of Sections for testing purposes.
 
     Args:
@@ -494,8 +584,7 @@ def default_sections() -> tuple[Section, ...]:
 
 
 @cached_factory
-def targets_factory(*,
-                    cache_id: CacheId = CACHE_DEFAULT) -> tuple[Target, ...]:  # pylint: disable=unused-argument
+def targets_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Target, ...]:  # pylint: disable=unused-argument
     """Return a default tuple of Targets for testing purposes.
 
     Args:
@@ -521,9 +610,7 @@ def default_targets() -> tuple[Target, ...]:
 
 
 @cached_factory
-def default_targets_factory(
-        *,
-        cache_id: CacheId = CACHE_DEFAULT) -> tuple[Target]:  # pylint: disable=unused-argument
+def default_targets_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Target]:  # pylint: disable=unused-argument
     """Return a default tuple for default_targets for testing purposes.
 
     Args:
@@ -534,7 +621,7 @@ def default_targets_factory(
     Returns:
         tuple[Target]: `(Target.CONSOLE,)`
     """
-    return (Target.CONSOLE,)
+    return (Target.CONSOLE, )
 
 
 def default_default_targets() -> tuple[Target]:
@@ -547,8 +634,7 @@ def default_default_targets() -> tuple[Target]:
 
 
 @cached_factory
-def formats_factory(*,
-                    cache_id: CacheId = CACHE_DEFAULT) -> tuple[Format]:  # pylint: disable=unused-argument
+def formats_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Format]:  # pylint: disable=unused-argument
     """Return a default tuple of Formats for testing purposes.
 
     Args:
@@ -559,7 +645,7 @@ def formats_factory(*,
     Returns:
         tuple[Format]: `(Format.RICH_TEXT,)`
     """
-    return (Format.RICH_TEXT,)
+    return (Format.RICH_TEXT, )
 
 
 def default_formats() -> tuple[Format]:
@@ -572,8 +658,7 @@ def default_formats() -> tuple[Format]:
 
 
 @cached_factory
-def output_format_factory(*,
-                          cache_id: CacheId = CACHE_DEFAULT) -> Format:  # pylint: disable=unused-argument
+def output_format_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Format:  # pylint: disable=unused-argument
     """Return a default Format for testing purposes.
 
     Args:
@@ -599,8 +684,7 @@ def default_output_format() -> Format:
 
 
 @cached_factory
-def description_factory(*,
-                        cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
+def description_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
     """Return a description string for testing purposes.
 
     Args:
@@ -626,8 +710,7 @@ def default_description() -> str:
 
 
 @cached_factory
-def reporter_name_factory(*,
-                          cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
+def reporter_name_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
     """Return a default reporter name string for testing purposes.
 
     Args:
@@ -653,8 +736,7 @@ def default_reporter_name() -> str:
 
 
 @cached_factory
-def choice_name_factory(*,
-                        cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
+def choice_name_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
     """Return a choice name string for testing purposes.
 
     Args:
@@ -690,8 +772,7 @@ def default_choice_name() -> str:
 
 
 @cached_factory
-def choice_flags_factory(*,
-                         cache_id: CacheId = CACHE_DEFAULT) -> tuple[str, ...]:  # pylint: disable=unused-argument
+def choice_flags_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[str, ...]:  # pylint: disable=unused-argument
     """Return a tuple of flags for testing purposes.
 
     Args:
@@ -717,8 +798,7 @@ def default_choice_flags() -> tuple[str, ...]:
 
 
 @cached_factory
-def flag_type_factory(*,
-                      cache_id: CacheId = CACHE_DEFAULT) -> FlagType:  # pylint: disable=unused-argument
+def flag_type_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> FlagType:  # pylint: disable=unused-argument
     """Return a FlagType for testing purposes.
 
     Args:
@@ -743,8 +823,7 @@ def default_flag_type() -> FlagType:
 
 
 @cached_factory
-def file_suffix_factory(*,
-                        cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
+def file_suffix_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
     """Return a default file suffix string for testing purposes.
 
     Args:
@@ -822,8 +901,7 @@ def default_file_append() -> bool:
 
 
 @cached_factory
-def report_output_factory(*,
-                          cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
+def report_output_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:  # pylint: disable=unused-argument
     """Return a report output string for testing purposes.
 
     Args:
@@ -877,8 +955,7 @@ def report_parameters_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
 
 
 @cached_factory
-def minimal_case_kwargs_factory(*,
-                                cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:  # pylint: disable=unused-argument
+def minimal_case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:  # pylint: disable=unused-argument
     """Return a minimally configured CaseKWArgs for testing purposes.
 
     Only the required attribute `action` is set to an explicit value.
@@ -911,8 +988,7 @@ def default_minimal_case_kwargs() -> CaseKWArgs:
 
 
 @cached_factory
-def iterations_factory(*,
-                       cache_id: CacheId = CACHE_DEFAULT) -> int:  # pylint: disable=unused-argument
+def iterations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:  # pylint: disable=unused-argument
     """Return a default number of iterations for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -935,8 +1011,7 @@ def default_iterations() -> int:
 
 
 @cached_factory
-def warmup_iterations_factory(*,
-                              cache_id: CacheId = CACHE_DEFAULT) -> int:  # pylint: disable=unused-argument
+def warmup_iterations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:  # pylint: disable=unused-argument
     """Return a default number of warmup iterations for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -959,8 +1034,7 @@ def default_warmup_iterations() -> int:
 
 
 @cached_factory
-def rounds_factory(*,
-                   cache_id: CacheId = CACHE_DEFAULT) -> int:  # pylint: disable=unused-argument
+def rounds_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:  # pylint: disable=unused-argument
     """Return a default number of rounds for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -988,8 +1062,7 @@ def default_rounds() -> int:
 
 
 @cached_factory
-def min_time_factory(*,
-                     cache_id: CacheId = CACHE_DEFAULT) -> float:  # pylint: disable=unused-argument
+def min_time_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:  # pylint: disable=unused-argument
     """Return a default minimum time for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -1012,8 +1085,7 @@ def default_min_time() -> float:
 
 
 @cached_factory
-def max_time_factory(*,
-                     cache_id: CacheId = CACHE_DEFAULT) -> float:  # pylint: disable=unused-argument
+def max_time_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:  # pylint: disable=unused-argument
     """Return a default maximum time for testing purposes.
 
     Args:
@@ -1041,8 +1113,7 @@ def default_max_time() -> float:
 
 
 @cached_factory
-def variation_cols_factory(*,
-                           cache_id: CacheId = CACHE_DEFAULT) -> dict[str, str]:  # pylint: disable=unused-argument
+def variation_cols_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, str]:  # pylint: disable=unused-argument
     """Return a dictionary of variation columns for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -1062,8 +1133,7 @@ def variation_cols_factory(*,
 
 @cached_factory
 def kwargs_variations_factory(
-        *,
-        cache_id: CacheId = CACHE_DEFAULT) -> dict[str, list[Any]]:  # pylint: disable=unused-argument
+        *, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, list[Any]]:  # pylint: disable=unused-argument
     """Return a set of kwargs variations for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -1082,9 +1152,7 @@ def kwargs_variations_factory(
 
 
 @cached_factory
-def runner_factory(
-        *,
-        cache_id: CacheId = CACHE_DEFAULT) -> type[SimpleRunner]:  # pylint: disable=unused-argument
+def runner_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> type[SimpleRunner]:  # pylint: disable=unused-argument
     """Return a SimpleRunner type for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -1108,8 +1176,7 @@ def default_runner() -> type[SimpleRunner]:
 
 @cached_factory
 def reporter_options_factory(
-        *,
-        cache_id: CacheId = CACHE_DEFAULT) -> ReporterOptions:  # pylint: disable=unused-argument
+        *, cache_id: CacheId = CACHE_DEFAULT) -> ReporterOptions:  # pylint: disable=unused-argument
     """Return a ReporterOptions instance for testing purposes.
 
     Args:
@@ -1136,8 +1203,7 @@ def default_reporter_options() -> ReporterOptions:
 
 @cached_factory
 def reporter_options_tuple_factory(
-        *,
-        cache_id: CacheId = CACHE_DEFAULT) -> tuple[ReporterOptions]:  # pylint: disable=unused-argument
+        *, cache_id: CacheId = CACHE_DEFAULT) -> tuple[ReporterOptions]:  # pylint: disable=unused-argument
     """Return a tuple containing a ReporterOptions instance for testing purposes.
 
     Args:
@@ -1148,7 +1214,7 @@ def reporter_options_tuple_factory(
     Returns:
         tuple[ReporterOptions]: A tuple containing a ReporterOptions instance.
     """
-    return (default_reporter_options(),)
+    return (default_reporter_options(), )
 
 
 def default_reporter_options_tuple() -> tuple[ReporterOptions]:
@@ -1169,20 +1235,20 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     The following parameters are all set to explicit values for testing purposes:
 
     Attributes:
-            group = `default_case_group()`
-            title = `default_title()`
-            description = `default_description()`
-            action = `default_benchcase`
-            iterations = `default_iterations()`
-            warmup_iterations = `default_warmup_iterations()`
-            rounds = `default_rounds()`
-            min_time = `default_min_time()`
-            max_time = `default_max_time()`
-            variation_cols = `default_variation_cols()`
-            kwargs_variations = `default_kwargs_variations()`
-            runner = `default_runner()`
-            callback = `default_reporter_allback`
-            options = `default_reporter_options()`
+        group = `default_case_group()`
+        title = `default_title()`
+        description = `default_description()`
+        action = `default_benchcase`
+        iterations = `default_iterations()`
+        warmup_iterations = `default_warmup_iterations()`
+        rounds = `default_rounds()`
+        min_time = `default_min_time()`
+        max_time = `default_max_time()`
+        variation_cols = `default_variation_cols()`
+        kwargs_variations = `default_kwargs_variations()`
+        runner = `default_runner()`
+        callback = `default_reporter_allback`
+        options = `default_reporter_options()`
 
     Args:
         cache_id (CacheId, default=CACHE_DEFAULT):
@@ -1192,26 +1258,24 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     Returns:
         CaseKWArgs: A fully configured CaseKWArgs instance.
     """
-    return CaseKWArgs(
-        group=default_case_group(),
-        title=default_title(),
-        description=default_description(),
-        action=default_benchcase,
-        iterations=default_iterations(),
-        warmup_iterations=default_warmup_iterations(),
-        rounds=default_rounds(),
-        min_time=default_min_time(),
-        max_time=default_max_time(),
-        variation_cols=variation_cols_factory(cache_id=cache_id),
-        kwargs_variations=kwargs_variations_factory(cache_id=cache_id),
-        runner=default_runner(),
-        callback=default_reporter_callback,
-        options=default_reporter_options_tuple()
-    )
+    return CaseKWArgs(group=default_case_group(),
+                      title=default_title(),
+                      description=default_description(),
+                      action=default_benchcase,
+                      iterations=default_iterations(),
+                      warmup_iterations=default_warmup_iterations(),
+                      rounds=default_rounds(),
+                      min_time=default_min_time(),
+                      max_time=default_max_time(),
+                      variation_cols=variation_cols_factory(cache_id=cache_id),
+                      kwargs_variations=kwargs_variations_factory(cache_id=cache_id),
+                      runner=default_runner(),
+                      callback=default_reporter_callback,
+                      options=default_reporter_options_tuple())
 
 
 @uncached_factory
-def case_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Case:   # pylint: disable=unused-argument
+def case_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Case:  # pylint: disable=unused-argument
     """Return a default Case instance for testing purposes.
 
     This is a 'pre-benchmarking' Case with default attributes set but no results.
@@ -1245,9 +1309,7 @@ def session_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Session:
             An optional identifier to distinguish different cached instances.
             If None, caching is disabled for this call.
     """
-    return Session(
-        cases=[case_factory(cache_id=cache_id)],
-        verbosity=Verbosity.QUIET)
+    return Session(cases=[case_factory(cache_id=cache_id)], verbosity=Verbosity.QUIET)
 
 
 def namespace_factory(*, argparser: ArgumentParser | None = None, args: Sequence[str] | None = None) -> Namespace:
@@ -1305,10 +1367,9 @@ def boolean_flag_factory(flag: str, default: bool = False) -> dict[str, Any]:
     if not flag.startswith('--'):
         raise ValueError("'flag' argument must start with '--'")
     if not re.match(r'^--[A-Za-z0-9\-_.]+$', flag):
-        raise ValueError(
-            "'flag' argument contains invalid characters for a command-line flag. "
-            "It must be prefixed with '--' and only letters, numbers, hyphens, underscores, "
-            "and periods are allowed after the prefix.")
+        raise ValueError("'flag' argument contains invalid characters for a command-line flag. "
+                         "It must be prefixed with '--' and only letters, numbers, hyphens, underscores, "
+                         "and periods are allowed after the prefix.")
     if not isinstance(default, bool):
         raise TypeError("default arg must be a boolean")
 
@@ -1316,7 +1377,7 @@ def boolean_flag_factory(flag: str, default: bool = False) -> dict[str, Any]:
         'name_or_flags': flag,
         'action': 'store_true' if not default else 'store_false',
         'default': default,
-        'help': f'Enable {flag.lstrip("-")}' if not default else f'Disable {flag.lstrip("-")}'
+        'help': f'Enable {flag.lstrip("-")}' if not default else f'Disable {flag.lstrip("-")}',
     }
 
 
@@ -1350,10 +1411,9 @@ def list_of_strings_flag_factory(flag: str,
     if not flag.startswith('--'):
         raise ValueError("'flag' argument must start with '--'")
     if not re.match(r'^--[A-Za-z0-9\-_.]+$', flag):
-        raise ValueError(
-            "'flag' argument contains invalid characters for a command-line flag. "
-            "It must be prefixed with '--' and only letters, numbers, hyphens, underscores, "
-            "and periods are allowed after the prefix.")
+        raise ValueError("'flag' argument contains invalid characters for a command-line flag. "
+                         "It must be prefixed with '--' and only letters, numbers, hyphens, underscores, "
+                         "and periods are allowed after the prefix.")
 
     if not (choices is None or isinstance(choices, Iterable)):
         raise TypeError("'choices' argument must be an iterable of strings")
@@ -1422,19 +1482,19 @@ class FactoryReporter(Reporter):
     both good and bad parameters.
 
     """
-    def __init__(
-            self,
-            name: str | None = None,
-            description: str | None = None,
-            options_type: ReporterOptions | None = None,
-            sections: Iterable[Section] | None = None,
-            targets: Iterable[Target] | None = None,
-            formats: Iterable[Format] | None = None,
-            choices: ChoicesConf | None = None,
-            subdir: str | None = None,
-            file_suffix: str | None = None,
-            file_unique: str | None = None,
-            file_append: str | None = None) -> None:
+
+    def __init__(self,
+                 name: str | None = None,
+                 description: str | None = None,
+                 options_type: ReporterOptions | None = None,
+                 sections: Iterable[Section] | None = None,
+                 targets: Iterable[Target] | None = None,
+                 formats: Iterable[Format] | None = None,
+                 choices: ChoicesConf | None = None,
+                 subdir: str | None = None,
+                 file_suffix: str | None = None,
+                 file_unique: str | None = None,
+                 file_append: str | None = None) -> None:
         """Initialize Reporter with provided kwargs.
 
         Args:
@@ -1493,8 +1553,13 @@ class FactoryReporter(Reporter):
         Return:
             None
         """
-        self.render_by_case(
-            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
+        self.render_by_case(renderer=self.render,
+                            args=args,
+                            case=case,
+                            choice=choice,
+                            path=path,
+                            session=session,
+                            callback=callback)
 
     def render(
             self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
@@ -1512,9 +1577,7 @@ def default_options_type() -> type[ConfiguredReporterOptions]:
 
 
 @cached_factory
-def reporter_kwargs_factory(
-        *,
-        cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWArgs:  # pylint: disable=unused-argument
+def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWArgs:  # pylint: disable=unused-argument
     """Return a preconfigured ReporterKWArgs instance for testing purposes.
 
     The returned ReporterKWArgs instance is preconfigured for testing and is immutable.
@@ -1558,10 +1621,10 @@ def reporter_kwargs_factory(
         targets=default_targets(),
         formats=default_formats(),
         choices=default_choices_conf(),
-        subdir='',
+        subdir="",
         file_suffix=default_file_suffix(),
         file_unique=default_file_unique(),
-        file_append=default_file_append()
+        file_append=default_file_append(),
     )
 
 
@@ -1591,7 +1654,8 @@ def default_reporter_kwargs() -> ReporterKWArgs:
 @cached_factory
 def choice_conf_kwargs_factory(
         *,
-        cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConfKWArgs:  # pylint: disable=unused-argument
+        cache_id: CacheId = CACHE_DEFAULT,  # pylint: disable=unused-argument
+) -> ChoiceConfKWArgs:
     """Return a ChoiceConfKWArgs for testing purposes.
 
     It contains all parameters set to explicit default values for testing purposes.
@@ -1633,7 +1697,7 @@ def choice_conf_kwargs_factory(
         file_unique=default_file_unique(),
         file_append=default_file_append(),
         options=default_reporter_options(),
-        extra=default_extra()
+        extra=default_extra(),
     )
 
 
@@ -1672,8 +1736,7 @@ def default_choice_conf_kwargs() -> ChoiceConfKWArgs:
 
 @cached_factory
 def choices_conf_kwargs_factory(
-        *,
-        cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConfKWArgs:  # pylint: disable=unused-argument
+        *, cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConfKWArgs:  # pylint: disable=unused-argument
     """Return default ChoicesConfKWArgs for testing purposes.
 
     It contains a single ChoiceConf created by default_choice_conf_kwargs().
@@ -1736,7 +1799,8 @@ def choice_conf_factory(
         file_unique=default_file_unique(),
         file_append=default_file_append(),
         options=default_reporter_options(),
-        extra=default_extra())
+        extra=default_extra(),
+    )
 
 
 def default_choice_conf() -> ChoiceConf:
@@ -1799,9 +1863,8 @@ def choice_factory(*,
     if not isinstance(flags, tuple) or not all(isinstance(f, str) for f in flags):
         raise TypeError(f"Invalid type for flags argument: {flags!r}")
     if flags is not None or name is not None:
-        choices_conf = choices_conf_factory(
-            cache_id=cache_id,
-            choices=(choice_conf_factory(cache_id=cache_id, name=name, flags=flags),))
+        choices_conf = choices_conf_factory(cache_id=cache_id,
+                                            choices=(choice_conf_factory(cache_id=cache_id, name=name, flags=flags), ))
     else:
         choices_conf = choices_conf_factory(cache_id=cache_id)
     kwargs = default_reporter_kwargs().replace(choices=choices_conf)
@@ -1826,7 +1889,7 @@ def choices_conf_factory(*, choices: tuple[ChoiceConf, ...] | None = None) -> Ch
             Tuple is used to ensure hashability for caching.
     """
     if choices is None:
-        choices = (default_choice_conf(),)
+        choices = (default_choice_conf(), )
 
     if not isinstance(choices, tuple) or not all(isinstance(c, ChoiceConf) for c in choices):
         raise TypeError(f"Invalid type for choices argument (should be tuple[ChoiceConf, ...]): {choices!r}")
@@ -1905,8 +1968,7 @@ def choices_factory(*,
     return reporter.choices
 
 
-def reporter_namespace_factory(args: list[str],
-                               choices: list[str] | None = None) -> Namespace:
+def reporter_namespace_factory(args: list[str], choices: list[str] | None = None) -> Namespace:
     """Create a parsed `argparse.Namespace` for testing.
 
     It create a default argument parser with a flag named according to
@@ -1928,9 +1990,6 @@ def reporter_namespace_factory(args: list[str],
         raise TypeError("all items in args must be strings")
     if choices is None:
         choices = [Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value]
-    return argument_parser_factory(
-            arguments=[
-                list_of_strings_flag_factory(
-                    flag=flag_name_factory(),
-                    choices=choices,
-                    description='Select reporter targets.')]).parse_args(args=args)
+    return argument_parser_factory(arguments=[
+        list_of_strings_flag_factory(flag=flag_name_factory(), choices=choices, description="Select reporter targets.")
+    ]).parse_args(args=args)

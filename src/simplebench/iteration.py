@@ -77,21 +77,21 @@ class Iteration:
             SimpleBenchValueError: If any of the arguments have invalid values.
         """
         self._n = validate_positive_int(
-                    n, 'n',
-                    IterationErrorTag.N_ARG_TYPE,
-                    IterationErrorTag.N_ARG_VALUE)
+            n, 'n',
+            IterationErrorTag.N_ARG_TYPE,
+            IterationErrorTag.N_ARG_VALUE)
         self._rounds = validate_positive_int(
-                    rounds, 'rounds',
-                    IterationErrorTag.ROUNDS_ARG_TYPE,
-                    IterationErrorTag.ROUNDS_ARG_VALUE)
+            rounds, 'rounds',
+            IterationErrorTag.ROUNDS_ARG_TYPE,
+            IterationErrorTag.ROUNDS_ARG_VALUE)
         self._unit = validate_non_blank_string(
-                    unit, 'unit',
-                    IterationErrorTag.UNIT_ARG_TYPE,
-                    IterationErrorTag.UNIT_ARG_VALUE)
+            unit, 'unit',
+            IterationErrorTag.UNIT_ARG_TYPE,
+            IterationErrorTag.UNIT_ARG_VALUE)
         self._scale = validate_positive_float(
-                    scale, 'scale',
-                    IterationErrorTag.SCALE_ARG_TYPE,
-                    IterationErrorTag.SCALE_ARG_VALUE)
+            scale, 'scale',
+            IterationErrorTag.SCALE_ARG_TYPE,
+            IterationErrorTag.SCALE_ARG_VALUE)
         self._elapsed = validate_non_negative_float(
             elapsed, 'elapsed',
             IterationErrorTag.ELAPSED_ARG_TYPE,

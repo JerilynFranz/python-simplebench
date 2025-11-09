@@ -274,10 +274,10 @@ def test_factories(testspec: TestSpec) -> None:
         name="Collect list of strings flag with specific values",
         kwargs={
             'args': factories.argument_parser_factory(
-                        arguments=[factories.list_of_strings_flag_factory(
-                                        flag='--test-flag',
-                                        choices=['value1', 'value2', 'value3'])]
-                    ).parse_args(['--test-flag', 'value1', 'value2', 'value3']),
+                arguments=[factories.list_of_strings_flag_factory(
+                    flag='--test-flag',
+                    choices=['value1', 'value2', 'value3'])]
+            ).parse_args(['--test-flag', 'value1', 'value2', 'value3']),
             'flag': '--test-flag',
         },
         action=utils.collect_arg_list,
@@ -288,10 +288,10 @@ def test_factories(testspec: TestSpec) -> None:
         kwargs={
             'flag': '--test-flag',
             'args': factories.argument_parser_factory(
-                        arguments=[factories.list_of_strings_flag_factory(
-                                        flag='--test-flag',
-                                        choices=['value1', 'value2', 'value3'])]
-                    ).parse_args(['--test-flag']),
+                arguments=[factories.list_of_strings_flag_factory(
+                    flag='--test-flag',
+                    choices=['value1', 'value2', 'value3'])]
+            ).parse_args(['--test-flag']),
         },
         assertion=Assert.LEN,
         expected=0)),

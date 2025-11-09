@@ -9,11 +9,11 @@ from tests.factories import reporter_kwargs_factory
 
 
 from simplebench.case import Case
-from simplebench.enums import Section, Target, Format, FlagType
+from simplebench.enums import Section
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.reporters.choice import ChoiceConf, Choice
+from simplebench.reporters.choice import Choice
 from simplebench.session import Session
 
 from simplebench.reporters.reporter_manager.decorators import (
