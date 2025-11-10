@@ -1,11 +1,11 @@
-"""Exceptions for the simplebench.reporters.interfaces module."""
-from simplebench.exceptions.base import ErrorTag
+"""Exceptions for the simplebench.reporters.reporter module."""
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions.base import ErrorTag
 
 
 @enum_docstrings
 class ReporterErrorTag(ErrorTag):
-    """ErrorTags for exceptions in the reporters.interfaces module."""
+    """ErrorTags for exceptions in the reporters.reporter module."""
 
     # select_targets_from_args()
     SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED = "SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED"

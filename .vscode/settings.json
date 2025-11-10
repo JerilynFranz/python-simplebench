@@ -54,7 +54,7 @@
   "codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
   "[python]": {
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true
+      "source.organizeImports": "explicit"
     }
   }
 }

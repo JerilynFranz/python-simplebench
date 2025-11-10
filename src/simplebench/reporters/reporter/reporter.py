@@ -14,36 +14,41 @@ A `Reporter` is responsible for generating reports based on benchmark results fr
 Reporters can produce reports in various formats and output them to different targets.
 """
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from argparse import ArgumentParser, Namespace
 from io import StringIO
 from pathlib import Path
-from typing import Optional, Iterable, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, Optional, TypeVar
 
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from simplebench.defaults import BASE_INTERVAL_UNIT, BASE_OPS_PER_INTERVAL_UNIT, BASE_MEMORY_UNIT
-from simplebench.enums import Section, Target, Format, FlagType
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchNotImplementedError
+from simplebench.defaults import (BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT,
+                                  BASE_OPS_PER_INTERVAL_UNIT)
+from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.exceptions import (SimpleBenchNotImplementedError,
+                                    SimpleBenchTypeError,
+                                    SimpleBenchValueError)
 from simplebench.metaclasses import ICase, ISession
-from simplebench.results import Results
-from simplebench.utils import collect_arg_list, first_not_none, sanitize_filename
-from simplebench.validators import (validate_iterable_of_type, validate_string,
-                                    validate_type, validate_filename, validate_bool)
-
 # simplebench.reporters
 from simplebench.reporters.choice.metaclasses import IChoice
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
-from simplebench.reporters.validators import validate_report_renderer, validate_reporter_callback
-
 # simplebench.reporters.reporter
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.metaclasses import IReporter
 from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.reporters.validators import (validate_report_renderer,
+                                              validate_reporter_callback)
+from simplebench.results import Results
+from simplebench.utils import (collect_arg_list, first_not_none,
+                               sanitize_filename)
+from simplebench.validators import (validate_bool, validate_filename,
+                                    validate_iterable_of_type, validate_string,
+                                    validate_type)
 
 T = TypeVar('T')
 
@@ -56,7 +61,8 @@ def deferred_choice_import() -> None:
     global Choice, _CHOICE_IMPORTED  # pylint: disable=global-statement
     if _CHOICE_IMPORTED:
         return
-    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
+    from simplebench.reporters.choice.choice import \
+        Choice  # pylint: disable=import-outside-toplevel
     _CHOICE_IMPORTED = True
 
 
@@ -83,7 +89,7 @@ class Reporter(ABC, IReporter):
     """
 
     _HARDCODED_DEFAULT_OPTIONS: ReporterOptions = ReporterOptions()
-    """Built-in default CSVReporterOptions instance for the reporter used if none is specified
+    """Built-in default ReporterOptions instance for the reporter used if none is specified
     in a passed `Case`, `Choice`, or by `_DEFAULT_OPTIONS`. It forms the basis for the
     dynamic default options functionality provided by the `set_default_options()` and
     `get_default_options()` methods.
@@ -478,7 +484,7 @@ class Reporter(ABC, IReporter):
                 f"Unsupported Format in Choice().output_format: {choice.output_format}",
                 tag=ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)
 
-        if Target.CALLBACK in choice.targets:  # pylint: disable=used-before-assignment
+        if Target.CALLBACK in choice.targets:
             if callback is not None and not callable(callback):
                 raise SimpleBenchTypeError(
                     "Callback function must be callable if provided",
@@ -494,7 +500,7 @@ class Reporter(ABC, IReporter):
                 tag=ReporterErrorTag.REPORT_INVALID_SESSION_ARG)
 
         # Only proceed if there are results to report
-        # TODO: THINK ABOUT THIS MORE
+        # TODO: THINK ABOUT THIS MORE. SHOULD WE RAISE AN EXCEPTION INSTEAD?
         results = case.results
         if not results:
             return
