@@ -103,7 +103,8 @@ class Choices(_BaseChoices['Choice', ChoicesErrorTag]):
                 tag=ChoicesErrorTag.GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
         return self._args_index.get(arg, None)
 
-    def extend(self, choices: Iterable[Choice] | Choices) -> None:  # type: ignore[reportIncompatibleMethodOverride]
+    def extend(  # type: ignore[reportIncompatibleMethodOverride, override]
+            self, choices: Iterable[Choice] | Choices) -> None:
         """Add Choice instances to the container. It does so by adding each Choice in the
         provided iterable of Choice or by adding the Choice instances from the provided Choices instance.
 

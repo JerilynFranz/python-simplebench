@@ -1,30 +1,33 @@
 """Factories for creating Reporter, Choice, and Choices test objects."""
 # pylint: disable=unused-argument
 from __future__ import annotations
+
 from argparse import Namespace
 from pathlib import Path
 from typing import Any, Iterable
 
 from simplebench.case import Case
-from simplebench.enums import Section, Target, Format
-from simplebench.reporters.protocols import ReporterCallback
+from simplebench.enums import Format, Section, Target
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
+from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.session import Session
 
-from ...kwargs import ReporterKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs
-from ...cache_factory import cached_factory, uncached_factory, CacheId, CACHE_DEFAULT
-from .._primitives import (
-    default_reporter_name, default_description, default_sections, default_targets, default_formats,
-    default_file_suffix, default_file_unique, default_file_append, default_choice_flags, default_flag_type,
-    default_choice_name, default_subdir, default_default_targets, default_output_format, default_report_output,
-    path_factory
-)
+from ...cache_factory import (CACHE_DEFAULT, CacheId, cached_factory,
+                              uncached_factory)
+from ...kwargs import ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterKWArgs
+from .._primitives import (default_choice_flags, default_choice_name,
+                           default_default_targets, default_description,
+                           default_file_append, default_file_suffix,
+                           default_file_unique, default_flag_type,
+                           default_formats, default_output_format,
+                           default_report_output, default_reporter_name,
+                           default_sections, default_subdir, default_targets,
+                           path_factory)
 from .._utils import default_extra
 from ..argparse import namespace_factory
 from ..case import case_factory, session_factory
-
 from ..reporter_callback import default_reporter_callback
 from ..reporter_options import default_reporter_options
 
@@ -58,6 +61,24 @@ def report_parameters_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
     }
 
 
+'''
+    def __init__(  # pylint: disable=redefined-outer-name
+                self: ReporterProtocol, *,
+                name: str | None = None,
+                description: str | None = None,
+                options_type: ReporterOptions | None = None,
+                sections: Iterable[Section] | None = None,
+                targets: Iterable[Target] | None = None,
+                default_targets: Iterable[Target] | None = None,
+                formats: Iterable[Format] | None = None,
+                choices: ChoicesConf | None = None,
+                subdir: str | None = None,
+                file_suffix: str | None = None,
+                file_unique: str | None = None,
+                file_append: str | None = None) -> None:
+'''
+
+
 class FactoryReporter(Reporter):
     """A dummy reporter subclass for testing purposes.
 
@@ -68,19 +89,20 @@ class FactoryReporter(Reporter):
     both good and bad parameters.
 
     """
-
     def __init__(self,
-                 name: str | None = None,
-                 description: str | None = None,
-                 options_type: ReporterOptions | None = None,
-                 sections: Iterable[Section] | None = None,
-                 targets: Iterable[Target] | None = None,
-                 formats: Iterable[Format] | None = None,
-                 choices: ChoicesConf | None = None,
-                 subdir: str | None = None,
-                 file_suffix: str | None = None,
-                 file_unique: str | None = None,
-                 file_append: str | None = None) -> None:
+                 *,
+                 name: str,
+                 description: str,
+                 options_type: type[ReporterOptions],
+                 sections: Iterable[Section],
+                 targets: Iterable[Target],
+                 default_targets: Iterable[Target] | None = None,
+                 subdir: str = '',
+                 file_suffix: str,
+                 file_unique: bool,
+                 file_append: bool,
+                 formats: Iterable[Format],
+                 choices: ChoicesConf) -> None:
         """Initialize Reporter with provided kwargs.
 
         Args:
@@ -89,6 +111,7 @@ class FactoryReporter(Reporter):
             options_type (ReporterOptions | None): Options type for the reporter.
             sections (Iterable[Section] | None): Supported sections for the reporter.
             targets (Iterable[Target] | None): Supported targets for the reporter.
+            default_targets (Iterable[Target] | None): Default targets for the reporter.
             formats (Iterable[Format] | None): Supported formats for the reporter.
             choices (ChoicesConf | None): ChoicesConf for the reporter.
             subdir (str | None): Subdirectory for the reporter.
@@ -96,21 +119,33 @@ class FactoryReporter(Reporter):
             file_unique (str | None): File unique flag for the reporter.
             file_append (str | None): File append flag for the reporter.
         """
-        # Types don't match because we are TESTING the base class parameter validation code.
-        # This is expected and intentional.
-        super().__init__(
-            name=name,  # type: ignore[arg-type,reportArgumentType]
-            description=description,  # type: ignore[arg-type,reportArgumentType]
-            options_type=options_type,  # type: ignore[arg-type,reportArgumentType]
-            sections=sections,  # type: ignore[arg-type,reportArgumentType]
-            targets=targets,  # type: ignore[arg-type,reportArgumentType]
-            formats=formats,  # type: ignore[arg-type,reportArgumentType]
-            choices=choices,  # type: ignore[arg-type,reportArgumentType]
-            subdir=subdir,  # type: ignore[arg-type,reportArgumentType]
-            file_suffix=file_suffix,  # type: ignore[arg-type,reportArgumentType]
-            file_unique=file_unique,  # type: ignore[arg-type,reportArgumentType]
-            file_append=file_append  # type: ignore[arg-type,reportArgumentType]
-        )
+        kwargs: dict[str, Any] = {}
+        if name is not None:
+            kwargs['name'] = name
+        if description is not None:
+            kwargs['description'] = description
+        if options_type is not None:
+            kwargs['options_type'] = options_type
+        if sections is not None:
+            kwargs['sections'] = sections
+        if targets is not None:
+            kwargs['targets'] = targets
+        if default_targets is not None:
+            kwargs['default_targets'] = default_targets
+        if formats is not None:
+            kwargs['formats'] = formats
+        if choices is not None:
+            kwargs['choices'] = choices
+        if subdir is not None:
+            kwargs['subdir'] = subdir
+        if file_suffix is not None:
+            kwargs['file_suffix'] = file_suffix
+        if file_unique is not None:
+            kwargs['file_unique'] = file_unique
+        if file_append is not None:
+            kwargs['file_append'] = file_append
+
+        super().__init__(**kwargs)  # pylint: disable=missing-kwoa  # type: ignore[misc]
 
     def run_report(self,
                    *,
@@ -139,7 +174,7 @@ class FactoryReporter(Reporter):
         Return:
             None
         """
-        self.render_by_case(renderer=self.render,
+        self.render_by_case(renderer=self.render,  # type: ignore[misc]
                             args=args,
                             case=case,
                             choice=choice,

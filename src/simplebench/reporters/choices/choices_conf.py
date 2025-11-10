@@ -61,7 +61,7 @@ class ChoicesConf(_BaseChoices[ChoiceConf, ChoicesErrorTag]):
         """
         super().add(choice)
 
-    def extend(  # type: ignore[reportIncompatibleMethodOverride]
+    def extend(  # type: ignore[reportIncompatibleMethodOverride, override]
             self, choices: Iterable[ChoiceConf] | ChoicesConf) -> None:
         """Add ChoiceConf instances to the container.
 

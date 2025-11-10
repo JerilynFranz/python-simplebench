@@ -1,5 +1,6 @@
 """Test simplebench/reporters/reporter/reporter.py module"""
 from __future__ import annotations
+
 from argparse import Namespace
 from pathlib import Path
 from typing import Any, Optional
@@ -7,25 +8,31 @@ from typing import Any, Optional
 import pytest
 
 from simplebench.case import Case
-from simplebench.enums import Section, Target, Format
-from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchValueError, SimpleBenchTypeError
+from simplebench.enums import Format, Section, Target
+from simplebench.exceptions import (SimpleBenchNotImplementedError,
+                                    SimpleBenchTypeError,
+                                    SimpleBenchValueError)
 from simplebench.iteration import Iteration
-from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.results import Results
 from simplebench.runners import SimpleRunner
 from simplebench.session import Session
 
-from ...factories import (
-    choice_factory, choice_conf_factory, reporter_kwargs_factory, default_reporter_callback,
-    case_factory, namespace_factory, reporter_factory, FactoryReporter, path_factory,
-    default_description, report_parameters_factory, choice_conf_kwargs_factory,
-    session_factory, default_reporter_name, choices_factory,
-    reporter_namespace_factory, flag_name_factory)
-from ...testspec import TestAction, TestGet, TestSet, TestSpec, idspec, NO_EXPECTED_VALUE, Assert
+from ...factories import (FactoryReporter, case_factory, choice_conf_factory,
+                          choice_conf_kwargs_factory, choice_factory,
+                          choices_factory, default_description,
+                          default_reporter_callback, default_reporter_name,
+                          flag_name_factory, namespace_factory, path_factory,
+                          report_parameters_factory, reporter_factory,
+                          reporter_kwargs_factory, reporter_namespace_factory,
+                          session_factory)
+from ...testspec import (NO_EXPECTED_VALUE, Assert, TestAction, TestGet,
+                         TestSet, TestSpec, idspec)
 
 
 def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable=unused-argument  # pragma: no cover
@@ -84,6 +91,54 @@ class BadSuperReporter(Reporter):
                                   callback=callback)
 
 
+class GoodReporter(Reporter):
+    """A good dummy Reporter subclass for testing purposes.
+
+    """
+    def __init__(self) -> None:
+        super().__init__(**reporter_kwargs_factory(cache_id=None))
+
+    def run_report(self,  # pylint: disable=useless-parent-delegation
+                   *,
+                   args: Namespace,
+                   case: Case,
+                   choice: Choice,
+                   path: Optional[Path] = None,
+                   session: Optional[Session] = None,
+                   callback: Optional[ReporterCallback] = None) -> None:
+        return
+
+
+def test_good_reporter_subclassing() -> None:
+    """Test that GoodReporter subclass can be instantiated and run_report works."""
+    reporter = GoodReporter()
+    if not isinstance(reporter, ReporterProtocol):  # type: ignore[reportGeneralTypeIssue]
+        raise AssertionError("GoodReporter does not conform to ReporterProtocol")
+
+    assert isinstance(reporter, Reporter)
+    # Call run_report with minimal valid parameters
+    reporter.run_report(
+        args=namespace_factory(),
+        case=case_factory(),
+        choice=choice_factory()
+    )  # Should not raise any exceptions
+
+
+def test_factory_reporter_subclassing() -> None:
+    """Test that FactoryReporter subclass can be instantiated and run_report works."""
+    reporter = FactoryReporter(**reporter_kwargs_factory())
+    if not isinstance(reporter, ReporterProtocol):  # type: ignore[reportGeneralTypeIssue]
+        raise AssertionError("FactoryReporter does not conform to ReporterProtocol")
+
+    assert isinstance(reporter, Reporter)
+    # Call run_report with minimal valid parameters
+    reporter.run_report(
+        args=namespace_factory(),
+        case=case_factory(),
+        choice=choice_factory()
+    )  # Should not raise any exceptions
+
+
 @pytest.mark.parametrize('testspec', [
     idspec('REPORTER_001', TestAction(
         name="abstract base class Reporter() cannot be instantiated directly",
@@ -125,26 +180,20 @@ class BadSuperReporter(Reporter):
         kwargs=report_parameters_factory(),
         expected=NO_EXPECTED_VALUE)),
     idspec('REPORTER_008', TestAction(
-        name=("Init of Reporter with missing name raises "
-              "SimpleBenchTypeError/NAME_INVALID_ARG_TYPE"),
+        name="Init of Reporter with missing name raises TypeError",
         action=FactoryReporter,
         kwargs=reporter_kwargs_factory() - ['name'],
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.NAME_INVALID_ARG_TYPE)),
+        exception=TypeError)),
     idspec('REPORTER_009', TestAction(
-        name=("Init of Reporter with missing description raises "
-              "SimpleBenchTypeError/DESCRIPTION_INVALID_ARG_TYPE"),
+        name="Init of Reporter with missing description raises TypeError",
         action=FactoryReporter,
         kwargs=reporter_kwargs_factory() - ['description'],
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.DESCRIPTION_INVALID_ARG_TYPE)),
+        exception=TypeError)),
     idspec('REPORTER_010', TestAction(
-        name=("Init of Reporter with missing sections raises "
-              "SimpleBenchTypeError/SECTIONS_INVALID_ARG_TYPE"),
+        name="Init of Reporter with missing sections raises TypeError",
         action=FactoryReporter,
         kwargs=reporter_kwargs_factory() - ['sections'],
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.SECTIONS_INVALID_ARG_TYPE)),
+        exception=TypeError)),
     idspec('REPORTER_011', TestAction(
         name=("Init of FactoryReporter with empty targets raises "
               "SimpleBenchValueError/TARGETS_INVALID_ARG_TYPE"),
@@ -160,12 +209,10 @@ class BadSuperReporter(Reporter):
         exception=SimpleBenchValueError,
         exception_tag=ReporterErrorTag.FORMATS_ITEMS_ARG_VALUE)),
     idspec('REPORTER_013', TestAction(
-        name=("Init of FactoryReporter with missing choices raises "
-              "SimpleBenchTypeError/CHOICES_INVALID_ARG_TYPE"),
+        name="Init of FactoryReporter with missing choices raises TypeError",
         action=FactoryReporter,
         kwargs=reporter_kwargs_factory() - ['choices'],
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.CHOICES_INVALID_ARG_TYPE)),
+        exception=TypeError)),
     idspec('REPORTER_014', TestAction(
         name=("Init of FactoryReporter with choices not being a Choices instance raises "
               "SimpleBenchTypeError/INVALID_CHOICES_ARG_TYPE"),

@@ -16,18 +16,13 @@ Reporters can produce reports in various formats and output them to different ta
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from argparse import ArgumentParser, Namespace
-from io import StringIO
+from argparse import Namespace
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterable, Optional, TypeVar
 
-from rich.console import Console
-from rich.table import Table
-from rich.text import Text
-
 from simplebench.defaults import (BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT,
                                   BASE_OPS_PER_INTERVAL_UNIT)
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import (SimpleBenchNotImplementedError,
                                     SimpleBenchTypeError,
                                     SimpleBenchValueError)
@@ -36,19 +31,18 @@ from simplebench.metaclasses import ICase, ISession
 from simplebench.reporters.choice.metaclasses import IChoice
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
+from simplebench.reporters.protocols import ReporterCallback
 # simplebench.reporters.reporter
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.metaclasses import IReporter
+from simplebench.reporters.reporter.mixins import (
+    _ReporterArgparseMixin, _ReporterOrchestrationMixin,
+    _ReporterPrioritizationMixin, _ReporterTargetMixin)
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.reporters.validators import (validate_report_renderer,
-                                              validate_reporter_callback)
+from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.results import Results
-from simplebench.utils import (collect_arg_list, first_not_none,
-                               sanitize_filename)
-from simplebench.validators import (validate_bool, validate_filename,
-                                    validate_iterable_of_type, validate_string,
-                                    validate_type)
+from simplebench.validators import (validate_bool, validate_iterable_of_type,
+                                    validate_string, validate_type)
 
 T = TypeVar('T')
 
@@ -72,7 +66,8 @@ if TYPE_CHECKING:
     from simplebench.session import Session
 
 
-class Reporter(ABC, IReporter):
+class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
+               _ReporterPrioritizationMixin, _ReporterTargetMixin, ReporterProtocol):
     """Base class for Reporter classes.
 
     A Reporter is responsible for generating reports based on benchmark results
@@ -263,8 +258,7 @@ class Reporter(ABC, IReporter):
                 default_targets if default_targets is not None else set(),
                 Target, 'default_targets',
                 ReporterErrorTag.DEFAULT_TARGETS_INVALID_ARG_TYPE,
-                ReporterErrorTag.DEFAULT_TARGETS_ITEMS_ARG_VALUE,  # errortag not used
-                allow_empty=True))
+                ReporterErrorTag.DEFAULT_TARGETS_ITEMS_ARG_VALUE,                allow_empty=True))
         """The default set of Targets for the reporter (private backing field)"""
 
         subdir = validate_string(
@@ -362,72 +356,6 @@ class Reporter(ABC, IReporter):
             if isinstance(item, cls):
                 return item  # type: ignore
         return None
-
-    def select_targets_from_args(
-            self, *,
-            args: Namespace, choice: Choice, default_targets: Iterable[Target]) -> set[Target]:
-        """Select the output targets based on command-line arguments and choice configuration.
-
-        It checks the command-line arguments for any flags corresponding to the choice
-        and collects the specified targets. It then cross-validates the specified targets
-        against the supported targets for the choice. If no targets are specified in the
-        command-line arguments, the default targets are used instead.
-
-        An exception is raised if a target is specified in the arguments,
-        or in the default targets, that are not supported by the choice.
-
-        Args:
-            args (Namespace): The parsed command-line arguments.
-            choice (Choice): The Choice instance specifying the report configuration.
-            default_targets (Iterable[Target]]): The default targets to use if no targets
-                are specified in the command-line arguments.
-
-        Returns:
-            A set of Target enums representing the selected output targets.
-
-        Raises:
-            SimpleBenchTypeError: If args is not an argparse.Namespace instance.
-            SimpleBenchValueError: If an unsupported target is specified in the arguments.
-        """
-        args = validate_type(args, Namespace, 'args',
-                             ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)
-        choice = validate_type(choice, Choice, 'choice',
-                               ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)
-        default_targets = validate_iterable_of_type(
-            default_targets, Target, 'default_targets',
-            ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG,
-            ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG,
-            allow_empty=True)
-
-        for target in default_targets:
-            if target not in choice.targets:
-                raise SimpleBenchValueError(
-                    f"Default target {target} is not supported by the choice.",
-                    tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)
-
-        # Look for flags specified by choice, collect specified targets from command-line arguments
-        # and cross-validate with supported targets for the choice. Add to selected_targets set.
-        selected_targets: set[Target] = set()
-        target_members = Target.__members__
-        reverse_target_map = {v.value: v for k, v in target_members.items()}
-        for flag in choice.flags:
-            target_names = collect_arg_list(args=args, flag=flag)
-            if not target_names:
-                continue  # No targets specified for this flag, skip to next flag
-            for name in target_names:
-                target_enum = reverse_target_map.get(name, None)
-                if target_enum is None:
-                    raise SimpleBenchValueError(
-                        f"Unknown output target {name} specified for {flag}.",
-                        tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)
-                if target_enum in choice.targets:
-                    selected_targets.add(target_enum)
-                else:
-                    raise SimpleBenchValueError(
-                        f"Output target {name} is not supported by {flag}.",
-                        tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)
-
-        return set(default_targets) if not selected_targets else selected_targets
 
     def report(self,
                *,
@@ -593,6 +521,8 @@ class Reporter(ABC, IReporter):
             SimpleBenchValueError: If the choice's sections, targets, or formats
                 are not supported by the reporter.
         """
+        deferred_choice_import()
+
         choice = validate_type(
             choice, Choice, 'choice',
             ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
@@ -674,127 +604,6 @@ class Reporter(ABC, IReporter):
         """
         return self._formats
 
-    def target_filesystem(self, *,
-                          path: Path | None,
-                          subdir: str,
-                          filename: str,
-                          output: str | bytes | Text | Table,
-                          unique: bool = False,
-                          append: bool = False) -> None:
-        """Helper method to output report data to the filesystem.
-
-        path, subdir, and filename are combined to form the full path to the output file.
-
-        If unique is True, the filename will be made unique by prepending a counter
-        starting from 001 to the filename and counting up until a unique filename is found.
-        E.g. 001_filename.txt, 002_filename.txt, etc.
-
-        If append is True, the output will be appended to the file if it already exists.
-        Otherwise, an exception will be raised if the file already exists. Note that
-        append mode is not compatible with unique mode.
-
-        The type signature for path is Path | None because the overall report() method
-        accepts path as Optional[Path] because it is not always required. However,
-        this method should only be called when a valid Path is provided and will
-        raise an exception if it is not a Path instance.
-
-        Args:
-            path (Path | None): The path to the directory where output should be saved.
-            subdir (str): The subdirectory within the path to save the file to.
-            filename (str): The filename to save the output as.
-            output (str | bytes | Text | Table): The report data to write to the file.
-            unique (bool): If True, ensure the filename is unique by prepending a counter as needed.
-            append (bool): If True, append to the file if it already exists. Otherwise, raise an error.
-
-        Raises:
-            SimpleBenchTypeError: If path is not a Path instance,
-                or if subdir or filename are not strings.
-            SimpleBenchValueError: If both append and unique are True. Or if the output file
-                already exists and neither append nor unique options were specified.
-        """
-        path = validate_type(
-            path, Path, 'path',
-            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
-        subdir = validate_string(
-            subdir, 'subdir',
-            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE,
-            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_VALUE,
-            strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
-        filename = validate_filename(filename)
-        append = validate_type(
-            append, bool, 'append',
-            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE)
-        unique = validate_type(
-            unique, bool, 'unique',
-            error_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE)
-        if not isinstance(output, (str, bytes, Text, Table)):
-            raise SimpleBenchTypeError(
-                "output must be of type str, bytes, Text, or Table",
-                tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE)
-        if append and unique:
-            raise SimpleBenchValueError(
-                "append and unique options are not compatible when writing to filesystem",
-                tag=ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS)
-        if unique:
-            counter = 1
-            while (path / subdir / f"{counter:03d}_{filename}").exists():
-                counter += 1
-            filename = f"{counter:03d}_{filename}"
-
-        if isinstance(output, (Text, Table)):
-            output = self.rich_text_to_plain_text(output)
-        output_path = path / subdir / filename
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        mode = 'wb' if isinstance(output, bytes) else 'w'
-        if append:
-            mode = 'ab' if isinstance(output, bytes) else 'a'
-        if output_path.exists() and not append:
-            raise SimpleBenchValueError(
-                f"Output file already exists and neither append nor unique options were specified: {output_path}",
-                tag=ReporterErrorTag.TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS)
-        with output_path.open(mode=mode) as f:
-            f.write(output)
-
-    def target_callback(self,
-                        callback: ReporterCallback | None,
-                        case: Case,
-                        section: Section,
-                        output_format: Format,
-                        output: str | bytes | Text | Table) -> None:
-        """Helper method to send report data to a callback function.
-
-        Args:
-            callback (ReporterCallback | None): The callback function to send the output to.
-            case (Case): The Case instance representing the benchmarked code.
-            section (Section): The Section of the report.
-            output_format (Format): The Format of the report.
-            output (str | bytes | Text | Table): The report data to send to the callback.
-
-        Returns:
-            None
-        """
-        if isinstance(output, (Text, Table)):
-            output = self.rich_text_to_plain_text(output)
-        if callback is not None:
-            callback(case=case, section=section, output_format=output_format, output=output)
-
-    def target_console(self, session: Session | None, output: str | bytes | Text | Table) -> None:
-        """Helper method to output report data to the console.
-
-        It uses the Rich Console instance from the Session if provided, otherwise
-        it creates a new Console instance.
-
-        It can accept output as a string, Rich Text, or Rich Table.
-
-        Args:
-            output (str | bytes | Text | Table): The report data to print to the console.
-
-        Returns:
-            None
-        """
-        console = session.console if session is not None else Console()
-        console.print(output)
-
     def get_base_unit_for_section(self, section: Section) -> str:
         """Return the base unit for the specified section.
 
@@ -817,108 +626,6 @@ class Reporter(ABC, IReporter):
                 raise SimpleBenchValueError(
                     f"Unsupported section: {section} (this should never happen)",
                     tag=ReporterErrorTag.RUN_REPORT_UNSUPPORTED_SECTION)
-
-    def add_flags_to_argparse(self, parser: ArgumentParser) -> None:
-        """Add the reporter's command-line flags to an ArgumentParser.
-
-        This is an interface method for adding flags of different types to an ArgumentParser.
-
-        Choices can define different types of flags, such as boolean flags or
-        flags that accept multiple values (lists). This method allows adding
-        flags of the specified type to the ArgumentParser.
-
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-        """
-        if not isinstance(parser, ArgumentParser):
-            raise SimpleBenchTypeError(
-                "parser arg must be an argparse.ArgumentParser instance",
-                tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
-        for choice in self.choices.values():
-            match choice.flag_type:
-                case FlagType.BOOLEAN:
-                    self.add_boolean_flags_to_argparse(parser=parser, choice=choice)
-                case FlagType.TARGET_LIST:
-                    self.add_list_of_targets_flags_to_argparse(parser=parser, choice=choice)
-                case _:
-                    raise SimpleBenchValueError(
-                        f"Unsupported flag type: {choice.flag_type}",
-                        tag=ReporterErrorTag.ADD_FLAGS_UNSUPPORTED_FLAG_TYPE)
-
-    def add_list_of_targets_flags_to_argparse(self, parser: ArgumentParser, choice: Choice) -> None:
-        """Add a Choice's command-line flags to an ArgumentParser.
-
-        This is a default implementation of adding flags that accept multiple
-        values for each Choice's flags to specify the output targets for the reporter.
-
-        Example:
-            For a Choice with flags ['--json'], this method will add an argument
-            to the parser that accepts multiple target values, like so:
-
-            --json                             # default target
-            --json console filesystem callback # multiple targets
-            --json filesystem                  # single target
-
-        Subclasses can override this method if they need custom behavior such as adding
-        arguments with different types or more complex logic.
-
-        The added argument will use the 'append' action to allow multiple occurrences
-        of the flag, each potentially specifying multiple targets, and uses the choices
-        option to restrict the allowed target values to only those supported by the Choice.
-
-        This will be enforced during argument parsing, so invalid target values will
-        result in an error.
-
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-            choice (Choice): The Choice instance for which to add the flags.
-
-        Raises:
-            SimpleBenchTypeError: If the parser arg is not an ArgumentParser instance.
-        """
-        if not isinstance(parser, ArgumentParser):
-            raise SimpleBenchTypeError(
-                "parser arg must be an argparse.ArgumentParser instance",
-                tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
-        if not isinstance(choice, IChoice):
-            raise SimpleBenchTypeError(
-                "choice arg must be a Choice instance",
-                tag=ReporterErrorTag.ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE)
-        targets = [target.value for target in choice.targets]
-        for flag in choice.flags:
-            # Add an argument that accepts multiple target values
-            # for each occurrence of the flag, restricts the choices
-            # to only those supported by the Choice. Zero or more
-            # targets can be specified for each flag occurrence.
-            # Zero is allowed so that the default targets can be used
-            # when no targets are explicitly specified.
-            parser.add_argument(flag,
-                                action='append',
-                                nargs='*',
-                                choices=targets,
-                                help=choice.description)
-
-    def add_boolean_flags_to_argparse(self, parser: ArgumentParser, choice: Choice) -> None:
-        """Adds a Choice's command-line flags to an ArgumentParser.
-
-        This is a default implementation that adds boolean flags for each Choice's flags.
-        Subclasses can override this method if they need custom behavior such as
-        adding arguments with different types or more complex logic.
-
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-            choice (Choice): The Choice instance for which to add the flags.
-        """
-        if not isinstance(parser, ArgumentParser):
-            raise SimpleBenchTypeError(
-                "parser arg must be an argparse.ArgumentParser instance",
-                tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE)
-        if not isinstance(choice, IChoice):
-            raise SimpleBenchTypeError(
-                "choice arg must be a Choice instance",
-                tag=ReporterErrorTag.ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE)
-        for flag in choice.flags:
-            parser.add_argument(flag, action='store_true', help=choice.description)
 
     def get_all_stats_values(self, results: list[Results], section: Section) -> list[float]:
         """Gathers all primary statistical values for a given section across multiple results.
@@ -947,376 +654,3 @@ class Reporter(ABC, IReporter):
                 stats.percentiles[5], stats.percentiles[95]
             ])
         return all_numbers
-
-    def get_prioritized_options(self, case: Case, choice: Choice) -> ReporterOptions:
-        """Get the reporter-specific options from the case, choice, or default options.
-        This method retrieves reporter-specific options of type `options_cls` by
-        checking the `case` options first, then the `choice` options, and finally
-        falling back to the reporter's default options if none are found.
-
-        The actual type of `ReporterOptions` to retrieve is determined by the
-        reporter's `options_type` property - it will always be a specific subclass
-        of `ReporterOptions` defined by the reporter.
-
-        Args:
-            case (Case): The Case instance containing benchmark results.
-            choice (Choice): The Choice instance specifying the report configuration.
-
-        Returns:
-            ReporterOptions: The prioritized instance of the class `ReporterOptions`.
-                More specifically, it will be an instance of the reporter's specific
-                `ReporterOptions` subclass as defined by the reporter's `options_type` property.
-
-        Raises:
-            SimpleBenchNotImplementedError: If no ReporterOptions instance can be found
-        """
-        cls = type(self)
-        options_cls = self.options_type
-        # case.options is a list of ReporterOptions because Case.options is used
-        # for all reporters. Thus, we need to filter by the specific type here
-        # to find the reporter-specific options.
-        case_options = cls.find_options_by_type(options=case.options, cls=options_cls)
-        # Since different reporters can have different options types,
-        # we need to filter the options by the specific type here as well in case
-        # a less specific type was used in the current default options.
-        default_options = cls.get_default_options()
-        if default_options is None:
-            raise SimpleBenchNotImplementedError(
-                "Reporter subclasses must set __HARDCODED_DEFAULT_OPTIONS to a"
-                "a valid ReporterOptions subclass to provide default options",
-                tag=ReporterErrorTag.HARDCODED_DEFAULT_OPTIONS_NOT_IMPLEMENTED)
-        options = first_not_none([case_options, choice.options, default_options])
-        if options is None:
-            raise SimpleBenchNotImplementedError(
-                "Reporter subclasses must provide ReporterOptions via Case, Choice, or default options",
-                tag=ReporterErrorTag.REPORTER_OPTIONS_NOT_IMPLEMENTED)
-        return options
-
-    def get_prioritized_default_targets(self, choice: Choice) -> frozenset[Target]:
-        """Get the prioritized default targets from the choice or reporter defaults.
-
-        This method retrieves the default targets for the reporter by first checking
-        the `choice` default_targets, and if none are found, falling back to the reporter's
-        default targets.
-
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            frozenset[Target]: The set of default targets.
-        """
-        if choice.default_targets is not None:
-            return choice.default_targets
-        return self._default_targets
-
-    def get_prioritized_subdir(self, choice: Choice) -> str:
-        """Get the prioritized subdirectory from the choice or reporter defaults.
-
-        This method retrieves the subdirectory for the reporter by first checking
-        the `choice` subdir, and if none is found, falling back to the reporter's
-        default subdir.
-
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            str: The subdirectory for saving report files.
-        """
-        if choice.subdir is not None:
-            return choice.subdir
-        return self._subdir
-
-    def get_prioritized_file_suffix(self, choice: Choice) -> str:
-        """Get the prioritized file suffix from the choice or reporter.
-
-        This method retrieves the file suffix for the reporter by first checking
-        the `choice` file_suffix, and if None is found falling back to the reporter's
-        file_suffix.
-
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            str: The file suffix for report files.
-        """
-        if choice.file_suffix is not None:
-            return choice.file_suffix
-        return self._file_suffix
-
-    def get_prioritized_file_unique(self, choice: Choice) -> bool:
-        """Get the prioritized file unique flag from the choice or reporter.
-
-        This method retrieves the file unique flag for the reporter by first checking
-        the `choice` file_unique, and if None is found falling back to the reporter's
-        file_unique.
-
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            bool: The file unique flag for report files.
-        """
-        if choice.file_unique is not None:
-            return choice.file_unique
-        return self._file_unique
-
-    def get_prioritized_file_append(self, choice: Choice) -> bool:
-        """Get the prioritized file append flag from the choice or reporter.
-
-        This method retrieves the file append flag for the reporter by first checking
-        the `choice` file_append, and if None is found falling back to the reporter's
-        file_append.
-
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            bool: The file append flag for report files.
-        """
-        if choice.file_append is not None:
-            return choice.file_append
-        return self._file_append
-
-    def render_by_section(self, *,
-                          renderer: ReportRenderer,
-                          args: Namespace,
-                          case: Case,
-                          choice: Choice,
-                          path: Path | None = None,
-                          session: Session | None = None,
-                          callback: ReporterCallback | None = None) -> None:
-        """Render the report for each section individually.
-
-        This method is called by the subclass's run_report() method to run one report per section
-        that is then processed according to the specified targets.
-
-        It calls the subclass's render() method to actually generate the report output.
-
-        Args:
-            renderer (ReportRenderer): The method to be used for actually rendering the report.
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
-
-        Return:
-            None
-
-        Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
-                required arguments are missing. Also raised if the callback is not callable when
-                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
-                target is specified.
-            SimpleBenchValueError: If an unsupported section or target is specified in the choice.
-        """
-        renderer = validate_report_renderer(renderer)
-
-        args = validate_type(
-            args, Namespace, 'args',
-            ReporterErrorTag.RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE)
-
-        # We validate for Case using ICase to prevent circular import issues
-        if not isinstance(case, ICase):
-            raise SimpleBenchTypeError(
-                "Expected a Case instance",
-                tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_CASE_ARG)
-
-        # We validate for Choice using IChoice to prevent circular import issues
-        if not isinstance(choice, IChoice):
-            raise SimpleBenchTypeError(
-                "Expected a Choice instance",
-                tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_CHOICE_ARG_TYPE)
-
-        if path is not None:
-            path = validate_type(
-                path, Path, 'path',
-                ReporterErrorTag.RENDER_BY_SECTION_INVALID_PATH_ARG_TYPE)
-
-        # We validate for Session using ISession to prevent circular import issues
-        if not isinstance(session, ISession) and session is not None:
-            raise SimpleBenchTypeError(
-                "session must be a Session instance if provided",
-                tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_SESSION_ARG_TYPE)
-
-        callback = validate_reporter_callback(callback, allow_none=True)
-
-        default_targets = self.get_prioritized_default_targets(choice=choice)
-        subdir = self.get_prioritized_subdir(choice=choice)
-        options = self.get_prioritized_options(case=case, choice=choice)
-
-        targets: set[Target] = self.select_targets_from_args(
-            args=args, choice=choice, default_targets=default_targets)
-        for section in choice.sections:
-            output = renderer(case=case, section=section, options=options)
-
-            for output_target in targets:
-                match output_target:
-                    case Target.FILESYSTEM:
-                        filename: str = sanitize_filename(section.value)
-                        if self._file_suffix:
-                            filename += f'.{self._file_suffix}'
-                        if isinstance(output, (Text, Table)):
-                            output = self.rich_text_to_plain_text(output)
-                        self.target_filesystem(
-                            path=path,
-                            subdir=subdir,
-                            filename=filename,
-                            output=output,
-                            unique=self._file_unique,
-                            append=self._file_append)
-
-                    case Target.CALLBACK:
-                        if isinstance(output, (Text, Table)):
-                            output = self.rich_text_to_plain_text(output)
-                        self.target_callback(
-                            callback=callback,
-                            case=case,
-                            section=section,
-                            output_format=choice.output_format,
-                            output=output)
-
-                    case Target.CONSOLE:
-                        self.target_console(session=session, output=output)
-
-                    case _:
-                        raise SimpleBenchValueError(
-                            f'Unsupported target for {type(self)}: {output_target}',
-                            tag=ReporterErrorTag.RENDER_BY_SECTION_UNSUPPORTED_TARGET)
-
-    def render_by_case(self, *,
-                       renderer: ReportRenderer,
-                       args: Namespace,
-                       case: Case,
-                       choice: Choice,
-                       path: Path | None = None,
-                       session: Session | None = None,
-                       callback: ReporterCallback | None = None) -> None:
-        """Render the report for an entire case at once across all applicable sections.
-
-        This method is called by the subclass's run_report() method to run one report per case
-        that is then processed according to the specified targets.
-
-        It calls the subclass's render() method to actually generate the report output.
-
-        Args:
-            renderer (ReportRenderer): The method to be used for actually rendering the report.
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
-
-        Return:
-            None
-
-        Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
-                required arguments are missing. Also raised if the callback is not callable when
-                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
-                target is specified.
-            SimpleBenchValueError: If an unsupported section or target is specified in the choice.
-        """
-        renderer = validate_report_renderer(renderer)
-
-        args = validate_type(
-            args, Namespace, 'args',
-            ReporterErrorTag.RENDER_BY_CASE_INVALID_ARGS_ARG_TYPE)
-
-        # We validate for Case using ICase to prevent circular import issues
-        if not isinstance(case, ICase):
-            raise SimpleBenchTypeError(
-                "Expected a Case instance",
-                tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_CASE_ARG)
-
-        # We validate for Choice using IChoice to prevent circular import issues
-        if not isinstance(choice, IChoice):
-            raise SimpleBenchTypeError(
-                "Expected a Choice instance",
-                tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_CHOICE_ARG_TYPE)
-
-        if path is not None:
-            path = validate_type(
-                path, Path, 'path',
-                ReporterErrorTag.RENDER_BY_CASE_INVALID_PATH_ARG_TYPE)
-
-        # We validate for Session using ISession to prevent circular import issues
-        if not isinstance(session, ISession) and session is not None:
-            raise SimpleBenchTypeError(
-                "session must be a Session instance if provided",
-                tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_SESSION_ARG_TYPE)
-
-        callback = validate_reporter_callback(callback, allow_none=True)
-
-        default_targets = self.get_prioritized_default_targets(choice=choice)
-        subdir = self.get_prioritized_subdir(choice=choice)
-        file_suffix = self.get_prioritized_file_suffix(choice=choice)
-        file_unique = self.get_prioritized_file_unique(choice=choice)
-        file_append = self.get_prioritized_file_append(choice=choice)
-        options = self.get_prioritized_options(case=case, choice=choice)
-
-        targets: set[Target] = self.select_targets_from_args(
-            args=args, choice=choice, default_targets=default_targets)
-        output = renderer(case=case, section=Section.NULL, options=options)
-
-        for output_target in targets:
-            match output_target:
-                case Target.FILESYSTEM:
-                    filename: str = sanitize_filename(case.title)
-                    if file_suffix:
-                        filename += f'.{file_suffix}'
-                    self.target_filesystem(
-                        path=path,
-                        subdir=subdir,
-                        filename=filename,
-                        output=output,
-                        unique=file_unique,
-                        append=file_append)
-
-                case Target.CALLBACK:
-                    self.target_callback(
-                        callback=callback,
-                        case=case,
-                        section=Section.NULL,
-                        output_format=Format.JSON,
-                        output=output)
-
-                case Target.CONSOLE:
-                    self.target_console(session=session, output=output)
-
-                case _:
-                    raise SimpleBenchValueError(
-                        f'Unsupported target for {type(self).__name__}: {output_target}',
-                        tag=ReporterErrorTag.RENDER_BY_CASE_UNSUPPORTED_TARGET)
-
-    def rich_text_to_plain_text(self, rich_text: Text | Table) -> str:
-        """Convert Rich Text or Table to plain text by stripping formatting.
-
-        Applies a virtual console width to ensure proper line wrapping. The console
-        width simulates how the text would appear in a terminal of the specified width.
-
-        As rich text is normally mainly used for console output, this method
-        provides a way to convert it to plain text while preserving the intended
-        layout as much as possible for non-console output targets.
-
-        Args:
-            rich_text (Text | Table): The Rich Text or Table instance to convert.
-        Returns:
-            str: The plain text representation of the Rich Text.
-        """
-        if not isinstance(rich_text, (Text, Table)):
-            raise SimpleBenchTypeError(
-                f'rich_text argument is of invalid type: {type(rich_text)}. '
-                f'Must be rich.Text or rich.Table.',
-                tag=ReporterErrorTag.RICH_TEXT_TO_PLAIN_TEXT_INVALID_RICH_TEXT_ARG_TYPE)
-
-        output_io = StringIO()  # just a string buffer to capture console output
-        console = Console(file=output_io, width=None, record=True)
-        console.print(rich_text)
-        text_output = console.export_text(styles=False, clear=False)
-        output_io.close()
-
-        return text_output

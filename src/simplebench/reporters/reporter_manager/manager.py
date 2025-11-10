@@ -65,10 +65,10 @@ class ReporterManager():
 
         if not load_defaults:
             return
-        for reporter in _PREDEFINED_REPORTERS:
-            self.register(reporter())  # type: ignore[reportCallIssue]
-        for reporter in get_registered_reporters():
-            self.register(reporter)
+        for predefined_reporter in _PREDEFINED_REPORTERS:
+            self.register(predefined_reporter())  # type: ignore[reportCallIssue, call-arg]
+        for registered_reporter in get_registered_reporters():
+            self.register(registered_reporter)
 
     @property
     def choices(self) -> Choices:

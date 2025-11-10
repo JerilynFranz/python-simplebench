@@ -1,14 +1,15 @@
 """Choices for reporters."""
 from __future__ import annotations
-from collections.abc import Hashable
+
 from collections import UserDict
-from typing import Iterable, TypeVar, Generic, Type
+from collections.abc import Hashable
+from typing import Generic, Iterable, Type, TypeVar
 
-
-from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError
+from simplebench.exceptions import (ErrorTag, SimpleBenchKeyError,
+                                    SimpleBenchTypeError,
+                                    SimpleBenchValueError)
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.validators import validate_iterable_of_type
-
 
 T_Item = TypeVar('T_Item', bound=ChoiceProtocol)  # pylint: disable=invalid-name
 T_Error = TypeVar('T_Error', bound=ErrorTag)  # pylint: disable=invalid-name
@@ -58,8 +59,8 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         # 4. Use the generic types in the implementation
         choices_list: list[T_Item] = validate_iterable_of_type(
             choices, self._item_type, "choices",
-            self._error_tags.CHOICES_INVALID_ARG_TYPE,  # type: ignore[attributeAccessIssue]
-            self._error_tags.CHOICES_INVALID_ITEM_VALUE,  # type: ignore[attributeAccessIssue]
+            self._error_tags.CHOICES_INVALID_ARG_TYPE,  # type: ignore[attributeAccessIssue, attr-defined]
+            self._error_tags.CHOICES_INVALID_ITEM_VALUE,  # type: ignore[attributeAccessIssue, attr-defined]
             allow_empty=True, exact_type=True)
 
         if choices_list:
@@ -82,7 +83,7 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         if not isinstance(choice, self._item_type):
             raise SimpleBenchTypeError(
                 f"Only {self._item_type.__name__} instances can be added: ",
-                tag=self._error_tags.ADD_CHOICE_INVALID_ARG_TYPE)  # type: ignore[attributeAccessIssue]
+                tag=self._error_tags.ADD_CHOICE_INVALID_ARG_TYPE)  # type: ignore[attributeAccessIssue, attr-defined]
         self[choice.name] = choice
 
     def extend(self, choices: Iterable[T_Item] | _BaseChoices[T_Item, T_Error]) -> None:
@@ -105,8 +106,8 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         else:
             choices_list = validate_iterable_of_type(
                 choices, self._item_type, "choices",
-                self._error_tags.EXTEND_CHOICES_INVALID_ARG_TYPE,  # type: ignore[attributeAccessIssue]
-                self._error_tags.EXTEND_CHOICES_INVALID_ITEM_VALUE,  # type: ignore[attributeAccessIssue]
+                self._error_tags.EXTEND_CHOICES_INVALID_ARG_TYPE,  # type: ignore[attributeAccessIssue, attr-defined]
+                self._error_tags.EXTEND_CHOICES_INVALID_ITEM_VALUE,  # type: ignore[attributeAccessIssue, attr-defined]
                 allow_empty=True)
             for choice in choices_list:
                 self.add(choice)
@@ -135,7 +136,7 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         if key not in self.data:
             raise SimpleBenchKeyError(
                 f"No {self._item_type.__name__} key with the name '{key}' exists",
-                tag=self._error_tags.DELITEM_UNKNOWN_CHOICE_NAME)  # type: ignore[attributeAccessIssue]
+                tag=self._error_tags.DELITEM_UNKNOWN_CHOICE_NAME)  # type: ignore[attributeAccessIssue, attr-defined]
         choice = self[key]
         for arg in choice.flags:
             if arg in self._flags_index:
@@ -177,26 +178,26 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
                 "Choice key must be a string",
-                tag=self._error_tags.SETITEM_INVALID_KEY_TYPE)  # type: ignore[attributeAccessIssue]
+                tag=self._error_tags.SETITEM_INVALID_KEY_TYPE)  # type: ignore[attributeAccessIssue, attr-defined]
         if not isinstance(value, self._item_type):
             raise SimpleBenchTypeError(
                 f"Only {self._item_type.__name__} instances can be added",
-                tag=self._error_tags.SETITEM_INVALID_VALUE_TYPE)  # type: ignore[attributeAccessIssue]
+                tag=self._error_tags.SETITEM_INVALID_VALUE_TYPE)  # type: ignore[attributeAccessIssue, attr-defined]
         if key != value.name:
             raise SimpleBenchValueError(
                 "key must match the item's .name attribute",
-                tag=self._error_tags.SETITEM_KEY_NAME_MISMATCH)  # type: ignore[attributeAccessIssue]
+                tag=self._error_tags.SETITEM_KEY_NAME_MISMATCH)  # type: ignore[attributeAccessIssue, attr-defined]
         if key in self.data:
             raise SimpleBenchValueError(
                 f"An item with the name '{value.name}' already exists",
-                tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_NAME)  # type: ignore[attributeAccessIssue]
+                tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_NAME)  # type: ignore[attributeAccessIssue, attr-defined]
 
         self._args_index.update({flag.replace('--', '', 1).replace('-', '_'): value for flag in value.flags})
         for flag in value.flags:
             if flag in self._flags_index:
                 raise SimpleBenchValueError(
                     f"An item with the flag '{flag}' already exists",
-                    tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG)  # type: ignore[attributeAccessIssue]
+                    tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG)  # type: ignore[attributeAccessIssue, attr-defined]  # noqa: E501
             self._flags_index[flag] = value
         super().__setitem__(key, value)
 

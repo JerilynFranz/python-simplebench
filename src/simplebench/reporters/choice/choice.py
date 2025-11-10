@@ -114,8 +114,13 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
         """
         deferred_reporter_import()
 
+        # mypy raises a [type-abstract] error because Reporter is an Abstract Base Class
+        # (ABC). We are using the Reporter ABC itself as a type argument in the
+        # validate_type function, which mypy flags because ABCs cannot be instantiated.
+        # We use type: ignore because we know at runtime we will only ever receive
+        # concrete subclasses of Reporter, not the abstract Reporter itself.
         self._reporter: Reporter = validate_type(
-            reporter, Reporter, "reporter",
+            reporter, Reporter, "reporter",  # type: ignore[type-abstract]
             error_tag=ChoiceErrorTag.REPORTER_INVALID_ARG_TYPE)
         """The Reporter subclass instance associated with the choice
         (private backing field for attribute)"""

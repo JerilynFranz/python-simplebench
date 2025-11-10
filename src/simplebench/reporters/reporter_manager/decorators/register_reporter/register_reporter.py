@@ -34,7 +34,7 @@ def register_reporter(cls: type[Reporter]) -> type[Reporter]:
         return cls
 
     _REGISTERED_REPORTER_TYPES.add(cls)
-    _REGISTERED_REPORTER_INSTANCES.add(cls())  # type: ignore[reportCallIssue]
+    _REGISTERED_REPORTER_INSTANCES.add(cls())  # type: ignore[reportCallIssue, call-arg]
     return cls
 
 

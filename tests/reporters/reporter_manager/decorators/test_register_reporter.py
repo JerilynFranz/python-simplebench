@@ -1,23 +1,21 @@
 """Tests for the register_reporter decorator."""
 from argparse import Namespace
-
 from pathlib import Path
 
 import pytest
 
-from tests.factories import reporter_kwargs_factory
-
-
 from simplebench.case import Case
 from simplebench.enums import Section
+from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.reporters.choice import Choice
+from simplebench.reporters.reporter_manager.decorators import (
+    RegisterReporterErrorTag, clear_registered_reporters,
+    get_registered_reporters, register_reporter)
 from simplebench.session import Session
 
-from simplebench.reporters.reporter_manager.decorators import (
-    register_reporter, get_registered_reporters, clear_registered_reporters, RegisterReporterErrorTag)
+from ....factories import reporter_kwargs_factory
 
 
 class MockReporterOptions(ReporterOptions):
@@ -39,7 +37,13 @@ class MockReporter(Reporter):
                    callback: ReporterCallback | None = None) -> None:
         """A mock run_report method."""
         self.render_by_section(  # pragma: no cover
-            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
+            renderer=self.render,
+            args=args,
+            case=case,
+            choice=choice,
+            path=path,
+            session=session,
+            callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """A mock render method."""
