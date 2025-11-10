@@ -52,4 +52,9 @@
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
   "pylint.cwd": "${workspaceFolder}/src",
   "codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
+  "[python]": {
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
+  }
 }
