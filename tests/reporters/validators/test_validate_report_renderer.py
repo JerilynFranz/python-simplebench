@@ -47,43 +47,53 @@ class MockReporter(Reporter):
         self.render_by_section(  # pragma: no cover
             renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def render(
+            self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """A mock render method."""
         return "Mock Report"  # pragma: no cover
 
-    def invalid_render_no_options(self, *, case: Case, section: Section) -> str:  # pylint: disable=unused-argument
+    def invalid_render_no_options(
+            self, *, case: Case, section: Section) -> str:  # pylint: disable=unused-argument
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that is missing options parameter"  # pragma: no cover
 
-    def invalid_render_options_wrong_type(self, *, case: Case, section: Section, options: str) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def invalid_render_options_wrong_type(
+            self, *, case: Case, section: Section, options: str) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that has options parameter of wrong type"  # pragma: no cover
 
-    def invalid_render_options_missing_type_hint(self, *, case: Case, section: Section, options) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def invalid_render_options_missing_type_hint(
+            self, *, case: Case, section: Section, options) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that has options parameter missing type hint"  # pragma: no cover
 
-    def invalid_render_no_section(self, *, case: Case, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def invalid_render_no_section(
+            self, *, case: Case, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that is missing section parameter"  # pragma: no cover
 
-    def invalid_render_section_wrong_type(self, *, case: Case, section: str, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
+    def invalid_render_section_wrong_type(
+            self, *, case: Case, section: str, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that has section parameter of wrong type"  # pragma: no cover
 
-    def invalid_render_section_missing_type_hint(self, *, case: Case, section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
+    def invalid_render_section_missing_type_hint(
+            self, *, case: Case, section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that has section parameter missing type hint"  # pragma: no cover
 
-    def invalid_render_no_case(self, *, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def invalid_render_no_case(
+            self, *, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that is missing case parameter"  # pragma: no cover
 
-    def invalid_render_case_wrong_type(self, *, case: str, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
+    def invalid_render_case_wrong_type(
+            self, *, case: str, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that has case parameter of wrong type"  # pragma: no cover
 
-    def invalid_render_case_missing_type_hint(self, *, case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
+    def invalid_render_case_missing_type_hint(
+            self, *, case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
         """An invalid render method for testing purposes."""
         return "Invalid Mock Report render method that has case parameter missing type hint"  # pragma: no cover
 
