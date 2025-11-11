@@ -23,7 +23,7 @@ from simplebench.reporters.validators.exceptions import ReportersValidatorsError
 _CORE_TYPES_IMPORTED = False
 
 # Define placeholders for runtime name resolution
-Case = None  # pylint: disable=invalid-name  # type: ignore[assignment]
+Case = None  # pylint: disable=invalid-name  # type: ignore[assignment,var-annotated]
 
 
 def _deferred_core_imports() -> None:
