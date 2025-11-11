@@ -177,3 +177,20 @@ def session_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Session:
             If None, caching is disabled for this call.
     """
     return Session(cases=[case_factory(cache_id=cache_id)], verbosity=Verbosity.QUIET)
+
+
+@cached_factory
+def post_run_case_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Case:
+    """Return a default Case instance representing a post-benchmarking run state for testing purposes.
+
+    The Case is initialized with default attributes and includes benchmark results
+    based on the `default_benchcase` function.
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+    """
+    case = Case(**case_kwargs_factory())
+    case.run()
+    return case

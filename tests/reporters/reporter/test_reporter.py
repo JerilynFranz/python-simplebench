@@ -27,10 +27,9 @@ from ...factories import (FactoryReporter, case_factory, choice_conf_factory,
                           choice_conf_kwargs_factory, choice_factory,
                           choices_factory, default_description,
                           default_reporter_callback, default_reporter_name,
-                          flag_name_factory, namespace_factory, path_factory,
+                          namespace_factory, path_factory,
                           report_parameters_factory, reporter_factory,
-                          reporter_kwargs_factory, reporter_namespace_factory,
-                          session_factory)
+                          reporter_kwargs_factory, session_factory)
 from ...testspec import (NO_EXPECTED_VALUE, Assert, TestAction, TestGet,
                          TestSet, TestSpec, idspec)
 
@@ -489,8 +488,42 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'session': "not_a_session"},
         exception=SimpleBenchTypeError,
         exception_tag=ReporterErrorTag.REPORT_INVALID_SESSION_ARG)),
+    idspec('REPORT_014', TestAction(
+        name="report() invalid args type raises SimpleBenchTypeError/REPORT_INVALID_ARGS_ARG_TYPE",
+        action=reporter_factory().report,
+        kwargs={'args': "not_a_namespace",
+                'case': case_factory(),
+                'choice': choice_factory(),
+                'path': path_factory(),
+                'session': session_factory()},
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.REPORT_INVALID_ARGS_ARG_TYPE)),
+    idspec('REPORT_015', TestAction(
+        name="report() with missing args raises TypeError",
+        action=reporter_factory().report,
+        kwargs={'case': case_factory(),
+                'choice': choice_factory(),
+                'path': path_factory(),
+                'session': session_factory()},
+        exception=TypeError)),
+    idspec('REPORT_016', TestAction(
+        name="report() with missing case raises TypeError",
+        action=reporter_factory().report,
+        kwargs={'args': namespace_factory(),
+                'choice': choice_factory(),
+                'path': path_factory(),
+                'session': session_factory()},
+        exception=TypeError)),
+    idspec('REPORT_017', TestAction(
+        name="report() with missing choice raises TypeError",
+        action=reporter_factory().report,
+        kwargs={'args': namespace_factory(),
+                'case': case_factory(),
+                'path': path_factory(),
+                'session': session_factory()},
+        exception=TypeError)),
 ])
-def test_reporter_report(testspec: TestSpec) -> None:
+def test_report(testspec: TestSpec) -> None:
     """Test Reporter.report() method."""
     testspec.run()
 
@@ -787,97 +820,34 @@ def test_find_options_by_type(testspec: TestSpec) -> None:
     testspec.run()
 
 
-@pytest.mark.parametrize('testspec', [
-    idspec('SELECT_TARGETS_FROM_ARGS_001', TestAction(
-        name="select_targets_from_args() with args specifying console target returns console target",
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': reporter_namespace_factory([flag_name_factory(), Target.CONSOLE.value]),
+def run_report_testspecs() -> list[TestSpec]:
+    """Generate TestSpecs for Reporter.run_report()."""
+    testspecs: list[TestSpec] = [
+        idspec('RUN_REPORT_001', TestAction(
+            name="run_report() with all valid args runs successfully",
+            action=reporter_factory().run_report,
+            kwargs={
+                'args': namespace_factory(),
+                'case': case_factory(),
                 'choice': choice_factory(),
-                'default_targets': {Target.FILESYSTEM}},
-        assertion=Assert.EQUAL,
-        expected={Target.CONSOLE})),
-    idspec('SELECT_TARGETS_FROM_ARGS_002', TestAction(
-        name="select_targets_from_args() with no specified target returns default targets",
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': reporter_namespace_factory([flag_name_factory()]),
+                'path': path_factory(),
+                'session': session_factory(),
+                'callback': default_reporter_callback,
+            },
+            expected=NO_EXPECTED_VALUE)),
+        idspec('RUN_REPORT_002', TestAction(
+            name="run_report() with minimal args runs successfully",
+            action=reporter_factory().run_report,
+            kwargs={
+                'args': namespace_factory(),
+                'case': case_factory(),
                 'choice': choice_factory(),
-                'default_targets': {Target.FILESYSTEM}},
-        assertion=Assert.EQUAL,
-        expected={Target.FILESYSTEM})),
-    idspec('SELECT_TARGETS_FROM_ARGS_004', TestAction(
-        name="select_targets_from_args() with args specifying multiple targets returns all specified targets",
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': reporter_namespace_factory(
-                            [flag_name_factory(), Target.CONSOLE.value, Target.FILESYSTEM.value]),
-                'choice': choice_factory(),
-                'default_targets': {Target.FILESYSTEM}},
-        assertion=Assert.EQUAL,
-        expected={Target.CONSOLE, Target.FILESYSTEM})),
-    idspec('SELECT_TARGETS_FROM_ARGS_005', TestAction(
-        name=("select_targets_from_args() incorrect args type raises SimpleBenchTypeError"),
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': "not_a_namespace", 'choice': choice_factory(), 'default_targets': {Target.FILESYSTEM}},
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)),
-    idspec('SELECT_TARGETS_FROM_ARGS_006', TestAction(
-        name=("select_targets_from_args() incorrect choice type raises SimpleBenchTypeError"),
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': reporter_namespace_factory([flag_name_factory()]),
-                'choice': "not_a_choice_instance",
-                'default_targets': {Target.FILESYSTEM}},
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)),
-    idspec('SELECT_TARGETS_FROM_ARGS_007', TestAction(
-        name=("select_targets_from_args() incorrect default_targets type raises SimpleBenchTypeError"),
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': reporter_namespace_factory([flag_name_factory()]),
-                'choice': choice_factory(),
-                'default_targets': "not_a_set_of_targets"},
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG)),
-    idspec('SELECT_TARGETS_FROM_ARGS_008', TestAction(
-        name="select_targets_from_args() with args including unsupported target raises SimpleBenchValueError",
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': reporter_namespace_factory(
-                            args=[flag_name_factory(), Target.CUSTOM.value],
-                            choices=[Target.CUSTOM.value, Target.FILESYSTEM.value]),
-                'choice': choice_factory(),
-                'default_targets': {Target.FILESYSTEM}},
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)),
-    idspec('SELECT_TARGETS_FROM_ARGS_009', TestAction(
-        name=("select_targets_from_args() with an arg that does not match any "
-              "Target enums raises SimpleBenchValueError"),
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': reporter_namespace_factory(
-                            args=[flag_name_factory(), "non_existent_target"],
-                            choices=["non_existent_target"]),
-                'choice': choice_factory(),
-                'default_targets': {Target.FILESYSTEM}},
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)),
-    idspec('SELECT_TARGETS_FROM_ARGS_010', TestAction(
-        name="select_targets_from_args() with default target not supported by choice raises SimpleBenchValueError",
-        action=reporter_factory().select_targets_from_args,
-        kwargs={'args': reporter_namespace_factory([flag_name_factory()]),
-                'choice': choice_factory(),
-                'default_targets': {Target.CUSTOM}},
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)),
-])
-def test_select_targets_from_args(testspec: TestSpec) -> None:
-    """Test Reporter.select_targets_from_args() method."""
-    testspec.run()
-
-
-def report_testspecs() -> list[TestSpec]:
-    """Generate TestSpecs for Reporter.report() method."""
-    testspecs: list[TestSpec] = []
-
+            })),
+    ]
     return testspecs
 
 
-@pytest.mark.parametrize('testspec', report_testspecs())
-def test_report(testspec: TestSpec) -> None:
-    """Test Reporter.report() method."""
+@pytest.mark.parametrize('testspec', run_report_testspecs())
+def test_run_report(testspec: TestSpec) -> None:
+    """Test Reporter.run_report() method."""
     testspec.run()

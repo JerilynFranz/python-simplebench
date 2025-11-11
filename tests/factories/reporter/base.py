@@ -1,7 +1,5 @@
 """Factories for creating Reporter, Choice, and Choices test objects."""
 # pylint: disable=unused-argument
-from __future__ import annotations
-
 from argparse import Namespace
 from pathlib import Path
 from typing import Any, Iterable
@@ -89,20 +87,21 @@ class FactoryReporter(Reporter):
     both good and bad parameters.
 
     """
-    def __init__(self,
-                 *,
-                 name: str,
-                 description: str,
-                 options_type: type[ReporterOptions],
-                 sections: Iterable[Section],
-                 targets: Iterable[Target],
-                 default_targets: Iterable[Target] | None = None,
-                 subdir: str = '',
-                 file_suffix: str,
-                 file_unique: bool,
-                 file_append: bool,
-                 formats: Iterable[Format],
-                 choices: ChoicesConf) -> None:
+    def __init__(  # pylint: disable=redefined-outer-name
+                self,
+                *,
+                name: str,
+                description: str,
+                options_type: type[ReporterOptions],
+                sections: Iterable[Section],
+                targets: Iterable[Target],
+                default_targets: Iterable[Target] | None = None,
+                subdir: str = '',
+                file_suffix: str,
+                file_unique: bool,
+                file_append: bool,
+                formats: Iterable[Format],
+                choices: ChoicesConf) -> None:
         """Initialize Reporter with provided kwargs.
 
         Args:
@@ -218,6 +217,7 @@ def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWA
         description=default_description(),
         sections=default_sections(),
         targets=default_targets(),
+        default_targets=default_default_targets(),
         formats=default_formats(),
         choices=default_choices_confs(),
         file_suffix=default_file_suffix(),
@@ -240,6 +240,7 @@ def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWA
         options_type=default_options_type(),
         sections=default_sections(),
         targets=default_targets(),
+        default_targets=default_default_targets(),
         formats=default_formats(),
         choices=default_choices_conf(),
         subdir="",
@@ -259,6 +260,7 @@ def default_reporter_kwargs() -> ReporterKWArgs:
         description=default_description(),
         sections=default_sections(),
         targets=default_targets(),
+        default_targets=default_default_targets(),
         formats=default_formats(),
         choices=default_choices_confs(),
         file_suffix=default_file_suffix(),
@@ -470,6 +472,7 @@ def choice_factory(*,
 
             Tuple is used to ensure hashability for caching.
     """
+    is_default: bool = name is None and flags is None
     if name is None:
         name = default_choice_name()
     if flags is None:
@@ -478,7 +481,7 @@ def choice_factory(*,
         raise TypeError(f"Invalid type for name argument: {name!r}")
     if not isinstance(flags, tuple) or not all(isinstance(f, str) for f in flags):
         raise TypeError(f"Invalid type for flags argument: {flags!r}")
-    if flags is not None or name is not None:
+    if not is_default:
         choices_conf = choices_conf_factory(cache_id=cache_id,
                                             choices=(choice_conf_factory(cache_id=cache_id, name=name, flags=flags), ))
     else:

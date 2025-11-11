@@ -594,9 +594,9 @@ def max_time_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
     This is for use in configuring benchmark cases in tests.
 
     Returns:
-        float: `10.0`
+        float: `0.2`
     """
-    return 10.0
+    return 0.2
 
 
 def default_max_time() -> float:
@@ -605,7 +605,7 @@ def default_max_time() -> float:
     It always returns the same number instance created by max_time_factory().
 
     Returns:
-        float: `10.0`
+        float: `0.2`
     """
     return max_time_factory(cache_id=f'{__name__}.default_max_time:singleton')
 
