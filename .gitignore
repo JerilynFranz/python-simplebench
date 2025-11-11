@@ -3,6 +3,10 @@
 # codeql
 # codeql-custom-queries-python/
 
+# VSCode settings
+.vscode/launch.json
+.vscode/tasks.json
+
 # Benchmarks
 .benchmark_reports
 .benchmarks
