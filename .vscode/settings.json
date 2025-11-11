@@ -56,5 +56,6 @@
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
     }
-  }
+  },
+  "mypy-type-checker.preferDaemon": true
 }
