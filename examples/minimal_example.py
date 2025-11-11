@@ -45,6 +45,7 @@ various output targets. The available reports and their default targets are:
 **Usage Examples**
 
 Generate a rich table report to the default target (console):
+
     python examples/minimal_example.py --rich-table
 
 Generate a rich table report specifically to the console:
@@ -63,7 +64,6 @@ See all available command-line options:
 
     python examples/minimal_example.py --help
 """
-
 import simplebench
 
 
