@@ -25,10 +25,37 @@ from simplebench.reporters.reporter import Reporter
 from .options import CSVOptions
 from .exceptions import CSVReporterErrorTag
 
+# Deferred imports to avoid circular dependencies. This pattern is required for any
+# type hints that are resolved at runtime via get_type_hints() and involve a
+# circular dependency (e.g., Reporter -> Case -> Choice -> Reporter).
+_CORE_TYPES_IMPORTED = False
+
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
+    _CORE_TYPES_IMPORTED = True
+else:
+    # Define placeholders for runtime name resolution
+    Case = None  # pylint: disable=invalid-name  # type: ignore[assignment]
+    Choice = None  # pylint: disable=invalid-name  # type: ignore[assignment]
+    Session = None  # pylint: disable=invalid-name  # type: ignore[assignment]
+
+
+def _deferred_core_imports() -> None:
+    """Deferred import of core types to avoid circular imports during initialization.
+
+    This imports `Case`, `Choice`, and `Session` only when needed at runtime,
+    preventing circular import issues during module load time while still allowing
+    their use in type hints and runtime validations.
+    """
+    global Case, Choice, Session, _CORE_TYPES_IMPORTED  # pylint: disable=global-statement
+    if _CORE_TYPES_IMPORTED:
+        return
+    from simplebench.case import Case  # pylint: disable=import-outside-toplevel
+    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
+    from simplebench.session import Session  # pylint: disable=import-outside-toplevel
+    _CORE_TYPES_IMPORTED = True
 
 
 class CSVReporter(Reporter):
@@ -164,6 +191,8 @@ class CSVReporter(Reporter):
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        # Ensure core types are imported before use by the render method and its validators
+        _deferred_core_imports()
         self.render_by_section(
             renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
@@ -181,6 +210,8 @@ class CSVReporter(Reporter):
         Raises:
             SimpleBenchValueError: If the specified section is unsupported.
         """
+        # Ensure core types are imported before use by the validators
+        _deferred_core_imports()
         case = validate_type(case, Case, 'case',
                              CSVReporterErrorTag.RENDER_INVALID_CASE)
         section = validate_type(section, Section, 'section',

@@ -10,8 +10,8 @@ from rich.text import Text
 
 from simplebench.enums import Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metaclasses import ICase, ISession
-from simplebench.reporters.choice.choice import Choice, IChoice
+from simplebench.metaclasses import ISession
+from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
@@ -20,9 +20,27 @@ from simplebench.reporters.validators import (validate_report_renderer,
 from simplebench.utils import sanitize_filename
 from simplebench.validators import validate_type
 
+_CASE_IMPORTED: bool = False
+"""Indicates whether Case has been imported yet."""
+
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.session import Session
+    _CASE_IMPORTED = True
+
+else:
+    # Placeholder for deferred import of Case
+    Case = None   # pylint: disable=invalid-name
+
+
+def deferred_case_import() -> None:
+    """Deferrred import of Case to avoid circular imports."""
+    global Case, _CASE_IMPORTED  # pylint: disable=global-statement
+    if _CASE_IMPORTED:
+        return
+    from simplebench.case import \
+        Case  # pylint: disable=redefined-outer-name,import-outside-toplevel
+    _CASE_IMPORTED = True
 
 
 class _ReporterOrchestrationMixin:
@@ -65,20 +83,20 @@ class _ReporterOrchestrationMixin:
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        deferred_case_import()
+
         renderer = validate_report_renderer(renderer)
 
         args = validate_type(
             args, Namespace, 'args',
             ReporterErrorTag.RENDER_BY_CASE_INVALID_ARGS_ARG_TYPE)
 
-        # We validate for Case using ICase to prevent circular import issues
-        if not isinstance(case, ICase):
+        if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
                 tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_CASE_ARG)
 
-        # We validate for Choice using IChoice to prevent circular import issues
-        if not isinstance(choice, IChoice):
+        if not isinstance(choice, Choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
                 tag=ReporterErrorTag.RENDER_BY_CASE_INVALID_CHOICE_ARG_TYPE)
@@ -180,20 +198,20 @@ class _ReporterOrchestrationMixin:
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        deferred_case_import()
+
         renderer = validate_report_renderer(renderer)
 
         args = validate_type(
             args, Namespace, 'args',
             ReporterErrorTag.RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE)
 
-        # We validate for Case using ICase to prevent circular import issues
-        if not isinstance(case, ICase):
+        if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
                 tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_CASE_ARG)
 
-        # We validate for Choice using IChoice to prevent circular import issues
-        if not isinstance(choice, IChoice):
+        if not isinstance(choice, Choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
                 tag=ReporterErrorTag.RENDER_BY_SECTION_INVALID_CHOICE_ARG_TYPE)

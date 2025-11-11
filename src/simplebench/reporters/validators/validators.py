@@ -1,5 +1,4 @@
 """Validators for reporters stuff."""
-from __future__ import annotations
 import inspect
 from typing import Any, Callable, get_type_hints, TypeVar, overload, cast
 from types import UnionType
@@ -13,19 +12,31 @@ from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
 
-_CASE_IMPORTED: bool = False
-"""Indicates whether Case has been imported yet."""
-# Placeholder for deferred import of Case
-Case = None   # pylint: disable=invalid-name
+# Deferred imports to avoid circular dependencies. This pattern is required for any
+# type hints that are resolved at runtime via get_type_hints() and involve a
+# circular dependency (e.g., Reporter -> Case -> Choice -> Reporter).
+#
+# Becase the reporter validators need to specifically validate callbacks that use
+# the Case type, we need to defer the import of that type until runtime to avoid
+# circular imports. If other core types are needed in the future, they can be added
+# here as well.
+_CORE_TYPES_IMPORTED = False
+
+# Define placeholders for runtime name resolution
+Case = None  # pylint: disable=invalid-name  # type: ignore[assignment]
 
 
-def deferred_case_import() -> None:
-    """Deferrred import of Case to avoid circular imports during initialization."""
-    global Case, _CASE_IMPORTED  # pylint: disable=global-statement
-    if _CASE_IMPORTED:
+def _deferred_core_imports() -> None:
+    """Deferred import of core types to avoid circular imports during initialization.
+
+    This imports `Case`, only when needed at runtime, preventing circular import issues
+    during module load time while still allowing its use in type hints and runtime validations.
+    """
+    global Case, _CORE_TYPES_IMPORTED  # pylint: disable=global-statement
+    if _CORE_TYPES_IMPORTED:
         return
-    from ...case import Case  # pylint: disable=redefined-outer-name,import-outside-toplevel
-    _CASE_IMPORTED = True
+    from simplebench.case import Case  # pylint: disable=import-outside-toplevel,redefined-outer-name
+    _CORE_TYPES_IMPORTED = True
 
 
 T = TypeVar('T')
@@ -43,6 +54,7 @@ def resolve_type_hints(callback: Callable) -> dict[str, type]:
     Raises:
         SimpleBenchTypeError: If the type hints cannot be resolved.
     """
+    _deferred_core_imports()
     try:
         resolved_hints = get_type_hints(
             callback, globalns=callback.__globals__)  # pyright: ignore[reportAttributeAccessIssue]
@@ -134,7 +146,7 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
     Raises:
         SimpleBenchTypeError: If the callback is invalid.
     """
-    deferred_case_import()
+    _deferred_core_imports()
     if callback is None and allow_none:
         return None
     if not callable(callback):
@@ -191,7 +203,7 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
     Raises:
         SimpleBenchTypeError: If the renderer is invalid.
     """
-    deferred_case_import()
+    _deferred_core_imports()
     if not callable(renderer):
         raise SimpleBenchTypeError(
             f'Invalid renderer: {renderer}. Must be a callable.',
