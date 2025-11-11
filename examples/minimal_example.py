@@ -12,7 +12,8 @@ def addition_benchmark():
 
 
 @benchmark('string_ops',
-           title='String Concatenation Benchmark')
+           title='String Concatenation Benchmark',
+           rounds=5)
 def string_concatenation_benchmark():
     '''A simple string concatenation benchmark.'''
     result = ''
