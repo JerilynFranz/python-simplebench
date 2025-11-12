@@ -173,6 +173,32 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
             )),
     ])
 
+    def add_unsupported_flag_type_to_argparse() -> ArgumentParser:
+        """Create an ArgumentParser with an unsupported flag type added by the reporter.
+        """
+        choice_conf_kwargs = choice_conf_kwargs_factory().replace(
+            flag_type=FlagType.INVALID, flags=['--invalid-flag'])
+        choices_conf = ChoicesConf(choices=[ChoiceConf(**choice_conf_kwargs)])
+        reporter_kwargs = reporter_kwargs_factory().replace(choices=choices_conf)
+        reporter = FactoryReporter(**reporter_kwargs)
+        arg_parser = ArgumentParser(prog='test_reporter')
+        reporter.add_flags_to_argparse(arg_parser)
+        return arg_parser  # pragma: no cover   # should raise before this point
+    testspecs.append(idspec('ADD_FLAGS_TO_ARGPARSE_006', TestAction(
+        name="add_flags_to_argparse() with unsupported flag type raises SimpleBenchValueError",
+        action=add_unsupported_flag_type_to_argparse,
+        exception=SimpleBenchValueError,
+        exception_tag=ReporterErrorTag.ADD_FLAGS_UNSUPPORTED_FLAG_TYPE,
+    )))
+
+    testspecs.append(idspec('ADD_FLAGS_TO_ARGPARSE_007', TestAction(
+        name="add_flags_to_argparse() with invalid parser arg type raises SimpleBenchTypeError",
+        action=reporter_factory().add_flags_to_argparse,
+        kwargs={'parser': "not_an_argument_parser"},
+        exception=SimpleBenchTypeError,
+        exception_tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
+    )))
+
     return testspecs
 
 
