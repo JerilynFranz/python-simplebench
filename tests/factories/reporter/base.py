@@ -356,8 +356,8 @@ def default_reporter_kwargs() -> ReporterKWArgs:
     return reporter_kwargs_factory(cache_id=f'{__name__}.default_reporter_kwargs:singleton')
 
 
-@cached_factory
-def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConfKWArgs:
+@overload
+def choice_conf_kwargs_factory() -> ChoiceConfKWArgs:
     """Return a ChoiceConfKWArgs for testing purposes.
 
     It contains all parameters set to explicit default values for testing purposes.
@@ -382,6 +382,81 @@ def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceCo
             extra=default_extra()
        )
     ```
+    Returns:
+        ChoiceConfKWArgs: A default ChoiceConfKWArgs instance.
+    """
+
+
+# Overloads provide IDE tooltips and docstrings for the cache_factory decorated function.
+# They are not strictly necessary for functionality, but improve developer experience.
+@overload
+def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConfKWArgs:
+    """Return a ChoiceConfKWArgs for testing purposes.
+
+    It contains all parameters set to explicit default values for testing purposes.
+    Because ChoiceConfKWArgs has many parameters, they are listed here for clarity:
+
+    ```python
+
+       ChoiceConfKWArgs(
+            flags=default_choice_flags(),
+            flag_type=default_flag_type(),
+            name=default_choice_name(),
+            description=default_description(),
+            subdir=default_subdir(),
+            sections=default_sections(),
+            targets=default_targets(),
+            default_targets=default_default_targets(),
+            output_format=default_output_format(),
+            file_suffix=default_file_suffix(),
+            file_unique=default_file_unique(),
+            file_append=default_file_append(),
+            options=default_reporter_options(),
+            extra=default_extra(),
+        )
+    ```
+
+    Args:
+        cache_id (CacheId, optional, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+    Returns:
+        ChoiceConfKWArgs: A default ChoiceConfKWArgs instance.
+    """
+
+
+@cached_factory
+def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceConfKWArgs:
+    """Return a ChoiceConfKWArgs for testing purposes.
+
+    It contains all parameters set to explicit default values for testing purposes.
+    Because ChoiceConfKWArgs has many parameters, they are listed here for clarity:
+
+    ```python
+
+       ChoiceConfKWArgs(
+            flags=default_choice_flags(),
+            flag_type=default_flag_type(),
+            name=default_choice_name(),
+            description=default_description(),
+            subdir=default_subdir(),
+            sections=default_sections(),
+            targets=default_targets(),
+            default_targets=default_default_targets(),
+            output_format=default_output_format(),
+            file_suffix=default_file_suffix(),
+            file_unique=default_file_unique(),
+            file_append=default_file_append(),
+            options=default_reporter_options(),
+            extra=default_extra(),
+        )
+    ```
+
+    Args:
+        cache_id (CacheId, optional, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+
     Returns:
         ChoiceConfKWArgs: A default ChoiceConfKWArgs instance.
     """
