@@ -13,125 +13,64 @@ Example:
 The cache for all factories can be cleared by calling `clear_cache()`.
 """
 from ..cache_factory import clear_cache
-
-from ._primitives import (
-    n_factory,
-    path_factory,
-    case_group_factory,
-    default_case_group,
-    title_factory,
-    default_title,
-    subdir_factory,
-    default_subdir,
-    sections_factory,
-    default_sections,
-    targets_factory,
-    default_targets,
-    default_targets_factory,
-    default_default_targets,
-    formats_factory,
-    default_formats,
-    output_format_factory,
-    default_output_format,
-    description_factory,
-    default_description,
-    reporter_name_factory,
-    default_reporter_name,
-    choice_name_factory,
-    flag_name_factory,
-    default_choice_name,
-    choice_flags_factory,
-    default_choice_flags,
-    flag_type_factory,
-    default_flag_type,
-    file_suffix_factory,
-    default_file_suffix,
-    file_unique_factory,
-    default_file_unique,
-    file_append_factory,
-    default_file_append,
-    report_output_factory,
-    default_report_output,
-    iterations_factory,
-    default_iterations,
-    warmup_iterations_factory,
-    default_warmup_iterations,
-    rounds_factory,
-    default_rounds,
-    min_time_factory,
-    default_min_time,
-    max_time_factory,
-    default_max_time,
-    variation_cols_factory,
-    kwargs_variations_factory,
-    total_elapsed_factory,
-    interval_unit_factory,
-    interval_scale_factory,
-    ops_per_interval_unit_factory,
-    ops_per_interval_scale_factory,
-    memory_unit_factory,
-    memory_scale_factory,
-    variation_marks_factory,
-)
-from ._utils import (
-    DefaultExtra,
-    extra_factory,
-    default_extra,
-)
-from .argparse import (
-    namespace_factory,
-    argument_parser_factory,
-    boolean_flag_factory,
-    list_of_strings_flag_factory,
-    reporter_namespace_factory,
-)
-from .case import (
-    case_factory,
-    session_factory,
-    runner_factory,
-    default_runner,
-    case_kwargs_factory,
-    minimal_case_kwargs_factory,
-    default_minimal_case_kwargs,
-    default_benchcase,
-)
-from .reporter import (
-    reporter_factory,
-    choice_factory,
-    choices_factory,
-    reporter_kwargs_factory,
-    default_reporter_kwargs,
-    choice_conf_kwargs_factory,
-    default_choice_conf_kwargs,
-    choices_conf_kwargs_factory,
-    default_choices_conf_kwargs,
-    choice_conf_factory,
-    default_choice_conf,
-    choices_conf_factory,
-    default_choices_conf,
-    report_parameters_factory,
-    FactoryReporter,
-    ConfiguredReporterOptions,
-    default_options_type,
-)
-from .results import (
-    results_kwargs_factory,
-    results_extra_info_factory,
-    iterations_sequence_factory,
-    peak_memory_factory,
-    memory_factory,
-    per_round_timings_factory,
-    ops_per_interval_factory,
-)
+from ._primitives import (case_group_factory, choice_flags_factory,
+                          choice_name_factory, default_case_group,
+                          default_choice_flags, default_choice_name,
+                          default_default_targets, default_description,
+                          default_file_append, default_file_suffix,
+                          default_file_unique, default_flag_type,
+                          default_formats, default_iterations,
+                          default_max_time, default_min_time,
+                          default_output_format, default_report_output,
+                          default_reporter_name, default_rounds,
+                          default_sections, default_subdir, default_targets,
+                          default_targets_factory, default_title,
+                          default_warmup_iterations, description_factory,
+                          file_append_factory, file_suffix_factory,
+                          file_unique_factory, flag_name_factory,
+                          flag_type_factory, formats_factory,
+                          interval_scale_factory, interval_unit_factory,
+                          iterations_factory, kwargs_variations_factory,
+                          max_time_factory, memory_scale_factory,
+                          memory_unit_factory, min_time_factory, n_factory,
+                          ops_per_interval_scale_factory,
+                          ops_per_interval_unit_factory, output_format_factory,
+                          output_path_factory, report_output_factory,
+                          reporter_name_factory, rounds_factory,
+                          sections_factory, subdir_factory, targets_factory,
+                          title_factory, total_elapsed_factory,
+                          variation_cols_factory, variation_marks_factory,
+                          warmup_iterations_factory)
+from ._utils import DefaultExtra, default_extra, extra_factory
+from .argparse import (argument_parser_factory, boolean_flag_factory,
+                       list_of_strings_flag_factory, namespace_factory,
+                       reporter_namespace_factory)
+from .case import (case_factory, case_kwargs_factory, default_benchcase,
+                   default_minimal_case_kwargs, default_runner,
+                   minimal_case_kwargs_factory, runner_factory)
+from .console import console_factory
+from .path import path_factory
+from .reporter import (ConfiguredReporterOptions, FactoryReporter,
+                       choice_conf_factory, choice_conf_kwargs_factory,
+                       choice_factory, choices_conf_factory,
+                       choices_conf_kwargs_factory, choices_factory,
+                       default_choice_conf, default_choice_conf_kwargs,
+                       default_choices_conf, default_choices_conf_kwargs,
+                       default_options_type, default_reporter_kwargs,
+                       report_parameters_factory, reporter_factory,
+                       reporter_kwargs_factory)
 from .reporter_callback import default_reporter_callback
-from .reporter_options import (
-    reporter_options_type_factory,
-    default_reporter_options_type,
-    reporter_options_factory,
-    default_reporter_options,
-    reporter_options_tuple_factory,
-    default_reporter_options_tuple,
-)
+from .reporter_options import (default_reporter_options,
+                               default_reporter_options_tuple,
+                               default_reporter_options_type,
+                               reporter_options_factory,
+                               reporter_options_tuple_factory,
+                               reporter_options_type_factory)
+from .results import (iterations_sequence_factory, memory_factory,
+                      ops_per_interval_factory, peak_memory_factory,
+                      per_round_timings_factory, results_extra_info_factory,
+                      results_kwargs_factory)
+from .session import session_factory, session_kwargs_factory
 
 __all__ = [
     # Cache control
@@ -139,7 +78,6 @@ __all__ = [
 
     # Primitives factories
     'n_factory',
-    'path_factory',
     'case_group_factory',
     'default_case_group',
     'title_factory',
@@ -192,9 +130,11 @@ __all__ = [
     'interval_scale_factory',
     'ops_per_interval_unit_factory',
     'ops_per_interval_scale_factory',
+    'output_path_factory',
     'memory_unit_factory',
     'memory_scale_factory',
     'variation_marks_factory',
+    'output_path_factory',
 
     # Utils factories
     'DefaultExtra',
@@ -207,6 +147,12 @@ __all__ = [
     'boolean_flag_factory',
     'list_of_strings_flag_factory',
     'reporter_namespace_factory',
+
+    # Path factories
+    'path_factory',
+
+    # Console factories
+    'console_factory',
 
     # Case factories
     'case_factory',
@@ -252,4 +198,8 @@ __all__ = [
     'memory_factory',
     'per_round_timings_factory',
     'ops_per_interval_factory',
+
+    # Session factories
+    'session_kwargs_factory',
+    'session_factory',
 ]

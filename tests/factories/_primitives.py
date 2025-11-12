@@ -5,11 +5,74 @@ factories in other modules.
 """
 # pylint: disable=unused-argument
 from __future__ import annotations
+
+import tempfile
 from pathlib import Path
+from typing import overload
 
-from simplebench.enums import Section, Target, Format, FlagType
+from simplebench.enums import FlagType, Format, Section, Target
 
-from ..cache_factory import cached_factory, CacheId, CACHE_DEFAULT
+from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
+
+
+# overloads provide a tooltip assist for the decorated function and IDE tooltips
+# that is needed because the cache_factory decorators create a function
+# with a confusing tooltip (inherently).
+@overload
+def output_path_factory() -> Path:
+    """Return a default output Path instance for testing purposes.
+
+    This path points to a directory inside the system's temporary directory.
+
+    This function is cached by default to return the same Path instance
+    for identical calls, unless a different cache_id is provided.
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+    Returns:
+        Path: A Path object pointing to a directory in the temporary directory.
+    """
+
+
+@overload
+def output_path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
+    """Return a default output Path instance for testing purposes.
+
+    This path points to a directory inside the system's temporary directory.
+
+    This function is cached by default to return the same Path instance
+    for identical calls, unless a different cache_id is provided.
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+    Returns:
+        Path: A Path object pointing to a directory in the temporary directory.
+    """
+
+
+@cached_factory
+def output_path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
+    """Return a default output Path instance for testing purposes.
+
+    This path points to a directory inside the system's temporary directory.
+
+    This function is cached by default to return the same Path instance
+    for identical calls, unless a different cache_id is provided.
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+    Returns:
+        Path: A Path object pointing to a file in the temporary directory.
+    """
+    # Use tempfile.gettempdir() to get a cross-platform temporary directory
+    # e.g., '/tmp' on Linux, 'C:\Users\...\AppData\Local\Temp' on Windows
+    return Path(tempfile.gettempdir())
 
 
 @cached_factory
@@ -20,21 +83,6 @@ def n_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:
         int: `1`
     """
     return 1
-
-
-@cached_factory
-def path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
-    """Return a default Path instance for testing purposes.
-
-    Args:
-        cache_id (CacheId, default=CacheDefault):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        Path: `Path('/tmp/mock_report.txt')`
-    """
-    return Path('/tmp/mock_report.txt')
 
 
 @cached_factory

@@ -2,7 +2,7 @@
 # pylint: disable=unused-argument
 from argparse import Namespace
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, overload
 
 from simplebench.case import Case
 from simplebench.enums import Format, Section, Target
@@ -21,13 +21,14 @@ from .._primitives import (default_choice_flags, default_choice_name,
                            default_file_unique, default_flag_type,
                            default_formats, default_output_format,
                            default_report_output, default_reporter_name,
-                           default_sections, default_subdir, default_targets,
-                           path_factory)
+                           default_sections, default_subdir, default_targets)
 from .._utils import default_extra
 from ..argparse import namespace_factory
-from ..case import case_factory, session_factory
+from ..case import case_factory
+from ..path import path_factory
 from ..reporter_callback import default_reporter_callback
 from ..reporter_options import default_reporter_options
+from ..session import session_factory
 
 
 @uncached_factory
@@ -194,6 +195,87 @@ class ConfiguredReporterOptions(ReporterOptions):
 def default_options_type() -> type[ConfiguredReporterOptions]:
     """Return a default ReporterOptions type for testing purposes."""
     return ConfiguredReporterOptions
+
+
+# overloads provide tooltips and docstrings for the cache_factory decorated function
+@overload
+def reporter_kwargs_factory() -> ReporterKWArgs:
+    """Return a preconfigured ReporterKWArgs instance for testing purposes.
+
+    The returned ReporterKWArgs instance is preconfigured for testing and is immutable.
+
+    It is cached by default to ensure that repeated calls return the same instance.
+    This is safe because ReporterKWArgs is immutable and will always return the same values
+    for the same attributes, behaving consistently across tests.
+
+    If there is a need for a fresh instance, provide a unique cache_id or set cache_id to `None`.
+
+    It contains all parameters set to explicit default values for testing purposes:
+
+    ```python
+
+    ReporterKWArgs(
+        name=default_name(),
+        description=default_description(),
+        sections=default_sections(),
+        targets=default_targets(),
+        default_targets=default_default_targets(),
+        formats=default_formats(),
+        choices=default_choices_confs(),
+        file_suffix=default_file_suffix(),
+        file_unique=default_file_unique(),
+        file_append=default_file_append()
+    )
+    ```
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+
+    Returns:
+        ReporterKWArgs: A preconfigured instance with default values for testing.
+    """
+
+
+@overload
+def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWArgs:
+    """Return a preconfigured ReporterKWArgs instance for testing purposes.
+
+    The returned ReporterKWArgs instance is preconfigured for testing and is immutable.
+
+    It is cached by default to ensure that repeated calls return the same instance.
+    This is safe because ReporterKWArgs is immutable and will always return the same values
+    for the same attributes, behaving consistently across tests.
+
+    If there is a need for a fresh instance, provide a unique cache_id or set cache_id to `None`.
+
+    It contains all parameters set to explicit default values for testing purposes:
+
+    ```python
+
+    ReporterKWArgs(
+        name=default_name(),
+        description=default_description(),
+        sections=default_sections(),
+        targets=default_targets(),
+        default_targets=default_default_targets(),
+        formats=default_formats(),
+        choices=default_choices_confs(),
+        file_suffix=default_file_suffix(),
+        file_unique=default_file_unique(),
+        file_append=default_file_append()
+    )
+    ```
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+
+    Returns:
+        ReporterKWArgs: A preconfigured instance with default values for testing.
+    """
 
 
 @cached_factory
