@@ -1,6 +1,6 @@
 """ErrorTags for CSVReporter exceptions."""
-from simplebench.exceptions import ErrorTag
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
@@ -33,4 +33,4 @@ class CSVReporterErrorTag(ErrorTag):
     RENDER_INVALID_SECTION = "RENDER_INVALID_SECTION"
     """Something other than a valid Section enum member was passed to the CSVReporter.render() method."""
     RENDER_INVALID_OPTIONS = "RENDER_INVALID_OPTIONS"
-    """Something other than a valid CSVOptions instance was passed to the CSVReporter.render() method."""
+

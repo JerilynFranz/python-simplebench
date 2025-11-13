@@ -4,10 +4,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from simplebench.enums import Target
-from simplebench.exceptions import SimpleBenchNotImplementedError
+from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.validators import validate_type
+from simplebench.type_proxies import is_case, is_choice
 
 
 if TYPE_CHECKING:
@@ -61,13 +61,17 @@ class _ReporterPrioritizationMixin:
         Raises:
             SimpleBenchNotImplementedError: If no ReporterOptions instance can be found
         """
-        _deferred_core_imports()
-        case = validate_type(case, Case, 'case',
-                             ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE)
-        choice = validate_type(choice, Choice, 'choice',
-                               ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE)
+        # is_* checks handle deferred import runtime type checking for Case and Choice
+        if not is_case(case):
+            raise SimpleBenchTypeError(
+                f"Invalid case argument: expected Case instance, got {type(case).__name__}",
+                tag=ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE)
+        if not is_choice(choice):
+            raise SimpleBenchTypeError(
+                f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
+                tag=ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE)
 
-        cls = type(self)
+        cls = self.__class__
         options_cls = self.options_type
         # case.options is a list of ReporterOptions because Case.options is used
         # for all reporters. Thus, we need to filter by the specific type here

@@ -237,3 +237,16 @@ class ReporterProtocol(Protocol):
     def get_all_stats_values(self, results: list, section: Section) -> list[float]:
         """Get all statistical values for the given results and section."""
         ...
+
+    def _validate_render_by_args(
+        self: ReporterProtocol, *,
+        renderer: ReportRenderer,
+        args: Namespace,
+        case: Case,
+        choice: Choice,
+        path: Path | None = None,
+        session: Session | None = None,
+        callback: ReporterCallback | None = None
+    ) -> None:
+        """Validate common arguments for render_by_case and render_by_section methods."""
+        ...

@@ -26,9 +26,7 @@ from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import (SimpleBenchNotImplementedError,
                                     SimpleBenchTypeError,
                                     SimpleBenchValueError)
-from simplebench.metaclasses import ICase, ISession
 # simplebench.reporters
-from simplebench.reporters.choice.metaclasses import IChoice
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols import ReporterCallback
@@ -41,29 +39,34 @@ from simplebench.reporters.reporter.mixins import (
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.results import Results
+from simplebench.type_proxies import is_case, is_choice, is_session
 from simplebench.validators import (validate_bool, validate_iterable_of_type,
                                     validate_string, validate_type)
 
 T = TypeVar('T')
 
-_CHOICE_IMPORTED: bool = False
-"""Indicates whether Choice has been imported yet."""
-
-
-def deferred_choice_import() -> None:
-    """Deferred import of Choice to avoid circular imports during initialization."""
-    global Choice, _CHOICE_IMPORTED  # pylint: disable=global-statement
-    if _CHOICE_IMPORTED:
-        return
-    from simplebench.reporters.choice.choice import \
-        Choice  # pylint: disable=import-outside-toplevel
-    _CHOICE_IMPORTED = True
-
-
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
+
+
+def deferred_core_imports() -> None:
+    """Deferred import of core types to avoid circular imports during initialization.
+
+    This imports `Choice` when needed at runtime, preventing circular import issues
+    during module load time while still allowing its use in creating Choice()
+    instances from ChoiceConf() instances
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+    global Choice  # pylint: disable=global-statement
+    from simplebench.reporters.choice.choice import \
+        Choice  # pylint: disable=import-outside-toplevel
 
 
 class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
@@ -213,7 +216,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             SimpleBenchValueError: If any of the provided parameters have invalid values.
             SimpleBenchTypeError: If any of the provided parameters are of incorrect types.
         """
-        deferred_choice_import()
+        deferred_core_imports()
 
         self._name: str = validate_string(
             name, 'name',
@@ -384,14 +387,19 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             raise SimpleBenchTypeError(
                 "args argument must be an argparse.Namespace instance",
                 tag=ReporterErrorTag.REPORT_INVALID_ARGS_ARG_TYPE)
-        if not isinstance(case, ICase):
+        # is_* checks handle deferred import runtime type checking for Case, Choice, and Session
+        if not is_case(case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance",
                 tag=ReporterErrorTag.REPORT_INVALID_CASE_ARG)
-        if not isinstance(choice, IChoice):
+        if not is_choice(choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance",
                 tag=ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)
+        if not is_session(session) and session is not None:
+            raise SimpleBenchTypeError(
+                "session must be a Session instance if provided",
+                tag=ReporterErrorTag.REPORT_INVALID_SESSION_ARG)
 
         unsupported_sections = choice.sections - self.supported_sections()
         if unsupported_sections:
@@ -421,11 +429,6 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             raise SimpleBenchTypeError(
                 "Path must be a pathlib.Path instance when using FILESYSTEM target",
                 tag=ReporterErrorTag.REPORT_INVALID_PATH_ARG)
-
-        if session is not None and not isinstance(session, ISession):
-            raise SimpleBenchTypeError(
-                "session must be a Session instance if provided",
-                tag=ReporterErrorTag.REPORT_INVALID_SESSION_ARG)
 
         # Only proceed if there are results to report
         # TODO: THINK ABOUT THIS MORE. SHOULD WE RAISE AN EXCEPTION INSTEAD?
@@ -521,11 +524,11 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             SimpleBenchValueError: If the choice's sections, targets, or formats
                 are not supported by the reporter.
         """
-        deferred_choice_import()
-
-        choice = validate_type(
-            choice, Choice, 'choice',
-            ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
+        # is_choice check handles deferred import runtime type checking for Choice
+        if not is_choice(choice):
+            raise SimpleBenchTypeError(
+                "Expected a Choice instance",
+                tag=ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
 
         unsupported_sections = choice.sections - self.supported_sections()
         if unsupported_sections:

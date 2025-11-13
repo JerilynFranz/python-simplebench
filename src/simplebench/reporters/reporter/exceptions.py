@@ -6,6 +6,30 @@ from simplebench.exceptions.base import ErrorTag
 @enum_docstrings
 class ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the reporters.reporter module."""
+
+    # _validate_render_by_args()
+    VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE = (
+        "VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE")
+    """Invalid type for renderer argument in _validate_render_by_args()"""
+    VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE = (
+        "VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE")
+    """Invalid type for args argument in _validate_render_by_args()"""
+    VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE = (
+        "VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE")
+    """Invalid type for case argument in _validate_render_by_args()"""
+    VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE = (
+        "VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE")
+    """Invalid type for choice argument in _validate_render_by_args()"""
+    VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE = (
+        "VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE")
+    """Invalid type for session argument in _validate_render_by_args()"""
+    VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE = (
+        "VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE")
+    """Invalid type for path argument in _validate_render_by_args()"""
+    VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE = (
+        "VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE")
+    """Invalid type for callback argument in _validate_render_by_args()"""
+
     # get_prioritized_options()
     GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE = "GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE"
     """Invalid type for case argument in get_prioritized_options()"""
@@ -53,34 +77,6 @@ class ReporterErrorTag(ErrorTag):
     """Exactly one of file_unique or file_append must be True"""
     DUPLICATE_CHOICE_NAMES_IN_CHOICES = "DUPLICATE_CHOICE_NAMES_IN_CHOICES"
     """Duplicate Choice names were found in the choices argument"""
-
-    # render_by_section()
-    RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE = "RENDER_BY_SECTION_INVALID_ARGS_ARG_TYPE"
-    """Something other than a Namespace instance was passed as the args argument"""
-    RENDER_BY_SECTION_INVALID_CASE_ARG = "RENDER_BY_SECTION_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed as the case argument"""
-    RENDER_BY_SECTION_INVALID_CHOICE_ARG_TYPE = "RENDER_BY_SECTION_INVALID_CHOICE_ARG_TYPE"
-    """Something other than a Choice instance was passed as the choice argument"""
-    RENDER_BY_SECTION_INVALID_SESSION_ARG_TYPE = "RENDER_BY_SECTION_INVALID_SESSION_ARG_TYPE"
-    """Something other than a Session instance or None was passed as the session argument"""
-    RENDER_BY_SECTION_INVALID_PATH_ARG_TYPE = "RENDER_BY_SECTION_INVALID_PATH_ARG_TYPE"
-    """Something other than a Path instance or None was passed as the path argument"""
-    RENDER_BY_SECTION_INVALID_CALLBACK_ARG_TYPE = "RENDER_BY_SECTION_INVALID_CALLBACK_ARG_TYPE"
-    """Something other than a callable or None was passed as the callback argument"""
-
-    # render_by_case()
-    RENDER_BY_CASE_INVALID_ARGS_ARG_TYPE = "RENDER_BY_CASE_INVALID_ARGS_ARG_TYPE"
-    """Something other than a Namespace instance was passed as the args argument"""
-    RENDER_BY_CASE_INVALID_CASE_ARG = "RENDER_BY_CASE_INVALID_CASE_ARG"
-    """Something other than a Case instance was passed as the case argument"""
-    RENDER_BY_CASE_INVALID_CHOICE_ARG_TYPE = "RENDER_BY_CASE_INVALID_CHOICE_ARG_TYPE"
-    """Something other than a Choice instance was passed as the choice argument"""
-    RENDER_BY_CASE_INVALID_SESSION_ARG_TYPE = "RENDER_BY_CASE_INVALID_SESSION_ARG_TYPE"
-    """Something other than a Session instance or None was passed as the session argument"""
-    RENDER_BY_CASE_INVALID_PATH_ARG_TYPE = "RENDER_BY_CASE_INVALID_PATH_ARG_TYPE"
-    """Something other than a Path instance or None was passed as the path argument"""
-    RENDER_BY_CASE_INVALID_CALLBACK_ARG_TYPE = "RENDER_BY_CASE_INVALID_CALLBACK_ARG_TYPE"
-    """Something other than a callable or None was passed as the callback argument"""
 
     EMPTY_TARGETS_ARG_VALUE = "EMPTY_TARGETS_ARG_VALUE"
     """The targets arg cannot be an empty sequence"""

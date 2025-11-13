@@ -219,7 +219,7 @@ def validate_type(
             f'Invalid "{field_name}" type: {type(value)}. Must be {repr(types)}.',
             tag=error_tag
         )
-    return value
+    return value  # type: ignore[return-value]
 
 
 def validate_string(

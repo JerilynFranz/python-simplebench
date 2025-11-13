@@ -1,6 +1,6 @@
 """"Protocols for reporters stuff."""
 from __future__ import annotations
-from typing import Protocol, TYPE_CHECKING
+from typing import Protocol, TYPE_CHECKING, runtime_checkable
 
 from rich.table import Table
 from rich.text import Text
@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.reporter.options import ReporterOptions
 
 
+@runtime_checkable
 class ReportRenderer(Protocol):
     """A protocol for render methods in Reporters.
 

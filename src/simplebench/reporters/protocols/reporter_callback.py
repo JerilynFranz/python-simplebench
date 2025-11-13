@@ -1,6 +1,6 @@
 """"Protocols for reporters stuff."""
 from __future__ import annotations
-from typing import Any, Protocol, TYPE_CHECKING
+from typing import Any, Protocol, TYPE_CHECKING, runtime_checkable
 
 # Disconnects any possible circular imports
 if TYPE_CHECKING:
@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from simplebench.enums import Format, Section
 
 
+@runtime_checkable
 class ReporterCallback(Protocol):
     """A protocol for callback functions used by Case and Reporters.
 

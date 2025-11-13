@@ -9,51 +9,26 @@ from rich.table import Table
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.enums import FlagType, Format, Section, Target
-from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.exceptions import SimpleBenchTypeError
 # simplebench.reporters imports
+from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
+# simplebench.reporters.rich_table imports
 from simplebench.reporters.rich_table.reporter.exceptions import \
     RichTableReporterErrorTag
-# simplebench.reporters.rich_table imports
 from simplebench.reporters.rich_table.reporter.options import RichTableOptions
 from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
+from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
-
-# Deferred imports to avoid circular dependencies. This pattern is required for any
-# type hints that are resolved at runtime via get_type_hints() and involve a
-# circular dependency (e.g., Reporter -> Case -> Choice -> Reporter).
-_CORE_TYPES_IMPORTED = False
 
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
-    _CORE_TYPES_IMPORTED = True
-else:
-    # Define placeholders for runtime name resolution
-    Case = None  # pylint: disable=invalid-name  # type: ignore[assignment]
-    Choice = None  # pylint: disable=invalid-name  # type: ignore[assignment]
-    Session = None  # pylint: disable=invalid-name  # type: ignore[assignment]
-
-
-def _deferred_core_imports() -> None:
-    """Deferred import of core types to avoid circular imports during initialization.
-
-    This imports `Case`, `Choice`, and `Session` only when needed at runtime,
-    preventing circular import issues during module load time while still allowing
-    their use in type hints and runtime validations.
-    """
-    global Case, Choice, Session, _CORE_TYPES_IMPORTED  # pylint: disable=global-statement
-    if _CORE_TYPES_IMPORTED:
-        return
-    from simplebench.case import Case  # pylint: disable=import-outside-toplevel
-    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
-    from simplebench.session import Session  # pylint: disable=import-outside-toplevel
-    _CORE_TYPES_IMPORTED = True
 
 
 Options = RichTableOptions
@@ -184,8 +159,6 @@ class RichTableReporter(Reporter):
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
-        # Ensure core types are imported before use by the render method and its validators
-        _deferred_core_imports()
         self.render_by_section(
             renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
@@ -203,10 +176,11 @@ class RichTableReporter(Reporter):
         Returns:
             Table: The Rich Table instance.
         """
-        # Ensure core types are imported before use by the validators
-        _deferred_core_imports()
-        case = validate_type(case, Case, 'case',
-                             RichTableReporterErrorTag.RENDER_INVALID_CASE)
+        # is_* checks provide deferred import validation to avoid circular imports
+        if not is_case(case):
+            raise SimpleBenchTypeError(
+                f"'case' argument must be a Case instance, got {type(case)}",
+                tag=RichTableReporterErrorTag.RENDER_INVALID_CASE)
         section = validate_type(section, Section, 'section',
                                 RichTableReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options',

@@ -1,55 +1,29 @@
 """Reporter for benchmark results using JSON files."""
 from __future__ import annotations
-from argparse import Namespace
+
 import json
+from argparse import Namespace
 from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from simplebench.enums import Section, FlagType, Target, Format
+from simplebench.enums import FlagType, Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.utils import get_machine_info, sigfigs
-from simplebench.validators import validate_type
-
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.type_proxies import is_case
+from simplebench.utils import get_machine_info, sigfigs
+from simplebench.validators import validate_type
 
 from .exceptions import JSONReporterErrorTag
 from .options import JSONOptions
-
-# Deferred imports to avoid circular dependencies. This pattern is required for any
-# type hints that are resolved at runtime via get_type_hints() and involve a
-# circular dependency (e.g., Reporter -> Case -> Choice -> Reporter).
-_CORE_TYPES_IMPORTED = False
 
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
-    _CORE_TYPES_IMPORTED = True
-else:
-    # Define placeholders for runtime name resolution
-    Case = None  # pylint: disable=invalid-name  # type: ignore[assignment]
-    Choice = None  # pylint: disable=invalid-name  # type: ignore[assignment]
-    Session = None  # pylint: disable=invalid-name  # type: ignore[assignment]
-
-
-def _deferred_core_imports() -> None:
-    """Deferred import of core types to avoid circular imports during initialization.
-
-    This imports `Case`, `Choice`, and `Session` only when needed at runtime,
-    preventing circular import issues during module load time while still allowing
-    their use in type hints and runtime validations.
-    """
-    global Case, Choice, Session, _CORE_TYPES_IMPORTED  # pylint: disable=global-statement
-    if _CORE_TYPES_IMPORTED:
-        return
-    from simplebench.case import Case  # pylint: disable=import-outside-toplevel
-    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
-    from simplebench.session import Session  # pylint: disable=import-outside-toplevel
-    _CORE_TYPES_IMPORTED = True
 
 
 Options = JSONOptions
@@ -162,8 +136,6 @@ class JSONReporter(Reporter):
         Return:
             None
         """
-        # Ensure core types are imported before use by the render method and its validators
-        _deferred_core_imports()
         self.render_by_case(
             renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
@@ -180,10 +152,11 @@ class JSONReporter(Reporter):
         Returns:
             str: The JSON string representation of the Case data.
         """
-        # Ensure core types are imported before use by the validators
-        _deferred_core_imports()
-        case = validate_type(case, Case, 'case',
-                             JSONReporterErrorTag.RENDER_INVALID_CASE)
+        # is_* checks provide deferred import validation to avoid circular imports
+        if not is_case(case):
+            raise SimpleBenchTypeError(
+                f"'case' argument must be a Case instance, got {type(case)}",
+                tag=JSONReporterErrorTag.RENDER_INVALID_CASE)
         section = validate_type(section, Section, 'section',
                                 JSONReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options',
