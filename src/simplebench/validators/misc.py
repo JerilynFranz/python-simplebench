@@ -4,11 +4,12 @@ These functions raise appropriate exceptions with error tags from exceptions.py
 and return the validated and/or normalized value.
 """
 from pathlib import Path
-from typing import Any, cast, TypeVar, Sequence, overload
+from typing import Any, Sequence, TypeVar, cast, overload
 
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ErrorTag
+from simplebench.exceptions import (ErrorTag, SimpleBenchTypeError,
+                                    SimpleBenchValueError)
+from simplebench.type_proxies.lazy_type_proxy import LazyTypeProxy
 from simplebench.validators.exceptions import ValidatorsErrorTag
-
 
 T = TypeVar('T')
 
@@ -128,7 +129,7 @@ def validate_bool(
 @overload
 def validate_type(
         value: Any,
-        types: tuple[type, ...],
+        types: tuple[type | LazyTypeProxy[Any], ...],
         field_name: str,
         error_tag: ErrorTag) -> Any:
     ...
@@ -143,9 +144,18 @@ def validate_type(
     ...
 
 
+@overload
 def validate_type(
         value: Any,
-        types: type[T] | tuple[type, ...],
+        types: LazyTypeProxy[T],
+        field_name: str,
+        error_tag: ErrorTag) -> T:
+    ...
+
+
+def validate_type(
+        value: Any,
+        types: type[T] | tuple[type | LazyTypeProxy[Any], ...] | LazyTypeProxy[T],
         field_name: str,
         error_tag: ErrorTag) -> T | Any:
     """Validate that a value is of the expected type.
@@ -169,7 +179,7 @@ def validate_type(
 
     Args:
         value (Any): The value to validate.
-        types (type[T] | tuple[type, ...]): The expected type of the value.
+        types (type[T] | tuple[type, ...] | LazyType[T]): The expected type of the value.
         field_name (str): The name of the field being validated (for error messages).
         error_tag (ErrorTag): The error tag to use for type errors.
 
@@ -179,16 +189,16 @@ def validate_type(
     Raises:
         SimpleBenchTypeError: If the value is not of the expected type.
     """
-    if not isinstance(types, type) and not isinstance(types, tuple):
+    if not isinstance(types, (type, tuple, LazyTypeProxy)):
         raise SimpleBenchTypeError(
-            f'Invalid expected argument type: {type(types)}. Must be a type or tuple of types.',
+            f'Invalid expected argument type: {type(types)}. Must be a type, tuple of types, or LazyType.',
             tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE
         )
     if isinstance(types, tuple):
         for item in types:
-            if not isinstance(item, type):
+            if not isinstance(item, (type, LazyTypeProxy)):
                 raise SimpleBenchTypeError(
-                    f'Invalid expected argument item type in tuple: {type(item)}. Must be a type.',
+                    f'Invalid expected argument item type in tuple: {type(item)}. Must be a type or LazyType.',
                     tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE
                 )
     if not isinstance(field_name, str):
@@ -201,12 +211,15 @@ def validate_type(
             f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
             tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)
 
-    if not isinstance(value, types):
+    # We use `cast` here to inform the static type checker that we know
+    # LazyTypeProxy is a valid type for `isinstance` due to its metaclass.
+    # This suppresses the Pylance warning without affecting runtime behavior.
+    if not isinstance(value, cast(type, types)):
         raise SimpleBenchTypeError(
             f'Invalid "{field_name}" type: {type(value)}. Must be {repr(types)}.',
             tag=error_tag
         )
-    return cast(T, value)
+    return value
 
 
 def validate_string(
@@ -606,7 +619,7 @@ def validate_sequence_of_type(
 
     Args:
         value (Sequence[Any]): The sequence of values to validate.
-        types (type[T] | tuple[type, ...]): A single type or tuple of allowed types.
+        types (type[T] | tuple[type, ...] | LazyType[T, Any]): A single type or tuple of allowed types.
         field_name (str): The name of the field being validated (for error messages).
         type_tag (ErrorTag): The error tag to use for type errors.
         value_tag (ErrorTag): The error tag to use for value errors.
