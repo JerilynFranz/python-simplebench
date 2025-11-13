@@ -1,6 +1,6 @@
 """Validators for reporters stuff."""
 import inspect
-from typing import Any, Callable, get_type_hints, TypeVar, overload, cast
+from typing import Any, Callable, get_type_hints, TypeVar, overload, cast, TYPE_CHECKING
 from types import UnionType
 
 from rich.table import Table
@@ -20,10 +20,15 @@ from simplebench.reporters.validators.exceptions import ReportersValidatorsError
 # the Case type, we need to defer the import of that type until runtime to avoid
 # circular imports. If other core types are needed in the future, they can be added
 # here as well.
-_CORE_TYPES_IMPORTED = False
 
 # Define placeholders for runtime name resolution
-Case = None  # pylint: disable=invalid-name  # type: ignore
+
+if TYPE_CHECKING:
+    from simplebench.case import Case
+    _CORE_TYPES_IMPORTED = True
+else:
+    Case = None  # pylint: disable=invalid-name  # type: ignore
+    _CORE_TYPES_IMPORTED = False
 
 
 def _deferred_core_imports() -> None:

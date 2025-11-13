@@ -50,17 +50,17 @@ from .case import (case_factory, case_kwargs_factory, default_benchcase,
                    minimal_case_kwargs_factory, runner_factory)
 from .console import console_factory
 from .path import path_factory
-from .reporter import (ConfiguredReporterOptions, FactoryReporter,
-                       choice_conf_factory, choice_conf_kwargs_factory,
-                       choice_factory, choices_conf_factory,
-                       choices_conf_kwargs_factory, choices_factory,
-                       default_choice_conf, default_choice_conf_kwargs,
-                       default_choices_conf, default_choices_conf_kwargs,
-                       default_options_type, default_reporter_kwargs,
-                       report_parameters_factory, reporter_factory,
-                       reporter_kwargs_factory)
+from .reporter import (FactoryReporter, choice_conf_factory,
+                       choice_conf_kwargs_factory, choice_factory,
+                       choices_conf_factory, choices_conf_kwargs_factory,
+                       choices_factory, default_choice_conf,
+                       default_choice_conf_kwargs, default_choices_conf,
+                       default_choices_conf_kwargs, default_options_type,
+                       default_reporter_kwargs, report_parameters_factory,
+                       reporter_factory, reporter_kwargs_factory)
 from .reporter_callback import default_reporter_callback
-from .reporter_options import (default_reporter_options,
+from .reporter_options import (FactoryReporterOptions,
+                               default_reporter_options,
                                default_reporter_options_tuple,
                                default_reporter_options_type,
                                reporter_options_factory,
@@ -187,7 +187,7 @@ __all__ = [
     'report_parameters_factory',
     'default_reporter_callback',
     'FactoryReporter',
-    'ConfiguredReporterOptions',
+    'FactoryReporterOptions',
     'default_options_type',
 
     # Results factories

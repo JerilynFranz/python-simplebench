@@ -3,16 +3,37 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchNotImplementedError
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.utils import first_not_none
+from simplebench.validators import validate_type
+
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.enums import Target
     from simplebench.reporters.choice.choice import Choice
     from simplebench.reporters.reporter.protocols import ReporterProtocol
+    _CORE_TYPES_IMPORTED = True
+else:
+    Choice = None  # pylint: disable=invalid-name
+    Case = None  # pylint: disable=invalid-name
+    _CORE_TYPES_IMPORTED = False
+
+
+def _deferred_core_imports() -> None:
+    """Deferred import of core types to avoid circular imports during initialization.
+
+    This imports `Case` and `Choice` only when needed at runtime, preventing circular
+    import issues during module load time while still allowing their use in type hints
+    and runtime validations.
+    """
+    global Case, Choice, _CORE_TYPES_IMPORTED  # pylint: disable=global-statement
+    if _CORE_TYPES_IMPORTED:
+        return
+    from simplebench.case import Case  # pylint: disable=import-outside-toplevel
+    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
+    _CORE_TYPES_IMPORTED = True
 
 
 class _ReporterPrioritizationMixin:
@@ -40,27 +61,32 @@ class _ReporterPrioritizationMixin:
         Raises:
             SimpleBenchNotImplementedError: If no ReporterOptions instance can be found
         """
+        _deferred_core_imports()
+        case = validate_type(case, Case, 'case',
+                             ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE)
+        choice = validate_type(choice, Choice, 'choice',
+                               ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE)
+
         cls = type(self)
         options_cls = self.options_type
         # case.options is a list of ReporterOptions because Case.options is used
         # for all reporters. Thus, we need to filter by the specific type here
         # to find the reporter-specific options.
         case_options = cls.find_options_by_type(options=case.options, cls=options_cls)
-        # Since different reporters can have different options types,
-        # we need to filter the options by the specific type here as well in case
-        # a less specific type was used in the current default options.
+        if isinstance(case_options, options_cls):
+            return case_options
+
+        if isinstance(choice.options, options_cls):
+            return choice.options
+
         default_options = cls.get_default_options()
-        if default_options is None:
-            raise SimpleBenchNotImplementedError(
+        if isinstance(default_options, options_cls):
+            return default_options
+
+        raise SimpleBenchNotImplementedError(
                 "Reporter subclasses must set __HARDCODED_DEFAULT_OPTIONS to a"
                 "a valid ReporterOptions subclass to provide default options",
                 tag=ReporterErrorTag.HARDCODED_DEFAULT_OPTIONS_NOT_IMPLEMENTED)
-        options = first_not_none([case_options, choice.options, default_options])
-        if options is None:
-            raise SimpleBenchNotImplementedError(
-                "Reporter subclasses must provide ReporterOptions via Case, Choice, or default options",
-                tag=ReporterErrorTag.REPORTER_OPTIONS_NOT_IMPLEMENTED)
-        return options
 
     def get_prioritized_default_targets(self: ReporterProtocol, choice: Choice) -> frozenset[Target]:
         """Get the prioritized default targets from the choice or reporter defaults.

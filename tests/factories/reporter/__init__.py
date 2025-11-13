@@ -15,7 +15,6 @@ from .base import (
     default_choices_conf,
     report_parameters_factory,
     FactoryReporter,
-    ConfiguredReporterOptions,
     default_options_type,
 )
 
@@ -35,7 +34,6 @@ __all__ = [
     "default_choices_conf",
     "report_parameters_factory",
     "FactoryReporter",
-    "ConfiguredReporterOptions",
     "default_options_type",
 ]
 """'*' imports for factories related to Reporters."""

@@ -6,6 +6,11 @@ from simplebench.exceptions.base import ErrorTag
 @enum_docstrings
 class ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the reporters.reporter module."""
+    # get_prioritized_options()
+    GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE = "GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE"
+    """Invalid type for case argument in get_prioritized_options()"""
+    GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE = "GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE"
+    """Invalid type for choice argument in get_prioritized_options()"""
 
     # select_targets_from_args()
     SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED = "SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED"

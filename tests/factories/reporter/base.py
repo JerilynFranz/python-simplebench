@@ -27,7 +27,7 @@ from ..argparse import namespace_factory
 from ..case import case_factory
 from ..path import path_factory
 from ..reporter_callback import default_reporter_callback
-from ..reporter_options import default_reporter_options
+from ..reporter_options import FactoryReporterOptions, default_reporter_options
 from ..session import session_factory
 
 
@@ -60,24 +60,6 @@ def report_parameters_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
     }
 
 
-'''
-    def __init__(  # pylint: disable=redefined-outer-name
-                self: ReporterProtocol, *,
-                name: str | None = None,
-                description: str | None = None,
-                options_type: ReporterOptions | None = None,
-                sections: Iterable[Section] | None = None,
-                targets: Iterable[Target] | None = None,
-                default_targets: Iterable[Target] | None = None,
-                formats: Iterable[Format] | None = None,
-                choices: ChoicesConf | None = None,
-                subdir: str | None = None,
-                file_suffix: str | None = None,
-                file_unique: str | None = None,
-                file_append: str | None = None) -> None:
-'''
-
-
 class FactoryReporter(Reporter):
     """A dummy reporter subclass for testing purposes.
 
@@ -88,6 +70,9 @@ class FactoryReporter(Reporter):
     both good and bad parameters.
 
     """
+    _HARDCODED_DEFAULT_OPTIONS = FactoryReporterOptions()
+    _DEFAULT_OPTIONS: ReporterOptions | None = None
+
     def __init__(  # pylint: disable=redefined-outer-name
                 self,
                 *,
@@ -188,13 +173,13 @@ class FactoryReporter(Reporter):
         return default_report_output()
 
 
-class ConfiguredReporterOptions(ReporterOptions):
-    """A mock ReporterOptions subclass for testing purposes."""
+def default_options_type() -> type[FactoryReporterOptions]:
+    """Return a default ReporterOptions type for testing purposes.
 
-
-def default_options_type() -> type[ConfiguredReporterOptions]:
-    """Return a default ReporterOptions type for testing purposes."""
-    return ConfiguredReporterOptions
+    Returns:
+        type[FactoryReporterOptions]: A FactoryReporterOptions type.
+    """
+    return FactoryReporterOptions
 
 
 # overloads provide tooltips and docstrings for the cache_factory decorated function
@@ -217,6 +202,7 @@ def reporter_kwargs_factory() -> ReporterKWArgs:
     ReporterKWArgs(
         name=default_name(),
         description=default_description(),
+        options_type=default_options_type(),
         sections=default_sections(),
         targets=default_targets(),
         default_targets=default_default_targets(),
@@ -257,6 +243,7 @@ def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWA
     ReporterKWArgs(
         name=default_name(),
         description=default_description(),
+        options_type=default_options_type(),
         sections=default_sections(),
         targets=default_targets(),
         default_targets=default_default_targets(),
@@ -297,6 +284,7 @@ def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWA
     ReporterKWArgs(
         name=default_name(),
         description=default_description(),
+        options_type=default_options_type(),
         sections=default_sections(),
         targets=default_targets(),
         default_targets=default_default_targets(),
@@ -340,6 +328,7 @@ def default_reporter_kwargs() -> ReporterKWArgs:
     ReporterKWArgs(
         name=default_name(),
         description=default_description(),
+        options_type=default_options_type(),
         sections=default_sections(),
         targets=default_targets(),
         default_targets=default_default_targets(),
@@ -511,6 +500,34 @@ def default_choice_conf_kwargs() -> ChoiceConfKWArgs:
     return choice_conf_kwargs_factory(cache_id=f'{__name__}.default_choice_conf_kwargs:singleton')
 
 
+@overload
+def choices_conf_kwargs_factory() -> ChoicesConfKWArgs:
+    """Return default ChoicesConfKWArgs for testing purposes.
+
+    It contains a single ChoiceConf created by default_choice_conf_kwargs().
+
+    Returns:
+        ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
+    """
+
+
+# overloads provide IDE tooltips and docstrings for the cache_factory decorated function.
+# They are not strictly necessary for functionality, but improve developer experience.
+@overload
+def choices_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConfKWArgs:
+    """Return default ChoicesConfKWArgs for testing purposes.
+
+    It contains a single ChoiceConf created by default_choice_conf_kwargs().
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+    Returns:
+        ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
+    """
+
+
 @cached_factory
 def choices_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConfKWArgs:
     """Return default ChoicesConfKWArgs for testing purposes.
@@ -648,14 +665,13 @@ def choice_factory(*,
     return reporter.choices[name]
 
 
-@cached_factory
-def choices_conf_factory(*, choices: tuple[ChoiceConf, ...] | None = None) -> ChoicesConf:
+# overloads provide IDE tooltips and docstrings for the cache_factory decorated function.
+# They are not strictly necessary for functionality, but improve developer experience.
+@overload
+def choices_conf_factory(choices: tuple[ChoiceConf, ...]) -> ChoicesConf:
     """Factory function to return a cached ChoicesConf instance for testing.
 
     Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different ChoicesConf instances if needed.
-            If None, caching is disabled for this call.
         choices (tuple[ChoiceConf, ...] | None, default=None):
             A tuple of ChoiceConf instances to initialize the ChoicesConf with.
 
@@ -663,6 +679,56 @@ def choices_conf_factory(*, choices: tuple[ChoiceConf, ...] | None = None) -> Ch
             instance created by default_choice_conf() is returned.
 
             Tuple is used to ensure hashability for caching.
+
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An identifier to cache different ChoicesConf instances if needed.
+            If None, caching is disabled for this call.
+    Returns:
+        ChoicesConf: A ChoicesConf instance.
+    """
+
+
+@overload
+def choices_conf_factory(*,
+                         choices: tuple[ChoiceConf, ...] | None = None,
+                         cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConf:
+    """Factory function to return a cached ChoicesConf instance for testing.
+
+    Args:
+        choices (tuple[ChoiceConf, ...] | None, default=None):
+            A tuple of ChoiceConf instances to initialize the ChoicesConf with.
+
+            If None, a default ChoicesConf instance with a single ChoiceConf
+            instance created by default_choice_conf() is returned.
+
+            Tuple is used to ensure hashability for caching.
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An identifier to cache different ChoicesConf instances if needed.
+            If None, caching is disabled for this call.
+
+    Returns:
+        ChoicesConf: A ChoicesConf instance.
+    """
+
+
+@cached_factory
+def choices_conf_factory(*, choices: tuple[ChoiceConf, ...] | None = None) -> ChoicesConf:
+    """Factory function to return a cached ChoicesConf instance for testing.
+
+    Args:
+        choices (tuple[ChoiceConf, ...] | None, default=None):
+            A tuple of ChoiceConf instances to initialize the ChoicesConf with.
+
+            If None, a default ChoicesConf instance with a single ChoiceConf
+            instance created by default_choice_conf() is returned.
+
+            Tuple is used to ensure hashability for caching.
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An identifier to cache different ChoicesConf instances if needed.
+            If None, caching is disabled for this call.
+
+    Returns:
+        ChoicesConf: A ChoicesConf instance.
     """
     if choices is None:
         choices = (default_choice_conf(), )
