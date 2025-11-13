@@ -401,7 +401,7 @@ class Results:
         """
         if value is None:
             return OperationTimings(unit=self._interval_unit,
-                                    scale=self._interval_scale, 
+                                    scale=self._interval_scale,
                                     rounds=self._rounds,
                                     iterations=self._iterations)
 
