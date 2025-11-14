@@ -75,7 +75,32 @@ class ReporterProtocol(Protocol):
 
     @property
     def choices(self) -> Choices:
-        """Return the Choices instance for this reporter."""
+        """The Choices instance for this reporter."""
+        ...
+
+    @property
+    def default_targets(self) -> frozenset[Target]:
+        """The default set of Targets for the reporter."""
+        ...
+
+    @property
+    def subdir(self) -> str:
+        """The subdirectory where report files will  be saved."""
+        ...
+
+    @property
+    def file_suffix(self) -> str:
+        """The file suffix for report files."""
+        ...
+
+    @property
+    def file_unique(self) -> bool:
+        """Indicates whether report files should have unique names."""
+        ...
+
+    @property
+    def file_append(self) -> bool:
+        """Indicates whether report files should be appended to if they exist."""
         ...
 
     @classmethod

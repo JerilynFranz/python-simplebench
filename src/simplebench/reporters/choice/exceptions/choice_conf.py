@@ -52,6 +52,8 @@ class ChoiceConfErrorTag(ErrorTag):
     """The file_unique argument is not a boolean value or None."""
     FILE_APPEND_INVALID_ARG_TYPE = "FILE_APPEND_INVALID_ARG_TYPE"
     """The file_append argument is not a boolean value or None."""
+    FILE_UNIQUE_FILE_APPEND_MUTUALLY_EXCLUSIVE = "FILE_UNIQUE_FILE_APPEND_MUTUALLY_EXCLUSIVE"
+    """The file_unique and file_append arguments cannot both be set to True or both be set to False."""
     OUTPUT_FORMAT_INVALID_ARG_TYPE = "OUTPUT_FORMAT_INVALID_ARG_TYPE"
     """The output_format argument is not a Format enum value."""
     OPTIONS_INVALID_ARG_TYPE = "OPTIONS_INVALID_ARG_TYPE"

@@ -617,6 +617,82 @@ def default_choice_conf() -> ChoiceConf:
     return choice_conf_factory(cache_id=f'{__name__}.default_choice_conf:singleton')
 
 
+@overload
+def choice_factory() -> Choice:
+    """Factory function to return a single cached Choice instance for testing.
+
+    The choice instance is created using MockReporter() and is
+    extracted from the MockReporter.choices attribute.
+
+    It is uncached by default to ensure that each call returns a fresh Choice instance.
+    This can be overridden by providing a non-None cache_id.
+
+    If cached, multiple calls with the same cache_id, name, and flags
+    return the same instance.
+
+    Because choice instances embed state related to the reporter they belong to,
+    it is important to use cache_id appropriately to avoid unintended side effects
+    from shared instances in tests.
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An identifier to cache different Choice instances if needed.
+            If None, caching is disabled for this call.
+    Returns:
+        Choice: A Choice instance.
+    """
+
+
+@overload
+def choice_factory(*,
+                   cache_id: CacheId = CACHE_DEFAULT,
+                   name: str | None = None,
+                   flags: tuple[str, ...] | None = None) -> Choice:
+    """Factory function to return a single cached Choice instance for testing.
+    The choice instance is created using MockReporter() and is
+    extracted from the MockReporter.choices attribute.
+    It is uncached by default to ensure that each call returns a fresh Choice instance.
+    This can be overridden by providing a non-None cache_id.
+    If cached, multiple calls with the same cache_id, name, and flags
+    return the same instance.
+
+    Because choice instances embed state related to the reporter they belong to,
+    it is important to use cache_id appropriately to avoid unintended side effects
+    from shared instances in tests.
+
+    The choice instance has the following parameters:
+
+    ```python
+         Choice(
+                reporter=FactoryReporter(),
+                flags=default_choice_flags(),
+                flag_type=default_flag_type(),
+                name=default_choice_name(),
+                description=default_description(),
+                sections=default_sections(),
+                targets=default_targets(),
+                output_format=default_output_format(),
+                file_suffix=default_file_suffix(),
+                file_unique=default_file_unique(),
+                file_append=default_file_append(),
+                options=default_reporter_options(),
+                extra=default_extra()
+         )
+     ```
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An identifier to cache different Choice instances if needed.
+            If None, caching is disabled for this call.
+        name (str | None, default=None):
+            The name of the Choice instance.
+            If None, the default name from default_choice_name() is used.
+        flags (tuple[str, ...] | None, default=None):
+            The flags associated with the Choice instance.
+            If None, the default flags from default_choice_flags() are used.
+            Tuple is used to ensure hashability for caching.
+    """
+
+
 @uncached_factory
 def choice_factory(*,
                    cache_id: CacheId = CACHE_DEFAULT,

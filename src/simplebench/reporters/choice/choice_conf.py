@@ -2,15 +2,18 @@
 from collections.abc import Hashable
 from typing import Any, Iterable, Sequence
 
-from simplebench.enums import Section, Target, Format, FlagType
+from simplebench.enums import FlagType, Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.validators import (validate_sequence_of_str, validate_string,
-                                    validate_iterable_of_type, validate_type,
-                                    validate_bool)
-
+from simplebench.reporters.choice.exceptions import ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.reporters.choice.exceptions import ChoiceConfErrorTag
+from simplebench.validators import (
+    validate_bool,
+    validate_iterable_of_type,
+    validate_sequence_of_str,
+    validate_string,
+    validate_type,
+)
 
 
 class ChoiceConf(Hashable, ChoiceProtocol):
@@ -77,8 +80,8 @@ class ChoiceConf(Hashable, ChoiceProtocol):
                  default_targets: Iterable[Target] | None = None,
                  subdir: str | None = None,
                  file_suffix: str | None = None,
-                 file_unique: bool | None = False,
-                 file_append: bool | None = False,
+                 file_unique: bool | None = None,
+                 file_append: bool | None = None,
                  options: ReporterOptions | None = None,
                  extra: Any = None) -> None:
         """Construct a ChoiceConf instance.
@@ -251,6 +254,23 @@ class ChoiceConf(Hashable, ChoiceProtocol):
             ChoiceConfErrorTag.FILE_APPEND_INVALID_ARG_TYPE,
             allow_none=True)
         """Whether to append to existing output files (private backing field for attribute)"""
+
+        # Ensure that if one is None and the other is not, we set the None one
+        # to the opposite of the other to maintain mutual exclusivity
+        # and to prevent prioritization logic from having to handle the case
+        # where only one is None.
+        if self._file_unique is None and self._file_append is not None:
+            self._file_unique = not self._file_append
+        elif self._file_append is None and self._file_unique is not None:
+            self._file_append = not self._file_unique
+
+        if (self._file_unique is not None and
+                self._file_append is not None and
+                self._file_unique == self._file_append):
+            raise SimpleBenchTypeError(
+                "file_unique and file_append are mutually exclusive; "
+                "both cannot be True or False at the same time",
+                tag=ChoiceConfErrorTag.FILE_UNIQUE_FILE_APPEND_MUTUALLY_EXCLUSIVE)
 
         self._output_format: Format = validate_type(
             output_format, Format, "output_format",

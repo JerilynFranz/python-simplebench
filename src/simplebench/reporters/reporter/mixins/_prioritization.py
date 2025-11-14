@@ -4,36 +4,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from simplebench.enums import Target
-from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.type_proxies import is_case, is_choice
-
 
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.reporters.reporter.protocols import ReporterProtocol
-    _CORE_TYPES_IMPORTED = True
-else:
-    Choice = None  # pylint: disable=invalid-name
-    Case = None  # pylint: disable=invalid-name
-    _CORE_TYPES_IMPORTED = False
-
-
-def _deferred_core_imports() -> None:
-    """Deferred import of core types to avoid circular imports during initialization.
-
-    This imports `Case` and `Choice` only when needed at runtime, preventing circular
-    import issues during module load time while still allowing their use in type hints
-    and runtime validations.
-    """
-    global Case, Choice, _CORE_TYPES_IMPORTED  # pylint: disable=global-statement
-    if _CORE_TYPES_IMPORTED:
-        return
-    from simplebench.case import Case  # pylint: disable=import-outside-toplevel
-    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
-    _CORE_TYPES_IMPORTED = True
 
 
 class _ReporterPrioritizationMixin:
@@ -83,14 +62,7 @@ class _ReporterPrioritizationMixin:
         if isinstance(choice.options, options_cls):
             return choice.options
 
-        default_options = cls.get_default_options()
-        if isinstance(default_options, options_cls):
-            return default_options
-
-        raise SimpleBenchNotImplementedError(
-                "Reporter subclasses must set __HARDCODED_DEFAULT_OPTIONS to a"
-                "a valid ReporterOptions subclass to provide default options",
-                tag=ReporterErrorTag.HARDCODED_DEFAULT_OPTIONS_NOT_IMPLEMENTED)
+        return cls.get_default_options()
 
     def get_prioritized_default_targets(self: ReporterProtocol, choice: Choice) -> frozenset[Target]:
         """Get the prioritized default targets from the choice or reporter defaults.
@@ -104,25 +76,38 @@ class _ReporterPrioritizationMixin:
         Returns:
             frozenset[Target]: The set of default targets.
         """
-        if choice.default_targets is not None:
+        if not is_choice(choice):
+            raise SimpleBenchTypeError(
+                f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
+                tag=ReporterErrorTag.GET_PRIORITIZED_DEFAULT_TARGETS_INVALID_CHOICE_ARG_TYPE)
+        if choice.default_targets:
             return choice.default_targets
-        return self._default_targets
+        return self.default_targets
 
     def get_prioritized_subdir(self: ReporterProtocol, choice: Choice) -> str:
         """Get the prioritized subdirectory from the choice or reporter defaults.
 
-        This method retrieves the subdirectory for the reporter by first checking
-        the `choice` subdir, and if none is found, falling back to the reporter's
-        default subdir.
+        The prioritized subdirectory is determined by checking the `Choice().subdir`
+        attribute of the provided `choice` argument:
+        - If `None`, the reporter's default subdir is returned.
+        - If not `None`, the Choice's subdir is returned as the prioritized subdirectory.
+
+        Semantically, a subdir of '' indicates that report files should be saved
+        in the root output directory, while any other string indicates a subdirectory
+        within the output directory.
 
         Args:
             choice (Choice): The Choice instance specifying the report configuration.
         Returns:
             str: The subdirectory for saving report files.
         """
+        if not is_choice(choice):
+            raise SimpleBenchTypeError(
+                f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
+                tag=ReporterErrorTag.GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE)
         if choice.subdir is not None:
             return choice.subdir
-        return self._subdir
+        return self.subdir
 
     def get_prioritized_file_suffix(self: ReporterProtocol, choice: Choice) -> str:
         """Get the prioritized file suffix from the choice or reporter.

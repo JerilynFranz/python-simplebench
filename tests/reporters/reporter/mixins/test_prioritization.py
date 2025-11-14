@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import pytest
 
 from simplebench.case import Case
+from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.choice.choice_conf import ChoiceConf
@@ -260,5 +261,355 @@ def test_get_prioritized_options_without_reporter_default_options(testspec: Test
     """Test the get_prioritized_options method of PrioritizationMixin.
 
     Tested without FactoryReporter default options set.
+    """
+    testspec.run()
+
+
+def get_prioritized_default_targets_testspecs() -> list[TestSpec]:
+    """Get test specifications for get_prioritized_default_targets method.
+
+    Returns:
+        list[TestSpec]: A list of TestSpec instances for testing.
+
+    """
+    testspecs: list[TestSpec] = []
+
+    choice_default_targets = frozenset({Target.CONSOLE})
+    choice_conf_kwargs_with_default_targets = choice_conf_kwargs_factory().replace(
+                                            name='choice_with_default_targets',
+                                            flags=['--choice-with-default-targets'],
+                                            default_targets=choice_default_targets)
+    choice_conf_with_default_targets = ChoiceConf(**choice_conf_kwargs_with_default_targets)
+
+    choice_conf_kwargs_without_default_targets = choice_conf_kwargs_factory().replace(
+                                            name='choice_without_default_targets',
+                                            flags=['--choice-without-default-targets']) - ['default_targets']
+    choice_conf_without_default_targets = ChoiceConf(**choice_conf_kwargs_without_default_targets)
+    choices = ChoicesConf(choices=[choice_conf_with_default_targets,
+                                   choice_conf_without_default_targets])
+
+    reporter_default_targets = frozenset({Target.FILESYSTEM})
+    reporter_kwargs = reporter_kwargs_factory().replace(
+                            choices=choices,
+                            default_targets=reporter_default_targets)
+    reporter = FactoryReporter(**reporter_kwargs)
+
+    choice_with_default_targets = reporter.choices['choice_with_default_targets']
+    choice_without_default_targets = reporter.choices['choice_without_default_targets']
+
+    testspecs.extend([
+        idspec("PRIORITIZE_DEFAULT_TARGETS_001", TestAction(
+            name="Choice with default targets -> (Choice default targets)",
+            action=reporter.get_prioritized_default_targets,
+            args=[choice_with_default_targets],
+            assertion=Assert.EQUAL,
+            expected=choice_default_targets,
+        )),
+        idspec("PRIORITIZE_DEFAULT_TARGETS_002", TestAction(
+            name="Choice without default targets -> (Reporter default targets)",
+            action=reporter.get_prioritized_default_targets,
+            args=[choice_without_default_targets],
+            assertion=Assert.EQUAL,
+            expected=reporter_default_targets,
+        )),
+        idspec("PRIORITIZE_DEFAULT_TARGETS_003", TestAction(
+            name="Invalid choice arg type raises SimpleBenchTypeError",
+            action=reporter.get_prioritized_default_targets,
+            args=['not_a_real_choice_instance'],
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.GET_PRIORITIZED_DEFAULT_TARGETS_INVALID_CHOICE_ARG_TYPE,)),
+    ])
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec",
+                         get_prioritized_default_targets_testspecs())
+def test_get_prioritized_default_targets(testspec: TestSpec) -> None:
+    """Test the get_prioritized_default_targets method of PrioritizationMixin."""
+    testspec.run()
+
+
+def get_prioritized_subdir_testspecs() -> list[TestSpec]:
+    """Get test specifications for get_prioritized_subdir method.
+
+    Returns:
+        list[TestSpec]: A list of TestSpec instances for testing.
+
+    """
+    testspecs: list[TestSpec] = []
+
+    choice_subdir = 'choicesubdir'
+    choice_conf_kwargs_with_subdir = choice_conf_kwargs_factory().replace(
+                                            name='choice_with_subdir',
+                                            flags=['--choice-with-subdir'],
+                                            subdir=choice_subdir)
+    choice_conf_with_subdir = ChoiceConf(**choice_conf_kwargs_with_subdir)
+
+    choice_conf_kwargs_without_subdir = choice_conf_kwargs_factory().replace(
+                                            name='choice_without_subdir',
+                                            flags=['--choice-without-subdir']) - ['subdir']
+    choice_conf_without_subdir = ChoiceConf(**choice_conf_kwargs_without_subdir)
+    choices = ChoicesConf(choices=[choice_conf_with_subdir,
+                                   choice_conf_without_subdir])
+
+    reporter_default_subdir = 'reporterdefaultsubdir'
+    reporter_kwargs = reporter_kwargs_factory().replace(
+                            choices=choices,
+                            subdir=reporter_default_subdir)
+    reporter = FactoryReporter(**reporter_kwargs)
+
+    choice_with_subdir = reporter.choices['choice_with_subdir']
+    choice_without_subdir = reporter.choices['choice_without_subdir']
+
+    testspecs.extend([
+        idspec("PRIORITIZE_SUBDIR_001", TestAction(
+            name="Choice with subdir -> (Choice subdir)",
+            action=reporter.get_prioritized_subdir,
+            args=[choice_with_subdir],
+            assertion=Assert.EQUAL,
+            expected=choice_subdir,
+        )),
+        idspec("PRIORITIZE_SUBDIR_002", TestAction(
+            name="Choice without subdir -> (Reporter default subdir)",
+            action=reporter.get_prioritized_subdir,
+            args=[choice_without_subdir],
+            assertion=Assert.EQUAL,
+            expected=reporter_default_subdir,
+        )),
+        idspec("PRIORITIZE_SUBDIR_003", TestAction(
+            name="Invalid choice arg type raises SimpleBenchTypeError",
+            action=reporter.get_prioritized_subdir,
+            args=['not_a_real_choice_instance'],
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE,)),
+    ])
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec",
+                         get_prioritized_subdir_testspecs())
+def test_get_prioritized_subdir(testspec: TestSpec) -> None:
+    """Test the get_prioritized_subdir method of PrioritizationMixin."""
+    testspec.run()
+
+
+def get_prioritized_file_suffix_testspecs() -> list[TestSpec]:
+    """Get test specifications for get_prioritized_file_suffix method.
+
+    Returns:
+        list[TestSpec]: A list of TestSpec instances for testing.
+    """
+    testspecs: list[TestSpec] = []
+
+    reporter_kwargs = reporter_kwargs_factory()
+    reporter = FactoryReporter(**reporter_kwargs)
+
+    choice_suffix = ''
+    choice_conf_kwargs_with_file_suffix = choice_conf_kwargs_factory().replace(
+                                            name='choice_with_file_suffix',
+                                            flags=['--choice-with-file-suffix'],
+                                            file_suffix=choice_suffix)
+    choice_conf_with_file_suffix = ChoiceConf(**choice_conf_kwargs_with_file_suffix)
+
+    choice_conf_kwargs_without_file_suffix = choice_conf_kwargs_factory().replace(
+                                            name='choice_without_file_suffix',
+                                            flags=['--choice-without-file-suffix']) - ['file_suffix']
+    choice_conf_without_file_suffix = ChoiceConf(**choice_conf_kwargs_without_file_suffix)
+    choices = ChoicesConf(choices=[choice_conf_with_file_suffix,
+                                   choice_conf_without_file_suffix])
+
+    reporter_suffix = 'reporterfs'
+    reporter_kwargs = reporter_kwargs_factory().replace(
+                            choices=choices,
+                            file_suffix=reporter_suffix)
+    reporter = FactoryReporter(**reporter_kwargs)
+
+    choice_with_file_suffix = reporter.choices['choice_with_file_suffix']
+    choice_without_file_suffix = reporter.choices['choice_without_file_suffix']
+
+    testspecs.extend([
+        idspec("PRIORITIZE_FILE_SUFFIX_001", TestAction(
+            name="Choice with file suffix -> (Choice file suffix)",
+            action=reporter.get_prioritized_file_suffix,
+            args=[choice_with_file_suffix],
+            assertion=Assert.EQUAL,
+            expected=choice_suffix,
+        )),
+        idspec("PRIORITIZE_FILE_SUFFIX_002", TestAction(
+            name="Choice without file suffix -> (Reporter file suffix)",
+            action=reporter.get_prioritized_file_suffix,
+            args=[choice_without_file_suffix],
+            assertion=Assert.EQUAL,
+            expected=reporter_suffix,
+        )),
+    ])
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec",
+                         get_prioritized_file_suffix_testspecs())
+def test_get_prioritized_file_suffix(testspec: TestSpec) -> None:
+    """Test the get_prioritized_file_suffix method of PrioritizationMixin."""
+    testspec.run()
+
+
+def get_prioritized_file_append_and_unique_testspecs() -> list[TestSpec]:
+    """Get test specifications for get_prioritized_file_append and
+    get_prioritized_file_unique methods.
+
+    These file_append and file_unique are tested together because they always
+    have opposite boolean values making them complementary and so easily tested together
+    with the same setup.
+
+    Returns:
+        list[TestSpec]: A list of TestSpec instances for testing.
+    """
+    testspecs: list[TestSpec] = []
+
+    choice_file_append_true = True
+    choice_file_append_false = False
+
+    choice_file_unique_false = False
+    choice_file_unique_true = True
+
+    choice_name_with_file_append_true_unique_false = 'choice_with_file_append_true_unique_false'
+    choice_name_with_file_append_false_unique_true = 'choice_with_file_append_false_unique_true'
+    choice_name_without_file_append_or_unique = 'choice_without_file_append_or_unique'
+
+    choice_conf_kwargs_with_file_append_true_unique_false = choice_conf_kwargs_factory().replace(
+                                            name=choice_name_with_file_append_true_unique_false,
+                                            flags=['--choice-with-file-append-true-unique-false'],
+                                            file_append=choice_file_append_true,
+                                            file_unique=choice_file_unique_false)
+    choice_conf_with_file_append_true_unique_false = ChoiceConf(**choice_conf_kwargs_with_file_append_true_unique_false)
+
+    choice_conf_kwargs_with_file_append_false_unique_true = choice_conf_kwargs_factory().replace(
+                                            name=choice_name_with_file_append_false_unique_true,
+                                            flags=['--choice-with-file-append-false-unique-true'],
+                                            file_append=choice_file_append_false,
+                                            file_unique=choice_file_unique_true)
+    choice_conf_with_file_append_false_unique_true = ChoiceConf(**choice_conf_kwargs_with_file_append_false_unique_true)
+
+    choice_conf_kwargs_without_file_append_or_unique = choice_conf_kwargs_factory().replace(
+                                    name=choice_name_without_file_append_or_unique,
+                                    flags=['--choice-without-file-append-or-unique']) - ['file_append', 'file_unique']
+    choice_conf_without_file_append_or_unique = ChoiceConf(**choice_conf_kwargs_without_file_append_or_unique)
+
+    choices = ChoicesConf(choices=[choice_conf_with_file_append_true_unique_false,
+                                   choice_conf_with_file_append_false_unique_true,
+                                   choice_conf_without_file_append_or_unique])
+
+    reporter_kwargs_append_true = reporter_kwargs_factory().replace(choices=choices,
+                                                                    file_append=True,
+                                                                    file_unique=False)
+    reporter_kwargs_append_false = reporter_kwargs_factory().replace(choices=choices,
+                                                                     file_append=False,
+                                                                     file_unique=True)
+
+    reporter_append_false = FactoryReporter(**reporter_kwargs_append_false)
+    reporter_append_true = FactoryReporter(**reporter_kwargs_append_true)
+
+    choice_with_file_append_true_unique_false = reporter_append_false.choices[
+                                                    choice_name_with_file_append_true_unique_false]
+    choice_with_file_append_false_unique_true = reporter_append_false.choices[
+                                                    choice_name_with_file_append_false_unique_true]
+    choice_without_file_append_or_unique = reporter_append_false.choices[choice_name_without_file_append_or_unique]
+
+    testspecs.extend([
+        idspec("FILE_APPEND_001", TestAction(
+            name="Reporter with file_append=True, Choice with file_append=True -> True (Choice file append)",
+            action=reporter_append_true.get_prioritized_file_append,
+            args=[choice_with_file_append_true_unique_false],
+            assertion=Assert.EQUAL,
+            expected=True,
+        )),
+        idspec("FILE_APPEND_002", TestAction(
+            name="Reporter with file_append=False, Choice with file_append=True -> True (Choice file append)",
+            action=reporter_append_false.get_prioritized_file_append,
+            args=[choice_with_file_append_true_unique_false],
+            assertion=Assert.EQUAL,
+            expected=True,
+        )),
+        idspec("FILE_APPEND_003", TestAction(
+            name="Reporter with file_append=True, Choice with file_append=False -> False (Choice file append)",
+            action=reporter_append_true.get_prioritized_file_append,
+            args=[choice_with_file_append_false_unique_true],
+            assertion=Assert.EQUAL,
+            expected=False,
+        )),
+        idspec("FILE_APPEND_004", TestAction(
+            name="Reporter with file_append=False, Choice with file_append=False -> False (Choice file append)",
+            action=reporter_append_false.get_prioritized_file_append,
+            args=[choice_with_file_append_false_unique_true],
+            assertion=Assert.EQUAL,
+            expected=False,
+        )),
+        idspec("FILE_UNIQUE_001", TestAction(
+            name="Reporter with file_unique=False, Choice with file_unique=False -> False (Choice file unique)",
+            action=reporter_append_false.get_prioritized_file_unique,
+            args=[choice_with_file_append_true_unique_false],
+            assertion=Assert.EQUAL,
+            expected=False,
+        )),
+        idspec("FILE_UNIQUE_002", TestAction(
+            name="Reporter with file_unique=True, Choice with file_unique=False -> False (Choice file unique)",
+            action=reporter_append_true.get_prioritized_file_unique,
+            args=[choice_with_file_append_true_unique_false],
+            assertion=Assert.EQUAL,
+            expected=False,
+        )),
+        idspec("FILE_UNIQUE_003", TestAction(
+            name="Reporter with file_unique=False, Choice with file_unique=True -> True (Choice file unique)",
+            action=reporter_append_false.get_prioritized_file_unique,
+            args=[choice_with_file_append_false_unique_true],
+            assertion=Assert.EQUAL,
+            expected=True,
+        )),
+        idspec("FILE_UNIQUE_004", TestAction(
+            name="Reporter with file_unique=True, Choice with file_unique=True -> True (Choice file unique)",
+            action=reporter_append_true.get_prioritized_file_unique,
+            args=[choice_with_file_append_false_unique_true],
+            assertion=Assert.EQUAL,
+            expected=True,
+        )),
+        idspec("FILE_APPEND_AND_UNIQUE_NONE_001", TestAction(
+            name="Reporter with file_append=True, Choice without file_append -> True (Reporter file append)",
+            action=reporter_append_true.get_prioritized_file_append,
+            args=[choice_without_file_append_or_unique],
+            assertion=Assert.EQUAL,
+            expected=True,
+        )),
+        idspec("FILE_APPEND_AND_UNIQUE_NONE_002", TestAction(
+            name="Reporter with file_append=False, Choice without file_append -> False (Reporter file append)",
+            action=reporter_append_false.get_prioritized_file_append,
+            args=[choice_without_file_append_or_unique],
+            assertion=Assert.EQUAL,
+            expected=False,
+        )),
+        idspec("FILE_APPEND_AND_UNIQUE_NONE_003", TestAction(
+            name="Reporter with file_unique=False, Choice without file_unique -> False (Reporter file unique)",
+            action=reporter_append_false.get_prioritized_file_unique,  # file_append=False means file_unique=True
+            args=[choice_without_file_append_or_unique],
+            assertion=Assert.EQUAL,
+            expected=True,
+        )),
+        idspec("FILE_APPEND_AND_UNIQUE_NONE_004", TestAction(
+            name="Reporter with file_unique=True, Choice without file_unique -> True (Reporter file unique)",
+            action=reporter_append_true.get_prioritized_file_unique,  # file_append=True means file_unique=False
+            args=[choice_without_file_append_or_unique],
+            assertion=Assert.EQUAL,
+            expected=False,
+        )),
+    ])
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec",
+                         get_prioritized_file_append_and_unique_testspecs())
+def test_get_prioritized_file_append_and_unique(testspec: TestSpec) -> None:
+    """Test the get_prioritized_file_append and get_prioritized_file_unique methods of PrioritizationMixin.
+
+    They are tested together because they always have opposite boolean values making them complementary
+    and so easily tested.
     """
     testspec.run()

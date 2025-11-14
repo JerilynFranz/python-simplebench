@@ -222,7 +222,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         """
         cls._validate_subclass_config()
         if '_DEFAULT_OPTIONS' in cls.__dict__:
-            user_default = cls._DEFAULT_OPTIONS  # pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]  # noqa: E501
+            user_default = getattr(cls, '_DEFAULT_OPTIONS')
             if user_default is not None:
                 return user_default
         return cls.get_hardcoded_default_options()
@@ -638,19 +638,44 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
 
     @property
     def name(self) -> str:
-        """Return the unique identifying name of the reporter."""
+        """The unique identifying name of the reporter."""
         return self._name
 
     @property
     def description(self) -> str:
-        """Return a brief description of the reporter."""
+        """A brief description of the reporter."""
         return self._description
 
     @property
     def options_type(self) -> type[Options]:
-        """Return the specific ReporterOptions subclass associated with this reporter.
+        """The specific ReporterOptions subclass associated with this reporter.
         """
         return self.__class__.get_default_options().__class__
+
+    @property
+    def subdir(self) -> str:
+        """The subdirectory where report files will be saved."""
+        return self._subdir
+
+    @property
+    def default_targets(self) -> frozenset[Target]:
+        """The default set of Targets for the reporter."""
+        return self._default_targets
+
+    @property
+    def file_suffix(self) -> str:
+        """The file suffix for reporter output files."""
+        return self._file_suffix
+
+    @property
+    def file_unique(self) -> bool:
+        """Whether output files should have unique names."""
+        return self._file_unique
+
+    @property
+    def file_append(self) -> bool:
+        """Whether output files should be appended to."""
+        return self._file_append
 
     def supported_sections(self) -> frozenset[Section]:
         """Return the set of supported Sections for the reporter.
