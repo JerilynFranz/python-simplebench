@@ -442,6 +442,12 @@ def get_prioritized_file_suffix_testspecs() -> list[TestSpec]:
             assertion=Assert.EQUAL,
             expected=reporter_suffix,
         )),
+        idspec("PRIORITIZE_FILE_SUFFIX_003", TestAction(
+            name="Invalid choice arg type raises SimpleBenchTypeError",
+            action=reporter.get_prioritized_file_suffix,
+            args=['not_a_real_choice_instance'],
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE,)),
     ])
     return testspecs
 
@@ -544,6 +550,12 @@ def get_prioritized_file_append_and_unique_testspecs() -> list[TestSpec]:
             assertion=Assert.EQUAL,
             expected=False,
         )),
+        idspec("FILE_APPEND_005", TestAction(
+            name="Invalid choice arg type raises SimpleBenchTypeError for file_append",
+            action=reporter_append_true.get_prioritized_file_append,
+            args=['not_a_real_choice_instance'],
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE,)),
         idspec("FILE_UNIQUE_001", TestAction(
             name="Reporter with file_unique=False, Choice with file_unique=False -> False (Choice file unique)",
             action=reporter_append_false.get_prioritized_file_unique,
@@ -572,6 +584,13 @@ def get_prioritized_file_append_and_unique_testspecs() -> list[TestSpec]:
             assertion=Assert.EQUAL,
             expected=True,
         )),
+        idspec("FILE_UNIQUE_005", TestAction(
+            name="Invalid choice arg type raises SimpleBenchTypeError for file_unique",
+            action=reporter_append_true.get_prioritized_file_unique,
+            args=['not_a_real_choice_instance'],
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE,)),
+        # Tests for when Choice has neither file_append nor file_unique set
         idspec("FILE_APPEND_AND_UNIQUE_NONE_001", TestAction(
             name="Reporter with file_append=True, Choice without file_append -> True (Reporter file append)",
             action=reporter_append_true.get_prioritized_file_append,

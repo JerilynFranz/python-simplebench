@@ -121,6 +121,10 @@ class _ReporterPrioritizationMixin:
         Returns:
             str: The file suffix for report files.
         """
+        if not is_choice(choice):
+            raise SimpleBenchTypeError(
+                f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
+                tag=ReporterErrorTag.GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE)
         if choice.file_suffix is not None:
             return choice.file_suffix
         return self._file_suffix
@@ -137,6 +141,10 @@ class _ReporterPrioritizationMixin:
         Returns:
             bool: The file unique flag for report files.
         """
+        if not is_choice(choice):
+            raise SimpleBenchTypeError(
+                f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
+                tag=ReporterErrorTag.GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE)
         if choice.file_unique is not None:
             return choice.file_unique
         return self._file_unique
@@ -153,6 +161,10 @@ class _ReporterPrioritizationMixin:
         Returns:
             bool: The file append flag for report files.
         """
+        if not is_choice(choice):
+            raise SimpleBenchTypeError(
+                f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
+                tag=ReporterErrorTag.GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE)
         if choice.file_append is not None:
             return choice.file_append
         return self._file_append

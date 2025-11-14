@@ -10,6 +10,20 @@ class ReporterErrorTag(ErrorTag):
     GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE = (
         "GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE")
     """Invalid type for choice argument in get_prioritized_subdir()"""
+    # get_prioritized_file_suffix()
+    GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE = (
+        "GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE")
+    """Invalid type for choice argument in get_prioritized_file_suffix()"""
+
+    # get_prioritized_file_unique()
+    GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE = (
+        "GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE")
+    """Invalid type for choice argument in get_prioritized_file_unique()"""
+
+    # get_prioritized_file_append()
+    GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE = (
+        "GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE")
+    """Invalid type for choice argument in get_prioritized_file_append()"""
 
     # get_prioritized_default_targets()
     GET_PRIORITIZED_DEFAULT_TARGETS_INVALID_CHOICE_ARG_TYPE = (
