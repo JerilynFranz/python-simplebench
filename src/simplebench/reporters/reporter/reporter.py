@@ -296,6 +296,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             SimpleBenchTypeError: If any of the provided parameters are of incorrect types.
         """
         deferred_core_imports()
+        self.__class__._validate_subclass_config()
 
         self._name: str = validate_string(
             name, 'name',

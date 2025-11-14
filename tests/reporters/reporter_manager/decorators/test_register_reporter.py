@@ -1,6 +1,7 @@
 """Tests for the register_reporter decorator."""
 from argparse import Namespace
 from pathlib import Path
+from typing import Any, ClassVar
 
 import pytest
 
@@ -27,13 +28,10 @@ class MockReporterOptions(ReporterOptions):
 
 class MockReporter(Reporter):
     """A mock reporter subclass for testing purposes."""
-
-    @classmethod
-    def get_hardcoded_default_options(cls) -> MockReporterOptions:
-        """Return a mock hardcoded default options instance."""
-        return MockReporterOptions()
-
-    _DEFAULT_OPTIONS: MockReporterOptions | None = None  # type: ignore[reportIncompatibleVariableOverride]
+    _OPTIONS_TYPE: ClassVar[type[MockReporterOptions]] = MockReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
+    """The ReporterOptions subclass type for the reporter: `MockReporterOptions`"""
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
+    """Keyword arguments for constructing a MockReporterOptions hardcoded default instance: `{}`"""
 
     def __init__(self, name: str = 'mock') -> None:
         super().__init__(**reporter_kwargs_factory(cache_id=None))
@@ -61,12 +59,42 @@ class MockReporter(Reporter):
         return "Mock Report"  # pragma: no cover
 
 
-def test_register_reporter():
+def test_register_reporter() -> None:
     """Test the register_reporter decorator."""
 
+    class TestReporterOptions(ReporterOptions):
+        """A mock ReporterOptions subclass for testing purposes."""
+
     @register_reporter
-    class TestReporter(MockReporter):  # pylint: disable=unused-variable
+    class TestReporter(Reporter):  # pylint: disable=unused-variable
         """A test reporter subclass for testing purposes."""
+
+        _OPTIONS_TYPE: ClassVar[type[TestReporterOptions]] = TestReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
+        """The ReporterOptions subclass type for the reporter: `TestReporterOptions`"""
+        _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
+        """Keyword arguments for constructing a TestReporterOptions hardcoded default instance: `{}`"""
+
+        def run_report(self,
+                       *,
+                       args: Namespace,
+                       case: Case,
+                       choice: Choice,
+                       path: Path | None = None,
+                       session: Session | None = None,
+                       callback: ReporterCallback | None = None) -> None:
+            """A mock run_report method."""
+            self.render_by_section(  # pragma: no cover
+                renderer=self.render,
+                args=args,
+                case=case,
+                choice=choice,
+                path=path,
+                session=session,
+                callback=callback)
+
+        def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+            """A mock render method."""
+            return "Mock Report"  # pragma: no cover
 
     registered_reporters = get_registered_reporters()
     assert len(registered_reporters) == 1, (

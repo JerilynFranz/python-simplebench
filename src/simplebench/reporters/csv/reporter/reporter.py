@@ -5,7 +5,7 @@ import csv
 from argparse import Namespace
 from io import StringIO
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, Any
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.enums import FlagType, Format, Section, Target
@@ -62,7 +62,7 @@ class CSVReporter(Reporter):
     """
     _OPTIONS_TYPE: ClassVar[type[CSVOptions]] = CSVOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
     """The ReporterOptions subclass type for the reporter: `CSVOptions`"""
-    _OPTIONS_KWARGS: ClassVar[dict[str, object]] = {}
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
     """Keyword arguments for constructing a CSVOptions hardcoded default instance: `{}`"""
 
     def __init__(self) -> None:
