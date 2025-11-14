@@ -5,7 +5,7 @@ import json
 from argparse import Namespace
 from io import StringIO
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from simplebench.enums import FlagType, Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError
@@ -20,13 +20,13 @@ from simplebench.validators import validate_type
 from .exceptions import JSONReporterErrorTag
 from .options import JSONOptions
 
+Options: TypeAlias = JSONOptions
+
+
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
-
-
-Options = JSONOptions
 
 
 class JSONReporter(Reporter):
@@ -60,18 +60,21 @@ class JSONReporter(Reporter):
         formats (set[Format]): The supported output formats for the reporter.
         choices (Choices): The supported Choices for the reporter.
     """
-    _HARDCODED_DEFAULT_OPTIONS = JSONOptions(full_data=False)
-    """Built-in default JSONOptions instance for the reporter used if none is specified
-    in a passed `Case`, `Choice`, or by `_DEFAULT_OPTIONS`. It forms the basis for the
-    dynamic default options functionality provided by the `set_default_options()` and
-    `get_default_options()` methods."""
+    _OPTIONS_TYPE: ClassVar[type[JSONOptions]] = JSONOptions  # type: ignore[reportIncompatibleVariableOveride]
+    """The type of ReporterOptions used by the JSONReporter."""
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {'full_data': False}
+    """The default keyword arguments for the JSONReporter options.
+
+    ```python
+    {"full_data": False}
+    ```
+    """
 
     def __init__(self) -> None:
         """Initialize the JSONReporter with its name, description, choices, targets, and formats."""
         super().__init__(
             name='json',
             description='Outputs benchmark results to JSON files.',
-            options_type=Options,
             sections={Section.NULL},
             targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
             formats={Format.JSON},

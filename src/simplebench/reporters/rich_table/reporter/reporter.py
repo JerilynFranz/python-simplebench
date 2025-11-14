@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from argparse import Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from rich.table import Table
 
@@ -16,8 +16,7 @@ from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 # simplebench.reporters.rich_table imports
-from simplebench.reporters.rich_table.reporter.exceptions import \
-    RichTableReporterErrorTag
+from simplebench.reporters.rich_table.reporter.exceptions import RichTableReporterErrorTag
 from simplebench.reporters.rich_table.reporter.options import RichTableOptions
 from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
@@ -25,13 +24,12 @@ from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
+Options: TypeAlias = RichTableOptions
+
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
-
-
-Options = RichTableOptions
 
 
 class RichTableReporter(Reporter):
@@ -57,11 +55,8 @@ class RichTableReporter(Reporter):
             the reporter instance, CLI flags, Choice name, supported Result Sections,
             supported output Targets, and supported output Formats for the reporter.
     """
-    _HARDCODED_DEFAULT_OPTIONS = RichTableOptions()
-    """Built-in default ReporterOptions instance for the reporter used if none is specified
-    in a passed `Case`, `Choice`, or by `_DEFAULT_OPTIONS`. It forms the basis for the
-    dynamic default options functionality provided by the `set_default_options()` and
-    `get_default_options()` methods."""
+    _OPTIONS_TYPE: ClassVar[type[RichTableOptions]] = RichTableOptions  # pylint: disable=line-too-long # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
 
     def __init__(self) -> None:
         """Initialize the RichTableReporter."""
@@ -69,7 +64,6 @@ class RichTableReporter(Reporter):
             name='rich-table',
             description='Displays benchmark results as a rich text table on the console.',
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
-            options_type=Options,
             targets={Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK},
             default_targets={Target.CONSOLE},
             formats={Format.RICH_TEXT},

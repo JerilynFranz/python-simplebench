@@ -53,7 +53,36 @@ class ReporterErrorTag(ErrorTag):
     FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE = "FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE"
     """Invalid type for cls argument in find_options_by_type()"""
 
+    # _validate_subclass_config()
+    VALIDATE_SUBCLASS_CONFIG_CANNOT_BE_REPORTER = (
+        "VALIDATE_SUBCLASS_CONFIG_CANNOT_BE_REPORTER")
+    """Subclass of Reporter cannot be the base Reporter class itself"""
+    VALIDATE_SUBCLASS_CONFIG_MUST_BE_SUBCLASS_OF_REPORTER = (
+        "VALIDATE_SUBCLASS_CONFIG_MUST_BE_SUBCLASS_OF_REPORTER")
+    """Must be a subclass of Reporter"""
+    VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_NOT_IMPLEMENTED = (
+        "VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_NOT_IMPLEMENTED")
+    """_OPTION_TYPE class attribute must be implemented in subclass"""
+    VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_INVALID_TYPE = (
+        "VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_INVALID_TYPE")
+    """_OPTION_TYPE cannot be set to the base ReporterOptions class"""
+    VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_MUST_BE_SUBCLASS = (
+        "VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_MUST_BE_SUBCLASS")
+    """_OPTION_TYPE must be set to a subclass of ReporterOptions"""
+    VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_IMPLEMENTED = (
+        "VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_IMPLEMENTED")
+    """_OPTIONS_KWARGS class attribute must be implemented in subclass"""
+    VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_A_DICT = (
+        "VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_A_DICT")
+    """_OPTIONS_KWARGS class attribute must be a dict in subclass"""
+    VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_KEYS_MUST_BE_STR = (
+        "VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_KEYS_MUST_BE_STR")
+    """_OPTIONS_KWARGS class attribute must be a dictionary with type str keys in subclass"""
+
     # set_default_options()
+    SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE_BASE_CLASS_INSTANCE = (
+        "SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE_BASE_CLASS_INSTANCE")
+    """Invalid type for options argument in set_default_options() - cannot be ReporterOptions base class instance"""
     SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE = "SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE"
     """Invalid type for options argument in set_default_options()"""
 

@@ -1,16 +1,16 @@
 """simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
 from __future__ import annotations
-from typing import Iterable, TYPE_CHECKING
 
-from tests.kwargs.kwargs import KWArgs, NoDefaultValue
+from typing import TYPE_CHECKING, Iterable
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter import Reporter
 
+from ..kwargs import KWArgs, NoDefaultValue
+
 if TYPE_CHECKING:
-    from simplebench.enums import Section, Target, Format
-    from simplebench.reporters.reporter import ReporterOptions
+    from simplebench.enums import Format, Section, Target
 
 
 class ReporterKWArgs(KWArgs):
@@ -29,7 +29,6 @@ class ReporterKWArgs(KWArgs):
             *,
             name: str | NoDefaultValue = NoDefaultValue(),
             description: str | NoDefaultValue = NoDefaultValue(),
-            options_type: type[ReporterOptions] | NoDefaultValue = NoDefaultValue(),
             sections: Iterable[Section] | NoDefaultValue = NoDefaultValue(),
             targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
             default_targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
@@ -47,8 +46,6 @@ class ReporterKWArgs(KWArgs):
                 The unique identifying name of the reporter. Must be a non-empty string.
             description (str):
                 A brief description of the reporter. Must be a non-empty string.
-            options_type (type[ReporterOptions] | None):
-                The specific ReporterOptions subclass associated with this reporter,
                 or None if no specific options are defined.
             sections (set[Section]):
                 The set of all Sections supported by the reporter.

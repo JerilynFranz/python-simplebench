@@ -5,7 +5,7 @@ from __future__ import annotations
 from argparse import Namespace
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -27,29 +27,26 @@ from ..matplotlib import MatPlotLibReporter
 from .exceptions import ScatterPlotReporterErrorTag
 from .options import ScatterPlotOptions
 
+Options: TypeAlias = ScatterPlotOptions
+
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
 
 
-Options = ScatterPlotOptions
-
-
 class ScatterPlotReporter(MatPlotLibReporter):
     """Class for outputting benchmark results as scatter plot graphs."""
 
-    _HARDCODED_DEFAULT_OPTIONS = ScatterPlotOptions()
-    """Built-in default ReporterOptions subclass instance for the reporter used if
-    none is specified in a passed `Case`, `Choice`, or by `_DEFAULT_OPTIONS`. It
-    forms the basis for the dynamic default options functionality provided by the
-    `set_default_options()` and `get_default_options()` methods."""
+    _OPTIONS_TYPE: ClassVar[type[ScatterPlotOptions]] = ScatterPlotOptions  # pylint: disable=line-too-long  # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
+    """The specific ReporterOptions subclass associated with this reporter."""
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = ScatterPlotOptions.DEFAULT_KWARGS
+    """The default keyword arguments for the ScatterPlotOptions subclass."""
 
     def __init__(self) -> None:
         super().__init__(
             name='graph',
             description='Outputs benchmark results as graphs.',
-            options_type=Options,
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
             targets={Target.FILESYSTEM, Target.CALLBACK},
             formats={Format.GRAPH},

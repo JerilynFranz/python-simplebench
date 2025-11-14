@@ -72,7 +72,7 @@ class _ReporterPrioritizationMixin:
                 tag=ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE)
 
         cls = self.__class__
-        options_cls = self.options_type
+        options_cls = self._OPTIONS_TYPE
         # case.options is a list of ReporterOptions because Case.options is used
         # for all reporters. Thus, we need to filter by the specific type here
         # to find the reporter-specific options.

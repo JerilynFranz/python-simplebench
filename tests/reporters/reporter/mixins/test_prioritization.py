@@ -11,12 +11,45 @@ from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 
-from ....factories import (FactoryReporter, FactoryReporterOptions,
-                           case_factory, case_kwargs_factory,
-                           choice_conf_kwargs_factory, choice_factory,
-                           reporter_factory, reporter_kwargs_factory,
-                           reporter_options_factory)
+from ....factories import (
+    FactoryReporter,
+    FactoryReporterOptions,
+    case_factory,
+    case_kwargs_factory,
+    choice_conf_kwargs_factory,
+    choice_factory,
+    reporter_factory,
+    reporter_kwargs_factory,
+    reporter_options_factory,
+)
 from ....testspec import Assert, TestAction, TestSpec, idspec
+
+
+def test_factory_reporter_default_options() -> None:
+    """Test the get_hardcoded_default_options class method with FactoryReporter."""
+    FactoryReporter.set_default_options(None)
+    hardcoded_default_options = FactoryReporter.get_hardcoded_default_options()
+    hardcoded_default_options.tag = 'hardcoded_default_options'  # type: ignore[attr-defined]
+
+    assert hardcoded_default_options is FactoryReporter.get_default_options(), (
+        "FactoryReporter.get_default_options() should return the hardcoded default options"
+        " when no default options are set."
+    )
+
+    default_options = FactoryReporterOptions()
+    default_options.tag = 'default_options'
+    FactoryReporter.set_default_options(default_options)
+
+    assert default_options is FactoryReporter.get_default_options(), (
+        "FactoryReporter.get_default_options() should return the set default options"
+        " when they are set."
+    )
+
+    FactoryReporter.set_default_options(None)
+    assert hardcoded_default_options is FactoryReporter.get_default_options(), (
+        "FactoryReporter.get_default_options() should return the hardcoded default options"
+        " after default options are cleared."
+    )
 
 
 def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions | None) -> list[TestSpec]:
@@ -109,10 +142,10 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
 
     def prioritize_fail(msg: str) -> NoReturn:
         """Helper function to raise an AssertionError with a message."""
-        default_options = FactoryReporter._DEFAULT_OPTIONS  # pylint: disable=protected-access
+        default_options = FactoryReporter.get_default_options()
         hardcoded_default_options = FactoryReporter.get_hardcoded_default_options()
         raise AssertionError(
-            f"{msg} FactoryReporter._DEFAULT_OPTIONS = {default_options}\n"
+            f"{msg} FactoryReporter.get_default_options() = {default_options}\n"
             f"FactoryReporter.get_hardcoded_default_options() = {hardcoded_default_options}"
             )
 

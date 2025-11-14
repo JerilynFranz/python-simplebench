@@ -2,7 +2,7 @@
 # pylint: disable=unused-argument
 from argparse import Namespace
 from pathlib import Path
-from typing import Any, Iterable, overload
+from typing import Any, ClassVar, Iterable, TypeAlias, overload
 
 from simplebench.case import Case
 from simplebench.enums import Format, Section, Target
@@ -12,16 +12,25 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.session import Session
 
-from ...cache_factory import (CACHE_DEFAULT, CacheId, cached_factory,
-                              uncached_factory)
+from ...cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from ...kwargs import ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterKWArgs
-from .._primitives import (default_choice_flags, default_choice_name,
-                           default_default_targets, default_description,
-                           default_file_append, default_file_suffix,
-                           default_file_unique, default_flag_type,
-                           default_formats, default_output_format,
-                           default_report_output, default_reporter_name,
-                           default_sections, default_subdir, default_targets)
+from .._primitives import (
+    default_choice_flags,
+    default_choice_name,
+    default_default_targets,
+    default_description,
+    default_file_append,
+    default_file_suffix,
+    default_file_unique,
+    default_flag_type,
+    default_formats,
+    default_output_format,
+    default_report_output,
+    default_reporter_name,
+    default_sections,
+    default_subdir,
+    default_targets,
+)
 from .._utils import default_extra
 from ..argparse import namespace_factory
 from ..case import case_factory
@@ -60,6 +69,9 @@ def report_parameters_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
     }
 
 
+Options: TypeAlias = FactoryReporterOptions
+
+
 class FactoryReporter(Reporter):
     """A dummy reporter subclass for testing purposes.
 
@@ -70,15 +82,15 @@ class FactoryReporter(Reporter):
     both good and bad parameters.
 
     """
-    _HARDCODED_DEFAULT_OPTIONS = FactoryReporterOptions()
-    _DEFAULT_OPTIONS: ReporterOptions | None = None
+    _OPTIONS_TYPE: ClassVar[type[FactoryReporterOptions]] = FactoryReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
+    """The specific ReporterOptions subclass associated with this reporter."""
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
 
     def __init__(  # pylint: disable=redefined-outer-name
                 self,
                 *,
                 name: str,
                 description: str,
-                options_type: type[ReporterOptions],
                 sections: Iterable[Section],
                 targets: Iterable[Target],
                 default_targets: Iterable[Target] | None = None,
@@ -93,7 +105,6 @@ class FactoryReporter(Reporter):
         Args:
             name (str | None): Name of the reporter.
             description (str | None): Description of the reporter.
-            options_type (ReporterOptions | None): Options type for the reporter.
             sections (Iterable[Section] | None): Supported sections for the reporter.
             targets (Iterable[Target] | None): Supported targets for the reporter.
             default_targets (Iterable[Target] | None): Default targets for the reporter.
@@ -109,8 +120,6 @@ class FactoryReporter(Reporter):
             kwargs['name'] = name
         if description is not None:
             kwargs['description'] = description
-        if options_type is not None:
-            kwargs['options_type'] = options_type
         if sections is not None:
             kwargs['sections'] = sections
         if targets is not None:
@@ -173,13 +182,13 @@ class FactoryReporter(Reporter):
         return default_report_output()
 
 
-def default_options_type() -> type[FactoryReporterOptions]:
+def default_options_type() -> type[Options]:
     """Return a default ReporterOptions type for testing purposes.
 
     Returns:
         type[FactoryReporterOptions]: A FactoryReporterOptions type.
     """
-    return FactoryReporterOptions
+    return Options
 
 
 # overloads provide tooltips and docstrings for the cache_factory decorated function
@@ -307,7 +316,6 @@ def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWA
     return ReporterKWArgs(
         name=default_reporter_name(),
         description=default_description(),
-        options_type=default_options_type(),
         sections=default_sections(),
         targets=default_targets(),
         default_targets=default_default_targets(),

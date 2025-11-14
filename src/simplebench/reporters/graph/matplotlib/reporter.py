@@ -6,18 +6,20 @@ can focus on the specific details of their graph types instead of boilerplate co
 It is not a complete implementation of a Reporter and must be subclassed to be used.
 """
 from __future__ import annotations
+
 from abc import abstractmethod
 from argparse import Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeAlias
 
 # simplebench.reporters
 from ...choice import Choice
 from ...protocols import ReporterCallback
 from ...reporter import Reporter
-
 # simplebench.reporters.graph.matplotlib
 from .options import MatPlotLibOptions
+
+Options: TypeAlias = MatPlotLibOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -25,13 +27,7 @@ if TYPE_CHECKING:
 
 
 class MatPlotLibReporter(Reporter):
-    """Base class for MatPlotLib based graph reporters in the reporters package."""
-
-    _HARDCODED_DEFAULT_OPTIONS = MatPlotLibOptions()
-    """Built-in default ReporterOptions subclass instance for the reporter used if
-    none is specified in a passed `Case`, `Choice`, or by `_DEFAULT_OPTIONS`. It
-    forms the basis for the dynamic default options functionality provided by the
-    `set_default_options()` and `get_default_options()` methods."""
+    """Abstract base class for MatPlotLib based graph reporters in the reporters package."""
 
     @abstractmethod
     def run_report(self,
@@ -69,14 +65,19 @@ class MatPlotLibReporter(Reporter):
         ```
 
         Args:
-            args (Namespace): The argparse Namespace with the parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance representing the reporter choice.
-            path (Path | None): The output path for file-based targets, or None if not applicable.
-            session (Session | None): The Session instance representing the current benchmarking session,
+            args (Namespace):
+                The argparse Namespace with the parsed command-line arguments.
+            case (Case):
+                The Case instance representing the benchmarked code.
+            choice (Choice):
+                The Choice instance representing the reporter choice.
+            path (Path | None):
+                The output path for file-based targets, or None if not applicable.
+            session (Session | None):
+                The Session instance representing the current benchmarking session,
                 or None if not applicable.
-            callback (ReporterCallback | None): The callback function for callback targets,
-                or None if not applicable.
+            callback (ReporterCallback | None):
+                The callback function for callback targets, or None if not applicable.
 
         """
         raise NotImplementedError(

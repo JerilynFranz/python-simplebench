@@ -18,14 +18,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from argparse import Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeAlias, TypeVar
 
-from simplebench.defaults import (BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT,
-                                  BASE_OPS_PER_INTERVAL_UNIT)
+from simplebench.defaults import BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT, BASE_OPS_PER_INTERVAL_UNIT
 from simplebench.enums import Format, Section, Target
-from simplebench.exceptions import (SimpleBenchNotImplementedError,
-                                    SimpleBenchTypeError,
-                                    SimpleBenchValueError)
+from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.choices.choices_conf import ChoicesConf
@@ -34,14 +31,18 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.metaclasses import IReporter
 from simplebench.reporters.reporter.mixins import (
-    _ReporterArgparseMixin, _ReporterOrchestrationMixin,
-    _ReporterPrioritizationMixin, _ReporterTargetMixin)
+    _ReporterArgparseMixin,
+    _ReporterOrchestrationMixin,
+    _ReporterPrioritizationMixin,
+    _ReporterTargetMixin,
+)
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.results import Results
 from simplebench.type_proxies import is_case, is_choice, is_session
-from simplebench.validators import (validate_bool, validate_iterable_of_type,
-                                    validate_string, validate_type)
+from simplebench.validators import validate_bool, validate_iterable_of_type, validate_string, validate_type
+
+Options: TypeAlias = ReporterOptions
 
 T = TypeVar('T')
 
@@ -65,8 +66,7 @@ def deferred_core_imports() -> None:
         None
     """
     global Choice  # pylint: disable=global-statement
-    from simplebench.reporters.choice.choice import \
-        Choice  # pylint: disable=import-outside-toplevel
+    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
 
 
 class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
@@ -85,53 +85,132 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
     set of functionalities, making it easier to manage and utilize different
     reporting options within the SimpleBench framework.
     """
+    @classmethod
+    def _validate_subclass_config(cls) -> None:
+        """Validate that the subclass has implemented required class variables.
 
-    _HARDCODED_DEFAULT_OPTIONS: ReporterOptions = ReporterOptions()
-    """Built-in default ReporterOptions instance for the reporter used if none is specified
-    in a passed `Case`, `Choice`, or by `_DEFAULT_OPTIONS`. It forms the basis for the
-    dynamic default options functionality provided by the `set_default_options()` and
-    `get_default_options()` methods.
+        This method checks that the subclass has defined the required class variables
+        and that they are of the correct types.
 
-    Subclasses **SHOULD** override this with their own default specific options instances
-    as appropriate for the reporter to provide sensible defaults.
-    """
+        Subclasses m ust implement the following class variables:
+
+            _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions
+            _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}
+
+        _OPTIONS_TYPE must be a subclass of ReporterOptions
+        and _OPTIONS_KWARGS must be a dict[str, Any] that can be used
+        to instantiate the _OPTIONS_TYPE subclass.
+
+
+        Raises:
+            SimpleBenchNotImplementedError: If required class variables are not implemented
+                or are of incorrect types.
+        """
+        # Verify that we are being called from a subclass of Reporter, not Reporter itself
+        if cls is Reporter:
+            raise SimpleBenchNotImplementedError(
+                ("get_hardcoded_default_options() cannot be called directly on the Reporter class"),
+                tag=ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_CANNOT_BE_REPORTER)
+        if not issubclass(cls, Reporter):
+            raise SimpleBenchNotImplementedError(
+                ("Only sub-classes of Reporter can call get_hardcoded_default_options()"),
+                tag=ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_MUST_BE_SUBCLASS_OF_REPORTER)
+
+        # Verify that the subclass has implemented the _OPTIONS_TYPE class variable correctly
+        # It must be implemented in the subclass, and it must be a subclass of ReporterOptions,
+        # but not ReporterOptions itself
+        if "_OPTIONS_TYPE" not in cls.__dict__:
+            raise SimpleBenchNotImplementedError(
+                ("Reporter subclasses must implement the class variable '_OPTIONS_TYPE' "
+                 "and set it to the specific ReporterOptions subclass they use"),
+                tag=ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_NOT_IMPLEMENTED)
+        options = cls._OPTIONS_TYPE  # pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]
+        if options is ReporterOptions:
+            raise SimpleBenchNotImplementedError(
+                ("Reporter subclasses must set '_OPTIONS_TYPE' to a ReporterOptions subclass, "
+                 "not the base ReporterOptions class"),
+                tag=ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_INVALID_TYPE)
+        if not issubclass(options, ReporterOptions):
+            raise SimpleBenchNotImplementedError(
+                ("Reporter subclasses must implement the class variable '_OPTIONS_TYPE' "
+                 "and set it to a ReporterOptions subclass."),
+                tag=ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_MUST_BE_SUBCLASS)
+
+        # Verify the subclass has implemented the _OPTIONS_KWARGS class variable correctly
+        # It must be implemented in the subclass, and it must be a dict[str, Any]
+        if "_OPTIONS_KWARGS" not in cls.__dict__:
+            raise SimpleBenchNotImplementedError(
+                ("Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' "
+                 "and set it to a dict of keyword arguments for the ReporterOptions subclass."),
+                tag=ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_IMPLEMENTED)
+        options_kwargs = cls._OPTIONS_KWARGS  # pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]
+        if not isinstance(options_kwargs, dict):
+            raise SimpleBenchNotImplementedError(
+                ("Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' "
+                 "and set it to a dict of keyword arguments for the ReporterOptions subclass."),
+                tag=ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_A_DICT)
+        if not all(isinstance(k, str) for k in options_kwargs.keys()):
+            raise SimpleBenchNotImplementedError(
+                ("Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' "
+                 "as a dict with string keys."),
+                tag=ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_KEYS_MUST_BE_STR)
 
     @classmethod
-    def get_hardcoded_default_options(cls) -> ReporterOptions:
+    def get_hardcoded_default_options(cls) -> Any:
         """Get the built-in hardcoded default options for the reporter.
 
+        This abstract method must be implemented by all Reporter subclasses.
+        It defines the base class default options for a reporter and must
+        be available in all Reporter subclasses.
+
+        It returns the hardcoded default ReporterOptions sub-class instance
+        specific to the reporter.
+
+        Sub-classes must implement the following class variables:
+
+            _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions
+            _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}
+
+        or the method will raise an exception.
+
         Returns:
-            ReporterOptions: The built-in hardcoded default ReporterOptions instance.
+            (ReporterOptions-subclass): The built-in hardcoded default
+            ReporterOptions instance.
+
+        Raises:
+            SimpleBenchNotImplementedError: If required class variables are not implemented
+                or are of incorrect types.
         """
-        return cls._HARDCODED_DEFAULT_OPTIONS
+        cls._validate_subclass_config()
+        if '_HARDCODED_DEFAULT_OPTIONS' not in cls.__dict__:
+            options_type: type[ReporterOptions] = getattr(cls, '_OPTIONS_TYPE')
+            options_kwargs: dict[str, Any] = getattr(cls, '_OPTIONS_KWARGS')
+            setattr(cls, '_HARDCODED_DEFAULT_OPTIONS', options_type(**options_kwargs))
+        return cls._HARDCODED_DEFAULT_OPTIONS  # pylint: disable=no-member   # type: ignore[attr-defined,reportAttributeAccessIssue]  # noqa: E501
 
-    _DEFAULT_OPTIONS: ReporterOptions | None = None
-    """Default ReporterOptions instance for the reporter.
-
-    Note:
-        The value None indicates that the built-in hardcoded default options
-        `get_hardcoded_default_options()` should be used.
-
-        See the `get_default_options()` method for details.
-    """
     @classmethod
-    def set_default_options(cls, options: ReporterOptions | None = None) -> None:
+    def set_default_options(cls, options: Options | None = None) -> None:
         """Set the default options for the  reporter.
 
         Args:
             options (ReporterOptions | None, default=None): The options to set as the default.
         """
-        if options is None or isinstance(options, ReporterOptions):
-            cls._DEFAULT_OPTIONS = options
-
-        else:
+        cls._validate_subclass_config()
+        options_type = getattr(cls, '_OPTIONS_TYPE')
+        if options.__class__ is ReporterOptions:
             raise SimpleBenchTypeError(
-                f"Invalid type for options argument in set_default_options(). "
-                f"Expected ReporterOptions or None and got {type(options)}.",
+                "Invalid type for options argument in set_default_options(). "
+                "Expected ReporterOptions subclass instance or None and got ReporterOptions base class instance.",
+                tag=ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE_BASE_CLASS_INSTANCE)
+        if not isinstance(options, options_type) and options is not None:
+            raise SimpleBenchTypeError(
+                "Invalid type for options argument in set_default_options(). "
+                f"Expected {options_type} or None and got {type(options)}.",
                 tag=ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE)
+        setattr(cls, '_DEFAULT_OPTIONS', options)
 
     @classmethod
-    def get_default_options(cls) -> ReporterOptions:
+    def get_default_options(cls) -> Options:
         """Get the default options for the reporter.
 
         Returns the default options set via set_default_options() if set,
@@ -139,17 +218,19 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         `get_hardcoded_default_options()`.
 
         Returns:
-            ReporterOptions | None: The default options.
+            ReporterOptions: The default options.
         """
-        if cls._DEFAULT_OPTIONS is None:
-            return cls.get_hardcoded_default_options()
-        return cls._DEFAULT_OPTIONS
+        cls._validate_subclass_config()
+        if '_DEFAULT_OPTIONS' in cls.__dict__:
+            user_default = cls._DEFAULT_OPTIONS  # pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]  # noqa: E501
+            if user_default is not None:
+                return user_default
+        return cls.get_hardcoded_default_options()
 
     def __init__(self,
                  *,
                  name: str,
                  description: str,
-                 options_type: type[ReporterOptions],
                  sections: Iterable[Section],
                  targets: Iterable[Target],
                  default_targets: Iterable[Target] | None = None,
@@ -175,10 +256,8 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                 A brief description of the reporter.
 
                 - must be a non-empty string.
-            options_type (type[ReporterOptions] | None):
-                The specific ReporterOptions subclass associated with this reporter.
 
-                - `None` if no specific options are defined.
+                - If `None`, the reporter's hardcoded default options type will be used.
             sections (Iterable[Section]):
                 An iterable of all Sections supported by the reporter.
 
@@ -231,14 +310,6 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             ReporterErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
             allow_empty=False, allow_blank=False)
         """A brief description of the reporter (private backing field)"""
-
-        if not issubclass(options_type, ReporterOptions):
-            raise SimpleBenchTypeError(
-                "options_type must be a subclass of ReporterOptions",
-                tag=ReporterErrorTag.OPTIONS_TYPE_INVALID_VALUE)
-        self._options_type: type[ReporterOptions] = options_type
-        """The specific ReporterOptions subclass associated with this reporter.
-        (private backing field)"""
 
         self._sections: frozenset[Section] = frozenset(
             validate_iterable_of_type(
@@ -575,10 +646,10 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         return self._description
 
     @property
-    def options_type(self) -> type[ReporterOptions]:
+    def options_type(self) -> type[Options]:
         """Return the specific ReporterOptions subclass associated with this reporter.
         """
-        return self._options_type
+        return self.__class__.get_default_options().__class__
 
     def supported_sections(self) -> frozenset[Section]:
         """Return the set of supported Sections for the reporter.

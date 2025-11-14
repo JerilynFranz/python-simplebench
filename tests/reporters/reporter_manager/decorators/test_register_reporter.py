@@ -11,8 +11,11 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter_manager.decorators import (
-    RegisterReporterErrorTag, clear_registered_reporters,
-    get_registered_reporters, register_reporter)
+    RegisterReporterErrorTag,
+    clear_registered_reporters,
+    get_registered_reporters,
+    register_reporter,
+)
 from simplebench.session import Session
 
 from ....factories import reporter_kwargs_factory
@@ -24,6 +27,14 @@ class MockReporterOptions(ReporterOptions):
 
 class MockReporter(Reporter):
     """A mock reporter subclass for testing purposes."""
+
+    @classmethod
+    def get_hardcoded_default_options(cls) -> MockReporterOptions:
+        """Return a mock hardcoded default options instance."""
+        return MockReporterOptions()
+
+    _DEFAULT_OPTIONS: MockReporterOptions | None = None  # type: ignore[reportIncompatibleVariableOverride]
+
     def __init__(self, name: str = 'mock') -> None:
         super().__init__(**reporter_kwargs_factory(cache_id=None))
 

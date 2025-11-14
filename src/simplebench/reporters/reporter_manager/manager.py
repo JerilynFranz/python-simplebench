@@ -7,6 +7,7 @@ This registry is global. When a Reporter is registered, it is added to the globa
 registry, and when it is unregistered, it is removed from the global registry.
 """
 from __future__ import annotations
+
 from argparse import ArgumentParser
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
@@ -14,15 +15,21 @@ from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.csv.reporter import CSVReporter
 from simplebench.reporters.graph.scatterplot.reporter import ScatterPlotReporter
-from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.json import JSONReporter
+from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.rich_table.reporter import RichTableReporter
 
 from .decorators.register_reporter import get_registered_reporters
 from .exceptions import ReporterManagerErrorTag
 
-_PREDEFINED_REPORTERS: list[type[Reporter]] = [CSVReporter, ScatterPlotReporter, RichTableReporter, JSONReporter]
-"""Container for all predefined Reporter classes."""
+_PREDEFINED_REPORTERS: list[type[Reporter]] = [
+    CSVReporter, ScatterPlotReporter, RichTableReporter, JSONReporter]
+"""Container for all predefined Reporter classes.
+- CSVReporter
+- ScatterPlotReporter
+- RichTableReporter
+- JSONReporter
+"""
 
 
 class ReporterManager():

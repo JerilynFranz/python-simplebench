@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Reporter for benchmark results using CSV files."""
 from __future__ import annotations
 
@@ -6,7 +5,7 @@ import csv
 from argparse import Namespace
 from io import StringIO
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.enums import FlagType, Format, Section, Target
@@ -14,6 +13,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 # simplebench.reporters imports
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
+from simplebench.reporters.csv.reporter.options import CSVOptions
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -24,8 +24,6 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 from .exceptions import CSVReporterErrorTag
-# simplebench.reporters.csv imports
-from .options import CSVOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -62,18 +60,16 @@ class CSVReporter(Reporter):
         targets (set[Target]): The supported output targets for the reporter.
         formats (set[Format]): The supported output formats for the reporter.
     """
-    _HARDCODED_DEFAULT_OPTIONS = CSVOptions()
-    """Built-in default CSVOptions instance for the reporter used if none is specified
-    in a passed `Case`, `Choice`, or by `_DEFAULT_OPTIONS`. It forms the basis for the
-    dynamic default options functionality provided by the `set_default_options()` and
-    `get_default_options()` methods."""
+    _OPTIONS_TYPE: ClassVar[type[CSVOptions]] = CSVOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
+    """The ReporterOptions subclass type for the reporter: `CSVOptions`"""
+    _OPTIONS_KWARGS: ClassVar[dict[str, object]] = {}
+    """Keyword arguments for constructing a CSVOptions hardcoded default instance: `{}`"""
 
     def __init__(self) -> None:
         """Initialize the CSVReporter with its name, description, choices, targets, and formats."""
         super().__init__(
             name='csv',
             description='Outputs benchmark results to CSV files.',
-            options_type=CSVOptions,
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
             targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
             formats={Format.CSV},

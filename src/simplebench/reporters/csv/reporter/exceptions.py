@@ -33,4 +33,3 @@ class CSVReporterErrorTag(ErrorTag):
     RENDER_INVALID_SECTION = "RENDER_INVALID_SECTION"
     """Something other than a valid Section enum member was passed to the CSVReporter.render() method."""
     RENDER_INVALID_OPTIONS = "RENDER_INVALID_OPTIONS"
-

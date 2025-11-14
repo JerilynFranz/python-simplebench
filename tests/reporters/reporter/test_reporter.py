@@ -3,15 +3,13 @@ from __future__ import annotations
 
 from argparse import Namespace
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, ClassVar, Optional
 
 import pytest
 
 from simplebench.case import Case
 from simplebench.enums import Format, Section, Target
-from simplebench.exceptions import (SimpleBenchNotImplementedError,
-                                    SimpleBenchTypeError,
-                                    SimpleBenchValueError)
+from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.iteration import Iteration
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
@@ -23,15 +21,24 @@ from simplebench.results import Results
 from simplebench.runners import SimpleRunner
 from simplebench.session import Session
 
-from ...factories import (FactoryReporter, case_factory, choice_conf_factory,
-                          choice_conf_kwargs_factory, choice_factory,
-                          choices_factory, default_description,
-                          default_reporter_callback, default_reporter_name,
-                          namespace_factory, path_factory,
-                          report_parameters_factory, reporter_factory,
-                          reporter_kwargs_factory, session_factory)
-from ...testspec import (NO_EXPECTED_VALUE, Assert, TestAction, TestGet,
-                         TestSet, TestSpec, idspec)
+from ...factories import (
+    FactoryReporter,
+    case_factory,
+    choice_conf_factory,
+    choice_conf_kwargs_factory,
+    choice_factory,
+    choices_factory,
+    default_description,
+    default_reporter_callback,
+    default_reporter_name,
+    namespace_factory,
+    path_factory,
+    report_parameters_factory,
+    reporter_factory,
+    reporter_kwargs_factory,
+    session_factory,
+)
+from ...testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
 
 
 def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable=unused-argument  # pragma: no cover
@@ -63,12 +70,21 @@ def broken_benchcase_missing_kwargs(
             iterations=[Iteration(elapsed=1.0), Iteration(elapsed=2.0)])
 
 
+class BadSuperReporterOptions(ReporterOptions):
+    """A bad dummy ReporterOptions subclass for testing purposes."""
+
+
 class BadSuperReporter(Reporter):
     """A dummy Reporter subclass for testing purposes.
 
     This class incorrectly calls super().run_report(), which should raise NotImplementedError
     when run() is called.
     """
+    _OPTIONS_TYPE: ClassVar[type[BadSuperReporterOptions]] = BadSuperReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
+    """The ReporterOptions subclass type for the reporter: `BadSuperReporterOptions`"""
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
+    """Keyword arguments for constructing a BadSuperReporterOptions hardcoded default instance: `{}`"""
+
     def __init__(self) -> None:
         super().__init__(**reporter_kwargs_factory(cache_id=None))
 
@@ -81,8 +97,7 @@ class BadSuperReporter(Reporter):
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
         """Incorrectly calls super().run_report(), which should raise NotImplementedError."""
-        return super().run_report(
-                                  args=args,
+        return super().run_report(args=args,
                                   case=case,
                                   choice=choice,
                                   path=path,
@@ -90,10 +105,19 @@ class BadSuperReporter(Reporter):
                                   callback=callback)
 
 
+class GoodReporterOptions(ReporterOptions):
+    """A good dummy ReporterOptions subclass for testing purposes."""
+
+
 class GoodReporter(Reporter):
     """A good dummy Reporter subclass for testing purposes.
 
     """
+    _OPTIONS_TYPE: ClassVar[type[GoodReporterOptions]] = GoodReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
+    """The ReporterOptions subclass type for the reporter: `GoodReporterOptions`"""
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
+    """Keyword arguments for constructing a GoodReporterOptions hardcoded default instance: `{}`"""
+
     def __init__(self) -> None:
         super().__init__(**reporter_kwargs_factory(cache_id=None))
 
@@ -273,13 +297,6 @@ def test_factory_reporter_subclassing() -> None:
         action=Reporter,
         kwargs=reporter_kwargs_factory(),
         exception=TypeError)),
-    idspec('REPORTER_023', TestAction(
-        name=("Init of FactoryReporter with an options_type that is not "
-              "a ReporterOptions subclass raises SimpleBenchTypeError"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(options_type=str),
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.OPTIONS_TYPE_INVALID_VALUE)),
     idspec('REPORTER_024', TestAction(
         name="Init of FactoryReporter with subdir name longer than 64 characters raises SimpleBenchValueError",
         action=FactoryReporter,

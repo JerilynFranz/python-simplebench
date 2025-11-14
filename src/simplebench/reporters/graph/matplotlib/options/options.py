@@ -2,6 +2,7 @@
 
 These options are used to configure the behavior of a MatPlotLib reporter
 when generating graph reports for benchmark test cases."""
+from typing import ClassVar
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.validators import validate_int_range, validate_type, validate_float, validate_bool
 
@@ -69,30 +70,51 @@ class MatPlotLibOptions(GraphOptions):
         theme (Theme): The default theme to use for the MatPlotLib graphs.
         image_type (ImageType): The output image format for the graph files.
     """
-    _HARDCODED_DEFAULT_WIDTH: int = 1500
+    _HARDCODED_DEFAULT_WIDTH: ClassVar[int] = 1500
     """Hardcoded default width in pixels for all MatPlotLib graphs.
     (private class attribute)"""
-    _HARDCODED_DEFAULT_HEIGHT: int = 750
+    _HARDCODED_DEFAULT_HEIGHT: ClassVar[int] = 750
     """Hardcoded default height in pixels for all MatPlotLib graphs.
     (private class attribute)"""
-    _HARDCODED_DEFAULT_DPI: int = 150
+    _HARDCODED_DEFAULT_DPI: ClassVar[int] = 150
     """Hardcoded default DPI for all MatPlotLib graphs.
     (private class attribute)"""
-    _HARDCODED_DEFAULT_Y_STARTS_AT_ZERO: bool = True
+    _HARDCODED_DEFAULT_Y_STARTS_AT_ZERO: ClassVar[bool] = True
     """Hardcoded default value for whether Y-axis starts at zero for all MatPlotLib graphs.
     (private class attribute)"""
-    _HARDCODED_DEFAULT_X_LABELS_ROTATION: float = 45.0
+    _HARDCODED_DEFAULT_X_LABELS_ROTATION: ClassVar[float] = 45.0
     """Hardcoded default rotation angle in degrees for X-axis labels for all MatPlotLib graphs.
     (private class attribute)"""
-    _HARDCODED_DEFAULT_STYLE: Style = Style.DARK_BACKGROUND
+    _HARDCODED_DEFAULT_STYLE: ClassVar[Style] = Style.DARK_BACKGROUND
     """Hardcoded default style for all MatPlotLib graphs.
     (private class attribute)"""
-    _HARDCODED_DEFAULT_THEME: Theme = DefaultTheme
+    _HARDCODED_DEFAULT_THEME: ClassVar[Theme] = DefaultTheme
     """Hardcoded default theme for all MatPlotLib graphs.
     (private class attribute)"""
-    _HARDCODED_IMAGE_TYPE: ImageType = ImageType.SVG
+    _HARDCODED_IMAGE_TYPE: ClassVar[ImageType] = ImageType.SVG
     """Hardcoded default image type for all MatPlotLib graphs.
     (private class attribute)"""
+
+    DEFAULT_KWARGS: ClassVar[dict[str, object]] = {
+        'width': _HARDCODED_DEFAULT_WIDTH,
+        'height': _HARDCODED_DEFAULT_HEIGHT,
+        'dpi': _HARDCODED_DEFAULT_DPI,
+        'y_starts_at_zero': _HARDCODED_DEFAULT_Y_STARTS_AT_ZERO,
+        'x_labels_rotation': _HARDCODED_DEFAULT_X_LABELS_ROTATION,
+        'style': _HARDCODED_DEFAULT_STYLE,
+        'theme': _HARDCODED_DEFAULT_THEME,
+        'image_type': _HARDCODED_IMAGE_TYPE,
+    }
+    """Default keyword arguments for MatPlotLibOptions constructor.
+        - width: int = 1500
+        - height: int = 750
+        - dpi: int = 150
+        - y_starts_at_zero: bool = True
+        - x_labels_rotation: float = 45.0
+        - style: Style = Style.DARK_BACKGROUND
+        - theme: Theme = Theme.Default
+        - image_type: ImageType = ImageType.SVG
+    """
 
     @classmethod
     def get_hardcoded_default_width(cls) -> int:

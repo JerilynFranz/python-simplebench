@@ -1,27 +1,25 @@
 """Test the simplebench.reporters.validators.validate_report_renderer function."""
 from argparse import Namespace
 from pathlib import Path
-from typing import Any, TypeVar
-
-from rich.table import Table
-from rich.text import Text
+from typing import Any, ClassVar, TypeVar
 
 import pytest
-
-from tests.factories import reporter_kwargs_factory
-from tests.testspec import TestSpec, TestAction, idspec, Assert
+from rich.table import Table
+from rich.text import Text
 
 from simplebench.case import Case
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
 from simplebench.reporters.validators import validate_report_renderer
-from simplebench.reporters.choice import Choice
+from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
 from simplebench.session import Session
 
+from ...factories import reporter_kwargs_factory
+from ...testspec import Assert, TestAction, TestSpec, idspec
 
 T = TypeVar('T')
 
@@ -32,6 +30,12 @@ class MockReporterOptions(ReporterOptions):
 
 class MockReporter(Reporter):
     """A mock reporter subclass for testing purposes."""
+
+    _OPTIONS_TYPE: ClassVar[type[MockReporterOptions]] = MockReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
+    """The specific ReporterOptions subclass associated with this reporter."""
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
+    """The default keyword arguments for the MockReporterOptions subclass."""
+
     def __init__(self):
         super().__init__(**reporter_kwargs_factory(cache_id=None))
 

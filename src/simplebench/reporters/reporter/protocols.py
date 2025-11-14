@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import (TYPE_CHECKING, Iterable, Protocol, TypeVar,
-                    runtime_checkable)
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Protocol, TypeVar, runtime_checkable
 
 from rich.table import Table
 from rich.text import Text
@@ -26,6 +25,8 @@ T = TypeVar('T')
 @runtime_checkable
 class ReporterProtocol(Protocol):
     """Protocol for the Reporter class and its mixins."""
+    _OPTIONS_TYPE: ClassVar[type[ReporterOptions]]
+    _OPTIONS_KWARGS: ClassVar[dict[str, Any]]
 
     @property
     def name(self) -> str:
@@ -35,11 +36,6 @@ class ReporterProtocol(Protocol):
     @property
     def description(self) -> str:
         """Return the description of the reporter."""
-        ...
-
-    @property
-    def options_type(self) -> type[ReporterOptions]:
-        """Return the ReporterOptions subclass used by this reporter."""
         ...
 
     def supported_sections(self) -> frozenset[Section]:
@@ -58,8 +54,6 @@ class ReporterProtocol(Protocol):
     """The name of the reporter (private backend attribute)."""
     _description: str
     """The description of the reporter (private backend attribute)."""
-    _options_type: type[ReporterOptions]
-    """The ReporterOptions subclass used by this reporter (private backend attribute)."""
     _sections: frozenset[Section]
     """The supported sections for this reporter (private backend attribute)."""
     _targets: frozenset[Target]
