@@ -88,6 +88,12 @@ max-line-length = 120
 extend-ignore = ["E203"]
 max-complexity = 10
 
+[tool.isort]
+line_length = 120
+# Mode 3 - Vertical Hanging Indent
+multi_line_output = 3
+include_trailing_comma = true
+
 [tool.yapf]
 based_on_style = "pep8"
 column_limit = 120
