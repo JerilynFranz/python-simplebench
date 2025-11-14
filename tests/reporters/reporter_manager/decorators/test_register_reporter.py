@@ -62,11 +62,11 @@ class MockReporter(Reporter):
 def test_register_reporter() -> None:
     """Test the register_reporter decorator."""
 
-    class TestReporterOptions(ReporterOptions):
+    class TestReporterOptions(MockReporterOptions):
         """A mock ReporterOptions subclass for testing purposes."""
 
     @register_reporter
-    class TestReporter(Reporter):  # pylint: disable=unused-variable
+    class TestReporter(MockReporter):  # pylint: disable=unused-variable
         """A test reporter subclass for testing purposes."""
 
         _OPTIONS_TYPE: ClassVar[type[TestReporterOptions]] = TestReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501

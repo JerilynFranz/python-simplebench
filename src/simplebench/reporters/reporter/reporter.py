@@ -186,7 +186,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             options_type: type[ReporterOptions] = getattr(cls, '_OPTIONS_TYPE')
             options_kwargs: dict[str, Any] = getattr(cls, '_OPTIONS_KWARGS')
             setattr(cls, '_HARDCODED_DEFAULT_OPTIONS', options_type(**options_kwargs))
-        return cls._HARDCODED_DEFAULT_OPTIONS  # pylint: disable=no-member   # type: ignore[attr-defined,reportAttributeAccessIssue]  # noqa: E501
+        return getattr(cls, '_HARDCODED_DEFAULT_OPTIONS')
 
     @classmethod
     def set_default_options(cls, options: Options | None = None) -> None:

@@ -1,11 +1,11 @@
 """Tests for the simplebench.reporters.reporter._ReporterPrioritizationMixin mixin class."""
 from dataclasses import dataclass
-from typing import NoReturn
 
 import pytest
 
 from simplebench.case import Case
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
@@ -69,6 +69,8 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
 
     """
 
+    default_options_title = 'without' if reporter_default_options is None else 'with'
+
     # Each of the ReporterOptions() instances must be different to allow
     # distinguishing their source in the tests.
     case_options = reporter_options_factory(cache_id=None)
@@ -130,30 +132,34 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
         choice = next(iter(reporter.choices.values()))
         return idspec(testcase.test_id, TestAction(
             name=testcase.name,
-            action=reporter.get_prioritized_options,
+            action=get_prioritized_options_helper,
             kwargs={
+                'reporter': reporter,
                 'case': testcase.case,
                 'choice': choice,
+                'default_reporter_options': testcase.reporter_default_options,
             },
             assertion=Assert.IS,
             expected=testcase.expected,
-            on_fail=prioritize_fail
         ))
 
-    def prioritize_fail(msg: str) -> NoReturn:
-        """Helper function to raise an AssertionError with a message."""
-        default_options = FactoryReporter.get_default_options()
-        hardcoded_default_options = FactoryReporter.get_hardcoded_default_options()
-        raise AssertionError(
-            f"{msg} FactoryReporter.get_default_options() = {default_options}\n"
-            f"FactoryReporter.get_hardcoded_default_options() = {hardcoded_default_options}"
-            )
+    def get_prioritized_options_helper(
+            reporter: FactoryReporter,
+            case: Case,
+            choice: Choice,
+            default_reporter_options: ReporterOptions | None) -> ReporterOptions:
+        """Helper function to call get_prioritized_options and handle failures."""
+        FactoryReporter.set_default_options(default_reporter_options)
+        return reporter.get_prioritized_options(
+                case=case,
+                choice=choice)
 
     # Prioritization tests with FactoryReporter default options set to reporter_default_options
     prioritization_testcases = [
         PrioritizeOptionsTest(
             test_id="PRIORITIZE_OPTIONS_001",
-            name="Case With Options, Choice With Options, Reporter With Default Options -> (Case with Options)",
+            name=(f"Case With Options, Choice With Options, Reporter {default_options_title} "
+                  "Default Options -> (Case with Options)"),
             case=case_with_options,
             choices=choices_conf_with_options,
             reporter_default_options=reporter_default_options,
@@ -161,7 +167,8 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
         ),
         PrioritizeOptionsTest(
             test_id="PRIORITIZE_OPTIONS_002",
-            name="Case Without Options, Choice With Options, Reporter With Default Options -> (Choice with Options)",
+            name=(f"Case Without Options, Choice With Options, Reporter {default_options_title} "
+                  "Default Options -> (Choice with Options)"),
             case=case_without_options,
             choices=choices_conf_with_options,
             reporter_default_options=reporter_default_options,
@@ -173,7 +180,7 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
         prioritization_testcases.append(
             PrioritizeOptionsTest(
                 test_id="PRIORITIZE_OPTIONS_003",
-                name=("Case Without Options, Choice Without Options, Reporter With Without "
+                name=(f"(A) Case Without Options, Choice Without Options, Reporter {default_options_title} "
                       "Default Options -> (Reporter Hardcoded Default Options)"),
                 case=case_without_options,
                 choices=choices_conf_without_options,
@@ -185,7 +192,7 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
         prioritization_testcases.append(
             PrioritizeOptionsTest(
                 test_id="PRIORITIZE_OPTIONS_003",
-                name=("Case Without Options, Choice Without Options, Reporter With "
+                name=(f"(B) Case Without Options, Choice Without Options, Reporter {default_options_title} "
                       "Default Options -> (Reporter Default Options)"),
                 case=case_without_options,
                 choices=choices_conf_without_options,

@@ -23,6 +23,7 @@ from simplebench.session import Session
 
 from ...factories import (
     FactoryReporter,
+    FactoryReporterOptions,
     case_factory,
     choice_conf_factory,
     choice_conf_kwargs_factory,
@@ -645,23 +646,23 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
     testspec: list[TestSpec] = [
         idspec('CLASS_METHODS_001', TestAction(
             name="Reporter.get_hardcoded_default_options() class method returns expected value with expected type",
-            action=Reporter.get_hardcoded_default_options,
+            action=FactoryReporter.get_hardcoded_default_options,
             assertion=Assert.ISINSTANCE,
-            expected=ReporterOptions)),
+            expected=FactoryReporterOptions)),
         idspec('CLASS_METHODS_002', TestAction(
             name="Reporter.get_default_options() class method returns ReporterOptions with expected type",
-            action=Reporter.get_default_options,
+            action=FactoryReporter.get_default_options,
             assertion=Assert.ISINSTANCE,
-            expected=ReporterOptions)),
+            expected=FactoryReporterOptions)),
         idspec('CLASS_METHODS_003', TestAction(
             name="Reporter.set_default_options() sets default options",
-            action=Reporter.set_default_options,
-            args=[ReporterOptions()],
+            action=FactoryReporter.set_default_options,
+            args=[FactoryReporterOptions()],
             expected=NO_EXPECTED_VALUE)),
         idspec('CLASS_METHODS_004', TestAction(
             name=("Reporter.set_default_options() with bad type raises "
                   "SimpleBenchTypeError/SET_DEFAULT_OPTIONS_INVALID_ARG_TYPE"),
-            action=Reporter.set_default_options,
+            action=FactoryReporter.set_default_options,
             args=["not_a_reporter_options_instance"],
             exception=SimpleBenchTypeError,
             exception_tag=ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE)),
@@ -679,9 +680,9 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         Raises:
             AssertionError if the test fails.
         """
-        Reporter.set_default_options(None)  # Reset to hard coded defaults
-        hard_coded_options = Reporter.get_hardcoded_default_options()
-        original_default_options = Reporter.get_default_options()
+        FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
+        hard_coded_options = FactoryReporter.get_hardcoded_default_options()
+        original_default_options = FactoryReporter.get_default_options()
         assert hard_coded_options is original_default_options, (
             "get_default_options() does not return the hard coded instance after reset with None")
     testspec.append(idspec(
@@ -704,11 +705,11 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         Raises:
             AssertionError if the test fails.
         """
-        Reporter.set_default_options(None)  # Reset to hard coded defaults
-        hardcoded_options: ReporterOptions = Reporter.get_default_options()
-        new_options = ReporterOptions()
-        Reporter.set_default_options(new_options)
-        post_set_options = Reporter.get_default_options()
+        FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
+        hardcoded_options = FactoryReporter.get_default_options()
+        new_options = FactoryReporterOptions()
+        FactoryReporter.set_default_options(new_options)
+        post_set_options = FactoryReporter.get_default_options()
 
         assert hardcoded_options is not post_set_options, (
             "get_default_options() did not return a different instance after set_default_options()")
@@ -732,19 +733,18 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         Raises:
             AssertionError if the test fails.
         """
-        Reporter.set_default_options(None)  # Reset to hard coded defaults
-        hardcoded_options: ReporterOptions = Reporter.get_hardcoded_default_options()
-        new_options = ReporterOptions()
-        Reporter.set_default_options(new_options)
-        post_set_options = Reporter.get_default_options()
-
+        FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
+        hardcoded_options: FactoryReporterOptions = FactoryReporter.get_hardcoded_default_options()
+        new_options = FactoryReporterOptions()
+        FactoryReporter.set_default_options(new_options)
+        post_set_options = FactoryReporter.get_default_options()
         assert hardcoded_options is not post_set_options, (
             "get_default_options() did not return a different instance after set_default_options()")
         assert new_options is post_set_options, (
             "get_default_options() does not return the new ReporterOptions instance after set_default_options()")
 
-        Reporter.set_default_options(None)  # Reset to hard coded defaults
-        reset_options = Reporter.get_default_options()
+        FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
+        reset_options = FactoryReporter.get_default_options()
         assert hardcoded_options is reset_options, (
             "get_default_options() does not return the hard coded instance after reset with None")
     testspec.append(idspec(
