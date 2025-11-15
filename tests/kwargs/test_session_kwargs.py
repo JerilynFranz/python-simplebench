@@ -1,15 +1,17 @@
 """simplebench.session KWArgs package for SimpleBench tests."""
 from __future__ import annotations
 
-from tests.kwargs import kwargclass_matches_modeledclass
+from tests.kwargs import kwargs_class_matches_modeled_call
 
 from simplebench.session import Session as _MODELED_CLASS
 from .session_kwargs import SessionKWArgs as _KWARGS_CLASS
 
+_MODELED_CALL = _MODELED_CLASS.__init__
+
 
 def test_kwargs_matches_signature():
     """Test that KWargs sublass __init__ signature matches the modeled class __init__ signature."""
-    kwargclass_matches_modeledclass(kwargs_class=_KWARGS_CLASS, modeled_class=_MODELED_CLASS)
+    kwargs_class_matches_modeled_call(kwargs_class=_KWARGS_CLASS, modeled_call=_MODELED_CALL)
 
 
 def test_can_instantiate():

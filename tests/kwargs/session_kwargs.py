@@ -1,10 +1,11 @@
 """simplebench.session KWArgs package for SimpleBench tests."""
 from __future__ import annotations
-from typing import Sequence, TYPE_CHECKING
 
-from tests.kwargs import NoDefaultValue, KWArgs
+from typing import TYPE_CHECKING, Sequence
 
 from simplebench.session import Session
+
+from .kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
     from argparse import ArgumentParser
@@ -12,8 +13,8 @@ if TYPE_CHECKING:
 
     from rich.console import Console
 
-    from simplebench.enums import Verbosity
     from simplebench.case import Case
+    from simplebench.enums import Verbosity
     from simplebench.runners import SimpleRunner
 
 
@@ -45,4 +46,4 @@ class SessionKWArgs(KWArgs):
             output_path (Path): The output path for the session results.
             console (Console): The console instance to use for the session.
         """
-        super().__init__(base_class=Session, kwargs=locals())
+        super().__init__(call=Session.__init__, kwargs=locals())

@@ -1,16 +1,17 @@
 """simplebench.cases.Case KWArgs package for SimpleBench tests."""
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Iterable
 
-from tests.kwargs import NoDefaultValue, KWArgs
+from typing import TYPE_CHECKING, Any, Iterable
 
 from simplebench.case import Case
 
+from .kwargs import KWArgs, NoDefaultValue
+
 if TYPE_CHECKING:
-    from simplebench.runners import SimpleRunner
     from simplebench.protocols import ActionRunner
-    from simplebench.reporters.reporter.options import ReporterOptions
     from simplebench.reporters.protocols import ReporterCallback
+    from simplebench.reporters.reporter.options import ReporterOptions
+    from simplebench.runners import SimpleRunner
 
 
 class CaseKWArgs(KWArgs):
@@ -110,4 +111,4 @@ class CaseKWArgs(KWArgs):
                 specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
                 from the iterable of options themselves.
         """
-        super().__init__(base_class=Case, kwargs=locals())
+        super().__init__(call=Case.__init__, kwargs=locals())

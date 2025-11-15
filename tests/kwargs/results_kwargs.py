@@ -60,4 +60,4 @@ class ResultsKWArgs(KWArgs):
             peak_memory (PeakMemoryUsage): PeakMemoryUsage instance.
             extra_info (dict[str, Any]): Additional information as a dictionary.
         """
-        super().__init__(base_class=Results, kwargs=locals())
+        super().__init__(call=Results.__init__, kwargs=locals())

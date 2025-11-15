@@ -71,4 +71,4 @@ class ChoiceConfKWArgs(KWArgs):
             extra (Any | NoDefaultValue, default=NoDefaultValue()):
                 Any additional metadata associated with the choice. Defaults to None.
         """
-        super().__init__(base_class=ChoiceConf, kwargs=locals())
+        super().__init__(call=ChoiceConf.__init__, kwargs=locals())

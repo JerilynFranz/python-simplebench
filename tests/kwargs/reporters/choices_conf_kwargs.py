@@ -28,4 +28,4 @@ class ChoicesConfKWArgs(KWArgs):
             choices (Iterable[ChoiceConf] | ChoicesConf | NoDefaultValue, default=NoDefaultValue()):
                 An iterable of ChoiceConf instances.
         """
-        super().__init__(base_class=ChoicesConf, kwargs=locals())
+        super().__init__(call=ChoicesConf.__init__, kwargs=locals())

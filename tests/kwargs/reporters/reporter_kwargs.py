@@ -1,16 +1,14 @@
 """simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from typing import Iterable
 
+from simplebench.enums import Format, Section, Target
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter import Reporter
 
 from ..kwargs import KWArgs, NoDefaultValue
-
-if TYPE_CHECKING:
-    from simplebench.enums import Format, Section, Target
 
 
 class ReporterKWArgs(KWArgs):
@@ -69,4 +67,4 @@ class ReporterKWArgs(KWArgs):
             choices (Iterable[ChoiceConf] | Choices):
                 A Choices instance defining the sections, output targets,
                 and formats supported by the reporter. Must have at least one Choice."""
-        super().__init__(base_class=Reporter, kwargs=locals())
+        super().__init__(call=Reporter.__init__, kwargs=locals())

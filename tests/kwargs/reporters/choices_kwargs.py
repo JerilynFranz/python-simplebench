@@ -1,10 +1,11 @@
 """Choice KWArgs package for SimpleBench tests."""
 from __future__ import annotations
-from typing import Iterable, TYPE_CHECKING
 
-from tests.kwargs import NoDefaultValue, KWArgs
+from typing import TYPE_CHECKING, Iterable
 
 from simplebench.reporters.choices import Choices
+
+from ..kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
     from simplebench.reporters.choice import Choice
@@ -31,4 +32,4 @@ class ChoicesKWArgs(KWArgs):
             choices (Iterable[Choice] | Choices | NoDefaultValue, default=NoDefaultValue()):
                 An iterable of Choice instances.
         """
-        super().__init__(base_class=Choices, kwargs=locals())
+        super().__init__(call=Choices.__init__, kwargs=locals())

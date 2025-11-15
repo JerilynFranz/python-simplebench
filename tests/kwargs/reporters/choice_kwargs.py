@@ -34,4 +34,4 @@ class ChoiceKWArgs(KWArgs):
             choice_conf (ChoiceConf | NoDefaultValue, default=NoDefaultValue()):
                 An instance of ChoiceConf containing configuration for the Choice reporter.
         """
-        super().__init__(base_class=Choice, kwargs=locals())
+        super().__init__(call=Choice.__init__, kwargs=locals())

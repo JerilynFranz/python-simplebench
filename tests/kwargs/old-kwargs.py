@@ -1,10 +1,13 @@
-"""KWArgs package for creating keyword argument for testing."""
+"""simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
+from __future__ import annotations
+import inspect
+from typing import Any, Iterable, cast, TypeVar, TypeGuard, Hashable
 
 # TODO: Create a new PyPi python-testkwargs package to implement a generic KWArgs class
-# using decorators to generate subclasses for specific modeled callables automatically
+# using decorators to generate subclasses for specific modeled classes automatically
 # similarly to dataclasses instead of manually creating and maintaining each KWArgs
 # subclass as done currently. This would reduce boilerplate code and maintenance overhead
-# in writing tests for new modeled callables in SimpleBench (e.g., reporters, benchmarks, etc.).
+# in writing tests for new modeled classes in SimpleBench (e.g., reporters, benchmarks, etc.).
 # and be generally useful for other projects as well.
 #
 # Proposed API:
@@ -41,15 +44,7 @@
 # This would allow flexibility in testing scenarios while reducing boilerplate
 # and maintenance overhead for KWArgs subclasses.
 
-from __future__ import annotations
-import inspect
-from typing import Any, Callable, Iterable, cast, TypeVar, TypeGuard, Hashable
-
-
 T = TypeVar('T')
-
-
-_CALL_KWARG_PARAMS_CACHE_NAME = '_CALL_KWARG_PARAMS'
 
 
 class NoDefaultValue:
@@ -73,28 +68,24 @@ def is_kwargs(obj: object) -> TypeGuard[KWArgs]:
 
 
 class KWArgs(dict[str, Any], Hashable):
-    """A base class to hold keyword arguments for calling a function or initializing a class.
+    """A base class to hold keyword arguments for instance initialization.
 
-    This class is primarily used to facilitate testing of function or method calls
+    This class is primarily used to facilitate testing of class initialization
     with various combinations of parameters, including those that are optional and those
     that have no default value.
 
-    Classes derived from KWArgs should be named to reflect the function or method they are modeling.
-
     It provides a convenient way to construct a dictionary of parameters to be passed
-    to a function or method, with linting tools guiding the types of each
-    parameter without constraining the presence of or strictly enforcing the
-    types of any parameter.
+    to the Reporter class during initialization with linting tools guiding the types of each
+    parameter without constraining the presence of or strictly enforcing the types of any parameter.
 
-    This class is intended to be subclassed for specific functions or methods under test,
-    with each subclass defining its own __init__ method parameters using the
-    NoDefaultValue pattern.
+    This class is intended to be subclassed for specific classes under test,
+    with each subclass defining its own __init__ method parameters using the NoDefaultValue pattern.
 
     Subclass implementation example:
 
     ```python
     class SpecificKWArgs(KWArgs):
-        '''A class to hold keyword arguments for calling a specific function.'''
+        '''A class to hold keyword arguments for initializing a SpecificClass instance.'''
         from tests.kwargs import KWArgs, NoDefaultValue
 
         def __init__(  # pylint: disable=unused-argument
@@ -102,67 +93,72 @@ class KWArgs(dict[str, Any], Hashable):
                 *,
                 name: str | NoDefaultValue = NoDefaultValue()) -> None:
             '''Constructs a SpecificKWArgs instance. This class is used to hold keyword
-            arguments for calling a specific function in tests.'''
-            # Pass the local scope to the parent constructor.
+            arguments for initializing a SpecificClass instance in tests.'''
+            # Pass the local scope to the parent constructor. This allows the
             super().__init__(locals())
     ```
     """
     def __init__(
-            self, call: Callable[..., Any], kwargs: dict[str, Any]) -> None:
+            self, base_class: type, kwargs: dict[str, Any]) -> None:
         """Initializes the KWArgs instance from a dictionary of arguments.
 
         This constructor is intended to be called from a subclass's __init__
         method via `super().__init__(locals())`. It receives the local scope
         of the subclass constructor, which contains all the keyword arguments
-        defined for the specific function being modeled.
+        defined for the specific class being modeled.
 
         On the first instantiation of a given subclass, this method also inspects
-        the subclass __init__ and modeled call signatures to validate that they match,
-        and cache the set of all possible parameter names for efficient use in other
+        the subclass and modeled class's __init__ signatures to validate that they match,
+        and  cache the set of all possible parameter names for efficient use in other
         methods like `__sub__` and `replace`.
 
-        Because it is a dict, the KWArgs instance behaves like a standard dictionary,
+        Because it is a UserDict, the KWArgs instance behaves like a standard dictionary,
         allowing access to its items via standard dictionary methods and syntax.
 
         This has the effect of filtering out any parameters that were not defined
-        in the modeled call's signature, as well as any parameters that
+        in the modeled class's __init__ method, as well as any parameters that
         were not provided (i.e., those still set to NoDefaultValue).
 
         Args:
-            call (Callable[..., Any]): The callable that this KWArgs instance is modeling.
+            base_class (type): The class that this KWArgs instance is modeling.
             kwargs (dict[str, Any]): A dictionary of arguments, typically from a
                 call to `locals()` in a subclass's `__init__` method.
         Raises:
+            ValueError:
+                - If base_class does not have an __init__ method.
+                - If the modeled class's __init__ method has a parameter named 'data'.
             TypeError: If the provided arguments are not of the expected types.
-            AssertionError: If the resulting KWArgs does not match the call argument's signature parameter names.
+            AssertionError: If the resulting KWArgs does not match the base class signature parameter names.
 
         """
-        if not callable(call):
-            raise TypeError("call must be a callable.")
+        if not isinstance(base_class, type):
+            raise TypeError("base_class must be a class type.")
         if not isinstance(kwargs, dict):
             raise TypeError("kwargs must be a dictionary.")
         if not all(isinstance(key, str) for key in kwargs.keys()):
             raise TypeError("All keys in kwargs must be strings.")
 
-        cls = self.__class__
+        cls = type(self)
 
         # On first instantiation of this subclass, verify that the __init__ signature
-        # matches the modeled call's signature and cache the call for
+        # matches the modeled class's __init__ signature and cache the base class for
         # future reference.
-        if not hasattr(cls, '_BASE_KWARGS_CALL'):
-            kwargs_class_matches_modeled_call(kwargs_class=cls, modeled_call=call)
-            setattr(cls, '_BASE_KWARGS_CALL', call)
+        if not hasattr(cls, '_BASE_KWARGS_CLASS'):
+            kwargclass_matches_modeledclass(kwargs_class=cls, modeled_class=base_class)
+            setattr(cls, '_BASE_KWARGS_CLASS', base_class)
 
         # Cache the __init__ parameter names for use in __sub__ if not already cached.
         # This ensures we get the full set of parameters defined in the subclass __init__
         # whether or not they were provided in this particular call.
         # This reduces the risk of the subclass passing incomplete kwargs to __init__
         # on the first call to the constructor.
-        if not hasattr(cls, _CALL_KWARG_PARAMS_CACHE_NAME):
-            kwargs_sig = inspect.signature(call)
+        if not hasattr(cls, '_INIT_KWARG_PARAMS'):
+            if not hasattr(base_class, '__init__'):
+                raise ValueError("base_class must have an __init__ method.")
+            kwargs_sig = inspect.signature(base_class.__init__)  # type: ignore[name-defined, misc]
             params = set(kwargs_sig.parameters.keys()) - set(['self', '__class__'])
-            setattr(cls, _CALL_KWARG_PARAMS_CACHE_NAME, params)
-        params = cast(set[str], getattr(cls, _CALL_KWARG_PARAMS_CACHE_NAME))
+            setattr(cls, '_INIT_KWARG_PARAMS', params)
+        params = cast(set[str], getattr(cls, '_INIT_KWARG_PARAMS'))
 
         pass_through_kwargs = {}
         for key, value in kwargs.items():
@@ -226,7 +222,7 @@ class KWArgs(dict[str, Any], Hashable):
         if not is_kwargs(self):
             raise TypeError("replace() can only be called on KWArgs and its subclasses instances.")
         cls = type(self)
-        params = cast(set[str], getattr(cls, _CALL_KWARG_PARAMS_CACHE_NAME))
+        params = cast(set[str], getattr(cls, '_INIT_KWARG_PARAMS'))
         if not all(key in params for key in kwargs):
             invalid_keys = [key for key in kwargs if key not in params]
             bad_keys = f"One or more keys to replace are not valid keys: {invalid_keys}"
@@ -274,7 +270,7 @@ class KWArgs(dict[str, Any], Hashable):
         if not all(isinstance(key, str) for key in other):
             raise TypeError("All keys in other must be strings.")
         cls = type(self)
-        params = cast(set[str], getattr(cls, _CALL_KWARG_PARAMS_CACHE_NAME))
+        params = cast(set[str], getattr(cls, '_INIT_KWARG_PARAMS'))
         new_kwargs: dict[str, Any] = {}
         for_removal = set(other)
         if not all(key in params for key in for_removal):
@@ -287,30 +283,27 @@ class KWArgs(dict[str, Any], Hashable):
         return cls(**new_kwargs)  # type: ignore[return-value]
 
 
-def kwargs_class_matches_modeled_call(kwargs_class: type[KWArgs],
-                                      modeled_call: Callable[..., Any]) -> None:
-    """Verify KWArgs().__init__() signature matches the modeled call signature.
+def kwargclass_matches_modeledclass(kwargs_class: type, modeled_class: type) -> None:
+    """Verify KWArgs()__init__() signature matches the ModeledClass().__init__.
 
-    Helper function to compare the signatures for testing.
+    Helper function to compare the __init__ signatures of two classes for testing.
 
-    This test ensures that the kwargs_class has the same parameters as
-    the modeled_call call signature. This prevents discrepancies between
-    the two that could lead to errors in tests or misunderstandings
-    about the parameters required to call the modeled call.
+    This test ensures that the KWArgsClass class has the same parameters as
+    the ModeledClass class's __init__ method. This prevents discrepancies between
+    the two classes that could lead to errors in tests or misunderstandings
+    about the parameters required to initialize a ModeledClass instance.
 
     It does not check parameter types or default values, only the presence
-    or absence of parameter names.
+    of parameter names.
 
     Raises:
         AssertionError: If there are any extra or missing parameters in the
-            kwargs_class compared to the modeled_call
+            KWArgsClass compared to the ModeledClass.
     """
-    if not hasattr(kwargs_class, '__init__'):
-        raise TypeError("kwargs_class must have an __init__ method.")
-    if not callable(modeled_call):
-        raise TypeError("modeled_call must be a callable.")
-    modeled_sig = inspect.signature(modeled_call)
-    kwargs_sig = inspect.signature(kwargs_class.__init__)
+    if not hasattr(modeled_class, '__init__') or not hasattr(kwargs_class, '__init__'):
+        raise ValueError("Both modeled_class and kwargs_class must have an __init__ method.")
+    modeled_sig = inspect.signature(modeled_class.__init__)  # type: ignore[misc]
+    kwargs_sig = inspect.signature(kwargs_class.__init__)  # type: ignore[misc]
 
     # Get parameter names (excluding 'self')
     modeled_params = set(modeled_sig.parameters.keys()) - {'self'}
