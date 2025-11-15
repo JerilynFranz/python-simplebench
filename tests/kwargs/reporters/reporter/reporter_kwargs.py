@@ -8,7 +8,7 @@ from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter import Reporter
 
-from ..kwargs import KWArgs, NoDefaultValue
+from ....kwargs import KWArgs, NoDefaultValue
 
 
 class ReporterKWArgs(KWArgs):
