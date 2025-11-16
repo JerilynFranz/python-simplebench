@@ -37,6 +37,8 @@ pip3 install .
 
 - Jerilyn Franz
 
+## Inspiration
+
 "Simple things should be simple and complex things should be possible." *Alan Kay*
 
 "... with proper design, the features come cheaply. This approach is arduous,
