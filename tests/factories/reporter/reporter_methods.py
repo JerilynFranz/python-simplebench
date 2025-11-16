@@ -18,7 +18,7 @@ from rich.text import Text
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 
 from ...cache_factory import CacheId, cached_factory
-from ...kwargs.reporters.reporter import RenderByCaseMethodKWArgs
+from ...kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderBySectionMethodKWArgs
 from .. import case_factory, choice_factory, default_reporter_callback, namespace_factory, path_factory, session_factory
 
 if TYPE_CHECKING:
@@ -149,6 +149,47 @@ def render_by_case_kwargs_factory(
         callback=default_reporter_callback,
     )
     return defaults if kwargs is None else RenderByCaseMethodKWArgs(**(defaults | kwargs))
+
+
+@cached_factory
+def render_by_section_kwargs_factory(
+    *,
+    kwargs: RenderBySectionMethodKWArgs | None = None,
+    cache_id: CacheId = None,
+) -> RenderBySectionMethodKWArgs:
+    """Factory to create RenderBySectionMethodKWArgs with default values.
+
+    This factory constructs a RenderBySectionMethodKWArgs instance populated with
+    default values for testing the Reporter.render_by_section() method.
+
+    Defaults can be overridden by providing specific arguments in the kwargs parameter.
+
+    Defaults:
+        renderer (ReportRenderer): `RenderSpy()`
+        args (Namespace): `namespace_factory()`
+        case (Case): `case_factory(cache_id=cache_id)`
+        choice (Choice): `choice_factory(cache_id=cache_id)`
+        path (Path): `path_factory(cache_id=cache_id)`
+        session (Session): `session_factory(cache_id=cache_id)`
+        callback (ReporterCallback): `default_reporter_callback`
+
+    Args:
+        kwargs (RenderBySectionMethodKWArgs | None, default=None): Specific keyword arguments to override defaults.
+        cache_id (CacheId, default=None): The cache identifier.
+
+    Returns:
+        RenderBySectionMethodKWArgs: The constructed keyword arguments dataclass.
+    """
+    defaults = RenderBySectionMethodKWArgs(
+        renderer=RenderSpy(),
+        args=namespace_factory(),
+        case=case_factory(cache_id=cache_id),
+        choice=choice_factory(cache_id=cache_id),
+        path=path_factory(cache_id=cache_id),
+        session=session_factory(cache_id=cache_id),
+        callback=default_reporter_callback,
+    )
+    return defaults if kwargs is None else RenderBySectionMethodKWArgs(**(defaults | kwargs))
 
 
 @dataclass
