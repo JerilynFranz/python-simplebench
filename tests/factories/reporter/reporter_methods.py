@@ -15,19 +15,77 @@ from typing import TYPE_CHECKING, Any, TypeAlias, overload
 from rich.table import Table
 from rich.text import Text
 
+from simplebench.enums import Format, Section
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 
 from ...cache_factory import CacheId, cached_factory
-from ...kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderBySectionMethodKWArgs
-from .. import case_factory, choice_factory, default_reporter_callback, namespace_factory, path_factory, session_factory
+from ...kwargs.reporters.reporter import (
+    DispatchToTargetsMethodKWArgs,
+    RenderByCaseMethodKWArgs,
+    RenderBySectionMethodKWArgs,
+)
+from .. import (
+    case_factory,
+    choice_factory,
+    default_filename_base,
+    default_output,
+    default_reporter_callback,
+    default_section,
+    namespace_factory,
+    path_factory,
+    session_factory,
+)
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.enums import Format, Section
     from simplebench.reporters.reporter.options import ReporterOptions
     from simplebench.session import Session
 
 Output: TypeAlias = str | bytes | Text | Table
+
+
+def dispatch_to_targets_kwargs_factory(
+    *,
+    kwargs: DispatchToTargetsMethodKWArgs | None = None,
+    cache_id: CacheId = None,
+) -> DispatchToTargetsMethodKWArgs:
+    """Factory to create DispatchToTargetsMethodKWArgs with default values.
+
+    This factory constructs a DispatchToTargetsMethodKWArgs instance populated with
+    default values for testing the Reporter.dispatch_to_targets() method.
+
+    Defaults can be overridden by providing specific arguments in the kwargs parameter.
+
+    Defaults:
+        args (Namespace): `namespace_factory(cache_id=cache_id)`
+        case (Case): `case_factory(cache_id=cache_id)`
+        choice (Choice): `choice_factory(cache_id=cache_id)`
+        path (Path): `path_factory(cache_id=cache_id)`
+        session (Session): `session_factory(cache_id=cache_id)`
+        section (Section): `default_section()`
+        callback (ReporterCallback): `default_reporter_callback()`
+        output (Output): `default_output()`
+        filename_base (str): `default_filename_base()`
+
+    Args:
+        kwargs (DispatchToTargetsMethodKWArgs | None, default=None): Specific keyword arguments to override defaults.
+        cache_id (CacheId, default=None): The cache identifier.
+
+    Returns:
+        DispatchToTargetsMethodKWArgs: The constructed keyword arguments dataclass.
+    """
+    defaults = DispatchToTargetsMethodKWArgs(
+        args=namespace_factory(),
+        case=case_factory(cache_id=cache_id),
+        choice=choice_factory(cache_id=cache_id),
+        path=path_factory(cache_id=cache_id),
+        session=session_factory(cache_id=cache_id),
+        section=default_section(),
+        callback=default_reporter_callback,
+        output=default_output(),
+        filename_base=default_filename_base(),
+    )
+    return defaults if kwargs is None else DispatchToTargetsMethodKWArgs(**(defaults | kwargs))
 
 
 @overload

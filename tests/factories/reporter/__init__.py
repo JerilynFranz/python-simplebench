@@ -18,6 +18,8 @@ from .base import (
     reporter_kwargs_factory,
 )
 
+# DO NOT import from .reporter_options here. It will create a circular import.
+
 __all__ = [
     "reporter_factory",
     "choice_factory",

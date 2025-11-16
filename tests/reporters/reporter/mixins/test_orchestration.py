@@ -30,10 +30,14 @@ from ....factories.reporter.reporter_methods import (
     ConsoleSpy,
     FileSystemSpy,
     RenderSpy,
+    dispatch_to_targets_kwargs_factory,
     render_by_case_kwargs_factory,
     render_by_section_kwargs_factory,
 )
-from ....kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderBySectionMethodKWArgs
+from ....kwargs.reporters.reporter import (
+    RenderByCaseMethodKWArgs,
+    RenderBySectionMethodKWArgs,
+)
 from ....testspec import Assert, TestAction, TestGet, TestSpec, idspec
 
 Output: TypeAlias = str | bytes | Text | Table
@@ -395,3 +399,78 @@ def test_render_by_case(testspec: TestSpec) -> None:
 def test_render_by_section(testspec: TestSpec) -> None:
     """Test the render_by_section method of the OrchestrationMixin."""
     testspec.run()
+
+
+def dispatch_to_targets_params_testspecs() -> list[TestSpec]:
+    """Generate test specifications for the dispatch_to_targets method tests."""
+    testspecs: list[TestSpec] = []
+
+    reporter = _orchestration_reporter_factory(choice_name="dispatch_test_choice")
+    kwargs = dispatch_to_targets_kwargs_factory(cache_id=None)
+
+    testspecs.extend([
+        idspec("DISPATCH_001", TestAction(
+            name="Verify that valid parameters do not raise an exception",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs)),
+        idspec("DISPATCH_002", TestAction(
+            name="Verify that invalid 'args' argument raises SimpleBenchTypeError",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs.replace(args="invalid_args"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE)),
+        idspec("DISPATCH_003", TestAction(
+            name="Verify that invalid 'case' argument raises SimpleBenchTypeError",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs.replace(case="invalid_case"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE)),
+        idspec("DISPATCH_004", TestAction(
+            name="Verify that invalid 'choice' argument raises SimpleBenchTypeError",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs.replace(choice="invalid_choice"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE)),
+        idspec("DISPATCH_005", TestAction(
+            name="Verify that invalid 'path' argument raises SimpleBenchTypeError",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs.replace(path="invalid_path"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)),
+        idspec("DISPATCH_006", TestAction(
+            name="Verify that invalid 'session' argument raises SimpleBenchTypeError",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs.replace(session="invalid_session"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE)),
+        idspec("DISPATCH_007", TestAction(
+            name="Verify that invalid 'callback' argument raises SimpleBenchTypeError",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs.replace(callback="invalid_callback"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE)),
+        idspec("DISPATCH_008", TestAction(
+            name="Verify that invalid 'output' argument raises SimpleBenchTypeError",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs.replace(output=123),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)),
+        idspec("DISPATCH_009", TestAction(
+            name="Verify that invalide 'filename_base' argument raises SimpleBenchTypeError",
+            action=reporter.dispatch_to_targets,
+            kwargs=kwargs.replace(filename_base=456),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE)),
+    ])
+
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec", dispatch_to_targets_params_testspecs())
+def test_dispatch_to_targets_params(testspec: TestSpec):
+    """Tests for parameter validation of the dispatch_to_targets method."""
+    testspec.run()
+
+# We don't need to explicitly test the individual targets for dispatch_to_targets
+# because they are already implicitly tested as part of the render_by_case and
+# render_by_section tests.

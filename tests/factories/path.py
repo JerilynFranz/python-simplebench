@@ -1,8 +1,19 @@
 """Default path factories for tests."""
+# import atexit
+# import tempfile
 from pathlib import Path
 from typing import overload
 
-from ..cache_factory import cached_factory, CacheId, CACHE_DEFAULT
+from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
+
+# TODO: Remove once pyfakefs is used for filesystem tests
+# _TEMP_DIR = tempfile.TemporaryDirectory(prefix='simplebench_test_')
+# atexit.register(_TEMP_DIR.cleanup)
+
+
+def temp_dir() -> Path:
+    """Return the temporary directory path used for testing."""
+    return Path('/simplebench_test_temp_dir')
 
 
 # The overloads provide a tooltip assist for the decorated function and IDE tooltips
@@ -22,7 +33,6 @@ def path_factory() -> Path:
     Returns:
         Path: `Path('/tmp/mock_report.txt')`
     """
-    return Path('/tmp/mock_report.txt')
 
 
 @overload
@@ -39,7 +49,6 @@ def path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
     Returns:
         Path: `Path('/tmp/mock_report.txt')`
     """
-    return Path('/tmp/mock_report.txt')
 
 
 @cached_factory
@@ -57,4 +66,4 @@ def path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:  # pylint: disab
     Returns:
         Path: `Path('/tmp/mock_report.txt')`
     """
-    return Path('/tmp/mock_report.txt')
+    return temp_dir()

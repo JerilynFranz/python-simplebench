@@ -8,11 +8,52 @@ from __future__ import annotations
 
 import tempfile
 from pathlib import Path
-from typing import overload
+from typing import TypeAlias, overload
+
+from rich.table import Table
+from rich.text import Text
 
 from simplebench.enums import FlagType, Format, Section, Target
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
+
+Output: TypeAlias = str | bytes | Text | Table
+
+
+def default_output_text() -> str:
+    """Return default output for testing purposes.
+
+    Returns:
+        str: "Default Output"
+    """
+    return "Default Output"
+
+
+def default_output() -> Output:
+    """Return default output for testing purposes.
+
+    Returns:
+        Output: Text("Default Output")
+    """
+    return Text("Default Output")
+
+
+def default_section() -> Section:
+    """Return a single default Section for testing purposes.
+
+    Returns:
+        Section: Section.OPS
+    """
+    return Section.OPS
+
+
+def default_filename_base() -> str:
+    """Return a default filename base string for testing purposes.
+
+    Returns:
+        str: "A Report Name"
+    """
+    return "A Report Name"
 
 
 # overloads provide a tooltip assist for the decorated function and IDE tooltips
