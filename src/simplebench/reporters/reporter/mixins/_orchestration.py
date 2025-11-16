@@ -304,7 +304,7 @@ class _ReporterOrchestrationMixin:
             path=path,
             session=session,
             callback=callback)
-        
+
         default_targets = self.get_prioritized_default_targets(choice=choice)
         subdir = self.get_prioritized_subdir(choice=choice)
         file_suffix = self.get_prioritized_file_suffix(choice=choice)
