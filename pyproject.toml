@@ -199,6 +199,7 @@ exclude_exact = [
 
 [dependency-groups]
 dev = [
+    "pyfakefs>=5.10.2",
     "coverage>=7.10.6",
     "flake8>=7.3.0",
     "graphviz>=0.21",

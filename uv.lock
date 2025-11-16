@@ -1741,6 +1741,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pyfakefs"
+version = "5.10.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/58/1c/4b9489847535a41e074d108bfb86119ab463aa3012f4cb8f6b7f9154e00a/pyfakefs-5.10.2.tar.gz", hash = "sha256:8ae0e5421e08de4e433853a4609a06a1835f4bc2a3ce13b54f36713a897474ba", size = 231379, upload-time = "2025-11-04T20:19:04.446Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b0/65/3a15447a8630a6bb79cf1ecd9e323a72b28830cb9f367494bedcd045059d/pyfakefs-5.10.2-py3-none-any.whl", hash = "sha256:6ff0e84653a71efc6a73f9ee839c3141e3a7cdf4e1fb97666f82ac5b24308d64", size = 246305, upload-time = "2025-11-04T20:19:02.583Z" },
+]
+
+[[package]]
 name = "pyflakes"
 version = "3.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2095,6 +2104,7 @@ dev = [
     { name = "mypy" },
     { name = "pandas-stubs" },
     { name = "pydeps" },
+    { name = "pyfakefs" },
     { name = "pylint" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -2130,6 +2140,7 @@ dev = [
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "pandas-stubs", specifier = ">=2.3.2.250827" },
     { name = "pydeps", specifier = ">=1.23.2" },
+    { name = "pyfakefs", specifier = ">=5.10.2" },
     { name = "pylint", specifier = ">=3.3.8" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest-cov", specifier = ">=6.2.1" },
