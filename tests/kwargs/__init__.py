@@ -7,7 +7,9 @@ from .reporters import (
     ChoiceKWArgs,
     ChoicesConfKWArgs,
     ChoicesKWArgs,
+    DispatchToTargetsMethodKWArgs,
     RenderByCaseMethodKWArgs,
+    RenderBySectionMethodKWArgs,
     ReporterKWArgs,
 )
 from .results_kwargs import ResultsKWArgs
@@ -22,8 +24,10 @@ __all__ = [
     "ChoiceConfKWArgs",
     "ChoicesKWArgs",
     "ChoicesConfKWArgs",
+    "DispatchToTargetsMethodKWArgs",
     "ReporterKWArgs",
     "RenderByCaseMethodKWArgs",
+    "RenderBySectionMethodKWArgs",
     "SessionKWArgs",
     "CaseKWArgs",
     "ResultsKWArgs",
