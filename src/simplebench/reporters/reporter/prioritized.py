@@ -47,7 +47,6 @@ class Prioritized:
             choice (Choice): The Choice instance specifying the report configuration.
             case (Case): The Case instance for which the report is being generated.
         """
-
         if not is_reporter(reporter) or not isinstance(reporter, ReporterProtocol):
             raise SimpleBenchTypeError(
                 f"Invalid reporter argument: expected Reporter instance, got {type(reporter).__name__}",
