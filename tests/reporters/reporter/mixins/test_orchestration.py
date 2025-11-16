@@ -1,7 +1,5 @@
 """Tests for the simplebench.reporters.reporter.mixins._OrchestrationMixin mixin class."""
-from argparse import Namespace
-from pathlib import Path
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TypeAlias
 
 import pytest
 from rich.table import Table
@@ -9,10 +7,9 @@ from rich.text import Text
 
 from simplebench.case import Case
 from simplebench.enums import Section, Target
-from simplebench.exceptions import SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.protocols import ReportRenderer
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 
@@ -28,14 +25,15 @@ from ....factories import (
     reporter_kwargs_factory,
     session_factory,
 )
-from ....factories.reporter.reporter_methods import CallbackSpy, ConsoleSpy, FileSystemSpy, RenderSpy
+from ....factories.reporter.reporter_methods import (
+    CallbackSpy,
+    ConsoleSpy,
+    FileSystemSpy,
+    RenderSpy,
+    render_by_case_kwargs_factory,
+)
 from ....kwargs.reporters.reporter import RenderByCaseMethodKWArgs
 from ....testspec import Assert, TestAction, TestGet, TestSpec, idspec
-
-if TYPE_CHECKING:
-    from simplebench.reporters.choice.choice import Choice
-    from simplebench.reporters.reporter.protocols import ReporterCallback
-    from simplebench.session import Session
 
 Output: TypeAlias = str | bytes | Text | Table
 
@@ -130,91 +128,150 @@ def render_by_case_reporter_factory(choice_name: str,
     return reporter
 
 
+def _setup_render_by_case_good_path() -> tuple[FactoryReporterRenderByCase, RenderByCaseMethodKWArgs]:
+    """Helper to arrange the 'good path' test scenario for render_by_case."""
+    choice_name = "test_choice"
+    reporter = render_by_case_reporter_factory(choice_name=choice_name)
+    choice = reporter.choices[choice_name]
+    flag_name = next(iter(choice.flags))
+    args = argument_parser_factory(
+        arguments=[
+            list_of_strings_flag_factory(
+                flag=flag_name, choices=[
+                    Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value])]
+    ).parse_args([flag_name,
+                  Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value])
+    kwargs = RenderByCaseMethodKWArgs(
+        renderer=reporter.render,
+        args=args,
+        case=case_factory(),
+        choice=choice,
+        path=path_factory(),
+        session=session_factory(),
+        callback=default_reporter_callback
+    )
+    return reporter, kwargs
+
+
+def _setup_render_by_case_bad_target_path() -> tuple[FactoryReporterRenderByCase, RenderByCaseMethodKWArgs]:
+    """Helper to arrange the 'bad target' test scenario for render_by_case."""
+    choice_name = "bad_target_choice"
+    reporter = render_by_case_reporter_factory(
+        choice_name=choice_name,
+        targets={Target.INVALID, Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK},
+        default_targets={Target.INVALID}
+    )
+    choice = reporter.choices[choice_name]
+    flag_name = next(iter(choice.flags))
+    args = argument_parser_factory(
+        arguments=[
+            list_of_strings_flag_factory(
+                flag=flag_name, choices=[
+                    Target.CONSOLE.value, Target.FILESYSTEM.value,
+                    Target.CALLBACK.value, Target.INVALID.value])]
+    ).parse_args([flag_name, Target.INVALID.value])
+    kwargs = RenderByCaseMethodKWArgs(
+        renderer=reporter.render,
+        args=args,
+        case=case_factory(),
+        choice=choice,
+        path=path_factory(),
+        session=session_factory(),
+        callback=default_reporter_callback
+    )
+    return reporter, kwargs
+
+
 def render_by_case_testspecs() -> list[TestSpec]:
     """Generate test specifications for the render_by_case method tests."""
     testspecs: list[TestSpec] = []
 
-    choice_name: str = "test_choice"
-    reporter: FactoryReporterRenderByCase = render_by_case_reporter_factory(choice_name=choice_name)
-    renderer: ReportRenderer = reporter.render
-    choice: Choice = reporter.choices[choice_name]
-    path: Path = path_factory(cache_id=None)
-    case: Case = case_factory(cache_id=None)
-    session: Session = session_factory(cache_id=None)
-    callback: ReporterCallback = default_reporter_callback
-    flag_name: str = next(iter(choice.flags))  # Use the first flag of the choice (only one exists)
-    args: Namespace = argument_parser_factory(
-            arguments=[
-                list_of_strings_flag_factory(
-                    flag=flag_name, choices=[
-                        Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value])]
-        ).parse_args([flag_name,
-                      Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value])
-    render_by_case_kwargs = RenderByCaseMethodKWArgs(
-                                renderer=renderer,
-                                args=args,
-                                case=case,
-                                choice=choice,
-                                path=path,
-                                session=session,
-                                callback=callback)
-    reporter.render_by_case(**render_by_case_kwargs)
-
+    # --- Good Path Test Group ---
+    good_reporter, good_kwargs = _setup_render_by_case_good_path()
+    good_reporter.render_by_case(**good_kwargs)
     testspecs.extend([
         idspec("BY_CASE_001", TestGet(
             name="Verify exactly one render call was made",
-            obj=reporter.render_spy,
+            obj=good_reporter.render_spy,
             attribute="count",
             assertion=Assert.EQUAL,
             expected=1)),
         idspec("BY_CASE_002", TestGet(
             name="Verify exactly one console target call was made",
-            obj=reporter.target_console,
+            obj=good_reporter.target_console,
             attribute="count",
             assertion=Assert.EQUAL,
             expected=1)),
         idspec("BY_CASE_003", TestGet(
             name="Verify exactly one filesystem target call was made",
-            obj=reporter.target_filesystem,
+            obj=good_reporter.target_filesystem,
             attribute="count",
             assertion=Assert.EQUAL,
             expected=1)),
         idspec("BY_CASE_004", TestGet(
             name="Verify exactly one callback target call was made",
-            obj=reporter.target_callback,
+            obj=good_reporter.target_callback,
             attribute="count",
             assertion=Assert.EQUAL,
             expected=1)),
     ])
 
-    bad_target_reporter: FactoryReporterRenderByCase = render_by_case_reporter_factory(
-        choice_name=choice_name,
-        targets={Target.INVALID, Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK},
-        default_targets={Target.INVALID})
-    renderer = bad_target_reporter.render
-    choice = bad_target_reporter.choices[choice_name]
-    args = argument_parser_factory(
-                arguments=[
-                    list_of_strings_flag_factory(
-                        flag=flag_name, choices=[
-                            Target.CONSOLE.value, Target.FILESYSTEM.value,
-                            Target.CALLBACK.value, Target.INVALID.value])]
-        ).parse_args([flag_name, Target.INVALID.value])
-    render_by_case_kwargs = RenderByCaseMethodKWArgs(
-                                renderer=renderer,
-                                args=args,
-                                case=case,
-                                choice=choice,
-                                path=path,
-                                session=session,
-                                callback=callback)
+    # --- Bad Path Test ---
+    bad_target_reporter, bad_target_kwargs = _setup_render_by_case_bad_target_path()
     testspecs.append(idspec("BY_CASE_005", TestAction(
         name=("Verify that specifying an unsupported target raises "
               "a SimpleBenchValueError/RENDER_BY_CASE_UNSUPPORTED_TARGET"),
         action=bad_target_reporter.render_by_case,
-        kwargs=render_by_case_kwargs,
+        kwargs=bad_target_kwargs,
         exception=SimpleBenchValueError,
         exception_tag=ReporterErrorTag.RENDER_BY_CASE_UNSUPPORTED_TARGET)))
+
+    # --- Parameter Validation Tests ---
+    render_by_case_kwargs = render_by_case_kwargs_factory(cache_id=None)
+    testspecs.extend([
+        idspec("BY_CASE_006", TestAction(
+            name="Verify that invalid 'renderer' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_case,
+            kwargs=render_by_case_kwargs.replace(renderer="invalid_renderer"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)),
+        idspec("BY_CASE_007", TestAction(
+            name="Verify that invalid 'args' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_case,
+            kwargs=render_by_case_kwargs.replace(args="invalid_args"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)),
+        idspec("BY_CASE_008", TestAction(
+            name="Verify that invalid 'case' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_case,
+            kwargs=render_by_case_kwargs.replace(case="invalid_case"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)),
+        idspec("BY_CASE_009", TestAction(
+            name="Verify that invalid 'choice' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_case,
+            kwargs=render_by_case_kwargs.replace(choice="invalid_choice"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)),
+        idspec("BY_CASE_010", TestAction(
+            name="Verify that invalid 'path' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_case,
+            kwargs=render_by_case_kwargs.replace(path="invalid_path"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)),
+        idspec("BY_CASE_011", TestAction(
+            name="Verify that invalid 'session' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_case,
+            kwargs=render_by_case_kwargs.replace(session="invalid_session"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)),
+        idspec("BY_CASE_012", TestAction(
+            name="Verify that invalid 'callback' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_case,
+            kwargs=render_by_case_kwargs.replace(callback="invalid_callback"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)),
+    ])
 
     return testspecs
 
