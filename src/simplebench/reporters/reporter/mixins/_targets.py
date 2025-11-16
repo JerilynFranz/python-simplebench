@@ -30,8 +30,8 @@ class _ReporterTargetMixin:
                           subdir: str,
                           filename: str,
                           output: str | bytes | Text | Table,
-                          unique: bool = False,
-                          append: bool = False) -> None:
+                          unique: bool,
+                          append: bool,) -> None:
         """Helper method to output report data to the filesystem.
 
         path, subdir, and filename are combined to form the full path to the output file.

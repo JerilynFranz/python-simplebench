@@ -224,8 +224,8 @@ class ReporterProtocol(Protocol):
         subdir: str,
         filename: str,
         output: str | bytes | Text | Table,
-        unique: bool = False,
-        append: bool = False,
+        unique: bool,
+        append: bool,
     ) -> None:
         """Helper method to write report data to the filesystem."""
         ...

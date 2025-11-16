@@ -23,6 +23,18 @@ class RenderByCaseMethodKWArgs(KWArgs):
     It provides a convenient way to construct a dictionary of parameters to be passed
     to the Reporter class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
+
+    Args:
+        renderer (ReportRenderer): The method to be used for actually rendering the report.
+        args (Namespace): The parsed command-line arguments.
+        case (Case): The Case instance representing the benchmarked code.
+        choice (Choice): The Choice instance specifying the report configuration.
+        path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
+        session (Optional[Session]): The Session instance containing benchmark results.
+        callback (Optional[ReporterCallback]):
+            A callback function for additional processing of the report.
+            The function should accept two arguments: the Case instance and the CSV data as a string.
+            Leave as None if no callback is needed.
     """
     def __init__(  # pylint: disable=unused-argument
             self,
@@ -34,10 +46,10 @@ class RenderByCaseMethodKWArgs(KWArgs):
             path: Path | NoDefaultValue = NoDefaultValue(),
             session: Session | NoDefaultValue = NoDefaultValue(),
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue()) -> None:
-        """Constructs a RenderByCaseKWArgs instance.
+        """Constructs a RenderByCaseMethodKWArgs instance.
 
-        This class is used to hold keyword arguments for calling the Reporter.render_by_case()
-        method in tests.
+        This class is used to hold keyword arguments for calling the Reporter().render_by_case()
+        instance method in tests.
 
         Args:
             renderer (ReportRenderer): The method to be used for actually rendering the report.

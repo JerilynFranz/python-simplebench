@@ -106,19 +106,33 @@ def case_kwargs_factory() -> CaseKWArgs:
     The following parameters are all set to explicit values for testing purposes:
 
     Attributes:
+
         group = `default_case_group()`
+
         title = `default_title()`
+
         description = `default_description()`
+
         action = `default_benchcase`
+
         iterations = `default_iterations()`
+
         warmup_iterations = `default_warmup_iterations()`
+
         rounds = `default_rounds()`
+
         min_time = `default_min_time()`
+
         max_time = `default_max_time()`
+
         variation_cols = `default_variation_cols()`
+
         kwargs_variations = `default_kwargs_variations()`
+
         runner = `default_runner()`
+
         callback = `default_reporter_callback`
+
         options = `default_reporter_options()`
 
     Args:
@@ -138,20 +152,35 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     The CaseKWArgs instance is fully populated and cached by default for efficiency.
 
     The following parameters are all set to explicit values for testing purposes:
+
     Attributes:
+
         group = `default_case_group()`
+
         title = `default_title()`
+
         description = `default_description()`
+
         action = `default_benchcase`
+
         iterations = `default_iterations()`
+
         warmup_iterations = `default_warmup_iterations()`
+
         rounds = `default_rounds()`
+
         min_time = `default_min_time()`
+
         max_time = `default_max_time()`
+
         variation_cols = `default_variation_cols()`
+
         kwargs_variations = `default_kwargs_variations()`
+
         runner = `default_runner()`
+
         callback = `default_reporter_callback`
+
         options = `default_reporter_options()`
 
     Args:
@@ -172,19 +201,33 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     The following parameters are all set to explicit values for testing purposes:
 
     Attributes:
+
         group = `default_case_group()`
+
         title = `default_title()`
+
         description = `default_description()`
+
         action = `default_benchcase`
+
         iterations = `default_iterations()`
+
         warmup_iterations = `default_warmup_iterations()`
+
         rounds = `default_rounds()`
+
         min_time = `default_min_time()`
+
         max_time = `default_max_time()`
+
         variation_cols = `default_variation_cols()`
+
         kwargs_variations = `default_kwargs_variations()`
+
         runner = `default_runner()`
-        callback = `default_reporter_allback`
+
+        callback = `default_reporter_callback`
+
         options = `default_reporter_options()`
 
     Args:

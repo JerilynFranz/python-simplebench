@@ -191,32 +191,30 @@ class _ReporterOrchestrationMixin:
         targets: set[Target] = self.select_targets_from_args(
             args=args, choice=choice, default_targets=default_targets)
         output = renderer(case=case, section=Section.NULL, options=options)
-
+        output_as_text = output
+        if isinstance(output, (Text, Table)):
+            output_as_text = self.rich_text_to_plain_text(output)
         for output_target in targets:
             match output_target:
                 case Target.FILESYSTEM:
                     filename: str = sanitize_filename(case.title)
                     if file_suffix:
                         filename += f'.{file_suffix}'
-                    if isinstance(output, (Text, Table)):
-                        output = self.rich_text_to_plain_text(output)
                     self.target_filesystem(
                         path=path,
                         subdir=subdir,
                         filename=filename,
-                        output=output,
+                        output=output_as_text,
                         unique=file_unique,
                         append=file_append)
 
                 case Target.CALLBACK:
-                    if isinstance(output, (Text, Table)):
-                        output = self.rich_text_to_plain_text(output)
                     self.target_callback(
                         callback=callback,
                         case=case,
                         section=Section.NULL,
                         output_format=choice.output_format,
-                        output=output)
+                        output=output_as_text)
 
                 case Target.CONSOLE:
                     self.target_console(session=session, output=output)
@@ -315,6 +313,9 @@ class _ReporterOrchestrationMixin:
             args=args, choice=choice, default_targets=default_targets)
         for section in choice.sections:
             output = renderer(case=case, section=section, options=options)
+            output_as_text = output
+            if isinstance(output, (Text, Table)):
+                output_as_text = self.rich_text_to_plain_text(output)
 
             for output_target in targets:
                 match output_target:
@@ -322,13 +323,11 @@ class _ReporterOrchestrationMixin:
                         filename: str = sanitize_filename(section.value)
                         if self._file_suffix:
                             filename += f'.{self._file_suffix}'
-                        if isinstance(output, (Text, Table)):
-                            output = self.rich_text_to_plain_text(output)
                         self.target_filesystem(
                             path=path,
                             subdir=subdir,
                             filename=filename,
-                            output=output,
+                            output=output_as_text,
                             unique=self._file_unique,
                             append=self._file_append)
 
@@ -340,7 +339,7 @@ class _ReporterOrchestrationMixin:
                             case=case,
                             section=section,
                             output_format=choice.output_format,
-                            output=output)
+                            output=output_as_text)
 
                     case Target.CONSOLE:
                         self.target_console(session=session, output=output)

@@ -2,7 +2,7 @@
 from simplebench.reporters.reporter import Reporter as _MODELED_CLASS
 
 from ....kwargs import kwargs_class_matches_modeled_call
-from .render_by_case_kwargs import RenderByCaseMethodKWArgs as _KWARGS_CLASS
+from .render_by_case_method_kwargs import RenderByCaseMethodKWArgs as _KWARGS_CLASS
 
 _MODELED_CALL = _MODELED_CLASS.render_by_case
 

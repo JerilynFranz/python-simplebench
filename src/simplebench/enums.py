@@ -180,6 +180,8 @@ class Target(str, Enum):
     """Output to a custom target."""
     NULL = 'null'
     """No output."""
+    INVALID = 'invalid'
+    """Invalid target. This is a testing placeholder and should not be used."""
 
 
 @enum_docstrings

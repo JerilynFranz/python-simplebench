@@ -4,6 +4,9 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Any, ClassVar, Iterable, TypeAlias, overload
 
+from rich.table import Table
+from rich.text import Text
+
 from simplebench.case import Case
 from simplebench.enums import Format, Section, Target
 from simplebench.reporters.choice import Choice, ChoiceConf
@@ -177,7 +180,7 @@ class FactoryReporter(Reporter):
                             callback=callback)
 
     def render(
-            self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+            self, *, case: Case, section: Section, options: ReporterOptions) -> str | bytes | Text | Table:
         """Render the report for the given case, section, and options."""
         return default_report_output()
 
@@ -563,6 +566,76 @@ def default_choices_conf_kwargs() -> ChoicesConfKWArgs:
     return choices_conf_kwargs_factory(cache_id=f'{__name__}.default_choices_conf_kwargs:singleton')
 
 
+@overload
+def choice_conf_factory() -> ChoiceConf:
+    """Factory to create ChoiceConf with default values.
+
+    This factory constructs a ChoiceConf instance populated with
+    default values for testing the ChoiceConf class.
+
+    Defaults can be overridden by providing specific arguments in the kwargs parameter.
+
+    Defaults:
+        renderer (ReportRenderer):
+            RenderRecorder()
+        args (Namespace):
+            namespace_factory(cache_id=cache_id),
+        case (Case):
+                case_factory(cache_id=cache_id).
+        choice (Choice):
+            choice_factory(cache_id=cache_id).
+        path (Path):
+            path_factory(cache_id=cache_id).
+        session (Session):
+            session_factory(cache_id=cache_id).
+        callback (ReporterCallback):
+            CallbackRecorder()
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+    Returns:
+        ChoiceConf: A ChoiceConf instance.
+    """
+
+
+@overload
+def choice_conf_factory(*,
+                        cache_id: CacheId = CACHE_DEFAULT,
+                        name: str | None = None,
+                        flags: tuple[str, ...] | None = None) -> ChoiceConf:
+    """Factory to create ChoiceConf with default values.
+    This factory constructs a ChoiceConf instance populated with
+    default values for testing the ChoiceConf class.
+    Defaults can be overridden by providing specific arguments in the kwargs parameter.
+    Defaults:
+        renderer (ReportRenderer):
+            RenderRecorder()
+        args (Namespace):
+            namespace_factory(cache_id=cache_id),
+        case (Case):
+                case_factory(cache_id=cache_id).
+        choice (Choice):
+            choice_factory(cache_id=cache_id).
+        path (Path):
+            path_factory(cache_id=cache_id).
+        session (Session):
+            session_factory(cache_id=cache_id).
+        callback (ReporterCallback):
+            CallbackRecorder()
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An optional identifier to distinguish different cached instances.
+            If None, caching is disabled for this call.
+        name (str | None, default=None):
+            The name of the ChoiceConf instance.
+        flags (tuple[str, ...] | None, default=None):
+            The flags associated with the ChoiceConf instance.
+    Returns:
+        ChoiceConf: A ChoiceConf instance.
+    """
+
+
 @cached_factory
 def choice_conf_factory(*,
                         cache_id: CacheId = CACHE_DEFAULT,
@@ -832,6 +905,52 @@ def default_choices_conf() -> ChoicesConf:
         ChoicesConf: A default ChoicesConf instance.
     """
     return choices_conf_factory(cache_id=f'{__name__}.default_choices_conf:singleton')
+
+
+@overload
+def reporter_factory() -> FactoryReporter:
+    """Factory function to return an uncached FactortyReporter instance for testing.
+
+    By default, it uses default_reporter_kwargs() to provide a set of parameters
+    to initialize the FactoryReporter. However, custom parameters can be provided
+    via the reporter_kwargs argument.
+
+    It does not cache the created FactoryReporter instance by default, so each call
+    returns a new instance.
+
+    To override this caching behavior, provide a non-None cache_id and it will be cached
+    based on that identifier.
+
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An identifier to cache different UnconfiguredReporter instances if needed.
+            If None, caching is disabled for this call.
+        reporter_kwargs (ReporterKWArgs | None, default=None):
+            Keyword arguments to initialize the UnconfiguredReporter.
+            If none, default_reporter_kwargs() is used to provide a default set of parameters.
+    """
+
+
+@overload
+def reporter_factory(*,
+                     cache_id: CacheId = CACHE_DEFAULT,
+                     reporter_kwargs: ReporterKWArgs | None = None) -> FactoryReporter:
+    """Factory function to return an uncached FactortyReporter instance for testing.
+    By default, it uses default_reporter_kwargs() to provide a set of parameters
+    to initialize the FactoryReporter. However, custom parameters can be provided
+    via the reporter_kwargs argument.
+    It does not cache the created FactoryReporter instance by default, so each call
+    returns a new instance.
+    To override this caching behavior, provide a non-None cache_id and it will be cached
+    based on that identifier.
+    Args:
+        cache_id (CacheId, default=CACHE_DEFAULT):
+            An identifier to cache different UnconfiguredReporter instances if needed.
+            If None, caching is disabled for this call.
+        reporter_kwargs (ReporterKWArgs | None, default=None):
+            Keyword arguments to initialize the UnconfiguredReporter.
+            If none, default_reporter_kwargs() is used to provide a default set of parameters.
+    """
 
 
 @uncached_factory
