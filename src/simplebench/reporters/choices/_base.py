@@ -5,9 +5,7 @@ from collections import UserDict
 from collections.abc import Hashable
 from typing import Generic, Iterable, Type, TypeVar
 
-from simplebench.exceptions import (ErrorTag, SimpleBenchKeyError,
-                                    SimpleBenchTypeError,
-                                    SimpleBenchValueError)
+from simplebench.exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.validators import validate_iterable_of_type
 
@@ -186,18 +184,18 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         if key != value.name:
             raise SimpleBenchValueError(
                 "key must match the item's .name attribute",
-                tag=self._error_tags.SETITEM_KEY_NAME_MISMATCH)  # type: ignore[attributeAccessIssue, attr-defined]
+                tag=self._error_tags.SETITEM_KEY_NAME_MISMATCH)  # type: ignore[attributeAccessIssue,attr-defined]
         if key in self.data:
             raise SimpleBenchValueError(
                 f"An item with the name '{value.name}' already exists",
-                tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_NAME)  # type: ignore[attributeAccessIssue, attr-defined]
+                tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_NAME)  # type: ignore[attributeAccessIssue,attr-defined]
 
         self._args_index.update({flag.replace('--', '', 1).replace('-', '_'): value for flag in value.flags})
         for flag in value.flags:
             if flag in self._flags_index:
                 raise SimpleBenchValueError(
                     f"An item with the flag '{flag}' already exists",
-                    tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG)  # pylint: disable=line-too-long  # type: ignore[attributeAccessIssue, attr-defined]  # noqa: E501
+                    tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG)  # pylint: disable=line-too-long  # type: ignore[attributeAccessIssue,attr-defined]  # noqa: E501
             self._flags_index[flag] = value
         super().__setitem__(key, value)
 

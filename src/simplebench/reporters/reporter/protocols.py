@@ -258,7 +258,7 @@ class ReporterProtocol(Protocol):
         ...
 
     def _validate_render_by_args(
-        self: ReporterProtocol, *,
+        self, *,
         renderer: ReportRenderer,
         args: Namespace,
         case: Case,
@@ -268,4 +268,18 @@ class ReporterProtocol(Protocol):
         callback: ReporterCallback | None = None
     ) -> None:
         """Validate common arguments for render_by_case and render_by_section methods."""
+        ...
+
+    def dispatch_to_targets(
+            self, *,
+            output: str | bytes | Text | Table,
+            filename_base: str,
+            args: Namespace,
+            choice: Choice,
+            case: Case,
+            section: Section,
+            path: Path | None = None,
+            session: Session | None = None,
+            callback: ReporterCallback | None = None) -> None:
+        """Deliver the rendered output to the specified targets."""
         ...

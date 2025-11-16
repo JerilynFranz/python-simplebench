@@ -236,7 +236,7 @@ def render_by_case_testspecs() -> list[TestSpec]:
         action=bad_target_reporter.render_by_case,
         kwargs=bad_target_kwargs,
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.RENDER_BY_CASE_UNSUPPORTED_TARGET)))
+        exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)))
 
     # --- Parameter Validation Tests ---
     render_by_case_kwargs = render_by_case_kwargs_factory(cache_id=None)
@@ -333,7 +333,7 @@ def render_by_section_testspecs() -> list[TestSpec]:
         action=bad_target_reporter.render_by_section,
         kwargs=bad_target_kwargs,
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.RENDER_BY_SECTION_UNSUPPORTED_TARGET)))
+        exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)))
 
     # --- Parameter Validation Tests ---
     render_by_section_kwargs = render_by_section_kwargs_factory(cache_id=None)

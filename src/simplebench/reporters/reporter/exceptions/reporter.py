@@ -6,6 +6,45 @@ from simplebench.exceptions.base import ErrorTag
 @enum_docstrings
 class ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the reporters.reporter module."""
+    # dispatch_to_targets()
+    DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE")
+    """Invalid type for args argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE")
+    """Invalid type for output argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE")
+    """Invalid type for filename_base argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_VALUE = (
+        "DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_VALUE")
+    """Invalid value for filename_base argument in dispatch_to_targets()
+    - must be a non-empty, non-blank string."""
+    DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE")
+    """Invalid type for path argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE")
+    """Invalid type for callback argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE")
+    """Invalid type for case argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE")
+    """Invalid type for choice argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE")
+    """Invalid type for section argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE")
+    """Invalid type for session argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_INVALID_PRIORITIZED_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_PRIORITIZED_ARG_TYPE")
+    """Invalid type for prioritized argument in dispatch_to_targets()"""
+    DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET = (
+        "DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET")
+    """An unsupported Target was passed to the dispatch_to_targets() method"""
+
     # get_prioritized_subdir()
     GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE = (
         "GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE")
@@ -283,10 +322,6 @@ class ReporterErrorTag(ErrorTag):
     GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE = "GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE"
     """Invalid options argument value:
     - options argument iterable contains something other than `ReporterOptions` instances."""
-    RENDER_BY_SECTION_UNSUPPORTED_TARGET = "RENDER_BY_SECTION_UNSUPPORTED_TARGET"
-    """An unsupported Target was passed to the reporter's render_by_section() method"""
-    RENDER_BY_CASE_UNSUPPORTED_TARGET = "RENDER_BY_CASE_UNSUPPORTED_TARGET"
-    """An unsupported Target was passed to the reporter's render_by_case() method"""
     RENDER_NOT_IMPLEMENTED = "RENDER_NOT_IMPLEMENTED"
     """The Reporter.render() method must be implemented by subclasses"""
     RICH_TEXT_TO_PLAIN_TEXT_INVALID_WIDTH_ARG_TYPE = "RICH_TEXT_TO_PLAIN_TEXT_INVALID_WIDTH_ARG_TYPE"

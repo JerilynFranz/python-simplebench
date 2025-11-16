@@ -1,4 +1,9 @@
-"""Mixin for orchestration-related functionality for the Reporter class."""
+"""Mixin for orchestration-related functionality for the Reporter class.
+
+It provides methods to orchestrate the rendering of reports by case or by section,
+handling the dispatching of outputs to various targets such as filesystem, console,
+or callback functions.
+"""
 from __future__ import annotations
 
 from argparse import Namespace
@@ -17,7 +22,7 @@ from simplebench.reporters.reporter.prioritized import Prioritized
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.type_proxies import is_case, is_choice, is_session
 from simplebench.utils import sanitize_filename
-from simplebench.validators import validate_type
+from simplebench.validators import validate_string, validate_type
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -181,45 +186,17 @@ class _ReporterOrchestrationMixin:
             path=path,
             session=session,
             callback=callback)
-
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
-
-        targets: set[Target] = self.select_targets_from_args(
-            args=args, choice=choice, default_targets=prioritized.default_targets)
-        output = renderer(case=case, section=Section.NULL, options=prioritized.options)
-        output_as_text = output
-        if isinstance(output, (Text, Table)):
-            output_as_text = self.rich_text_to_plain_text(output)
-        filename: str = sanitize_filename(case.title)
-        if prioritized.file_suffix:
-            filename += f'.{prioritized.file_suffix}'
-
-        for output_target in targets:
-            match output_target:
-                case Target.FILESYSTEM:
-                    self.target_filesystem(
-                        path=path,
-                        subdir=prioritized.subdir,
-                        filename=filename,
-                        output=output_as_text,
-                        unique=prioritized.file_unique,
-                        append=prioritized.file_append)
-
-                case Target.CALLBACK:
-                    self.target_callback(
-                        callback=callback,
-                        case=case,
-                        section=Section.NULL,
-                        output_format=choice.output_format,
-                        output=output_as_text)
-
-                case Target.CONSOLE:
-                    self.target_console(session=session, output=output)
-
-                case _:
-                    raise SimpleBenchValueError(
-                        f'Unsupported target for {type(self)}: {output_target}',
-                        tag=ReporterErrorTag.RENDER_BY_CASE_UNSUPPORTED_TARGET)
+        self.dispatch_to_targets(
+            output=renderer(case=case, section=Section.NULL, options=prioritized.options),
+            filename_base=case.title,
+            args=args,
+            choice=choice,
+            case=case,
+            section=Section.NULL,
+            path=path,
+            session=session,
+            callback=callback)
 
     def render_by_section(
             self: ReporterProtocol,
@@ -301,41 +278,128 @@ class _ReporterOrchestrationMixin:
             path=path,
             session=session,
             callback=callback)
-
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
-
-        targets: set[Target] = self.select_targets_from_args(
-            args=args, choice=choice, default_targets=prioritized.default_targets)
         for section in choice.sections:
             output = renderer(case=case, section=section, options=prioritized.options)
-            output_as_text = output
-            if isinstance(output, (Text, Table)):
-                output_as_text = self.rich_text_to_plain_text(output)
-            filename: str = sanitize_filename(section.value)
-            if prioritized.file_suffix:
-                filename += f'.{prioritized.file_suffix}'
-            for output_target in targets:
-                match output_target:
-                    case Target.FILESYSTEM:
-                        self.target_filesystem(
-                            path=path,
-                            subdir=prioritized.subdir,
-                            filename=filename,
-                            output=output_as_text,
-                            unique=prioritized.file_unique,
-                            append=prioritized.file_append)
-                    case Target.CALLBACK:
-                        self.target_callback(
-                            callback=callback,
-                            case=case,
-                            section=section,
-                            output_format=choice.output_format,
-                            output=output_as_text)
+            self.dispatch_to_targets(
+                output=output,
+                filename_base=section.value,
+                args=args,
+                choice=choice,
+                case=case,
+                section=section,
+                path=path,
+                session=session,
+                callback=callback)
 
-                    case Target.CONSOLE:
-                        self.target_console(session=session, output=output)
+    def dispatch_to_targets(
+            self: ReporterProtocol, *,
+            output: str | bytes | Text | Table,
+            filename_base: str,
+            args: Namespace,
+            choice: Choice,
+            case: Case,
+            section: Section,
+            path: Path | None = None,
+            session: Session | None = None,
+            callback: ReporterCallback | None = None) -> None:
+        """Deliver the rendered output to the specified targets.
+        This helper method takes the rendered output and dispatches it to the
+        appropriate targets based on the prioritized options.
 
-                    case _:
-                        raise SimpleBenchValueError(
-                            f'Unsupported target for {type(self)}: {output_target}',
-                            tag=ReporterErrorTag.RENDER_BY_SECTION_UNSUPPORTED_TARGET)
+        This method handles the logic for delivering the report output to the possible targets:
+        - FILESYSTEM: Writes the output to a file in the specified path and subdirectory.
+        - CALLBACK: Sends the output to a provided callback function for further processing.
+        - CONSOLE: Outputs the report directly to the console.
+
+        Args:
+            output (str | bytes | Text | Table): The rendered report output.
+            filename_base (str): The base filename to use for filesystem outputs.
+                This is the filename without any suffixes or extensions.
+            args (Namespace): The parsed command-line arguments.
+            choice (Choice): The Choice instance specifying the report configuration.
+            case (Case): The Case instance representing the benchmarked code.
+            section (Section): The Section of the report.
+            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
+            session (Optional[Session]): The Session instance containing benchmark results.
+            callback (Optional[ReporterCallback]): A callback function for additional processing of the report.
+        Returns:
+            None
+        Raises:
+            SimpleBenchValueError: If an unsupported target is specified in the choice.
+        """
+        output = validate_type(output,
+                               (str, bytes, Text, Table),
+                               'output',
+                               ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)
+        filename_base = validate_string(
+                            filename_base, 'filename_base',
+                            ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE,
+                            ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_VALUE,
+                            allow_empty=False,
+                            strip=True,
+                            alphanumeric_only=False,
+                            allow_blank=False)
+        args = validate_type(
+            args, Namespace, 'args',
+            ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE)
+        if not is_case(case):
+            raise SimpleBenchTypeError(
+                "Expected a Case instance for case argument",
+                tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE)
+        if not is_choice(choice):
+            raise SimpleBenchTypeError(
+                "Expected a Choice instance for choice argument",
+                tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE)
+        if not is_session(session) and session is not None:
+            raise SimpleBenchTypeError(
+                "session must be a Session instance if provided",
+                tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE)
+        section = validate_type(
+            section, Section, 'section',
+            ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE)
+        if callback is not None and not isinstance(callback, ReporterCallback):
+            raise SimpleBenchTypeError(
+                "callback must be a callable ReporterCallback if provided",
+                tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE)
+        if path is not None:
+            path = validate_type(
+                path, Path, 'path',
+                ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)
+
+        prioritized = Prioritized(reporter=self, choice=choice, case=case)
+        targets: set[Target] = self.select_targets_from_args(
+            args=args, choice=choice, default_targets=prioritized.default_targets)
+        output_as_text = output
+        if isinstance(output, (Text, Table)):
+            output_as_text = self.rich_text_to_plain_text(output)
+        filename: str = sanitize_filename(filename_base)
+        if prioritized.file_suffix:
+            filename += f'.{prioritized.file_suffix}'
+
+        for output_target in targets:
+            match output_target:
+                case Target.FILESYSTEM:
+                    self.target_filesystem(
+                        path=path,
+                        subdir=prioritized.subdir,
+                        filename=filename,
+                        output=output_as_text,
+                        unique=prioritized.file_unique,
+                        append=prioritized.file_append)
+
+                case Target.CALLBACK:
+                    self.target_callback(
+                        callback=callback,
+                        case=case,
+                        section=section,
+                        output_format=choice.output_format,
+                        output=output_as_text)
+
+                case Target.CONSOLE:
+                    self.target_console(session=session, output=output)
+
+                case _:
+                    raise SimpleBenchValueError(
+                        f'Unsupported target for {type(self)}: {output_target}',
+                        tag=ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)
