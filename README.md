@@ -8,10 +8,12 @@ simplebench
 
 Benchmarking suite (WIP, pre-alpha)
 
-This is **IN DEVELOPMENT** benchmarking suite. The APIs and commandline interfaces are still subject to radical change without any notice until
-it reaches the first alpha release. If you want to play with it, feel free - but this is absolutely not yet ready for production use yet.
+This is **IN DEVELOPMENT** benchmarking suite. The APIs and commandline interfaces are still
+subject to radical change without any notice until it reaches the first alpha release.
 
-I'm hoping to reach the first alpha release around the second or third week of October, 2025.
+If you want to play with it, feel free - but this is absolutely not yet ready for production use yet.
+
+I'm hoping to reach the first alpha release around the third week of November, 2025.
 
 ## Installation
 
@@ -31,9 +33,12 @@ pip3 install .
 
 ## Usage
 
-## Authors and acknowledgment
+## Authors and acknowledgments
 
 - Jerilyn Franz
+
+"... with proper design, the features come cheaply. This approach is arduous,
+but continues to succeed."  *Dennis Ritchie*
 
 ## Copyright
 
