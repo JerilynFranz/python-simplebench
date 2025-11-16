@@ -193,9 +193,8 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         self._args_index.update({flag.replace('--', '', 1).replace('-', '_'): value for flag in value.flags})
         for flag in value.flags:
             if flag in self._flags_index:
-                raise SimpleBenchValueError(
-                    f"An item with the flag '{flag}' already exists",
-                    tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG)  # pylint: disable=line-too-long  # type: ignore[attributeAccessIssue,attr-defined]  # noqa: E501
+                tag = self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG  # type: ignore[attr-defined]
+                raise SimpleBenchValueError(f"An item with the flag '{flag}' already exists", tag=tag)
             self._flags_index[flag] = value
         super().__setitem__(key, value)
 
