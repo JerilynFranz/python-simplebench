@@ -13,6 +13,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.prioritized import Prioritized
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.type_proxies import is_case, is_choice, is_session
 from simplebench.utils import sanitize_filename
@@ -181,32 +182,28 @@ class _ReporterOrchestrationMixin:
             session=session,
             callback=callback)
 
-        default_targets = self.get_prioritized_default_targets(choice=choice)
-        subdir = self.get_prioritized_subdir(choice=choice)
-        file_suffix = self.get_prioritized_file_suffix(choice=choice)
-        file_unique = self.get_prioritized_file_unique(choice=choice)
-        file_append = self.get_prioritized_file_append(choice=choice)
-        options = self.get_prioritized_options(case=case, choice=choice)
+        prioritized = Prioritized(reporter=self, choice=choice, case=case)
 
         targets: set[Target] = self.select_targets_from_args(
-            args=args, choice=choice, default_targets=default_targets)
-        output = renderer(case=case, section=Section.NULL, options=options)
+            args=args, choice=choice, default_targets=prioritized.default_targets)
+        output = renderer(case=case, section=Section.NULL, options=prioritized.options)
         output_as_text = output
         if isinstance(output, (Text, Table)):
             output_as_text = self.rich_text_to_plain_text(output)
+        filename: str = sanitize_filename(case.title)
+        if prioritized.file_suffix:
+            filename += f'.{prioritized.file_suffix}'
+
         for output_target in targets:
             match output_target:
                 case Target.FILESYSTEM:
-                    filename: str = sanitize_filename(case.title)
-                    if file_suffix:
-                        filename += f'.{file_suffix}'
                     self.target_filesystem(
                         path=path,
-                        subdir=subdir,
+                        subdir=prioritized.subdir,
                         filename=filename,
                         output=output_as_text,
-                        unique=file_unique,
-                        append=file_append)
+                        unique=prioritized.file_unique,
+                        append=prioritized.file_append)
 
                 case Target.CALLBACK:
                     self.target_callback(
@@ -305,35 +302,28 @@ class _ReporterOrchestrationMixin:
             session=session,
             callback=callback)
 
-        default_targets = self.get_prioritized_default_targets(choice=choice)
-        subdir = self.get_prioritized_subdir(choice=choice)
-        file_suffix = self.get_prioritized_file_suffix(choice=choice)
-        file_unique = self.get_prioritized_file_unique(choice=choice)
-        file_append = self.get_prioritized_file_append(choice=choice)
-        options = self.get_prioritized_options(case=case, choice=choice)
+        prioritized = Prioritized(reporter=self, choice=choice, case=case)
 
         targets: set[Target] = self.select_targets_from_args(
-            args=args, choice=choice, default_targets=default_targets)
+            args=args, choice=choice, default_targets=prioritized.default_targets)
         for section in choice.sections:
-            output = renderer(case=case, section=section, options=options)
+            output = renderer(case=case, section=section, options=prioritized.options)
             output_as_text = output
             if isinstance(output, (Text, Table)):
                 output_as_text = self.rich_text_to_plain_text(output)
-
+            filename: str = sanitize_filename(section.value)
+            if prioritized.file_suffix:
+                filename += f'.{prioritized.file_suffix}'
             for output_target in targets:
                 match output_target:
                     case Target.FILESYSTEM:
-                        filename: str = sanitize_filename(section.value)
-                        if file_suffix:
-                            filename += f'.{file_suffix}'
                         self.target_filesystem(
                             path=path,
-                            subdir=subdir,
+                            subdir=prioritized.subdir,
                             filename=filename,
                             output=output_as_text,
-                            unique=file_unique,
-                            append=file_append)
-
+                            unique=prioritized.file_unique,
+                            append=prioritized.file_append)
                     case Target.CALLBACK:
                         self.target_callback(
                             callback=callback,
