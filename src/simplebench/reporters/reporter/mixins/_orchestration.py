@@ -304,9 +304,12 @@ class _ReporterOrchestrationMixin:
             path=path,
             session=session,
             callback=callback)
-
+        
         default_targets = self.get_prioritized_default_targets(choice=choice)
         subdir = self.get_prioritized_subdir(choice=choice)
+        file_suffix = self.get_prioritized_file_suffix(choice=choice)
+        file_unique = self.get_prioritized_file_unique(choice=choice)
+        file_append = self.get_prioritized_file_append(choice=choice)
         options = self.get_prioritized_options(case=case, choice=choice)
 
         targets: set[Target] = self.select_targets_from_args(
@@ -321,19 +324,17 @@ class _ReporterOrchestrationMixin:
                 match output_target:
                     case Target.FILESYSTEM:
                         filename: str = sanitize_filename(section.value)
-                        if self._file_suffix:
-                            filename += f'.{self._file_suffix}'
+                        if file_suffix:
+                            filename += f'.{file_suffix}'
                         self.target_filesystem(
                             path=path,
                             subdir=subdir,
                             filename=filename,
                             output=output_as_text,
-                            unique=self._file_unique,
-                            append=self._file_append)
+                            unique=file_unique,
+                            append=file_append)
 
                     case Target.CALLBACK:
-                        if isinstance(output, (Text, Table)):
-                            output = self.rich_text_to_plain_text(output)
                         self.target_callback(
                             callback=callback,
                             case=case,
