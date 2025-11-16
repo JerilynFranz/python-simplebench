@@ -114,8 +114,8 @@ def _setup_good_path(
     """Generic helper to arrange a 'good path' test scenario."""
     reporter = _orchestration_reporter_factory(choice_name=choice_name, sections=sections)
     choice = reporter.choices[choice_name]
-    flag_name = next(iter(choice.flags))
-    target_values = [Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value]
+    flag_name: str = next(iter(choice.flags))
+    target_values: list[str] = [Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value]
     args = argument_parser_factory(
         arguments=[list_of_strings_flag_factory(flag=flag_name, choices=target_values)]
     ).parse_args([flag_name, *target_values])
