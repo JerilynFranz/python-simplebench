@@ -197,7 +197,7 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
             if flag in self._flags_index:
                 raise SimpleBenchValueError(
                     f"An item with the flag '{flag}' already exists",
-                    tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG)  # type: ignore[attributeAccessIssue, attr-defined]  # noqa: E501
+                    tag=self._error_tags.SETITEM_DUPLICATE_CHOICE_FLAG)  # pylint: disable=line-too-long  # type: ignore[attributeAccessIssue, attr-defined]  # noqa: E501
             self._flags_index[flag] = value
         super().__setitem__(key, value)
 

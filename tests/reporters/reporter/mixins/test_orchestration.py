@@ -1,5 +1,5 @@
 """Tests for the simplebench.reporters.reporter.mixins._OrchestrationMixin mixin class."""
-from typing import TypeAlias
+from typing import TypeAlias, TypeVar
 
 import pytest
 from rich.table import Table
@@ -39,12 +39,12 @@ from ....testspec import Assert, TestAction, TestGet, TestSpec, idspec
 Output: TypeAlias = str | bytes | Text | Table
 
 
-class RenderByCaseReporterFactoryOptions(FactoryReporterOptions):
-    """Factory reporter options for render_by_case tests."""
+class RenderOrchestrationReporterFactoryOptions(FactoryReporterOptions):
+    """Factory reporter options for orchestration tests."""
 
 
-class FactoryReporterRenderByCase(FactoryReporter):
-    """Factory reporter with mock methods for testing the `render_by_case()` method.
+class FactoryReporterForOrchestration(FactoryReporter):
+    """Factory reporter with mock methods for testing orchestration methods.
 
     Overrides:
         render(): Uses a `RenderSpy` to record calls to `render()`.
@@ -52,11 +52,11 @@ class FactoryReporterRenderByCase(FactoryReporter):
         target_callback(): Uses a `CallbackSpy` to record calls to `target_callback()`.
         target_filesystem(): Uses a `FileSystemSpy` to record calls to `target_filesystem()`.
     """
-    _OPTIONS_TYPE = RenderByCaseReporterFactoryOptions
+    _OPTIONS_TYPE = RenderOrchestrationReporterFactoryOptions
     _OPTIONS_KWARGS = {}
 
     def __init__(self, choices: ChoicesConf) -> None:
-        """Initialize the FactoryReporterRenderByCase with mock method spies.
+        """Initialize the FactoryReporterForOrchestration with mock method spies.
 
         Args:
             choices (ChoicesConf): The choices configuration for the reporter.
@@ -83,80 +83,11 @@ class FactoryReporterRenderByCase(FactoryReporter):
         return self.render_spy(case=case, section=section, options=options)
 
 
-class RenderBySectionReporterFactoryOptions(FactoryReporterOptions):
-    """Factory reporter options for render_by_section tests."""
-
-
-class FactoryReporterRenderBySection(FactoryReporter):
-    """Factory reporter with mock methods for testing the `render_by_section()` method.
-
-    Overrides:
-        render(): Uses a `RenderSpy` to record calls to `render()`.
-        target_console(): Uses a `ConsoleSpy` to record calls to `target_console()`.
-        target_callback(): Uses a `CallbackSpy` to record calls to `target_callback()`.
-        target_filesystem(): Uses a `FileSystemSpy` to record calls to `target_filesystem()`.
-    """
-    _OPTIONS_TYPE = RenderBySectionReporterFactoryOptions
-    _OPTIONS_KWARGS = {}
-
-    def __init__(self, choices: ChoicesConf) -> None:
-        """Initialize the FactoryReporterRenderBySection with mock method spies.
-
-        Args:
-            choices (ChoicesConf): The choices configuration for the reporter.
-        """
-        reporter_kwargs = reporter_kwargs_factory().replace(
-            choices=choices,
-            targets={Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK, Target.INVALID},)
-        super().__init__(**reporter_kwargs)
-        self.render_spy: RenderSpy = RenderSpy()
-        self.target_console = ConsoleSpy()  # type: ignore[method-assign,assignment,reporterAttributeAccessIssue]
-        """Spy for console target method calls."""
-        self.target_callback = CallbackSpy()  # type: ignore[method-assign,assignment,reporterAttributeAccessIssue]
-        """Spy for callback target method calls."""
-        self.target_filesystem = FileSystemSpy()  # type: ignore[method-assign,assignment,reporterAttributeAccessIssue]
-        """Spy for filesystem target method calls."""
-
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> Output:
-        """Render the report for the given case, section, and options.
-
-        Unlike the base FactoryReporter, this method uses a RenderSpy
-        to record calls for testing purposes.
-        """
-        return self.render_spy(case=case, section=section, options=options)
-
-
-def render_by_case_reporter_factory(choice_name: str,
+def _orchestration_reporter_factory(choice_name: str,
                                     sections: set[Section] | None = None,
                                     targets: set[Target] | None = None,
-                                    default_targets: set[Target] | None = None) -> FactoryReporterRenderByCase:
-    """Generate a FactoryReporterRenderByCase testing instance.
-
-    It is created with a single choice configured for render_by_case tests
-    with all sections and targets enabled, a console default target, and
-    using RenderByCaseReporterFactoryOptions for options.
-
-    Default Options:
-    - name = `choice_name`
-    - sections = `{Section.MEMORY, Section.OPS, Section.TIMING, Section.PEAK_MEMORY}`
-    - targets = `{Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}`
-    - default_targets = `{Target.CONSOLE}`
-    - options = `RenderByCaseReporterFactoryOptions()`
-
-    Args:
-        choice_name (str): The name of the choice to create.
-        sections (set[Section] | None): The set of sections for the reporter.
-            If `None`, sections will default to
-            `{Section.MEMORY, Section.OPS, Section.TIMING, Section.PEAK_MEMORY}`.
-        targets (set[Target] | None): The set of targets for the reporter.
-            If `None`, targets will default to
-            `{Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}`.
-        default_targets (set[Target] | None): The set of default targets for the reporter.
-            If `None`, default_targets will default to `{Target.CONSOLE}`.
-    Returns:
-        FactoryReporterRenderByCase: The testing reporter instance.
-
-    """
+                                    default_targets: set[Target] | None = None) -> FactoryReporterForOrchestration:
+    """Generate a FactoryReporterForOrchestration testing instance."""
     sections = sections or {Section.MEMORY, Section.OPS, Section.TIMING, Section.PEAK_MEMORY}
     default_targets = default_targets or {Target.CONSOLE}
     targets = targets or {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
@@ -165,68 +96,30 @@ def render_by_case_reporter_factory(choice_name: str,
         sections=sections,
         targets=targets,
         default_targets=default_targets,
-        options=RenderByCaseReporterFactoryOptions(),
+        options=RenderOrchestrationReporterFactoryOptions(),
     )
     choices_conf = ChoicesConf([ChoiceConf(**choice_conf_kwargs)])
-    reporter = FactoryReporterRenderByCase(choices=choices_conf)
+    reporter = FactoryReporterForOrchestration(choices=choices_conf)
     return reporter
 
 
-def render_by_section_reporter_factory(choice_name: str,
-                                       sections: set[Section] | None = None,
-                                       targets: set[Target] | None = None,
-                                       default_targets: set[Target] | None = None) -> FactoryReporterRenderBySection:
-    """Generate a FactoryReporterRenderBySection testing instance.
-
-    It is created with a single choice configured for render_by_section tests.
-
-    Default Options:
-    - name = `choice_name`
-    - sections = `{Section.MEMORY, Section.OPS, Section.TIMING}`
-    - targets = `{Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}`
-    - default_targets = `{Target.CONSOLE}`
-    - options = `RenderBySectionReporterFactoryOptions()`
-
-    Args:
-        choice_name (str): The name of the choice to create.
-        sections (set[Section] | None): The set of sections for the reporter.
-            If `None`, sections will default to `{Section.MEMORY, Section.OPS, Section.TIMING}`.
-        targets (set[Target] | None): The set of targets for the reporter.
-            If `None`, targets will default to `{Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}`.
-        default_targets (set[Target] | None): The set of default targets for the reporter.
-            If `None`, default_targets will default to `{Target.CONSOLE}`.
-    Returns:
-        FactoryReporterRenderBySection: The testing reporter instance.
-    """
-    sections = sections or {Section.MEMORY, Section.OPS, Section.TIMING}
-    default_targets = default_targets or {Target.CONSOLE}
-    targets = targets or {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
-    choice_conf_kwargs = choice_conf_kwargs_factory(cache_id=None).replace(
-        name=choice_name,
-        sections=sections,
-        targets=targets,
-        default_targets=default_targets,
-        options=RenderBySectionReporterFactoryOptions(),
-    )
-    choices_conf = ChoicesConf([ChoiceConf(**choice_conf_kwargs)])
-    reporter = FactoryReporterRenderBySection(choices=choices_conf)
-    return reporter
+T = TypeVar("T", RenderByCaseMethodKWArgs, RenderBySectionMethodKWArgs)
 
 
-def _setup_render_by_case_good_path() -> tuple[FactoryReporterRenderByCase, RenderByCaseMethodKWArgs]:
-    """Helper to arrange the 'good path' test scenario for render_by_case."""
-    choice_name = "test_choice"
-    reporter = render_by_case_reporter_factory(choice_name=choice_name)
+def _setup_good_path(
+    kwargs_class: type[T],
+    choice_name: str,
+    sections: set[Section] | None = None
+) -> tuple[FactoryReporterForOrchestration, T]:
+    """Generic helper to arrange a 'good path' test scenario."""
+    reporter = _orchestration_reporter_factory(choice_name=choice_name, sections=sections)
     choice = reporter.choices[choice_name]
     flag_name = next(iter(choice.flags))
+    target_values = [Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value]
     args = argument_parser_factory(
-        arguments=[
-            list_of_strings_flag_factory(
-                flag=flag_name, choices=[
-                    Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value])]
-    ).parse_args([flag_name,
-                  Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value])
-    kwargs = RenderByCaseMethodKWArgs(
+        arguments=[list_of_strings_flag_factory(flag=flag_name, choices=target_values)]
+    ).parse_args([flag_name, *target_values])
+    kwargs = kwargs_class(
         renderer=reporter.render,
         args=args,
         case=case_factory(),
@@ -238,51 +131,25 @@ def _setup_render_by_case_good_path() -> tuple[FactoryReporterRenderByCase, Rend
     return reporter, kwargs
 
 
-def _setup_render_by_section_good_path() -> tuple[FactoryReporterRenderBySection, RenderBySectionMethodKWArgs]:
-    """Helper to arrange the 'good path' test scenario for render_by_section."""
-    choice_name = "test_choice_by_section"
-    # Use a known number of sections to make assertions predictable
-    sections = {Section.MEMORY, Section.OPS, Section.TIMING}
-    reporter = render_by_section_reporter_factory(choice_name=choice_name, sections=sections)
-    choice = reporter.choices[choice_name]
-    flag_name = next(iter(choice.flags))
-    args = argument_parser_factory(
-        arguments=[
-            list_of_strings_flag_factory(
-                flag=flag_name, choices=[
-                    Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value])]
-    ).parse_args([flag_name,
-                  Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value])
-    kwargs = RenderBySectionMethodKWArgs(
-        renderer=reporter.render,
-        args=args,
-        case=case_factory(),
-        choice=choice,
-        path=path_factory(),
-        session=session_factory(),
-        callback=default_reporter_callback
-    )
-    return reporter, kwargs
-
-
-def _setup_render_by_case_bad_target_path() -> tuple[FactoryReporterRenderByCase, RenderByCaseMethodKWArgs]:
-    """Helper to arrange the 'bad target' test scenario for render_by_case."""
-    choice_name = "bad_target_choice"
-    reporter = render_by_case_reporter_factory(
+def _setup_bad_target_path(
+    kwargs_class: type[T],
+    choice_name: str,
+    sections: set[Section] | None = None
+) -> tuple[FactoryReporterForOrchestration, T]:
+    """Generic helper to arrange a 'bad target' test scenario."""
+    reporter = _orchestration_reporter_factory(
         choice_name=choice_name,
+        sections=sections,
         targets={Target.INVALID, Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK},
         default_targets={Target.INVALID}
     )
     choice = reporter.choices[choice_name]
     flag_name = next(iter(choice.flags))
+    target_values = [Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value, Target.INVALID.value]
     args = argument_parser_factory(
-        arguments=[
-            list_of_strings_flag_factory(
-                flag=flag_name, choices=[
-                    Target.CONSOLE.value, Target.FILESYSTEM.value,
-                    Target.CALLBACK.value, Target.INVALID.value])]
+        arguments=[list_of_strings_flag_factory(flag=flag_name, choices=target_values)]
     ).parse_args([flag_name, Target.INVALID.value])
-    kwargs = RenderByCaseMethodKWArgs(
+    kwargs = kwargs_class(
         renderer=reporter.render,
         args=args,
         case=case_factory(),
@@ -294,31 +161,37 @@ def _setup_render_by_case_bad_target_path() -> tuple[FactoryReporterRenderByCase
     return reporter, kwargs
 
 
-def _setup_render_by_section_bad_target_path() -> tuple[FactoryReporterRenderBySection, RenderBySectionMethodKWArgs]:
+def _setup_render_by_case_good_path() -> tuple[FactoryReporterForOrchestration, RenderByCaseMethodKWArgs]:
+    """Helper to arrange the 'good path' test scenario for render_by_case."""
+    return _setup_good_path(  # type: ignore[return-value]
+        kwargs_class=RenderByCaseMethodKWArgs,
+        choice_name="test_choice"
+    )
+
+
+def _setup_render_by_section_good_path() -> tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]:
+    """Helper to arrange the 'good path' test scenario for render_by_section."""
+    return _setup_good_path(  # type: ignore[return-value]
+        kwargs_class=RenderBySectionMethodKWArgs,
+        choice_name="test_choice_by_section",
+        sections={Section.MEMORY, Section.OPS, Section.TIMING}
+    )
+
+
+def _setup_render_by_case_bad_target_path() -> tuple[FactoryReporterForOrchestration, RenderByCaseMethodKWArgs]:
+    """Helper to arrange the 'bad target' test scenario for render_by_case."""
+    return _setup_bad_target_path(  # type: ignore[return-value]
+        kwargs_class=RenderByCaseMethodKWArgs,
+        choice_name="bad_target_choice"
+    )
+
+
+def _setup_render_by_section_bad_target_path() -> tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]:
     """Helper to arrange the 'bad target' test scenario for render_by_section."""
-    choice_name = "bad_target_choice_by_section"
-    reporter = render_by_section_reporter_factory(
-        choice_name=choice_name,
-        targets={Target.INVALID, Target.CONSOLE},
-        default_targets={Target.INVALID}
+    return _setup_bad_target_path(  # type: ignore[return-value]
+        kwargs_class=RenderBySectionMethodKWArgs,
+        choice_name="bad_target_choice_by_section"
     )
-    choice = reporter.choices[choice_name]
-    flag_name = next(iter(choice.flags))
-    args = argument_parser_factory(
-        arguments=[
-            list_of_strings_flag_factory(
-                flag=flag_name, choices=[Target.CONSOLE.value, Target.INVALID.value])]
-    ).parse_args([flag_name, Target.INVALID.value])
-    kwargs = RenderBySectionMethodKWArgs(
-        renderer=reporter.render,
-        args=args,
-        case=case_factory(),
-        choice=choice,
-        path=path_factory(),
-        session=session_factory(),
-        callback=default_reporter_callback
-    )
-    return reporter, kwargs
 
 
 def render_by_case_testspecs() -> list[TestSpec]:
@@ -463,16 +336,51 @@ def render_by_section_testspecs() -> list[TestSpec]:
         exception_tag=ReporterErrorTag.RENDER_BY_SECTION_UNSUPPORTED_TARGET)))
 
     # --- Parameter Validation Tests ---
-    # The _validate_render_by_args method is shared, so we only need to ensure
-    # it's being called by render_by_section. We can do this with one representative test.
     render_by_section_kwargs = render_by_section_kwargs_factory(cache_id=None)
-    testspecs.append(
+    testspecs.extend([
         idspec("BY_SECTION_006", TestAction(
             name="Verify that invalid 'renderer' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_section,
             kwargs=render_by_section_kwargs.replace(renderer="invalid_renderer"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)))
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)),
+        idspec("BY_SECTION_007", TestAction(
+            name="Verify that invalid 'args' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_section,
+            kwargs=render_by_section_kwargs.replace(args="invalid_args"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)),
+        idspec("BY_SECTION_008", TestAction(
+            name="Verify that invalid 'case' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_section,
+            kwargs=render_by_section_kwargs.replace(case="invalid_case"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)),
+        idspec("BY_SECTION_009", TestAction(
+            name="Verify that invalid 'choice' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_section,
+            kwargs=render_by_section_kwargs.replace(choice="invalid_choice"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)),
+        idspec("BY_SECTION_010", TestAction(
+            name="Verify that invalid 'path' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_section,
+            kwargs=render_by_section_kwargs.replace(path="invalid_path"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)),
+        idspec("BY_SECTION_011", TestAction(
+            name="Verify that invalid 'session' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_section,
+            kwargs=render_by_section_kwargs.replace(session="invalid_session"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)),
+        idspec("BY_SECTION_012", TestAction(
+            name="Verify that invalid 'callback' argument raises SimpleBenchTypeError",
+            action=good_reporter.render_by_section,
+            kwargs=render_by_section_kwargs.replace(callback="invalid_callback"),
+            exception=SimpleBenchTypeError,
+            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)),
+    ])
 
     return testspecs
 
