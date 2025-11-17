@@ -1,8 +1,6 @@
 """Reporter for benchmark results using Rich tables on the console."""
 from __future__ import annotations
 
-from argparse import Namespace
-from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from rich.table import Table
@@ -13,7 +11,6 @@ from simplebench.exceptions import SimpleBenchTypeError
 # simplebench.reporters imports
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 # simplebench.reporters.rich_table imports
 from simplebench.reporters.rich_table.reporter.exceptions import RichTableReporterErrorTag
@@ -28,8 +25,6 @@ Options: TypeAlias = RichTableOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.reporters.choice.choice import Choice
-    from simplebench.session import Session
 
 
 class RichTableReporter(Reporter):
@@ -109,52 +104,6 @@ class RichTableReporter(Reporter):
                     output_format=Format.RICH_TEXT),
             ])
         )
-
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Path | None = None,
-                   session: Session | None = None,
-                   callback: ReporterCallback | None = None
-                   ) -> None:
-        """Output the benchmark results to a file as tagged RichTable if available.
-
-        This method is called by the base class's `report()` method after validation. The base class
-        handles validation of the arguments, so subclasses can assume the arguments
-        are valid without a large amount of boilerplate code. The base class also handles lazy
-        loading of the reporter classes, so subclasses can assume any required imports are available.
-
-        The run_report() method's main responsibilities are to select the appropriate output method
-        (render_by_case() in this case) based on the provided arguments.
-
-        It passes the actual rendering method to be used (the `render()` method in this case) to `render_by_case()`.
-        The rendering method must conform with the ReportRenderer protocol.
-
-        Args:
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Path | None): The path to the directory where the RichTable file(s) will be saved.
-            session (Session | None): The Session instance containing benchmark results.
-            callback (ReporterCallback | None):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the RichTable data as a string.
-                Leave as None if no callback is needed.
-
-        Return:
-            None
-
-        Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
-                required arguments are missing. Also raised if the callback is not callable when
-                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
-                target is specified.
-            SimpleBenchValueError: If an unsupported section or target is specified in the choice.
-        """
-        self.render_by_section(
-            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> Table:
         """Prints the benchmark results in a rich table format if available.

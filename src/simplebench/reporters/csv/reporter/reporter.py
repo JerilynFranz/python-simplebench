@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 import csv
-from argparse import Namespace
 from io import StringIO
-from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Any
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
@@ -14,7 +12,6 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.csv.reporter.options import CSVOptions
-from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.results import Results
@@ -27,8 +24,6 @@ from .exceptions import CSVReporterErrorTag
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.reporters.choice.choice import Choice
-    from simplebench.session import Session
 
 
 class CSVReporter(Reporter):
@@ -119,51 +114,6 @@ class CSVReporter(Reporter):
                 ),
             ])
         )
-
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Path | None = None,
-                   session: Session | None = None,  # pylint: disable=unused-argument
-                   callback: ReporterCallback | None = None  # pylint: disable=unused-argument
-                   ) -> None:
-        """Output the benchmark results to a file as tagged CSV if available.
-
-        This method is called by the base class's report() method after validation. The base class
-        handles validation of the arguments, so subclasses can assume the arguments
-        are valid without a large amount of boilerplate code. The base class also handles lazy
-        loading of the reporter classes, so subclasses can assume any required imports are available.
-
-        It calls the Reporter.render_by_section() method to generate the report output.
-
-        It passes the actual method to be used for rendering in the renderer parameter and that
-        rendering method must conform with the ReportRenderer protocol.
-
-        Args:
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The ChoiceConf  instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
-
-        Return:
-            None
-
-        Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
-                required arguments are missing. Also raised if the callback is not callable when
-                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
-                target is specified.
-            SimpleBenchValueError: If an unsupported section or target is specified in the choice.
-        """
-        self.render_by_section(
-            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Renders the benchmark results as tagged CSV data and returns it as a string.

@@ -4,11 +4,11 @@ This module defines the Reporter abstract base class, which serves as the founda
 for all reporter implementations in the SimpleBench benchmarking framework.
 
 It handles common functionality such as validating input arguments, configuring argparse CLI arguments,
-managing default options, sending reports to various targets, orchestrating report generation
-for `Session` and `Case`, and providing utility methods for working with reporter options.
+managing default options, sending reports to various targets, and orchestrating report generation.
 
-Currently, the only required method to implement is `run_report()`, which is responsible
-for generating the reports based on the benchmark results.
+To create a new reporter, a developer must subclass `Reporter` and implement the abstract
+`render()` method. For most reporters, the default `run_report()` implementation, which
+renders a report for each section, is sufficient.
 
 A `Reporter` is responsible for generating reports based on benchmark results from a `Session` and `Case`.
 Reporters can produce reports in various formats and output them to different targets.
@@ -549,6 +549,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         """Internal method that generates the report by rendering each section.
 
         This default implementation calls `render_by_section` to generate the report.
+
         Subclasses can override this method to provide custom report generation logic,
         for example by calling `render_by_case` for reports that are generated once
         per case.
@@ -563,10 +564,9 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         are valid. The base class also handles lazy loading of classes that could not
         be loaded at init, so subclasses can assume any required imports are available.
 
-        Because this method is a concrete implementation of an abstract method, it must be
-        implemented by the subclass. However, because some reporters may not need all
-        available arguments, such as 'path', 'session', or 'callback', the subclass implementation
-        may choose to ignore any arguments that are not applicable.
+        Because some reporters may not need all available arguments, such as 'path',
+        'session', or 'callback', the subclass implementation may choose to ignore
+        any arguments that are not applicable.
 
         Args:
             args (Namespace): The parsed command-line arguments.
@@ -592,7 +592,6 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
-        # The 'args' parameter is not used by render_by_section, so we ignore it.
         self.render_by_section(
             case=case,
             choice=choice,

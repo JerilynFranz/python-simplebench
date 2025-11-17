@@ -1,7 +1,5 @@
 """Factories for creating Reporter, Choice, and Choices test objects."""
 # pylint: disable=unused-argument
-from argparse import Namespace
-from pathlib import Path
 from typing import Any, ClassVar, Iterable, TypeAlias, overload
 
 from rich.table import Table
@@ -11,9 +9,7 @@ from simplebench.case import Case
 from simplebench.enums import Format, Section, Target
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
-from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
-from simplebench.session import Session
 
 from ...cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from ...kwargs import ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterKWArgs
@@ -143,41 +139,6 @@ class FactoryReporter(Reporter):
             kwargs['file_append'] = file_append
 
         super().__init__(**kwargs)  # pylint: disable=missing-kwoa  # type: ignore[misc]
-
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Path | None = None,
-                   session: Session | None = None,
-                   callback: ReporterCallback | None = None) -> None:
-        """Run the report with the given arguments, case, and choice.
-
-        Args:
-            args (Namespace):
-            Parsed command-line arguments.
-            case (Case):
-                The benchmark `Case` to report on.
-            choice (Choice):
-                The `Choice` configuration for the report.
-            path (Path | None, default=None):
-                Optional file `Path` for the report output.
-            session (Session | None, default=None):
-                Optional `Session` context for the report.
-            callback (ReporterCallback | None, default=None):
-                Optional `ReporterCallback` function for the report.
-
-        Return:
-            None
-        """
-        self.render_by_case(renderer=self.render,  # type: ignore[misc]
-                            args=args,
-                            case=case,
-                            choice=choice,
-                            path=path,
-                            session=session,
-                            callback=callback)
 
     def render(
             self, *, case: Case, section: Section, options: ReporterOptions) -> str | bytes | Text | Table:

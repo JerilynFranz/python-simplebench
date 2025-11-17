@@ -2,9 +2,7 @@
 """Reporter for benchmark results using graphs."""
 from __future__ import annotations
 
-from argparse import Namespace
 from io import BytesIO
-from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 import matplotlib as mpl
@@ -16,7 +14,6 @@ from simplebench.enums import FlagType, Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
@@ -31,8 +28,6 @@ Options: TypeAlias = ScatterPlotOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.reporters.choice.choice import Choice
-    from simplebench.session import Session
 
 
 class ScatterPlotReporter(MatPlotLibReporter):
@@ -89,20 +84,6 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     output_format=Format.GRAPH),
             ])
         )
-
-    # Not strictly necessary because the default implementation in Reporter
-    # would work, but we override it here to provide more specific docstrings.
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Path | None = None,
-                   session: Session | None = None,
-                   callback: ReporterCallback | None = None) -> None:
-        """Output the benchmark results as individual graphs for each case and section."""
-        self.render_by_section(
-            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
         """Render the scatter plot graph and return it as bytes.
