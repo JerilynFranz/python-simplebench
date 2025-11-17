@@ -510,7 +510,8 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             return
 
         # If we reach this point, all validation has passed and execution
-        # will pass through to the subclass implementation
+        # will pass through to the hook method, either the default implementation
+        # or an overridden implementation in the subclass
         self.run_report(args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     @abstractmethod
@@ -546,51 +547,26 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
-        """Internal method that generates the report by rendering each section.
+        """Orchestration hook for report generation.
 
-        This default implementation calls `render_by_section` to generate the report.
+        This method is the primary customization point for controlling how a report is generated.
+        It is called by the public `report()` method after all inputs have been validated.
 
-        Subclasses can override this method to provide custom report generation logic,
-        for example by calling `render_by_case` for reports that are generated once
-        per case.
+        The default implementation calls `render_by_section()`, which is suitable for most
+        reporters. Subclasses can override this method to provide alternative orchestration,
+        such as calling `render_by_case()` for reports that are generated once per case.
 
         Note:
-
-            To process Target.CUSTOM or other non-standard targets, subclasses
-            should implement their own custom logic within this method.
-
-        This method is called by the base class's report() method after validation. The base class
-        handles validation of the arguments, so subclasses can assume the arguments
-        are valid. The base class also handles lazy loading of classes that could not
-        be loaded at init, so subclasses can assume any required imports are available.
-
-        Because some reporters may not need all available arguments, such as 'path',
-        'session', or 'callback', the subclass implementation may choose to ignore
-        any arguments that are not applicable.
+            This is also the correct place to implement custom logic for non-standard
+            targets like `Target.CUSTOM`.
 
         Args:
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
+            path (Optional[Path]): The path to the directory where report files will be saved.
             session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]): A callback function for additional processing of the report.
-                The function should accept four arguments: the Case instance, the Section instance,
-                the Format instance, and the report output.
-
-                Example callback function signature:
-                    def my_callback(case: Case, section: Section, output_format: Format, output: Any) -> None:
-                        # Custom processing logic here
-
-        Return:
-            None
-
-        Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
-                required arguments are missing. Also raised if the callback is not callable when
-                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
-                target is specified.
-            SimpleBenchValueError: If an unsupported section or target is specified in the choice.
+            callback (Optional[ReporterCallback]): A callback function for additional processing.
         """
         self.render_by_section(
             case=case,
