@@ -23,14 +23,20 @@ from ...kwargs.reporters.reporter import (
     DispatchToTargetsMethodKWArgs,
     RenderByCaseMethodKWArgs,
     RenderBySectionMethodKWArgs,
+    TargetCallbackMethodKWArgs,
+    TargetConsoleMethodKWArgs,
+    TargetFilesystemMethodKWArgs,
 )
 from .. import (
     case_factory,
     choice_factory,
     default_filename_base,
+    default_format_plain,
     default_output,
+    default_output_str,
     default_reporter_callback,
     default_section,
+    default_subdir,
     namespace_factory,
     path_factory,
     session_factory,
@@ -42,6 +48,107 @@ if TYPE_CHECKING:
     from simplebench.session import Session
 
 Output: TypeAlias = str | bytes | Text | Table
+
+
+def target_callback_kwargs_factory(
+        *,
+        kwargs: dict[str, Any] | None = None,
+        cache_id: CacheId = None) -> TargetCallbackMethodKWArgs:
+    """Factory to create keyword arguments for the callback target method.
+
+    This factory constructs a dictionary of keyword arguments populated with
+    default values for testing the Reporter.target_callback() method.
+
+    Defaults can be overridden by providing specific arguments in the kwargs parameter.
+
+    Defaults:
+        callback (ReporterCallback): `default_reporter_callback()`
+        case (Case): `case_factory(cache_id=cache_id)`
+        section (Section): `default_section()`
+        output_format (Format): `default_format_plain()`
+        output (Output): `default_output_str()`
+
+    Args:
+        kwargs (dict[str, Any] | None, default=None): Specific keyword arguments to override defaults.
+        cache_id (CacheId, default=None): The cache identifier.
+
+    Returns:
+        TargetCallbackMethodKWArgs: The constructed keyword arguments.
+    """
+    defaults = TargetCallbackMethodKWArgs(
+        callback=default_reporter_callback,
+        case=case_factory(cache_id=cache_id),
+        section=default_section(),
+        output_format=default_format_plain(),
+        output=default_output_str(),
+    )
+    return defaults if kwargs is None else TargetCallbackMethodKWArgs(**(defaults | kwargs))
+
+
+def target_console_kwargs_factory(
+        *,
+        kwargs: dict[str, Any] | None = None,
+        cache_id: CacheId = None) -> TargetConsoleMethodKWArgs:
+    """Factory to create keyword arguments for the console target method.
+
+    This factory constructs a dictionary of keyword arguments populated with
+    default values for testing the Reporter.target_console() method.
+
+    Defaults can be overridden by providing specific arguments in the kwargs parameter.
+
+    Defaults:
+        session (Session): `session_factory(cache_id=cache_id)`
+        output (Output): `default_output()`
+
+    Args:
+        kwargs (dict[str, Any] | None, default=None): Specific keyword arguments to override defaults.
+        cache_id (CacheId, default=None): The cache identifier.
+
+    Returns:
+        TargetConsoleMethodKWArgs: The constructed keyword arguments.
+    """
+    defaults = TargetConsoleMethodKWArgs(
+        session=session_factory(cache_id=cache_id),
+        output=default_output(),
+    )
+    return defaults if kwargs is None else TargetConsoleMethodKWArgs(**(defaults | kwargs))
+
+
+def target_filesystem_kwargs_factory(
+        *,
+        kwargs: dict[str, Any] | None = None,
+        cache_id: CacheId = None) -> TargetFilesystemMethodKWArgs:
+    """Factory to create keyword arguments for the filesystem target method.
+
+    This factory constructs a dictionary of keyword arguments populated with
+    default values for testing the Reporter.target_filesystem() method.
+
+    Defaults can be overridden by providing specific arguments in the kwargs parameter.
+
+    Defaults:
+        path (Path): `path_factory(cache_id=cache_id)`
+        subdir (str): `default_subdir()`
+        filename (str): `default_filename_base()`
+        output (Output): `default_output()`
+        unique (bool): `True`
+        append (bool): `False`
+
+    Args:
+        kwargs (dict[str, Any] | None, default=None): Specific keyword arguments to override defaults.
+        cache_id (CacheId, default=None): The cache identifier.
+
+    Returns:
+        TargetFilesystemMethodKWArgs: The constructed keyword arguments.
+    """
+    defaults = TargetFilesystemMethodKWArgs(
+        path=path_factory(cache_id=cache_id),
+        subdir=default_subdir(),
+        filename=default_filename_base(),
+        output=default_output(),
+        unique=True,
+        append=False,
+    )
+    return defaults if kwargs is None else TargetFilesystemMethodKWArgs(**(defaults | kwargs))
 
 
 def dispatch_to_targets_kwargs_factory(

@@ -14,8 +14,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
-from simplebench.validators import (validate_filename, validate_string,
-                                    validate_type)
+from simplebench.validators import validate_filename, validate_string, validate_type
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -82,9 +81,9 @@ class _ReporterTargetMixin:
             raise SimpleBenchTypeError(
                 "output must be of type str, bytes, Text, or Table",
                 tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE)
-        if append and unique:
+        if append == unique:
             raise SimpleBenchValueError(
-                "append and unique options are not compatible when writing to filesystem",
+                "one, and only one, of append or unique must be True when writing to filesystem",
                 tag=ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS)
         if unique:
             counter = 1
@@ -99,10 +98,6 @@ class _ReporterTargetMixin:
         mode = 'wb' if isinstance(output, bytes) else 'w'
         if append:
             mode = 'ab' if isinstance(output, bytes) else 'a'
-        if output_path.exists() and not append:
-            raise SimpleBenchValueError(
-                f"Output file already exists and neither append nor unique options were specified: {output_path}",
-                tag=ReporterErrorTag.TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS)
         with output_path.open(mode=mode) as f:
             f.write(output)
 
@@ -124,8 +119,23 @@ class _ReporterTargetMixin:
         Returns:
             None
         """
+        # Rich text is not generally suitable for callback output, convert to plain text
         if isinstance(output, (Text, Table)):
             output = self.rich_text_to_plain_text(output)
+            output_format = Format.PLAIN_TEXT
+        # The logic behind this is that only test cases that have a callback defined
+        # should invoke the callback, otherwise it would be unexpected behavior.
+        #
+        # This allows reporters to call this method without needing to check
+        # if a callback is defined each time. It allows end users to define
+        # callbacks only when they want to handle output via callback without
+        # having to define a no-op callback for all other cases.
+        #
+        # It is not perfectly symmetrical with target_console, which always outputs to console,
+        # or target_filesystem, which always writes to the filesystem,
+        # but callbacks are more specialized in nature.
+        #
+        # It is different, but intentional.
         if callback is not None:
             callback(case=case, section=section, output_format=output_format, output=output)
 

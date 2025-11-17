@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 """Utility functions"""
-from argparse import Namespace
-from functools import cache
 import itertools
 import math
 import platform
 import re
 import sys
+from argparse import Namespace
+from functools import cache
 from typing import Any, Sequence, TypedDict, TypeVar
 
 from cpuinfo import get_cpu_info  # type: ignore[import-untyped]
 
 from .defaults import DEFAULT_SIGNIFICANT_FIGURES
-from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, UtilsErrorTag
-
+from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, UtilsErrorTag
 
 T = TypeVar('T')
 
@@ -102,12 +101,16 @@ def platform_id() -> str:
           arch=platform.architecture()[0]).lower().replace(' ', '')
 
 
+# Finds all characters that are not a-z, A-Z, 0-9, _ (underline), or - (dash)
+_SANITIZE_FILENAME_RE = re.compile(r'[^-a-zA-Z0-9_]+')
+
+
 def sanitize_filename(name: str) -> str:
     """Sanitizes a filename by replacing invalid characters with _ (underline).
 
     Only a-z, A-Z, 0-9, _  (underline), and - (dash) characters are allowed. All other
     characters are replaced with _ and multiple sequential _ characters are then
-    collapsed to single _ characters.
+    collapsed to single _ characters. Leading and trailing _ and - characters are removed.
 
     Args:
         name (str): The filename to sanitize.
@@ -123,8 +126,9 @@ def sanitize_filename(name: str) -> str:
         raise SimpleBenchValueError(
             "name arg must not be an empty string",
             tag=UtilsErrorTag.SANITIZE_FILENAME_EMPTY_NAME_ARG)
-    first_pass: str = re.sub(r'[^a-zA-Z0-9_-]+', '_', name)
-    return re.sub(r'_+', '_', first_pass)
+    first_pass: str = re.sub(_SANITIZE_FILENAME_RE, '_', name)
+    second_pass: str = first_pass.strip('_-')
+    return re.sub(r'_+', '_', second_pass)
 
 
 def sigfigs(number: float, figures: int = DEFAULT_SIGNIFICANT_FIGURES) -> float:

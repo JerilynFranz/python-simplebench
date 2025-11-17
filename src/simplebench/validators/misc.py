@@ -3,11 +3,11 @@
 These functions raise appropriate exceptions with error tags from exceptions.py
 and return the validated and/or normalized value.
 """
+import re
 from pathlib import Path
 from typing import Any, Sequence, TypeVar, cast, overload
 
-from simplebench.exceptions import (ErrorTag, SimpleBenchTypeError,
-                                    SimpleBenchValueError)
+from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.type_proxies.lazy_type_proxy import LazyTypeProxy
 from simplebench.validators.exceptions import ValidatorsErrorTag
 
@@ -997,13 +997,19 @@ def validate_float_range(
     return number
 
 
+# Validate filename stem regex: alphanumeric characters, dashes, and underscores only,
+# at least one character long, cannot start or end with an underscore or dash.
+# Length is checked separately.
+_FILENAME_STEM_RE = re.compile(r'^[A-Za-z0-9]$|^[A-Za-z0-9][-_A-Za-z0-9]*[A-Za-z0-9]$')
+
+
 def validate_filename(filename: Any) -> str:
     """Validate a filename for use in the filesystem.
 
     It validates that:
         - The filename is a string.
         - The filename suffix (if present) is alphanumeric and no longer than 10 characters.
-        - The filename stem (name without suffix) is alphanumeric and at least one character long.
+        - The filename stem (name without suffix) is alphanumeric or underscores and at least one character long.
         - The total filename length does not exceed 255 characters.
 
     Args:
@@ -1033,12 +1039,15 @@ def validate_filename(filename: Any) -> str:
     file_stem = file.stem
     if file_stem == '':
         raise SimpleBenchValueError(
-            "Filename must have a valid stem (name without suffix)",
+            "Filename must have a valid stem (name without suffix)> It cannot be empty or blank",
             tag=ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_STEM)
-    if not file_stem.isalnum():
+    if not re.match(_FILENAME_STEM_RE, file_stem):
         raise SimpleBenchValueError(
-            "Filename stem (name without suffix) must be alphanumeric "
-            "contain at least one character and only contain characters from A-Z, a-z, 0-9)",
+            "Filename stem (name without suffix) must consist of "
+            "only alphanumeric (A-Z, a-z, 0-9) or underscore (_) characters, "
+            "cannot start or end with an underscore, and must be "
+            "at least one character long "
+            f"(passed stem was '{file_stem}')",
             tag=ValidatorsErrorTag.VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC)
     if len(filename) > 255:
         raise SimpleBenchValueError(

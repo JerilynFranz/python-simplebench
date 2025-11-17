@@ -1,3 +1,4 @@
+"""KWArgs for the Reporter.dispatch_to_targets method tests."""
 from __future__ import annotations
 
 from argparse import Namespace

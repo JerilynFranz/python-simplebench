@@ -117,7 +117,7 @@ max-line-length = 120
 [tool.pylint.MASTER]
 suggestion-mode = 'yes'
 
-[tool.pytest.ini_options]
+[tool.pytest]
 testpaths = 'tests'
 
 [tool.coverage.run]

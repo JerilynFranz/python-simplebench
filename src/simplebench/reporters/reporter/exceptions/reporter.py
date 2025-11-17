@@ -293,7 +293,7 @@ class ReporterErrorTag(ErrorTag):
     method as the output argument"""
     TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS = (
         "TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS")
-    """The append and unique options are not compatible when writing to the filesystem"""
+    """One, and only one, of append and unique must be True when writing to the filesystem"""
     TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS = "TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS"
     """The output file already exists and the append or unique options were not specified"""
     RUN_REPORT_UNSUPPORTED_SECTION = "RUN_REPORT_UNSUPPORTED_SECTION"

@@ -6,7 +6,6 @@ factories in other modules.
 # pylint: disable=unused-argument
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
 from typing import TypeAlias, overload
 
@@ -16,11 +15,12 @@ from rich.text import Text
 from simplebench.enums import FlagType, Format, Section, Target
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
+from .path import path_factory
 
 Output: TypeAlias = str | bytes | Text | Table
 
 
-def default_output_text() -> str:
+def default_output_str() -> str:
     """Return default output for testing purposes.
 
     Returns:
@@ -38,6 +38,24 @@ def default_output() -> Output:
     return Text("Default Output")
 
 
+def default_format() -> Format:
+    """Return a default Format for testing purposes.
+
+    Returns:
+        Format: Format.RICH_TEXT
+    """
+    return Format.RICH_TEXT
+
+
+def default_format_plain() -> Format:
+    """Return a default Format.PLAIN_TEXT for testing purposes.
+
+    Returns:
+        Format: Format.PLAIN_TEXT
+    """
+    return Format.PLAIN_TEXT
+
+
 def default_section() -> Section:
     """Return a single default Section for testing purposes.
 
@@ -50,10 +68,12 @@ def default_section() -> Section:
 def default_filename_base() -> str:
     """Return a default filename base string for testing purposes.
 
+    It has to be a valid filename stem (alphanumeric, no spaces, not empty or blank).
+
     Returns:
-        str: "A Report Name"
+        str: "ReportName"
     """
-    return "A Report Name"
+    return "ReportName"
 
 
 # overloads provide a tooltip assist for the decorated function and IDE tooltips
@@ -111,9 +131,7 @@ def output_path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
     Returns:
         Path: A Path object pointing to a file in the temporary directory.
     """
-    # Use tempfile.gettempdir() to get a cross-platform temporary directory
-    # e.g., '/tmp' on Linux, 'C:\Users\...\AppData\Local\Temp' on Windows
-    return Path(tempfile.gettempdir())
+    return path_factory(cache_id=cache_id)
 
 
 @cached_factory

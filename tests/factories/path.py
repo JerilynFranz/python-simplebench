@@ -1,19 +1,19 @@
 """Default path factories for tests."""
-# import atexit
-# import tempfile
+import atexit
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import overload
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
 
-# TODO: Remove once pyfakefs is used for filesystem tests
-# _TEMP_DIR = tempfile.TemporaryDirectory(prefix='simplebench_test_')
-# atexit.register(_TEMP_DIR.cleanup)
+# Create a temporary directory for testing purposes and ensure cleanup on exit
+_TEMP_DIR = TemporaryDirectory(prefix='simplebench_test_')
+atexit.register(_TEMP_DIR.cleanup)
 
 
 def temp_dir() -> Path:
     """Return the temporary directory path used for testing."""
-    return Path('/simplebench_test_temp_dir')
+    return Path(_TEMP_DIR.name)
 
 
 # The overloads provide a tooltip assist for the decorated function and IDE tooltips
