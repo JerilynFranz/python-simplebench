@@ -54,7 +54,21 @@ class RichTableReporter(Reporter):
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
 
     def __init__(self) -> None:
-        """Initialize the RichTableReporter."""
+        """Initialize the RichTableReporter.
+
+        Note:
+
+        The exception documentation below refers to validation of subclass configuration
+        class variables `_OPTIONS_TYPE` and `_OPTIONS_KWARGS`. These must be correctly defined
+        in any subclass of `RichTableReporter` to ensure proper functionality.
+
+        In simple use, these exceptions should never be raised, as `RichTableReporter` provides
+        valid implementations. They are documented here for completeness.
+
+         Raises:
+            SimpleBenchTypeError: If the subclass configuration types are invalid.
+            SimpleBenchValueError: If the subclass configuration values are invalid.
+        """
         super().__init__(
             name='rich-table',
             description='Displays benchmark results as a rich text table on the console.',

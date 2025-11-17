@@ -90,12 +90,12 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
     """
     @classmethod
     def _validate_subclass_config(cls) -> None:
-        """Validate that the subclass has implemented required class variables.
+        """Validate that the subclass has correctly defined its options configuration.
 
-        This method checks that the subclass has defined the required class variables
-        and that they are of the correct types.
+        This method checks that the subclass has implemented the required class variables
+        that allow the Reporter base class to automatically instantiate the default options object.
 
-        Subclasses m ust implement the following class variables:
+        Subclasses must implement the following class variables:
 
             _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions
             _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}

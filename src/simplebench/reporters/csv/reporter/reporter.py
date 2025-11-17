@@ -61,7 +61,21 @@ class CSVReporter(Reporter):
     """Keyword arguments for constructing a CSVOptions hardcoded default instance: `{}`"""
 
     def __init__(self) -> None:
-        """Initialize the CSVReporter with its name, description, choices, targets, and formats."""
+        """Initialize the CSVReporter with its name, description, choices, targets, and formats.
+
+        Note:
+
+        The exception documentation below refers to validation of subclass configuration
+        class variables `_OPTIONS_TYPE` and `_OPTIONS_KWARGS`. These must be correctly defined
+        in any subclass of `CSVReporter` to ensure proper functionality.
+
+        In simple use, these exceptions should never be raised, as `CSVReporter` provides
+        valid implementations. They are documented here for completeness.
+
+         Raises:
+            SimpleBenchTypeError: If the subclass configuration types are invalid.
+            SimpleBenchValueError: If the subclass configuration values are invalid.
+        """
         super().__init__(
             name='csv',
             description='Outputs benchmark results to CSV files.',

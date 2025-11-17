@@ -157,8 +157,8 @@ class _ReporterOrchestrationMixin:
         ```
 
         Args:
-            renderer (ReportRenderer | None, default=None): The method to be used for actually rendering the report.
-                If None, the reporter's own `render()` method will be used.
+            renderer (Optional[ReportRenderer]): The rendering function to use. If not provided,
+                defaults to `self.render`.
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
@@ -251,8 +251,8 @@ class _ReporterOrchestrationMixin:
         ```
 
         Args:
-            renderer (ReportRenderer | None, default=None): The method to be used for actually rendering the report.
-                If None, the reporter's own `render()` method will be used.
+            renderer (Optional[ReportRenderer]): The rendering function to use. If not provided,
+                defaults to `self.render`.
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.

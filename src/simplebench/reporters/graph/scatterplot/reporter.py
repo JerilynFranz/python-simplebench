@@ -31,7 +31,22 @@ if TYPE_CHECKING:
 
 
 class ScatterPlotReporter(MatPlotLibReporter):
-    """Class for outputting benchmark results as scatter plot graphs."""
+    """Class for outputting benchmark results as scatter plot graphs.
+
+    This reporter generates scatter plot visualizations for various result sections,
+    saving them to the filesystem or passing them to a callback function. It provides
+    a visual way to compare the performance of different benchmark variations.
+
+    Defined command-line flags:
+        --scatter-plot: {filesystem, callback} (default=filesystem)
+        --scatter-plot.ops: ...
+        --scatter-plot.timings: ...
+        --scatter-plot.memory: ...
+
+    Example usage:
+        program.py --scatter-plot               # Outputs graphs to the filesystem.
+        program.py --scatter-plot.ops filesystem  # Outputs only ops graphs to the filesystem.
+    """
 
     _OPTIONS_TYPE: ClassVar[type[ScatterPlotOptions]] = ScatterPlotOptions  # pylint: disable=line-too-long  # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
     """The specific ReporterOptions subclass associated with this reporter."""
@@ -39,6 +54,21 @@ class ScatterPlotReporter(MatPlotLibReporter):
     """The default keyword arguments for the ScatterPlotOptions subclass."""
 
     def __init__(self) -> None:
+        """Initialize the ScatterPlotReporter with its name, description, choices, targets, and formats.
+
+        Note:
+
+        The exception documentation below refers to validation of subclass configuration
+        class variables `_OPTIONS_TYPE` and `_OPTIONS_KWARGS`. These must be correctly defined
+        in any subclass of `ScatterPlotReporter` to ensure proper functionality.
+
+        In simple use, these exceptions should never be raised, as `ScatterPlotReporter` provides
+        valid implementations. They are documented here for completeness.
+
+        Raises:
+            SimpleBenchTypeError: If the subclass configuration types are invalid.
+            SimpleBenchValueError: If the subclass configuration values are invalid.
+        """
         super().__init__(
             name='graph',
             description='Outputs benchmark results as graphs.',

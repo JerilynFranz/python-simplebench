@@ -71,7 +71,23 @@ class JSONReporter(Reporter):
     """
 
     def __init__(self) -> None:
-        """Initialize the JSONReporter with its name, description, choices, targets, and formats."""
+        """Initialize the JSONReporter with its name, description, choices, targets, and formats.
+
+        All sections are always included in the JSON output.
+
+        Note:
+
+        The exception documentation below refers to validation of subclass configuration
+        class variables `_OPTIONS_TYPE` and `_OPTIONS_KWARGS`. These must be correctly defined
+        in any subclass of `JSONReporter` to ensure proper functionality.
+
+        In simple use, these exceptions should never be raised, as `JSONReporter` provides
+        valid implementations. They are documented here for completeness.
+
+         Raises:
+            SimpleBenchTypeError: If the subclass configuration types are invalid.
+            SimpleBenchValueError: If the subclass configuration values are invalid.
+        """
         super().__init__(
             name='json',
             description='Outputs benchmark results to JSON files.',
