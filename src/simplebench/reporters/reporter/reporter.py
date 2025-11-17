@@ -20,6 +20,9 @@ from argparse import Namespace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeAlias, TypeVar
 
+from rich.table import Table
+from rich.text import Text
+
 from simplebench.defaults import BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT, BASE_OPS_PER_INTERVAL_UNIT
 from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
@@ -452,8 +455,6 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
             session (Optional[Session]): The Session instance containing benchmark results.
             callback (Optional[Callable[[Case, Section, Any], None]]):
                 A callback function for additional processing of the report.
-        Raises:
-            NotImplementedError: If the method is not implemented in a subclass.
         """
         if not isinstance(args, Namespace):
             raise SimpleBenchTypeError(
@@ -513,6 +514,30 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         self.run_report(args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     @abstractmethod
+    def render(self, *, case: "Case", section: "Section", options: "ReporterOptions") -> str | bytes | Text | Table:
+        """Render the report for a specific case and section.
+
+        This abstract method must be implemented by all Reporter subclasses. It is responsible
+        for generating the actual report content for a given case and section, based on the
+        provided options.
+
+        The output can be a string, bytes, or a Rich object (Text or Table).
+
+        Args:
+            case (Case): The Case instance containing the benchmark results.
+            section (Section): The specific section of the results to render.
+            options (ReporterOptions): The reporter-specific options for rendering.
+
+        Returns:
+            str | bytes | Text | Table: The rendered report content.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in a subclass.
+        """
+        raise SimpleBenchNotImplementedError(
+            "Reporter subclasses must implement the render method",
+            tag=ReporterErrorTag.RENDER_NOT_IMPLEMENTED)
+
     def run_report(self,
                    *,
                    args: Namespace,
@@ -521,24 +546,12 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                    path: Optional[Path] = None,
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
-        """Internal method to be implemented by subclasses to actually generate the report.
+        """Internal method that generates the report by rendering each section.
 
-        Output the benchmark results.
-
-        This is a hook method that must be implemented by subclasses to perform the actual
-        report generation based on the provided arguments.
-
-        The concrete implementation of this method will typically just call the
-        base class's render_by_section() (for reports that are rendered for each
-        individual section) or the render_by_case() (for reports that only
-        are generated once per case) as appropriate to handle the rendering of
-        the report by section or entire case.
-
-        This reduces the amount of boilerplate code that needs to be implemented
-        in each reporter subclass to a minimum.
-
-        If those two methods are not suitable, the subclass can implement its own custom
-        report generation logic within this method instead.
+        This default implementation calls `render_by_section` to generate the report.
+        Subclasses can override this method to provide custom report generation logic,
+        for example by calling `render_by_case` for reports that are generated once
+        per case.
 
         Note:
 
@@ -578,11 +591,16 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                 provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
-            NotImplementedError: If the method is not implemented in a subclass.
         """
-        raise SimpleBenchNotImplementedError(
-            "Reporter subclasses must implement the report method",
-            tag=ReporterErrorTag.RUN_REPORT_NOT_IMPLEMENTED)
+        # The 'args' parameter is not used by render_by_section, so we ignore it.
+        self.render_by_section(
+            case=case,
+            choice=choice,
+            path=path,
+            session=session,
+            callback=callback,
+            args=args
+        )
 
     def add_choice(self, choice: Choice) -> None:
         """Add a Choice to the reporter's Choices.

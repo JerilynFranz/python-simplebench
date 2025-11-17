@@ -182,6 +182,19 @@ class ReporterProtocol(Protocol):
         """Generate the report for the given case and choice."""
         ...
 
+    def render(self, *, case: "Case", section: "Section", options: "ReporterOptions") -> str | bytes | Text | Table:
+        """Render the report for a specific case and section.
+
+        Args:
+            case (Case): The Case instance representing the benchmarked code.
+            section (Section): The section to render the report for.
+            options (ReporterOptions): The options for rendering the report.
+
+        Returns:
+            str | bytes | Text | Table: The rendered report output.
+        """
+        raise NotImplementedError
+
     def run_report(
         self,
         *,

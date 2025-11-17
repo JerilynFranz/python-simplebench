@@ -9,7 +9,7 @@ import pytest
 
 from simplebench.case import Case
 from simplebench.enums import Format, Section, Target
-from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.iteration import Iteration
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
@@ -71,41 +71,6 @@ def broken_benchcase_missing_kwargs(
             iterations=[Iteration(elapsed=1.0), Iteration(elapsed=2.0)])
 
 
-class BadSuperReporterOptions(ReporterOptions):
-    """A bad dummy ReporterOptions subclass for testing purposes."""
-
-
-class BadSuperReporter(Reporter):
-    """A dummy Reporter subclass for testing purposes.
-
-    This class incorrectly calls super().run_report(), which should raise NotImplementedError
-    when run() is called.
-    """
-    _OPTIONS_TYPE: ClassVar[type[BadSuperReporterOptions]] = BadSuperReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
-    """The ReporterOptions subclass type for the reporter: `BadSuperReporterOptions`"""
-    _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
-    """Keyword arguments for constructing a BadSuperReporterOptions hardcoded default instance: `{}`"""
-
-    def __init__(self) -> None:
-        super().__init__(**reporter_kwargs_factory(cache_id=None))
-
-    def run_report(self,  # pylint: disable=useless-parent-delegation
-                   *,
-                   args: Namespace,
-                   case: Case,
-                   choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,
-                   callback: Optional[ReporterCallback] = None) -> None:
-        """Incorrectly calls super().run_report(), which should raise NotImplementedError."""
-        return super().run_report(args=args,
-                                  case=case,
-                                  choice=choice,
-                                  path=path,
-                                  session=session,
-                                  callback=callback)
-
-
 class GoodReporterOptions(ReporterOptions):
     """A good dummy ReporterOptions subclass for testing purposes."""
 
@@ -131,6 +96,10 @@ class GoodReporter(Reporter):
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
         return
+
+    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+        """Dummy render method for testing."""
+        return ""
 
 
 def test_good_reporter_subclassing() -> None:
@@ -168,20 +137,6 @@ def test_factory_reporter_subclassing() -> None:
         name="abstract base class Reporter() cannot be instantiated directly",
         action=Reporter,
         exception=TypeError)),
-    idspec('REPORTER_002', TestAction(
-        name="configured subclass of BadSuperFactoryReporter() can be instantiated",
-        action=BadSuperReporter,
-        assertion=Assert.ISINSTANCE,
-        expected=BadSuperReporter)),
-    idspec('REPORTER_003', TestAction(
-        name=("calling run_report() on BadSuperFactoryReporter with bad run_report() super() delegation "
-              "raises SimpleBenchNotImplementedError"),
-        action=BadSuperReporter().run_report,
-        kwargs={'args': namespace_factory(),
-                'case': case_factory(),
-                'choice': choice_factory()},
-        exception=SimpleBenchNotImplementedError,
-        exception_tag=ReporterErrorTag.RUN_REPORT_NOT_IMPLEMENTED)),
     idspec('REPORTER_004', TestAction(
         name="reporter_factory() is creating valid FactoryReporter instances",
         action=reporter_factory,

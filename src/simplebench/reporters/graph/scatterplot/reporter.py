@@ -90,6 +90,8 @@ class ScatterPlotReporter(MatPlotLibReporter):
             ])
         )
 
+    # Not strictly necessary because the default implementation in Reporter
+    # would work, but we override it here to provide more specific docstrings.
     def run_report(self,
                    *,
                    args: Namespace,
@@ -107,11 +109,12 @@ class ScatterPlotReporter(MatPlotLibReporter):
 
         Args:
             case (Case): The Case instance representing the benchmarked code.
-            section (Section): The section of the results to plot. Must be Section.OPS or Section.TIMING.
-            options (ReporterOptions): The options for rendering the scatter plot.
+            section (Section): The section of the results to plot.
+            options (ScatterPlotOptions): The options for rendering the scatter plot.
 
         Returns:
-            bytes: The rendered graph as bytes.
+            bytes: The rendered graph as bytes. The format is determined by the options.
+                The defaults are defined in `ScatterPlotOptions`.
 
         Raises:
             SimpleBenchTypeError: If the provided arguments are not of the expected types or values.

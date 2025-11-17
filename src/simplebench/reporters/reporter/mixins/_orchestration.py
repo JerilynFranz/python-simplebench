@@ -46,7 +46,7 @@ class _ReporterOrchestrationMixin:
 
     def _validate_render_by_args(
         self: ReporterProtocol, *,
-        renderer: ReportRenderer,
+        renderer: ReportRenderer | None,
         args: Namespace,
         case: Case,
         choice: Choice,
@@ -60,7 +60,7 @@ class _ReporterOrchestrationMixin:
         if any argument is of an incorrect type.
 
         Args:
-            renderer (ReportRenderer): The method to be used for actually rendering the report.
+            renderer (ReportRenderer | None): The method to be used for actually rendering the report.
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
@@ -74,9 +74,9 @@ class _ReporterOrchestrationMixin:
         Raises:
             SimpleBenchTypeError: If any of the provided arguments are not of the expected types.
         """
-        if not isinstance(renderer, ReportRenderer):
+        if renderer is not None and not callable(renderer):
             raise SimpleBenchTypeError(
-                "renderer must be a callable ReportRenderer",
+                "renderer must be a callable ReportRenderer or None",
                 tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)
 
         args = validate_type(
@@ -109,7 +109,7 @@ class _ReporterOrchestrationMixin:
                 ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)
 
     def render_by_case(self: ReporterProtocol, *,
-                       renderer: ReportRenderer,
+                       renderer: ReportRenderer | None = None,
                        args: Namespace,
                        case: Case,
                        choice: Choice,
@@ -157,7 +157,8 @@ class _ReporterOrchestrationMixin:
         ```
 
         Args:
-            renderer (ReportRenderer): The method to be used for actually rendering the report.
+            renderer (ReportRenderer | None, default=None): The method to be used for actually rendering the report.
+                If None, the reporter's own `render()` method will be used.
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
@@ -178,8 +179,9 @@ class _ReporterOrchestrationMixin:
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        actual_renderer = renderer if renderer is not None else self.render
         self._validate_render_by_args(
-            renderer=renderer,
+            renderer=actual_renderer,
             args=args,
             case=case,
             choice=choice,
@@ -188,7 +190,7 @@ class _ReporterOrchestrationMixin:
             callback=callback)
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         self.dispatch_to_targets(
-            output=renderer(case=case, section=Section.NULL, options=prioritized.options),
+            output=actual_renderer(case=case, section=Section.NULL, options=prioritized.options),
             filename_base=case.title,
             args=args,
             choice=choice,
@@ -201,7 +203,7 @@ class _ReporterOrchestrationMixin:
     def render_by_section(
             self: ReporterProtocol,
             *,
-            renderer: ReportRenderer,
+            renderer: ReportRenderer | None = None,
             args: Namespace,
             case: Case,
             choice: Choice,
@@ -249,7 +251,8 @@ class _ReporterOrchestrationMixin:
         ```
 
         Args:
-            renderer (ReportRenderer): The method to be used for actually rendering the report.
+            renderer (ReportRenderer | None, default=None): The method to be used for actually rendering the report.
+                If None, the reporter's own `render()` method will be used.
             args (Namespace): The parsed command-line arguments.
             case (Case): The Case instance representing the benchmarked code.
             choice (Choice): The Choice instance specifying the report configuration.
@@ -270,8 +273,9 @@ class _ReporterOrchestrationMixin:
                 target is specified.
             SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        actual_renderer = renderer if renderer is not None else self.render
         self._validate_render_by_args(
-            renderer=renderer,
+            renderer=actual_renderer,
             args=args,
             case=case,
             choice=choice,
@@ -280,10 +284,10 @@ class _ReporterOrchestrationMixin:
             callback=callback)
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         for section in choice.sections:
-            output = renderer(case=case, section=section, options=prioritized.options)
+            output = actual_renderer(case=case, section=section, options=prioritized.options)
             self.dispatch_to_targets(
                 output=output,
-                filename_base=section.value,
+                filename_base=f"{case.title}-{section.value}",
                 args=args,
                 choice=choice,
                 case=case,
