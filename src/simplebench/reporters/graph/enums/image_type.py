@@ -1,4 +1,4 @@
-"""ImageType enums for the simplebench.graph package."""
+"""ImageType enums for the :mod:`simplebench.graph` package."""
 from enum import Enum
 
 from simplebench.enums import enum_docstrings

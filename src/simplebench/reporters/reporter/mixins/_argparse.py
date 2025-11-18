@@ -33,18 +33,17 @@ class _ReporterArgparseMixin:
         An exception is raised if a target is specified in the arguments,
         or in the default targets, that are not supported by the choice.
 
-        Args:
-            args (Namespace): The parsed command-line arguments.
-            choice (Choice): The Choice instance specifying the report configuration.
-            default_targets (Iterable[Target]]): The default targets to use if no targets
-                are specified in the command-line arguments.
-
-        Returns:
-            A set of Target enums representing the selected output targets.
-
-        Raises:
-            SimpleBenchTypeError: If args is not an argparse.Namespace instance.
-            SimpleBenchValueError: If an unsupported target is specified in the arguments.
+        :param args: The parsed command-line arguments.
+        :type args: Namespace
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :param default_targets: The default targets to use if no targets
+            are specified in the command-line arguments.
+        :type default_targets: Iterable[Target]
+        :return: A set of Target enums representing the selected output targets.
+        :rtype: set[Target]
+        :raises SimpleBenchTypeError: If args is not an argparse.Namespace instance.
+        :raises SimpleBenchValueError: If an unsupported target is specified in the arguments.
         """
         args = validate_type(args, Namespace, 'args',
                              ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)
@@ -95,8 +94,8 @@ class _ReporterArgparseMixin:
         flags that accept multiple values (lists). This method allows adding
         flags of the specified type to the ArgumentParser.
 
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
+        :param parser: The ArgumentParser to add the flags to.
+        :type parser: ArgumentParser
         """
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
@@ -141,12 +140,11 @@ class _ReporterArgparseMixin:
         This will be enforced during argument parsing, so invalid target values will
         result in an error.
 
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-            choice (Choice): The Choice instance for which to add the flags.
-
-        Raises:
-            SimpleBenchTypeError: If the parser arg is not an ArgumentParser instance.
+        :param parser: The ArgumentParser to add the flags to.
+        :type parser: ArgumentParser
+        :param choice: The Choice instance for which to add the flags.
+        :type choice: Choice
+        :raises SimpleBenchTypeError: If the parser arg is not an ArgumentParser instance.
         """
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
@@ -179,9 +177,10 @@ class _ReporterArgparseMixin:
         Subclasses can override this method if they need custom behavior such as
         adding arguments with different types or more complex logic.
 
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
-            choice (Choice): The Choice instance for which to add the flags.
+        :param parser: The ArgumentParser to add the flags to.
+        :type parser: ArgumentParser
+        :param choice: The Choice instance for which to add the flags.
+        :type choice: Choice
         """
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(

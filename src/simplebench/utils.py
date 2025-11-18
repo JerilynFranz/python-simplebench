@@ -18,39 +18,52 @@ T = TypeVar('T')
 
 
 class MachineInfo(TypedDict):
-    """TypedDict for machine info returned by get_machine_info()."""
+    """TypedDict for machine info returned by :func:`get_machine_info`.
+
+    :ivar node: Computer's network name.
+    :vartype node: str
+    :ivar processor: Processor name.
+    :vartype processor: str
+    :ivar machine: Machine type.
+    :vartype machine: str
+    :ivar python_compiler: Python compiler used.
+    :vartype python_compiler: str
+    :ivar python_implementation: Python implementation name.
+    :vartype python_implementation: str
+    :ivar python_implementation_version: Python implementation version.
+    :vartype python_implementation_version: str
+    :ivar python_version: Python version.
+    :vartype python_version: str
+    :ivar python_build: Python build information.
+    :vartype python_build: tuple[str, str]
+    :ivar release: Operating system release.
+    :vartype release: str
+    :ivar system: Operating system name.
+    :vartype system: str
+    :ivar cpu: CPU information.
+    :vartype cpu: dict[str, str]
+    """
     node: str
-    """Computer's network name."""
     processor: str
-    """Processor name."""
     machine: str
-    """Machine type."""
     python_compiler: str
-    """Python compiler used."""
     python_implementation: str
-    """Python implementation name."""
     python_implementation_version: str
-    """Python implementation version."""
     python_version: str
-    """Python version."""
     python_build: tuple[str, str]
-    """Python build information."""
     release: str
-    """Operating system release."""
     system: str
-    """Operating system name."""
     cpu: dict[str, str]
-    """CPU information."""
 
 
 def python_implementation_version() -> str:
     """Return the Python implementation version.
 
-    For CPython, this is the same as platform.python_version().
+    For CPython, this is the same as :func:`platform.python_version`.
     For PyPy, this is the PyPy version (e.g., '7.3.5').
 
-    Returns:
-        str: The Python implementation version.
+    :return: The Python implementation version.
+    :rtype: str
     """
     python_implementation: str = platform.python_implementation()
     py_implementation_version: str = platform.python_version()
@@ -91,8 +104,8 @@ def platform_id() -> str:
     The platform ID is a lowercase string that combines the operating system, Python implementation,
     Python version, and architecture.
 
-    Returns:
-        str: The platform ID.
+    :return: The platform ID.
+    :rtype: str
     """
     return '{system}-{python_impl}-{python_version}-{arch}'.format(  # pylint: disable=consider-using-f-string
           system=platform.system(),
@@ -112,11 +125,10 @@ def sanitize_filename(name: str) -> str:
     characters are replaced with _ and multiple sequential _ characters are then
     collapsed to single _ characters. Leading and trailing _ and - characters are removed.
 
-    Args:
-        name (str): The filename to sanitize.
-
-    Returns:
-        str: The sanitized filename.
+    :param name: The filename to sanitize.
+    :type name: str
+    :return: The sanitized filename.
+    :rtype: str
     """
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
@@ -135,7 +147,7 @@ def sigfigs(number: float, figures: int = DEFAULT_SIGNIFICANT_FIGURES) -> float:
     """Rounds a floating point number to the specified number of significant figures.
 
     If the number of significant figures is not specified, it defaults to
-    DEFAULT_SIGNIFICANT_FIGURES.
+    :data:`~.defaults.DEFAULT_SIGNIFICANT_FIGURES`.
 
     * 14.2 to 2 digits of significant figures becomes 14
     * 0.234 to 2 digits of significant figures becomes 0.23
@@ -143,16 +155,14 @@ def sigfigs(number: float, figures: int = DEFAULT_SIGNIFICANT_FIGURES) -> float:
     * 14.5 to 2 digits of significant figures becomes 15
     * 0.235 to 2 digits of significant figures becomes 0.24
 
-    Args:
-        number (float): The number to round.
-        figures (int): The number of significant figures to round to.
-
-    Returns:
-        The rounded number as a float.
-
-    Raises:
-        TypeError: If the number arg is not a float or the figures arg is not an int.
-        ValueError: If the figures arg is not at least 1.
+    :param number: The number to round.
+    :type number: float
+    :param figures: The number of significant figures to round to.
+    :type figures: int
+    :raises TypeError: If the ``number`` arg is not a float or the ``figures`` arg is not an int.
+    :raises ValueError: If the ``figures`` arg is not at least 1.
+    :return: The rounded number as a float.
+    :rtype: float
     """
     if not isinstance(number, float):
         raise SimpleBenchTypeError(
@@ -180,27 +190,27 @@ def kwargs_variations(kwargs: dict[str, Sequence[Any]]) -> list[dict[str, Any]]:
     of dictionaries, each dictionary representing a unique combination of keyword arguments and
     their values.
 
-    Example
-    -------
-    If the input is:
-    {
-        'arg1': [1, 2],
-        'arg2': ['a', 'b']
-    }
-    The output will be:
-    [
-        {'arg1': 1, 'arg2': 'a'},
-        {'arg1': 1, 'arg2': 'b'},
-        {'arg1': 2, 'arg2': 'a'},
-        {'arg1': 2, 'arg2': 'b'}
-    ]
+    Example:
 
-    Args:
-        kwargs (dict[str, Sequence[Any]]): A dictionary of keyword arguments and their possible values.
+    .. code-block:: python
+
+        kwargs_variations({
+            'arg1': [1, 2],
+            'arg2': ['a', 'b']
+        })
+        # output:
+        # [
+        #     {'arg1': 1, 'arg2': 'a'},
+        #     {'arg1': 1, 'arg2': 'b'},
+        #     {'arg1': 2, 'arg2': 'a'},
+        #     {'arg1': 2, 'arg2': 'b'}
+        # ]
+
+    :param kwargs: A dictionary of keyword arguments and their possible values.
         The value must be a Sequence (e.g., list, tuple, set), but not a str or bytes instance.
-
-    Returns:
-        A list of dictionaries, each representing a unique combination of keyword arguments and values.
+    :type kwargs: dict[str, Sequence[Any]]
+    :return: A list of dictionaries, each representing a unique combination of keyword arguments and values.
+    :rtype: list[dict[str, Any]]
     '''
     if not isinstance(kwargs, dict):
         raise SimpleBenchTypeError(
@@ -226,18 +236,15 @@ def flag_to_arg(flag: str) -> str:
     """Convert a command-line flag to a valid Python argument name.
 
     This function takes a command-line flag (e.g., '--my-flag') and converts it
-    to a valid Python argument name (e.g., 'my_flag') as expected in a Namespace
+    to a valid Python argument name (e.g., 'my_flag') as expected in a :class:`~argparse.Namespace`
     result by removing leading dashes and replacing hyphens with underscores.
 
-    Args:
-        flag (str): The command-line flag to convert.
-
-    Returns:
-        str: The corresponding Python argument name.
-
-    Raises:
-        SimpleBenchTypeError: If the flag arg is not a str.
-        SimpleBenchValueError: If the flag arg is an empty string or does not start with '--'.
+    :param flag: The command-line flag to convert.
+    :type flag: str
+    :raises SimpleBenchTypeError: If the ``flag`` arg is not a str.
+    :raises SimpleBenchValueError: If the ``flag`` arg is an empty string or does not start with '--'.
+    :return: The corresponding Python argument name.
+    :rtype: str
     """
     if not isinstance(flag, str):
         raise SimpleBenchTypeError(
@@ -263,15 +270,12 @@ def arg_to_flag(arg: str) -> str:
     to a command-line flag (e.g., '--my-flag') by adding leading dashes and
     replacing underscores with hyphens.
 
-    Args:
-        arg (str): The Python argument name to convert.
-
-    Returns:
-        str: The corresponding command-line flag.
-
-    Raises:
-        SimpleBenchTypeError: If the arg argument is not a str.
-        SimpleBenchValueError: If the arg argument is an empty string.
+    :param arg: The Python argument name to convert.
+    :type arg: str
+    :raises SimpleBenchTypeError: If the ``arg`` argument is not a str.
+    :raises SimpleBenchValueError: If the ``arg`` argument is an empty string.
+    :return: The corresponding command-line flag.
+    :rtype: str
     """
     if not isinstance(arg, str):
         raise SimpleBenchTypeError(
@@ -294,7 +298,7 @@ def collect_arg_list(*, args: Namespace, flag: str) -> list[str]:
     """Collects a list of argument values from a Namespace for a given flag.
 
     This function retrieves the values associated with the specified flag from
-    the provided Namespace object. If the value is a sequence (excluding str and bytes),
+    the provided :class:`~argparse.Namespace` object. If the value is a sequence (excluding str and bytes),
     it returns the values as a list. If the value is a single item, it returns a list
     containing that single item. If the flag does not exist in the Namespace,
     it returns an empty list.
@@ -302,16 +306,14 @@ def collect_arg_list(*, args: Namespace, flag: str) -> list[str]:
     argparse lists consist of lists of lists of strings and so they have to be flattened
     to be processed.
 
-    Args:
-        args (Namespace): The Namespace object containing argument values.
-        flag (str): The command-line flag whose value is to be collected.
-
-    Returns:
-        list[str]: A list of unique argument values associated with the specified flag.
-
-    Raises:
-        SimpleBenchTypeError: If the args argument is not a Namespace or
-                              if the retrieved argument value is of an unexpected type.
+    :param args: The :class:`~argparse.Namespace` object containing argument values.
+    :type args: Namespace
+    :param flag: The command-line flag whose value is to be collected.
+    :type flag: str
+    :raises SimpleBenchTypeError: If the ``args`` argument is not a :class:`~argparse.Namespace` or
+        if the retrieved argument value is of an unexpected type.
+    :return: A list of unique argument values associated with the specified flag.
+    :rtype: list[str]
     """
     if not isinstance(args, Namespace):
         raise SimpleBenchTypeError(
@@ -362,11 +364,10 @@ def first_not_none(items: Sequence[T]) -> T | None:
     This utility method is used to prioritize non-None values when determining
     configuration settings, such as default options or targets.
 
-    Args:
-        items (Sequence[T]): The sequence of items to check.
-
-    Returns:
-        T | None: The first not None element from items, or None if all are None.
+    :param items: The sequence of items to check.
+    :type items: Sequence[T]
+    :return: The first not None element from items, or None if all are None.
+    :rtype: T or None
     """
     for element in items:
         if element is not None:

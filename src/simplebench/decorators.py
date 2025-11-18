@@ -1,17 +1,20 @@
 """Decorators for simplifying benchmark case creation."""
 from __future__ import annotations
-from typing import Any, Callable, TypeVar, ParamSpec
+
+from typing import Any, Callable, ParamSpec, TypeVar
 
 from .case import Case
-from .defaults import (DEFAULT_WARMUP_ITERATIONS, DEFAULT_ROUNDS, DEFAULT_MIN_TIME,
-                       DEFAULT_MAX_TIME, DEFAULT_ITERATIONS)
-from .runners import SimpleRunner
-from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, DecoratorsErrorTag
-from .validators import (validate_positive_int, validate_non_negative_int, validate_positive_float,
-                         validate_non_blank_string)
-
+from .defaults import DEFAULT_ITERATIONS, DEFAULT_MAX_TIME, DEFAULT_MIN_TIME, DEFAULT_ROUNDS, DEFAULT_WARMUP_ITERATIONS
+from .exceptions import DecoratorsErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 # simplebench.reporters.reporter
 from .reporters.reporter.options import ReporterOptions
+from .runners import SimpleRunner
+from .validators import (
+    validate_non_blank_string,
+    validate_non_negative_int,
+    validate_positive_float,
+    validate_positive_int,
+)
 
 # A global registry to hold benchmark cases created by the decorator.
 _DECORATOR_CASES: list[Case] = []
@@ -36,28 +39,29 @@ def benchmark(
         options: list[ReporterOptions] | None = None,
         n: int = 1,
         use_field_for_n: str | None = None) -> Callable[[Callable[P, R]], Callable[P, R]]:
-    """
-    A decorator to register a function as a benchmark case.
+    """A decorator to register a function as a benchmark case.
 
     This module uses a global registry to store benchmark cases created via the
     @benchmark decorator. This enables a streamlined workflow where users simply
     decorate functions and call main().
 
-    Note: Importing a module that uses @benchmark will register its cases globally.
-    For testing, use clear_registered_cases() to reset state between tests.
+    .. note::
 
-    This simplifies creating a `Case` by wrapping the decorated function.
+        Importing a module that uses @benchmark will register its cases globally.
+        For testing, use :func:`clear_registered_cases` to reset state between tests.
+
+    This simplifies creating a :class:`Case` by wrapping the decorated function.
     The decorated function should contain the code to be benchmarked.
 
     It is important to note that the decorated function will be called
-    within the context of a `SimpleRunner.run()` call, which means it
+    within the context of a :meth:`SimpleRunner.run` call, which means it
     should not handle its own timing or iterations.
 
-    The args provided to the decorator are used to create a `Case` instance,
+    The args provided to the decorator are used to create a :class:`Case` instance,
     which is then added to a global registry. The original function is returned
     unmodified, allowing it to be called directly if needed.
 
-    The arguments to the decorator are largely the same as those for `Case`, with
+    The arguments to the decorator are largely the same as those for :class:`Case`, with
     the exception of `action`, which is replaced by the decorated function.
 
     n is included to allow n-weighting the complexity of the benchmark case when using
@@ -65,75 +69,80 @@ def benchmark(
 
     A minimal example:
 
-    ```python
-    from simplebench import benchmark, main
+    .. code-block:: python
+
+        from simplebench import benchmark, main
 
 
-    @benchmark
-    def addition_benchmark():
-        '''A simple addition benchmark.'''
-        sum(range(1000))
+        @benchmark
+        def addition_benchmark():
+            '''A simple addition benchmark.'''
+            sum(range(1000))
 
 
-    if __name__ == '__main__':
-        extra_args = None if len(sys.argv) > 1 else ['--progress', '--rich-table.console']
-    main(extra_args=extra_args)
-    ```
+        if __name__ == '__main__':
+            extra_args = None if len(sys.argv) > 1 else ['--progress', '--rich-table.console']
+        main(extra_args=extra_args)
 
-    You should read the documentation for `Case` for full details on the parameters and their
+    You should read the documentation for :class:`Case` for full details on the parameters and their
     meanings.
 
-    Args:
-        group (str, positional-only, default='default'): The benchmark reporting group to which the benchmark
-            case belongs for selection and reporting purposes. It is used to categorize and filter benchmark cases.
-            Cannot be blank. The group parameter is positional-only. All other parameters must be passed as keyword
-            arguments. When the decorator is used without parameters, the group defaults to 'default'.
-
-            This has special handling to allow the decorator to be used easily without any parameters.
-
-        title (Optional[str], default=None): The title of the benchmark case. Uses the function
-                name if None. Cannot be blank.
-        description (Optional[str], default=None): A description for the case.
-                Uses the function's docstring if None or '(no description)' if there is no docstring.
-                Cannot be blank.
-        iterations (int, default=`DEFAULT_WARMUP_ITERATIONS`): The minimum number of iterations to run for
-                the benchmark.
-        warmup_iterations (int, default=`DEFAULT_WARMUP_ITERATIONS`): The number of warmup iterations
-                to run before the benchmark.
-        rounds (int, default=`DEFAULT_ROUNDS`): The number of rounds to run the benchmark within each
-                iteration.
-        min_time (int | float, default=`DEFAULT_MIN_TIME`): The minimum time in seconds to run the benchmark.
-                Must be a positive number.
-        max_time (int | float, default=`DEFAULT_MAX_TIME`): The maximum time in seconds to run the benchmark.
-                Must be a positive number greater than min_time.
-        variation_cols (Optional[dict[str, str]], default=None): kwargs to be used for cols to denote kwarg
-                variations. Each key is a keyword argument name, and the value is the column label to use for that
-                argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
-                added to the output of reporters that support them as columns of data with the specified labels.
-
-                If None, an empty dict is used.
-        kwargs_variations (Optional[dict[str, list[Any]]], default=None): A mapping of keyword argument key names to
-                a list of possible values for that argument. Default is {}. When tests are run, the benchmark
-                will be executed for each combination of the specified keyword argument variations. The action
-                function will be called with a `bench` parameter that is an instance of the runner and the
-                keyword arguments for the current variation.
-
-                If None, an empty dict is used.
-        options (Optional[list[ReporterOptions], default=None): A list of additional options for the benchmark case.
-                Each option is an instance of ReporterOptions or a subclass of ReporterOptions.
-                Reporter options can be used to customize the output of the benchmark reports for
-                specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
-                from the list of options themselves.
-        n (int, default=1): The 'n' weighting of the benchmark case. Must be a positive integer.
-        use_field_for_n (Optional[str], default=None): If provided, use the value of this field from kwargs_variations
-            to set 'n' dynamically for each variation.
-
-    Returns:
-        A decorator that registers the function for benchmarking and returns it unmodified.
-
-    Raises:
-        SimpleBenchTypeError: If any argument is of an incorrect type.
-        SimpleBenchValueError: If any argument has an invalid value.
+    :param group: The benchmark reporting group to which the benchmark
+        case belongs for selection and reporting purposes. It is used to categorize and filter benchmark cases.
+        Cannot be blank. The group parameter is positional-only. All other parameters must be passed as keyword
+        arguments. When the decorator is used without parameters, the group defaults to 'default'.
+        This has special handling to allow the decorator to be used easily without any parameters.
+    :type group: str, positional-only
+    :param title: The title of the benchmark case. Uses the function
+        name if None. Cannot be blank.
+    :type title: Optional[str]
+    :param description: A description for the case.
+        Uses the function's docstring if None or '(no description)' if there is no docstring.
+        Cannot be blank.
+    :type description: Optional[str]
+    :param iterations: The minimum number of iterations to run for
+        the benchmark.
+    :type iterations: int
+    :param warmup_iterations: The number of warmup iterations
+        to run before the benchmark.
+    :type warmup_iterations: int
+    :param rounds: The number of rounds to run the benchmark within each
+        iteration.
+    :type rounds: int
+    :param min_time: The minimum time in seconds to run the benchmark.
+        Must be a positive number.
+    :type min_time: int | float
+    :param max_time: The maximum time in seconds to run the benchmark.
+        Must be a positive number greater than min_time.
+    :type max_time: int | float
+    :param variation_cols: kwargs to be used for cols to denote kwarg
+        variations. Each key is a keyword argument name, and the value is the column label to use for that
+        argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
+        added to the output of reporters that support them as columns of data with the specified labels.
+        If None, an empty dict is used.
+    :type variation_cols: Optional[dict[str, str]]
+    :param kwargs_variations: A mapping of keyword argument key names to
+        a list of possible values for that argument. Default is {}. When tests are run, the benchmark
+        will be executed for each combination of the specified keyword argument variations. The action
+        function will be called with a `bench` parameter that is an instance of the runner and the
+        keyword arguments for the current variation.
+        If None, an empty dict is used.
+    :type kwargs_variations: Optional[dict[str, list[Any]]]
+    :param options: A list of additional options for the benchmark case.
+        Each option is an instance of ReporterOptions or a subclass of ReporterOptions.
+        Reporter options can be used to customize the output of the benchmark reports for
+        specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
+        from the list of options themselves.
+    :type options: Optional[list[ReporterOptions]]
+    :param n: The 'n' weighting of the benchmark case. Must be a positive integer.
+    :type n: int
+    :param use_field_for_n: If provided, use the value of this field from kwargs_variations
+        to set 'n' dynamically for each variation.
+    :type use_field_for_n: Optional[str]
+    :return: A decorator that registers the function for benchmarking and returns it unmodified.
+    :rtype: Callable[[Callable[P, R]], Callable[P, R]]
+    :raises SimpleBenchTypeError: If any argument is of an incorrect type.
+    :raises SimpleBenchValueError: If any argument has an invalid value.
     """
     func: Callable[..., Any] | None = None
     if callable(group):  # decorator used without parameters
@@ -213,13 +222,13 @@ def benchmark(
     def decorator(func):
         """The actual decorator that wraps the user's function."""
         def case_action_wrapper(bench: SimpleRunner, **kwargs) -> Any:
-            """
-            This wrapper becomes the `action` for the `Case`.
+            """This wrapper becomes the `action` for the `Case`.
+
             It calls the user's decorated function inside `runner.run()`.
 
-            Args:
-                bench (SimpleRunner): The benchmark runner executing the benchmark.
-                **kwargs: Any keyword arguments from `kwargs_variations`.
+            :param bench: The benchmark runner executing the benchmark.
+            :type bench: SimpleRunner
+            :param kwargs: Any keyword arguments from `kwargs_variations`.
             """
             # The designated use_field_for_n field will always be present
             # in kwargs if specified due to prior validation.
@@ -263,18 +272,16 @@ def benchmark(
 
 
 def get_registered_cases() -> list[Case]:
-    """
-    Retrieve all benchmark cases registered via the `@benchmark` decorator.
+    """Retrieve all benchmark cases registered via the `@benchmark` decorator.
 
-    Returns:
-        A list of `Case` objects.
+    :return: A list of :class:`Case` objects.
+    :rtype: list[Case]
     """
     return _DECORATOR_CASES
 
 
 def clear_registered_cases() -> None:
-    """
-    Clear all benchmark cases registered via the `@benchmark` decorator.
+    """Clear all benchmark cases registered via the `@benchmark` decorator.
 
     This can be useful in testing scenarios to reset the state.
     """

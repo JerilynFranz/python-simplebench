@@ -13,7 +13,7 @@ E = TypeVar("E", bound=Enum)
 # Decorator to attach docstrings to enum members
 # See: https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
 def enum_docstrings(enum: type[E]) -> type[E]:
-    '''Attach docstrings to enum members.
+    """Attach docstrings to enum members.
 
     Docstrings are string literals that appear directly below the enum member
     assignment expression within triple-quotes.
@@ -28,20 +28,22 @@ def enum_docstrings(enum: type[E]) -> type[E]:
     https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
 
     Example:
-        @enum_docstrings
-        class SomeEnum(Enum):
-            """Docstring for the SomeEnum enum"""
+        .. code-block:: python
 
-            foo_member = "foo_value"
-            """Docstring for the foo_member enum member"""
+            @enum_docstrings
+            class SomeEnum(Enum):
+                '''Docstring for the SomeEnum enum'''
 
-        SomeEnum.foo_member.__doc__  # 'Docstring for the foo_member enum member'
+                foo_member = "foo_value"
+                '''Docstring for the foo_member enum member'''
 
-    Args:
-        enum (type[Enum]): The enum class to process.
-    Returns:
-        The same enum class with member docstrings attached.
-    '''
+            SomeEnum.foo_member.__doc__  # 'Docstring for the foo_member enum member'
+
+    :param enum: The enum class to process.
+    :type enum: type[Enum]
+    :return: The same enum class with member docstrings attached.
+    :rtype: type[E]
+    """
     try:
         mod = ast.parse(inspect.getsource(enum))
     except OSError:
@@ -88,7 +90,6 @@ class Section(str, Enum):
       - MEMORY: Memory usage section.
       - PEAK_MEMORY: Peak memory usage section.
       - NULL: No section. This is used when a reporter does not specify a section.
-
     """
     OPS = 'operations per second'
     """Operations per second section."""
@@ -132,7 +133,6 @@ class Verbosity(int, Enum):
       - NORMAL: Normal messages are shown, including status displays during runs.
       - VERBOSE: All messages are shown and status displays during runs.
       - DEBUG: All messages are shown, including debug messages and status displays during runs.
-
     """
     QUIET = 0
     """Only requested output, errors, warnings and critical messages are shown.
@@ -196,7 +196,6 @@ class Format(str, Enum):
       - JSON: JSON format.
       - GRAPH: Graphical format.
       - CUSTOM: Custom format.
-
     """
     PLAIN_TEXT = 'plain text'
     """Plain text format"""
@@ -254,7 +253,6 @@ class FlagType(str, Enum):
       - BOOLEAN: Boolean flag type.
       - TARGET_LIST: List of output targets
       - INVALID: Invalid flag type. This is a testing placeholder and should not be used.
-
     """
     BOOLEAN = 'boolean'
     """Boolean flag type.

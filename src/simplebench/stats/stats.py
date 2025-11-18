@@ -1,36 +1,41 @@
 # -*- coding: utf-8 -*-
 """Base benchmark statistics class."""
 from __future__ import annotations
-from math import isclose, sqrt
+
 import statistics
+from math import isclose, sqrt
 from typing import Any, Sequence
 
-from .exceptions.stats import StatsErrorTag, StatsSummaryErrorTag
 from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError
-from ..si_units import si_unit_base, si_scale_to_unit
-from ..validators import (validate_non_blank_string, validate_float, validate_non_negative_float,
-                          validate_positive_float, validate_sequence_of_numbers,
-                          validate_positive_int)
+from ..si_units import si_scale_to_unit, si_unit_base
+from ..validators import (
+    validate_float,
+    validate_non_blank_string,
+    validate_non_negative_float,
+    validate_positive_float,
+    validate_positive_int,
+    validate_sequence_of_numbers,
+)
+from .exceptions.stats import StatsErrorTag, StatsSummaryErrorTag
 
 
 class Stats:
     '''Generic container for statistics on a benchmark.
 
-    Attributes:
-        unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
-        scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
-        rounds (int): The number of rounds each data point represents. (read only)
-        data: (tuple[float | int, ...]) = Tuple of data points. (read only)
-        mean (float): The mean operations per time interval. (read only)
-        median (float): The median operations per time interval. (read only)
-        minimum (float): The minimum operations per time interval. (read only)
-        maximum (float): The maximum operations per time interval. (read only)
-        standard_deviation (float): The standard deviation of operations per time interval. (read only)
-        adjusted_standard_deviation (float): The standard deviation adjusted for the number of rounds. (read only)
-        relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
-        adjusted_relative_standard_deviation (float): The adjusted relative standard deviation of ops per
-            time interval. (read only)
-        percentiles (tuple[float, ...]): Percentiles of operations per time interval. (read only)
+    :ivar str unit: The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
+    :ivar float scale: The scale factor for the interval (e.g. 1 for seconds). (read only)
+    :ivar int rounds: The number of rounds each data point represents. (read only)
+    :ivar tuple[float | int, ...] data: Tuple of data points. (read only)
+    :ivar float mean: The mean operations per time interval. (read only)
+    :ivar float median: The median operations per time interval. (read only)
+    :ivar float minimum: The minimum operations per time interval. (read only)
+    :ivar float maximum: The maximum operations per time interval. (read only)
+    :ivar float standard_deviation: The standard deviation of operations per time interval. (read only)
+    :ivar float adjusted_standard_deviation: The standard deviation adjusted for the number of rounds. (read only)
+    :ivar float relative_standard_deviation: The relative standard deviation of ops per time interval. (read only)
+    :ivar float adjusted_relative_standard_deviation: The adjusted relative standard deviation of ops per
+        time interval. (read only)
+    :ivar tuple[float, ...] percentiles: Percentiles of operations per time interval. (read only)
     '''
     __slots__ = ('_unit', '_scale', '_rounds', '_data', '_percentiles', '_mean', '_median',
                  '_minimum', '_maximum', '_standard_deviation', '_adjusted_standard_deviation',
@@ -40,14 +45,12 @@ class Stats:
     def __init__(self, *, unit: str, scale: float, data: Sequence[int | float], rounds: int = 1) -> None:
         """Initialize the Stats object.
 
-        Args:
-            unit (str): The unit of measurement for the benchmark (e.g., "ops/s").
-            scale (float): The scale factor for the interval (e.g. 1 for seconds).
-            data (Sequence[int | float]): Sequence of data points.
-            rounds (int, default=1): The number of rounds each data point represents.
-        Raises:
-            SimpleBenchTypeError: If any of the arguments are of the wrong type.
-            SimpleBenchValueError: If any of the arguments have invalid values.
+        :param str unit: The unit of measurement for the benchmark (e.g., "ops/s").
+        :param float scale: The scale factor for the interval (e.g. 1 for seconds).
+        :param Sequence[int | float] data: Sequence of data points.
+        :param int rounds: The number of rounds each data point represents.
+        :raises SimpleBenchTypeError: If any of the arguments are of the wrong type.
+        :raises SimpleBenchValueError: If any of the arguments have invalid values.
         """
         self._unit: str = validate_non_blank_string(
                                 unit, 'unit',
@@ -226,28 +229,25 @@ class Stats:
         """Construct a Stats object from a dictionary.
 
         Example:
-            stats_dict = {
-                "unit": "ops/s",
-                "scale": 1,
-                "data": [1000, 2000, 1500, 3000, 2500]
-            }
-            stats = Stats.from_dict(stats_dict)
-            print(stats.mean)  # Output: 2000.0
+            .. code-block:: python
 
-        Args:
-            data (dict): A dictionary containing the stats data. Must contain 'data' key with a non-empty
-                sequence of data points consisting of integers or floats.
+                stats_dict = {
+                    "unit": "ops/s",
+                    "scale": 1,
+                    "data": [1000, 2000, 1500, 3000, 2500]
+                }
+                stats = Stats.from_dict(stats_dict)
+                print(stats.mean)  # Output: 2000.0
 
-        Returns:
-            Stats: A Stats object constructed from the provided dictionary.
-
-        Raises:
-            SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
-            SimpleBenchKeyError: If the data dictionary does not contain a 'unit' key and
-                no unit argument is provided.
-            SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key
-                with at least one data point, if the scale argument is not greater than zero,
-                or if the unit argument is an empty string
+        :param dict data: A dictionary containing the stats data. Must contain 'data' key with a non-empty
+            sequence of data points consisting of integers or floats.
+        :return: A Stats object constructed from the provided dictionary.
+        :raises SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
+        :raises SimpleBenchKeyError: If the data dictionary does not contain a 'unit' key and
+            no unit argument is provided.
+        :raises SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key
+            with at least one data point, if the scale argument is not greater than zero,
+            or if the unit argument is an empty string
         """
         if not isinstance(data, dict):
             raise SimpleBenchTypeError('The data argument must be a dictionary.',
@@ -283,14 +283,9 @@ class Stats:
         It does not consider the raw data points in the comparison as they will differ
         between a basic Stats object and a StatsSummary object derived from it.
 
-        Args:
-            other (object): The other object to compare against.
-
-        Returns:
-            bool: True if the objects are considered equal, False otherwise.
-
-        Raises:
-            SimpleBenchValueError: If either Stats object has a scale of zero.
+        :param object other: The other object to compare against.
+        :return: True if the objects are considered equal, False otherwise.
+        :raises SimpleBenchValueError: If either Stats object has a scale of zero.
         """
         if not isinstance(other, (Stats, StatsSummary)):
             return NotImplemented
@@ -340,19 +335,18 @@ class StatsSummary:
     This is a lightweight, data-only version of the Stats class, suitable for
     serialization or reporting when raw data points are not needed.
 
-    Attributes:
-        unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
-        scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
-        rounds (int): The number of rounds each data point represents. (read only)
-        mean (float): The mean operations per time interval. (read only)
-        median (float): The median operations per time interval. (read only)
-        minimum (float): The minimum operations per time interval. (read only)
-        maximum (float): The maximum operations per time interval. (read only)
-        standard_deviation (float): The standard deviation of operations per time interval. (read only)
-        relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
-        percentiles (tuple[float, ...]): Percentiles of operations per time interval. (read only)
-        data (tuple[int | float, ...]): Always an empty tuple as StatsSummary does not contain raw data points.
-            (read only)
+    :ivar str unit: The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
+    :ivar float scale: The scale factor for the interval (e.g. 1 for seconds). (read only)
+    :ivar int rounds: The number of rounds each data point represents. (read only)
+    :ivar float mean: The mean operations per time interval. (read only)
+    :ivar float median: The median operations per time interval. (read only)
+    :ivar float minimum: The minimum operations per time interval. (read only)
+    :ivar float maximum: The maximum operations per time interval. (read only)
+    :ivar float standard_deviation: The standard deviation of operations per time interval. (read only)
+    :ivar float relative_standard_deviation: The relative standard deviation of ops per time interval. (read only)
+    :ivar tuple[float, ...] percentiles: Percentiles of operations per time interval. (read only)
+    :ivar tuple[int | float, ...] data: Always an empty tuple as StatsSummary does not contain raw data points.
+        (read only)
     '''
     __slots__ = ('_unit', '_scale', '_rounds', '_mean', '_median', '_minimum', '_maximum',
                  '_standard_deviation', '_relative_standard_deviation', '_percentiles',
@@ -373,20 +367,18 @@ class StatsSummary:
                  percentiles: tuple[float, ...]):
         """Initialize the StatsSummary object.
 
-        Args:
-            unit (str): The unit of measurement for the data (e.g., "ops/s").
-            scale (float): The scale factor the data (e.g. 1.0 for seconds).
-            rounds (int): The number of rounds each data point represents.
-            mean (float): The mean data point.
-            median (float): The median data point.
-            minimum (float): The minimum data point.
-            maximum (float): The maximum data point.
-            standard_deviation (float): The standard deviation of data.
-            relative_standard_deviation (float): The relative standard deviation of data.
-            percentiles (tuple[float, ...]): Percentiles of data.
-        Raises:
-            SimpleBenchTypeError: If any of the arguments are of the wrong type.
-            SimpleBenchValueError: If any of the arguments have invalid values.
+        :param str unit: The unit of measurement for the data (e.g., "ops/s").
+        :param float scale: The scale factor the data (e.g. 1.0 for seconds).
+        :param int rounds: The number of rounds each data point represents.
+        :param float mean: The mean data point.
+        :param float median: The median data point.
+        :param float minimum: The minimum data point.
+        :param float maximum: The maximum data point.
+        :param float standard_deviation: The standard deviation of data.
+        :param float relative_standard_deviation: The relative standard deviation of data.
+        :param tuple[float, ...] percentiles: Percentiles of data.
+        :raises SimpleBenchTypeError: If any of the arguments are of the wrong type.
+        :raises SimpleBenchValueError: If any of the arguments have invalid values.
         """
         self._unit = validate_non_blank_string(
                         unit, 'unit',
@@ -512,11 +504,8 @@ class StatsSummary:
 
         It also verifies that the units are equivalent when converted to their SI base units.
 
-        Args:
-            other (object): The other object to compare against.
-
-        Returns:
-            bool: True if the objects are considered equal, False otherwise.
+        :param object other: The other object to compare against.
+        :return: True if the objects are considered equal, False otherwise.
         """
         if not isinstance(other, (Stats, StatsSummary)):
             return NotImplemented
@@ -559,14 +548,9 @@ class StatsSummary:
     def from_stats(cls, stats: Stats) -> StatsSummary:
         """Construct a new StatsSummary object from a Stats object.
 
-        Args:
-            stats (Stats): The Stats object to derive the summary from.
-
-        Returns:
-            StatsSummary: A new StatsSummary object containing the same statistics as the provided Stats object.
-
-        Raises:
-            SimpleBenchTypeError: If the stats argument is not a Stats object.
+        :param Stats stats: The Stats object to derive the summary from.
+        :return: A new StatsSummary object containing the same statistics as the provided Stats object.
+        :raises SimpleBenchTypeError: If the stats argument is not a Stats object.
         """
         if not isinstance(stats, Stats):
             raise SimpleBenchTypeError(
@@ -590,36 +574,33 @@ class StatsSummary:
         """Construct a StatsSummary object from a dictionary.
 
         Example:
-            stats_summary_dict = {
-                "unit": "ops/s",
-                "scale": 1.0,
-                "rounds": 1,
-                "mean": 2000.0,
-                "median": 2000.0,
-                "minimum": 1000.0,
-                "maximum": 3000.0,
-                "standard_deviation": 790.5694150420949,
-                "relative_standard_deviation": 39.52847075252201,
-                "percentiles": [1000.0, 1300.0, 1600.0, 1900.0, 2200.0,
-                                2500.0, 2800.0, 3000.0, 3000.0]
-            }
-            stats_summary = StatsSummary.from_dict(stats_summary_dict)
-            print(stats_summary.mean)  # Output: 2000.0
+            .. code-block:: python
 
-        Args:
-            data (dict): A dictionary containing the stats data. Must contain 'data' key with a non-empty
-                sequence of data points consisting of integers or floats.
+                stats_summary_dict = {
+                    "unit": "ops/s",
+                    "scale": 1.0,
+                    "rounds": 1,
+                    "mean": 2000.0,
+                    "median": 2000.0,
+                    "minimum": 1000.0,
+                    "maximum": 3000.0,
+                    "standard_deviation": 790.5694150420949,
+                    "relative_standard_deviation": 39.52847075252201,
+                    "percentiles": [1000.0, 1300.0, 1600.0, 1900.0, 2200.0,
+                                    2500.0, 2800.0, 3000.0, 3000.0]
+                }
+                stats_summary = StatsSummary.from_dict(stats_summary_dict)
+                print(stats_summary.mean)  # Output: 2000.0
 
-        Returns:
-            StatsSummary: A StatsSummary object constructed from the provided dictionary.
-
-        Raises:
-            SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
-            SimpleBenchKeyError: If the data dictionary does not contain a 'unit' key and
-                no unit argument is provided.
-            SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key
-                with at least one data point, if the scale argument is not greater than zero,
-                or if the unit argument is an empty string
+        :param dict data: A dictionary containing the stats data. Must contain 'data' key with a non-empty
+            sequence of data points consisting of integers or floats.
+        :return: A StatsSummary object constructed from the provided dictionary.
+        :raises SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
+        :raises SimpleBenchKeyError: If the data dictionary does not contain a 'unit' key and
+            no unit argument is provided.
+        :raises SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key
+            with at least one data point, if the scale argument is not greater than zero,
+            or if the unit argument is an empty string
         """
         if not isinstance(data, dict):
             raise SimpleBenchTypeError('The data argument must be a dictionary.',

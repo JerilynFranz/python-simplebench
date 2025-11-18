@@ -33,22 +33,28 @@ class RichTableReporter(Reporter):
     It supports reporting operations per second and per round timing results,
     either separately or together, to the console, to files, and/or via a callback function.
 
-    Defined command-line flags:
-        --rich-table:               Outputs all results as rich text tables on the console.
-        --rich-table.ops:           Outputs only operations per second results.
-        --rich-table.timings:       Outputs only per round timing results.
-        --rich-table.memory:        Outputs only memory usage results.
-        --rich-table.peak-memory:   Outputs only peak memory usage results.
+    **Defined command-line flags:**
 
-    Each flag supports multiple targets: console, filesystem, and callback with the default target
-    being console.
+    * ``--rich-table``: Outputs all results as rich text tables on the console.
+    * ``--rich-table.ops``: Outputs only operations per second results.
+    * ``--rich-table.timings``: Outputs only per round timing results.
+    * ``--rich-table.memory``: Outputs only memory usage results.
+    * ``--rich-table.peak-memory``: Outputs only peak memory usage results.
 
-    Attributes:
-        name (str): The unique identifying name of the reporter.
-        description (str): A brief description of the reporter.
-        choices (Choices): A collection of Choices instances defining
-            the reporter instance, CLI flags, Choice name, supported Result Sections,
-            supported output Targets, and supported output Formats for the reporter.
+    Each flag supports multiple targets: ``console``, ``filesystem``, and ``callback`` with
+    the default target being ``console``.
+
+    :ivar name: The unique identifying name of the reporter.
+    :vartype name: str
+    :ivar description: A brief description of the reporter.
+    :vartype description: str
+    :ivar choices: A collection of :class:`~simplebench.reporters.choices.Choices` instances
+        defining the reporter instance, CLI flags,
+        :class:`~simplebench.reporters.choice.Choice` name, supported
+        :class:`~simplebench.enums.Section` objects, supported output
+        :class:`~simplebench.enums.Target` objects, and supported output
+        :class:`~simplebench.enums.Format` objects for the reporter.
+    :vartype choices: ~simplebench.reporters.choices.Choices
     """
     _OPTIONS_TYPE: ClassVar[type[RichTableOptions]] = RichTableOptions  # pylint: disable=line-too-long # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
@@ -56,18 +62,21 @@ class RichTableReporter(Reporter):
     def __init__(self) -> None:
         """Initialize the RichTableReporter.
 
-        Note:
+        .. note::
 
-        The exception documentation below refers to validation of subclass configuration
-        class variables `_OPTIONS_TYPE` and `_OPTIONS_KWARGS`. These must be correctly defined
-        in any subclass of `RichTableReporter` to ensure proper functionality.
+            The exception documentation below refers to validation of subclass configuration
+            class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly
+            defined in any subclass of :class:`~.RichTableReporter` to ensure proper
+            functionality.
 
-        In simple use, these exceptions should never be raised, as `RichTableReporter` provides
-        valid implementations. They are documented here for completeness.
+            In simple use, these exceptions should never be raised, as
+            :class:`~.RichTableReporter` provides valid implementations. They are documented
+            here for completeness.
 
-         Raises:
-            SimpleBenchTypeError: If the subclass configuration types are invalid.
-            SimpleBenchValueError: If the subclass configuration values are invalid.
+        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration
+            types are invalid.
+        :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration
+            values are invalid.
         """
         super().__init__(
             name='rich-table',
@@ -122,16 +131,16 @@ class RichTableReporter(Reporter):
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> Table:
         """Prints the benchmark results in a rich table format if available.
 
-        It creates a Rich Table instance containing the benchmark results for the specified section.
+        It creates a :class:`~rich.table.Table` instance containing the benchmark results
+        for the specified section.
 
-        Args:
-            case (Case): The Case instance representing the benchmarked code.
-            options (RichTableOptions): The options specifying the report configuration.
-                            (RichTableOptions is a subclass of ReporterOptions.)
-            section (Section): The Section enum value specifying the type of results to display.
-
-        Returns:
-            Table: The Rich Table instance.
+        :param case: The :class:`~simplebench.case.Case` instance representing the
+            benchmarked code.
+        :param options: The options specifying the report configuration.
+            (:class:`~.RichTableOptions` is a subclass of :class:`~.ReporterOptions`.)
+        :param section: The :class:`~simplebench.enums.Section` enum value specifying the
+            type of results to display.
+        :return: The :class:`~rich.table.Table` instance.
         """
         # is_* checks provide deferred import validation to avoid circular imports
         if not is_case(case):

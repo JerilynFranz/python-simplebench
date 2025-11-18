@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """CLI script support for SimpleBench."""
 from __future__ import annotations
-from argparse import Namespace, ArgumentParser
+
 import pathlib
 import sys
-from typing import Optional, Sequence, TYPE_CHECKING
+from argparse import ArgumentParser, Namespace
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from rich.console import Console
 
 from .decorators import get_registered_cases
-from .exceptions import SimpleBenchTypeError, CLIErrorTag
 from .enums import Verbosity
+from .exceptions import CLIErrorTag, SimpleBenchTypeError
 from .session import Session
-
 
 if TYPE_CHECKING:
     from .case import Case
@@ -33,13 +33,14 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None,
     Usage:
         This function serves as the main entry point for running benchmarks.
 
-    Args:
-        benchmark_cases (Optional[Sequence[Case]]): A Sequence of SimpleBench.Case instances to be benchmarked.
-        argv (Optional[list[str]]): A list of command-line arguments to parse. If None, defaults to sys.argv.
-        extra_args (Optional[list[str]]): Additional command-line arguments to include.
-
-    Returns:
-        An integer exit code.
+    :param benchmark_cases: A Sequence of SimpleBench.Case instances to be benchmarked.
+    :type benchmark_cases: Optional[Sequence[Case]]
+    :param argv: A list of command-line arguments to parse. If None, defaults to sys.argv.
+    :type argv: Optional[list[str]]
+    :param extra_args: Additional command-line arguments to include.
+    :type extra_args: Optional[list[str]]
+    :return: An integer exit code.
+    :rtype: int
     """
     if extra_args is not None:
         if not isinstance(extra_args, Sequence):

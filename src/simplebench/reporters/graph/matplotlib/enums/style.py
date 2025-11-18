@@ -1,5 +1,6 @@
-"""Enums used in the simplebench.reporters.graph package."""
+"""Enums used in the :mod:`simplebench.reporters.graph` package."""
 from enum import Enum
+
 from simplebench.enums import enum_docstrings
 
 
@@ -7,11 +8,13 @@ from simplebench.enums import enum_docstrings
 class Style(str, Enum):
     """Enumeration of graph styles.
 
-    The styles correspond to those available in Matplotlib 3.10.6
+    .. note:: The styles correspond to those available in Matplotlib 3.10.6
     """
     BMH = "bmh"
     """Bayesian Methods for Hackers style for graphs.
-    https://github.com/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/
+
+    See `Bayesian Methods for Hackers
+    <https://github.com/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/>`_
     """
     CLASSIC = "classic"
     """Light background style for graphs.
@@ -27,26 +30,30 @@ class Style(str, Enum):
     """FiveThirtyEight style for graphs.
 
     Replicated styles from FiveThirtyEight.com
-    See https://www.dataorigami.net/blogs/fivethirtyeight-mpl
+
+    See `dataorigami.net <https://www.dataorigami.net/blogs/fivethirtyeight-mpl>`_
     """
     GGPLOT = "ggplot"
     """ggplot style for graphs.
 
     Replicates the style of R's ggplot library.
-    See https://everyhue.me/posts/sane-color-scheme-for-matplotlib/
+
+    See `everyhue.me <https://everyhue.me/posts/sane-color-scheme-for-matplotlib/>`_
     """
     GRAYSCALE = "grayscale"
     """Grayscale style for graphs.
 
     Set all colors to grayscale
-    Note: strings of float values are interpreted by matplotlib as gray values.
+
+    .. note:: strings of float values are interpreted by matplotlib as gray values.
     """
     PETTROF10 = "petroff10"
     """Petroff10 style for graphs.
 
     Color cycle survey palette from Petroff (2021):
-    https://arxiv.org/abs/2107.02270
-    https://github.com/mpetroff/accessible-color-cycles
+
+    See `arxiv.org <https://arxiv.org/abs/2107.02270>`_ and
+    `github.com <https://github.com/mpetroff/accessible-color-cycles>`_
     """
     SEABORN_V0_8 = "seaborn-v0_8"
     """Base Seaborn style for graphs."""
@@ -83,7 +90,7 @@ class Style(str, Enum):
     SOLARIZE_LIGHT2 = "Solarize_Light2"
     """Solarized light style for graphs.
 
-    Solarized color palette taken from https://ethanschoonover.com/solarized/
+    Solarized color palette taken from `ethanschoonover.com <https://ethanschoonover.com/solarized/>`_
     """
     TABLEAU_COLORBLIND10 = "tableau-colorblind10"
     """Tableau colorblind10 style for graphs."""

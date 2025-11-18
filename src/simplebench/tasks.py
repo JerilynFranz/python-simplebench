@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """module for managing progress tasks using Rich Progress."""
 from __future__ import annotations
-from typing import Any, Optional, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Any, Optional
 
 from rich.console import Console
 from rich.progress import Progress, Task, TaskID
 
-from .enums import Verbosity, Color
-from .exceptions import (SimpleBenchKeyError, SimpleBenchTypeError,
-                         SimpleBenchValueError, SimpleBenchRuntimeError)
-from .exceptions.tasks import RichTaskErrorTag, RichProgressTasksErrorTag
+from .enums import Color, Verbosity
+from .exceptions import SimpleBenchKeyError, SimpleBenchRuntimeError, SimpleBenchTypeError, SimpleBenchValueError
+from .exceptions.tasks import RichProgressTasksErrorTag, RichTaskErrorTag
 
 if TYPE_CHECKING:
     from .session import Session
@@ -26,12 +26,19 @@ class ProgressTracker:
                  color: Color = Color.GREEN) -> None:
         """Initialize the ProgressTracker.
 
-        Args:
-            session (Session | None): The Session instance.
-            task_name (str): The name of the progress task.
-            progress_max (int | float, default=100): The maximum value for progress completion.
-            description (str, default='Benchmarking'): The description for the progress task.
-            color (Color, default=Color.GREEN): The color for the progress task.
+        :param session: The Session instance.
+        :type session: Session or None
+        :param task_name: The name of the progress task.
+        :type task_name: str
+        :param progress_max: The maximum value for progress completion.
+            Defaults to 100.
+        :type progress_max: int or float, optional
+        :param description: The description for the progress task.
+            Defaults to 'Benchmarking'.
+        :type description: str, optional
+        :param color: The color for the progress task.
+            Defaults to :attr:`~.enums.Color.GREEN`.
+        :type color: Color, optional
         """
         self._session: Session | None = session
         self._task: RichTask | None = None
@@ -61,12 +68,10 @@ class ProgressTracker:
 
     @property
     def is_running(self) -> bool:
-        """If the progress tracking is currently running.
+        """Check if the Rich Progress display is currently running.
 
-        The progress tracking is considered running if the start() method has been called
-        and the stop() method has not yet been called.
-
-        Value is True if running, False otherwise.
+        :return: True if the display is running, False otherwise.
+        :rtype: bool
         """
         return self._is_running
 
@@ -106,10 +111,11 @@ class ProgressTracker:
     def reset(self, start: bool = True) -> None:
         """Reset the progress tracking.
 
-        Args:
-            start (bool, default=True): Whether to start the progress tracking after resetting.
-
         This will reset the progress completion to zero and start it running by default.
+
+        :param start: Whether to start the progress tracking after resetting.
+            Defaults to True.
+        :type start: bool, optional
         """
         if self._task:
             self._task.reset(start=start)
@@ -127,17 +133,20 @@ class RichTask:
                  verbosity: Verbosity = Verbosity.NORMAL) -> None:
         """Construct a new RichTask.
 
-        Args:
-            name (str): The name of the task.
-            description (str): The description of the task.
-            completed (Optional[int]): Completion step (default=0)
-            total (Optional[int]): Total number of steps (default=100)
-            progress (Progress): The Progress instance to use.
-            verbosity (Verbosity): The verbosity level for console output.
-
-        Raises:
-            SimpleBenchTypeError: If any argument is of an incorrect type.
-            SimpleBenchValueError: If any argument has an invalid value.
+        :param name: The name of the task.
+        :type name: str
+        :param description: The description of the task.
+        :type description: str
+        :param completed: Completion step. Defaults to 0.
+        :type completed: int, optional
+        :param total: Total number of steps. Defaults to 100.
+        :type total: int, optional
+        :param progress: The Progress instance to use.
+        :type progress: Progress
+        :param verbosity: The verbosity level for console output.
+        :type verbosity: Verbosity
+        :raises SimpleBenchTypeError: If any argument is of an incorrect type.
+        :raises SimpleBenchValueError: If any argument has an invalid value.
         """
         if not isinstance(name, str):
             raise SimpleBenchTypeError(
@@ -214,16 +223,16 @@ class RichTask:
         """Update the task progress.
 
         If an attempt to update a terminated task is made, a
-        SimpleBenchRuntimeError will be raised.
+        :class:`~.exceptions.SimpleBenchRuntimeError` will be raised.
 
-        Args:
-            completed (int | float): The number of completed steps.
-            description (str | None): The description of the task.
-            refresh (bool | None): Whether to refresh the progress display.
-
-        Raises:
-            SimpleBenchTypeError: If any argument is of an incorrect type.
-            SimpleBenchRuntimeError: If the task has already been terminated.
+        :param completed: The number of completed steps.
+        :type completed: int or float, optional
+        :param description: The description of the task.
+        :type description: str, optional
+        :param refresh: Whether to refresh the progress display.
+        :type refresh: bool, optional
+        :raises SimpleBenchTypeError: If any argument is of an incorrect type.
+        :raises SimpleBenchRuntimeError: If the task has already been terminated.
         """
         if completed is not None and not isinstance(completed, (int, float)):
             raise SimpleBenchTypeError(
@@ -274,8 +283,8 @@ class RichTask:
     def get_task(self) -> Task | None:
         """Get the Rich Task instance from the Progress instance.
 
-        Returns:
-            Task: The Rich Task instance, or None if not found.
+        :return: The Rich Task instance, or None if not found.
+        :rtype: Task or None
         """
         if self._progress is None or self._task_id is None:
             return None
@@ -296,18 +305,18 @@ class RichProgressTasks:
     def __init__(self, verbosity: Verbosity, console: Optional[Console] = None) -> None:
         """Initialize a new RichProgressTasks instance.
 
-        This instance manages multiple RichTask instances and provides
+        This instance manages multiple :class:`RichTask` instances and provides
         a Rich Progress display for console output.
 
-        The display will not start until the start() method is called on
+        The display will not start until the :meth:`start` method is called on
         this instance.
 
-        Args:
-            verbosity (Verbosity): The verbosity level for console output.
-            console (Optional[Console]): The Rich Console instance for displaying output.
-                If None, a new Console will be created as needed. (default: None)
-        Raises:
-            SimpleBenchTypeError: If verbosity is not a Verbosity enum.
+        :param verbosity: The verbosity level for console output.
+        :type verbosity: Verbosity
+        :param console: The Rich Console instance for displaying output.
+            If None, a new Console will be created as needed. Defaults to None.
+        :type console: Console, optional
+        :raises SimpleBenchTypeError: If ``verbosity`` is not a :class:`~.enums.Verbosity` enum.
         """
         if console is None:
             console = Console()
@@ -399,16 +408,15 @@ class RichProgressTasks:
 
         Example:
 
-        task = progress_tasks['task_name']
+        .. code-block:: python
 
-        Args:
-            name (str): The name of the task to retrieve.
+            task = progress_tasks['task_name']
 
-        Returns:
-            RichTask: The requested task.
-
-        Raises:
-            SimpleBenchKeyError: If the requested task does not exist.
+        :param name: The name of the task to retrieve.
+        :type name: str
+        :raises SimpleBenchKeyError: If the requested task does not exist.
+        :return: The requested task.
+        :rtype: RichTask
         """
         if not isinstance(name, str):
             raise (SimpleBenchKeyError(
@@ -427,13 +435,13 @@ class RichProgressTasks:
 
         Example:
 
-        del progress_tasks['task_name']
+        .. code-block:: python
 
-        Args:
-            name (str): The name of the task to delete.
+            del progress_tasks['task_name']
 
-        Raises:
-            SimpleBenchKeyError: If the task does not exist.
+        :param name: The name of the task to delete.
+        :type name: str
+        :raises SimpleBenchKeyError: If the task does not exist.
         """
         if not isinstance(name, str):
             raise SimpleBenchTypeError(
@@ -457,19 +465,21 @@ class RichProgressTasks:
         """Create a new RichTask.
 
         The new task is initialized with the given parameters,
-        added to the task manager index, and a RichTask
+        added to the task manager index, and a :class:`RichTask`
         instance returned.
 
-        The RichTask instance provides control over the task's progress and status.
+        The :class:`RichTask` instance provides control over the task's progress and status.
 
-        Args:
-            name (str): The name of the task.
-            description (str): The description of the task.
-            total (int): The total number of steps for the task.
-            completed (int): Number of steps completed (default = 0)
-
-        Returns:
-            RichTask: The created RichTask instance.
+        :param name: The name of the task.
+        :type name: str
+        :param description: The description of the task.
+        :type description: str
+        :param total: The total number of steps for the task.
+        :type total: int
+        :param completed: Number of steps completed. Defaults to 0.
+        :type completed: int, optional
+        :return: The created RichTask instance.
+        :rtype: RichTask
         """
         task: RichTask = RichTask(progress=self._progress,
                                   name=name,
@@ -483,12 +493,41 @@ class RichProgressTasks:
     def get(self, name: str) -> RichTask | None:
         """Get a task by name or return None if not found.
 
-        Args:
-            name (str): The name of the task to retrieve.
-
-        Returns:
-            RichTask: The requested task, or None if not found.
+        :param name: The name of the task to retrieve.
+        :type name: str
+        :return: The requested task, or None if not found.
+        :rtype: RichTask or None
         """
         if name in self._tasks:
             return self._tasks[name]
         return None
+
+    def add_task(self, name: str, description: str, total: float = 100.0) -> RichTask:
+        """Add a new task to the Rich Progress display.
+
+        If a task with the same name already exists, a :exc:`~.exceptions.SimpleBenchValueError`
+        is raised.
+
+        :param name: The unique name for the task.
+        :type name: str
+        :param description: The description to display for the task.
+        :type description: str
+        :param total: The total number of steps for the task. Defaults to 100.0.
+        :type total: float
+        :raises SimpleBenchValueError: If a task with the same name already exists.
+        :return: The newly created RichTask instance.
+        :rtype: RichTask
+        """
+        if name in self._tasks:
+            raise SimpleBenchValueError(
+                f"Task with name '{name}' already exists.",
+                tag=RichProgressTasksErrorTag.ADD_TASK_DUPLICATE_NAME)
+
+        task: RichTask = RichTask(progress=self._progress,
+                                  name=name,
+                                  description=description,
+                                  completed=0,
+                                  total=total,
+                                  verbosity=self._verbosity)
+        self._tasks[name] = task
+        return task

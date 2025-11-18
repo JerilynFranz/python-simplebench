@@ -1,11 +1,11 @@
-"""ErrorTags for CSVReporter exceptions."""
+"""ErrorTags for :class:`~.CSVReporter` exceptions."""
 from simplebench.enums import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
 class CSVReporterErrorTag(ErrorTag):
-    """Error tags for CSVReporter class related exceptions."""
+    """Error tags for :class:`~.CSVReporter` class related exceptions."""
     SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE = "SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE"
     """Invalid targets argument type:
     - must be of type `frozenset[Target]` or `None.`"""

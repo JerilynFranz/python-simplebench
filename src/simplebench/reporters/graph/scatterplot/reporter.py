@@ -37,41 +37,53 @@ class ScatterPlotReporter(MatPlotLibReporter):
     saving them to the filesystem or passing them to a callback function. It provides
     a visual way to compare the performance of different benchmark variations.
 
-    Defined command-line flags:
-        --scatter-plot: {filesystem, callback} (default=filesystem)
-        --scatter-plot.ops: ...
-        --scatter-plot.timings: ...
-        --scatter-plot.memory: ...
+    **Defined command-line flags:**
 
-    Example usage:
+    * ``--scatter-plot: {filesystem, callback}`` (default=filesystem)
+    * ``--scatter-plot.ops: ...``
+    * ``--scatter-plot.timings: ...``
+    * ``--scatter-plot.memory: ...``
+
+    **Example usage:**
+
+    .. code-block:: none
+
         program.py --scatter-plot               # Outputs graphs to the filesystem.
         program.py --scatter-plot.ops filesystem  # Outputs only ops graphs to the filesystem.
+
     """
 
     _OPTIONS_TYPE: ClassVar[type[ScatterPlotOptions]] = ScatterPlotOptions  # pylint: disable=line-too-long  # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
-    """The specific ReporterOptions subclass associated with this reporter."""
+    """:ivar: The specific :class:`~.ReporterOptions` subclass associated with this reporter.
+    :vartype: ~typing.ClassVar[type[~.ScatterPlotOptions]]
+    """
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = ScatterPlotOptions.DEFAULT_KWARGS
-    """The default keyword arguments for the ScatterPlotOptions subclass."""
+    """:ivar: The default keyword arguments for the :class:`~.ScatterPlotOptions` subclass.
+    :vartype: ~typing.ClassVar[dict[str, ~typing.Any]]
+    """
 
     def __init__(self) -> None:
-        """Initialize the ScatterPlotReporter with its name, description, choices, targets, and formats.
+        """Initialize the ScatterPlotReporter.
 
-        Note:
+        .. note::
 
-        The exception documentation below refers to validation of subclass configuration
-        class variables `_OPTIONS_TYPE` and `_OPTIONS_KWARGS`. These must be correctly defined
-        in any subclass of `ScatterPlotReporter` to ensure proper functionality.
+            The exception documentation below refers to validation of subclass configuration
+            class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly
+            defined in any subclass of :class:`ScatterPlotReporter` to ensure proper
+            functionality.
 
-        In simple use, these exceptions should never be raised, as `ScatterPlotReporter` provides
-        valid implementations. They are documented here for completeness.
+            In simple use, these exceptions should never be raised, as
+            :class:`ScatterPlotReporter` provides valid implementations. They are documented
+            here for completeness.
 
-        Raises:
-            SimpleBenchTypeError: If the subclass configuration types are invalid.
-            SimpleBenchValueError: If the subclass configuration values are invalid.
+        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration
+            types are invalid.
+        :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration
+            values are invalid.
         """
         super().__init__(
-            name='graph',
-            description='Outputs benchmark results as graphs.',
+            name='scatter-plot',
+            description='Outputs benchmark results as scatter plot graphs.',
             sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
             targets={Target.FILESYSTEM, Target.CALLBACK},
             formats={Format.GRAPH},
@@ -118,18 +130,16 @@ class ScatterPlotReporter(MatPlotLibReporter):
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
         """Render the scatter plot graph and return it as bytes.
 
-        Args:
-            case (Case): The Case instance representing the benchmarked code.
-            section (Section): The section of the results to plot.
-            options (ScatterPlotOptions): The options for rendering the scatter plot.
-
-        Returns:
-            bytes: The rendered graph as bytes. The format is determined by the options.
-                The defaults are defined in `ScatterPlotOptions`.
-
-        Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types or values.
-            SimpleBenchValueError: If the provided values are not valid.
+        :param case: The :class:`~simplebench.case.Case` instance representing the
+            benchmarked code.
+        :param section: The section of the results to plot.
+        :param options: The options for rendering the scatter plot.
+        :return: The rendered graph as bytes. The format is determined by the options.
+            The defaults are defined in :class:`~.ScatterPlotOptions`.
+        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the provided arguments are not
+            of the expected types or values.
+        :raises ~simplebench.exceptions.SimpleBenchValueError: If the provided values are not
+            valid.
         """
         # is_* checks provide deferred import validation to avoid circular imports
         if not is_case(case):

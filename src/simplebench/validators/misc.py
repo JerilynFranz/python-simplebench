@@ -24,16 +24,12 @@ def validate_bool(
     If the value passes, type checkers will annotate the returned value
     as `bool`.
 
-    Args:
-        value: The value being validated
-        name (str): The field name for the value
-        error_tag (ErrorTag): The ErrorTag to be used if it fails the validation
-
-    Returns:
-        bool: The validated boolean value.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a boolean.
+    :param value: The value being validated
+    :param str name: The field name for the value
+    :param ErrorTag error_tag: The ErrorTag to be used if it fails the validation
+    :return: The validated boolean value.
+    :rtype: bool
+    :raises SimpleBenchTypeError: If the value is not a boolean.
     """
 
 
@@ -49,17 +45,13 @@ def validate_bool(
     If the value passes, type checkers will annotate the returned value
     as `bool | None`.
 
-    Args:
-        value: The value being validated
-        name (str): The field name for the value
-        error_tag (ErrorTag): The ErrorTag to be used if it fails the validation
-        allow_none (bool, keyword-only): If None should be allowed.
-
-    Returns:
-        (bool | None): The validated boolean value or None.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a boolean or None.
+    :param value: The value being validated
+    :param str name: The field name for the value
+    :param ErrorTag error_tag: The ErrorTag to be used if it fails the validation
+    :param bool allow_none: If None should be allowed.
+    :return: The validated boolean value or None.
+    :rtype: bool | None
+    :raises SimpleBenchTypeError: If the value is not a boolean or None.
     """
 
 
@@ -77,22 +69,18 @@ def validate_bool(
     only boolean values are accepted. In that case, the return type is guaranteed
     to be bool and type checkers will accept it as bool for type narrowing.
 
-    Args:
-        value (Any): The value to validate.
-        name (str): The name of the field being validated (for error messages).
-        error_tag (ErrorTag): The error tag to use for type errors.
-        allow_none (bool, default=False, kwarg only): Whether to allow None as a valid value.
-
-    Returns:
-        (bool | None): The validated boolean or None if allowed and provided.
-
-    Raises:
-        SimpleBenchTypeError:
-            - If the value is not a boolean and allow_none==False
-            - If the value is not a boolean or None and allow_none==True
-            - If name is not a str
-            - If error_tag is not an ErrorTag
-            - If allow_none is not a bool
+    :param Any value: The value to validate.
+    :param str name: The name of the field being validated (for error messages).
+    :param ErrorTag error_tag: The error tag to use for type errors.
+    :param bool allow_none: Whether to allow None as a valid value.
+    :return: The validated boolean or None if allowed and provided.
+    :rtype: bool | None
+    :raises SimpleBenchTypeError:
+        - If the value is not a boolean and allow_none==False
+        - If the value is not a boolean or None and allow_none==True
+        - If name is not a str
+        - If error_tag is not an ErrorTag
+        - If allow_none is not a bool
     """
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
@@ -171,23 +159,22 @@ def validate_type(
 
     Example:
 
-        mixed: str | int = validate_type(
-            value=some_value,
-            expected=(str, int),
-            name='mixed',
-            error_tag=ErrorTag.INVALID_EXPECTED_ARG_TYPE)
+        .. code-block:: python
 
-    Args:
-        value (Any): The value to validate.
-        types (type[T] | tuple[type, ...] | LazyType[T]): The expected type of the value.
-        field_name (str): The name of the field being validated (for error messages).
-        error_tag (ErrorTag): The error tag to use for type errors.
+            mixed: str | int = validate_type(
+                value=some_value,
+                expected=(str, int),
+                name='mixed',
+                error_tag=ErrorTag.INVALID_EXPECTED_ARG_TYPE)
 
-    Returns:
-        T | Any: The validated (unmodifed) value.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not of the expected type.
+    :param Any value: The value to validate.
+    :param types: The expected type of the value.
+    :type types: type[T] | tuple[type, ...] | LazyType[T]
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag error_tag: The error tag to use for type errors.
+    :return: The validated (unmodifed) value.
+    :rtype: T | Any
+    :raises SimpleBenchTypeError: If the value is not of the expected type.
     """
     if not isinstance(types, (type, tuple, LazyTypeProxy)):
         raise SimpleBenchTypeError(
@@ -267,20 +254,17 @@ def validate_string(
     `alphanumeric_only=True` behaves differently than `str().isalnum()` in that it allows empty strings if
     `allow_empty=True` is also provided.
 
-    Args:
-        value (Any): The value to validate as being a string.
-        field_name (str, positional or kwarg): The name of the field being validated (for error messages).
-        type_error_tag (ErrorTag, positional or kwarg): The error tag to use for type errors.
-        value_error_tag (ErrorTag, positional or kwarg): The error tag to use for value errors.
-        strip (bool, default=False, kwarg only): Whether to strip leading/trailing whitespace.
-        allow_empty (bool, default=True, kwarg only): Whether to allow empty strings.
-        allow_blank (bool, default=True, kwarg only): Whether to allow blank strings (strings that consist
-            only of whitespace).
-        alphanumeric_only (bool, default=False, kwarg only): Whether to allow only alphanumeric characters.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a str.
-        SimpleBenchValueError: If the string fails any of the specified checks or if options contradict.
+    :param Any value: The value to validate as being a string.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_error_tag: The error tag to use for type errors.
+    :param ErrorTag value_error_tag: The error tag to use for value errors.
+    :param bool strip: Whether to strip leading/trailing whitespace.
+    :param bool allow_empty: Whether to allow empty strings.
+    :param bool allow_blank: Whether to allow blank strings (strings that consist
+        only of whitespace).
+    :param bool alphanumeric_only: Whether to allow only alphanumeric characters.
+    :raises SimpleBenchTypeError: If the value is not a str.
+    :raises SimpleBenchValueError: If the string fails any of the specified checks or if options contradict.
     """
     if not isinstance(strip, bool):
         raise SimpleBenchTypeError(
@@ -344,18 +328,14 @@ def validate_non_blank_string(
     The validation checks that the value is a string and that it is not blank or only whitespace.
     The returned value is guaranteed to be non-blank and non-blank and to be of type str.
 
-    Args:
-        value (str): The string value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_error_tag (ErrorTag): The error tag to use for type errors.
-        value_error_tag (ErrorTag): The error tag to use for value errors.
-
-    Returns:
-        str: The stripped string value.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a string.
-        SimpleBenchValueError: If the string is blank or only whitespace.
+    :param str value: The string value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_error_tag: The error tag to use for type errors.
+    :param ErrorTag value_error_tag: The error tag to use for value errors.
+    :return: The stripped string value.
+    :rtype: str
+    :raises SimpleBenchTypeError: If the value is not a string.
+    :raises SimpleBenchValueError: If the string is blank or only whitespace.
     """
     if not isinstance(value, str):
         raise SimpleBenchTypeError(
@@ -386,19 +366,15 @@ def validate_non_blank_string_or_is_none(
     The validated value is guaranteed to either be non-blank and non-blank and of type str, or
     None if allow_none is True and None is provided as the value.
 
-    Args:
-        value (str): The string value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_error_tag (ErrorTag): The error tag to use for type errors.
-        value_error_tag (ErrorTag): The error tag to use for value errors.
-        allow_none (bool): Whether to allow None as a valid value. Defaults to True.
-
-    Returns:
-        str | None: The stripped string value or None if allowed and provided.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a str, or None (if allow_none is False).
-        SimpleBenchValueError: If the string is blank or only whitespace.
+    :param str value: The string value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_error_tag: The error tag to use for type errors.
+    :param ErrorTag value_error_tag: The error tag to use for value errors.
+    :param bool allow_none: Whether to allow None as a valid value. Defaults to True.
+    :return: The stripped string value or None if allowed and provided.
+    :rtype: str | None
+    :raises SimpleBenchTypeError: If the value is not a str, or None (if allow_none is False).
+    :raises SimpleBenchValueError: If the string is blank or only whitespace.
     """
     if value is None:
         if allow_none:
@@ -413,16 +389,12 @@ def validate_non_blank_string_or_is_none(
 def validate_int(value: Any, field_name: str, type_tag: ErrorTag) -> int:
     """Validate that a value is an integer.
 
-    Args:
-        value (int): The value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-
-    Returns:
-        int: The validated integer.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not an integer.
+    :param int value: The value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :return: The validated integer.
+    :rtype: int
+    :raises SimpleBenchTypeError: If the value is not an integer.
     """
     if not isinstance(value, int):
         raise SimpleBenchTypeError(
@@ -438,16 +410,12 @@ def validate_float(value: Any, field_name: str, type_tag: ErrorTag) -> float:
     Validates that the value is either a float or an int.
     The return type is always a float.
 
-    Args:
-        value (float | int): The value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-
-    Returns:
-        float: The validated float.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a float.
+    :param float | int value: The value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :return: The validated float.
+    :rtype: float
+    :raises SimpleBenchTypeError: If the value is not a float.
     """
     if not isinstance(value, (float, int)):  # Allow ints as valid floats
         raise SimpleBenchTypeError(
@@ -460,18 +428,14 @@ def validate_float(value: Any, field_name: str, type_tag: ErrorTag) -> float:
 def validate_positive_int(value: Any, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> int:
     """Validate that a value is a positive integer.
 
-    Args:
-        value (int): The value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-
-    Returns:
-        int: The validated positive integer.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not an integer.
-        SimpleBenchValueError: If the value is not positive.
+    :param int value: The value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :return: The validated positive integer.
+    :rtype: int
+    :raises SimpleBenchTypeError: If the value is not an integer.
+    :raises SimpleBenchValueError: If the value is not positive.
     """
     if not isinstance(value, int):
         raise SimpleBenchTypeError(
@@ -489,18 +453,14 @@ def validate_positive_int(value: Any, field_name: str, type_tag: ErrorTag, value
 def validate_non_negative_int(value: Any, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> int:
     """Validate that a value is a non-negative integer.
 
-    Args:
-        value (int): The value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-
-    Returns:
-        int: The validated non-negative integer.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not an integer.
-        SimpleBenchValueError: If the value is negative.
+    :param int value: The value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :return: The validated non-negative integer.
+    :rtype: int
+    :raises SimpleBenchTypeError: If the value is not an integer.
+    :raises SimpleBenchValueError: If the value is negative.
     """
     if not isinstance(value, int):
         raise SimpleBenchTypeError(
@@ -522,18 +482,14 @@ def validate_positive_float(
     Validates that the value is either a float or an int and that it is positive.
     The return type is always a float.
 
-    Args:
-        value (float | int): The value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-
-    Returns:
-        float: The validated positive float.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a float.
-        SimpleBenchValueError: If the value is not positive.
+    :param float | int value: The value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :return: The validated positive float.
+    :rtype: float
+    :raises SimpleBenchTypeError: If the value is not a float.
+    :raises SimpleBenchValueError: If the value is not positive.
     """
     if not isinstance(value, (float, int)):  # Allow ints as valid floats
         raise SimpleBenchTypeError(
@@ -555,18 +511,14 @@ def validate_non_negative_float(
     Validates that the value is either a float or an int and that it is non-negative.
     The return type is always a float.
 
-    Args:
-        value (float | int): The value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-
-    Returns:
-        float: The validated non-negative float.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a float.
-        SimpleBenchValueError: If the value is negative.
+    :param float | int value: The value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :return: The validated non-negative float.
+    :rtype: float
+    :raises SimpleBenchTypeError: If the value is not a float.
+    :raises SimpleBenchValueError: If the value is negative.
     """
     if not isinstance(value, (float, int)):  # Allow ints as valid floats
         raise SimpleBenchTypeError(
@@ -617,28 +569,31 @@ def validate_sequence_of_type(
     When multiple types are provided, the return type is list[Any], which allows the
     caller to narrow the type with an explicit annotation.
 
-    Args:
-        value (Sequence[Any]): The sequence of values to validate.
-        types (type[T] | tuple[type, ...] | LazyType[T, Any]): A single type or tuple of allowed types.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-        allow_empty (bool, keyword-only): Whether to allow an empty sequence. Defaults to True.
-
-    Returns:
-        list[T] | list[Any]: For single type, returns list[T]. For multiple types,
-            returns list[Any] which can be narrowed with explicit type annotation.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a sequence or contains invalid types.
-        SimpleBenchValueError: If the sequence is empty and allow_empty is False.
+    :param Sequence[Any] value: The sequence of values to validate.
+    :param types: A single type or tuple of allowed types.
+    :type types: type[T] | tuple[type, ...] | LazyType[T, Any]
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :param bool allow_empty: Whether to allow an empty sequence. Defaults to True.
+    :return: For single type, returns list[T]. For multiple types,
+        returns list[Any] which can be narrowed with explicit type annotation.
+    :rtype: list[T] | list[Any]
+    :raises SimpleBenchTypeError: If the value is not a sequence or contains invalid types.
+    :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False.
 
     Examples:
         Single type (automatic inference):
+
+        .. code-block:: python
+
             names = validate_sequence_of_type(['Alice'], str, 'names', ...)
             # Type: list[str]
 
         Multiple types (manual narrowing):
+
+        .. code-block:: python
+
             mixed: list[str | int] = validate_sequence_of_type(
                 ['a', 1], (str, int), 'items', ...
             )
@@ -711,6 +666,8 @@ def validate_frozenset_of_type(
 
     Single type (automatic type inference) example:
 
+    .. code-block:: python
+
         friends_names: frozenset[str] = frozenset(['Alice', 'Bob'])
         names = validate_frozenset_of_type(
             friends_names, str, 'names',
@@ -722,6 +679,8 @@ def validate_frozenset_of_type(
 
     Multiple types (manual narrowing) example:
 
+    .. code-block:: python
+
         mixed_values: frozenset[str | int] = frozenset(['a', 1, 'b', 2])
         mixed: frozenset[str | int] = validate_frozenset_of_type(
             mixed_values, (str, int), 'items',
@@ -730,22 +689,18 @@ def validate_frozenset_of_type(
             allow_empty=True)
         # Type: frozenset[str | int]
 
-    Args:
-        value (Any): The frozenset of values to validate.
-        types (type[T] | tuple[type, ...]): A single type or tuple of allowed types.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-        allow_empty (bool): Whether to allow an empty iterable. Defaults to True.
-
-    Returns:
-        frozenset:
-            For single type, returns `frozenset[T]`. For multiple types, returns `frozenset[Any]`
-            which can be narrowed with explicit type annotation.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a frozenset or contains invalid types.
-        SimpleBenchValueError: If the frozenset is empty and allow_empty is False.
+    :param Any value: The frozenset of values to validate.
+    :param types: A single type or tuple of allowed types.
+    :type types: type[T] | tuple[type, ...]
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :param bool allow_empty: Whether to allow an empty iterable. Defaults to True.
+    :return: For single type, returns `frozenset[T]`. For multiple types, returns `frozenset[Any]`
+        which can be narrowed with explicit type annotation.
+    :rtype: frozenset
+    :raises SimpleBenchTypeError: If the value is not a frozenset or contains invalid types.
+    :raises SimpleBenchValueError: If the frozenset is empty and allow_empty is False.
     """
     if not isinstance(value, frozenset):
         raise SimpleBenchTypeError(
@@ -804,19 +759,15 @@ def validate_sequence_of_numbers(
     If you wish to suppress static type checker warnings for a specific call to this function,
     you can use a type: ignore[arg-type] comment on that line.
 
-    Args:
-        value (Sequence[int | float]): The sequence of values to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-        allow_empty (bool): Whether to allow a empty sequence. Defaults to True.
-
-    Returns:
-        Sequence[int | float]: The validated Sequence of numbers.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a sequence or contains non-numeric types.
-        SimpleBenchValueError: If the sequence is empty and allow_empty is False.
+    :param Sequence[int | float] value: The sequence of values to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :param bool allow_empty: Whether to allow a empty sequence. Defaults to True.
+    :return: The validated Sequence of numbers.
+    :rtype: Sequence[int | float]
+    :raises SimpleBenchTypeError: If the value is not a sequence or contains non-numeric types.
+    :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False.
     """
     if not isinstance(value, Sequence) or isinstance(value, str):
         raise SimpleBenchTypeError(
@@ -854,22 +805,18 @@ def validate_sequence_of_str(
     It can enforce that the sequence is not empty, and that individual strings are not blank
     or do not contain any whitespace, based on the provided flags.
 
-    Args:
-        value (Sequence[Any]): The sequence of values to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-        allow_empty (bool): Whether to allow an empty sequence. Defaults to True.
-        allow_blank (bool): Whether to allow blank strings in the sequence. Defaults to True.
-        allow_whitespace (bool): Whether to allow strings that contain whitespace. Defaults to True.
-
-    Returns:
-        list[str]: The validated list of strings.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not a sequence or contains non-string types.
-        SimpleBenchValueError: If the sequence is empty and allow_empty is False or an element is
-                blank and allow_blank is False.
+    :param Sequence[Any] value: The sequence of values to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :param bool allow_empty: Whether to allow an empty sequence. Defaults to True.
+    :param bool allow_blank: Whether to allow blank strings in the sequence. Defaults to True.
+    :param bool allow_whitespace: Whether to allow strings that contain whitespace. Defaults to True.
+    :return: The validated list of strings.
+    :rtype: list[str]
+    :raises SimpleBenchTypeError: If the value is not a sequence or contains non-string types.
+    :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False or an element is
+            blank and allow_blank is False.
     """
     list_of_str: list[str] = validate_sequence_of_type(
                                 value, str, field_name,
@@ -900,20 +847,17 @@ def validate_int_range(number: Any,
                        max_value: int) -> int:
     """Validate that a value is an integer within a specified range.
 
-    Args:
-        number (Any): The value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-        min_value (int): The minimum value of the range.
-        max_value (int): The maximum value of the range.
-
-    Raises:
-        SimpleBenchValueError: If min_value is greater than max_value.
-        SimpleBenchTypeError: If field_name is not a str.
-        SimpleBenchTypeError: If type_tag or value_tag is not an ErrorTag.
-        SimpleBenchTypeError: If number, min_value, or max_value is not an int.
-        SimpleBenchValueError: If number is not within the specified range.
+    :param Any number: The value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :param int min_value: The minimum value of the range.
+    :param int max_value: The maximum value of the range.
+    :raises SimpleBenchValueError: If min_value is greater than max_value.
+    :raises SimpleBenchTypeError: If field_name is not a str.
+    :raises SimpleBenchTypeError: If type_tag or value_tag is not an ErrorTag.
+    :raises SimpleBenchTypeError: If number, min_value, or max_value is not an int.
+    :raises SimpleBenchValueError: If number is not within the specified range.
     """
     if not isinstance(field_name, str):
         raise SimpleBenchTypeError(
@@ -953,20 +897,17 @@ def validate_float_range(
         max_value: float) -> float:
     """Validate that a value is a float within a specified range.
 
-    Args:
-        number (float): The value to validate.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-        min_value (float): The minimum value of the range.
-        max_value (float): The maximum value of the range.
-
-    Raises:
-        SimpleBenchValueError: If min_value is greater than max_value.
-        SimpleBenchTypeError: If field_name is not a str.
-        SimpleBenchTypeError: If type_tag or value_tag is not an ErrorTag.
-        SimpleBenchTypeError: If number, min_value, or max_value is not a float..
-        SimpleBenchValueError: If number is not within the specified range.
+    :param float number: The value to validate.
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :param float min_value: The minimum value of the range.
+    :param float max_value: The maximum value of the range.
+    :raises SimpleBenchValueError: If min_value is greater than max_value.
+    :raises SimpleBenchTypeError: If field_name is not a str.
+    :raises SimpleBenchTypeError: If type_tag or value_tag is not an ErrorTag.
+    :raises SimpleBenchTypeError: If number, min_value, or max_value is not a float..
+    :raises SimpleBenchValueError: If number is not within the specified range.
     """
     if not isinstance(field_name, str):
         raise SimpleBenchTypeError(
@@ -1012,15 +953,11 @@ def validate_filename(filename: Any) -> str:
         - The filename stem (name without suffix) is alphanumeric or underscores and at least one character long.
         - The total filename length does not exceed 255 characters.
 
-    Args:
-        filename (str): The filename to validate.
-
-    Returns:
-        str: The validated filename.
-
-    Raises:
-        SimpleBenchTypeError: If the filename is not a string.
-        SimpleBenchValueError: If the filename is invalid.
+    :param str filename: The filename to validate.
+    :return: The validated filename.
+    :rtype: str
+    :raises SimpleBenchTypeError: If the filename is not a string.
+    :raises SimpleBenchValueError: If the filename is invalid.
     """
     filename = validate_type(
         filename, str, 'filename',

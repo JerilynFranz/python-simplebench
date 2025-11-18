@@ -1,12 +1,12 @@
 """Validators for reporters stuff."""
 import inspect
-from typing import Any, Callable, get_type_hints, TypeVar, overload, cast, TYPE_CHECKING
 from types import UnionType
+from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast, get_type_hints, overload
 
 from rich.table import Table
 from rich.text import Text
 
-from simplebench.enums import Section, Format
+from simplebench.enums import Format, Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -34,8 +34,9 @@ else:
 def _deferred_core_imports() -> None:
     """Deferred import of core types to avoid circular imports during initialization.
 
-    This imports `Case`, only when needed at runtime, preventing circular import issues
-    during module load time while still allowing its use in type hints and runtime validations.
+    This imports :class:`~simplebench.case.Case`, only when needed at runtime, preventing
+    circular import issues during module load time while still allowing its use in type
+    hints and runtime validations.
     """
     global Case, _CORE_TYPES_IMPORTED  # pylint: disable=global-statement
     if _CORE_TYPES_IMPORTED:
@@ -50,14 +51,10 @@ T = TypeVar('T')
 def resolve_type_hints(callback: Callable) -> dict[str, type]:
     """Resolve the type hints for a callback function.
 
-    Args:
-        callback (Callable): The callback function to resolve type hints for.
-
-    Returns:
-        dict[str, type]: A dictionary mapping parameter names to their resolved types.
-
-    Raises:
-        SimpleBenchTypeError: If the type hints cannot be resolved.
+    :param callback: The callback function to resolve type hints for.
+    :return: A dictionary mapping parameter names to their resolved types.
+    :raises ~simplebench.exceptions.SimpleBenchTypeError: If the type hints cannot be
+        resolved.
     """
     _deferred_core_imports()
     try:
@@ -79,13 +76,10 @@ def validate_call_parameter(call: Callable,
 
     The parameter must exist, be of the expected type, and be a keyword-only parameter.
 
-    Args:
-        callback (Callable): The callback function to validate.
-        expected_type (type | Any): The expected type of the parameter.
-        param_name (str): The name of the parameter to validate.
-
-    Raises:
-        SimpleBenchTypeError: If the parameter is invalid.
+    :param call: The callback function to validate.
+    :param expected_type: The expected type of the parameter.
+    :param param_name: The name of the parameter to validate.
+    :raises ~simplebench.exceptions.SimpleBenchTypeError: If the parameter is invalid.
     """
     signature = inspect.signature(call)
     if param_name not in signature.parameters:
@@ -125,31 +119,29 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
 
     Verifies the callback function has the correct signature.
 
-    If called without an allow_none parameter, the returned value will be guaranteed to conform
-    to the ReporterCallback protocol and type checkers will automatically type-narrow it.
+    If called without an ``allow_none`` parameter, the returned value will be guaranteed
+    to conform to the :class:`~.ReporterCallback` protocol and type checkers will
+    automatically type-narrow it.
 
-    If called with an allow_none=True parameter, the validator will accept **either**
-    a ReporterCallback conformant method or None as valid.
+    If called with an ``allow_none=True`` parameter, the validator will accept **either**
+    a :class:`~.ReporterCallback` conformant method or ``None`` as valid.
 
-    If an explicit allow_none parameter is passed, regardless of whether allow_none=True
-    or allow_none=False, the return type determined by static type checkers will be
-    ReporterCallback | None.
+    If an explicit ``allow_none`` parameter is passed, regardless of whether
+    ``allow_none=True`` or ``allow_none=False``, the return type determined by static type
+    checkers will be ``ReporterCallback | None``.
 
     A callback function must accept the following four keyword-only parameters:
-        - case: Case
-        - section: Section
-        - output_format: Format
-        - output: Any
 
-    Args:
-        callback (ReporterCallback | None): The callback function to validate.
-        allow_none (bool, default=False): Whether to allow None as a valid value for the callback.
+    * ``case: Case``
+    * ``section: Section``
+    * ``output_format: Format``
+    * ``output: Any``
 
-    Returns:
-        ReporterCallback | None: The validated callback function or None.
-
-    Raises:
-        SimpleBenchTypeError: If the callback is invalid.
+    :param callback: The callback function to validate.
+    :param allow_none: Whether to allow ``None`` as a valid value for the callback.
+        Defaults to ``False``.
+    :return: The validated callback function or ``None``.
+    :raises ~simplebench.exceptions.SimpleBenchTypeError: If the callback is invalid.
     """
     _deferred_core_imports()
     if callback is None and allow_none:
@@ -166,8 +158,9 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
     params = list(callback_signature.parameters.values())
     if len(params) != 4:
         raise SimpleBenchTypeError(
-            f'Invalid callback: {callback}. Must accept exactly four keyword-only parameters with the following '
-            'names and types: case: Case, section: Section, output_format: Format, output: Any',
+            'Invalid callback: {callback}. Must accept exactly four keyword-only parameters '
+            'with the following names and types: case: Case, section: Section, '
+            'output_format: Format, output: Any',
             tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
 
     resolved_hints = resolve_type_hints(callback)
@@ -192,21 +185,17 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
     """Validate the report renderer method.
 
     Verifies the renderer method has the correct signature.
-    This is functionally equivalent to the ReportRenderer protocol.
+    This is functionally equivalent to the :class:`~.ReportRenderer` protocol.
 
     A renderer function must accept the following three keyword-only parameters:
-        - case: Case
-        - section: Section
-        - options: ReporterOptions
 
-    Args:
-        renderer (ReporterRenderer): The renderer function to validate.
+    * ``case: Case``
+    * ``section: Section``
+    * ``options: ReporterOptions``
 
-    Returns:
-        Any: The validated renderer function.
-
-    Raises:
-        SimpleBenchTypeError: If the renderer is invalid.
+    :param renderer: The renderer function to validate.
+    :return: The validated renderer function.
+    :raises ~simplebench.exceptions.SimpleBenchTypeError: If the renderer is invalid.
     """
     _deferred_core_imports()
     if not callable(renderer):
@@ -220,8 +209,9 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
     params = list(signature.parameters.values())
     if len(params) != 3:
         raise SimpleBenchTypeError(
-            f'Invalid renderer: {renderer}. Must accept exactly three keyword-only parameters with the following '
-            'names and types: case: Case, section: Section, options: ReporterOptions',
+            'Invalid renderer: {renderer}. Must accept exactly three keyword-only '
+            'parameters with the following names and types: case: Case, section: Section, '
+            'options: ReporterOptions',
             tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS)
 
     resolved_hints = resolve_type_hints(renderer)
@@ -230,7 +220,7 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
             'Invalid renderer return type: Must have a return type annotation.',
             tag=ReportersValidatorsErrorTag.REPORT_RENDERER_MISSING_RETURN_ANNOTATION)
     actual_return_type: type | Any = resolved_hints['return']
-    allowed_return_types: set[type | Any] = set([str, bytes, Text, Table])
+    allowed_return_types: set[type | Any] = {str, bytes, Text, Table}
 
     # just a simple type in the allowed set
     if actual_return_type in allowed_return_types:
@@ -242,8 +232,9 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
         if allowed_return_types.issuperset(return_types):
             return renderer
         raise SimpleBenchTypeError(
-            f"Invalid renderer return type: Return type must only include types '{allowed_return_types}, '"
-            f"actual return type of '{actual_return_type} includes other types'.",
+            f"Invalid renderer return type: Return type must only include types "
+            f"'{allowed_return_types}, 'actual return type of '{actual_return_type} "
+            "includes other types'.",
             tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE)
 
     # Something else entirely. Whatever it is, it is not valid.

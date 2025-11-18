@@ -22,8 +22,10 @@ class SessionTypeProxy(LazyTypeProxy['Session']):
     It can be used in `isinstance` and `issubclass` checks as if it were
     the actual `Session` type.
 
-    WARNING: Do not attempt to import `Session` directly from this module,
-    as it will lead to circular import issues and will not work as intended.
+    .. warning::
+
+        Do not attempt to import `Session` directly from this module,
+        as it will lead to circular import issues and will not work as intended.
 
     It is not intended to be instantiated directly; use the actual `Session` class
     instead if an actual `Session` instance is needed.
@@ -44,9 +46,11 @@ def is_session(obj: object) -> TypeGuard[Session]:
     and IDEs.
 
     Usage:
-    ```python
-    if is_session(some_object):
-        # Now `some_object` is treated as a `Session` instance by static type checkers.
-    ```
+
+    .. code-block:: python
+
+        if is_session(some_object):
+            # Now `some_object` is treated as a `Session` instance by static type checkers.
+
     """
     return isinstance(obj, SessionTypeProxy)

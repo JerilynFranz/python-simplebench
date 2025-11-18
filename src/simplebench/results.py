@@ -1,51 +1,71 @@
 # -*- coding: utf-8 -*-
 """Container for the results of a single benchmark test."""
 from __future__ import annotations
-from copy import copy, deepcopy
-from typing import Any, Optional, Sequence
-from types import MappingProxyType
 
-from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError, ResultsErrorTag
+from copy import copy, deepcopy
+from types import MappingProxyType
+from typing import Any, Optional, Sequence
+
+from simplebench.exceptions import ResultsErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
 from .enums import Section
 from .iteration import Iteration
-from .stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
-from .validators import validate_non_blank_string, validate_positive_int, validate_positive_float
+from .stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
+from .validators import validate_non_blank_string, validate_positive_float, validate_positive_int
 
 
 class Results:
-    '''Container for the results of a single benchmark test.
+    """Container for the results of a single benchmark test.
 
     The Results class holds all relevant information about a benchmark test's execution and its outcomes.
     It is immutable after creation to ensure data integrity.
 
-    Properties:
-        group (str): The reporting group to which the benchmark case belongs. (read only)
-        title (str): The name of the benchmark case. (read only)
-        description (str): A brief description of the benchmark case. (read only)
-        n (int): The n weighting the benchmark assigned to the iteration for purposes of Big O analysis. (read only)
-        rounds (int): The number of rounds in the benchmark case. (read only)
-        variation_marks (MappingProxyType[str, Any]): A dictionary of variation marks used to identify the
-            benchmark variation. (read only)
-        variation_cols (MappingProxyType[str, str]): The columns to use for labelling kwarg variations in
-            the benchmark. (read only)
-        interval_unit (str): The unit of measurement for the interval (e.g. "ns"). (read only)
-        interval_scale (float): The scale factor for the interval (e.g. 1e-9 for nanoseconds). (read only)
-        ops_per_interval_unit (str): The unit of measurement for operations per interval (e.g. "ops/s"). (read only)
-        ops_per_interval_scale (float): The scale factor for operations per interval (e.g. 1.0 for ops/s). (read only)
-        memory_unit (str): The unit of measurement for memory usage (e.g. "bytes"). (read only)
-        memory_scale (float): The scale factor for memory usage (e.g. 1.0 for bytes). (read only)
-        iterations (tuple[Iteration, ...]): A tuple of Iteration objects representing each iteration of
-            the benchmark. (read only)
-        ops_per_second (OperationsPerInterval): Statistics for operations per interval. (read only)
-        per_round_timings (OperationTimings): Statistics for per-round timings. (read only)
-        memory (MemoryUsage): Statistics for memory usage. (read only)
-        peak_memory (PeakMemoryUsage): Statistics for peak memory usage. (read only)
-        total_elapsed (float): The total elapsed time for the benchmark. (read only)
-        extra_info (MappingProxyType[str, Any]): Additional information about the benchmark run. This is a
-            read-only property that returns a mapping proxy to prevent external mutation. (read only)
-    '''
+    :ivar group: The reporting group to which the benchmark case belongs. (read only)
+    :vartype group: str
+    :ivar title: The name of the benchmark case. (read only)
+    :vartype title: str
+    :ivar description: A brief description of the benchmark case. (read only)
+    :vartype description: str
+    :ivar n: The n weighting the benchmark assigned to the iteration for purposes of Big O analysis. (read only)
+    :vartype n: int
+    :ivar rounds: The number of rounds in the benchmark case. (read only)
+    :vartype rounds: int
+    :ivar variation_marks: A dictionary of variation marks used to identify the
+        benchmark variation. (read only)
+    :vartype variation_marks: MappingProxyType[str, Any]
+    :ivar variation_cols: The columns to use for labelling kwarg variations in
+        the benchmark. (read only)
+    :vartype variation_cols: MappingProxyType[str, str]
+    :ivar interval_unit: The unit of measurement for the interval (e.g. "ns"). (read only)
+    :vartype interval_unit: str
+    :ivar interval_scale: The scale factor for the interval (e.g. 1e-9 for nanoseconds). (read only)
+    :vartype interval_scale: float
+    :ivar ops_per_interval_unit: The unit of measurement for operations per interval (e.g. "ops/s"). (read only)
+    :vartype ops_per_interval_unit: str
+    :ivar ops_per_interval_scale: The scale factor for operations per interval (e.g. 1.0 for ops/s). (read only)
+    :vartype ops_per_interval_scale: float
+    :ivar memory_unit: The unit of measurement for memory usage (e.g. "bytes"). (read only)
+    :vartype memory_unit: str
+    :ivar memory_scale: The scale factor for memory usage (e.g. 1.0 for bytes). (read only)
+    :vartype memory_scale: float
+    :ivar iterations: A tuple of Iteration objects representing each iteration of
+        the benchmark. (read only)
+    :vartype iterations: tuple[Iteration, ...]
+    :ivar ops_per_second: Statistics for operations per interval. (read only)
+    :vartype ops_per_second: OperationsPerInterval
+    :ivar per_round_timings: Statistics for per-round timings. (read only)
+    :vartype per_round_timings: OperationTimings
+    :ivar memory: Statistics for memory usage. (read only)
+    :vartype memory: MemoryUsage
+    :ivar peak_memory: Statistics for peak memory usage. (read only)
+    :vartype peak_memory: PeakMemoryUsage
+    :ivar total_elapsed: The total elapsed time for the benchmark. (read only)
+    :vartype total_elapsed: float
+    :ivar extra_info: Additional information about the benchmark run. This is a
+        read-only property that returns a mapping proxy to prevent external mutation. (read only)
+    :vartype extra_info: MappingProxyType[str, Any]
+    """
     __slots__ = (
         '_group',
         '_title',
@@ -94,40 +114,61 @@ class Results:
                  extra_info: Optional[dict[str, Any]] = None) -> None:
         """Initialize a Results object.
 
-        Args:
-            group (str): The reporting group to which the benchmark case belongs.
-            title (str): The name of the benchmark case.
-            description (str): A brief description of the benchmark case.
-            n (int): The n weighting assigned to the iteration for purposes of Big O analysis.
-            rounds (int): The number of rounds in the benchmark case.
-            total_elapsed (float): The total elapsed time for the benchmark.
-            iterations (list[Iteration]): The list of Iteration objects representing each iteration of the benchmark.
-            variation_cols (dict[str, str], optional): The columns to use for labelling kwarg variations
-                in the benchmark. Defaults to None, which results in an empty dictionary.
-            variation_marks (dict[str, Any], optional): A dictionary of variation marks used to identify
-                the benchmark variation. Defaults to None, which results in an empty dictionary.
-            interval_unit (str, optional): The unit of measurement for the interval (e.g. "ns").
-                Defaults to "ns".
-            interval_scale (float, optional): The scale factor for the interval (e.g. 1e-9 for nanoseconds).
-                Defaults to 1e-9.
-            ops_per_interval_unit (str, optional): The unit of measurement for operations per interval (e.g. "ops/s").
-                Defaults to "ops/s".
-            ops_per_interval_scale (float, optional): The scale factor for operations per interval (e.g. 1.0 for ops/s).
-                Defaults to 1.0.
-            memory_unit (str, optional): The unit of measurement for memory usage (e.g. "bytes").
-                Defaults to "bytes".
-            memory_scale (float, optional): The scale factor for memory usage (e.g. 1.0 for bytes).
-                Defaults to 1.0.
-            ops_per_second (Optional[OperationsPerInterval], optional): The operations per second for the benchmark.
-                Defaults to a new OperationsPerInterval object initialized from the benchmark's iterations.
-            per_round_timings (Optional[OperationTimings], optional): The per-round timings for the benchmark.
-                Defaults to a new OperationTimings object initialized from the benchmark's iterations.
-            memory (Optional[MemoryUsage], optional): The memory usage for the benchmark.
-                Defaults to a new MemoryUsage object initialized from the benchmark's iterations.
-            peak_memory (Optional[PeakMemoryUsage], optional): The peak memory usage for the benchmark.
-                Defaults to a new PeakMemoryUsage object initialized from the benchmark's iterations.
-            extra_info (Optional[dict[str, Any]], optional): Any extra information to include in the benchmark results.
-                Defaults to {}.
+        :param group: The reporting group to which the benchmark case belongs.
+        :type group: str
+        :param title: The name of the benchmark case.
+        :type title: str
+        :param description: A brief description of the benchmark case.
+        :type description: str
+        :param n: The n weighting assigned to the iteration for purposes of Big O analysis.
+        :type n: int
+        :param rounds: The number of rounds in the benchmark case.
+        :type rounds: int
+        :param total_elapsed: The total elapsed time for the benchmark.
+        :type total_elapsed: float
+        :param iterations: The list of Iteration objects representing each iteration of the benchmark.
+        :type iterations: list[Iteration]
+        :param variation_cols: The columns to use for labelling kwarg variations
+            in the benchmark. Defaults to None, which results in an empty dictionary.
+        :type variation_cols: dict[str, str], optional
+        :param variation_marks: A dictionary of variation marks used to identify
+            the benchmark variation. Defaults to None, which results in an empty dictionary.
+        :type variation_marks: dict[str, Any], optional
+        :param interval_unit: The unit of measurement for the interval (e.g. "ns").
+            Defaults to "ns".
+        :type interval_unit: str, optional
+        :param interval_scale: The scale factor for the interval (e.g. 1e-9 for nanoseconds).
+            Defaults to 1e-9.
+        :type interval_scale: float, optional
+        :param ops_per_interval_unit: The unit of measurement for operations per interval (e.g. "ops/s").
+            Defaults to "ops/s".
+        :type ops_per_interval_unit: str, optional
+        :param ops_per_interval_scale: The scale factor for operations per interval (e.g. 1.0 for ops/s).
+            Defaults to 1.0.
+        :type ops_per_interval_scale: float, optional
+        :param memory_unit: The unit of measurement for memory usage (e.g. "bytes").
+            Defaults to "bytes".
+        :type memory_unit: str, optional
+        :param memory_scale: The scale factor for memory usage (e.g. 1.0 for bytes).
+            Defaults to 1.0.
+        :type memory_scale: float, optional
+        :param ops_per_second: The operations per second for the benchmark.
+            Defaults to a new OperationsPerInterval object initialized from the benchmark's iterations.
+        :type ops_per_second: Optional[OperationsPerInterval], optional
+        :param per_round_timings: The per-round timings for the benchmark.
+            Defaults to a new OperationTimings object initialized from the benchmark's iterations.
+        :type per_round_timings: Optional[OperationTimings], optional
+        :param memory: The memory usage for the benchmark.
+            Defaults to a new MemoryUsage object initialized from the benchmark's iterations.
+        :type memory: Optional[MemoryUsage], optional
+        :param peak_memory: The peak memory usage for the benchmark.
+            Defaults to a new PeakMemoryUsage object initialized from the benchmark's iterations.
+        :type peak_memory: Optional[PeakMemoryUsage], optional
+        :param extra_info: Any extra information to include in the benchmark results.
+            Defaults to {}.
+        :type extra_info: Optional[dict[str, Any]], optional
+        :raises SimpleBenchTypeError: If any of the arguments are of incorrect type.
+        :raises SimpleBenchValueError: If any of the arguments have invalid values.
         """
         self._group: str = validate_non_blank_string(
             group, 'group',

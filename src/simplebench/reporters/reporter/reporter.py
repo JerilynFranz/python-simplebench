@@ -58,15 +58,10 @@ if TYPE_CHECKING:
 def deferred_core_imports() -> None:
     """Deferred import of core types to avoid circular imports during initialization.
 
-    This imports `Choice` when needed at runtime, preventing circular import issues
-    during module load time while still allowing its use in creating Choice()
-    instances from ChoiceConf() instances
-
-    Args:
-        None
-
-    Returns:
-        None
+    This imports :class:`~simplebench.reporters.choice.choice.Choice` when needed at runtime,
+    preventing circular import issues during module load time while still allowing its use
+    in creating :class:`~simplebench.reporters.choice.choice.Choice` instances from
+    :class:`~simplebench.reporters.choice.choice_conf.ChoiceConf` instances.
     """
     global Choice  # pylint: disable=global-statement
     from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
@@ -76,16 +71,17 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                _ReporterPrioritizationMixin, _ReporterTargetMixin, ReporterProtocol):
     """Base class for Reporter classes.
 
-    A Reporter is responsible for generating reports based on benchmark results
-    from a Session and Case. Reporters can produce reports in various formats and
-    output them to different targets.
+    A :class:`~.Reporter` is responsible for generating reports based on benchmark results
+    from a :class:`~simplebench.session.Session` and :class:`~simplebench.case.Case`.
+    Reporters can produce reports in various formats and output them to different targets.
 
-    All Reporter subclasses must implement the methods defined in this interface.
+    All :class:`~.Reporter` subclasses must implement the methods defined in this interface.
     Reporters should handle their own output, whether to console, file system,
     HTTP endpoint, display device, via a callback or other output.
 
-    The Reporter interface ensures that all reporters provide a consistent
+    The :class:`~.Reporter` interface ensures that all reporters provide a consistent
     set of functionalities, making it easier to manage and utilize different
+
     reporting options within the SimpleBench framework.
     """
     @classmethod
@@ -93,21 +89,20 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         """Validate that the subclass has correctly defined its options configuration.
 
         This method checks that the subclass has implemented the required class variables
-        that allow the Reporter base class to automatically instantiate the default options object.
+        that allow the :class:`~.Reporter` base class to automatically instantiate the default
+        options object.
 
         Subclasses must implement the following class variables:
 
             _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions
             _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}
 
-        _OPTIONS_TYPE must be a subclass of ReporterOptions
-        and _OPTIONS_KWARGS must be a dict[str, Any] that can be used
-        to instantiate the _OPTIONS_TYPE subclass.
+        ``_OPTIONS_TYPE`` must be a subclass of :class:`~.ReporterOptions`
+        and ``_OPTIONS_KWARGS`` must be a ``dict[str, Any]`` that can be used
+        to instantiate the ``_OPTIONS_TYPE`` subclass.
 
-
-        Raises:
-            SimpleBenchNotImplementedError: If required class variables are not implemented
-                or are of incorrect types.
+        :raises SimpleBenchNotImplementedError: If required class variables are not implemented
+            or are of incorrect types.
         """
         # Verify that we are being called from a subclass of Reporter, not Reporter itself
         if cls is Reporter:
@@ -162,11 +157,11 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
     def get_hardcoded_default_options(cls) -> Any:
         """Get the built-in hardcoded default options for the reporter.
 
-        This abstract method must be implemented by all Reporter subclasses.
+        This abstract method must be implemented by all :class:`~.Reporter` subclasses.
         It defines the base class default options for a reporter and must
-        be available in all Reporter subclasses.
+        be available in all :class:`~.Reporter` subclasses.
 
-        It returns the hardcoded default ReporterOptions sub-class instance
+        It returns the hardcoded default :class:`~.ReporterOptions` sub-class instance
         specific to the reporter.
 
         Sub-classes must implement the following class variables:
@@ -176,13 +171,9 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
 
         or the method will raise an exception.
 
-        Returns:
-            (ReporterOptions-subclass): The built-in hardcoded default
-            ReporterOptions instance.
-
-        Raises:
-            SimpleBenchNotImplementedError: If required class variables are not implemented
-                or are of incorrect types.
+        :return: The built-in hardcoded default :class:`~.ReporterOptions` instance.
+        :raises SimpleBenchNotImplementedError: If required class variables are not implemented
+            or are of incorrect types.
         """
         cls._validate_subclass_config()
         if '_HARDCODED_DEFAULT_OPTIONS' not in cls.__dict__:
@@ -193,10 +184,10 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
 
     @classmethod
     def set_default_options(cls, options: Options | None = None) -> None:
-        """Set the default options for the  reporter.
+        """Set the default options for the reporter.
 
-        Args:
-            options (ReporterOptions | None, default=None): The options to set as the default.
+        :param options: The options to set as the default, defaults to None
+        :type options: :class:`~.ReporterOptions` or None, optional
         """
         cls._validate_subclass_config()
         options_type = getattr(cls, '_OPTIONS_TYPE')
@@ -216,12 +207,12 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
     def get_default_options(cls) -> Options:
         """Get the default options for the reporter.
 
-        Returns the default options set via set_default_options() if set,
+        Returns the default options set via :meth:`~.set_default_options` if set,
         otherwise returns the built-in hardcoded default options from
-        `get_hardcoded_default_options()`.
+        :meth:`~.get_hardcoded_default_options`.
 
-        Returns:
-            ReporterOptions: The default options.
+        :return: The default options.
+        :rtype: :class:`~.ReporterOptions`
         """
         cls._validate_subclass_config()
         if '_DEFAULT_OPTIONS' in cls.__dict__:
@@ -243,60 +234,47 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                  file_append: bool,
                  formats: Iterable[Format],
                  choices: ChoicesConf) -> None:
-        """
-        Initialize the Reporter instance.
+        """Initialize the Reporter instance.
 
-        Note:
-            Exactly one of `file_unique` or `file_append` must be `True`. If both are `False`,
-            or if both are `True`, an exception will be raised.
+        .. note::
+            Exactly one of ``file_unique`` or ``file_append`` must be ``True``.
+            If both are ``False``, or if both are ``True``, an exception will be raised.
 
-        Args:
-            name (str):
-                The unique identifying name of the reporter.
-
-                - must be a non-empty string.
-            description (str):
-                A brief description of the reporter.
-
-                - must be a non-empty string.
-
-                - If `None`, the reporter's hardcoded default options type will be used.
-            sections (Iterable[Section]):
-                An iterable of all Sections supported by the reporter.
-
-                - Must include at least one Section.
-            targets (Iterable[Target]):
-                An iterable of all Targets supported by the reporter.
-
-                - Must include at least one Target.
-            default_targets (Iterable[Target] | None, default=None):
-                An iterable of default Targets for the reporter.
-            subdir (str, default=''):
-                The subdirectory where report files will be saved.
-                - May be an empty string (''), which indicates the base output directory.
-                - Cannot contain non-alphanumeric characters (characters other than A-Z, a-z, 0-9).
-                - Cannot be longer than 64 characters.
-                - If empty, reports will be saved in the base output directory.
-            file_suffix (str):
-                An optional file suffix for reporter output files.
-                - May be an empty string ('')
-                - Cannot contain non-alphanumeric characters (characters other than A-Z, a-z, 0-9).
-                - Cannot be longer than 10 characters.
-            file_unique (bool):
-                Whether output files should have unique names by default.
-            file_append (bool):
-                Whether output files should be appended to by default.
-            formats (Iterable[Format]):
-                An iterable of all Formats supported by the reporter.
-                - Must include at least one Format.
-            choices (ChoicesConf):
-                An iterable of ChoicesConf instances defining the sections, output targets,
-                and formats supported by the reporter.
-                - Must have at least one ChoiceConf.
-
-        Raises:
-            SimpleBenchValueError: If any of the provided parameters have invalid values.
-            SimpleBenchTypeError: If any of the provided parameters are of incorrect types.
+        :param name: The unique identifying name of the reporter. Must be a non-empty string.
+        :type name: str
+        :param description: A brief description of the reporter. Must be a non-empty string.
+        :type description: str
+        :param sections: An iterable of all :class:`~simplebench.enums.Section` supported by the reporter.
+                         Must include at least one :class:`~simplebench.enums.Section`.
+        :type sections: Iterable[Section]
+        :param targets: An iterable of all :class:`~simplebench.enums.Target` supported by the reporter.
+                        Must include at least one :class:`~simplebench.enums.Target`.
+        :type targets: Iterable[Target]
+        :param default_targets: An iterable of default :class:`~simplebench.enums.Target` for the reporter,
+                                defaults to None
+        :type default_targets: Iterable[Target] | None, optional
+        :param subdir: The subdirectory where report files will be saved. May be an empty string
+                       to indicate the base output directory. Cannot contain non-alphanumeric
+                       characters and cannot be longer than 64 characters. Defaults to ''.
+        :type subdir: str, optional
+        :param file_suffix: An optional file suffix for reporter output files. May be an empty
+                            string. Cannot contain non-alphanumeric characters and cannot be
+                            longer than 10 characters.
+        :type file_suffix: str
+        :param file_unique: Whether output files should have unique names by default.
+        :type file_unique: bool
+        :param file_append: Whether output files should be appended to by default.
+        :type file_append: bool
+        :param formats: An iterable of all :class:`~simplebench.enums.Format` supported by the reporter.
+                        Must include at least one :class:`~simplebench.enums.Format`.
+        :type formats: Iterable[Format]
+        :param choices: An iterable of :class:`~simplebench.reporters.choice.choice_conf.ChoiceConf`
+                        instances defining the sections, output targets, and formats supported
+                        by the reporter. Must have at least one
+                        :class:`~simplebench.reporters.choice.choice_conf.ChoiceConf`.
+        :type choices: :class:`~simplebench.reporters.choices.choices_conf.ChoicesConf`
+        :raises SimpleBenchValueError: If any of the provided parameters have invalid values.
+        :raises SimpleBenchTypeError: If any of the provided parameters are of incorrect types.
         """
         deferred_core_imports()
         self.__class__._validate_subclass_config()
@@ -401,23 +379,24 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
 
     @staticmethod
     def find_options_by_type(options: Iterable[ReporterOptions] | None, cls: type[T]) -> T | None:
-        """Retrieve an instance of type cls (if present) from a collection of `ReporterOptions`.
+        """Retrieve an instance of type ``cls`` (if present) from a collection of :class:`~.ReporterOptions`.
 
         This is used to extract reporter specific options from an iterable container of generic
-        `ReporterOptions` such as those associated with a `Choice` or `Case`.
+        :class:`~.ReporterOptions` such as those associated with a
+        :class:`~simplebench.reporters.choice.choice.Choice` or :class:`~simplebench.case.Case`.
 
-        For example, a `CSVReporter` may define a `CSVReporterOptions` class that extends
-        `ReporterOptions` and use this method to extract the `CSVReporterOptions` instance
+        For example, a ``CSVReporter`` may define a ``CSVReporterOptions`` class that extends
+        :class:`~.ReporterOptions` and use this method to extract the ``CSVReporterOptions`` instance
         from the options iterable:
 
             options = Reporter.find_options_by_type(case.options, CSVReporterOptions)
 
-        Args:
-            options (Iterable[ReporterOptions]): An iterable of `ReporterOptions` instances.
-            cls: (type[T]): The specific subclass type of `ReporterOptions` to find.
-
-        Returns:
-            T | None: The instance of the class `cls` if found, otherwise `None`.
+        :param options: An iterable of :class:`~.ReporterOptions` instances.
+        :type options: Iterable[:class:`~.ReporterOptions`]
+        :param cls: The specific subclass type of :class:`~.ReporterOptions` to find.
+        :type cls: type[T]
+        :return: The instance of the class ``cls`` if found, otherwise ``None``.
+        :rtype: T | None
         """
         if options is None:
             return None
@@ -443,18 +422,25 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                path: Optional[Path] = None,
                session: Optional[Session] = None,
                callback: Optional[ReporterCallback] = None) -> None:
-        """Generate a report based on the benchmark results. This method
-        performs validation and then calls the subclass's run_report method.
+        """Generate a report based on the benchmark results.
 
-        Args:
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance containing benchmark results.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the report can be saved if needed.
-                Leave as None if not saving to the filesystem.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[Callable[[Case, Section, Any], None]]):
-                A callback function for additional processing of the report.
+        This method performs validation and then calls the subclass's :meth:`~.run_report` method.
+
+        :param args: The parsed command-line arguments.
+        :type args: :class:`~argparse.Namespace`
+        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.
+        :type case: :class:`~simplebench.case.Case`
+        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying
+                       the report configuration.
+        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
+        :param path: The path to the directory where the report can be saved if needed.
+                     Leave as ``None`` if not saving to the filesystem. Defaults to ``None``.
+        :type path: :class:`~pathlib.Path` | None, optional
+        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.
+                        Defaults to ``None``.
+        :type session: :class:`~simplebench.session.Session` | None, optional
+        :param callback: A callback function for additional processing of the report. Defaults to ``None``.
+        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
         if not isinstance(args, Namespace):
             raise SimpleBenchTypeError(
@@ -518,22 +504,22 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
     def render(self, *, case: "Case", section: "Section", options: "ReporterOptions") -> str | bytes | Text | Table:
         """Render the report for a specific case and section.
 
-        This abstract method must be implemented by all Reporter subclasses. It is responsible
-        for generating the actual report content for a given case and section, based on the
-        provided options.
+        This abstract method must be implemented by all :class:`~.Reporter` subclasses.
+        It is responsible for generating the actual report content for a given case and section,
+        based on the provided options.
 
-        The output can be a string, bytes, or a Rich object (Text or Table).
+        The output can be a string, bytes, or a Rich object (:class:`~rich.text.Text` or
+        :class:`~rich.table.Table`).
 
-        Args:
-            case (Case): The Case instance containing the benchmark results.
-            section (Section): The specific section of the results to render.
-            options (ReporterOptions): The reporter-specific options for rendering.
-
-        Returns:
-            str | bytes | Text | Table: The rendered report content.
-
-        Raises:
-            NotImplementedError: If the method is not implemented in a subclass.
+        :param case: The :class:`~simplebench.case.Case` instance containing the benchmark results.
+        :type case: :class:`~simplebench.case.Case`
+        :param section: The specific :class:`~simplebench.enums.Section` of the results to render.
+        :type section: :class:`~simplebench.enums.Section`
+        :param options: The reporter-specific :class:`~.ReporterOptions` for rendering.
+        :type options: :class:`~.ReporterOptions`
+        :return: The rendered report content.
+        :rtype: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`
+        :raises NotImplementedError: If the method is not implemented in a subclass.
         """
         raise SimpleBenchNotImplementedError(
             "Reporter subclasses must implement the render method",
@@ -550,23 +536,32 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         """Orchestration hook for report generation.
 
         This method is the primary customization point for controlling how a report is generated.
-        It is called by the public `report()` method after all inputs have been validated.
+        It is called by the public :meth:`~.report` method after all inputs have been validated.
 
-        The default implementation calls `render_by_section()`, which is suitable for most
-        reporters. Subclasses can override this method to provide alternative orchestration,
-        such as calling `render_by_case()` for reports that are generated once per case.
+        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_section`,
+        which is suitable for most reporters. Subclasses can override this method to provide
+        alternative orchestration, such as calling
+        :meth:`~._ReporterOrchestrationMixin.render_by_case` for reports that are generated
+        once per case.
 
-        Note:
+        .. note::
             This is also the correct place to implement custom logic for non-standard
-            targets like `Target.CUSTOM`.
+            targets like :attr:`~simplebench.enums.Target.CUSTOM`.
 
-        Args:
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where report files will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]): A callback function for additional processing.
+        :param args: The parsed command-line arguments.
+        :type args: :class:`~argparse.Namespace`
+        :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.
+        :type case: :class:`~simplebench.case.Case`
+        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying
+                       the report configuration.
+        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
+        :param path: The path to the directory where report files will be saved. Defaults to ``None``.
+        :type path: :class:`~pathlib.Path` | None, optional
+        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.
+                        Defaults to ``None``.
+        :type session: :class:`~simplebench.session.Session` | None, optional
+        :param callback: A callback function for additional processing. Defaults to ``None``.
+        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
         self.render_by_section(
             case=case,
@@ -578,16 +573,14 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         )
 
     def add_choice(self, choice: Choice) -> None:
-        """Add a Choice to the reporter's Choices.
+        """Add a :class:`~simplebench.reporters.choice.choice.Choice` to the reporter's choices.
 
-        Args:
-            choice (ChoiceConf):
-                The Choice instance to add.
-
-        Raises:
-            SimpleBenchTypeError: If the provided choice is not a Choice instance.
-            SimpleBenchValueError: If the choice's sections, targets, or formats
-                are not supported by the reporter.
+        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance to add.
+        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
+        :raises SimpleBenchTypeError: If the provided choice is not a
+            :class:`~simplebench.reporters.choice.choice.Choice` instance.
+        :raises SimpleBenchValueError: If the choice's sections, targets, or formats
+            are not supported by the reporter.
         """
         # is_choice check handles deferred import runtime type checking for Choice
         if not is_choice(choice):
@@ -616,16 +609,18 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
 
     @property
     def choices(self) -> Choices:
-        """Return the Choices instance for the reporter, including sections, output targets, and formats.
+        """The :class:`~simplebench.reporters.choices.choices.Choices` for the reporter.
 
-        The Choices instance contains one or more Choice instances, each representing a specific combination of
-        sections, targets, and formats, command line flags, and descriptions.
+        The :class:`~simplebench.reporters.choices.choices.Choices` instance contains one or more
+        :class:`~simplebench.reporters.choice.choice.Choice` instances, each representing a
+        specific combination of sections, targets, and formats, command line flags,
+        and descriptions.
 
-        This property allows access to the reporter's choices for generating reports and customizing report
-        output and available options.
+        This property allows access to the reporter's choices for generating reports
+        and customizing report output and available options.
 
-        Returns:
-            Choices: The Choices instance for the reporter.
+        :return: The :class:`~simplebench.reporters.choices.choices.Choices` instance for the reporter.
+        :rtype: :class:`~simplebench.reporters.choices.choices.Choices`
         """
         return self._choices
 
@@ -641,8 +636,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
 
     @property
     def options_type(self) -> type[Options]:
-        """The specific ReporterOptions subclass associated with this reporter.
-        """
+        """The specific :class:`~.ReporterOptions` subclass associated with this reporter."""
         return self.__class__.get_default_options().__class__
 
     @property
@@ -671,40 +665,43 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         return self._file_append
 
     def supported_sections(self) -> frozenset[Section]:
-        """Return the set of supported Sections for the reporter.
+        """The set of supported :class:`~simplebench.enums.Section` for the reporter.
 
-        This is the set of Sections that the reporter can include in its reports.
+        This is the set of :class:`~simplebench.enums.Section` that the reporter can include
+        in its reports.
 
-        Defined Choices can only include Sections that are declared in this set.
+        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include
+        :class:`~simplebench.enums.Section` that are declared in this set.
         """
         return self._sections
 
     def supported_targets(self) -> frozenset[Target]:
-        """Return the set of supported Targets for the reporter.
+        """The set of supported :class:`~simplebench.enums.Target` for the reporter.
 
-        This is the set of Targets that the reporter can output to.
+        This is the set of :class:`~simplebench.enums.Target` that the reporter can output to.
 
-        Defined Choices can only include Targets that are declared in this set.
+        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include
+        :class:`~simplebench.enums.Target` that are declared in this set.
         """
         return self._targets
 
     def supported_formats(self) -> frozenset[Format]:
-        """Return the set of supported Formats for the reporter.
+        """The set of supported :class:`~simplebench.enums.Format` for the reporter.
 
-        This is the set of Formats that the reporter can output in.
+        This is the set of :class:`~simplebench.enums.Format` that the reporter can output in.
 
-        Defined Choices can only include Formats that are declared in this set.
+        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include
+        :class:`~simplebench.enums.Format` that are declared in this set.
         """
         return self._formats
 
     def get_base_unit_for_section(self, section: Section) -> str:
         """Return the base unit for the specified section.
 
-        Args:
-            section (Section): The section to get the base unit for.
-
-        Returns:
-            str: The base unit for the section.
+        :param section: The section to get the base unit for.
+        :type section: :class:`~simplebench.enums.Section`
+        :return: The base unit for the section.
+        :rtype: str
         """
         match section:
             case Section.OPS:
@@ -723,21 +720,23 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
     def get_all_stats_values(self, results: list[Results], section: Section) -> list[float]:
         """Gathers all primary statistical values for a given section across multiple results.
 
-        It collects mean, median, minimum, maximum, 5th percentile, 95th percentile,
-        from each Results instance for the specified section.
+        It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,
+        from each :class:`~simplebench.results.Results` instance for the specified section.
 
         This method is useful in determining appropriate scaling factors or units
         for reporting by analyzing the range of values across all results.
 
         Adjusted standard deviation is not included in this collection because it can
-        be NaN for results with insufficient data points, or orders of magnitude different
+        be ``NaN`` for results with insufficient data points, or orders of magnitude different
         from the other statistics, which can skew scaling calculations.
-        Args:
-            results (list[Results]): A list of Results instances to gather statistics from.
-            section (Section): The section to gather statistics for.
 
-        Returns:
-            list[float]: A list of all gathered statistical values.
+        :param results: A list of :class:`~simplebench.results.Results` instances to gather
+                        statistics from.
+        :type results: list[:class:`~simplebench.results.Results`]
+        :param section: The section to gather statistics for.
+        :type section: :class:`~simplebench.enums.Section`
+        :return: A list of all gathered statistical values.
+        :rtype: list[float]
         """
         all_numbers = []
         for result in results:

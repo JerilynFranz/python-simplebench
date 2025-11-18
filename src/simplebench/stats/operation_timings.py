@@ -1,32 +1,44 @@
 # -*- coding: utf-8 -*-
 """Containers for benchmark statistics"""
 from __future__ import annotations
+
 from typing import Optional, Sequence
 
-from . import Stats, StatsSummary
-from .exceptions.operation_timings import OperationTimingsErrorTag
 from ..defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from ..exceptions import SimpleBenchTypeError
-from ..validators import validate_sequence_of_numbers
 from ..iteration import Iteration
+from ..validators import validate_sequence_of_numbers
+from . import Stats, StatsSummary
+from .exceptions.operation_timings import OperationTimingsErrorTag
 
 
 class OperationTimings(Stats):
-    '''Container for the operation timing statistics of a benchmark.
+    """Container for the operation timing statistics of a benchmark.
 
-    Attributes:
-        unit (str): The unit of measurement for the timings (e.g., "ns"). (read only)
-        scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds). (read only)
-        rounds (int): The number of data points in the benchmark. (read only)
-        data: (tuple[int | float, ...]) = Tuple of timing data points. (read only)
-        mean (float): The mean time per operation. (read only)
-        median (float): The median time per operation. (read only)
-        minimum (float): The minimum time per operation. (read only)
-        maximum (float): The maximum time per operation. (read only)
-        standard_deviation (float): The standard deviation of the time per operation. (read only)
-        relative_standard_deviation (float): The relative standard deviation of the time per operation. (read only)
-        percentiles (dict[int, float]): Percentiles of time per operation. (read only)
-    '''
+    :ivar unit: The unit of measurement for the timings (e.g., "ns").
+    :vartype unit: str
+    :ivar scale: The scale factor for the timings (e.g., "1e-9" for nanoseconds).
+    :vartype scale: float
+    :ivar rounds: The number of data points in the benchmark.
+    :vartype rounds: int
+    :ivar data: Tuple of timing data points.
+    :vartype data: tuple[int | float, ...]
+    :ivar mean: The mean time per operation.
+    :vartype mean: float
+    :ivar median: The median time per operation.
+    :vartype median: float
+    :ivar minimum: The minimum time per operation.
+    :vartype minimum: float
+    :ivar maximum: The maximum time per operation.
+    :vartype maximum: float
+    :ivar standard_deviation: The standard deviation of the time per operation.
+    :vartype standard_deviation: float
+    :ivar relative_standard_deviation: The relative standard deviation of the time per
+        operation.
+    :vartype relative_standard_deviation: float
+    :ivar percentiles: Percentiles of time per operation.
+    :vartype percentiles: dict[int, float]
+    """
     def __init__(self,
                  *,
                  iterations: Sequence[Iteration] | None = None,
@@ -36,16 +48,17 @@ class OperationTimings(Stats):
                  data: Optional[Sequence[int | float]] = None):
         """Construct OperationTimings stats from Iteration or raw timing data.
 
-        Args:
-            iterations (Sequence[Iteration] | None): Sequence of Iteration objects to extract timing data from.
-            unit (str): The unit of measurement for the timings (e.g., "ns").
-            scale (float): The scale factor for the timings (e.g., "1e-9" for nanoseconds).
-            rounds (int): The number of data points in the benchmark.
-            data (Optional[Sequence[int | float]]): Optional Sequence of timing data points. If not provided,
-                timing data will be extracted from the iterations if available.
-        Raises:
-            SimpleBenchTypeError: If any of the arguments are of the wrong type.
-            SimpleBenchValueError: If any of the arguments have invalid values.
+        :param iterations: Sequence of
+            :class:`~simplebench.iteration.Iteration` objects to extract timing data from.
+        :param unit: The unit of measurement for the timings (e.g., "ns").
+        :param scale: The scale factor for the timings (e.g., "1e-9" for nanoseconds).
+        :param rounds: The number of data points in the benchmark.
+        :param data: Optional sequence of timing data points. If not provided,
+            timing data will be extracted from the iterations if available.
+        :raises ~simplebench.exceptions.SimpleBenchTypeError: If any of the arguments are
+            of the wrong type.
+        :raises ~simplebench.exceptions.SimpleBenchValueError: If any of the arguments have
+            invalid values.
         """
         if iterations is None and data is None:
             raise SimpleBenchTypeError(
@@ -74,17 +87,27 @@ class OperationTimings(Stats):
 
 
 class OperationTimingsSummary(StatsSummary):
-    '''Container for summary of operation timing statistics of a benchmark.
+    """Container for summary of operation timing statistics of a benchmark.
 
-    Attributes:
-        unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
-        scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
-        rounds (int): The number of data points in the benchmark. (read only)
-        mean (float): The mean operations per time interval. (read only)
-        median (float): The median operations per time interval. (read only)
-        minimum (float): The minimum operations per time interval. (read only)
-        maximum (float): The maximum operations per time interval. (read only)
-        standard_deviation (float): The standard deviation of operations per time interval. (read only)
-        relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
-        percentiles (dict[int, float]): Percentiles of operations per time interval. (read only)
-    '''
+    :ivar unit: The unit of measurement for the benchmark (e.g., "ops/s").
+    :vartype unit: str
+    :ivar scale: The scale factor for the interval (e.g. 1 for seconds).
+    :vartype scale: float
+    :ivar rounds: The number of data points in the benchmark.
+    :vartype rounds: int
+    :ivar mean: The mean operations per time interval.
+    :vartype mean: float
+    :ivar median: The median operations per time interval.
+    :vartype median: float
+    :ivar minimum: The minimum operations per time interval.
+    :vartype minimum: float
+    :ivar maximum: The maximum operations per time interval.
+    :vartype maximum: float
+    :ivar standard_deviation: The standard deviation of operations per time interval.
+    :vartype standard_deviation: float
+    :ivar relative_standard_deviation: The relative standard deviation of ops per time
+        interval.
+    :vartype relative_standard_deviation: float
+    :ivar percentiles: Percentiles of operations per time interval.
+    :vartype percentiles: dict[int, float]
+    """

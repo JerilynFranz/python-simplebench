@@ -1,10 +1,10 @@
-"""ErrorTags for Matplotlib themes."""
-from simplebench.exceptions import ErrorTag
+"""ErrorTags for Matplotlib :class:`~.Theme`."""
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
 class ThemeErrorTag(ErrorTag):
-    """ErrorTags for exceptions in the MatPlotLib Theme class."""
+    """ErrorTags for exceptions in the MatPlotLib :class:`~.Theme` class."""
     THEME_IMMUTABLE = "THEME_IMMUTABLE"
     """The Theme instance is immutable; modification of individual rcParams is not allowed after creation."""

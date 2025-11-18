@@ -26,8 +26,10 @@ class ChoiceTypeProxy(LazyTypeProxy['Choice']):
     It can be used in `isinstance` and `issubclass` checks as if it were
     the actual `Choice` type.
 
-    WARNING: Do not attempt to import `Choice` directly from this module,
-    as it will lead to circular import issues and will not work as intended.
+    .. warning::
+
+        Do not attempt to import `Choice` directly from this module,
+        as it will lead to circular import issues and will not work as intended.
 
     It is not intended to be instantiated directly; use the actual `Choice` class
     instead if an actual `Choice` instance is needed.
@@ -48,15 +50,14 @@ def is_choice(obj: object) -> TypeGuard[Choice]:
     and IDEs.
 
     Usage:
-    ```python
-    if is_choice(some_object):
-        # Now `some_object` is treated as a `Choice` instance by static type checkers.
-    ```
 
-    Args:
-        obj (object): The object to check.
+    .. code-block:: python
 
-    Returns:
-        TypeGuard[Choice]: True if the object is an instance of `Choice`, False otherwise
+        if is_choice(some_object):
+            # Now `some_object` is treated as a `Choice` instance by static type checkers.
+
+    :param object obj: The object to check.
+    :return: True if the object is an instance of `Choice`, False otherwise
+    :rtype: TypeGuard[Choice]
     """
     return isinstance(obj, ChoiceTypeProxy)

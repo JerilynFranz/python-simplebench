@@ -1,10 +1,12 @@
 """ReporterManager for benchmark results.
 
-This module contains the ReporterManager class, which manages the registration,
-retrieval, and unregistration of Reporter classes and instances.
+This module contains the :class:`~.ReporterManager` class, which manages the registration,
+retrieval, and unregistration of :class:`~simplebench.reporters.reporter.Reporter`
+classes and instances.
 
-This registry is global. When a Reporter is registered, it is added to the global
-registry, and when it is unregistered, it is removed from the global registry.
+This registry is global. When a :class:`~simplebench.reporters.reporter.Reporter` is registered,
+it is added to the global registry, and when it is unregistered, it is removed from the
+global registry.
 """
 from __future__ import annotations
 
@@ -33,21 +35,27 @@ _PREDEFINED_REPORTERS: list[type[Reporter]] = [
 
 
 class ReporterManager():
-    """Manager for all available Reporter classes.
+    """Manager for all available :class:`~simplebench.reporters.reporter.Reporter` classes.
 
-    This class maintains a registry of Reporter instances and their associated
-    CLI arguments. It allows for the registration, retrieval, and unregistration of
-    Reporters.
+    This class maintains a registry of :class:`~simplebench.reporters.reporter.Reporter`
+    instances and their associated CLI arguments. It allows for the registration, retrieval,
+    and unregistration of :class:`~simplebench.reporters.reporter.Reporter` instances.
 
-    Initially, it registers a set of built-in Reporters: CSVReporter, ScatterGraphReporter, and RichTableReporter.
+    Initially, it registers a set of built-in :class:`~simplebench.reporters.reporter.Reporter`
+    instances: :class:`~simplebench.reporters.csv.reporter.CSVReporter`,
+    :class:`~simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter`,
+    and :class:`~simplebench.reporters.rich_table.reporter.RichTableReporter`.
 
-    New Reporters can be added using the `register` method, and existing ones can be
-    removed using the `unregister` or `unregister_by_name` methods.
+    New :class:`~simplebench.reporters.reporter.Reporter` instances can be added using the
+    :meth:`~.register` method, and existing ones can be removed using the :meth:`~.unregister`
+    or :meth:`~.unregister_by_name` methods.
 
-    Reporters are required to have unique names and CLI arguments in their Choices to avoid conflicts
-    and the manager will raise exceptions if duplicates are detected during registration.
+    :class:`~simplebench.reporters.reporter.Reporter` instances are required to have unique
+    names and CLI arguments in their :class:`~simplebench.reporters.choices.Choices` to avoid
+    conflicts and the manager will raise exceptions if duplicates are detected during registration.
 
-    Example:
+    .. code-block:: python
+
         reporter_manager = ReporterManager()
         my_custom_reporter = CustomReporter()
         reporter_manager.register(my_custom_reporter)
@@ -56,16 +64,17 @@ class ReporterManager():
     def __init__(self, load_defaults: bool = True) -> None:
         """Initialize the ReporterManager.
 
-        By default, this loads a set of predefined Reporters and then any reporters
-        registered via the `@register_reporter` decorator.
+        By default, this loads a set of predefined :class:`~simplebench.reporters.reporter.Reporter`
+        instances and then any reporters registered via the :func:`~.register_reporter` decorator.
 
-        If desired, this can be skipped by setting `load_defaults` to False. In
-        which case, the manager starts with an empty registry and Reporters
-        can be added via the `register()` method.
+        If desired, this can be skipped by setting ``load_defaults`` to ``False``. In
+        which case, the manager starts with an empty registry and
+        :class:`~simplebench.reporters.reporter.Reporter` instances can be added via the
+        :meth:`~.register` method.
 
 
-        Args:
-            load_defaults (bool, default=True): Whether to load the predefined reporters.
+        :param load_defaults: Whether to load the predefined reporters. Defaults to ``True``.
+        :type load_defaults: bool
         """
         self._registered_reporter_choices: Choices = Choices()
         self._registered_reporters: dict[str, Reporter] = {}
@@ -79,40 +88,44 @@ class ReporterManager():
 
     @property
     def choices(self) -> Choices:
-        """Return a Choices instance containing all registered reporter choices.
+        """Return a :class:`~simplebench.reporters.choices.Choices` instance containing all
+        registered reporter choices.
 
-        Returns:
-            Choices: A Choices instance with all registered reporter choices.
+        :return: A :class:`~simplebench.reporters.choices.Choices` instance with all
+                 registered reporter choices.
+        :rtype: :class:`~simplebench.reporters.choices.Choices`
         """
         return self._registered_reporter_choices
 
     def choice_for_arg(self, arg: str) -> Choice | None:
-        """Return the Choice instance for a given CLI argument.
+        """Return the :class:`~simplebench.reporters.choice.Choice` instance for a given CLI argument.
 
-        Args:
-            arg (str): The CLI argument to look up.
-
-        Returns:
-            Choice | None: The corresponding Choice instance, or None if not found.
+        :param arg: The CLI argument to look up.
+        :type arg: str
+        :return: The corresponding :class:`~simplebench.reporters.choice.Choice` instance,
+                 or ``None`` if not found.
+        :rtype: :class:`~simplebench.reporters.choice.Choice` | None
         """
         return self._registered_reporter_choices.get_choice_for_arg(arg)
 
     def register(self, reporter: Reporter) -> None:
-        """Register a new Reporter.
+        """Register a new :class:`~simplebench.reporters.reporter.Reporter`.
 
-        This method adds a new Reporter to the registry. Unlike the predefined reporters
-        and the @register_reporter decorator which both register by class,  this method
-        requires an instance of the Reporter.
+        This method adds a new :class:`~simplebench.reporters.reporter.Reporter` to the registry.
+        Unlike the predefined reporters and the :func:`~.register_reporter` decorator which both
+        register by class, this method requires an instance of the
+        :class:`~simplebench.reporters.reporter.Reporter`.
 
-        This allows for more flexibility, such as registering Reporters with custom
+        This allows for more flexibility, such as registering
+        :class:`~simplebench.reporters.reporter.Reporter` instances with custom
         initialization parameters.
 
-        Args:
-            reporter (Reporter): The Reporter to register.
-
-        Raises:
-            SimpleBenchValueError: If a Reporter with the same name or CLI argument is already registered.
-            SimpleBenchTypeError: If the provided reporter is not an instance of Reporter.
+        :param reporter: The :class:`~simplebench.reporters.reporter.Reporter` to register.
+        :type reporter: :class:`~simplebench.reporters.reporter.Reporter`
+        :raises SimpleBenchValueError: If a :class:`~simplebench.reporters.reporter.Reporter`
+                                      with the same name or CLI argument is already registered.
+        :raises SimpleBenchTypeError: If the provided reporter is not an instance of
+                                     :class:`~simplebench.reporters.reporter.Reporter`.
         """
         if type(reporter) is Reporter:  # pylint: disable=unidiomatic-typecheck
             raise SimpleBenchValueError(
@@ -154,28 +167,30 @@ class ReporterManager():
         self._registered_reporters[reporter.name] = reporter
 
     def all_reporters(self) -> dict[str, Reporter]:
-        """Return all available Reporter instances as a dictionary keyed by their names.
+        """Return all available :class:`~simplebench.reporters.reporter.Reporter` instances
+        as a dictionary keyed by their names.
 
-        Returns:
-            dict[str, Reporter]: A dictionary of all Reporter instances
-                with their names as keys.
+        :return: A dictionary of all :class:`~simplebench.reporters.reporter.Reporter`
+                 instances with their names as keys.
+        :rtype: dict[str, :class:`~simplebench.reporters.reporter.Reporter`]
         """
         return {reporter.name: reporter for reporter in self._registered_reporters.values()}
 
     def unregister(self, reporter: Reporter) -> None:
-        """Unregister a Reporter by an instance exemplar.
+        """Unregister a :class:`~simplebench.reporters.reporter.Reporter` by an instance exemplar.
 
         It looks up the reporter by its name and removes it from the registry.
 
-        Example:
+        .. code-block:: python
+
             reporter_manager.unregister(MyCustomReporter())
 
-        Args:
-            reporter (Reporter): Reporter instance exemplar to unregister.
-
-        Raises:
-            SimpleBenchKeyError: If no reporter with the given name is registered.
-            SimpleBenchTypeError: If the provided reporter is not an instance of Reporter.
+        :param reporter: :class:`~simplebench.reporters.reporter.Reporter` instance exemplar
+                         to unregister.
+        :type reporter: :class:`~simplebench.reporters.reporter.Reporter`
+        :raises SimpleBenchKeyError: If no reporter with the given name is registered.
+        :raises SimpleBenchTypeError: If the provided reporter is not an instance of
+                                     :class:`~simplebench.reporters.reporter.Reporter`.
         """
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
@@ -192,12 +207,12 @@ class ReporterManager():
         del self._registered_reporters[reporter.name]
 
     def unregister_by_name(self, name: str) -> None:
-        """Unregister a Reporter by its name.
+        """Unregister a :class:`~simplebench.reporters.reporter.Reporter` by its name.
 
-        Args:
-            name (str): The name of the Reporter to unregister.
-        Raises:
-            SimpleBenchKeyError: If no reporter with the given name is registered.
+        :param name: The name of the :class:`~simplebench.reporters.reporter.Reporter`
+                     to unregister.
+        :type name: str
+        :raises SimpleBenchKeyError: If no reporter with the given name is registered.
         """
         if name not in self._registered_reporters:
             raise SimpleBenchKeyError(
@@ -207,22 +222,24 @@ class ReporterManager():
         self.unregister(self._registered_reporters[name])
 
     def unregister_all(self) -> None:
-        """Unregister all Reporters.
+        """Unregister all :class:`~simplebench.reporters.reporter.Reporter` instances.
 
-        This clears the entire registry of Reporters.
+        This clears the entire registry of :class:`~simplebench.reporters.reporter.Reporter`
+        instances.
         """
         self._registered_reporter_choices.clear()
         self._registered_reporters.clear()
 
     def add_reporters_to_argparse(self, parser: ArgumentParser) -> None:
-        """Add all registered reporter choices to an ArgumentParser.
+        """Add all registered reporter choices to an :class:`~argparse.ArgumentParser`.
 
         This method adds the CLI arguments for all registered reporters
-        to the provided ArgumentParser instance using the `add_flags_to_argparse` method
-        of each Reporter.
+        to the provided :class:`~argparse.ArgumentParser` instance using the
+        :meth:`~simplebench.reporters.reporter.Reporter.add_flags_to_argparse` method
+        of each :class:`~simplebench.reporters.reporter.Reporter`.
 
-        Args:
-            parser (ArgumentParser): The ArgumentParser to add the flags to.
+        :param parser: The :class:`~argparse.ArgumentParser` to add the flags to.
+        :type parser: :class:`~argparse.ArgumentParser`
         """
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(

@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """Test runners for benchmarking."""
 from __future__ import annotations
+
 import gc
 import importlib.util
 import sys
 import tracemalloc
-from typing import Any, Callable, Optional, TYPE_CHECKING
 from types import ModuleType
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
-from .defaults import DEFAULT_TIMER, DEFAULT_INTERVAL_SCALE, MIN_MEASURED_ITERATIONS
+from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_TIMER, MIN_MEASURED_ITERATIONS
 from .enums import Color
 from .exceptions import RunnersErrorTag, SimpleBenchImportError
 from .iteration import Iteration
@@ -17,24 +18,21 @@ from .results import Results
 from .tasks import ProgressTracker
 from .validators import validate_positive_int
 
-
 if TYPE_CHECKING:
     from .case import Case
     from .session import Session
 
 
 def _create_timers_module() -> ModuleType:
-    """Creates a module to hold dynamically created timer functions.
+    """Create a module to hold dynamically created timer functions.
 
-    The module is created using importlib and added to sys.modules
+    The module is created using :mod:`importlib` and added to :data:`sys.modules`
     under the name 'simplebench._timers'. If the module already exists
-    in sys.modules, it is returned as is.
+    in :data:`sys.modules`, it is returned as is.
 
-    Returns:
-        ModuleType: The created or existing timers module.
-
-    Raises:
-        SimpleBenchImportError: If the module could not be created.
+    :return: The created or existing timers module.
+    :rtype: ModuleType
+    :raises SimpleBenchImportError: If the module could not be created.
     """
     spec = importlib.util.spec_from_loader('simplebench._timers', loader=None)
     if spec is None:
@@ -60,18 +58,24 @@ def _mock_action(**kwargs) -> None:  # pylint: disable=unused-argument
 class SimpleRunner(ISimpleRunner):
     """A class to run benchmarks for various actions.
 
-    Args:
-        case (Case): The benchmark case to run.
-        kwargs (dict[str, Any]): The keyword arguments for the benchmark case.
-        session (Optional[Session]): The session in which the benchmark is run.
-        runner (Optional[Callable[..., Any]]): The function to use to run the benchmark. If None, uses default_runner
-            from SimpleRunner.
+    :param case: The benchmark case to run.
+    :type case: Case
+    :param kwargs: The keyword arguments for the benchmark case.
+    :type kwargs: dict[str, Any]
+    :param session: The session in which the benchmark is run.
+    :type session: Session, optional
+    :param runner: The function to use to run the benchmark. If None, uses :meth:`default_runner`
+        from :class:`SimpleRunner`.
+    :type runner: Callable[..., Any], optional
 
-    Attributes:
-        case (Case): The benchmark case to run.
-        kwargs (dict[str, Any]): The keyword arguments for the benchmark case.
-        session (Optional[Session]): The session in which the benchmark is run.
-        run (Callable[..., Any]): The function to use to run the benchmark.
+    :ivar case: The benchmark case to run.
+    :vartype case: Case
+    :ivar kwargs: The keyword arguments for the benchmark case.
+    :vartype kwargs: dict[str, Any]
+    :ivar session: The session in which the benchmark is run.
+    :vartype session: Session, optional
+    :ivar run: The function to use to run the benchmark.
+    :vartype run: Callable[..., Any]
     """
     def __init__(self,
                  *,
@@ -80,11 +84,11 @@ class SimpleRunner(ISimpleRunner):
                  session: Optional[Session] = None,
                  runner: Optional[Callable[..., Any]] = None) -> None:
         self.case: Case = case
-        """The benchmark Case to run."""
+        """The benchmark :class:`~.case.Case` to run."""
         self.kwargs: dict[str, Any] = kwargs
         """The keyword arguments for the benchmark function."""
         self.run: Callable[..., Any] = runner if runner is not None else self.default_runner
-        """Benchmark runner function. Defaults to SimpleRunner.default_runner.
+        """Benchmark runner function. Defaults to :meth:`SimpleRunner.default_runner`.
 
         The runner function must accept the following parameters:
             n (int): The number of test rounds that will be run by the action on each iteration.
@@ -98,7 +102,7 @@ class SimpleRunner(ISimpleRunner):
 
     def _timer_function(self, rounds: int) -> Callable[
             [Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]:
-        """Returns a timer function for the benchmark.
+        """Return a timer function for the benchmark.
 
         The generated function will call the action `rounds` times and return the average time taken.
         The function is generated as a string and then compiled to avoid the overhead of
@@ -106,23 +110,23 @@ class SimpleRunner(ISimpleRunner):
 
         The generated function will have the following signature:
 
+        .. code-block:: python
+
             def _timer_function_{rounds}(
                     timer: Callable[[], float | int],
                     action: Callable[..., Any],
                     kwargs: dict[str, Any]) -> float:
 
-        It is created in the module `simplebench._timers` to avoid polluting the global namespace.
+        It is created in the module ``simplebench._timers`` to avoid polluting the global namespace.
 
         By creating a new dedicated function for each needed rounds value, we avoid the overhead
         of a loop in Python during the actual timing benchmark. This is particularly important
         for micro-benchmarks where the action being benchmarked is very fast.
 
-        Args:
-            rounds (int): The number of test rounds that will be run by the action on each iteration. Must be >= 1.
-
-        Returns:
-            Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]:
-                A function that returns the elapsed time for the benchmark as a float.
+        :param rounds: The number of test rounds that will be run by the action on each iteration. Must be >= 1.
+        :type rounds: int
+        :return: A function that returns the elapsed time for the benchmark as a float.
+        :rtype: Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]
         """
         rounds = validate_positive_int(
             rounds, 'rounds',
@@ -149,14 +153,17 @@ class SimpleRunner(ISimpleRunner):
 
     @property
     def variation_marks(self) -> dict[str, Any]:
-        '''Returns the variation marks for the benchmark as defined by the `Case.variation_cols`
+        """Return the variation marks for the benchmark.
+
+        The variation marks are defined by the :attr:`~.case.Case.variation_cols`
         and the current keyworded arguments to the function being benchmarked.
 
         The variation marks identify the specific variations being tested in a run
         from the kwargs values.
 
-        Returns: dict[str, Any]: The variation marks for the benchmark.
-        '''
+        :return: The variation marks for the benchmark.
+        :rtype: dict[str, Any]
+        """
         return {key: self.kwargs.get(key, None) for key in self.case.variation_cols.keys()}
 
     def default_runner(
@@ -179,20 +186,22 @@ class SimpleRunner(ISimpleRunner):
         over a small number of iterations) require more complex handling to account
         for the overhead of the function call.
 
-        Args:
-            n (int): The O(n) 'n' weight of the benchmark. This is used to calculate
-                a weight for the purpose of O(n) analysis. For example, if the action being benchmarked
-                is a function that sorts a list of length n, then n should be the
-                length of the list. If the action being benchmarked is a function
-                that performs a constant-time operation, then n should be 1.
-            rounds (int): The number of test rounds that will be run by the action on each iteration.
-            action (Callable[..., Any]): The action to benchmark.
-            setup (Optional[Callable[..., Any]]): A setup function to run before each iteration.
-            teardown (Optional[Callable[..., Any]]): A teardown function to run after each iteration.
-            kwargs (Optional[dict[str, Any]]): Keyword arguments to pass to the action.
-
-        Returns:
-            Results: The results of the benchmark.
+        :param n: The O(n) 'n' weight of the benchmark. This is used to calculate
+            a weight for the purpose of O(n) analysis. For example, if the action being benchmarked
+            is a function that sorts a list of length n, then n should be the
+            length of the list. If the action being benchmarked is a function
+            that performs a constant-time operation, then n should be 1.
+        :type n: int
+        :param action: The action to benchmark.
+        :type action: Callable[..., Any]
+        :param setup: A setup function to run before each iteration.
+        :type setup: Callable[..., Any], optional
+        :param teardown: A teardown function to run after each iteration.
+        :type teardown: Callable[..., Any], optional
+        :param kwargs: Keyword arguments to pass to the action.
+        :type kwargs: dict[str, Any], optional
+        :return: The results of the benchmark.
+        :rtype: Results
         """
         if kwargs is None:
             kwargs = {}

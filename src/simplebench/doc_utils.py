@@ -1,7 +1,6 @@
 """Documentation utilities."""
 import re
-from typing import overload, Callable, TypeVar, Any
-
+from typing import Any, Callable, TypeVar, overload
 
 # A single TypeVar that can be bound to any callable, which includes
 # both functions and class objects.
@@ -35,46 +34,44 @@ def format_docstring(
     the passed key-value pairs. It looks for {{key}} placeholders in the docstring
     and replaces them with the corresponding values from kwargs.
 
-    Note:
+    .. note::
 
-    - If used without arguments, the decorator will not modify the docstring.
-    - {} Placeholders in the docstring that do not have corresponding keys
-      in kwargs will remain unchanged. This means that if the docstring contains
-      code examples or other text with braces, those will not be affected.
-    - Changes will probably NOT be reflected in IDE tooltips. They are intended
-      for runtime documentation access (e.g., via `help()` or `.__doc__` access)
-      or for generating external documentation. Tools that read docstrings
-      statically from source code will not see the changes.
+        - If used without arguments, the decorator will not modify the docstring.
+        - {} Placeholders in the docstring that do not have corresponding keys
+          in kwargs will remain unchanged. This means that if the docstring contains
+          code examples or other text with braces, those will not be affected.
+        - Changes will probably NOT be reflected in IDE tooltips. They are intended
+          for runtime documentation access (e.g., via `help()` or `.__doc__` access)
+          or for generating external documentation. Tools that read docstrings
+          statically from source code will not see the changes.
 
-      Therefore, this decorator is best suited for adding dynamic information
-      such as version numbers, author names, or configuration-dependent details
-      to docstrings, rather than for altering the fundamental description of
-      the class or function. It should be used carefully with awareness that
-      it may appear either with or without the changes so to avoid confusion
-      either way.
+          Therefore, this decorator is best suited for adding dynamic information
+          such as version numbers, author names, or configuration-dependent details
+          to docstrings, rather than for altering the fundamental description of
+          the class or function. It should be used carefully with awareness that
+          it may appear either with or without the changes so to avoid confusion
+          either way.
 
     Examples:
 
-    ```python
-    @format_docstring(version="1.2.3")
-    class MyClass:
-        '''My class, version {version}'''
-        pass
+    .. code-block:: python
 
-    @format_docstring(author="Me")
-    def my_function():
-        '''A function by {author}'''
-        pass
-    ```
+        @format_docstring(version="1.2.3")
+        class MyClass:
+            '''My class, version {version}'''
+            pass
 
-    Args:
-        cls_or_func (Optional[Callable[..., Any]]):
-            The class or function to decorate. If None, the decorator is being called with arguments.
-        **kwargs: Key-value pairs to format the docstring.
+        @format_docstring(author="Me")
+        def my_function():
+            '''A function by {author}'''
+            pass
 
-    Returns:
-        The decorated class or function. If called with keyword arguments,
+    :param cls_or_func: The class or function to decorate. If None, the decorator is being called with arguments.
+    :type cls_or_func: Optional[Callable[..., Any]]
+    :param kwargs: Key-value pairs to format the docstring.
+    :return: The decorated class or function. If called with keyword arguments,
         returns a decorator function that is then applied to the target object.
+    :rtype: T | Callable[[T], T]
     """
     # This is the actual decorator that will be applied to the class or function.
     # It uses the 'kwargs' from the outer scope.
@@ -96,12 +93,12 @@ def format_docstring(
 def _replace_docstring_placeholders(docstring: str, kwargs: dict) -> str:
     """Replace placeholders in the docstring with values from kwargs.
 
-    Args:
-        docstring (str): The original docstring.
-        kwargs (dict): A dictionary of placeholder keys and their replacement values.
-
-    Returns:
-        str: The modified docstring with placeholders replaced.
+    :param docstring: The original docstring.
+    :type docstring: str
+    :param kwargs: A dictionary of placeholder keys and their replacement values.
+    :type kwargs: dict
+    :return: The modified docstring with placeholders replaced.
+    :rtype: str
     """
 
     def replacer(match: re.Match) -> str:

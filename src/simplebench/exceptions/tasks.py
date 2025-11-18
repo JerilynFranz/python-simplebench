@@ -1,6 +1,6 @@
 """ErrorTags for simplebench.tasks module."""
-from ..exceptions import ErrorTag
 from ..enums import enum_docstrings
+from ..exceptions import ErrorTag
 
 
 @enum_docstrings
@@ -44,3 +44,5 @@ class RichProgressTasksErrorTag(ErrorTag):
     constructor as the verbosity arg"""
     INIT_INVALID_CONSOLE_ARG = "INIT_INVALID_CONSOLE_ARG"
     """Something other than a Console instance was passed to the RichProgressTasks() constructor as the console arg"""
+    ADD_TASK_DUPLICATE_NAME = "ADD_TASK_DUPLICATE_NAME"
+    """A task with the same name already exists"""

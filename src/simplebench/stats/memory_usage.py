@@ -1,32 +1,43 @@
 # -*- coding: utf-8 -*-
 """Containers for benchmark statistics"""
 from __future__ import annotations
+
 from typing import Sequence
 
+from ..defaults import DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
+from ..exceptions import SimpleBenchTypeError
+from ..iteration import Iteration
+from ..validators import validate_sequence_of_numbers
 from . import Stats, StatsSummary
 from .exceptions.memory_usage import MemoryUsageErrorTag
-from ..defaults import DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
-from ..iteration import Iteration
-from ..exceptions import SimpleBenchTypeError
-from ..validators import validate_sequence_of_numbers
 
 
 class MemoryUsage(Stats):
-    '''Container for the memory usage statistics of a benchmark.
+    """Container for the memory usage statistics of a benchmark.
 
-    Attributes:
-        unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
-        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
-        rounds (int): The number of data points in the benchmark. (read only)
-        data: tuple[float | int, ...] = Tuple of memory usage data points. (read only)
-        mean (float): The mean memory usage. (read only)
-        median (float): The median memory usage. (read only)
-        minimum (float): The minimum memory usage. (read only)
-        maximum (float): The maximum memory usage. (read only)
-        standard_deviation (float): The standard deviation of the memory usage. (read only)
-        relative_standard_deviation (float): The relative standard deviation of the memory usage. (read only)
-        percentiles (dict[int, float]): Percentiles of memory usage. (read only)
-    '''
+    :ivar unit: The unit of measurement for the memory usage (e.g., "MB").
+    :vartype unit: str
+    :ivar scale: The scale factor for the memory usage (e.g., "1e6" for megabytes).
+    :vartype scale: float
+    :ivar rounds: The number of data points in the benchmark.
+    :vartype rounds: int
+    :ivar data: Tuple of memory usage data points.
+    :vartype data: tuple[float | int, ...]
+    :ivar mean: The mean memory usage.
+    :vartype mean: float
+    :ivar median: The median memory usage.
+    :vartype median: float
+    :ivar minimum: The minimum memory usage.
+    :vartype minimum: float
+    :ivar maximum: The maximum memory usage.
+    :vartype maximum: float
+    :ivar standard_deviation: The standard deviation of the memory usage.
+    :vartype standard_deviation: float
+    :ivar relative_standard_deviation: The relative standard deviation of the memory usage.
+    :vartype relative_standard_deviation: float
+    :ivar percentiles: Percentiles of memory usage.
+    :vartype percentiles: dict[int, float]
+    """
     def __init__(self,
                  *,
                  iterations: Sequence[Iteration] | None = None,
@@ -36,22 +47,27 @@ class MemoryUsage(Stats):
                  data: Sequence[int | float] | None = None):
         """Construct MemoryUsage stats from sequence of Iteration or raw memory data.
 
-        At least one of iterations or data must be provided.
+        At least one of ``iterations`` or ``data`` must be provided.
 
-        If provided, iterations must be a Sequence of Iteration objects and memory data will be extracted
-        from each Iteration's memory attribute. If data is also provided, the memory data extracted from
-        the iterations will be appended to the provided data.
+        If provided, ``iterations`` must be a sequence of
+        :class:`~simplebench.iteration.Iteration` objects and memory data will be extracted
+        from each :attr:`~simplebench.iteration.Iteration.memory` attribute. If ``data`` is
+        also provided, the memory data extracted from the iterations will be appended to
+        the provided data.
 
-        Args:
-            iterations (Sequence[Iteration] | None): Optional list of Iteration objects to extract memory data from.
-            unit (str): Optional unit of measurement for the memory usage (e.g., "MB"). (default = 'bytes')
-            scale (float): Optional scale factor for the memory usage (e.g., "1e6" for megabytes). (default = 1.0)
-            rounds (int): The number of data points in the benchmark. (default = 1)
-            data (Sequence[int | float] | None): Optional list of memory usage data points. If not provided,
-                memory data will be extracted from the iterations if available.
-        Raises:
-            SimpleBenchTypeError: If any of the arguments are of the wrong type.
-            SimpleBenchValueError: If any of the arguments have invalid values.
+        :param iterations: Optional list of
+            :class:`~simplebench.iteration.Iteration` objects to extract memory data from.
+        :param unit: Optional unit of measurement for the memory usage (e.g., "MB").
+            Defaults to 'bytes'.
+        :param scale: Optional scale factor for the memory usage (e.g., "1e6" for
+            megabytes). Defaults to 1.0.
+        :param rounds: The number of data points in the benchmark. Defaults to 1.
+        :param data: Optional list of memory usage data points. If not provided,
+            memory data will be extracted from the iterations if available.
+        :raises ~simplebench.exceptions.SimpleBenchTypeError: If any of the arguments are
+            of the wrong type.
+        :raises ~simplebench.exceptions.SimpleBenchValueError: If any of the arguments have
+            invalid values.
         """
         if iterations is None and data is None:
             raise SimpleBenchTypeError(
@@ -80,19 +96,32 @@ class MemoryUsage(Stats):
 
 
 class MemoryUsageSummary(StatsSummary):
-    '''Container for summary statistics of a MemoryUsage benchmark, exclusive of raw data points.
+    """Container for summary statistics of a MemoryUsage benchmark.
 
-    Attributes:
-        unit (str): The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
-        scale (float): The scale factor for the interval (e.g. 1 for seconds). (read only)
-        rounds (int): The number of data points in the benchmark. (read only)
-        data (tuple[int | float, ...]): Always an empty tuple as a StatsSummary object does not
-            contain raw data points. (read only)
-        mean (float): The mean operations per time interval. (read only)
-        median (float): The median operations per time interval. (read only)
-        minimum (float): The minimum operations per time interval. (read only)
-        maximum (float): The maximum operations per time interval. (read only)
-        standard_deviation (float): The standard deviation of operations per time interval. (read only)
-        relative_standard_deviation (float): The relative standard deviation of ops per time interval. (read only)
-        percentiles (tuple[float, ...]): Percentiles of operations per time interval. (read only)
-    '''
+    This class is exclusive of raw data points.
+
+    :ivar unit: The unit of measurement for the benchmark (e.g., "ops/s").
+    :vartype unit: str
+    :ivar scale: The scale factor for the interval (e.g. 1 for seconds).
+    :vartype scale: float
+    :ivar rounds: The number of data points in the benchmark.
+    :vartype rounds: int
+    :ivar data: Always an empty tuple as a :class:`~.StatsSummary` object does not
+        contain raw data points.
+    :vartype data: tuple[int | float, ...]
+    :ivar mean: The mean operations per time interval.
+    :vartype mean: float
+    :ivar median: The median operations per time interval.
+    :vartype median: float
+    :ivar minimum: The minimum operations per time interval.
+    :vartype minimum: float
+    :ivar maximum: The maximum operations per time interval.
+    :vartype maximum: float
+    :ivar standard_deviation: The standard deviation of operations per time interval.
+    :vartype standard_deviation: float
+    :ivar relative_standard_deviation: The relative standard deviation of ops per time
+        interval.
+    :vartype relative_standard_deviation: float
+    :ivar percentiles: Percentiles of operations per time interval.
+    :vartype percentiles: tuple[float, ...]
+    """

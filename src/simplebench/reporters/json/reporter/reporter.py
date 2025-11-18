@@ -39,35 +39,50 @@ class JSONReporter(Reporter):
     The JSON files are tagged with metadata comments including the case title,
     description, and units for clarity.
 
-    Defined command-line flags:
-        --json: {filesystem, console, callback} (default=filesystem) Outputs statistical results to JSON.
-        --json-data: {filesystem, console, callback} (default=filesystem) Outputs results to JSON with full data.
+    **Defined command-line flags:**
 
-    Example usage:
+    * ``--json: {filesystem, console, callback}`` (default=filesystem) Outputs statistical
+      results to JSON.
+    * ``--json-data: {filesystem, console, callback}`` (default=filesystem) Outputs results
+      to JSON with full data.
+
+    **Example usage:**
+
+    .. code-block:: none
+
         program.py --json               # Outputs results to JSON files in the filesystem (default).
         program.py --json filesystem    # Outputs results to JSON files in the filesystem.
         program.py --json console       # Outputs results to the console in JSON format.
         program.py --json callback      # Outputs results via a callback function in JSON format.
         program.py --json filesystem console  # Outputs results to both JSON files and the console.
 
-    Attributes:
-        name (str): The unique identifying name of the reporter.
-        description (str): A brief description of the reporter.
-        choices (Choices): A collection of Choices instances defining
-            the reporter instance, CLI flags, Choice name, supported Result Sections,
-            supported output Targets, and supported output Formats for the reporter.
-        targets (set[Target]): The supported output targets for the reporter.
-        formats (set[Format]): The supported output formats for the reporter.
-        choices (Choices): The supported Choices for the reporter.
+    :ivar name: The unique identifying name of the reporter.
+    :vartype name: str
+    :ivar description: A brief description of the reporter.
+    :vartype description: str
+    :ivar choices: A collection of :class:`~simplebench.reporters.choices.Choices` instances
+        defining the reporter instance, CLI flags, :class:`~simplebench.reporters.choice.Choice`
+        name, supported :class:`~simplebench.enums.Section` objects, supported output
+        :class:`~simplebench.enums.Target` objects, and supported output
+        :class:`~simplebench.enums.Format` objects for the reporter.
+    :vartype choices: ~simplebench.reporters.choices.Choices
+    :ivar targets: The supported output targets for the reporter.
+    :vartype targets: set[~simplebench.enums.Target]
+    :ivar formats: The supported output formats for the reporter.
+    :vartype formats: set[~simplebench.enums.Format]
     """
     _OPTIONS_TYPE: ClassVar[type[JSONOptions]] = JSONOptions  # type: ignore[reportIncompatibleVariableOveride]
-    """The type of ReporterOptions used by the JSONReporter."""
+    """:ivar: The type of :class:`~.ReporterOptions` used by the :class:`~.JSONReporter`.
+    :vartype: ~typing.ClassVar[type[~.JSONOptions]]
+    """
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {'full_data': False}
-    """The default keyword arguments for the JSONReporter options.
+    """:ivar: The default keyword arguments for the :class:`~.JSONReporter` options.
 
-    ```python
-    {"full_data": False}
-    ```
+    .. code-block:: python
+
+        {"full_data": False}
+
+    :vartype: ~typing.ClassVar[dict[str, ~typing.Any]]
     """
 
     def __init__(self) -> None:
@@ -75,18 +90,19 @@ class JSONReporter(Reporter):
 
         All sections are always included in the JSON output.
 
-        Note:
+        .. note::
 
-        The exception documentation below refers to validation of subclass configuration
-        class variables `_OPTIONS_TYPE` and `_OPTIONS_KWARGS`. These must be correctly defined
-        in any subclass of `JSONReporter` to ensure proper functionality.
+            The exception documentation below refers to validation of subclass configuration
+            class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly
+            defined in any subclass of :class:`~.JSONReporter` to ensure proper functionality.
 
-        In simple use, these exceptions should never be raised, as `JSONReporter` provides
-        valid implementations. They are documented here for completeness.
+            In simple use, these exceptions should never be raised, as :class:`~.JSONReporter`
+            provides valid implementations. They are documented here for completeness.
 
-         Raises:
-            SimpleBenchTypeError: If the subclass configuration types are invalid.
-            SimpleBenchValueError: If the subclass configuration values are invalid.
+        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration
+            types are invalid.
+        :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration
+            values are invalid.
         """
         super().__init__(
             name='json',
@@ -131,45 +147,47 @@ class JSONReporter(Reporter):
                    ) -> None:
         """Output the benchmark results to a file as tagged JSON if available.
 
-        This method is called by the base class's `report()` method after validation. The base class
-        handles validation of the arguments, so subclasses can assume the arguments
-        are valid without a large amount of boilerplate code. The base class also handles lazy
-        loading of the reporter classes, so subclasses can assume any required imports are available
+        This method is called by the base class's :meth:`~.Reporter.report` method after
+        validation. The base class handles validation of the arguments, so subclasses can
+        assume the arguments are valid without a large amount of boilerplate code. The base
+        class also handles lazy loading of the reporter classes, so subclasses can assume
+        any required imports are available.
 
-        The run_report() method's main responsibilities are to select the appropriate output method
-        (`render_by_case()` in this case) based on the provided arguments and to pass the
-        actual rendering method to be used (the render() method in this case). The rendering method
-        must conform with the `ReportRenderer` protocol.
+        The :meth:`~.run_report` method's main responsibilities are to select the appropriate
+        output method (``render_by_case()`` in this case) based on the provided arguments
+        and to pass the actual rendering method to be used (the :meth:`~.render` method in
+        this case). The rendering method must conform with the
+        :class:`~simplebench.reporters.protocols.reporter_renderer.ReportRenderer` protocol.
 
-        Args:
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Path | None): The path to the directory where the JSON file(s) will be saved.
-            session (Session | None): The Session instance containing benchmark results.
-            callback (ReporterCallback | None):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the JSON data as a string.
-                Leave as None if no callback is needed.
-
-        Return:
-            None
+        :param args: The parsed command-line arguments.
+        :param case: The :class:`~simplebench.case.Case` instance representing the
+            benchmarked code.
+        :param choice: The :class:`~simplebench.reporters.choice.Choice` instance specifying
+            the report configuration.
+        :param path: The path to the directory where the JSON file(s) will be saved.
+        :param session: The :class:`~simplebench.session.Session` instance containing
+            benchmark results.
+        :param callback: A callback function for additional processing of the report.
+            The function should accept two arguments: the :class:`~simplebench.case.Case`
+            instance and the JSON data as a string. Leave as ``None`` if no callback is
+            needed.
         """
         self.render_by_case(
             renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Convert the Case data for all sections to a JSON string.
+
         Machine info is included in the JSON output under the 'metadata' key.
 
-        Args:
-            case (Case): The Case instance holding the benchmarked code statistics.
-            section (Section): The Section to render (ignored, all sections are included).
-            options (JSONOptions): The JSONOptions instance specifying rendering options
-                or None if not provided. (JSONOptions is a subclass of ReporterOptions.)
-
-        Returns:
-            str: The JSON string representation of the Case data.
+        :param case: The :class:`~simplebench.case.Case` instance holding the benchmarked
+            code statistics.
+        :param section: The :class:`~simplebench.enums.Section` to render (ignored, all
+            sections are included).
+        :param options: The :class:`~.JSONOptions` instance specifying rendering options
+            or ``None`` if not provided. (:class:`~.JSONOptions` is a subclass of
+            :class:`~.ReporterOptions`.)
+        :return: The JSON string representation of the :class:`~simplebench.case.Case` data.
         """
         # is_* checks provide deferred import validation to avoid circular imports
         if not is_case(case):
@@ -197,26 +215,25 @@ class JSONReporter(Reporter):
     def mean_change(self, first: Case, second: Case, section: Section) -> float | None:
         """Compare two Case instances for a given section and return the change as a float ratio.
 
-        The float ratio is calculated as (value2 - value1) / value1, where value1 and value2
-        are the mean values for the specified section in the first and second cases, respectively.
+        The float ratio is calculated as ``(value2 - value1) / value1``, where ``value1`` and
+        ``value2`` are the mean values for the specified section in the first and second
+        cases, respectively.
 
-        A value of 0.0 indicates no change, a positive value indicates an increase,
+        A value of ``0.0`` indicates no change, a positive value indicates an increase,
         and a negative value indicates a decrease. If either case does not have data for the
-        specified section, None is returned. The ratio is limited to 3 significant digits for
-        clarity and to prevent a false sense of precision to the result.
+        specified section, ``None`` is returned. The ratio is limited to 3 significant digits
+        for clarity and to prevent a false sense of precision to the result.
 
-        If first mean value is 0.0 and second mean value is also 0.0, the change is defined as 0.0.
-        If first mean value is 0.0 and second mean value is non-zero, the change is defined as
-        None to indicate incomparability.
+        If first mean value is ``0.0`` and second mean value is also ``0.0``, the change is
+        defined as ``0.0``. If first mean value is ``0.0`` and second mean value is non-zero,
+        the change is defined as ``None`` to indicate incomparability.
 
-        Args:
-            first (Case): The first Case instance to compare.
-            second (Case): The second Case instance to compare.
-            section (Section): The Section to compare.
-
-        Returns:
-            float | None: The change between the mean for two cases for the specified section,
-            or None if the section is not present in either case or the numbers are incomparable.
+        :param first: The first :class:`~simplebench.case.Case` instance to compare.
+        :param second: The second :class:`~simplebench.case.Case` instance to compare.
+        :param section: The :class:`~simplebench.enums.Section` to compare.
+        :return: The change between the mean for two cases for the specified section,
+            or ``None`` if the section is not present in either case or the numbers are
+            incomparable.
         """
         value1 = first.section_mean(section)
         value2 = second.section_mean(section)

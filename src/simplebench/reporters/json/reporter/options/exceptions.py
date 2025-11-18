@@ -7,4 +7,4 @@ from simplebench.exceptions import ErrorTag
 class JSONOptionsErrorTag(ErrorTag):
     """Error tags for JSON options."""
     INVALID_FULL_DATA_ARG_TYPE = "invalid_full_data_ARG_TYPE"
-    """The 'full_data' argument is of an invalid type (expected bool)."""
+    """The ``full_data`` argument is of an invalid type (expected :class:`bool`)."""

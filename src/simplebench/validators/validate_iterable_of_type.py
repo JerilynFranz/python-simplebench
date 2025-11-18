@@ -46,31 +46,33 @@ def validate_iterable_of_type(
     When multiple types are provided, the return type is list[Any], which allows the
     caller to narrow the type with an explicit annotation.
 
-    Args:
-        value (Iterable[Any]): The iterable of values to validate.
-        types (type[T] | tuple[type, ...]): A single type or tuple of allowed types.
-        field_name (str): The name of the field being validated (for error messages).
-        type_tag (ErrorTag): The error tag to use for type errors.
-        value_tag (ErrorTag): The error tag to use for value errors.
-        allow_empty (bool): Whether to allow an empty iterable. Defaults to True.
-        exact_type (bool, default=False):
-            If set to True, require that the types be exactly the types specified, not subclasses.
-            Otherwise allow subclass matches.
-
-    Returns:
-        list[T] | list[Any]: For single type, returns list[T]. For multiple types,
-            returns list[Any] which can be narrowed with explicit type annotation.
-
-    Raises:
-        SimpleBenchTypeError: If the value is not an iterable or contains invalid types.
-        SimpleBenchValueError: If the iterable is empty and allow_empty is False.
+    :param Iterable[Any] value: The iterable of values to validate.
+    :param types: A single type or tuple of allowed types.
+    :type types: type[T] | tuple[type, ...]
+    :param str field_name: The name of the field being validated (for error messages).
+    :param ErrorTag type_tag: The error tag to use for type errors.
+    :param ErrorTag value_tag: The error tag to use for value errors.
+    :param bool allow_empty: Whether to allow an empty iterable. Defaults to True.
+    :param bool exact_type: If set to True, require that the types be exactly the types specified, not subclasses.
+        Otherwise allow subclass matches.
+    :return: For single type, returns list[T]. For multiple types,
+        returns list[Any] which can be narrowed with explicit type annotation.
+    :rtype: list[T] | list[Any]
+    :raises SimpleBenchTypeError: If the value is not an iterable or contains invalid types.
+    :raises SimpleBenchValueError: If the iterable is empty and allow_empty is False.
 
     Examples:
         Single type (automatic inference):
+
+        .. code-block:: python
+
             names = validate_iterable_of_type(['Alice'], str, 'names', ...)
             # Type: list[str]
 
         Multiple types (manual narrowing):
+
+        .. code-block:: python
+
             mixed: list[str | int] = validate_iterable_of_type(
                 ['a', 1], (str, int), 'items', ...
             )

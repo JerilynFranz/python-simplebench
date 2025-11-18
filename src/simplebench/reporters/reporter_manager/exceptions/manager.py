@@ -1,30 +1,42 @@
-"""ErrorTags for reporter_manager module in simplebench.reporters."""
-from simplebench.exceptions import ErrorTag
+"""ErrorTags for :mod:`~simplebench.reporters.reporter_manager` module in simplebench.reporters."""
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
 class ReporterManagerErrorTag(ErrorTag):
-    """ErrorTags for the ReporterManager class."""
+    """ErrorTags for the :class:`~simplebench.reporters.reporter_manager.ReporterManager` class."""
     CANNOT_REGISTER_BASE_CLASS = "CANNOT_REGISTER_BASE_CLASS"
-    """The base Reporter class cannot be registered in the ReporterManager instance"""
+    """The base :class:`~simplebench.reporters.reporter.Reporter` class cannot be registered
+    in the :class:`~simplebench.reporters.reporter_manager.ReporterManager` instance"""
     REGISTER_INVALID_REPORTER_ARG = "REGISTER_INVALID_REPORTER_ARG"
-    """Something other than a Reporter instance was passed to the ReporterManager.register() method"""
+    """Something other than a :class:`~simplebench.reporters.reporter.Reporter` instance was
+    passed to the
+    :meth:`~simplebench.reporters.reporter_manager.ReporterManager.register` method"""
     REGISTER_INVALID_CHOICES_RETURNED = "REGISTER_INVALID_CHOICES_RETURNED"
-    """Something other than a Choices instance was returned from the reporter.choices property"""
+    """Something other than a :class:`~simplebench.reporters.choices.Choices` instance was
+    returned from the ``reporter.choices`` property"""
     REGISTER_INVALID_CHOICES_CONTENT = "REGISTER_INVALID_CHOICES_CONTENT"
-    """Something other than a Choice instance was found in the Choices instance returned
-    from the reporter.choices property"""
+    """Something other than a :class:`~simplebench.reporters.choice.Choice` instance was
+    found in the :class:`~simplebench.reporters.choices.Choices` instance returned
+    from the ``reporter.choices`` property"""
     REGISTER_DUPLICATE_NAME = "REGISTER_DUPLICATE_NAME"
-    """A Reporter with the same name already exists in the ReporterManager instance"""
+    """A :class:`~simplebench.reporters.reporter.Reporter` with the same name already exists
+    in the :class:`~simplebench.reporters.reporter_manager.ReporterManager` instance"""
     REGISTER_DUPLICATE_CLI_ARG = "REGISTER_DUPLICATE_CLI_ARG"
-    """A Reporter with the same CLI argument already exists in the ReporterManager instance"""
+    """A :class:`~simplebench.reporters.reporter.Reporter` with the same CLI argument already
+    exists in the :class:`~simplebench.reporters.reporter_manager.ReporterManager` instance"""
     UNREGISTER_INVALID_REPORTER_ARG = "UNREGISTER_INVALID_REPORTER_ARG"
-    """Something other than a Reporter instance was passed to the ReporterManager.unregister() method"""
+    """Something other than a :class:`~simplebench.reporters.reporter.Reporter` instance was
+    passed to the
+    :meth:`~simplebench.reporters.reporter_manager.ReporterManager.unregister` method"""
     UNREGISTER_UNKNOWN_NAME = "UNREGISTER_UNKNOWN_NAME"
-    """No Reporter with the given name is registered in the ReporterManager instance"""
+    """No :class:`~simplebench.reporters.reporter.Reporter` with the given name is registered
+    in the :class:`~simplebench.reporters.reporter_manager.ReporterManager` instance"""
     ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG = "ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG"
-    """Something other than an ArgumentParser instance was passed to the
-    ReporterManager.add_reporters_to_argparse() method"""
+    """Something other than an :class:`~argparse.ArgumentParser` instance was passed to the
+    :meth:`~simplebench.reporters.reporter_manager.ReporterManager.add_reporters_to_argparse`
+    method"""
     ARGUMENT_ERROR_ADDING_FLAGS = "ARGUMENT_ERROR_ADDING_FLAGS"
-    """An ArgumentError was raised when adding reporter flags to the ArgumentParser instance"""
+    """An ``ArgumentError`` was raised when adding reporter flags to the
+    :class:`~argparse.ArgumentParser` instance"""

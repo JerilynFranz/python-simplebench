@@ -1,11 +1,13 @@
-"""ErrorTags for the graph.matplotlib.options module in the reporters package."""
-from simplebench.exceptions import ErrorTag
+"""ErrorTags for the :mod:`~simplebench.reporters.graph.matplotlib.options` module
+in the :mod:`~simplebench.reporters` package.
+"""
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
 class MatPlotLibOptionsErrorTag(ErrorTag):
-    """ErrorTags for exceptions in the MatPlotLibOptions class."""
+    """ErrorTags for exceptions in the :class:`~.MatPlotLibOptions` class."""
     INVALID_DEFAULT_STYLE_ARG_TYPE = "INVALID_DEFAULT_STYLE_ARG_TYPE"
     """The default style specified in the MatPlotLibOptions must be a Style enum member or None."""
     INVALID_DEFAULT_WIDTH_ARG_TYPE = "INVALID_DEFAULT_WIDTH_ARG_TYPE"

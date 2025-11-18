@@ -1,8 +1,8 @@
-"""ErrorTags for CSVOptions class related exceptions."""
-from simplebench.exceptions import ErrorTag
+"""ErrorTags for :class:`~.CSVOptions` class related exceptions."""
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
 class CSVOptionsErrorTag(ErrorTag):
-    """ErrorTags for CSVOptions class related exceptions."""
+    """ErrorTags for :class:`~.CSVOptions` class related exceptions."""

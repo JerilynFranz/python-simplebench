@@ -1,9 +1,10 @@
 """Protocols for SimpleBench."""
 from __future__ import annotations
+
 from typing import Protocol
 
-from .runners import SimpleRunner
 from .results import Results
+from .runners import SimpleRunner
 
 
 class ActionRunner(Protocol):
@@ -15,6 +16,8 @@ class ActionRunner(Protocol):
 
     Example action function signature:
 
+    .. code-block:: python
+
         def my_action(bench: SimpleRunner, **kwargs) -> Results:
             # Benchmark logic here
             def some_function_to_benchmark():
@@ -24,10 +27,9 @@ class ActionRunner(Protocol):
     def __call__(self, bench: SimpleRunner, **kwargs) -> Results:  # type: ignore[reportReturnType]
         """Run the benchmark action.
 
-        Args:
-            bench: The SimpleRunner instance.
-            **kwargs: Additional keyword arguments for the action.
-
-        Returns:
-            Results: The results of the benchmark action.
+        :param bench: The SimpleRunner instance.
+        :type bench: SimpleRunner
+        :param kwargs: Additional keyword arguments for the action.
+        :return: The results of the benchmark action.
+        :rtype: Results
         """

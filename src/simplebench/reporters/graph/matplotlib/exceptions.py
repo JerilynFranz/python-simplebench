@@ -1,11 +1,13 @@
-"""ErrorTags for MatPlotLibReporter exceptions in the reporters.graph.matplotlib.reporter module."""
-from simplebench.exceptions import ErrorTag
+"""ErrorTags for MatPlotLibReporter exceptions in the
+:mod:`~simplebench.reporters.graph.matplotlib.reporter` module.
+"""
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
 class MatPlotLibReporterErrorTag(ErrorTag):
-    """ErrorTags for exceptions in the MatPlotLibReporter class."""
+    """ErrorTags for exceptions in the :class:`~.MatPlotLibReporter` class."""
     RUN_REPORT_UNSUPPORTED_SECTION = "RUN_REPORT_UNSUPPORTED_SECTION"
     """The section specified in the MatPlotLibReporter.run_report method is not supported."""
     IMAGE_TYPE_INVALID_CASE_ARG_TYPE = "IMAGE_TYPE_INVALID_CASE_ARG_TYPE"

@@ -1,4 +1,4 @@
-"""Choice() for reporters."""
+"""``ChoiceConf()`` for reporters."""
 from collections.abc import Hashable
 from typing import Any, Iterable, Sequence
 
@@ -17,57 +17,75 @@ from simplebench.validators import (
 
 
 class ChoiceConf(Hashable, ChoiceProtocol):
-    """Definition of a Choice configuration for reporters.
+    """Definition of a :class:`~.Choice` configuration for reporters.
 
-    A ChoiceConf represents a specific configuration of an implied Choice
-    that can be registered with a Reporter subclass. It defines the sections
-    to include in the report, the output targets, the output format,
+    A :class:`~.ChoiceConf` represents a specific configuration of an implied :class:`~.Choice`
+    that can be registered with a :class:`~simplebench.reporters.reporter.Reporter` subclass.
+    It defines the sections to include in the report, the output targets, the output format,
     and various other options related to reporting.
 
-    The ChoiceConf class provides a structured way to define different
+    The :class:`~.ChoiceConf` class provides a structured way to define different
     reporting options within the SimpleBench framework so that
     users can select from predefined configurations and developers can
     easily add new reporting options to the framework.
 
-    A ChoiceConf instance is immutable after creation to ensure consistency
+    A :class:`~.ChoiceConf` instance is immutable after creation to ensure consistency
     in reporting configurations.
 
     The sections, targets, and formats are descriptive only; they do not
-    enforce any behavior on the associated Reporter subclass. It is the
-    responsibility of the Reporter subclass to implement the behavior
-    corresponding to the specified sections, targets, and formats.
+    enforce any behavior on the associated :class:`~simplebench.reporters.reporter.Reporter`
+    subclass. It is the responsibility of the :class:`~simplebench.reporters.reporter.Reporter`
+    subclass to implement the behavior corresponding to the specified sections, targets,
+    and formats.
 
-    The ChoiceConf is intended to be used in defining configurations for
-    reporters without depending on being embedded in the Reporter's __init__
+    The :class:`~.ChoiceConf` is intended to be used in defining configurations for
+    reporters without depending on being embedded in the
+    :meth:`~simplebench.reporters.reporter.Reporter.__init__`
     method for definition. This allows for more flexible and reusable
-    reporter configurations. The live counterpart to ChoiceConf is the
-    Choice class, which is used at runtime with actual Choice instances
-    created by Reporter from ChoiceConf definitions.
+    reporter configurations. The live counterpart to :class:`~.ChoiceConf` is the
+    :class:`~.Choice` class, which is used at runtime with actual :class:`~.Choice` instances
+    created by :class:`~simplebench.reporters.reporter.Reporter` from
+    :class:`~.ChoiceConf` definitions.
 
-    Attributes:
-        flags (set[str]): A set of command-line flags associated with the choice.
-        flag_type: (FlagType): The type of command-line flag (e.g., boolean, target_list, etc.).
-        name (str): A unique name for the choice.
-        description (str): A brief description of the choice.
-        sections (set[Section]): A set of Section enums to include in the report.
-        targets (set[Target]): A set of Target enums for output.
-        default_targets (set[Target] | None): A set of Target enums representing the default
-            targets for the choice. If None, no default targets are specified and the
-            reporter's defaults will be used when generating reports.
-        output_format (Format): A Format instance describing the output format.
-        subdir (str | None): An optional subdirectory for output files.
-            If None, reports default to the reporter's subdir.
-        file_suffix (str | None): An optional file suffix for output files.
-            If None, reports default to the reporter's file_suffix.
-        file_unique (bool | None): Whether to make output file names unique.
-            If None, reports default to the reporter's file_unique.
-        file_append (bool | None): Whether to append to existing output files.
-            If None, reports default to the reporter's file_append.
-        options (ReporterOptions | None): An optional ReporterOptions instance
-            for additional configurations specific to a specific reporter.
-            If None, reports default to the reporter's default options.
-        extra (Any | None): Any additional metadata associated with the choice.
-
+    :param flags: A set of command-line flags associated with the choice.
+    :type flags: set[str]
+    :param flag_type: The type of command-line flag (e.g., boolean, target_list, etc.).
+    :type flag_type: :class:`~simplebench.enums.FlagType`
+    :param name: A unique name for the choice.
+    :type name: str
+    :param description: A brief description of the choice.
+    :type description: str
+    :param sections: A set of :class:`~simplebench.enums.Section` enums to include in the report.
+    :type sections: set[:class:`~simplebench.enums.Section`]
+    :param targets: A set of :class:`~simplebench.enums.Target` enums for output.
+    :type targets: set[:class:`~simplebench.enums.Target`]
+    :param default_targets: A set of :class:`~simplebench.enums.Target` enums representing the
+                            default targets for the choice. If ``None``, no default targets are
+                            specified and the reporter's defaults will be used when generating
+                            reports.
+    :type default_targets: set[:class:`~simplebench.enums.Target`] | None
+    :param output_format: A :class:`~simplebench.enums.Format` instance describing the output
+                          format.
+    :type output_format: :class:`~simplebench.enums.Format`
+    :param subdir: An optional subdirectory for output files. If ``None``, reports default to
+                   the reporter's subdir.
+    :type subdir: str | None
+    :param file_suffix: An optional file suffix for output files. If ``None``, reports default
+                        to the reporter's file_suffix.
+    :type file_suffix: str | None
+    :param file_unique: Whether to make output file names unique. If ``None``, reports default
+                        to the reporter's file_unique.
+    :type file_unique: bool | None
+    :param file_append: Whether to append to existing output files. If ``None``, reports default
+                        to the reporter's file_append.
+    :type file_append: bool | None
+    :param options: An optional
+                    :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+                    instance for additional configurations specific to a specific reporter.
+                    If ``None``, reports default to the reporter's default options.
+    :type options: :class:`~simplebench.reporters.reporter.options.ReporterOptions` | None
+    :param extra: Any additional metadata associated with the choice.
+    :type extra: Any | None
     """
     def __init__(self, *,
                  flags: Sequence[str],
@@ -84,76 +102,74 @@ class ChoiceConf(Hashable, ChoiceProtocol):
                  file_append: bool | None = None,
                  options: ReporterOptions | None = None,
                  extra: Any = None) -> None:
-        """Construct a ChoiceConf instance.
+        """Construct a :class:`~.ChoiceConf` instance.
 
-        Args:
-            flags (Iterable[str]):
-                An iterable of command-line flags associated with the choice.
-            flag_type (FlagType):
-                The type of command-line flag (e.g., boolean, target_list, etc.).
-            name (str):
-                A unique name for the choice.
-            description (str):
-                A brief description of the choice.
-            sections (Iterable[Section]):
-                An iterable of Section enums to include in the report.
-
-                It must be non-empty, but Section.NULL may be included to indicate no sections are
-                specifically selected. The reporter is expected to include listed sections in its report.
-            output_format (Format):
-                A Format instance describing the output format.
-            targets (Iterable[Target]):
-                An iterable of Target enums for output.
-
-                It must be non-empty. If multiple targets are specified, the reporter is
-                expected to handle outputting to all specified targets when this choice is
-                selected.
-            default_targets (Iterable[Target] | None, default=None):
-                An optional iterable of default Target enums.
-
-                The enums represent the default targets for the choice. If None, no default
-                targets are specified and the reporter's defaults will be used when generating reports.
-            subdir (str | None, default=None):
-                An optional subdirectory for output files.
-
-                If None, defaults to the reporter's default subdir. It may only consist of
-                alphanumeric characters (a-z, A-Z, 0-9) or be an empty string (to indicate
-                no subdirectory). It cannot be longer than 64 characters and may be left as
-                None to use the reporter's default.
-            file_suffix (str | None, default=None):
-                An optional file suffix for output files.
-
-                If None, defaults to the reporter's default file_suffix when generating reports.
-                It may only consist of alphanumeric characters (a-z, A-Z, 0-9), and be no longer
-                than 10 characters. It may be left as None to use the reporter's default.
-            file_unique (bool | None, default=None):
-                Whether to make output file names unique by appending a unique identifier.
-
-                Mutually exclusive with `file_append`; both cannot be True or False at the same time.
-
-                If None, defaults to the reporter's default file_unique setting.
-            file_append (bool | None, default=None):
-                Whether to append to existing output files instead of overwriting them.
-
-                Mutually exclusive with `file_unique`; both cannot be True or False at the same time.
-
-                If None, defaults to the reporter's default file_append setting.
-            options (ReporterOptions | None, default=None):
-                An optional ReporterOptions instance for additional configuration specific to a reporter.
-
-                The option must be of the same type as that specified by the options_type property
-                of the associated Reporter subclass.
-            extra (Any, default=None):
-                Any additional metadata associated with the choice.
-
-                This can be used to store custom information relevant to the choice and the core
-                benchmarking framework does not interpret or enforce any structure on this data.
-
-                Reporter subclasses may choose to utilize this field for their own purposes.
-
-        Raises:
-            SimpleBenchTypeError: If any argument is of an incorrect type.
-            SimpleBenchValueError: If any argument has an invalid value (e.g., empty strings or empty sequences).
+        :param flags: An iterable of command-line flags associated with the choice.
+        :type flags: Iterable[str]
+        :param flag_type: The type of command-line flag (e.g., boolean, target_list, etc.).
+        :type flag_type: :class:`~simplebench.enums.FlagType`
+        :param name: A unique name for the choice.
+        :type name: str
+        :param description: A brief description of the choice.
+        :type description: str
+        :param sections: An iterable of :class:`~simplebench.enums.Section` enums to include
+                         in the report. It must be non-empty, but
+                         :attr:`~simplebench.enums.Section.NULL` may be included to indicate
+                         no sections are specifically selected. The reporter is expected to
+                         include listed sections in its report.
+        :type sections: Iterable[:class:`~simplebench.enums.Section`]
+        :param output_format: A :class:`~simplebench.enums.Format` instance describing the
+                              output format.
+        :type output_format: :class:`~simplebench.enums.Format`
+        :param targets: An iterable of :class:`~simplebench.enums.Target` enums for output.
+                        It must be non-empty. If multiple targets are specified, the reporter
+                        is expected to handle outputting to all specified targets when this
+                        choice is selected.
+        :type targets: Iterable[:class:`~simplebench.enums.Target`]
+        :param default_targets: An optional iterable of default
+                                :class:`~simplebench.enums.Target` enums.
+                                The enums represent the default targets for the choice.
+                                If ``None``, no default targets are specified and the
+                                reporter's defaults will be used when generating reports.
+        :type default_targets: Iterable[:class:`~simplebench.enums.Target`] | None
+        :param subdir: An optional subdirectory for output files. If ``None``, defaults to the
+                       reporter's default subdir. It may only consist of alphanumeric
+                       characters (a-z, A-Z, 0-9) or be an empty string (to indicate no
+                       subdirectory). It cannot be longer than 64 characters and may be left
+                       as ``None`` to use the reporter's default.
+        :type subdir: str | None
+        :param file_suffix: An optional file suffix for output files. If ``None``, defaults to
+                            the reporter's default file_suffix when generating reports.
+                            It may only consist of alphanumeric characters (a-z, A-Z, 0-9),
+                            and be no longer than 10 characters. It may be left as ``None``
+                            to use the reporter's default.
+        :type file_suffix: str | None
+        :param file_unique: Whether to make output file names unique by appending a unique
+                            identifier. Mutually exclusive with `file_append`; both cannot be
+                            ``True`` or ``False`` at the same time. If ``None``, defaults to
+                            the reporter's default file_unique setting.
+        :type file_unique: bool | None
+        :param file_append: Whether to append to existing output files instead of overwriting
+                            them. Mutually exclusive with `file_unique`; both cannot be
+                            ``True`` or ``False`` at the same time. If ``None``, defaults to
+                            the reporter's default file_append setting.
+        :type file_append: bool | None
+        :param options: An optional
+                        :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+                        instance for additional configuration specific to a reporter.
+                        The option must be of the same type as that specified by the
+                        ``options_type`` property of the associated
+                        :class:`~simplebench.reporters.reporter.Reporter` subclass.
+        :type options: :class:`~simplebench.reporters.reporter.options.ReporterOptions` | None
+        :param extra: Any additional metadata associated with the choice. This can be used to
+                      store custom information relevant to the choice and the core
+                      benchmarking framework does not interpret or enforce any structure on
+                      this data. :class:`~simplebench.reporters.reporter.Reporter` subclasses
+                      may choose to utilize this field for their own purposes.
+        :type extra: Any
+        :raises SimpleBenchTypeError: If any argument is of an incorrect type.
+        :raises SimpleBenchValueError: If any argument has an invalid value (e.g., empty
+                                       strings or empty sequences).
         """
         self._flags: frozenset[str] = frozenset(validate_sequence_of_str(
             flags, "flags",
@@ -292,21 +308,25 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def flags(self) -> frozenset[str]:
         """Flags associated with the choice. These are used for command-line selection.
         They must be unique across all choices for all reporters. This is enforced
-        by the ReporterManager when choices are registered.
+        by the :class:`~simplebench.reporters.reporter_manager.ReporterManager` when choices
+        are registered.
 
         The flags should be in the format used on the command line,
-        typically starting with '--' for long options.
+        typically starting with ``--`` for long options.
 
-        Example: ['--json', '--json-full']
+        .. code-block:: python
 
-        The description property of the Choice is used to provide
+            ['--json', '--json-full']
+
+        The :attr:`~.description` property of the :class:`~.Choice` is used to provide
         help text for the flags when generating command-line help.
         """
         return self._flags
 
     @property
     def flag_type(self) -> FlagType:
-        """The type of command-line flag (e.g., FlagType.BOOLEAN, FlagType.TARGET_LIST, etc.)."""
+        """The type of command-line flag (e.g., :attr:`~simplebench.enums.FlagType.BOOLEAN`,
+        :attr:`~simplebench.enums.FlagType.TARGET_LIST`, etc.)."""
         return self._flag_type
 
     @property
@@ -325,7 +345,8 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def sections(self) -> frozenset[Section]:
         """Sections included in the choice.
 
-        These are the sections that the associated Reporter subclass
+        These are the sections that the associated
+        :class:`~simplebench.reporters.reporter.Reporter` subclass
         is expected to include in its report when this choice is selected."""
         return self._sections
 
@@ -333,7 +354,8 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def targets(self) -> frozenset[Target]:
         """Output targets for the choice.
 
-        These are the output targets that the associated Reporter subclass
+        These are the output targets that the associated
+        :class:`~simplebench.reporters.reporter.Reporter` subclass
         is expected to use when this choice is selected."""
         return self._targets
 
@@ -341,7 +363,8 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def default_targets(self) -> frozenset[Target] | None:
         """Default output targets for the choice.
 
-        These are the default output targets that the associated Reporter subclass
+        These are the default output targets that the associated
+        :class:`~simplebench.reporters.reporter.Reporter` subclass
         should use when this choice is selected, if no specific target
          is provided by the user."""
         return self._default_targets
@@ -350,10 +373,10 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def subdir(self) -> str | None:
         """An optional subdirectory for output files.
 
-        If specified, the associated Reporter subclass should
-        use this subdirectory for output files when this choice
+        If specified, the associated :class:`~simplebench.reporters.reporter.Reporter` subclass
+        should use this subdirectory for output files when this choice
         is selected. If an empty string, no subdirectory
-        should be used. If None, the reporter's default subdir
+        should be used. If ``None``, the reporter's default subdir
         should be used."""
         return self._subdir
 
@@ -361,9 +384,9 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def file_suffix(self) -> str | None:
         """An optional file suffix for output files.
 
-        If specified, the associated Reporter subclass should
-        use this file suffix for output files when this choice
-        is selected. If None, the reporter's default file_suffix
+        If specified, the associated :class:`~simplebench.reporters.reporter.Reporter` subclass
+        should use this file suffix for output files when this choice
+        is selected. If ``None``, the reporter's default file_suffix
         should be used."""
         return self._file_suffix
 
@@ -371,9 +394,9 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def file_unique(self) -> bool | None:
         """Whether to make output file names unique.
 
-        If specified, the associated Reporter subclass should
-        use this setting for output files when this choice
-        is selected. If None, the reporter's default file_unique
+        If specified, the associated :class:`~simplebench.reporters.reporter.Reporter` subclass
+        should use this setting for output files when this choice
+        is selected. If ``None``, the reporter's default file_unique
         setting should be used."""
         return self._file_unique
 
@@ -381,9 +404,9 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def file_append(self) -> bool | None:
         """Whether to append to existing output files.
 
-        If specified, the associated Reporter subclass should
-        use this setting for output files when this choice
-        is selected. If None, the reporter's default file_append
+        If specified, the associated :class:`~simplebench.reporters.reporter.Reporter` subclass
+        should use this setting for output files when this choice
+        is selected. If ``None``, the reporter's default file_append
         setting should be used."""
         return self._file_append
 
@@ -391,17 +414,19 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     def output_format(self) -> Format:
         """Output format for the choice.
 
-        This is the output format that the associated Reporter subclass
+        This is the output format that the associated
+        :class:`~simplebench.reporters.reporter.Reporter` subclass
         is expected to use when this choice is selected.
 
-        Returns:
-            Format: The output format.
+        :return: The output format.
+        :rtype: :class:`~simplebench.enums.Format`
         """
         return self._output_format
 
     @property
     def options(self) -> ReporterOptions | None:
-        """An optional ReporterOptions instance for additional configuration."""
+        """An optional :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+        instance for additional configuration."""
         return self._options
 
     @property
@@ -410,10 +435,10 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         return self._extra
 
     def __hash__(self) -> int:
-        """Compute a hash value for the ChoiceConf instance.
+        """Compute a hash value for the :class:`~.ChoiceConf` instance.
 
-        Returns:
-            int: The computed hash value.
+        :return: The computed hash value.
+        :rtype: int
         """
         return hash((
             self.flags,
@@ -433,13 +458,12 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         ))
 
     def __eq__(self, other: object) -> bool:
-        """Check equality between two ChoiceConf instances.
+        """Check equality between two :class:`~.ChoiceConf` instances.
 
-        Args:
-            other (object): The other ChoiceConf instance to compare against.
-
-        Returns:
-            bool: True if the ChoiceConf instances are equal, False otherwise.
+        :param other: The other :class:`~.ChoiceConf` instance to compare against.
+        :type other: object
+        :return: ``True`` if the :class:`~.ChoiceConf` instances are equal, ``False`` otherwise.
+        :rtype: bool
         """
         if not isinstance(other, ChoiceConf):
             return False

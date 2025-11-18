@@ -6,4 +6,4 @@ __all__ = [
     "PrioritizedErrorTag",
     "ReporterErrorTag",
 ]
-"""'*' imports for reporter exceptions packages."""
+""":data:`__all__` for the reporter exceptions package."""

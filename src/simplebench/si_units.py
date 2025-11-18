@@ -2,7 +2,7 @@
 """Utility functions for handling SI units"""
 from typing import Sequence
 
-from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, SIUnitsErrorTag
+from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, SIUnitsErrorTag
 
 # SI prefixes from tera (T) to pico (p)
 # We don't go beyond pico (p) because it's not commonly used in benchmarking
@@ -30,7 +30,7 @@ _SI_PREFIXES_SCALE = {scale[1]: scale[0] for scale in _SI_PREFIXES}
 
 
 def si_scale_for_smallest(numbers: Sequence[float | int], base_unit: str) -> tuple[str, float]:
-    """Scale factor and SI unit for the smallest in a sequence of numbers.
+    """Get the scale factor and SI unit for the smallest in a sequence of numbers.
 
     The scale factor is the factor that should be applied to the numbers to convert
     them to the desired unit. The SI unit is the unit that corresponds to the scale factor.
@@ -38,12 +38,12 @@ def si_scale_for_smallest(numbers: Sequence[float | int], base_unit: str) -> tup
     It gives the SI prefix unit and scale for the smallest non-zero absolute value in the sequence.
     If all numbers are zero, it returns the base unit and a scale factor of 1.0.
 
-    Args:
-        numbers: A sequence of numbers to scale.
-        base_unit: The base unit to use for scaling.
-
-    Returns:
-        A tuple containing the scaled unit and the scaling factor.
+    :param numbers: A sequence of numbers to scale.
+    :type numbers: Sequence[float | int]
+    :param base_unit: The base unit to use for scaling.
+    :type base_unit: str
+    :return: A tuple containing the scaled unit and the scaling factor.
+    :rtype: tuple[str, float]
     """
     if not isinstance(numbers, Sequence) or isinstance(numbers, (str, bytes)):
         raise SimpleBenchTypeError(
@@ -74,19 +74,17 @@ def si_scale(unit: str, base_unit: str) -> float:
     relative to the base unit for SI prefixes ranging from tera (T)
     to pico (p).
 
-    Example: si_scale('ns', 's') returns 1e-9
+    Example: ``si_scale('ns', 's')`` returns ``1e-9``
 
-    Args:
-        unit (str): The unit to get the scale factor for.
-        base_unit (str): The base unit
-
-    Returns:
-        The scale factor for the given unit.
-
-    Raises:
-        SimpleBenchValueError: If the SI unit is not recognized, if base_unit is an empty string,
-            or if the unit does not end with the base_unit.
-        SimpleBenchTypeError: If the unit or base_unit args are not type str.
+    :param unit: The unit to get the scale factor for.
+    :type unit: str
+    :param base_unit: The base unit
+    :type base_unit: str
+    :return: The scale factor for the given unit.
+    :rtype: float
+    :raises SimpleBenchValueError: If the SI unit is not recognized, if ``base_unit`` is an empty string,
+        or if the ``unit`` does not end with the ``base_unit``.
+    :raises SimpleBenchTypeError: If the ``unit`` or ``base_unit`` args are not type str.
     """
     if not isinstance(unit, str):
         raise SimpleBenchTypeError(
@@ -133,17 +131,14 @@ def si_unit_base(unit: str) -> str:
     If no valid SI prefix is found, the unit is assumed to already be the base unit.
 
     Example:
-        si_unit_base('ns') returns 's'
+        ``si_unit_base('ns')`` returns ``'s'``
 
-    Args:
-        unit (str): The SI unit to get the base unit from.
-
-    Returns:
-        The base unit.
-
-    Raises:
-        SimpleBenchValueError: If the unit is an empty string.
-        SimpleBenchTypeError: If the unit arg is not of type str.
+    :param unit: The SI unit to get the base unit from.
+    :type unit: str
+    :return: The base unit.
+    :rtype: str
+    :raises SimpleBenchValueError: If the unit is an empty string.
+    :raises SimpleBenchTypeError: If the unit arg is not of type str.
     """
     if not isinstance(unit, str):
         raise SimpleBenchTypeError(
@@ -162,24 +157,27 @@ def si_unit_base(unit: str) -> str:
 
 
 def si_scale_to_unit(base_unit: str, current_unit: str, target_unit: str) -> float:
-    """Scale factor to convert a current SI unit to a target SI unit based on their SI prefixes.
+    """Get the scale factor to convert a current SI unit to a target SI unit based on their SI prefixes.
 
     Example:
-    scale_by: float = si_scale_to_unit(base_unit='s', current_unit='s', target_unit='ns')
 
-    Args:
-        base_unit: The base unit to use for scaling.
-        current_unit: The current unit of the number.
-        target_unit: The target unit to scale the number to.
+    .. code-block:: python
 
-    Returns:
-        The scaling factor to convert the current unit to the target unit.
+        scale_by: float = si_scale_to_unit(base_unit='s', current_unit='s', target_unit='ns')
 
-    Raises:
-        SimpleBenchValueError: If the SI prefix units are not recognized; if base_unit,
-            current_unit, or target_unit is an empty string; or if the units are not compatible
-            (i.e., do not share the same base unit (i.e. 'seconds' vs 'meters')).
-        SimpleBenchTypeError: If the unit, base_unit, current_unit, or target_unit args are not type str.
+    :param base_unit: The base unit to use for scaling.
+    :type base_unit: str
+    :param current_unit: The current unit of the number.
+    :type current_unit: str
+    :param target_unit: The target unit to scale the number to.
+    :type target_unit: str
+    :return: The scaling factor to convert the current unit to the target unit.
+    :rtype: float
+    :raises SimpleBenchValueError: If the SI prefix units are not recognized; if ``base_unit``,
+        ``current_unit``, or ``target_unit`` is an empty string; or if the units are not compatible
+        (i.e., do not share the same base unit (i.e. 'seconds' vs 'meters')).
+    :raises SimpleBenchTypeError: If the ``unit``, ``base_unit``, ``current_unit``,
+        or ``target_unit`` args are not type str.
     """
     if not isinstance(base_unit, str):
         raise SimpleBenchTypeError(

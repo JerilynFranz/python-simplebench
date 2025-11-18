@@ -1,9 +1,13 @@
-"""Reporter for benchmark results using CSV files."""
+"""Reporter for benchmark results using CSV files.
+
+This module provides the :class:`~.CSVReporter` class, which is responsible for
+outputting benchmark results to CSV files.
+"""
 from __future__ import annotations
 
 import csv
 from io import StringIO
-from typing import TYPE_CHECKING, ClassVar, Any
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.enums import FlagType, Format, Section, Target
@@ -39,42 +43,50 @@ class CSVReporter(Reporter):
     Defined command-line flags:
         --csv: {file, console, callback} (default=file) Outputs results to CSV.
 
-    Example usage:
+    .. code-block:: bash
+
         program.py --csv               # Outputs results to CSV files in the filesystem (default).
         program.py --csv filesystem    # Outputs results to CSV files in the filesystem.
         program.py --csv console       # Outputs results to the console in CSV format.
         program.py --csv callback      # Outputs results via a callback function in CSV format.
         program.py --csv filesystem console  # Outputs results to both CSV files and the console.
 
-    Attributes:
-        name (str): The unique identifying name of the reporter.
-        description (str): A brief description of the reporter.
-        choices (Iterable[ChoicesConf]): Iterable of ChoicesConf instances defining
-            the reporter instance, CLI flags, ChoiceConf  name, supported Result Sections,
-            supported output Targets, and supported output Formats for the reporter.
-        targets (set[Target]): The supported output targets for the reporter.
-        formats (set[Format]): The supported output formats for the reporter.
+    :ivar name: The unique identifying name of the reporter.
+    :vartype name: str
+    :ivar description: A brief description of the reporter.
+    :vartype description: str
+    :ivar choices: Iterable of :class:`~.ChoicesConf` instances defining
+        the reporter instance, CLI flags, :class:`~.ChoiceConf` name, supported
+        :class:`~simplebench.enums.Section` objects, supported output
+        :class:`~simplebench.enums.Target` objects, and supported output
+        :class:`~simplebench.enums.Format` for the reporter.
+    :vartype choices: Iterable[:class:`~.ChoicesConf`]
+    :ivar targets: The supported output targets for the reporter.
+    :vartype targets: set[:class:`~simplebench.enums.Target`]
+    :ivar formats: The supported output formats for the reporter.
+    :vartype formats: set[:class:`~simplebench.enums.Format`]
     """
     _OPTIONS_TYPE: ClassVar[type[CSVOptions]] = CSVOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
-    """The ReporterOptions subclass type for the reporter: `CSVOptions`"""
+    """:meta private:"""
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
-    """Keyword arguments for constructing a CSVOptions hardcoded default instance: `{}`"""
+    """:meta private:"""
 
     def __init__(self) -> None:
-        """Initialize the CSVReporter with its name, description, choices, targets, and formats.
+        """Initialize the :class:`~.CSVReporter` with its name, description, choices,
+        targets, and formats.
 
-        Note:
+        .. note::
 
-        The exception documentation below refers to validation of subclass configuration
-        class variables `_OPTIONS_TYPE` and `_OPTIONS_KWARGS`. These must be correctly defined
-        in any subclass of `CSVReporter` to ensure proper functionality.
+            The exception documentation below refers to validation of subclass configuration
+            class variables :attr:`~._OPTIONS_TYPE` and :attr:`~._OPTIONS_KWARGS`. These must be
+            correctly defined in any subclass of :class:`~.CSVReporter` to ensure proper
+            functionality.
 
-        In simple use, these exceptions should never be raised, as `CSVReporter` provides
-        valid implementations. They are documented here for completeness.
+            In simple use, these exceptions should never be raised, as :class:`~.CSVReporter`
+            provides valid implementations. They are documented here for completeness.
 
-         Raises:
-            SimpleBenchTypeError: If the subclass configuration types are invalid.
-            SimpleBenchValueError: If the subclass configuration values are invalid.
+        :raises SimpleBenchTypeError: If the subclass configuration types are invalid.
+        :raises SimpleBenchValueError: If the subclass configuration values are invalid.
         """
         super().__init__(
             name='csv',
@@ -132,16 +144,17 @@ class CSVReporter(Reporter):
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Renders the benchmark results as tagged CSV data and returns it as a string.
 
-        Args:
-            case: The Case instance representing the benchmarked code.
-            section: The section to output (eg. Section.OPS or Section.TIMING).
-            options: The options for the CSV report. (Currently unused.)
-
-        Returns:
-            str: The benchmark results formatted as tagged CSV data.
-
-        Raises:
-            SimpleBenchValueError: If the specified section is unsupported.
+        :param case: The :class:`~simplebench.case.Case` instance representing the
+                     benchmarked code.
+        :type case: :class:`~simplebench.case.Case`
+        :param section: The section to output (eg. :attr:`~simplebench.enums.Section.OPS` or
+                        :attr:`~simplebench.enums.Section.TIMING`).
+        :type section: :class:`~simplebench.enums.Section`
+        :param options: The options for the CSV report. (Currently unused.)
+        :type options: :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+        :return: The benchmark results formatted as tagged CSV data.
+        :rtype: str
+        :raises SimpleBenchValueError: If the specified section is unsupported.
         """
         if not is_case(case):  # Handle deferred import type checking
             raise SimpleBenchTypeError(

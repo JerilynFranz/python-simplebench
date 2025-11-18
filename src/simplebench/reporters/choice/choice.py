@@ -1,24 +1,25 @@
-"""Choice() for reporters."""
+"""``Choice()`` for reporters."""
 from __future__ import annotations
+
 from collections.abc import Hashable
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from simplebench.enums import Section, Target, Format, FlagType
-from simplebench.validators import validate_type
-
-from simplebench.reporters.protocols import ChoiceProtocol
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.enums import FlagType, Format, Section, Target
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choice.exceptions import ChoiceErrorTag
 from simplebench.reporters.choice.metaclasses import IChoice
-
+from simplebench.reporters.protocols import ChoiceProtocol
+from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.validators import validate_type
 
 _REPORTER_IMPORTED: bool = False
 """Indicates whether Reporter has been imported yet."""
 
 
 def deferred_reporter_import() -> None:
-    """Deferred import of Reporter to avoid circular imports during initialization."""
+    """Deferred import of :class:`~simplebench.reporters.reporter.Reporter`
+    to avoid circular imports during initialization.
+    """
     global Reporter, _REPORTER_IMPORTED  # pylint: disable=global-statement
     if _REPORTER_IMPORTED:
         return
@@ -31,67 +32,88 @@ if TYPE_CHECKING:
 
 
 class Choice(Hashable, IChoice, ChoiceProtocol):
-    """Definition of a Choice option for live use by reporters.
+    """Definition of a :class:`~.Choice` option for live use by reporters.
 
-    A Choice represents a specific configuration of a Reporter subclass,
+    A :class:`~.Choice` represents a specific configuration of a
+    :class:`~simplebench.reporters.reporter.Reporter` subclass,
     including the sections to include in the report,
     the output targets, and the output formats.
 
-    The Choice class provides a structured way to define and manage
+    The :class:`~.Choice` class provides a structured way to define and manage
     different reporting options within the SimpleBench framework so that
     users can select from predefined configurations and developers can
     easily add new reporting options to the framework.
 
-    A Choice instance is immutable after creation to ensure consistency
+    A :class:`~.Choice` instance is immutable after creation to ensure consistency
     in reporting configurations.
 
     The sections, targets, and formats are descriptive only; they do not
-    enforce any behavior on the associated Reporter subclass. It is the
-    responsibility of the Reporter subclass to implement the behavior
-    corresponding to the specified sections, targets, and formats.
+    enforce any behavior on the associated :class:`~simplebench.reporters.reporter.Reporter`
+    subclass. It is the responsibility of the :class:`~simplebench.reporters.reporter.Reporter`
+    subclass to implement the behavior corresponding to the specified sections, targets,
+    and formats.
 
-    It is intended that multiple Choice instances can be created
-    for a single Reporter subclass to represent different configurations
-    of that reporter. For example, a JSON reporter might have one
-    Choice that includes all sections and outputs to the filesystem,
-    and another Choice that includes only the OPS section and outputs
+    It is intended that multiple :class:`~.Choice` instances can be created
+    for a single :class:`~simplebench.reporters.reporter.Reporter` subclass to represent
+    different configurations of that reporter. For example, a JSON reporter might have one
+    :class:`~.Choice` that includes all sections and outputs to the filesystem,
+    and another :class:`~.Choice` that includes only the OPS section and outputs
     to the console. This allows users to select from a variety of
     predefined reporting configurations without needing to create
-    multiple Reporter subclasses.
+    multiple :class:`~simplebench.reporters.reporter.Reporter` subclasses.
 
-    Choice instances are created by the Reporter subclass from
-    ChoiceConf instances during a Reporter's instantation process.
+    :class:`~.Choice` instances are created by the :class:`~simplebench.reporters.reporter.Reporter`
+    subclass from :class:`~.ChoiceConf` instances during a
+    :class:`~simplebench.reporters.reporter.Reporter`'s instantation process.
 
-    Separating ChoiceConf and Choice allows for a clear distinction
-    between the configuration data (ChoiceConf) and the live,
-    operational representation (Choice) used by the Reporter subclass.
+    Separating :class:`~.ChoiceConf` and :class:`~.Choice` allows for a clear distinction
+    between the configuration data (:class:`~.ChoiceConf`) and the live,
+    operational representation (:class:`~.Choice`) used by the
+    :class:`~simplebench.reporters.reporter.Reporter` subclass.
 
-    Attributes:
-        reporter (Reporter): The Reporter subclass instance associated with the choice.
-        choice_conf (ChoiceConf): The ChoiceConf instance used to create the choice.
-        flags (set[str]): A set of command-line flags associated with the choice.
-        flag_type: (FlagType): The type of command-line flag (e.g., boolean, target_list, etc.).
-        name (str): A unique name for the choice.
-        description (str): A brief description of the choice.
-        sections (set[Section]): A set of Section enums to include in the report.
-        targets (set[Target]): A set of Target enums for output.
-        default_targets (set[Target] | None): A set of Target enums representing the default
-            targets for the choice. If None, no default targets are specified and the reporter's defaults
-            will be used when generating reports.
-        output_format (Format): A Format instance describing the output format.
-        subdir (str | None): An optional subdirectory for output files.
-            If None, reports default to the reporter's subdir.
-        file_suffix (str | None): An optional file suffix for output files.
-            If None, reports default to the reporter's file_suffix.
-        file_unique (bool | None): Whether to make output file names unique.
-            If None, reports default to the reporter's file_unique.
-        file_append (bool | None): Whether to append to existing output files.
-            If None, reports default to the reporter's file_append.
-        options (ReporterOptions | None): An optional ReporterOptions instance
-            for additional configurations specific to a specific reporter.
-            If None, reports default to the reporter's default options.
-        extra (Any | None): Any additional metadata associated with the choice.
-
+    :param reporter: The :class:`~simplebench.reporters.reporter.Reporter` subclass instance
+                     associated with the choice.
+    :type reporter: :class:`~simplebench.reporters.reporter.Reporter`
+    :param choice_conf: The :class:`~.ChoiceConf` instance used to create the choice.
+    :type choice_conf: :class:`~.ChoiceConf`
+    :param flags: A set of command-line flags associated with the choice.
+    :type flags: set[str]
+    :param flag_type: The type of command-line flag (e.g., boolean, target_list, etc.).
+    :type flag_type: :class:`~simplebench.enums.FlagType`
+    :param name: A unique name for the choice.
+    :type name: str
+    :param description: A brief description of the choice.
+    :type description: str
+    :param sections: A set of :class:`~simplebench.enums.Section` enums to include in the report.
+    :type sections: set[:class:`~simplebench.enums.Section`]
+    :param targets: A set of :class:`~simplebench.enums.Target` enums for output.
+    :type targets: set[:class:`~simplebench.enums.Target`]
+    :param default_targets: A set of :class:`~simplebench.enums.Target` enums representing the
+                            default targets for the choice. If ``None``, no default targets are
+                            specified and the reporter's defaults will be used when generating
+                            reports.
+    :type default_targets: set[:class:`~simplebench.enums.Target`] | None
+    :param output_format: A :class:`~simplebench.enums.Format` instance describing the output
+                          format.
+    :type output_format: :class:`~simplebench.enums.Format`
+    :param subdir: An optional subdirectory for output files. If ``None``, reports default to
+                   the reporter's subdir.
+    :type subdir: str | None
+    :param file_suffix: An optional file suffix for output files. If ``None``, reports default
+                        to the reporter's file_suffix.
+    :type file_suffix: str | None
+    :param file_unique: Whether to make output file names unique. If ``None``, reports default
+                        to the reporter's file_unique.
+    :type file_unique: bool | None
+    :param file_append: Whether to append to existing output files. If ``None``, reports default
+                        to the reporter's file_append.
+    :type file_append: bool | None
+    :param options: An optional :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+                    instance for additional configurations specific to a specific reporter.
+                    If ``None``, reports default to the reporter's default options.
+    :type options: :class:`~simplebench.reporters.reporter.options.ReporterOptions` | None
+    :param extra: Any additional metadata associated with the choice.
+    :type extra: Any | None
     """
     __slots__ = (
         '_reporter',
@@ -101,16 +123,18 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def __init__(self, *,
                  reporter: Reporter,
                  choice_conf: ChoiceConf) -> None:
-        """Construct a Choice instance from a Reporter and a ChoiceConf instance.
+        """Construct a :class:`~.Choice` instance from a
+        :class:`~simplebench.reporters.reporter.Reporter` and a :class:`~.ChoiceConf` instance.
 
-        Args:
-            reporter (Reporter): An instance of a Reporter subclass.
-            choice_conf (ChoiceConf): An instance of ChoiceConf containing
-                the configuration for the choice.
-
-        Raises:
-            SimpleBenchTypeError: If any argument is of an incorrect type.
-            SimpleBenchValueError: If any argument has an invalid value (e.g., empty strings or empty sequences).
+        :param reporter: An instance of a :class:`~simplebench.reporters.reporter.Reporter`
+                         subclass.
+        :type reporter: :class:`~simplebench.reporters.reporter.Reporter`
+        :param choice_conf: An instance of :class:`~.ChoiceConf` containing the configuration
+                            for the choice.
+        :type choice_conf: :class:`~.ChoiceConf`
+        :raises SimpleBenchTypeError: If any argument is of an incorrect type.
+        :raises SimpleBenchValueError: If any argument has an invalid value (e.g., empty strings
+                                       or empty sequences).
         """
         deferred_reporter_import()
 
@@ -133,12 +157,12 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
 
     @property
     def reporter(self) -> Reporter:
-        """The reporter sub-class associated with the choice."""
+        """The :class:`~simplebench.reporters.reporter.Reporter` sub-class associated with the choice."""
         return self._reporter
 
     @property
     def choice_conf(self) -> ChoiceConf:
-        """The ChoiceConf instance used to create the choice."""
+        """The :class:`~.ChoiceConf` instance used to create the choice."""
         return self._choice_conf
 
     # All the properties below simply proxy to the underlying ChoiceConf instance
@@ -146,21 +170,25 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def flags(self) -> frozenset[str]:
         """Flags associated with the choice. These are used for command-line selection.
         They must be unique across all choices for all reporters. This is enforced
-        by the ReporterManager when choices are registered.
+        by the :class:`~simplebench.reporters.reporter_manager.ReporterManager` when choices
+        are registered.
 
         The flags should be in the format used on the command line,
-        typically starting with '--' for long options.
+        typically starting with ``--`` for long options.
 
-        Example: ['--json', '--json-full']
+        .. code-block:: python
 
-        The description property of the Choice is used to provide
+            ['--json', '--json-full']
+
+        The :attr:`~.description` property of the :class:`~.Choice` is used to provide
         help text for the flags when generating command-line help.
         """
         return self._choice_conf.flags
 
     @property
     def flag_type(self) -> FlagType:
-        """The type of command-line flag (e.g., FlagType.BOOLEAN, FlagType.TARGET_LIST, etc.)."""
+        """The type of command-line flag (e.g., :attr:`~simplebench.enums.FlagType.BOOLEAN`,
+        :attr:`~simplebench.enums.FlagType.TARGET_LIST`, etc.)."""
         return self._choice_conf.flag_type
 
     @property
@@ -179,7 +207,8 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def sections(self) -> frozenset[Section]:
         """Sections included in the choice.
 
-        These are the sections that the associated Reporter subclass
+        These are the sections that the associated
+        :class:`~simplebench.reporters.reporter.Reporter` subclass
         is expected to include in its report when this choice is selected."""
         return self._choice_conf.sections
 
@@ -187,7 +216,8 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def targets(self) -> frozenset[Target]:
         """Output targets for the choice.
 
-        These are the output targets that the associated Reporter subclass
+        These are the output targets that the associated
+        :class:`~simplebench.reporters.reporter.Reporter` subclass
         is expected to use when this choice is selected."""
         return self._choice_conf.targets
 
@@ -195,7 +225,8 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def default_targets(self) -> frozenset[Target] | None:
         """Default output targets for the choice.
 
-        These are the default output targets that the associated Reporter subclass
+        These are the default output targets that the associated
+        :class:`~simplebench.reporters.reporter.Reporter` subclass
         should use when this choice is selected, if no specific target
          is provided by the user."""
         return self._choice_conf.default_targets
@@ -204,10 +235,10 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def subdir(self) -> str | None:
         """An optional subdirectory for output files.
 
-        If specified, the associated Reporter subclass should
-        use this subdirectory for output files when this choice
+        If specified, the associated :class:`~simplebench.reporters.reporter.Reporter` subclass
+        should use this subdirectory for output files when this choice
         is selected. If an empty string, no subdirectory
-        should be used. If None, the reporter's default subdir
+        should be used. If ``None``, the reporter's default subdir
         should be used."""
         return self._choice_conf.subdir
 
@@ -215,9 +246,9 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def file_suffix(self) -> str | None:
         """An optional file suffix for output files.
 
-        If specified, the associated Reporter subclass should
-        use this file suffix for output files when this choice
-        is selected. If None, the reporter's default file_suffix
+        If specified, the associated :class:`~simplebench.reporters.reporter.Reporter` subclass
+        should use this file suffix for output files when this choice
+        is selected. If ``None``, the reporter's default file_suffix
         should be used."""
         return self._choice_conf.file_suffix
 
@@ -225,9 +256,9 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def file_unique(self) -> bool | None:
         """Whether to make output file names unique.
 
-        If specified, the associated Reporter subclass should
-        use this setting for output files when this choice
-        is selected. If None, the reporter's default file_unique
+        If specified, the associated :class:`~simplebench.reporters.reporter.Reporter` subclass
+        should use this setting for output files when this choice
+        is selected. If ``None``, the reporter's default file_unique
         setting should be used."""
         return self._choice_conf.file_unique
 
@@ -235,9 +266,9 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def file_append(self) -> bool | None:
         """Whether to append to existing output files.
 
-        If specified, the associated Reporter subclass should
-        use this setting for output files when this choice
-        is selected. If None, the reporter's default file_append
+        If specified, the associated :class:`~simplebench.reporters.reporter.Reporter` subclass
+        should use this setting for output files when this choice
+        is selected. If ``None``, the reporter's default file_append
         setting should be used."""
         return self._choice_conf.file_append
 
@@ -245,17 +276,19 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
     def output_format(self) -> Format:
         """Output format for the choice.
 
-        This is the output format that the associated Reporter subclass
+        This is the output format that the associated
+        :class:`~simplebench.reporters.reporter.Reporter` subclass
         is expected to use when this choice is selected.
 
-        Returns:
-            Format: The output format.
+        :return: The output format.
+        :rtype: :class:`~simplebench.enums.Format`
         """
         return self._choice_conf.output_format
 
     @property
     def options(self) -> ReporterOptions | None:
-        """An optional ReporterOptions instance for additional configuration."""
+        """An optional :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+        instance for additional configuration."""
         return self._choice_conf.options
 
     @property
@@ -264,10 +297,10 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
         return self._choice_conf.extra
 
     def __hash__(self) -> int:
-        """Compute a hash value for the ChoiceConf instance.
+        """Compute a hash value for the :class:`~.ChoiceConf` instance.
 
-        Returns:
-            int: The computed hash value.
+        :return: The computed hash value.
+        :rtype: int
         """
         return hash((
             self.flags,
@@ -288,13 +321,12 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
         ))
 
     def __eq__(self, other: object) -> bool:
-        """Check equality between two ChoiceConf instances.
+        """Check equality between two :class:`~.ChoiceConf` instances.
 
-        Args:
-            other (object): The other ChoiceConf instance to compare against.
-
-        Returns:
-            bool: True if the ChoiceConf instances are equal, False otherwise.
+        :param other: The other :class:`~.ChoiceConf` instance to compare against.
+        :type other: object
+        :return: ``True`` if the :class:`~.ChoiceConf` instances are equal, ``False`` otherwise.
+        :rtype: bool
         """
         if not isinstance(other, Choice):
             return False

@@ -14,13 +14,14 @@ T_Error = TypeVar('T_Error', bound=ErrorTag)  # pylint: disable=invalid-name
 
 
 class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
-    """A generic dictionary-like container for Choice-like instances.
+    """A generic dictionary-like container for :class:`~simplebench.reporters.choice.Choice`
+    -like instances.
 
-    This class enforces that only Choice-like instances can be added to it,
-    and provides methods to manage and retrieve those instances.
+    This class enforces that only :class:`~simplebench.reporters.choice.Choice`-like instances
+    can be added to it, and provides methods to manage and retrieve those instances.
 
     It is designed to be used in the context of reporters that require
-    a collection of Choice-like instances.
+    a collection of :class:`~simplebench.reporters.choice.Choice`-like instances.
     """
     def __init__(
         self,
@@ -28,19 +29,22 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         error_tag_enum: Type[T_Error],
         choices: Iterable[T_Item] | _BaseChoices[T_Item, T_Error] | None = None,
     ) -> None:
-        """Construct generic Choices/ChoicesConf container.
+        """Construct generic :class:`~.Choices`/:class:`~.ChoicesConf` container.
 
-        Args:
-            item_type (Type[T_Item]):
-                The expected type of items in the container (e.g., Choice or ChoiceConf
-                or other ChoiceProtocol conforming subclass type).
-            error_tag_enum (Type[T_Error]):
-                The enum class containing error tags for this container.
-            choices (Iterable[T_Item] | _BaseChoices[T_Item, T_Error] | None, default=None):
-                An Iterable of ChoiceProtocol conforming instances or another _BaseChoices
-                subclass instance to initialize the container with.
-
-                If None, an empty container is created.
+        :param item_type: The expected type of items in the container (e.g.,
+                          :class:`~simplebench.reporters.choice.Choice` or
+                          :class:`~simplebench.reporters.choice.ChoiceConf`
+                          or other :class:`~simplebench.reporters.protocols.ChoiceProtocol`
+                          conforming subclass type).
+        :type item_type: Type[T_Item]
+        :param error_tag_enum: The enum class containing error tags for this container.
+        :type error_tag_enum: Type[T_Error]
+        :param choices: An ``Iterable`` of
+                        :class:`~simplebench.reporters.protocols.ChoiceProtocol`
+                        conforming instances or another :class:`~._BaseChoices`
+                        subclass instance to initialize the container with.
+                        If ``None``, an empty container is created.
+        :type choices: Iterable[T_Item] | _BaseChoices[T_Item, T_Error] | None
         """
         self._item_type = item_type
         self._error_tags = error_tag_enum
@@ -67,16 +71,15 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
     def add(self, choice: T_Item) -> None:
         """Add a instance to the container.
 
-        The choice name attribute is used as the key in the container and
+        The ``choice.name`` attribute is used as the key in the container and
         is required to be unique within the container.
 
-        Args:
-            choice (T_Item):
-                The instance to add.
-
-        Raises:
-            SimpleBenchTypeError: If the argument is not an instance of the expected item type.
-            SimpleBenchValueError: If a ChoiceConf with the same name already exists in the container.
+        :param choice: The instance to add.
+        :type choice: T_Item
+        :raises SimpleBenchTypeError: If the argument is not an instance of the expected
+                                     item type.
+        :raises SimpleBenchValueError: If a :class:`~simplebench.reporters.choice.ChoiceConf`
+                                       with the same name already exists in the container.
         """
         if not isinstance(choice, self._item_type):
             raise SimpleBenchTypeError(
@@ -86,17 +89,21 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
 
     def extend(self, choices: Iterable[T_Item] | _BaseChoices[T_Item, T_Error]) -> None:
         """Add instances to the container. It does so by adding each instance in the
-        provided iterable of T_Item instances or by adding the instances from the
-        provided _BaseChoices subclass instance.
+        provided ``Iterable`` of ``T_Item`` instances or by adding the instances from the
+        provided :class:`~._BaseChoices` subclass instance.
 
-        Args:
-            choices (Iterable[T_Item] | _BaseChoices[T_Item, T_Error]):
-                An iterable of instances or an instance of a Choices-like container.
-        Raises:
-            SimpleBenchTypeError: If the choices argument is not an Iterable of ChoiceConf instances
-                or a ChoicesConf instance.
-            SimpleBenchValueError: If any ChoiceConf in the iterable has a duplicate name that already exists in
-                the container.
+        :param choices: An ``Iterable`` of instances or an instance of a ``Choices``-like
+                        container.
+        :type choices: Iterable[T_Item] | _BaseChoices[T_Item, T_Error]
+        :raises SimpleBenchTypeError: If the ``choices`` argument is not an ``Iterable`` of
+                                     :class:`~simplebench.reporters.choice.ChoiceConf`
+                                     instances or a
+                                     :class:`~simplebench.reporters.choices.ChoicesConf`
+                                     instance.
+        :raises SimpleBenchValueError: If any
+                                       :class:`~simplebench.reporters.choice.ChoiceConf`
+                                       in the ``Iterable`` has a duplicate name that already
+                                       exists in the container.
         """
         if isinstance(choices, _BaseChoices):
             for choice in choices.values():
@@ -113,11 +120,12 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
     def remove(self, name: str) -> None:
         """Remove an item instance from the container by its name.
 
-        Args:
-            name (str):
-                The name of the ChoiceConf instance to remove.
-        Raises:
-            SimpleBenchKeyError: If no ChoiceConf under the given name exists in the container.
+        :param name: The name of the :class:`~simplebench.reporters.choice.ChoiceConf`
+                     instance to remove.
+        :type name: str
+        :raises SimpleBenchKeyError: If no
+                                     :class:`~simplebench.reporters.choice.ChoiceConf`
+                                     under the given name exists in the container.
         """
         del self[name]
 
@@ -125,11 +133,10 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
     def __delitem__(self, key: str) -> None:
         """Remove an instance from the container by its name.
 
-        Args:
-            name (str): The name of the instance to remove.
-
-        Raises:
-            SimpleBenchKeyError: If no instance under the given name exists in the container.
+        :param name: The name of the instance to remove.
+        :type name: str
+        :raises SimpleBenchKeyError: If no instance under the given name exists in the
+                                     container.
         """
         if key not in self.data:
             raise SimpleBenchKeyError(
@@ -153,25 +160,31 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         This restricts setting values to only instances with string keys
         and raises an error otherwise. It also prevents duplicate names.
 
-        It also restricts the key to match the `name` attribute and updates
+        It also restricts the key to match the ``name`` attribute and updates
         the internal indexes accordingly.
 
-          Example:
+        .. code-block:: python
+
             choices = MyChoicesContainer()
             choice = ChoiceConf(...)
             choices[choice.name] = choice
 
-        Args:
-            key (str):
-                The key under which to store the ChoiceConf instance.
-            value (ChoiceConf):
-                The ChoiceConf instance to add.
-
-        Raises:
-            SimpleBenchTypeError: If the key is not a string or the value is not a ChoiceConf instance.
-            SimpleBenchValueError: If a ChoiceConf with the same name already exists
-                in the container; if the key does not match the ChoiceConf.name attribute;
-                or if a ChoiceConf with the same flag already exists in the container.
+        :param key: The key under which to store the
+                    :class:`~simplebench.reporters.choice.ChoiceConf` instance.
+        :type key: str
+        :param value: The :class:`~simplebench.reporters.choice.ChoiceConf` instance to add.
+        :type value: :class:`~simplebench.reporters.choice.ChoiceConf`
+        :raises SimpleBenchTypeError: If the key is not a string or the value is not a
+                                     :class:`~simplebench.reporters.choice.ChoiceConf`
+                                     instance.
+        :raises SimpleBenchValueError: If a
+                                       :class:`~simplebench.reporters.choice.ChoiceConf`
+                                       with the same name already exists
+                                       in the container; if the key does not match the
+                                       ``ChoiceConf.name`` attribute;
+                                       or if a
+                                       :class:`~simplebench.reporters.choice.ChoiceConf`
+                                       with the same flag already exists in the container.
         """
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
@@ -199,30 +212,29 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
         super().__setitem__(key, value)
 
     def __hash__(self) -> int:
-        """Compute a hash value for the Choices container based on its id.
+        """Compute a hash value for the :class:`~.Choices` container based on its id.
 
-        This makes Choices instances hashable and usable in sets or as dictionary keys
-        or by lru_cache.
+        This makes :class:`~.Choices` instances hashable and usable in sets or as
+        dictionary keys or by ``lru_cache``.
 
         However, since the container is mutable, the hash value is based on its id
         and no two instances will have the same hash value.
 
-        Returns:
-            int: The computed hash value.
+        :return: The computed hash value.
+        :rtype: int
         """
         return id(self)
 
     def __eq__(self, other: object) -> bool:
-        """Check equality between two Choices containers.
+        """Check equality between two :class:`~.Choices` containers.
 
         This check is based on identity; two containers are considered equal
         if they are the same instance. Effectively this means that no two distinct
         instances will be considered equal, even if they contain the same items.
 
-        Args:
-            other (object): The other Choices container to compare against.
-
-        Returns:
-            bool: True if the containers are equal, False otherwise.
+        :param other: The other :class:`~.Choices` container to compare against.
+        :type other: object
+        :return: ``True`` if the containers are equal, ``False`` otherwise.
+        :rtype: bool
         """
         return id(self) == id(other)

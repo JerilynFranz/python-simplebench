@@ -1,19 +1,20 @@
 """Choices for reporters."""
 # pylint: disable=useless-parent-delegation
 from __future__ import annotations
-from typing import Iterable, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Iterable
 
 from simplebench.exceptions import SimpleBenchTypeError
-
-from simplebench.reporters.choices.exceptions import ChoicesErrorTag
 from simplebench.reporters.choices._base import _BaseChoices
+from simplebench.reporters.choices.exceptions import ChoicesErrorTag
 
 _CHOICE_IMPORTED: bool = False
-"""Indicates whether `Choice` has been imported yet."""
+"""Indicates whether :class:`~simplebench.reporters.choice.Choice` has been imported yet."""
 
 
 def deferred_choice_import() -> None:
-    """Deferred import of Choice to avoid circular imports during initialization."""
+    """Deferred import of :class:`~simplebench.reporters.choice.Choice`
+    to avoid circular imports during initialization."""
     global Choice, _CHOICE_IMPORTED  # pylint: disable=global-statement
     if _CHOICE_IMPORTED:
         return
@@ -26,23 +27,23 @@ if TYPE_CHECKING:
 
 
 class Choices(_BaseChoices['Choice', ChoicesErrorTag]):
-    """A dictionary-like container for Choice instances.
+    """A dictionary-like container for :class:`~simplebench.reporters.choice.Choice` instances.
 
-    This class enforces that only `Choice` instances can be added to it,
-    and provides methods to manage and retrieve those instances.
+    This class enforces that only :class:`~simplebench.reporters.choice.Choice` instances
+    can be added to it, and provides methods to manage and retrieve those instances.
 
     It is designed to be used in the context of reporters that require
-    a collection of `Choice` instances.
+    a collection of :class:`~simplebench.reporters.choice.Choice` instances.
     """
     def __init__(self, choices: Iterable[Choice] | Choices | None = None) -> None:
-        """Construct a Choices container.
+        """Construct a :class:`~.Choices` container.
 
-        Args:
-            choices (Iterable[Choice] | Choices | None, default=None):
-                An Iterable of Choice instances or another Choices instance to
-                initialize the container with.
-
-                If None, an empty container is created.
+        :param choices: An ``Iterable`` of :class:`~simplebench.reporters.choice.Choice`
+                        instances or another :class:`~.Choices` instance to
+                        initialize the container with. If ``None``, an empty container
+                        is created.
+        :type choices: Iterable[:class:`~simplebench.reporters.choice.Choice`] | \
+            :class:`~.Choices` | None
         """
         deferred_choice_import()
         super().__init__(item_type=Choice,
@@ -50,52 +51,51 @@ class Choices(_BaseChoices['Choice', ChoicesErrorTag]):
                          choices=choices)
 
     def add(self, choice: Choice) -> None:
-        """Add a Choice instance to the container.
+        """Add a :class:`~simplebench.reporters.choice.Choice` instance to the container.
 
-        The choice name attribute is used as the key in the container and
+        The ``choice.name`` attribute is used as the key in the container and
         is required to be unique withing the container.
 
-        Args:
-            choice (Choice):
-                The Choice instance to add.
-
-        Raises:
-            SimpleBenchTypeError: If the argument is not a Choice instance.
-            SimpleBenchValueError: If a Choice with the same name already exists in the container.
+        :param choice: The :class:`~simplebench.reporters.choice.Choice` instance to add.
+        :type choice: :class:`~simplebench.reporters.choice.Choice`
+        :raises SimpleBenchTypeError: If the argument is not a
+                                     :class:`~simplebench.reporters.choice.Choice` instance.
+        :raises SimpleBenchValueError: If a :class:`~simplebench.reporters.choice.Choice`
+                                       with the same name already exists in the container.
         """
         super().add(choice)
 
     def all_choice_args(self) -> set[str]:
-        """Return a set of all Namespace arg names from all Choice instances in the container.
+        """Return a set of all ``Namespace`` arg names from all
+        :class:`~simplebench.reporters.choice.Choice` instances in the container.
 
-        Returns:
-            set[str]:
-                A set of all Namespace arg names from all Choice instances.
+        :return: A set of all ``Namespace`` arg names from all
+                 :class:`~simplebench.reporters.choice.Choice` instances.
+        :rtype: set[str]
         """
         return set(self._args_index.keys())
 
     def all_choice_flags(self) -> set[str]:
-        """Return a set of all CLI flags from all Choice instances in the container.
+        """Return a set of all CLI flags from all
+        :class:`~simplebench.reporters.choice.Choice` instances in the container.
 
-        Returns:
-            set[str]:
-                A set of all CLI flags from all Choice instances.
+        :return: A set of all CLI flags from all
+                 :class:`~simplebench.reporters.choice.Choice` instances.
+        :rtype: set[str]
         """
         return set(self._flags_index.keys())
 
     def get_choice_for_arg(self, arg: str) -> Choice | None:
-        """Return the Choice instance associated with the given Namespace arg name.
+        """Return the :class:`~simplebench.reporters.choice.Choice` instance associated with
+        the given ``Namespace`` arg name.
 
-        Args:
-            arg (str):
-                The Namespace arg name to look up.
-
-        Returns:
-            Choice | None: The Choice instance associated with the arg,
-                or None if no such Choice exists.
-
-        Raises:
-            SimpleBenchTypeError: If the arg is not a string.
+        :param arg: The ``Namespace`` arg name to look up.
+        :type arg: str
+        :return: The :class:`~simplebench.reporters.choice.Choice` instance associated with
+                 the arg, or ``None`` if no such
+                 :class:`~simplebench.reporters.choice.Choice` exists.
+        :rtype: :class:`~simplebench.reporters.choice.Choice` | None
+        :raises SimpleBenchTypeError: If the arg is not a string.
         """
         if not isinstance(arg, str):
             raise SimpleBenchTypeError(
@@ -105,39 +105,47 @@ class Choices(_BaseChoices['Choice', ChoicesErrorTag]):
 
     def extend(  # type: ignore[reportIncompatibleMethodOverride, override]
             self, choices: Iterable[Choice] | Choices) -> None:
-        """Add Choice instances to the container. It does so by adding each Choice in the
-        provided iterable of Choice or by adding the Choice instances from the provided Choices instance.
+        """Add :class:`~simplebench.reporters.choice.Choice` instances to the container.
+        It does so by adding each :class:`~simplebench.reporters.choice.Choice` in the
+        provided ``Iterable`` of :class:`~simplebench.reporters.choice.Choice` or by adding
+        the :class:`~simplebench.reporters.choice.Choice` instances from the provided
+        :class:`~.Choices` instance.
 
-        Args:
-            choices (Iterable[Choice] | Choices): An iterable of Choice instances or an instance of Choices.
-
-        Raises:
-            SimpleBenchTypeError: If the choices argument is not an Iterable of Choice instances or a Choices instance.
-            SimpleBenchValueError: If any Choice in the iterable has a duplicate name that already exists in
-                the container.
+        :param choices: An ``Iterable`` of :class:`~simplebench.reporters.choice.Choice`
+                        instances or an instance of :class:`~.Choices`.
+        :type choices: Iterable[:class:`~simplebench.reporters.choice.Choice`] | \
+            :class:`~.Choices`
+        :raises SimpleBenchTypeError: If the ``choices`` argument is not an ``Iterable`` of
+                                     :class:`~simplebench.reporters.choice.Choice` instances
+                                     or a :class:`~.Choices` instance.
+        :raises SimpleBenchValueError: If any :class:`~simplebench.reporters.choice.Choice`
+                                       in the ``Iterable`` has a duplicate name that already
+                                       exists in the container.
         """
         super().extend(choices)
 
     def remove(self, name: str) -> None:
-        """Remove a Choice instance from the container by its name.
+        """Remove a :class:`~simplebench.reporters.choice.Choice` instance from the container
+        by its name.
 
-        Args:
-            name (str): The name of the Choice instance to remove.
-
-        Raises:
-            SimpleBenchKeyError: If no Choice under the given name exists in the container.
+        :param name: The name of the :class:`~simplebench.reporters.choice.Choice` instance
+                     to remove.
+        :type name: str
+        :raises SimpleBenchKeyError: If no :class:`~simplebench.reporters.choice.Choice`
+                                     under the given name exists in the container.
         """
         super().remove(name)
 
     # custom __delitem__ method to maintain indexes
     def __delitem__(self, key: str) -> None:
-        """Remove a Choice instance from the container by its name.
+        """Remove a :class:`~simplebench.reporters.choice.Choice` instance from the container
+        by its name.
 
-        Args:
-            name (str): The name of the Choice instance to remove.
-
-        Raises:
-            SimpleBenchKeyError: If no Choice under the given name exists in the container.
+        :param name: The name of the :class:`~simplebench.reporters.choice.Choice` instance
+                     to remove.
+        :type name: str
+        :raises SimpleBenchKeyError: If no :class:`~simplebench.reporters.choice.Choice`
+                                     under the given name exists in the container.
         """
         super().__delitem__(key)
 
@@ -145,29 +153,33 @@ class Choices(_BaseChoices['Choice', ChoicesErrorTag]):
     # We override __setitem__ to enforce that only Choice instances
     # can be added to the container, and to maintain internal indexes.
     def __setitem__(self, key: str, value: Choice) -> None:
-        """Set a value in the Choices container.
+        """Set a value in the :class:`~.Choices` container.
 
-        This restricts setting values to only Choice instances with string keys
-        and raises an error otherwise. It also prevents duplicate Choice names.
+        This restricts setting values to only :class:`~simplebench.reporters.choice.Choice`
+        instances with string keys and raises an error otherwise. It also prevents duplicate
+        :class:`~simplebench.reporters.choice.Choice` names.
 
-        It also restricts the key to match the Choice.name attribute and updates
+        It also restricts the key to match the ``Choice.name`` attribute and updates
         the internal indexes accordingly.
 
-          Example:
+        .. code-block:: python
+
             choices = Choices()
             choice = Choice(...)
             choices[choice.name] = choice
 
-        Args:
-            key (str):
-                The key under which to store the Choice instance.
-            value (Choice):
-                The Choice instance to add.
-
-        Raises:
-            SimpleBenchTypeError: If the key is not a string or the value is not a Choice instance.
-            SimpleBenchValueError: If a Choice with the same name already exists
-                in the container; if the key does not match the Choice.name attribute;
-                or if a Choice with the same flag already exists in the container.
+        :param key: The key under which to store the
+                    :class:`~simplebench.reporters.choice.Choice` instance.
+        :type key: str
+        :param value: The :class:`~simplebench.reporters.choice.Choice` instance to add.
+        :type value: :class:`~simplebench.reporters.choice.Choice`
+        :raises SimpleBenchTypeError: If the key is not a string or the value is not a
+                                     :class:`~simplebench.reporters.choice.Choice` instance.
+        :raises SimpleBenchValueError: If a :class:`~simplebench.reporters.choice.Choice`
+                                       with the same name already exists
+                                       in the container; if the key does not match the
+                                       ``Choice.name`` attribute;
+                                       or if a :class:`~simplebench.reporters.choice.Choice`
+                                       with the same flag already exists in the container.
         """
         super().__setitem__(key, value)

@@ -2,14 +2,19 @@
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from .doc_utils import format_docstring
 from .enums import Section
-from .exceptions import SimpleBenchValueError, SimpleBenchTypeError, IterationErrorTag
-from .validators import (validate_non_blank_string, validate_int, validate_positive_int,
-                         validate_positive_float, validate_non_negative_float)
+from .exceptions import IterationErrorTag, SimpleBenchTypeError, SimpleBenchValueError
+from .validators import (
+    validate_int,
+    validate_non_blank_string,
+    validate_non_negative_float,
+    validate_positive_float,
+    validate_positive_int,
+)
 
 
 @format_docstring(DEFAULT_INTERVAL_UNIT=DEFAULT_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE=DEFAULT_INTERVAL_SCALE)
 class Iteration:
-    '''Container for the results of a single benchmark iteration.
+    """Container for the results of a single benchmark iteration.
 
     An iteration represents a single run of a benchmarked action (a run may consist of multiple rounds
     and a full benchmark consists of multiple iterations).
@@ -32,19 +37,27 @@ class Iteration:
     being benchmarked when the benchmark data is exported, although it is not used directly in
     any calculations by SimpleBench itself currently.
 
-    Attributes:
-        n (int): The complexity n-weight for the iteration. (read only)
-        rounds (int): The number of rounds in the iteration. (read only)
-        unit (str, default={DEFAULT_INTERVAL_UNIT}): The unit of measurement for the elapsed time.
-            It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`. (read only)
-        scale (float, default={DEFAULT_INTERVAL_SCALE}): The scale factor for the elapsed time.
-            It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_SCALE`. (read only)
-        elapsed (float): The elapsed time for the iteration. (read only)
-        ops_per_second (float): The number of operations per second. (read only)
-        per_round_elapsed (float): The mean time for a single round scaled to the base unit. (read only)
-        memory (int): The memory usage in bytes. (defaults to 0) (read only)
-        peak_memory (int): The peak memory usage in bytes. (read only)
-    '''
+    :ivar n: The complexity n-weight for the iteration. (read only)
+    :vartype n: int
+    :ivar rounds: The number of rounds in the iteration. (read only)
+    :vartype rounds: int
+    :ivar unit: The unit of measurement for the elapsed time.
+        It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`. (read only)
+    :vartype unit: str
+    :ivar scale: The scale factor for the elapsed time.
+        It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_SCALE`. (read only)
+    :vartype scale: float
+    :ivar elapsed: The elapsed time for the iteration. (read only)
+    :vartype elapsed: float
+    :ivar ops_per_second: The number of operations per second. (read only)
+    :vartype ops_per_second: float
+    :ivar per_round_elapsed: The mean time for a single round scaled to the base unit. (read only)
+    :vartype per_round_elapsed: float
+    :ivar memory: The memory usage in bytes. (defaults to 0) (read only)
+    :vartype memory: int
+    :ivar peak_memory: The peak memory usage in bytes. (read only)
+    :vartype peak_memory: int
+    """
 
     __slots__ = ('_n', '_rounds', '_elapsed', '_unit', '_scale', '_memory', '_peak_memory')
 
@@ -59,22 +72,26 @@ class Iteration:
                  memory: int = 0,  # in bytes
                  peak_memory: int = 0,  # in bytes
                  ) -> None:
-        """"Initialize an Iteration instance.
+        """Initialize an Iteration instance.
 
-        Args:
-            n (int, default=1): The complexity n-weight for the iteration. Must be a positive integer.
-            rounds (int, default=1): The number of rounds in the iteration. Must be a positive integer.
-            unit (str, default={DEFAULT_INTERVAL_UNIT}): The unit of measurement for the elapsed time.
-                It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`.
-            scale (float, default={DEFAULT_INTERVAL_SCALE}): The scale factor for the elapsed time.
-                It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_SCALE`.
-            elapsed (float, default=0.0): The elapsed time for the iteration. Must be a non-negative float.
-            memory (int, default=0): The memory usage in bytes. Must be an integer.
-            peak_memory (int, default=0): The peak memory usage in bytes. Must be an integer.
-
-        Raises:
-            SimpleBenchTypeError: If any of the arguments are of the wrong type.
-            SimpleBenchValueError: If any of the arguments have invalid values.
+        :param n: The complexity n-weight for the iteration. Must be a positive integer.
+        :type n: int
+        :param rounds: The number of rounds in the iteration. Must be a positive integer.
+        :type rounds: int
+        :param unit: The unit of measurement for the elapsed time.
+            It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`.
+        :type unit: str
+        :param scale: The scale factor for the elapsed time.
+            It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_SCALE`.
+        :type scale: float
+        :param elapsed: The elapsed time for the iteration. Must be a non-negative float.
+        :type elapsed: float
+        :param memory: The memory usage in bytes. Must be an integer.
+        :type memory: int
+        :param peak_memory: The peak memory usage in bytes. Must be an integer.
+        :type peak_memory: int
+        :raises SimpleBenchTypeError: If any of the arguments are of the wrong type.
+        :raises SimpleBenchValueError: If any of the arguments have invalid values.
         """
         self._n = validate_positive_int(
             n, 'n',
@@ -119,49 +136,49 @@ class Iteration:
 
     @property
     def n(self) -> int:
-        '''The n weight of the iteration'''
+        """The n weight of the iteration"""
         return self._n
 
     @property
     def rounds(self) -> int:
-        '''The number of rounds in the iteration'''
+        """The number of rounds in the iteration"""
         return self._rounds
 
     @property
     def unit(self) -> str:
-        '''The unit of measurement for the elapsed time.'''
+        """The unit of measurement for the elapsed time."""
         return self._unit
 
     @property
     def scale(self) -> float:
-        '''The scale factor for the elapsed time.'''
+        """The scale factor for the elapsed time."""
         return self._scale
 
     @property
     def elapsed(self) -> float:
-        '''The total elapsed time for the iteration in the specified unit.'''
+        """The total elapsed time for the iteration in the specified unit."""
         return self._elapsed
 
     @property
     def memory(self) -> int:
-        '''The memory usage in bytes. This is the difference between the allocated
+        """The memory usage in bytes. This is the difference between the allocated
         memory before and after the action.
 
         The edge case of no memory allocated results in a returned value of 0
-        '''
+        """
         return self._memory
 
     @property
     def peak_memory(self) -> int:
-        '''The peak memory usage in bytes.
+        """The peak memory usage in bytes.
 
         This is the maximum memory allocated during the action.
-        '''
+        """
         return self._peak_memory
 
     @property
     def per_round_elapsed(self) -> float:
-        '''The mean time for a single round scaled to the base unit.
+        """The mean time for a single round scaled to the base unit.
         If elapsed is 0, returns 0.0
 
         The per round computation is the elapsed time divided by the number
@@ -172,20 +189,20 @@ class Iteration:
         For example, if the scale factor is 1e-9 then elapsed time in nanoseconds
         will be converted to seconds.
 
-        Returns:
-            The mean time for a single round scaled to the base unit.
-        '''
+        :return: The mean time for a single round scaled to the base unit.
+        :rtype: float
+        """
         return self._elapsed * self._scale / self._rounds
 
     @property
     def ops_per_second(self) -> float:
-        '''The number of operations per second.
+        """The number of operations per second.
 
         This is calculated as the inverse of the elapsed time.
 
         The edge cases of 0 elapsed time results in a returned value of 0.0
         This would otherwise be an impossible value and so flags a measurement error.
-        '''
+        """
         if self._elapsed == 0.0:
             return 0.0
         return self._rounds / (self._elapsed * self._scale)
@@ -193,11 +210,10 @@ class Iteration:
     def iteration_section(self, section: Section) -> int | float:
         """Returns the requested section of the benchmark results.
 
-        Args:
-            section (Section): The section of the results to return. Must be Section.OPS or Section.TIMING.
-
-        Returns:
-            Stats: The requested section of the benchmark results.
+        :param section: The section of the results to return. Must be Section.OPS or Section.TIMING.
+        :type section: Section
+        :return: The requested section of the benchmark results.
+        :rtype: Stats
         """
         if not isinstance(section, Section):
             raise SimpleBenchTypeError(

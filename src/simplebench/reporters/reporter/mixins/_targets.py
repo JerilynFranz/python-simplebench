@@ -48,19 +48,22 @@ class _ReporterTargetMixin:
         this method should only be called when a valid Path is provided and will
         raise an exception if it is not a Path instance.
 
-        Args:
-            path (Path | None): The path to the directory where output should be saved.
-            subdir (str): The subdirectory within the path to save the file to.
-            filename (str): The filename to save the output as.
-            output (str | bytes | Text | Table): The report data to write to the file.
-            unique (bool): If True, ensure the filename is unique by prepending a counter as needed.
-            append (bool): If True, append to the file if it already exists. Otherwise, raise an error.
-
-        Raises:
-            SimpleBenchTypeError: If path is not a Path instance,
-                or if subdir or filename are not strings.
-            SimpleBenchValueError: If both append and unique are True. Or if the output file
-                already exists and neither append nor unique options were specified.
+        :param path: The path to the directory where output should be saved.
+        :type path: Path | None
+        :param subdir: The subdirectory within the path to save the file to.
+        :type subdir: str
+        :param filename: The filename to save the output as.
+        :type filename: str
+        :param output: The report data to write to the file.
+        :type output: str | bytes | Text | Table
+        :param unique: If True, ensure the filename is unique by prepending a counter as needed.
+        :type unique: bool
+        :param append: If True, append to the file if it already exists. Otherwise, raise an error.
+        :type append: bool
+        :raises SimpleBenchTypeError: If path is not a Path instance,
+            or if subdir or filename are not strings.
+        :raises SimpleBenchValueError: If both append and unique are True. Or if the output file
+            already exists and neither append nor unique options were specified.
         """
         path = validate_type(
             path, Path, 'path',
@@ -109,15 +112,16 @@ class _ReporterTargetMixin:
                         output: str | bytes | Text | Table) -> None:
         """Helper method to send report data to a callback function.
 
-        Args:
-            callback (ReporterCallback | None): The callback function to send the output to.
-            case (Case): The Case instance representing the benchmarked code.
-            section (Section): The Section of the report.
-            output_format (Format): The Format of the report.
-            output (str | bytes | Text | Table): The report data to send to the callback.
-
-        Returns:
-            None
+        :param callback: The callback function to send the output to.
+        :type callback: ReporterCallback | None
+        :param case: The Case instance representing the benchmarked code.
+        :type case: Case
+        :param section: The Section of the report.
+        :type section: Section
+        :param output_format: The Format of the report.
+        :type output_format: Format
+        :param output: The report data to send to the callback.
+        :type output: str | bytes | Text | Table
         """
         # Rich text is not generally suitable for callback output, convert to plain text
         if isinstance(output, (Text, Table)):
@@ -147,11 +151,10 @@ class _ReporterTargetMixin:
 
         It can accept output as a string, Rich Text, or Rich Table.
 
-        Args:
-            output (str | bytes | Text | Table): The report data to print to the console.
-
-        Returns:
-            None
+        :param session: The Session instance containing the console.
+        :type session: Session | None
+        :param output: The report data to print to the console.
+        :type output: str | bytes | Text | Table
         """
         console = session.console if session is not None else Console()
         console.print(output)
@@ -166,10 +169,10 @@ class _ReporterTargetMixin:
         provides a way to convert it to plain text while preserving the intended
         layout as much as possible for non-console output targets.
 
-        Args:
-            rich_text (Text | Table): The Rich Text or Table instance to convert.
-        Returns:
-            str: The plain text representation of the Rich Text.
+        :param rich_text: The Rich Text or Table instance to convert.
+        :type rich_text: Text | Table
+        :return: The plain text representation of the Rich Text.
+        :rtype: str
         """
         if not isinstance(rich_text, (Text, Table)):
             raise SimpleBenchTypeError(

@@ -39,9 +39,10 @@ class _ReporterOrchestrationMixin:
     This makes writing reporters easier by providing common orchestration logic that
     can be reused across different reporter implementations.
 
-    Methods:
-        render_by_case: Render the report for an entire case at once across all applicable sections.
-        render_by_section: Render a report for each section and case individually and dispatch to targets.
+    :ivar render_by_case: Render the report for an entire case at once across all applicable sections.
+    :vartype render_by_case: meth
+    :ivar render_by_section: Render a report for each section and case individually and dispatch to targets.
+    :vartype render_by_section: meth
     """
 
     def _validate_render_by_args(
@@ -59,20 +60,21 @@ class _ReporterOrchestrationMixin:
         Checks that the provided arguments are of the expected types. Raises exceptions
         if any argument is of an incorrect type.
 
-        Args:
-            renderer (ReportRenderer | None): The method to be used for actually rendering the report.
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]): A callback function for additional processing of the report.
-
-        Returns:
-            None
-
-        Raises:
-            SimpleBenchTypeError: If any of the provided arguments are not of the expected types.
+        :param renderer: The method to be used for actually rendering the report.
+        :type renderer: ReportRenderer | None
+        :param args: The parsed command-line arguments.
+        :type args: Namespace
+        :param case: The Case instance representing the benchmarked code.
+        :type case: Case
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :param path: The path to the directory where the CSV file(s) will be saved.
+        :type path: Path | None
+        :param session: The Session instance containing benchmark results.
+        :type session: Session | None
+        :param callback: A callback function for additional processing of the report.
+        :type callback: ReporterCallback | None
+        :raises SimpleBenchTypeError: If any of the provided arguments are not of the expected types.
         """
         if renderer is not None and not callable(renderer):
             raise SimpleBenchTypeError(
@@ -128,56 +130,57 @@ class _ReporterOrchestrationMixin:
 
         Usage:
 
-        ```python
-        from typing import TYPE_CHECKING
+        .. code-block:: python
 
-        from simplebench.reporters.reporter.reporter import Reporter, ReporterOptions
+            from typing import TYPE_CHECKING
 
-        if TYPE_CHECKING:
-            from simplebench.case import Case
-            from simplebench.reporters.choice.choice import Choice
-            from simplebench.session import Session
+            from simplebench.reporters.reporter.reporter import Reporter, ReporterOptions
 
-        class MyReporter(Reporter):
-            def __init__(self, ...):
-                ...
+            if TYPE_CHECKING:
+                from simplebench.case import Case
+                from simplebench.reporters.choice.choice import Choice
+                from simplebench.session import Session
 
-            def run_report(self, case: Case, choice: Choice, session: Session | None = None) -> None:
-                self.render_by_case(renderer=self.render,
-                                    args=self._args,
-                                    case=case,
-                                    choice=choice,
-                                    path=self._path,
-                                    session=session,
-                                    callback=self._callback)
+            class MyReporter(Reporter):
+                def __init__(self, ...):
+                    ...
 
-            def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
-                '''Render the report output for the entire case across all sections.'''
-                ...
-        ```
+                def run_report(self, case: Case, choice: Choice, session: Session | None = None) -> None:
+                    self.render_by_case(renderer=self.render,
+                                        args=self._args,
+                                        case=case,
+                                        choice=choice,
+                                        path=self._path,
+                                        session=session,
+                                        callback=self._callback)
 
-        Args:
-            renderer (Optional[ReportRenderer]): The rendering function to use. If not provided,
-                defaults to `self.render`.
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
+                def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+                    '''Render the report output for the entire case across all sections.'''
+                    ...
 
-        Return:
-            None
-
-        Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
-                required arguments are missing. Also raised if the callback is not callable when
-                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
-                target is specified.
-            SimpleBenchValueError: If an unsupported section or target is specified in the choice.
+        :param renderer: The rendering function to use. If not provided,
+            defaults to `self.render`.
+        :type renderer: ReportRenderer | None
+        :param args: The parsed command-line arguments.
+        :type args: Namespace
+        :param case: The Case instance representing the benchmarked code.
+        :type case: Case
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :param path: The path to the directory where the CSV file(s) will be saved.
+        :type path: Path | None
+        :param session: The Session instance containing benchmark results.
+        :type session: Session | None
+        :param callback:
+            A callback function for additional processing of the report.
+            The function should accept two arguments: the Case instance and the CSV data as a string.
+            Leave as None if no callback is needed.
+        :type callback: ReporterCallback | None
+        :raises SimpleBenchTypeError: If the provided arguments are not of the expected types or if
+            required arguments are missing. Also raised if the callback is not callable when
+            provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
+            target is specified.
+        :raises SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
         actual_renderer = renderer if renderer is not None else self.render
         self._validate_render_by_args(
@@ -222,56 +225,57 @@ class _ReporterOrchestrationMixin:
 
         Usage:
 
-        ```python
-        from simplebench.reporters.reporter.reporter import Reporter, ReporterOptions
+        .. code-block:: python
 
-        if TYPE_CHECKING:
-            from simplebench.case import Case
-            from simplebench.reporters.choice.choice import Choice
-            from simplebench.session import Session
+            from simplebench.reporters.reporter.reporter import Reporter, ReporterOptions
+
+            if TYPE_CHECKING:
+                from simplebench.case import Case
+                from simplebench.reporters.choice.choice import Choice
+                from simplebench.session import Session
 
 
-        class MyReporter(Reporter):
-            def __init__(self, ...):
-                ...
+            class MyReporter(Reporter):
+                def __init__(self, ...):
+                    ...
 
-            def run_report(self, case: Case, choice: Choice, session: Session | None = None) -> None:
-                self.render_by_section(
-                                    renderer=self.render,
-                                    args=self._args,
-                                    case=case,
-                                    choice=choice,
-                                    path=self._path,
-                                    session=session,
-                                    callback=self._callback)
+                def run_report(self, case: Case, choice: Choice, session: Session | None = None) -> None:
+                    self.render_by_section(
+                                        renderer=self.render,
+                                        args=self._args,
+                                        case=case,
+                                        choice=choice,
+                                        path=self._path,
+                                        session=session,
+                                        callback=self._callback)
 
-            def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
-                '''Render the report output for the entire case across all sections.'''
-                ...
-        ```
+                def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+                    '''Render the report output for the entire case across all sections.'''
+                    ...
 
-        Args:
-            renderer (Optional[ReportRenderer]): The rendering function to use. If not provided,
-                defaults to `self.render`.
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
-
-        Return:
-            None
-
-        Raises:
-            SimpleBenchTypeError: If the provided arguments are not of the expected types or if
-                required arguments are missing. Also raised if the callback is not callable when
-                provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
-                target is specified.
-            SimpleBenchValueError: If an unsupported section or target is specified in the choice.
+        :param renderer: The rendering function to use. If not provided,
+            defaults to `self.render`.
+        :type renderer: ReportRenderer | None
+        :param args: The parsed command-line arguments.
+        :type args: Namespace
+        :param case: The Case instance representing the benchmarked code.
+        :type case: Case
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :param path: The path to the directory where the CSV file(s) will be saved.
+        :type path: Path | None
+        :param session: The Session instance containing benchmark results.
+        :type session: Session | None
+        :param callback:
+            A callback function for additional processing of the report.
+            The function should accept two arguments: the Case instance and the CSV data as a string.
+            Leave as None if no callback is needed.
+        :type callback: ReporterCallback | None
+        :raises SimpleBenchTypeError: If the provided arguments are not of the expected types or if
+            required arguments are missing. Also raised if the callback is not callable when
+            provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
+            target is specified.
+        :raises SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
         actual_renderer = renderer if renderer is not None else self.render
         self._validate_render_by_args(
@@ -308,6 +312,7 @@ class _ReporterOrchestrationMixin:
             session: Session | None = None,
             callback: ReporterCallback | None = None) -> None:
         """Deliver the rendered output to the specified targets.
+
         This helper method takes the rendered output and dispatches it to the
         appropriate targets based on the prioritized options.
 
@@ -316,21 +321,26 @@ class _ReporterOrchestrationMixin:
         - CALLBACK: Sends the output to a provided callback function for further processing.
         - CONSOLE: Outputs the report directly to the console.
 
-        Args:
-            output (str | bytes | Text | Table): The rendered report output.
-            filename_base (str): The base filename to use for filesystem outputs.
-                This is the filename without any suffixes or extensions.
-            args (Namespace): The parsed command-line arguments.
-            choice (Choice): The Choice instance specifying the report configuration.
-            case (Case): The Case instance representing the benchmarked code.
-            section (Section): The Section of the report.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]): A callback function for additional processing of the report.
-        Returns:
-            None
-        Raises:
-            SimpleBenchValueError: If an unsupported target is specified in the choice.
+        :param output: The rendered report output.
+        :type output: str | bytes | Text | Table
+        :param filename_base: The base filename to use for filesystem outputs.
+            This is the filename without any suffixes or extensions.
+        :type filename_base: str
+        :param args: The parsed command-line arguments.
+        :type args: Namespace
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :param case: The Case instance representing the benchmarked code.
+        :type case: Case
+        :param section: The Section of the report.
+        :type section: Section
+        :param path: The path to the directory where the CSV file(s) will be saved.
+        :type path: Path | None
+        :param session: The Session instance containing benchmark results.
+        :type session: Session | None
+        :param callback: A callback function for additional processing of the report.
+        :type callback: ReporterCallback | None
+        :raises SimpleBenchValueError: If an unsupported target is specified in the choice.
         """
         output = validate_type(output,
                                (str, bytes, Text, Table),

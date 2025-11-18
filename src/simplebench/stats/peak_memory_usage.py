@@ -1,32 +1,43 @@
 # -*- coding: utf-8 -*-
 """Containers for benchmark statistics"""
 from __future__ import annotations
+
 from typing import Optional, Sequence
 
-from . import Stats, StatsSummary
-from .exceptions.peak_memory_usage import PeakMemoryUsageErrorTag
 from ..defaults import DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
 from ..exceptions import SimpleBenchTypeError
-from ..validators import validate_sequence_of_numbers
 from ..iteration import Iteration
+from ..validators import validate_sequence_of_numbers
+from . import Stats, StatsSummary
+from .exceptions.peak_memory_usage import PeakMemoryUsageErrorTag
 
 
 class PeakMemoryUsage(Stats):
-    '''Container for the peak memory usage statistics of a benchmark.
+    """Container for the peak memory usage statistics of a benchmark.
 
-    Attributes:
-        unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
-        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
-        rounds (int): The number of data points in the benchmark. (read only)
-        data: tuple[int | float, ...] = Tuple of peak memory usage data points. (read only)
-        mean (float): The mean memory usage. (read only)
-        median (float): The median memory usage. (read only)
-        minimum (float): The minimum memory usage. (read only)
-        maximum (float): The maximum memory usage. (read only)
-        standard_deviation (float): The standard deviation of the memory usage. (read only)
-        relative_standard_deviation (float): The relative standard deviation of the memory usage. (read only)
-        percentiles (dict[int, float]): Percentiles of memory usage. (read only)
-    '''
+    :ivar unit: The unit of measurement for the memory usage (e.g., "MB").
+    :vartype unit: str
+    :ivar scale: The scale factor for the memory usage (e.g., "1e6" for megabytes).
+    :vartype scale: float
+    :ivar rounds: The number of data points in the benchmark.
+    :vartype rounds: int
+    :ivar data: Tuple of peak memory usage data points.
+    :vartype data: tuple[int | float, ...]
+    :ivar mean: The mean memory usage.
+    :vartype mean: float
+    :ivar median: The median memory usage.
+    :vartype median: float
+    :ivar minimum: The minimum memory usage.
+    :vartype minimum: float
+    :ivar maximum: The maximum memory usage.
+    :vartype maximum: float
+    :ivar standard_deviation: The standard deviation of the memory usage.
+    :vartype standard_deviation: float
+    :ivar relative_standard_deviation: The relative standard deviation of the memory usage.
+    :vartype relative_standard_deviation: float
+    :ivar percentiles: Percentiles of memory usage.
+    :vartype percentiles: dict[int, float]
+    """
     def __init__(self,
                  *,
                  iterations: Sequence[Iteration] | None = None,
@@ -35,16 +46,20 @@ class PeakMemoryUsage(Stats):
                  rounds: int = 1,
                  data: Optional[Sequence[int | float]] = None):
         """Construct PeakMemoryUsage stats from Iteration or raw memory data.
-        Args:
-            iterations (Sequence[Iteration] | None): Sequence of Iteration objects to extract peak memory data from.
-            unit (str): The unit of measurement for the memory usage (e.g., "MB").
-            scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes).
-            rounds (int): The number of data points in the benchmark.
-            data (Optional[Sequence[int | float]]): Optional Sequence of peak memory usage data points. If not provided,
-                peak memory data will be extracted from the iterations if available.
-        Raises:
-            SimpleBenchTypeError: If any of the arguments are of the wrong type.
-            SimpleBenchValueError: If any of the arguments have invalid values.
+
+        :param iterations: Sequence of
+            :class:`~simplebench.iteration.Iteration` objects to extract peak memory data
+            from.
+        :param unit: The unit of measurement for the memory usage (e.g., "MB").
+        :param scale: The scale factor for the memory usage (e.g., "1e6" for megabytes).
+        :param rounds: The number of data points in the benchmark.
+        :param data: Optional Sequence of peak memory usage data points. If not
+            provided, peak memory data will be extracted from the iterations if
+            available.
+        :raises ~simplebench.exceptions.SimpleBenchTypeError: If any of the arguments are
+            of the wrong type.
+        :raises ~simplebench.exceptions.SimpleBenchValueError: If any of the arguments have
+            invalid values.
         """
         if iterations is None and data is None:
             raise SimpleBenchTypeError(
@@ -73,17 +88,27 @@ class PeakMemoryUsage(Stats):
 
 
 class PeakMemoryUsageSummary(StatsSummary):
-    '''Container for the summary of peak memory usage statistics of a benchmark.
+    """Container for the summary of peak memory usage statistics of a benchmark.
 
-    Attributes:
-        unit (str): The unit of measurement for the memory usage (e.g., "MB"). (read only)
-        scale (float): The scale factor for the memory usage (e.g., "1e6" for megabytes). (read only)
-        rounds (int): The number of data points in the benchmark. (read only)
-        mean (float): The mean memory usage. (read only)
-        median (float): The median memory usage. (read only)
-        minimum (float): The minimum memory usage. (read only)
-        maximum (float): The maximum memory usage. (read only)
-        standard_deviation (float): The standard deviation of the memory usage. (read only)
-        relative_standard_deviation (float): The relative standard deviation of the memory usage. (read only)
-        percentiles (dict[int, float]): Percentiles of memory usage. (read only)
-    '''
+    :ivar unit: The unit of measurement for the memory usage (e.g., "MB").
+    :vartype unit: str
+    :ivar scale: The scale factor for the memory usage (e.g., "1e6" for megabytes).
+    :vartype scale: float
+    :ivar rounds: The number of data points in the benchmark.
+    :vartype rounds: int
+    :ivar mean: The mean memory usage.
+    :vartype mean: float
+    :ivar median: The median memory usage.
+    :vartype median: float
+    :ivar minimum: The minimum memory usage.
+    :vartype minimum: float
+    :ivar maximum: The maximum memory usage.
+    :vartype maximum: float
+    :ivar standard_deviation: The standard deviation of the memory usage.
+    :vartype standard_deviation: float
+    :ivar relative_standard_deviation: The relative standard deviation of the memory
+        usage.
+    :vartype relative_standard_deviation: float
+    :ivar percentiles: Percentiles of memory usage.
+    :vartype percentiles: dict[int, float]
+    """

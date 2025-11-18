@@ -1,24 +1,25 @@
 """Session management for SimpleBench."""
 from __future__ import annotations
-from argparse import ArgumentParser, ArgumentError, Namespace
+
+from argparse import ArgumentError, ArgumentParser, Namespace
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Sequence, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from rich.console import Console
 from rich.progress import Progress
 
-from simplebench.enums import Verbosity, Target, Color
-from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, SessionErrorTag
+from simplebench.case import Case
+from simplebench.enums import Color, Target, Verbosity
+from simplebench.exceptions import SessionErrorTag, SimpleBenchArgumentError, SimpleBenchTypeError
 from simplebench.metaclasses import ISession
-from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
+from simplebench.reporters.protocols import ReporterCallback
+from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.runners import SimpleRunner
-from simplebench.tasks import RichProgressTasks, ProgressTracker
-from simplebench.case import Case
-from simplebench.utils import sanitize_filename, platform_id
+from simplebench.tasks import ProgressTracker, RichProgressTasks
+from simplebench.utils import platform_id, sanitize_filename
 
 if TYPE_CHECKING:
     from simplebench.reporters.reporter import Reporter
@@ -27,18 +28,27 @@ if TYPE_CHECKING:
 class Session(ISession):
     """Container for session related information while running benchmarks.
 
-    Properties:
-        args: (Namespace): The command line arguments for the session.
-        cases: (Sequence[Case]): Sequence of benchmark cases for the session.
-        output_path: (Optional[Path]): The output path for reports.
-        console: (Console): A Rich Console instance for displaying output.
-        verbosity: (Verbosity): Verbosity level for console output (default: Verbosity.NORMAL)
-        default_runner: (type[SimpleRunner]): The default runner class to use for Cases
-            that do not specify a runner. Defaults to `SimpleRunner`.
-        show_progress: (bool): Whether to show progress bars during execution. Defaults to False.
-        progress: (Progress): Rich Progress instance for displaying progress bars. (read only)
-        tasks: (ProgressTasks): The ProgressTasks instance for managing progress tasks. (read only)
-        reporter_manager: (ReporterManager): The ReporterManager instance for managing reporters. (read only)
+    :ivar args: The command line arguments for the session.
+    :vartype args: Namespace
+    :ivar cases: Sequence of benchmark cases for the session.
+    :vartype cases: Sequence[Case]
+    :ivar output_path: The output path for reports.
+    :vartype output_path: Path, optional
+    :ivar console: A Rich Console instance for displaying output.
+    :vartype console: Console
+    :ivar verbosity: Verbosity level for console output (default: :attr:`Verbosity.NORMAL`)
+    :vartype verbosity: Verbosity
+    :ivar default_runner: The default runner class to use for Cases
+        that do not specify a runner. Defaults to :class:`~.runners.SimpleRunner`.
+    :vartype default_runner: type[SimpleRunner]
+    :ivar show_progress: Whether to show progress bars during execution. Defaults to False.
+    :vartype show_progress: bool
+    :ivar progress: Rich Progress instance for displaying progress bars. (read only)
+    :vartype progress: Progress
+    :ivar tasks: The ProgressTasks instance for managing progress tasks. (read only)
+    :vartype tasks: RichProgressTasks
+    :ivar reporter_manager: The ReporterManager instance for managing reporters. (read only)
+    :vartype reporter_manager: ReporterManager
     """
     def __init__(self,
                  *,
@@ -51,21 +61,29 @@ class Session(ISession):
                  console: Optional[Console] = None) -> None:
         """Create a new Session.
 
-        Args:
-            cases (Optional[Sequence[Case]], default=None): A Sequence of benchmark cases for the session.
-                If None, an empty list will be created.
-            verbosity (Verbosity, default=Verbosity.NORMAL): The verbosity level for console output
-            default_runner (Optional[type[SimpleRunner], default=None): The default runner class to use
-                for Cases that do not specify a runner. If None, the default SimpleRunner is used.
-            args_parser (Optional[ArgumentParser], default=None): The ArgumentParser instance for the
-                session. If None, a new ArgumentParser will be automatically created.
-            progress (bool, default=False): Whether to show progress bars during execution.
-            output_path (Optional[Path], default=None): The output path for reports.
-            console: (Optional[Console], default=None): A Rich Console instance for displaying output. If None,
-                a new Console will be automatically created.
-
-        Raises:
-            SimpleBenchTypeError: If the arguments are of the wrong type.
+        :param cases: A Sequence of benchmark cases for the session.
+            If None, an empty list will be created. Defaults to None.
+        :type cases: Sequence[Case], optional
+        :param verbosity: The verbosity level for console output.
+            Defaults to :attr:`Verbosity.NORMAL`.
+        :type verbosity: Verbosity, optional
+        :param default_runner: The default runner class to use
+            for Cases that do not specify a runner. If None, the default :class:`~.runners.SimpleRunner` is used.
+            Defaults to None.
+        :type default_runner: type[SimpleRunner], optional
+        :param args_parser: The :class:`~argparse.ArgumentParser` instance for the
+            session. If None, a new :class:`~argparse.ArgumentParser` will be automatically created.
+            Defaults to None.
+        :type args_parser: ArgumentParser, optional
+        :param progress: Whether to show progress bars during execution.
+            Defaults to False.
+        :type progress: bool, optional
+        :param output_path: The output path for reports. Defaults to None.
+        :type output_path: Path, optional
+        :param console: A Rich Console instance for displaying output. If None,
+            a new Console will be automatically created. Defaults to None.
+        :type console: Console, optional
+        :raises SimpleBenchTypeError: If the arguments are of the wrong type.
         """
         # public read/write properties with private backing fields
         self.default_runner = default_runner
@@ -93,18 +111,16 @@ class Session(ISession):
         """Rich Console instance for displaying output - backing field for the 'console' attribute."""
 
     def parse_args(self, args: Sequence[str] | None = None) -> None:
-        """Parse the command line arguments using the session's ArgumentParser.
+        """Parse the command line arguments using the session's :class:`~argparse.ArgumentParser`.
 
-        This method parses the command line arguments and stores them in the session's args property.
-        By default, it parses the arguments from sys.argv. If args is provided, it will parse
+        This method parses the command line arguments and stores them in the session's :attr:`args` property.
+        By default, it parses the arguments from :data:`sys.argv`. If ``args`` is provided, it will parse
         the arguments from the provided sequence of strings instead.
 
-        Args:
-            args (Optional[Sequence[str]]): A list of command line arguments to parse. If None,
-                the arguments will be taken from sys.argv. (default: None)
-
-        Raises:
-            SimpleBenchTypeError: If the args_parser is not set.
+        :param args: A list of command line arguments to parse. If None,
+            the arguments will be taken from :data:`sys.argv`. Defaults to None.
+        :type args: Sequence[str], optional
+        :raises SimpleBenchTypeError: If the ``args_parser`` is not set.
         """
         if args is not None:
             if not isinstance(args, Sequence):
@@ -122,30 +138,29 @@ class Session(ISession):
 
     @property
     def reporter_manager(self) -> ReporterManager:
-        """Return the ReporterManager instance for managing reporters.
+        """Return the :class:`~.reporters.reporter_manager.ReporterManager` instance for managing reporters.
 
-        Returns:
-            ReporterManager: The ReporterManager instance for managing reporters.
+        :return: The :class:`~.reporters.reporter_manager.ReporterManager` instance for managing reporters.
+        :rtype: ReporterManager
         """
         return self._reporter_manager
 
     def add_reporter_flags(self) -> None:
-        """Adds the command line flags for all registered reporters to the session's ArgumentParser.
+        """Add the command line flags for all registered reporters to the session's ArgumentParser.
 
-        Any conflicts in flag names with already declared ArgumentParser flags will have to be
+        Any conflicts in flag names with already declared :class:`~argparse.ArgumentParser` flags will have to be
         handled by the reporters themselves.
 
-        This method should be called before parse_args().
+        This method should be called before :meth:`parse_args`.
 
-        It is placed in its own method so that a user can customize the ArgumentParser
+        It is placed in its own method so that a user can customize the :class:`~argparse.ArgumentParser`
         before or after adding the reporter flags as needed.
 
         It also allows the user to unregister reporters before adding the reporter flags if they
         want to omit specific built-in reporters entirely.
 
 
-        Raises:
-            SimpleBenchArgumentError: If there is a conflict or other error in reporter flag names.
+        :raises SimpleBenchArgumentError: If there is a conflict or other error in reporter flag names.
         """
         try:
             # Add reporter flags to the ArgumentParser based on command line args defined in each registered Choice
@@ -198,8 +213,8 @@ class Session(ISession):
         that were set and parsed when the session was created and returns a list of
         report keys for the reports that should be generated.
 
-        Returns:
-            A list of report keys for all reports to be generated in this session.
+        :return: A list of report keys for all reports to be generated in this session.
+        :rtype: list[str]
         """
         report_keys: list[str] = []
         for key in self._choices.all_choice_args():
@@ -312,18 +327,17 @@ class Session(ISession):
 
         Example:
 
-            ```python
+        .. code-block:: python
+
             from simplebench import Session
             from mybenchmark.runners import MyCustomRunner
 
             session = Session(default_runner=MyCustomRunner)
-            ```
 
-        Args:
-            value (type[SimpleRunner] | SimpleRunner): The default runner class to use for Cases that do
-                not specify a runner. Default is `SimpleRunner`
-        Raises:
-            SimpleBenchTypeError: If the value is not a subclass of SimpleRunner or None.
+        :param value: The default runner class to use for Cases that do
+            not specify a runner. Default is :class:`~.runners.SimpleRunner`.
+        :type value: type[SimpleRunner] or None
+        :raises SimpleBenchTypeError: If the value is not a subclass of :class:`~.runners.SimpleRunner` or None.
         """
         if value is not None and not (isinstance(value, type) and issubclass(value, SimpleRunner)):
             raise SimpleBenchTypeError(
@@ -339,10 +353,10 @@ class Session(ISession):
 
     @args_parser.setter
     def args_parser(self, value: ArgumentParser) -> None:
-        """Set the ArgumentParser instance for the session.
+        """Set the :class:`~argparse.ArgumentParser` instance for the session.
 
-        Args:
-            value (ArgumentParser): The ArgumentParser instance for the session.
+        :param value: The :class:`~argparse.ArgumentParser` instance for the session.
+        :type value: ArgumentParser
         """
         if not isinstance(value, ArgumentParser):
             raise SimpleBenchTypeError(
@@ -361,8 +375,8 @@ class Session(ISession):
     def args(self, value: Namespace) -> None:
         """Set the command line arguments for the session.
 
-        Args:
-            value (Namespace): The command line arguments for the session.
+        :param value: The command line arguments for the session.
+        :type value: Namespace
         """
         if not isinstance(value, Namespace):
             raise SimpleBenchTypeError(
@@ -385,11 +399,9 @@ class Session(ISession):
     def show_progress(self, value: bool) -> None:
         """Set whether to show progress bars during execution.
 
-        Args:
-            value (bool): Whether to show progress bars during execution.
-
-        Raises:
-            SimpleBenchTypeError: If the value is not a bool.
+        :param value: Whether to show progress bars during execution.
+        :type value: bool
+        :raises SimpleBenchTypeError: If the value is not a bool.
         """
         if not isinstance(value, bool):
             raise SimpleBenchTypeError(
@@ -412,11 +424,9 @@ class Session(ISession):
     def verbosity(self, value: Verbosity) -> None:
         """Set the Verbosity level for this session.
 
-        Args:
-            value (Verbosity): The new verbosity level for the session.
-
-        Raises:
-            SimpleBenchTypeError: If the value is not a Verbosity instance.
+        :param value: The new verbosity level for the session.
+        :type value: Verbosity
+        :raises SimpleBenchTypeError: If the value is not a :class:`~.enums.Verbosity` instance.
         """
         if not isinstance(value, Verbosity):
             raise SimpleBenchTypeError(
@@ -434,11 +444,9 @@ class Session(ISession):
     def cases(self, value: Sequence[Case]) -> None:
         """Set the Sequence of Cases for this session.
 
-        Args:
-            value (Sequence[Case]): Sequence of Cases for the Session
-
-        Raises:
-            SimpleBenchTypeError: If the value is not a Sequence of Cases.
+        :param value: Sequence of Cases for the Session
+        :type value: Sequence[Case]
+        :raises SimpleBenchTypeError: If the value is not a Sequence of Cases.
         """
         if not isinstance(value, Sequence):
             raise SimpleBenchTypeError(
@@ -455,13 +463,11 @@ class Session(ISession):
         self._cases = value
 
     def add(self, case: Case) -> None:
-        """Add a Case to the Sequence of Cases for this session.
+        """Add a :class:`~.case.Case` to the Sequence of Cases for this session.
 
-        Args:
-            case (Case): Case to add to the Session
-
-        Raises:
-            SimpleBenchTypeError: If the value is not a Case instance.
+        :param case: :class:`~.case.Case` to add to the Session
+        :type case: Case
+        :raises SimpleBenchTypeError: If the value is not a :class:`~.case.Case` instance.
         """
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
@@ -473,11 +479,9 @@ class Session(ISession):
     def extend(self, cases: Sequence[Case]) -> None:
         """Extend the Sequence of Cases for this session.
 
-        Args:
-            cases (Sequence[Case]): Sequence of Cases to add to the Session
-
-        Raises:
-            SimpleBenchTypeError: If the value is not a Sequence of Cases.
+        :param cases: Sequence of Cases to add to the Session
+        :type cases: Sequence[Case]
+        :raises SimpleBenchTypeError: If the value is not a Sequence of Cases.
         """
         if not isinstance(cases, Sequence):
             raise SimpleBenchTypeError(
@@ -502,8 +506,8 @@ class Session(ISession):
     def output_path(self, value: Path | None) -> None:
         """Set the output path for reports.
 
-        Args:
-            value (Path | None): The output path for reports.
+        :param value: The output path for reports.
+        :type value: Path or None
         """
         if value is not None and not isinstance(value, Path):
             raise SimpleBenchTypeError(
@@ -521,8 +525,8 @@ class Session(ISession):
     def console(self, value: Console) -> None:
         """Set the Rich Console instance for displaying output.
 
-        Args:
-            value (Console): The Rich Console instance for displaying output.
+        :param value: The Rich Console instance for displaying output.
+        :type value: Console
         """
         if not isinstance(value, Console):
             raise SimpleBenchTypeError(

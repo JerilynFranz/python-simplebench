@@ -25,8 +25,10 @@ class ReporterTypeProxy(LazyTypeProxy['Reporter']):
     It can be used in `isinstance` and `issubclass` checks as if it were
     the actual `Reporter` type.
 
-    WARNING: Do not attempt to import `Reporter` directly from this module,
-    as it will lead to circular import issues and will not work as intended.
+    .. warning::
+
+        Do not attempt to import `Reporter` directly from this module,
+        as it will lead to circular import issues and will not work as intended.
 
     It is not intended to be instantiated directly; use the actual `Reporter` class instead
     if an actual `Reporter` instance is needed.
@@ -48,15 +50,14 @@ def is_reporter(obj: object) -> TypeGuard[Reporter]:
     and IDEs.
 
     Usage:
-    ```python
-    if is_reporter(some_object):
-        # Now `some_object` is treated as a `Reporter` instance by static type checkers.
-    ```
 
-    Args:
-        obj (object): The object to check.
+    .. code-block:: python
 
-    Returns:
-        TypeGuard[Reporter]: True if the object is an instance of `Reporter`, False otherwise
+        if is_reporter(some_object):
+            # Now `some_object` is treated as a `Reporter` instance by static type checkers.
+
+    :param object obj: The object to check.
+    :return: True if the object is an instance of `Reporter`, False otherwise
+    :rtype: TypeGuard[Reporter]
     """
     return isinstance(obj, ReporterTypeProxy)

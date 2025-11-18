@@ -20,6 +20,7 @@ class _ReporterPrioritizationMixin:
 
     def get_prioritized_options(self: ReporterProtocol, case: Case, choice: Choice) -> ReporterOptions:
         """Get the reporter-specific options from the case, choice, or default options.
+
         This method retrieves reporter-specific options of type `options_cls` by
         checking the `case` options first, then the `choice` options, and finally
         falling back to the reporter's default options if none are found.
@@ -28,17 +29,15 @@ class _ReporterPrioritizationMixin:
         reporter's `options_type` property - it will always be a specific subclass
         of `ReporterOptions` defined by the reporter.
 
-        Args:
-            case (Case): The Case instance containing benchmark results.
-            choice (Choice): The Choice instance specifying the report configuration.
-
-        Returns:
-            ReporterOptions: The prioritized instance of the class `ReporterOptions`.
-                More specifically, it will be an instance of the reporter's specific
-                `ReporterOptions` subclass as defined by the reporter's `options_type` property.
-
-        Raises:
-            SimpleBenchNotImplementedError: If no ReporterOptions instance can be found
+        :param case: The Case instance containing benchmark results.
+        :type case: Case
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :return: The prioritized instance of the class `ReporterOptions`.
+            More specifically, it will be an instance of the reporter's specific
+            `ReporterOptions` subclass as defined by the reporter's `options_type` property.
+        :rtype: ReporterOptions
+        :raises SimpleBenchNotImplementedError: If no ReporterOptions instance can be found.
         """
         # is_* checks handle deferred import runtime type checking for Case and Choice
         if not is_case(case):
@@ -71,10 +70,10 @@ class _ReporterPrioritizationMixin:
         the `choice` default_targets, and if none are found, falling back to the reporter's
         default targets.
 
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            frozenset[Target]: The set of default targets.
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :return: The set of default targets.
+        :rtype: frozenset[Target]
         """
         if not is_choice(choice):
             raise SimpleBenchTypeError(
@@ -96,10 +95,10 @@ class _ReporterPrioritizationMixin:
         in the root output directory, while any other string indicates a subdirectory
         within the output directory.
 
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            str: The subdirectory for saving report files.
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :return: The subdirectory for saving report files.
+        :rtype: str
         """
         if not is_choice(choice):
             raise SimpleBenchTypeError(
@@ -116,10 +115,10 @@ class _ReporterPrioritizationMixin:
         the `choice` file_suffix, and if None is found falling back to the reporter's
         file_suffix.
 
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            str: The file suffix for report files.
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :return: The file suffix for report files.
+        :rtype: str
         """
         if not is_choice(choice):
             raise SimpleBenchTypeError(
@@ -136,10 +135,10 @@ class _ReporterPrioritizationMixin:
         the `choice` file_unique, and if None is found falling back to the reporter's
         file_unique.
 
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            bool: The file unique flag for report files.
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :return: The file unique flag for report files.
+        :rtype: bool
         """
         if not is_choice(choice):
             raise SimpleBenchTypeError(
@@ -156,10 +155,10 @@ class _ReporterPrioritizationMixin:
         the `choice` file_append, and if None is found falling back to the reporter's
         file_append.
 
-        Args:
-            choice (Choice): The Choice instance specifying the report configuration.
-        Returns:
-            bool: The file append flag for report files.
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :return: The file append flag for report files.
+        :rtype: bool
         """
         if not is_choice(choice):
             raise SimpleBenchTypeError(
