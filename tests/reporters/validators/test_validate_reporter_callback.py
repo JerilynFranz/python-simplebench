@@ -11,7 +11,8 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.validators import validate_reporter_callback
 from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
-from tests.testspec import Assert, TestAction, TestSpec, idspec
+
+from ...testspec import Assert, TestAction, TestSpec, idspec
 
 
 def mock_callback_valid(  # pylint: disable=unused-argument
