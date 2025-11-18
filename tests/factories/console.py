@@ -4,7 +4,7 @@ from typing import overload
 
 from rich.console import Console
 
-from ..cache_factory import uncached_factory, CacheId
+from ..cache_factory import CacheId, uncached_factory
 
 
 # overloads provide a tooltip assist for the decorated function and IDE tooltips
@@ -34,8 +34,8 @@ def console_factory() -> Console:
     using `rich.console.Console().export_text()`, making it suitable for use in
     automated tests.
 
-    Returns:
-        Console: A Console instance with default test parameters.
+    :return: A Console instance with default test parameters.
+    :rtype: Console
     """
 
 
@@ -63,12 +63,11 @@ def console_factory(*, cache_id: CacheId = None) -> Console:
     using `rich.console.Console().export_text()`, making it suitable for use in
     automated tests.
 
-    Args:
-        cache_id (CacheId, optional, default=None):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        Console: A Console instance with default test parameters.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Console instance with default test parameters.
+    :rtype: Console
     """
 
 
@@ -96,12 +95,11 @@ def console_factory(*, cache_id: CacheId = None) -> Console:  # pylint: disable=
     using `rich.console.Console().export_text()`, making it suitable for use in
     automated tests.
 
-    Args:
-        cache_id (CacheId, optional, default=None):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        Console: A Console instance with default test parameters.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Console instance with default test parameters.
+    :rtype: Console
     """
     return Console(file=StringIO(),
                    quiet=True,

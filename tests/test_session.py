@@ -1,23 +1,22 @@
 """Tests for the session.py module."""
 from __future__ import annotations
+
+import sys
 from argparse import ArgumentParser
 from functools import cache
 from pathlib import Path
-import sys
 from typing import Any
 
 import pytest
 from rich.console import Console
 
-from tests.kwargs import SessionKWArgs
-from tests.testspec import TestAction, idspec, Assert, TestSpec, NO_EXPECTED_VALUE
-
 from simplebench import Case, Results, Session, Verbosity
-from simplebench.exceptions import SimpleBenchTypeError, SessionErrorTag
+from simplebench.exceptions import SessionErrorTag, SimpleBenchTypeError
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.runners import SimpleRunner
 from simplebench.utils import collect_arg_list
-
+from tests.kwargs import SessionKWArgs
+from tests.testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestSpec, idspec
 
 _SAVED_ARGV = sys.argv.copy()
 """Saved copy of sys.argv for restoring after tests."""
@@ -26,11 +25,22 @@ _SAVED_ARGV = sys.argv.copy()
 class MockReporterOption(ReporterOptions):
     """A mock ReporterOption for testing purposes."""
     def __init__(self, name: str) -> None:
+        """
+        :param name: The name of the mock option.
+        :type name: str
+        """
         self.name = name
 
 
 def benchcase(bench: SimpleRunner, **kwargs) -> Results:
-    """A simple benchmark case function."""
+    """A simple benchmark case function.
+
+    :param bench: The benchmark runner.
+    :type bench: SimpleRunner
+    :param kwargs: Keyword arguments for the benchmark.
+    :return: The benchmark results.
+    :rtype: Results
+    """
 
     def action() -> None:
         """A simple benchmark case function."""
@@ -147,21 +157,30 @@ def test_session_init(testspec: TestSpec) -> None:
     This test uses the SessionKWArgs class to generate different combinations of parameters
     for the Session class initialization. It checks that the Session instance is created successfully
     with each combination of parameters or raises the appropriate exception for invalid parameters.
-    Args:
-        testspec (TestSpec): An TestSpec instance for specifying a test.
+
+    :param testspec: An TestSpec instance for specifying a test.
+    :type testspec: TestSpec
     """
     testspec.run()
 
 
 def pre_action(extras: dict[str, Any]) -> None:
-    """Helper function to perform pre-action tasks."""
+    """Helper function to perform pre-action tasks.
+
+    :param extras: A dictionary of extra arguments.
+    :type extras: dict[str, Any]
+    """
     if extras and "pre_action" in extras:
         pre_args = extras.get("pre_action_args", [])
         extras["pre_action"](*pre_args)
 
 
 def post_action(extras: dict[str, Any]) -> None:
-    """Helper function to perform post-action tasks."""
+    """Helper function to perform post-action tasks.
+
+    :param extras: A dictionary of extra arguments.
+    :type extras: dict[str, Any]
+    """
     if extras and "post_action" in extras:
         post_args = extras.get("post_action_args", [])
         extras["post_action"](*post_args)
@@ -176,7 +195,11 @@ def restore_argv() -> None:
 
 
 def set_argv(args: list[str]) -> None:
-    """Helper function to set sys.argv for argparse testing."""
+    """Helper function to set sys.argv for argparse testing.
+
+    :param args: A list of strings to set as sys.argv.
+    :type args: list[str]
+    """
     if not isinstance(args, list) or not all(isinstance(arg, str) for arg in args):
         raise ValueError("args must be a list of strings")
     try:
@@ -191,6 +214,11 @@ def parseargs_helper(args: list[str]) -> dict[str, Any]:
 
     This function returns a dictionary with pre_action and post_action keys
     to set and restore sys.argv around a test action.
+
+    :param args: A list of strings to set as sys.argv.
+    :type args: list[str]
+    :return: A dictionary with pre_action and post_action keys.
+    :rtype: dict[str, Any]
     """
     if not isinstance(args, list) or not all(isinstance(arg, str) for arg in args):
         raise ValueError("args must be a list of strings")
@@ -200,7 +228,11 @@ def parseargs_helper(args: list[str]) -> dict[str, Any]:
 
 @cache
 def session_instance() -> Session:
-    """Helper function to create a persistent default Session instance."""
+    """Helper function to create a persistent default Session instance.
+
+    :return: A Session instance.
+    :rtype: Session
+    """
     return Session()
 
 
@@ -239,7 +271,11 @@ def session_instance() -> Session:
         exception_tag=SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)),
 ])
 def test_uninitialized_parse_args(testspec: TestAction) -> None:
-    """Tests the parse_args method of the Session class."""
+    """Tests the parse_args method of the Session class.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     pre_action(testspec.extra)
     testspec.run()
     post_action(testspec.extra)
@@ -247,7 +283,11 @@ def test_uninitialized_parse_args(testspec: TestAction) -> None:
 
 @cache
 def session_with_reporters() -> Session:
-    """Helper function to create a persistent Session instance initialized with reporters."""
+    """Helper function to create a persistent Session instance initialized with reporters.
+
+    :return: A Session instance.
+    :rtype: Session
+    """
     session = session_instance()
     session.add_reporter_flags()
     return session
@@ -278,7 +318,11 @@ NO_ATTRIBUTE = object()
             expected=NO_EXPECTED_VALUE)),
 ])
 def test_parse_args(testspec: TestAction) -> None:
-    """Tests the parse_args method of a Session instance with reporters loaded."""
+    """Tests the parse_args method of a Session instance with reporters loaded.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     pre_action(testspec.extra)
     testspec.run()
     post_action(testspec.extra)

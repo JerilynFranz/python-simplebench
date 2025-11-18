@@ -1,11 +1,10 @@
 """Tests for choices.py module."""
 import pytest
 
-from tests.factories import default_choice_conf_kwargs, default_choice_conf
-from tests.testspec import TestSpec, TestAction, TestGet, idspec, Assert
-
-from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice_conf import ChoiceConf, ChoiceConfErrorTag
+from tests.factories import default_choice_conf, default_choice_conf_kwargs
+from tests.testspec import Assert, TestAction, TestGet, TestSpec, idspec
 
 
 @pytest.mark.parametrize(
@@ -167,6 +166,9 @@ def test_initialization(testspec: TestSpec):
     using different combinations of parameters provided through the
     ChoiceConfKWArgs class. It checks that the attributes of the Choice instance
     match the expected values based on the provided keyword arguments.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
     """
     testspec.run()
 
@@ -225,5 +227,9 @@ def test_initialization(testspec: TestSpec):
     ]
 )
 def test_choice_properties(testspec: TestSpec):
-    """Test Choice properties return expected values."""
+    """Test Choice properties return expected values.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

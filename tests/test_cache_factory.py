@@ -2,15 +2,18 @@
 
 import pytest
 
-from .testspec import TestSpec, TestAction, idspec
-from .cache_factory import uncached_factory, cached_factory, CACHE_DEFAULT, clear_cache
-
+from .cache_factory import CACHE_DEFAULT, cached_factory, clear_cache, uncached_factory
+from .testspec import TestAction, TestSpec, idspec
 
 # TODO: Add tests for passthrough of additional arguments to the decorated factory functions
 
 
 def uncached_factory_testspecs() -> list[TestSpec]:
-    """Returns the TestSpecs for uncached_factory() tests."""
+    """Return the TestSpecs for uncached_factory() tests.
+
+    :return: The TestSpecs for uncached_factory() tests.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def uncached_factory_does_not_cache_by_default() -> None:
@@ -98,12 +101,20 @@ def uncached_factory_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", uncached_factory_testspecs())
 def test_uncached_factory(testspec: TestSpec) -> None:
-    """Runs the TestSpecs for uncached_factory() tests."""
+    """Run the TestSpecs for uncached_factory() tests.
+
+    :param testspec: The testspec to run.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def cached_factory_testspecs() -> list[TestSpec]:
-    """Returns the TestSpecs for cached_factory() tests."""
+    """Return the TestSpecs for cached_factory() tests.
+
+    :return: The TestSpecs for cached_factory() tests.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def cached_factory_does_cache_by_default() -> None:
@@ -191,5 +202,9 @@ def cached_factory_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", cached_factory_testspecs())
 def test_cached_factory(testspec: TestSpec) -> None:
-    """Runs the TestSpecs for cached_factory() tests."""
+    """Run the TestSpecs for cached_factory() tests.
+
+    :param testspec: The testspec to run.
+    :type testspec: TestSpec
+    """
     testspec.run()

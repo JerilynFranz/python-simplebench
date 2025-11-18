@@ -1,11 +1,11 @@
 """Tests for the simplebench/utils.py module."""
 import pytest
 
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, UtilsErrorTag
-from simplebench import utils
 import simplebench.defaults as defaults
+from simplebench import utils
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, UtilsErrorTag
 
-from .factories import namespace_factory, argument_parser_factory, list_of_strings_flag_factory
+from .factories import argument_parser_factory, list_of_strings_flag_factory, namespace_factory
 from .testspec import TestAction, idspec
 
 defaults.DEFAULT_SIGNIFICANT_FIGURES = 3  # Ensure default is as expected for tests
@@ -71,7 +71,11 @@ defaults.DEFAULT_SIGNIFICANT_FIGURES = 3  # Ensure default is as expected for te
         exception_tag=UtilsErrorTag.KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE)),
 ])
 def test_kwargs_variations(testspec: TestAction) -> None:
-    """Test utils.kwargs_variations() function."""
+    """Test utils.kwargs_variations() function.
+
+    :param testspec: The test specification.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
@@ -121,7 +125,11 @@ def test_kwargs_variations(testspec: TestAction) -> None:
         expected=0.0)),
 ])
 def test_sigfigs(testspec: TestAction) -> None:
-    """Test utils.sigfigs() function."""
+    """Test utils.sigfigs() function.
+
+    :param testspec: The test specification.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
@@ -155,12 +163,20 @@ def test_sigfigs(testspec: TestAction) -> None:
         exception_tag=UtilsErrorTag.SANITIZE_FILENAME_EMPTY_NAME_ARG)),
 ])
 def test_sanitize_filename(testspec: TestAction) -> None:
-    """Test utils.sanitize_filename() function."""
+    """Test utils.sanitize_filename() function.
+
+    :param testspec: The test specification.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
 def collect_arg_list_testspecs() -> list[TestAction]:
-    """Collect test specs for utils.collect_arg_list function."""
+    """Collect test specs for utils.collect_arg_list function.
+
+    :return: A list of test specifications.
+    :rtype: list[TestAction]
+    """
     testspecs: list[TestAction] = []
 
     testspecs.extend([
@@ -222,5 +238,9 @@ def collect_arg_list_testspecs() -> list[TestAction]:
 
 @pytest.mark.parametrize("testspec", collect_arg_list_testspecs())
 def test_collect_arg_list(testspec: TestAction) -> None:
-    """Test utils.collect_arg_list() function."""
+    """Test utils.collect_arg_list() function.
+
+    :param testspec: The test specification.
+    :type testspec: TestAction
+    """
     testspec.run()

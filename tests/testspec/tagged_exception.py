@@ -1,6 +1,6 @@
 """TestSpec testing framework - tagged exceptions."""
-from typing import Any, Generic, TypeVar
 from enum import Enum
+from typing import Any, Generic, TypeVar
 
 E = TypeVar('E', bound=Exception)
 
@@ -37,13 +37,14 @@ class TaggedException(Exception, Generic[E]):
 
         raise MyTaggedValueError("An error occurred", tag=MyErrorTags.SOME_ERROR)
 
-    Args:
-        *args: Positional arguments to pass to the base exception's constructor.
-        tag (Enum): An Enum member representing the error code.
-        **kwargs: Keyword arguments to pass to the base exception's constructor.
-
-    Attributes:
-        tag_code: Enum
+    :param args: Positional arguments to pass to the base exception's constructor.
+    :type args: Any
+    :param tag: An Enum member representing the error code.
+    :type tag: Enum
+    :param kwargs: Keyword arguments to pass to the base exception's constructor.
+    :type kwargs: Any
+    :ivar tag_code: The tag code for the exception.
+    :vartype tag_code: Enum
     """
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
@@ -51,10 +52,12 @@ class TaggedException(Exception, Generic[E]):
         """
         Initializes the exception with a mandatory tag.
 
-        Args:
-            *args: Positional arguments to pass to the base exception's constructor.
-            tag (Enum, keyword): An Enum member representing the error code.
-            **kwargs: Keyword arguments to pass to the base exception's constructor.
+        :param args: Positional arguments to pass to the base exception's constructor.
+        :type args: Any
+        :param tag: An Enum member representing the error code.
+        :type tag: Enum
+        :param kwargs: Keyword arguments to pass to the base exception's constructor.
+        :type kwargs: Any
         """
         if not isinstance(tag, Enum):
             raise TypeError("Missing or wrong type 'tag' argument (must be Enum)")

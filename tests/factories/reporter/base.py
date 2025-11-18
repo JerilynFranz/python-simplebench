@@ -50,13 +50,11 @@ def report_parameters_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
     it is important to use cache_id appropriately to avoid unintended side effects
     from shared instances in tests.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        dict[str, Any]: A dictionary of default report parameters.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A dictionary of default report parameters.
+    :rtype: dict[str, Any]
     """
     return {
         'args': namespace_factory(),
@@ -79,7 +77,6 @@ class FactoryReporter(Reporter):
     Provides a shim implementation of run_report() and render() methods to allow
     instantiation and testing of the Reporter base class functionality with
     both good and bad parameters.
-
     """
     _OPTIONS_TYPE: ClassVar[type[FactoryReporterOptions]] = FactoryReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
     """The specific ReporterOptions subclass associated with this reporter."""
@@ -101,18 +98,28 @@ class FactoryReporter(Reporter):
                 choices: ChoicesConf) -> None:
         """Initialize Reporter with provided kwargs.
 
-        Args:
-            name (str | None): Name of the reporter.
-            description (str | None): Description of the reporter.
-            sections (Iterable[Section] | None): Supported sections for the reporter.
-            targets (Iterable[Target] | None): Supported targets for the reporter.
-            default_targets (Iterable[Target] | None): Default targets for the reporter.
-            formats (Iterable[Format] | None): Supported formats for the reporter.
-            choices (ChoicesConf | None): ChoicesConf for the reporter.
-            subdir (str | None): Subdirectory for the reporter.
-            file_suffix (str | None): File suffix for the reporter.
-            file_unique (str | None): File unique flag for the reporter.
-            file_append (str | None): File append flag for the reporter.
+        :param name: Name of the reporter.
+        :type name: str
+        :param description: Description of the reporter.
+        :type description: str
+        :param sections: Supported sections for the reporter.
+        :type sections: Iterable[Section]
+        :param targets: Supported targets for the reporter.
+        :type targets: Iterable[Target]
+        :param default_targets: Default targets for the reporter.
+        :type default_targets: Iterable[Target] | None
+        :param formats: Supported formats for the reporter.
+        :type formats: Iterable[Format]
+        :param choices: ChoicesConf for the reporter.
+        :type choices: ChoicesConf
+        :param subdir: Subdirectory for the reporter.
+        :type subdir: str
+        :param file_suffix: File suffix for the reporter.
+        :type file_suffix: str
+        :param file_unique: File unique flag for the reporter.
+        :type file_unique: bool
+        :param file_append: File append flag for the reporter.
+        :type file_append: bool
         """
         kwargs: dict[str, Any] = {}
         if name is not None:
@@ -142,15 +149,25 @@ class FactoryReporter(Reporter):
 
     def render(
             self, *, case: Case, section: Section, options: ReporterOptions) -> str | bytes | Text | Table:
-        """Render the report for the given case, section, and options."""
+        """Render the report for the given case, section, and options.
+
+        :param case: The case to render.
+        :type case: Case
+        :param section: The section to render.
+        :type section: Section
+        :param options: The options for rendering.
+        :type options: ReporterOptions
+        :return: The rendered report.
+        :rtype: str | bytes | Text | Table
+        """
         return default_report_output()
 
 
 def default_options_type() -> type[Options]:
     """Return a default ReporterOptions type for testing purposes.
 
-    Returns:
-        type[FactoryReporterOptions]: A FactoryReporterOptions type.
+    :return: A FactoryReporterOptions type.
+    :rtype: type[FactoryReporterOptions]
     """
     return Options
 
@@ -170,30 +187,27 @@ def reporter_kwargs_factory() -> ReporterKWArgs:
 
     It contains all parameters set to explicit default values for testing purposes:
 
-    ```python
+    .. code-block:: python
 
-    ReporterKWArgs(
-        name=default_name(),
-        description=default_description(),
-        options_type=default_options_type(),
-        sections=default_sections(),
-        targets=default_targets(),
-        default_targets=default_default_targets(),
-        formats=default_formats(),
-        choices=default_choices_confs(),
-        file_suffix=default_file_suffix(),
-        file_unique=default_file_unique(),
-        file_append=default_file_append()
-    )
-    ```
+        ReporterKWArgs(
+            name=default_name(),
+            description=default_description(),
+            options_type=default_options_type(),
+            sections=default_sections(),
+            targets=default_targets(),
+            default_targets=default_default_targets(),
+            formats=default_formats(),
+            choices=default_choices_confs(),
+            file_suffix=default_file_suffix(),
+            file_unique=default_file_unique(),
+            file_append=default_file_append()
+        )
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        ReporterKWArgs: A preconfigured instance with default values for testing.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A preconfigured instance with default values for testing.
+    :rtype: ReporterKWArgs
     """
 
 
@@ -211,30 +225,27 @@ def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWA
 
     It contains all parameters set to explicit default values for testing purposes:
 
-    ```python
+    .. code-block:: python
 
-    ReporterKWArgs(
-        name=default_name(),
-        description=default_description(),
-        options_type=default_options_type(),
-        sections=default_sections(),
-        targets=default_targets(),
-        default_targets=default_default_targets(),
-        formats=default_formats(),
-        choices=default_choices_confs(),
-        file_suffix=default_file_suffix(),
-        file_unique=default_file_unique(),
-        file_append=default_file_append()
-    )
-    ```
+        ReporterKWArgs(
+            name=default_name(),
+            description=default_description(),
+            options_type=default_options_type(),
+            sections=default_sections(),
+            targets=default_targets(),
+            default_targets=default_default_targets(),
+            formats=default_formats(),
+            choices=default_choices_confs(),
+            file_suffix=default_file_suffix(),
+            file_unique=default_file_unique(),
+            file_append=default_file_append()
+        )
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        ReporterKWArgs: A preconfigured instance with default values for testing.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A preconfigured instance with default values for testing.
+    :rtype: ReporterKWArgs
     """
 
 
@@ -252,30 +263,27 @@ def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWA
 
     It contains all parameters set to explicit default values for testing purposes:
 
-    ```python
+    .. code-block:: python
 
-    ReporterKWArgs(
-        name=default_name(),
-        description=default_description(),
-        options_type=default_options_type(),
-        sections=default_sections(),
-        targets=default_targets(),
-        default_targets=default_default_targets(),
-        formats=default_formats(),
-        choices=default_choices_confs(),
-        file_suffix=default_file_suffix(),
-        file_unique=default_file_unique(),
-        file_append=default_file_append()
-    )
-    ```
+        ReporterKWArgs(
+            name=default_name(),
+            description=default_description(),
+            options_type=default_options_type(),
+            sections=default_sections(),
+            targets=default_targets(),
+            default_targets=default_default_targets(),
+            formats=default_formats(),
+            choices=default_choices_confs(),
+            file_suffix=default_file_suffix(),
+            file_unique=default_file_unique(),
+            file_append=default_file_append()
+        )
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        ReporterKWArgs: A preconfigured instance with default values for testing.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A preconfigured instance with default values for testing.
+    :rtype: ReporterKWArgs
     """
     return ReporterKWArgs(
         name=default_reporter_name(),
@@ -297,22 +305,24 @@ def default_reporter_kwargs() -> ReporterKWArgs:
 
     It always returns the same ReporterKWArgs instance created by reporter_kwargs_factory().
 
-    ReporterKWArgs(
-        name=default_name(),
-        description=default_description(),
-        options_type=default_options_type(),
-        sections=default_sections(),
-        targets=default_targets(),
-        default_targets=default_default_targets(),
-        formats=default_formats(),
-        choices=default_choices_confs(),
-        file_suffix=default_file_suffix(),
-        file_unique=default_file_unique(),
-        file_append=default_file_append()
-    )
+    .. code-block:: python
 
-    Returns:
-        ReporterKWArgs: A preconfigured instance with default values for testing.
+        ReporterKWArgs(
+            name=default_name(),
+            description=default_description(),
+            options_type=default_options_type(),
+            sections=default_sections(),
+            targets=default_targets(),
+            default_targets=default_default_targets(),
+            formats=default_formats(),
+            choices=default_choices_confs(),
+            file_suffix=default_file_suffix(),
+            file_unique=default_file_unique(),
+            file_append=default_file_append()
+        )
+
+    :return: A preconfigured instance with default values for testing.
+    :rtype: ReporterKWArgs
     """
     return reporter_kwargs_factory(cache_id=f'{__name__}.default_reporter_kwargs:singleton')
 
@@ -324,7 +334,7 @@ def choice_conf_kwargs_factory() -> ChoiceConfKWArgs:
     It contains all parameters set to explicit default values for testing purposes.
     Because ChoiceConfKWArgs has many parameters, they are listed here for clarity:
 
-    ```python
+    .. code-block:: python
 
        ChoiceConfKWArgs(
             flags=default_choice_flags(),
@@ -342,9 +352,8 @@ def choice_conf_kwargs_factory() -> ChoiceConfKWArgs:
             options=default_reporter_options(),
             extra=default_extra()
        )
-    ```
-    Returns:
-        ChoiceConfKWArgs: A default ChoiceConfKWArgs instance.
+    :return: A default ChoiceConfKWArgs instance.
+    :rtype: ChoiceConfKWArgs
     """
 
 
@@ -357,7 +366,7 @@ def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceCo
     It contains all parameters set to explicit default values for testing purposes.
     Because ChoiceConfKWArgs has many parameters, they are listed here for clarity:
 
-    ```python
+    .. code-block:: python
 
        ChoiceConfKWArgs(
             flags=default_choice_flags(),
@@ -375,14 +384,12 @@ def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceCo
             options=default_reporter_options(),
             extra=default_extra(),
         )
-    ```
 
-    Args:
-        cache_id (CacheId, optional, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        ChoiceConfKWArgs: A default ChoiceConfKWArgs instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A default ChoiceConfKWArgs instance.
+    :rtype: ChoiceConfKWArgs
     """
 
 
@@ -393,7 +400,7 @@ def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceCo
     It contains all parameters set to explicit default values for testing purposes.
     Because ChoiceConfKWArgs has many parameters, they are listed here for clarity:
 
-    ```python
+    .. code-block:: python
 
        ChoiceConfKWArgs(
             flags=default_choice_flags(),
@@ -411,15 +418,12 @@ def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceCo
             options=default_reporter_options(),
             extra=default_extra(),
         )
-    ```
 
-    Args:
-        cache_id (CacheId, optional, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        ChoiceConfKWArgs: A default ChoiceConfKWArgs instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A default ChoiceConfKWArgs instance.
+    :rtype: ChoiceConfKWArgs
     """
     return ChoiceConfKWArgs(
         flags=default_choice_flags(),
@@ -446,7 +450,7 @@ def default_choice_conf_kwargs() -> ChoiceConfKWArgs:
     It is safe to cache this instance because `ChoiceConfKWArgs` is immutable. It will always
     return the same values for the same attributes and behaves consistently across tests.
 
-    ```python
+    .. code-block:: python
 
        ChoiceConfKWArgs(
             flags=default_choice_flags(),
@@ -464,10 +468,9 @@ def default_choice_conf_kwargs() -> ChoiceConfKWArgs:
             options=default_reporter_options(),
             extra=default_extra()
        )
-    ```
 
-    Returns:
-        ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
+    :return: A default ChoicesConfKWArgs instance.
+    :rtype: ChoicesConfKWArgs
     """
     return choice_conf_kwargs_factory(cache_id=f'{__name__}.default_choice_conf_kwargs:singleton')
 
@@ -478,8 +481,8 @@ def choices_conf_kwargs_factory() -> ChoicesConfKWArgs:
 
     It contains a single ChoiceConf created by default_choice_conf_kwargs().
 
-    Returns:
-        ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
+    :return: A default ChoicesConfKWArgs instance.
+    :rtype: ChoicesConfKWArgs
     """
 
 
@@ -491,12 +494,11 @@ def choices_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Choices
 
     It contains a single ChoiceConf created by default_choice_conf_kwargs().
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A default ChoicesConfKWArgs instance.
+    :rtype: ChoicesConfKWArgs
     """
 
 
@@ -506,12 +508,11 @@ def choices_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Choices
 
     It contains a single ChoiceConf created by default_choice_conf_kwargs().
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A default ChoicesConfKWArgs instance.
+    :rtype: ChoicesConfKWArgs
     """
     return ChoicesConfKWArgs()
 
@@ -521,8 +522,8 @@ def default_choices_conf_kwargs() -> ChoicesConfKWArgs:
 
     It always returns the same ChoicesConfKWArgs instance created by choices_conf_kwargs_factory().
 
-    Returns:
-        ChoicesConfKWArgs: A default ChoicesConfKWArgs instance.
+    :return: A default ChoicesConfKWArgs instance.
+    :rtype: ChoicesConfKWArgs
     """
     return choices_conf_kwargs_factory(cache_id=f'{__name__}.default_choices_conf_kwargs:singleton')
 
@@ -537,26 +538,19 @@ def choice_conf_factory() -> ChoiceConf:
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
     Defaults:
-        renderer (ReportRenderer):
-            RenderRecorder()
-        args (Namespace):
-            namespace_factory(cache_id=cache_id),
-        case (Case):
-                case_factory(cache_id=cache_id).
-        choice (Choice):
-            choice_factory(cache_id=cache_id).
-        path (Path):
-            path_factory(cache_id=cache_id).
-        session (Session):
-            session_factory(cache_id=cache_id).
-        callback (ReporterCallback):
-            CallbackRecorder()
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        ChoiceConf: A ChoiceConf instance.
+        - renderer (ReportRenderer): RenderRecorder()
+        - args (Namespace): namespace_factory(cache_id=cache_id),
+        - case (Case): case_factory(cache_id=cache_id).
+        - choice (Choice): choice_factory(cache_id=cache_id).
+        - path (Path): path_factory(cache_id=cache_id).
+        - session (Session): session_factory(cache_id=cache_id).
+        - callback (ReporterCallback): CallbackRecorder()
+
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A ChoiceConf instance.
+    :rtype: ChoiceConf
     """
 
 
@@ -566,34 +560,29 @@ def choice_conf_factory(*,
                         name: str | None = None,
                         flags: tuple[str, ...] | None = None) -> ChoiceConf:
     """Factory to create ChoiceConf with default values.
+
     This factory constructs a ChoiceConf instance populated with
     default values for testing the ChoiceConf class.
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
+
     Defaults:
-        renderer (ReportRenderer):
-            RenderRecorder()
-        args (Namespace):
-            namespace_factory(cache_id=cache_id),
-        case (Case):
-                case_factory(cache_id=cache_id).
-        choice (Choice):
-            choice_factory(cache_id=cache_id).
-        path (Path):
-            path_factory(cache_id=cache_id).
-        session (Session):
-            session_factory(cache_id=cache_id).
-        callback (ReporterCallback):
-            CallbackRecorder()
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-        name (str | None, default=None):
-            The name of the ChoiceConf instance.
-        flags (tuple[str, ...] | None, default=None):
-            The flags associated with the ChoiceConf instance.
-    Returns:
-        ChoiceConf: A ChoiceConf instance.
+        - renderer (ReportRenderer): RenderRecorder()
+        - args (Namespace): namespace_factory(cache_id=cache_id),
+        - case (Case): case_factory(cache_id=cache_id).
+        - choice (Choice): choice_factory(cache_id=cache_id).
+        - path (Path): path_factory(cache_id=cache_id).
+        - session (Session): session_factory(cache_id=cache_id).
+        - callback (ReporterCallback): CallbackRecorder()
+
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :param name: The name of the ChoiceConf instance.
+    :type name: str | None
+    :param flags: The flags associated with the ChoiceConf instance.
+    :type flags: tuple[str, ...] | None
+    :return: A ChoiceConf instance.
+    :rtype: ChoiceConf
     """
 
 
@@ -612,14 +601,15 @@ def choice_conf_factory(*,
 
     The caching behavior can be overridden by providing a unique cache_id or setting cache_id to None.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different ChoiceConf instances if needed.
-            If None, caching is disabled for this call.
-        name (str | None, default=None):
-            The name of the ChoiceConf instance.
-        flags (tuple[str, ...] | None, default=None):
-            The flags associated with the ChoiceConf instance.
+    :param cache_id: An identifier to cache different ChoiceConf instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :param name: The name of the ChoiceConf instance.
+    :type name: str | None
+    :param flags: The flags associated with the ChoiceConf instance.
+    :type flags: tuple[str, ...] | None
+    :return: A ChoiceConf instance.
+    :rtype: ChoiceConf
     """
     return ChoiceConf(
         flags=default_choice_flags() if flags is None else flags,
@@ -645,8 +635,8 @@ def default_choice_conf() -> ChoiceConf:
     It always returns the same instance for consistency in tests. Because
     ChoiceConf instances are immutable after creation, this is safe.
 
-    Returns:
-        ChoiceConf: A default ChoiceConf instance.
+    :return: A default ChoiceConf instance.
+    :rtype: ChoiceConf
     """
     return choice_conf_factory(cache_id=f'{__name__}.default_choice_conf:singleton')
 
@@ -668,12 +658,11 @@ def choice_factory() -> Choice:
     it is important to use cache_id appropriately to avoid unintended side effects
     from shared instances in tests.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different Choice instances if needed.
-            If None, caching is disabled for this call.
-    Returns:
-        Choice: A Choice instance.
+    :param cache_id: An identifier to cache different Choice instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Choice instance.
+    :rtype: Choice
     """
 
 
@@ -683,6 +672,7 @@ def choice_factory(*,
                    name: str | None = None,
                    flags: tuple[str, ...] | None = None) -> Choice:
     """Factory function to return a single cached Choice instance for testing.
+
     The choice instance is created using MockReporter() and is
     extracted from the MockReporter.choices attribute.
     It is uncached by default to ensure that each call returns a fresh Choice instance.
@@ -696,7 +686,8 @@ def choice_factory(*,
 
     The choice instance has the following parameters:
 
-    ```python
+    .. code-block:: python
+
          Choice(
                 reporter=FactoryReporter(),
                 flags=default_choice_flags(),
@@ -712,18 +703,19 @@ def choice_factory(*,
                 options=default_reporter_options(),
                 extra=default_extra()
          )
-     ```
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different Choice instances if needed.
-            If None, caching is disabled for this call.
-        name (str | None, default=None):
-            The name of the Choice instance.
-            If None, the default name from default_choice_name() is used.
-        flags (tuple[str, ...] | None, default=None):
-            The flags associated with the Choice instance.
-            If None, the default flags from default_choice_flags() are used.
-            Tuple is used to ensure hashability for caching.
+
+    :param cache_id: An identifier to cache different Choice instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :param name: The name of the Choice instance.
+                 If None, the default name from default_choice_name() is used.
+    :type name: str | None
+    :param flags: The flags associated with the Choice instance.
+                  If None, the default flags from default_choice_flags() are used.
+                  Tuple is used to ensure hashability for caching.
+    :type flags: tuple[str, ...] | None
+    :return: A Choice instance.
+    :rtype: Choice
     """
 
 
@@ -747,22 +739,18 @@ def choice_factory(*,
     it is important to use cache_id appropriately to avoid unintended side effects
     from shared instances in tests.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different Choice instances if needed.
-            If None, caching is disabled for this call.
-
-        name (str | None, default=None):
-            The name of the Choice instance.
-
-            If None, the default name from default_choice_name() is used.
-
-        flags (tuple[str, ...] | None, default=None):
-            The flags associated with the Choice instance.
-
-            If None, the default flags from default_choice_flags() are used.
-
-            Tuple is used to ensure hashability for caching.
+    :param cache_id: An identifier to cache different Choice instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :param name: The name of the Choice instance.
+                 If None, the default name from default_choice_name() is used.
+    :type name: str | None
+    :param flags: The flags associated with the Choice instance.
+                  If None, the default flags from default_choice_flags() are used.
+                  Tuple is used to ensure hashability for caching.
+    :type flags: tuple[str, ...] | None
+    :return: A Choice instance.
+    :rtype: Choice
     """
     is_default: bool = name is None and flags is None
     if name is None:
@@ -789,20 +777,16 @@ def choice_factory(*,
 def choices_conf_factory(choices: tuple[ChoiceConf, ...]) -> ChoicesConf:
     """Factory function to return a cached ChoicesConf instance for testing.
 
-    Args:
-        choices (tuple[ChoiceConf, ...] | None, default=None):
-            A tuple of ChoiceConf instances to initialize the ChoicesConf with.
-
-            If None, a default ChoicesConf instance with a single ChoiceConf
-            instance created by default_choice_conf() is returned.
-
-            Tuple is used to ensure hashability for caching.
-
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different ChoicesConf instances if needed.
-            If None, caching is disabled for this call.
-    Returns:
-        ChoicesConf: A ChoicesConf instance.
+    :param choices: A tuple of ChoiceConf instances to initialize the ChoicesConf with.
+                    If None, a default ChoicesConf instance with a single ChoiceConf
+                    instance created by default_choice_conf() is returned.
+                    Tuple is used to ensure hashability for caching.
+    :type choices: tuple[ChoiceConf, ...] | None
+    :param cache_id: An identifier to cache different ChoicesConf instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A ChoicesConf instance.
+    :rtype: ChoicesConf
     """
 
 
@@ -812,20 +796,16 @@ def choices_conf_factory(*,
                          cache_id: CacheId = CACHE_DEFAULT) -> ChoicesConf:
     """Factory function to return a cached ChoicesConf instance for testing.
 
-    Args:
-        choices (tuple[ChoiceConf, ...] | None, default=None):
-            A tuple of ChoiceConf instances to initialize the ChoicesConf with.
-
-            If None, a default ChoicesConf instance with a single ChoiceConf
-            instance created by default_choice_conf() is returned.
-
-            Tuple is used to ensure hashability for caching.
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different ChoicesConf instances if needed.
-            If None, caching is disabled for this call.
-
-    Returns:
-        ChoicesConf: A ChoicesConf instance.
+    :param choices: A tuple of ChoiceConf instances to initialize the ChoicesConf with.
+                    If None, a default ChoicesConf instance with a single ChoiceConf
+                    instance created by default_choice_conf() is returned.
+                    Tuple is used to ensure hashability for caching.
+    :type choices: tuple[ChoiceConf, ...] | None
+    :param cache_id: An identifier to cache different ChoicesConf instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A ChoicesConf instance.
+    :rtype: ChoicesConf
     """
 
 
@@ -833,20 +813,16 @@ def choices_conf_factory(*,
 def choices_conf_factory(*, choices: tuple[ChoiceConf, ...] | None = None) -> ChoicesConf:
     """Factory function to return a cached ChoicesConf instance for testing.
 
-    Args:
-        choices (tuple[ChoiceConf, ...] | None, default=None):
-            A tuple of ChoiceConf instances to initialize the ChoicesConf with.
-
-            If None, a default ChoicesConf instance with a single ChoiceConf
-            instance created by default_choice_conf() is returned.
-
-            Tuple is used to ensure hashability for caching.
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different ChoicesConf instances if needed.
-            If None, caching is disabled for this call.
-
-    Returns:
-        ChoicesConf: A ChoicesConf instance.
+    :param choices: A tuple of ChoiceConf instances to initialize the ChoicesConf with.
+                    If None, a default ChoicesConf instance with a single ChoiceConf
+                    instance created by default_choice_conf() is returned.
+                    Tuple is used to ensure hashability for caching.
+    :type choices: tuple[ChoiceConf, ...] | None
+    :param cache_id: An identifier to cache different ChoicesConf instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A ChoicesConf instance.
+    :rtype: ChoicesConf
     """
     if choices is None:
         choices = (default_choice_conf(), )
@@ -862,8 +838,8 @@ def default_choices_conf() -> ChoicesConf:
 
     It always returns the same ChoicesConf instance created by choices_conf_factory().
 
-    Returns:
-        ChoicesConf: A default ChoicesConf instance.
+    :return: A default ChoicesConf instance.
+    :rtype: ChoicesConf
     """
     return choices_conf_factory(cache_id=f'{__name__}.default_choices_conf:singleton')
 
@@ -882,13 +858,14 @@ def reporter_factory() -> FactoryReporter:
     To override this caching behavior, provide a non-None cache_id and it will be cached
     based on that identifier.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different UnconfiguredReporter instances if needed.
-            If None, caching is disabled for this call.
-        reporter_kwargs (ReporterKWArgs | None, default=None):
-            Keyword arguments to initialize the UnconfiguredReporter.
-            If none, default_reporter_kwargs() is used to provide a default set of parameters.
+    :param cache_id: An identifier to cache different UnconfiguredReporter instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :param reporter_kwargs: Keyword arguments to initialize the UnconfiguredReporter.
+                            If none, default_reporter_kwargs() is used to provide a default set of parameters.
+    :type reporter_kwargs: ReporterKWArgs | None
+    :return: A FactoryReporter instance.
+    :rtype: FactoryReporter
     """
 
 
@@ -897,6 +874,7 @@ def reporter_factory(*,
                      cache_id: CacheId = CACHE_DEFAULT,
                      reporter_kwargs: ReporterKWArgs | None = None) -> FactoryReporter:
     """Factory function to return an uncached FactortyReporter instance for testing.
+
     By default, it uses default_reporter_kwargs() to provide a set of parameters
     to initialize the FactoryReporter. However, custom parameters can be provided
     via the reporter_kwargs argument.
@@ -904,13 +882,15 @@ def reporter_factory(*,
     returns a new instance.
     To override this caching behavior, provide a non-None cache_id and it will be cached
     based on that identifier.
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different UnconfiguredReporter instances if needed.
-            If None, caching is disabled for this call.
-        reporter_kwargs (ReporterKWArgs | None, default=None):
-            Keyword arguments to initialize the UnconfiguredReporter.
-            If none, default_reporter_kwargs() is used to provide a default set of parameters.
+
+    :param cache_id: An identifier to cache different UnconfiguredReporter instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :param reporter_kwargs: Keyword arguments to initialize the UnconfiguredReporter.
+                            If none, default_reporter_kwargs() is used to provide a default set of parameters.
+    :type reporter_kwargs: ReporterKWArgs | None
+    :return: A FactoryReporter instance.
+    :rtype: FactoryReporter
     """
 
 
@@ -930,14 +910,14 @@ def reporter_factory(*,
     To override this caching behavior, provide a non-None cache_id and it will be cached
     based on that identifier.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different UnconfiguredReporter instances if needed.
-            If None, caching is disabled for this call.
-        reporter_kwargs (ReporterKWArgs | None, default=None):
-            Keyword arguments to initialize the UnconfiguredReporter.
-
-            If none, default_reporter_kwargs() is used to provide a default set of parameters.
+    :param cache_id: An identifier to cache different UnconfiguredReporter instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :param reporter_kwargs: Keyword arguments to initialize the UnconfiguredReporter.
+                            If none, default_reporter_kwargs() is used to provide a default set of parameters.
+    :type reporter_kwargs: ReporterKWArgs | None
+    :return: A FactoryReporter instance.
+    :rtype: FactoryReporter
     """
     if reporter_kwargs is not None and not isinstance(reporter_kwargs, ReporterKWArgs):
         raise TypeError(f"Invalid type for reporter_kwargs argument: {reporter_kwargs!r}")
@@ -951,12 +931,13 @@ def choices_factory(*,
                     choices: tuple[ChoiceConf, ...] | ChoicesConf | None = None) -> Choices:
     """Factory function to return a cached Choices instance for testing.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An identifier to cache different Choices instances if needed.
-            If None, caching is disabled for this call.
-        choices (tuple[ChoiceConf, ...] | ChoicesConf | None, default=None):
-            A sequence of ChoiceConf instances or a ChoicesConf instance to initialize the Choices instance.
+    :param cache_id: An identifier to cache different Choices instances if needed.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :param choices: A sequence of ChoiceConf instances or a ChoicesConf instance to initialize the Choices instance.
+    :type choices: tuple[ChoiceConf, ...] | ChoicesConf | None
+    :return: A Choices instance.
+    :rtype: Choices
     """
     if choices is None:
         return Choices()

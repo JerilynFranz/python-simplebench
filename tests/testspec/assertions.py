@@ -6,21 +6,36 @@ from typing import Any
 class Assert(str, Enum):
     """Enumeration of supported assertion operators.
 
-    Supported operators include:
-        - EQUAL ('=='): Checks if two values are equal.
-        - NOT_EQUAL ('!='): Checks if two values are not equal.
-        - LESS_THAN ('<'): Checks if one value is less than another.
-        - LESS_THAN_OR_EQUAL ('<='): Checks if one value is less than or equal to another.
-        - GREATER_THAN ('>'): Checks if one value is greater than another.
-        - GREATER_THAN_OR_EQUAL ('>='): Checks if one value is greater than or equal to another.
-        - IN ('in'): Checks if a value is contained within another (e.g., a list or set).
-        - NOT_IN ('not in'): Checks if a value is not contained within another (e.g., a list or set).
-        - IS ('is'): Checks if two references point to the same object.
-        - IS_NOT ('is not'): Checks if two references do not point to the same object.
-        - IS_NONE ('is None'): Checks if a reference is None.
-        - IS_NOT_NONE ('is not None'): Checks if a reference is not None.
-        - ISINSTANCE ('isinstance'): Checks if an object is an instance of a specified class or tuple of classes.
-        - LEN ('len'): Checks the length of a collection against an expected value.
+    :cvar EQUAL: Checks if two values are equal.
+    :vartype EQUAL: str
+    :cvar NOT_EQUAL: Checks if two values are not equal.
+    :vartype NOT_EQUAL: str
+    :cvar LESS_THAN: Checks if one value is less than another.
+    :vartype LESS_THAN: str
+    :cvar LESS_THAN_OR_EQUAL: Checks if one value is less than or equal to another.
+    :vartype LESS_THAN_OR_EQUAL: str
+    :cvar GREATER_THAN: Checks if one value is greater than another.
+    :vartype GREATER_THAN: str
+    :cvar GREATER_THAN_OR_EQUAL: Checks if one value is greater than or equal to another.
+    :vartype GREATER_THAN_OR_EQUAL: str
+    :cvar IN: Checks if a value is contained within another (e.g., a list or set).
+    :vartype IN: str
+    :cvar NOT_IN: Checks if a value is not contained within another (e.g., a list or set).
+    :vartype NOT_IN: str
+    :cvar IS: Checks if two references point to the same object.
+    :vartype IS: str
+    :cvar IS_NOT: Checks if two references do not point to the same object.
+    :vartype IS_NOT: str
+    :cvar IS_NONE: Checks if a reference is None.
+    :vartype IS_NONE: str
+    :cvar IS_NOT_NONE: Checks if a reference is not None.
+    :vartype IS_NOT_NONE: str
+    :cvar ISINSTANCE: Checks if an object is an instance of a specified class or tuple of classes.
+    :vartype ISINSTANCE: str
+    :cvar ISSUBCLASS: Checks if a class is a subclass of another class.
+    :vartype ISSUBCLASS: str
+    :cvar LEN: Checks the length of a collection against an expected value.
+    :vartype LEN: str
     """
     EQUAL = '=='
     NOT_EQUAL = '!='
@@ -46,18 +61,15 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
     and performs the specified assertion check. If the assertion fails, it returns
     an error message; otherwise, it returns an empty string.
 
-    Args:
-        assertion (Assert): The assertion operator to use.
-        expected (Any): The expected value.
-        found (Any): The found value.
-        on_fail (Callable[[str], None]): A callback function to call on failure. It should accept a single
-            string argument containing the failure message and must not return (i.e., it should raise an exception).
-
-    Returns:
-        str: An error message if the assertion fails, otherwise an empty string.
-
-    Raises:
-        ValueError: If an unsupported assertion operator is provided.
+    :param assertion: The assertion operator to use.
+    :type assertion: Assert
+    :param expected: The expected value.
+    :type expected: Any
+    :param found: The found value.
+    :type found: Any
+    :return: An error message if the assertion fails, otherwise an empty string.
+    :rtype: str
+    :raises ValueError: If an unsupported assertion operator is provided.
     """
     match assertion:
         case Assert.EQUAL:

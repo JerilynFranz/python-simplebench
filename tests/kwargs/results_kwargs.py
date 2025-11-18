@@ -1,12 +1,13 @@
 """Keyword arguments for Results class."""
 from __future__ import annotations
+
 from typing import Any, Sequence
 
-from simplebench.results import Results
 from simplebench.iteration import Iteration
-from simplebench.stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage
+from simplebench.results import Results
+from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage
 
-from .kwargs import NoDefaultValue, KWArgs
+from .kwargs import KWArgs, NoDefaultValue
 
 
 class ResultsKWArgs(KWArgs):
@@ -38,26 +39,45 @@ class ResultsKWArgs(KWArgs):
             ) -> None:
         """Initialize ResultsKWArgs with optional keyword arguments.
 
-        Args:
-            group (str): The group name for the results.
-            title (str): The title of the results.
-            description (str): A description of the results.
-            n (int): The number of iterations.
-            rounds (int): The number of rounds in the benchmark case.
-            total_elapsed (float): The total elapsed time.
-            iterations (Sequence[Iteration]): A sequence of Iteration instances.
-            variation_cols (dict[str, str]): Variation columns as a dictionary.
-            variation_marks (dict[str, Any]): Variation marks as a dictionary.
-            interval_unit (str): The unit for intervals.
-            interval_scale (float): The scale for intervals.
-            ops_per_interval_unit (str): The unit for operations per interval.
-            ops_per_interval_scale (float): The scale for operations per interval.
-            memory_unit (str): The unit for memory usage.
-            memory_scale (float): The scale for memory usage.
-            ops_per_second (OperationsPerInterval): OperationsPerInterval instance.
-            per_round_timings (OperationTimings): OperationTimings instance.
-            memory (MemoryUsage): MemoryUsage instance.
-            peak_memory (PeakMemoryUsage): PeakMemoryUsage instance.
-            extra_info (dict[str, Any]): Additional information as a dictionary.
+        :param group: The group name for the results.
+        :type group: str
+        :param title: The title of the results.
+        :type title: str
+        :param description: A description of the results.
+        :type description: str
+        :param n: The number of iterations.
+        :type n: int
+        :param rounds: The number of rounds in the benchmark case.
+        :type rounds: int
+        :param total_elapsed: The total elapsed time.
+        :type total_elapsed: float
+        :param iterations: A sequence of Iteration instances.
+        :type iterations: Sequence[Iteration]
+        :param variation_cols: Variation columns as a dictionary.
+        :type variation_cols: dict[str, str]
+        :param variation_marks: Variation marks as a dictionary.
+        :type variation_marks: dict[str, Any]
+        :param interval_unit: The unit for intervals.
+        :type interval_unit: str
+        :param interval_scale: The scale for intervals.
+        :type interval_scale: float
+        :param ops_per_interval_unit: The unit for operations per interval.
+        :type ops_per_interval_unit: str
+        :param ops_per_interval_scale: The scale for operations per interval.
+        :type ops_per_interval_scale: float
+        :param memory_unit: The unit for memory usage.
+        :type memory_unit: str
+        :param memory_scale: The scale for memory usage.
+        :type memory_scale: float
+        :param ops_per_second: OperationsPerInterval instance.
+        :type ops_per_second: OperationsPerInterval
+        :param per_round_timings: OperationTimings instance.
+        :type per_round_timings: OperationTimings
+        :param memory: MemoryUsage instance.
+        :type memory: MemoryUsage
+        :param peak_memory: PeakMemoryUsage instance.
+        :type peak_memory: PeakMemoryUsage
+        :param extra_info: Additional information as a dictionary.
+        :type extra_info: dict[str, Any]
         """
         super().__init__(call=Results.__init__, kwargs=locals())

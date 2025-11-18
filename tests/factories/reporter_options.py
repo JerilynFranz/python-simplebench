@@ -3,6 +3,7 @@
 Separately defined to avoid circular imports.
 """
 from __future__ import annotations
+
 from collections.abc import Hashable
 from typing import overload
 
@@ -22,7 +23,11 @@ class FactoryReporterOptions(ReporterOptions, Hashable):
     def tag(self) -> str:
         """Get the tag of the FactoryReporterOptions instance.
 
-        The tag is a string that identifies the instance for testing purposes."""
+        The tag is a string that identifies the instance for testing purposes.
+
+        :return: The tag of the instance.
+        :rtype: str
+        """
         return self._tag
 
     @tag.setter
@@ -49,13 +54,11 @@ def reporter_options_tuple_factory(  # pylint: disable=unused-argument
         *, cache_id: CacheId = CACHE_DEFAULT) -> tuple[FactoryReporterOptions]:
     """Return a tuple containing a FactoryReporterOptions instance for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        tuple[ReporterOptions]: A tuple containing a ReporterOptions instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A tuple containing a ReporterOptions instance.
+    :rtype: tuple[ReporterOptions]
     """
     return (default_reporter_options(), )
 
@@ -65,8 +68,8 @@ def default_reporter_options_tuple() -> tuple[FactoryReporterOptions]:
 
     It always returns the same tuple created by reporter_options_tuple_factory().
 
-    Returns:
-        tuple[FactoryReporterOptions]: A tuple containing a FactoryReporterOptions instance.
+    :return: A tuple containing a FactoryReporterOptions instance.
+    :rtype: tuple[FactoryReporterOptions]
     """
     return reporter_options_tuple_factory(cache_id=f'{__name__}.default_reporter_options_tuple:singleton')
 
@@ -76,8 +79,8 @@ def reporter_options_type_factory(  # pylint: disable=unused-argument
         *, cache_id: CacheId = CACHE_DEFAULT) -> type[FactoryReporterOptions]:
     """Return a default FactoryReporterOptions type for testing purposes.
 
-    Returns:
-        type[FactoryReporterOptions]: `FactoryReporterOptions`
+    :return: `FactoryReporterOptions`
+    :rtype: type[FactoryReporterOptions]
     """
     return FactoryReporterOptions
 
@@ -87,8 +90,8 @@ def default_reporter_options_type() -> type[FactoryReporterOptions]:
 
     It always returns the same FactoryReporterOptions type returned by reporter_options_type_factory().
 
-    Returns:
-        type[FactoryReporterOptions]: `FactoryReporterOptions`
+    :return: `FactoryReporterOptions`
+    :rtype: type[FactoryReporterOptions]
     """
     return reporter_options_type_factory(cache_id=f'{__name__}.default_reporter_options_type:singleton')
 
@@ -99,13 +102,11 @@ def reporter_options_factory() -> FactoryReporterOptions:
 
     The returned instance is cached by default.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        FactoryReporterOptions: A FactoryReporterOptions instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A FactoryReporterOptions instance.
+    :rtype: FactoryReporterOptions
     """
     return FactoryReporterOptions()
 
@@ -117,12 +118,11 @@ def reporter_options_factory(  # pylint: disable=unused-argument
 
     It is cached by default.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        FactoryReporterOptions: A FactoryReporterOptions instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A FactoryReporterOptions instance.
+    :rtype: FactoryReporterOptions
     """
 
 
@@ -133,13 +133,11 @@ def reporter_options_factory(  # pylint: disable=unused-argument
 
     It is cached by default.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        FactoryReporterOptions: `FactoryReporterOptions`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A FactoryReporterOptions instance.
+    :rtype: FactoryReporterOptions
     """
     return FactoryReporterOptions()
 
@@ -149,7 +147,7 @@ def default_reporter_options() -> FactoryReporterOptions:
 
     It always returns the same FactoryReporterOptions instance created by reporter_options_factory().
 
-    Returns:
-        FactoryReporterOptions: `FactoryReporterOptions`
+    :return: A FactoryReporterOptions instance.
+    :rtype: FactoryReporterOptions
     """
     return reporter_options_factory(cache_id=f'{__name__}.default_reporter_options:singleton')

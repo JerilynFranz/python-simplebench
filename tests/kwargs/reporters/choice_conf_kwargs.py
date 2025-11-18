@@ -1,13 +1,13 @@
 """simplebench.reporters.choice.Choice KWArgs package for SimpleBench tests."""
 from __future__ import annotations
-from typing import Any, Sequence, TYPE_CHECKING
 
-from tests.kwargs import NoDefaultValue, KWArgs
+from typing import TYPE_CHECKING, Any, Sequence
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
+from tests.kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
-    from simplebench.enums import Section, Target, Format, FlagType
+    from simplebench.enums import FlagType, Format, Section, Target
     from simplebench.reporters.reporter import ReporterOptions
 
 
@@ -41,34 +41,33 @@ class ChoiceConfKWArgs(KWArgs):
         """Constructs a ChoiceConfKWArgs instance. This class is used to hold keyword arguments for
         initializing a ChoiceConf instance in tests.
 
-        Args:
-            flags (Sequence[str] | NoDefaultValue, default=NoDefaultValue()):
-                A sequence of command-line flags associated with the choice.
-            flag_type (FlagType | NoDefaultValue, default=NoDefaultValue()):
-                The type of flag (e.g., boolean, string) associated with the choice.
-            name (str | NoDefaultValue, default=NoDefaultValue()):
-                A unique name for the choice.
-            description (str | NoDefaultValue, default=NoDefaultValue()):
-                A brief description of the choice.
-            subdir (str | NoDefaultValue, default=NoDefaultValue()):
-                The subdirectory for output files.
-            sections (Sequence[Section] | NoDefaultValue, default=NoDefaultValue()):
-                A sequence of Section enums to include in the report.
-            targets (Sequence[Target] | NoDefaultValue, default=NoDefaultValue()):
-                A sequence of Target enums for output.
-            default_targets (Sequence[Target] | NoDefaultValue, default=NoDefaultValue()):
-                A sequence of default Target enums for output.
-            file_suffix (str | NoDefaultValue, default=NoDefaultValue()):
-                The file suffix for output files.
-            file_unique (bool | NoDefaultValue, default=NoDefaultValue()):
-                Whether the output files should be unique.
-            file_append (bool | NoDefaultValue, default=NoDefaultValue()):
-                Whether to append to existing output files.
-            output_format (Format | NoDefaultValue, default=NoDefaultValue()):
-                A Format enums for output.
-            options (ReporterOptions | NoDefaultValue, default=NoDefaultValue()):
-                Options for the choice.
-            extra (Any | NoDefaultValue, default=NoDefaultValue()):
-                Any additional metadata associated with the choice. Defaults to None.
+        :param flags: A sequence of command-line flags associated with the choice.
+        :type flags: Sequence[str] | NoDefaultValue
+        :param flag_type: The type of flag (e.g., boolean, string) associated with the choice.
+        :type flag_type: FlagType | NoDefaultValue
+        :param name: A unique name for the choice.
+        :type name: str | NoDefaultValue
+        :param description: A brief description of the choice.
+        :type description: str | NoDefaultValue
+        :param subdir: The subdirectory for output files.
+        :type subdir: str | NoDefaultValue
+        :param sections: A sequence of Section enums to include in the report.
+        :type sections: Sequence[Section] | NoDefaultValue
+        :param targets: A sequence of Target enums for output.
+        :type targets: Sequence[Target] | NoDefaultValue
+        :param default_targets: A sequence of default Target enums for output.
+        :type default_targets: Sequence[Target] | NoDefaultValue
+        :param file_suffix: The file suffix for output files.
+        :type file_suffix: str | NoDefaultValue
+        :param file_unique: Whether the output files should be unique.
+        :type file_unique: bool | NoDefaultValue
+        :param file_append: Whether to append to existing output files.
+        :type file_append: bool | NoDefaultValue
+        :param output_format: A Format enums for output.
+        :type output_format: Format | NoDefaultValue
+        :param options: Options for the choice.
+        :type options: ReporterOptions | NoDefaultValue
+        :param extra: Any additional metadata associated with the choice. Defaults to None.
+        :type extra: Any | NoDefaultValue
         """
         super().__init__(call=ChoiceConf.__init__, kwargs=locals())

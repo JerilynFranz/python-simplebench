@@ -7,9 +7,7 @@ from simplebench.session import Session
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from ..kwargs import SessionKWArgs
-
-from . import case_factory, runner_factory, console_factory, output_path_factory
-
+from . import case_factory, console_factory, output_path_factory, runner_factory
 
 # The overloads provide a tooltip assist for the decorated function and IDE tooltips
 # This is necessary because the cache_factory decorators create a function
@@ -24,10 +22,11 @@ def session_factory() -> Session:
 
     The Session is initialized with default attributes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Session instance.
+    :rtype: Session
     """
 
 
@@ -37,10 +36,11 @@ def session_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Session:
 
     The Session is initialized with default attributes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Session instance.
+    :rtype: Session
     """
 
 
@@ -50,10 +50,11 @@ def session_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Session:
 
     The Session is initialized with default attributes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Session instance.
+    :rtype: Session
     """
     return Session(cases=[case_factory(cache_id=cache_id)], verbosity=Verbosity.QUIET)
 
@@ -69,13 +70,11 @@ def session_kwargs_factory() -> SessionKWArgs:
 
     The dictionary contains default attributes for initializing a Session instance.
 
-    Args:
-        cache_id (CacheId, optional, default=None):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        SessionKWArgs: A dictionary with default Session keyword arguments.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A dictionary with default Session keyword arguments.
+    :rtype: SessionKWArgs
     """
 
 
@@ -87,13 +86,11 @@ def session_kwargs_factory(*, cache_id: CacheId = None) -> SessionKWArgs:
 
     The dictionary contains default attributes for initializing a Session instance.
 
-    Args:
-        cache_id (CacheId, optional, default=None):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        SessionKWArgs: A dictionary with default Session keyword arguments.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A dictionary with default Session keyword arguments.
+    :rtype: SessionKWArgs
     """
 
 
@@ -114,13 +111,11 @@ def session_kwargs_factory(cache_id: CacheId = None) -> SessionKWArgs:
         - output_path: A Path instance created by `output_path_factory()`.
         - console: A Console instance created by `console_factory()`.
 
-    Args:
-        cache_id (CacheId, optional, default=None):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        SessionKWArgs: A dictionary with default Session keyword arguments.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A dictionary with default Session keyword arguments.
+    :rtype: SessionKWArgs
     """
     return SessionKWArgs(cases=[case_factory(cache_id=cache_id)],
                          default_runner=runner_factory(cache_id=cache_id),

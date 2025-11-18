@@ -1,6 +1,6 @@
 """TestSpec testing framework - helper functions."""
-from enum import Enum
 import traceback
+from enum import Enum
 from typing import Any
 
 
@@ -15,12 +15,11 @@ def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
     This function can be used as a placeholder for the `action` attribute in the TestAction class
     that is replaced by a real function or method before the test is run.
 
-    Args:
-        *args: Positional arguments (not used).
-        **kwargs: Keyword arguments (not used).
-
-    Raises:
-        NotImplementedError: Always raised to indicate that no action is assigned.
+    :param args: Positional arguments (not used).
+    :type args: Any
+    :param kwargs: Keyword arguments (not used).
+    :type kwargs: Any
+    :raises NotImplementedError: Always raised to indicate that no action is assigned.
     """
     raise NotImplementedError("No action assigned for this test.")
 
@@ -35,19 +34,17 @@ def _process_exception(
     This method checks if the provided exception matches the expected type
     and tag.
 
-    Args:
-        err (BaseException):
-            The exception to check.
-        exception (type[BaseException]):
-            The expected exception type.
-        exception_tag (str | Enum):
-            The expected tag to look for in the exception.
-        label (str):
-            A title or context for the exception being processed.
-
-    Returns:
-        list[str]: A list of error messages if the expected exception and exception_tag
-            is not found, empty otherwise.
+    :param err: The exception to check.
+    :type err: BaseException
+    :param exception: The expected exception type.
+    :type exception: type[BaseException]
+    :param exception_tag: The expected tag to look for in the exception.
+    :type exception_tag: str | Enum
+    :param label: A title or context for the exception being processed.
+    :type label: str
+    :return: A list of error messages if the expected exception and exception_tag
+        is not found, empty otherwise.
+    :rtype: list[str]
     """
     errors: list[str] = []
     if exception is None:

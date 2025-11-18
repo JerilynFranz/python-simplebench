@@ -1,5 +1,6 @@
 """TestSpec framework - TestGet class."""
 from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, NoReturn, Optional
@@ -20,38 +21,43 @@ class TestGet(TestSpec):
     This class allows for testing getting of attributes on an object,
     including validation of the get value, expected exceptions, and custom validation functions.
 
-    Args:
-        name (str):
-            Identifying name for the test.
-        obj (Optional[object], default=NO_OBJ_ASSIGNED):
-            The object whose attribute is to be tested. If not provided, the special sentinel value
-            NO_OBJ_ASSIGNED is used. The object must not be None and must be an instance of object.
-            It must be provided to run the test.
-        attribute (str):
-            The name of the attribute to be tested by setting.
-        expected Optional(Any):
-            Expected value of attribute after setting the attribute. If a exception is set,
-            the expected value is ignored.
-        assertion (Assert, default=Assert.EQUAL):
-            The assertion operator to use when comparing the expected and found values.
-        exception (Optional[type[Exception]], default=None):
-            Expected exception type (if any) to be raised by setting the attribute.
-        exception_tag (Optional[str | Enum], default=None):
-            Expected tag (if any) to be found in the exception message.
-        validate (Optional[Callable[[TestGet, Any], bool]], default=None):
-            Function to validate obj after getting attribute. It should return True if the object state is valid.
-
-            This is distinguished from the expected value check in that it can perform more complex validation
-            of the entire object state rather than just checking the value of a single attribute.
-
-            It is passed two arguments, the TestGet instance and the object being validated.
-        display_on_fail (str | Callable[[], str], default=""):
-            Message to display on test failure. This can be a static string or a callable that returns a string.
-        on_fail (Callable[[str], NoReturn], default=pytest.fail):
-            Function to call on test failure to raise an exception
-        extra (Any):
-            Extra fields for use by test frameworks. It is not used by the TestGet class itself.
-            Default is None.
+    :param name: Identifying name for the test.
+    :type name: str
+    :param obj: The object whose attribute is to be tested. If not provided, the special sentinel value
+                NO_OBJ_ASSIGNED is used. The object must not be None and must be an instance of object.
+                It must be provided to run the test.
+                Defaults to NO_OBJ_ASSIGNED.
+    :type obj: Optional[object], optional
+    :param attribute: The name of the attribute to be tested by setting.
+    :type attribute: str
+    :param expected: Expected value of attribute after setting the attribute. If a exception is set,
+                     the expected value is ignored.
+    :type expected: Optional[Any], optional
+    :param assertion: The assertion operator to use when comparing the expected and found values.
+                      Defaults to Assert.EQUAL.
+    :type assertion: Assert, optional
+    :param exception: Expected exception type (if any) to be raised by setting the attribute.
+                      Defaults to None.
+    :type exception: Optional[type[Exception]], optional
+    :param exception_tag: Expected tag (if any) to be found in the exception message.
+                          Defaults to None.
+    :type exception_tag: Optional[str | Enum], optional
+    :param validate: Function to validate obj after getting attribute. It should return True if the object state is
+                     valid. This is distinguished from the expected value check in that it can perform more complex
+                     validation of the entire object state rather than just checking the value of a single attribute.
+                     It is passed two arguments, the TestGet instance and the object being validated.
+                     Defaults to None.
+    :type validate: Optional[Callable[[TestGet, Any], bool]], optional
+    :param display_on_fail: Message to display on test failure.
+                            This can be a static string or a callable that returns a string.
+                            Defaults to "".
+    :type display_on_fail: str | Callable[[], str], optional
+    :param on_fail: Function to call on test failure to raise an exception.
+                    Defaults to pytest.fail.
+    :type on_fail: Callable[[str], NoReturn], optional
+    :param extra: Extra fields for use by test frameworks. It is not used by the TestGet class itself.
+                  Defaults to None.
+    :type extra: Any, optional
     """
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 

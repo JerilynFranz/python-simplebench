@@ -1,7 +1,8 @@
 """Factories for creating argparse-related test objects."""
 from __future__ import annotations
-from argparse import ArgumentParser, Namespace
+
 import re
+from argparse import ArgumentParser, Namespace
 from typing import Any, Iterable, Sequence
 
 from simplebench.enums import Target
@@ -12,20 +13,17 @@ from ._primitives import flag_name_factory
 def namespace_factory(*, argparser: ArgumentParser | None = None, args: Sequence[str] | None = None) -> Namespace:
     """Return an ArgumentParser Namespace instance for testing purposes.
 
-
     If passed an ArgumentParser instance, it uses that to parse the arguments (if provided).
     Otherwise, it creates a new ArgumentParser instance with a default program name of 'simplebench'.
 
     It never performs caching of calls.
 
-    Args:
-        argparser (ArgumentParser | None, default=None):
-            An optional ArgumentParser instance to use for parsing.
-        args (Sequence[str] | None, default=None):
-            An optional sequence of command-line arguments to parse.
-
-    Returns:
-        Namespace: An ArgumentParser Namespace instance.
+    :param argparser: An optional ArgumentParser instance to use for parsing.
+    :type argparser: ArgumentParser | None, optional
+    :param args: An optional sequence of command-line arguments to parse.
+    :type args: Sequence[str] | None, optional
+    :return: An ArgumentParser Namespace instance.
+    :rtype: Namespace
     """
     if args is None:
         args = []
@@ -43,14 +41,12 @@ def boolean_flag_factory(flag: str, default: bool = False) -> dict[str, Any]:
     - If default is False, the flag enables the feature when present.
     - If default is True, the flag disables the feature when present.
 
-    Args:
-        flag (str):
-            The name of the flag (including the leading dashes).
-        default (bool, default=False):
-            The default value for the flag.
-
-    Returns:
-        (dict[str, Any]): A dictionary suitable for unpacking as argparser.add_argument() flag parameters.
+    :param flag: The name of the flag (including the leading dashes).
+    :type flag: str
+    :param default: The default value for the flag.
+    :type default: bool, optional
+    :return: A dictionary suitable for unpacking as argparser.add_argument() flag parameters.
+    :rtype: dict[str, Any]
 
     return {
         'flag': flag,
@@ -86,22 +82,23 @@ def list_of_strings_flag_factory(flag: str,
     It is suitable to multiple values being provided by repeating the flag
     on the command line, e.g.:
 
-        `--flag value1 --flag value2 value3`
+    .. code-block:: console
+
+        --flag value1 --flag value2 value3
 
     It sets the nargs to '*' to allow zero or more values per flag occurrence.
 
     No caching is performed for this factory function.
-    Args:
-        flag (str):
-            The name of the flag (including the leading dashes).
-        choices (Iterable[str] | None, default=None):
-            An optional iterable of valid string choices for the flag values.
-            If None, no choices are enforced.
-        description (str, default='Help string'):
-            A help string description for the flag.
 
-    Returns:
-        (dict[str, Any]): A dictionary suitable for unpacking as argparser.add_argument() flag parameters.
+    :param flag: The name of the flag (including the leading dashes).
+    :type flag: str
+    :param choices: An optional iterable of valid string choices for the flag values.
+                    If None, no choices are enforced.
+    :type choices: Iterable[str] | None, optional
+    :param description: A help string description for the flag.
+    :type description: str, optional
+    :return: A dictionary suitable for unpacking as argparser.add_argument() flag parameters.
+    :rtype: dict[str, Any]
     """
     if not isinstance(flag, str):
         raise TypeError("'flag' argument must be a string")
@@ -139,15 +136,14 @@ def argument_parser_factory(prog: str = 'simplebench',
 
     No caching is performed for this factory function.
 
-    Args:
-        prog (str, default='simplebench'):
-            The program name for the ArgumentParser.
-        arguments (Sequence[dict[str, Any]] | None, default=None):
-            An optional sequence of argument configurations to add to the parser.
-            Each argument configuration should be a dictionary suitable for
-            unpacking into the `add_argument()` method of ArgumentParser.
-    Returns:
-        ArgumentParser: An ArgumentParser instance.
+    :param prog: The program name for the ArgumentParser.
+    :type prog: str, optional
+    :param arguments: An optional sequence of argument configurations to add to the parser.
+                      Each argument configuration should be a dictionary suitable for
+                      unpacking into the `add_argument()` method of ArgumentParser.
+    :type arguments: Sequence[dict[str, Any]] | None, optional
+    :return: An ArgumentParser instance.
+    :rtype: ArgumentParser
     """
     if not isinstance(prog, str):
         raise TypeError("'prog' argument must be a string")
@@ -177,13 +173,12 @@ def reporter_namespace_factory(args: list[str], choices: list[str] | None = None
     the `Target` enum values. It then parses the provided args list
     and returns the resulting `Namespace`.
 
-    Args:
-        args: A list of strings representing command-line arguments to be parsed.
-        choices: An optional list of valid choices for the reporter target flag.
-
-                 If `None`, it defaults to
-                 `[Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value]`
-
+    :param args: A list of strings representing command-line arguments to be parsed.
+    :type args: list[str]
+    :param choices: An optional list of valid choices for the reporter target flag.
+                    If `None`, it defaults to
+                    `[Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value]`
+    :type choices: list[str] | None, optional
     """
     if not isinstance(args, list):
         raise TypeError("args must be a list of strings")

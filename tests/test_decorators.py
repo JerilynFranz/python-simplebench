@@ -3,17 +3,25 @@ from __future__ import annotations
 
 import pytest
 
-from simplebench.decorators import clear_registered_cases, get_registered_cases, benchmark
+from simplebench.decorators import benchmark, clear_registered_cases, get_registered_cases
 from simplebench.defaults import (
-    DEFAULT_ITERATIONS, DEFAULT_ROUNDS, DEFAULT_MIN_TIME, DEFAULT_MAX_TIME,
-    DEFAULT_WARMUP_ITERATIONS)
+    DEFAULT_ITERATIONS,
+    DEFAULT_MAX_TIME,
+    DEFAULT_MIN_TIME,
+    DEFAULT_ROUNDS,
+    DEFAULT_WARMUP_ITERATIONS,
+)
 from simplebench.enums import Verbosity
 from simplebench.exceptions import CaseErrorTag, DecoratorsErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.session import Session
 
 
 def mock_action(*arg, **kwargs) -> None:  # pylint: disable=unused-argument
-    """A mock action that does nothing."""
+    """A mock action that does nothing.
+
+    :param arg: Positional arguments.
+    :param kwargs: Keyword arguments.
+    """
     return None  # pragma: no cover
 
 
@@ -21,12 +29,18 @@ class MockRunner():
     """A mock SimpleRunner for testing."""
 
     def run(self, n: int, action, **kwargs):  # pylint: disable=unused-argument
-        """Mock run method that just calls the action."""
+        """Mock run method that just calls the action.
+
+        :param n: The number of iterations.
+        :param action: The action to be executed.
+        :param kwargs: Additional keyword arguments.
+        :return: The result of the action.
+        """
         return action()
 
 
 def test_benchmark_decorator_registers_case() -> None:
-    """Test that the @benchmark decorator registers a case correctly."""
+    """Test that the ``@benchmark`` decorator registers a case correctly."""
     # Clear any previously registered cases to ensure a clean test environment
     clear_registered_cases()
     assert len(get_registered_cases()) == 0, "Initial case registry not empty."
@@ -57,7 +71,7 @@ def test_benchmark_decorator_registers_case() -> None:
 
 
 def test_benchmark_decorator_preserves_functionality() -> None:
-    """Test that the @benchmark decorator preserves the original function's behavior."""
+    """Test that the ``@benchmark`` decorator preserves the original function's behavior."""
     clear_registered_cases()
 
     @benchmark('math',
@@ -89,6 +103,11 @@ def test_run_decorated_case() -> None:
                n=10,
                description="Function to sum numbers from 0 to 9.")
     def sum_function() -> int:
+        """Function to sum numbers from 0 to 9.
+
+        :return: The sum of numbers from 0 to 9.
+        :rtype: int
+        """
         return sum(range(10))
 
     cases = get_registered_cases()
@@ -108,6 +127,11 @@ def test_run_decorated_case() -> None:
                title='Sum Function2',
                description="Function to sum numbers from 0 to 19.")
     def sum_function2() -> int:
+        """Function to sum numbers from 0 to 19.
+
+        :return: The sum of numbers from 0 to 19.
+        :rtype: int
+        """
         return sum(range(20))
 
     cases = get_registered_cases()
@@ -119,7 +143,7 @@ def test_run_decorated_case() -> None:
 
 
 def test_decorator_invalid_title_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid title type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid title type."""
     clear_registered_cases()
 
     # Invalid title type (not a string)
@@ -133,7 +157,7 @@ def test_decorator_invalid_title_type() -> None:
 
 
 def test_decorator_blank_title() -> None:
-    """Test that the @benchmark decorator raises expected errors for blank title."""
+    """Test that the ``@benchmark`` decorator raises expected errors for blank title."""
     clear_registered_cases()
 
     # Empty title value (only whitespace)
@@ -147,7 +171,7 @@ def test_decorator_blank_title() -> None:
 
 
 def test_decorator_invalid_description_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid description type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid description type."""
     clear_registered_cases()
 
     # Invalid description type (not a string)
@@ -161,7 +185,7 @@ def test_decorator_invalid_description_type() -> None:
 
 
 def test_decorator_blank_description() -> None:
-    """Test that the @benchmark decorator raises expected errors for blank description."""
+    """Test that the ``@benchmark`` decorator raises expected errors for blank description."""
     clear_registered_cases()
 
     # Empty description value (only whitespace)
@@ -175,7 +199,7 @@ def test_decorator_blank_description() -> None:
 
 
 def test_decorator_invalid_iterations_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid iterations type"""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid iterations type"""
     clear_registered_cases()
 
     # Invalid iterations type (not an integer)
@@ -189,7 +213,7 @@ def test_decorator_invalid_iterations_type() -> None:
 
 
 def test_decorator_invalid_iterations_value() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid iterations value."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid iterations value."""
     clear_registered_cases()
 
     # Non-positive iterations value (zero)
@@ -203,7 +227,7 @@ def test_decorator_invalid_iterations_value() -> None:
 
 
 def test_decorator_invalid_warmup_iterations_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid warmup_iterations type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid warmup_iterations type."""
     clear_registered_cases()
 
     # Invalid warmup_iterations type (not an integer)
@@ -217,7 +241,7 @@ def test_decorator_invalid_warmup_iterations_type() -> None:
 
 
 def test_decorator_invalid_warmup_iterations_value() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid warmup_iterations value."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid warmup_iterations value."""
     clear_registered_cases()
 
     # Negative warmup_iterations value (negative integer)
@@ -231,7 +255,7 @@ def test_decorator_invalid_warmup_iterations_value() -> None:
 
 
 def test_decorator_invalid_use_field_for_n_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid use_field_for_n type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid use_field_for_n type."""
     clear_registered_cases()
 
     # use_field_for_n not a string
@@ -249,7 +273,7 @@ def test_decorator_invalid_use_field_for_n_type() -> None:
 
 
 def test_decorator_use_field_for_n_not_in_kwargs_variations() -> None:
-    """Test that the @benchmark decorator raises expected errors for use_field_for_n not in kwargs_variations."""
+    """Test that the ``@benchmark`` decorator raises expected errors for use_field_for_n not in kwargs_variations."""
     clear_registered_cases()
 
     # Invalid use_field_for_n value (not in kwargs_variations)
@@ -266,7 +290,7 @@ def test_decorator_use_field_for_n_not_in_kwargs_variations() -> None:
 
 
 def test_decorator_non_positive_use_field_for_n_values() -> None:
-    """Test that the @benchmark decorator raises expected errors for non-positive use_field_for_n values."""
+    """Test that the ``@benchmark`` decorator raises expected errors for non-positive use_field_for_n values."""
     # Invalid use_field_for_n values (non-positive integers in list)
     with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
         @benchmark('test',
@@ -282,7 +306,7 @@ def test_decorator_non_positive_use_field_for_n_values() -> None:
 
 
 def test_decorator_invalid_n_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid n type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid n type."""
     # Invalid n type (not an integer)
     with pytest.raises(SimpleBenchTypeError) as excinfo:
         @benchmark('test',
@@ -299,7 +323,7 @@ def test_decorator_invalid_n_type() -> None:
 
 
 def test_decorator_invalid_n_value() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid n value."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid n value."""
     clear_registered_cases()
     # Non-positive n value
     with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
@@ -317,7 +341,7 @@ def test_decorator_invalid_n_value() -> None:
 
 
 def test_decorator_missing_kwargs_variations_with_use_field_for_n() -> None:
-    """Test that the @benchmark decorator raises expected errors for missing kwargs_variations with use_field_for_n."""
+    """Test ``@benchmark`` for missing kwargs_variations with use_field_for_n."""
     clear_registered_cases()
 
     # Missing kwargs_variations with use_field_for_n
@@ -333,7 +357,7 @@ def test_decorator_missing_kwargs_variations_with_use_field_for_n() -> None:
 
 
 def test_decorator_invalid_group_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid group type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid group type."""
     clear_registered_cases()
 
     # Invalid group type
@@ -347,7 +371,7 @@ def test_decorator_invalid_group_type() -> None:
 
 
 def test_decorator_invalid_group_value() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid group value."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid group value."""
     clear_registered_cases()
 
     # Empty group value
@@ -361,7 +385,7 @@ def test_decorator_invalid_group_value() -> None:
 
 
 def test_decorator_invalid_min_time_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid min_time type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid min_time type."""
     clear_registered_cases()
 
     # Invalid min_time type (not a float)
@@ -375,7 +399,7 @@ def test_decorator_invalid_min_time_type() -> None:
 
 
 def test_decorator_invalid_min_time_value() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid min_time value."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid min_time value."""
     clear_registered_cases()
 
     # Invalid min_time value (non-positive)
@@ -389,7 +413,7 @@ def test_decorator_invalid_min_time_value() -> None:
 
 
 def test_decorator_invalid_max_time_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid max_time type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid max_time type."""
     clear_registered_cases()
 
     # Invalid max_time type (not a float)
@@ -403,7 +427,7 @@ def test_decorator_invalid_max_time_type() -> None:
 
 
 def test_decorator_invalid_max_time_value() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid max_time value."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid max_time value."""
     clear_registered_cases()
 
     # Invalid max_time value (non-positive)
@@ -417,7 +441,7 @@ def test_decorator_invalid_max_time_value() -> None:
 
 
 def test_decorator_invalid_kwargs_variations_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid kwargs_variations type"""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid kwargs_variations type"""
     clear_registered_cases()
 
     # Invalid kwargs_variations type (not a dict)
@@ -431,7 +455,7 @@ def test_decorator_invalid_kwargs_variations_type() -> None:
 
 
 def test_decorator_invalid_kwargs_variations_keys_types() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid kwargs_variations key types."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid kwargs_variations key types."""
     clear_registered_cases()
 
     # Invalid kwargs_variations keys/values
@@ -445,7 +469,7 @@ def test_decorator_invalid_kwargs_variations_keys_types() -> None:
 
 
 def test_decorator_invalid_kwargs_variations_key_value() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid kwargs_variations key value."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid kwargs_variations key value."""
     clear_registered_cases()
 
     # Invalid kwargs_variations key (blank string)
@@ -459,7 +483,7 @@ def test_decorator_invalid_kwargs_variations_key_value() -> None:
 
 
 def test_decorator_invalid_kwargs_variations_values_types() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid kwargs_variations value types."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid kwargs_variations value types."""
     clear_registered_cases()
 
     # Invalid kwargs_variations values type (not a list)
@@ -473,7 +497,7 @@ def test_decorator_invalid_kwargs_variations_values_types() -> None:
 
 
 def test_decorator_invalid_kwargs_variations_values_value() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid kwargs_variations value."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid kwargs_variations value."""
     clear_registered_cases()
 
     # Invalid kwargs_variations values (empty list)
@@ -487,7 +511,7 @@ def test_decorator_invalid_kwargs_variations_values_value() -> None:
 
 
 def test_decorator_invalid_variation_cols_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid variation_cols type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid variation_cols type."""
     clear_registered_cases()
 
     # Invalid variation_cols type (not a dict)
@@ -502,7 +526,7 @@ def test_decorator_invalid_variation_cols_type() -> None:
 
 
 def test_decorator_invalid_variation_cols_key_not_in_kwargs() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid variation_cols key values."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid variation_cols key values."""
     # Invalid variation_cols key values (not in kwargs_variations)
     with pytest.raises(SimpleBenchValueError) as excinfo:
         @benchmark('test', title='Valid Title',
@@ -515,7 +539,7 @@ def test_decorator_invalid_variation_cols_key_not_in_kwargs() -> None:
 
 
 def test_decorator_invalid_variation_cols_value_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid variation_cols value types."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid variation_cols value types."""
     clear_registered_cases()
 
     # Invalid variation_cols values types (not strings)
@@ -531,7 +555,7 @@ def test_decorator_invalid_variation_cols_value_type() -> None:
 
 
 def test_decorator_invalid_variation_cols_values() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid variation_cols values."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid variation_cols values."""
     clear_registered_cases()
 
     # Invalid variation_cols values (blank string)
@@ -547,7 +571,7 @@ def test_decorator_invalid_variation_cols_values() -> None:
 
 
 def test_decorator_invalid_options_type() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid options type."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid options type."""
     clear_registered_cases()
 
     # Invalid options type (not a list)
@@ -561,7 +585,7 @@ def test_decorator_invalid_options_type() -> None:
 
 
 def test_decorator_invalid_options_values() -> None:
-    """Test that the @benchmark decorator raises expected errors for invalid options values."""
+    """Test that the ``@benchmark`` decorator raises expected errors for invalid options values."""
     clear_registered_cases()
 
     # Invalid options values (not a ReporterOption)
@@ -575,7 +599,7 @@ def test_decorator_invalid_options_values() -> None:
 
 
 def test_decorator_use_field_for_n_valid() -> None:
-    """Test that the @benchmark decorator works correctly with valid use_field_for_n."""
+    """Test that the ``@benchmark`` decorator works correctly with valid use_field_for_n."""
     clear_registered_cases()
 
     sizes: list[int] = [10, 100, 1000]
@@ -589,6 +613,13 @@ def test_decorator_use_field_for_n_valid() -> None:
                use_field_for_n='size',
                n=50)
     def valid_use_field_for_n(size: int) -> int:
+        """A test function for valid use_field_for_n.
+
+        :param size: The size parameter.
+        :type size: int
+        :return: The sum of the range.
+        :rtype: int
+        """
         return sum(range(size))
 
     cases = get_registered_cases()
@@ -609,11 +640,11 @@ def test_decorator_use_field_for_n_valid() -> None:
 
 
 def test_decorator_with_no_parameters() -> None:
-    """Test that the @benchmark decorator works correctly with no optional parameters."""
+    """Test that the ``@benchmark`` decorator works correctly with no optional parameters."""
     clear_registered_cases()
 
     @benchmark
-    def no_parameters_function() -> int:
+    def no_parameters_function() -> int:  # deliberately has no docstring
         return 42
 
     cases = get_registered_cases()
@@ -634,7 +665,8 @@ def test_decorator_with_no_parameters() -> None:
     assert test_case.warmup_iterations == DEFAULT_WARMUP_ITERATIONS, (
         f"Expected default warmup_iterations to be {DEFAULT_WARMUP_ITERATIONS}.")
     assert test_case.description == '(no description)', (
-        "Expected default description to be '(no description)'.")
+        "Expected default description to be '(no description)': "
+        f"description was '{test_case.description}'. ")
     assert callable(test_case.action), "Registered action is not callable."
     assert test_case.variation_cols == {}, "Expected default variation_cols to be empty."
     assert test_case.kwargs_variations == {}, "Expected default kwargs_variations to be empty."
@@ -642,11 +674,11 @@ def test_decorator_with_no_parameters() -> None:
 
 
 def test_decorator_with_empty_parameters() -> None:
-    """Test that the @benchmark() decorator works correctly with no optional parameters."""
+    """Test that the ``@benchmark()`` decorator works correctly with no optional parameters."""
     clear_registered_cases()
 
     @benchmark
-    def no_parameters_function() -> int:
+    def no_parameters_function() -> int:  # deliberately has no docstring
         return 42
 
     cases = get_registered_cases()

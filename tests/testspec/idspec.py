@@ -18,16 +18,15 @@ def idspec(id_base: str, testspec: TestSpec | tuple[Context, TestSpec]) -> Any:
     Because the pytest ParameterSet class definition is hidden from the public API,
     we cannot use it directly in type annotations.
 
-    Args:
-        id_base (str): The base string to use for the test case id.
-        testspec (TestSpec | tuple[Context, TestSpec]): The TestSpec instance containing the test configuration.
-            TestSet, TestGet, TestSetGet, and TestAction are all subclasses of TestSpec.
-
-            It can also be a tuple of (Context, TestSpec) to provide a context for the test.
-    Returns:
-        A pytest parameter with a custom id derived from the id_base string and the test specification name.
-    Raises:
-        TypeError: If testspec is not an instance of TestSpec or id_base is not a str.
+    :param id_base: The base string to use for the test case id.
+    :type id_base: str
+    :param testspec: The TestSpec instance containing the test configuration.
+        TestSet, TestGet, TestSetGet, and TestAction are all subclasses of TestSpec.
+        It can also be a tuple of (Context, TestSpec) to provide a context for the test.
+    :type testspec: TestSpec | tuple[Context, TestSpec]
+    :return: A pytest parameter with a custom id derived from the id_base string and the test specification name.
+    :rtype: Any
+    :raises TypeError: If testspec is not an instance of TestSpec or id_base is not a str.
     """
     if not isinstance(testspec, (TestSpec, tuple)):
         raise TypeError(f"testspec must be an instance of TestSpec or a type: got {type(testspec)}")

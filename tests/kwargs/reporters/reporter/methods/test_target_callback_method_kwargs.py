@@ -13,8 +13,8 @@ _MODELED_CALL = _MODELED_CLASS.target_callback
 def target_callback_method_kwargs_testspecs() -> list[TestSpec]:
     """Generates TestSpecs for testing TargetCallbackMethodKWArgs.
 
-    Returns:
-        list[TestSpec]: A list of TestSpec instances for testing TargetCallbackMethodKWArgs.
+    :return: A list of TestSpec instances for testing TargetCallbackMethodKWArgs.
+    :rtype: list[TestSpec]
     """
     testspecs: list[TestSpec] = [
         idspec("KWARGS_001", TestAction(

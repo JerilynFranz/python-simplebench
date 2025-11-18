@@ -2,8 +2,8 @@
 
 import pytest
 
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SIUnitsErrorTag
 from simplebench import si_units
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SIUnitsErrorTag
 
 from .testspec import TestAction
 
@@ -142,7 +142,11 @@ from .testspec import TestAction
         id="SI_SCALE_018"),
 ])
 def test_si_scale(testspec: TestAction) -> None:
-    """Test si_units.si_scale() function."""
+    """Test si_units.si_scale() function.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
@@ -263,7 +267,11 @@ def test_si_scale(testspec: TestAction) -> None:
         id="SI_SCALE_TO_UNIT_015"),
 ])
 def test_si_scale_to_unit(testspec: TestAction) -> None:
-    """Test si_units.si_scale_to_unit() function."""
+    """Test si_units.si_scale_to_unit() function.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
@@ -296,7 +304,11 @@ def test_si_scale_to_unit(testspec: TestAction) -> None:
         id="SI_UNIT_BASE_004"),
 ])
 def test_si_unit_base(testspec: TestAction) -> None:
-    """Test si_units.si_unit_base() function."""
+    """Test si_units.si_unit_base() function.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
@@ -409,5 +421,9 @@ def test_si_unit_base(testspec: TestAction) -> None:
         id="SI_SCALE_FOR_SMALLEST_017"),
 ])
 def test_si_scale_for_smallest(testspec: TestAction) -> None:
-    """Test si_units.si_scale_for_smallest() function."""
+    """Test si_units.si_scale_for_smallest() function.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     testspec.run()

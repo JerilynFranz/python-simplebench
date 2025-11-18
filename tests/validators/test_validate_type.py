@@ -2,9 +2,9 @@
 import pytest
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
-from simplebench.validators import validate_type, ValidatorsErrorTag
+from simplebench.validators import ValidatorsErrorTag, validate_type
 
-from ..testspec import TestSpec, Assert, idspec, TestAction
+from ..testspec import Assert, TestAction, TestSpec, idspec
 
 
 class GenericErrorTag(ErrorTag):
@@ -63,7 +63,11 @@ TEST_STRING: str = 'asbc'
         exception_tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)),
 ])
 def test_param(testspec: TestSpec):
-    """Tests for validate_string parameters validation."""
+    """Tests for validate_string parameters validation.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -125,5 +129,9 @@ def test_param(testspec: TestSpec):
         expected=TEST_STRING)),
 ])
 def test_validate_type(testspec: TestSpec):
-    """Tests for validate_type validation."""
+    """Tests for validate_type validation.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

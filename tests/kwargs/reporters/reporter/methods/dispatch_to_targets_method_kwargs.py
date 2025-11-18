@@ -28,16 +28,20 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
     to the Reporter class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
 
-    Args:
-        args (Namespace): The parsed command-line arguments.
-        case (Case): The Case instance representing the benchmarked code.
-        choice (Choice): The Choice instance specifying the report configuration.
-        path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-        session (Optional[Session]): The Session instance containing benchmark results.
-        callback (Optional[ReporterCallback]):
-            A callback function for additional processing of the report.
-            The function should accept two arguments: the Case instance and the CSV data as a string.
-            Leave as None if no callback is needed.
+    :param args: The parsed command-line arguments.
+    :type args: Namespace
+    :param case: The Case instance representing the benchmarked code.
+    :type case: Case
+    :param choice: The Choice instance specifying the report configuration.
+    :type choice: Choice
+    :param path: The path to the directory where the CSV file(s) will be saved.
+    :type path: Path | None
+    :param session: The Session instance containing benchmark results.
+    :type session: Session | None
+    :param callback: A callback function for additional processing of the report.
+                     The function should accept two arguments: the Case instance and the CSV data as a string.
+                     Leave as None if no callback is needed.
+    :type callback: ReporterCallback | None
     """
     def __init__(  # pylint: disable=unused-argument
             self,
@@ -57,21 +61,26 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
         This class is used to hold keyword arguments for calling the Reporter().dispatch_to_targets()
         instance method in tests.
 
-        Args:
-            output (str | bytes | Text | Table):
-                The report data to be dispatched to the specified targets.
-            filename_base (str):
-                The base filename to use when saving report data to the filesystem.
-                Does not include file extension.
-            args (Namespace): The parsed command-line arguments.
-            choice (Choice): The Choice instance specifying the report configuration.
-            case (Case): The Case instance representing the benchmarked code.
-            section (Section): The Section instance specifying the report section.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
+        :param output: The report data to be dispatched to the specified targets.
+        :type output: str | bytes | Text | Table
+        :param filename_base: The base filename to use when saving report data to the filesystem.
+                              Does not include file extension.
+        :type filename_base: str
+        :param args: The parsed command-line arguments.
+        :type args: Namespace
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :param case: The Case instance representing the benchmarked code.
+        :type case: Case
+        :param section: The Section instance specifying the report section.
+        :type section: Section
+        :param path: The path to the directory where the CSV file(s) will be saved.
+        :type path: Path | None
+        :param session: The Session instance containing benchmark results.
+        :type session: Session | None
+        :param callback: A callback function for additional processing of the report.
+                         The function should accept two arguments: the Case instance and the CSV data as a string.
+                         Leave as None if no callback is needed.
+        :type callback: ReporterCallback | None
         """
         super().__init__(call=Reporter.dispatch_to_targets, kwargs=locals())

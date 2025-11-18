@@ -42,9 +42,9 @@
 # and maintenance overhead for KWArgs subclasses.
 
 from __future__ import annotations
-import inspect
-from typing import Any, Callable, Iterable, cast, TypeVar, TypeGuard, Hashable
 
+import inspect
+from typing import Any, Callable, Hashable, Iterable, TypeGuard, TypeVar, cast
 
 T = TypeVar('T')
 
@@ -63,11 +63,10 @@ def is_kwargs(obj: object) -> TypeGuard[KWArgs]:
     This function can be used in type checking to narrow
     the type of an object to KWArgs when the check passes.
 
-    Args:
-        obj (object): The object to check.
-
-    Returns:
-        bool: True if the object is a KWArgs instance, False otherwise.
+    :param obj: The object to check.
+    :type obj: object
+    :return: True if the object is a KWArgs instance, False otherwise.
+    :rtype: bool
     """
     return isinstance(obj, KWArgs)
 
@@ -92,20 +91,20 @@ class KWArgs(dict[str, Any], Hashable):
 
     Subclass implementation example:
 
-    ```python
-    class SpecificKWArgs(KWArgs):
-        '''A class to hold keyword arguments for calling a specific function.'''
-        from tests.kwargs import KWArgs, NoDefaultValue
+    .. code-block:: python
 
-        def __init__(  # pylint: disable=unused-argument
-                self,
-                *,
-                name: str | NoDefaultValue = NoDefaultValue()) -> None:
-            '''Constructs a SpecificKWArgs instance. This class is used to hold keyword
-            arguments for calling a specific function in tests.'''
-            # Pass the local scope to the parent constructor.
-            super().__init__(locals())
-    ```
+        class SpecificKWArgs(KWArgs):
+            '''A class to hold keyword arguments for calling a specific function.'''
+            from tests.kwargs import KWArgs, NoDefaultValue
+
+            def __init__(  # pylint: disable=unused-argument
+                    self,
+                    *,
+                    name: str | NoDefaultValue = NoDefaultValue()) -> None:
+                '''Constructs a SpecificKWArgs instance. This class is used to hold keyword
+                arguments for calling a specific function in tests.'''
+                # Pass the local scope to the parent constructor.
+                super().__init__(locals())
     """
     def __init__(
             self, call: Callable[..., Any], kwargs: dict[str, Any]) -> None:
@@ -128,14 +127,13 @@ class KWArgs(dict[str, Any], Hashable):
         in the modeled call's signature, as well as any parameters that
         were not provided (i.e., those still set to NoDefaultValue).
 
-        Args:
-            call (Callable[..., Any]): The callable that this KWArgs instance is modeling.
-            kwargs (dict[str, Any]): A dictionary of arguments, typically from a
-                call to `locals()` in a subclass's `__init__` method.
-        Raises:
-            TypeError: If the provided arguments are not of the expected types.
-            AssertionError: If the resulting KWArgs does not match the call argument's signature parameter names.
-
+        :param call: The callable that this KWArgs instance is modeling.
+        :type call: Callable[..., Any]
+        :param kwargs: A dictionary of arguments, typically from a
+                       call to `locals()` in a subclass's `__init__` method.
+        :type kwargs: dict[str, Any]
+        :raises TypeError: If the provided arguments are not of the expected types.
+        :raises AssertionError: If the resulting KWArgs does not match the call argument's signature parameter names.
         """
         if not callable(call):
             raise TypeError("call must be a callable.")
@@ -175,20 +173,19 @@ class KWArgs(dict[str, Any], Hashable):
 
         A KWArgs instance is Hashable if all its items are hashable.
 
-        Returns:
-            int: The hash value of the KWArgs instance.
+        :return: The hash value of the KWArgs instance.
+        :rtype: int
         """
         return hash(frozenset(self.items()))
 
     def __eq__(self, other):
         """Checks equality between this KWArgs instance and another object.
 
-        Args:
-            other (object):
-                The object to compare against.
-        Returns:
-            bool: True if the other object is a KWArgs subclass instance with the same items and type,
-                False otherwise.
+        :param other: The object to compare against.
+        :type other: object
+        :return: True if the other object is a KWArgs subclass instance with the same items and type,
+                 False otherwise.
+        :rtype: bool
         """
         if not is_kwargs(other):
             return False
@@ -212,14 +209,10 @@ class KWArgs(dict[str, Any], Hashable):
             modified_kwargs = kwargs.replace(description='A modified description.')
             # modified_kwargs will now have the updated description
 
-        Args:
-            **kwargs: Key-value pairs to replace in the new KWArgs instance.
-
-        Returns:
-            KWArgs: A new KWArgs instance with specified keys replaced.
-
-        Raises:
-            KeyError: If any key in kwargs is not a valid KWArgs key.
+        :param kwargs: Key-value pairs to replace in the new KWArgs instance.
+        :return: A new KWArgs instance with specified keys replaced.
+        :rtype: KWArgs
+        :raises KeyError: If any key in kwargs is not a valid KWArgs key.
         """
         if not isinstance(kwargs, dict):
             raise TypeError("new_kwargs must be provided as keyword arguments.")
@@ -258,14 +251,11 @@ class KWArgs(dict[str, Any], Hashable):
             reduced_kwargs = reporter_kwargs - ['formats', 'choices']
             # reduced_kwargs will now contain all keys except 'formats' and 'choices'
 
-        Args:
-            other (Iterable[str]): An iterable of keys to be subtracted.
-
-        Returns:
-            KWArgs: A new KWArgs instance with keys from the original instance removed.
-
-        Raises:
-            KeyError: If any key in other is not a valid KWArgs key.
+        :param other: An iterable of keys to be subtracted.
+        :type other: Iterable[str]
+        :return: A new KWArgs instance with keys from the original instance removed.
+        :rtype: KWArgs
+        :raises KeyError: If any key in other is not a valid KWArgs key.
         """
         if not is_kwargs(self):
             raise TypeError("replace() can only be called on KWArgs instances and subclasses.")
@@ -301,9 +291,8 @@ def kwargs_class_matches_modeled_call(kwargs_class: type[KWArgs],
     It does not check parameter types or default values, only the presence
     or absence of parameter names.
 
-    Raises:
-        AssertionError: If there are any extra or missing parameters in the
-            kwargs_class compared to the modeled_call
+    :raises AssertionError: If there are any extra or missing parameters in the
+                            kwargs_class compared to the modeled_call
     """
     if not hasattr(kwargs_class, '__init__'):
         raise TypeError("kwargs_class must have an __init__ method.")

@@ -132,11 +132,11 @@ Raises:
 """
 # --- Imports ---
 from __future__ import annotations
+
 import inspect
-from functools import wraps
 import threading
-from typing import (Any, Callable, Final, NamedTuple, Protocol,
-                    TypeAlias, TypeVar, ParamSpec)
+from functools import wraps
+from typing import Any, Callable, Final, NamedTuple, ParamSpec, Protocol, TypeAlias, TypeVar
 
 # --- Exports ---
 __all__ = [
@@ -187,26 +187,23 @@ class CacheKey(NamedTuple):
     The key is based on the package name, factory function name,
     a hash of the calling signature, and the cache ID.
 
-    Args:
-        package_name (str):
-            The name of the package where the factory function is defined.
-        factory_name (str):
-            The name of the factory function.
-        calling_signature_hash (int):
-            A hash representing the arguments with which the factory was called.
-        cache_id (CacheId):
-            The cache ID used for fine-grained cache control.
+    :param package_name: The name of the package where the factory function is defined.
+    :type package_name: str
+    :param factory_name: The name of the factory function.
+    :type factory_name: str
+    :param calling_signature_hash: A hash representing the arguments with which the factory was called.
+    :type calling_signature_hash: int
+    :param cache_id: The cache ID used for fine-grained cache control.
+    :type cache_id: CacheId
 
-    Attributes:
-        package_name (str):
-            The name of the package where the factory function is defined.
-        factory_name (str):
-            The name of the factory function.
-        calling_signature_hash (int):
-            A hash representing the arguments with which the factory was called.
-        cache_id (CacheId):
-            The cache ID used for fine-grained cache control.
-
+    :ivar package_name: The name of the package where the factory function is defined.
+    :vartype package_name: str
+    :ivar factory_name: The name of the factory function.
+    :vartype factory_name: str
+    :ivar calling_signature_hash: A hash representing the arguments with which the factory was called.
+    :vartype calling_signature_hash: int
+    :ivar cache_id: The cache ID used for fine-grained cache control.
+    :vartype cache_id: CacheId
     """
     package_name: str
     factory_name: str
@@ -323,17 +320,12 @@ def cached_factory(func: Callable[P, R_co]) -> CachedFactory[R_co]:
     pass cache_id=CACHE_DEFAULT. It is guaranteed to be different from `None` or
     any other values that may be used and will not ever conflict with other cache IDs.
 
-    Args:
-        func (Callable[P, R_co]):
-            The factory function to be decorated.
-
-    Returns:
-        (CachedFactory[P, R_co]):
-            The wrapped function with caching capabilities and an added `cache_id` keyword argument.
-
-    Raises:
-        TypeError: If any arguments passed to the decorated function are not hashable,
-                   or if the provided `cache_id` is not a valid type.
+    :param func: The factory function to be decorated.
+    :type func: Callable[P, R_co]
+    :return: The wrapped function with caching capabilities and an added `cache_id` keyword argument.
+    :rtype: CachedFactory[P, R_co]
+    :raises TypeError: If any arguments passed to the decorated function are not hashable,
+        or if the provided `cache_id` is not a valid type.
     """
     return _CACHED_FACTORY(func)  # type: ignore[return-value]
 
@@ -355,17 +347,12 @@ def uncached_factory(func: Callable[P, R_co]) -> CachedFactory[R_co]:
     is `CACHE_DEFAULT`. It is guaranteed to be different from `None` or any other values
     that may be used.
 
-    Args:
-        func (Callable[P, R_co]):
-            The factory function to be decorated.
-
-    Returns:
-        (CachedFactory[P, R_co]):
-            The wrapped function with caching capabilities and an added `cache_id` keyword argument.
-
-    Raises:
-        TypeError: If any arguments passed to the decorated function are not hashable,
-                   or if the provided `cache_id` is not a valid type.
+    :param func: The factory function to be decorated.
+    :type func: Callable[P, R_co]
+    :return: The wrapped function with caching capabilities and an added `cache_id` keyword argument.
+    :rtype: CachedFactory[P, R_co]
+    :raises TypeError: If any arguments passed to the decorated function are not hashable,
+        or if the provided `cache_id` is not a valid type.
     """
     return _UNCACHED_FACTORY(func)  # type: ignore[return-value]
 

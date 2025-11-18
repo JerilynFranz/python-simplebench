@@ -1,13 +1,12 @@
 """Tests for simplebench.reporters.choices_conf module."""
 import pytest
 
-from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError, SimpleBenchKeyError
+from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choices import Choices, ChoicesErrorTag
 
-from ..factories import (choice_conf_factory, reporter_factory, default_choice_name,
-                         choices_factory, choice_factory)
+from ..factories import choice_conf_factory, choice_factory, choices_factory, default_choice_name, reporter_factory
 from ..kwargs import ChoicesKWArgs
-from ..testspec import TestSpec, TestAction, TestGet, idspec, Assert
+from ..testspec import Assert, TestAction, TestGet, TestSpec, idspec
 
 
 @pytest.mark.parametrize(
@@ -64,12 +63,19 @@ def test_choices_init(testspec: TestSpec):
     using different combinations of parameters provided through the
     ChoicesKWArgs class. It checks that the attributes of the Choices instance
     match the expected values based on the provided keyword arguments.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
     """
     testspec.run()
 
 
 def choices_add_testspecs() -> list[TestSpec]:
-    """Returns a list of TestSpec instances for testing Choices add()"""
+    """Returns a list of TestSpec instances for testing Choices add().
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def add_choice_to_empty_choices_with_keyword_arg() -> None:
@@ -141,7 +147,11 @@ def choices_add_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", choices_add_testspecs())
 def test_choices_add_method(testspec: TestSpec) -> None:
-    """Test the Choices.add() method."""
+    """Test the Choices.add() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -166,7 +176,11 @@ def test_choices_add_method(testspec: TestSpec) -> None:
         )),
     ])
 def test_choices_all_choice_args_method(testspec: TestSpec) -> None:
-    """Test the Choices.all_choice_args() method."""
+    """Test the Choices.all_choice_args() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -191,7 +205,11 @@ def test_choices_all_choice_args_method(testspec: TestSpec) -> None:
         )),
     ])
 def test_choices_all_choice_flags_method(testspec: TestSpec) -> None:
-    """Test the Choices.all_choice_flags() method."""
+    """Test the Choices.all_choice_flags() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -229,12 +247,20 @@ def test_choices_all_choice_flags_method(testspec: TestSpec) -> None:
         )),
     ])
 def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
-    """Test the Choices.get_choice_for_arg() method."""
+    """Test the Choices.get_choice_for_arg() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def choices_extend_testspecs() -> list[TestSpec]:
-    """Returns a list of TestSpec instances for testing Choices extend()"""
+    """Returns a list of TestSpec instances for testing Choices extend().
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
     prefix = f"{__file__}:test_choices_extend_testspecs"
 
@@ -289,12 +315,20 @@ def choices_extend_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", choices_extend_testspecs())
 def test_choices_extend(testspec: TestSpec) -> None:
-    """Test the Choices extend() method."""
+    """Test the Choices extend() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def choices_remove_testspecs() -> list[TestSpec]:
-    """Returns a list of TestSpec instances for testing Choices remove()"""
+    """Returns a list of TestSpec instances for testing Choices remove().
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def remove_existing_choice() -> Choices:
@@ -324,12 +358,20 @@ def choices_remove_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", choices_remove_testspecs())
 def test_choices_remove(testspec: TestSpec) -> None:
-    """Test the Choices.remove() method."""
+    """Test the Choices.remove() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def choices_setitem_testspecs() -> list[TestSpec]:
-    """Returns a list of TestSpec instances for testing Choices __setitem__()"""
+    """Returns a list of TestSpec instances for testing Choices __setitem__().
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def set_item_with_valid_choice() -> None:
@@ -390,5 +432,9 @@ def choices_setitem_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", choices_setitem_testspecs())
 def test_setitem_dunder_method(testspec: TestSpec) -> None:
-    """Test that the __setitem__ dunder method of Choices works correctly."""
+    """Test that the __setitem__ dunder method of Choices works correctly.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

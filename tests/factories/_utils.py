@@ -10,12 +10,9 @@ class DefaultExtra:
     def __init__(self, full_data: bool = False) -> None:
         """Constructs a DefaultExtra instance.
 
-        Args:
-            full_data (bool, default=False):
-                Indicates whether the extra data is full or minimal.
-
-        Raises:
-            TypeError: If full_data is not a bool.
+        :param full_data: Indicates whether the extra data is full or minimal.
+        :type full_data: bool, optional
+        :raises TypeError: If full_data is not a bool.
         """
         if not isinstance(full_data, bool):
             raise TypeError(f'full_data must be a bool, got {full_data!r}')
@@ -31,14 +28,13 @@ class DefaultExtra:
 def extra_factory(*, full_data: bool = True) -> DefaultExtra:
     """Return a default DefaultExtra instance for testing purposes.
 
-    Args:
-        full_data (bool, default=True):
-            Indicates whether the extra data is full or minimal.
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        DefaultExtra: `DefaultExtra(full_data=True)`
+    :param full_data: Indicates whether the extra data is full or minimal.
+    :type full_data: bool, optional
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `DefaultExtra(full_data=True)`
+    :rtype: DefaultExtra
     """
     return DefaultExtra(full_data=full_data)
 
@@ -48,7 +44,7 @@ def default_extra() -> DefaultExtra:
 
     It always returns the same DefaultExtra instance created by extra_factory().
 
-    Returns:
-        DefaultExtra: `DefaultExtra(full_data=False)`
+    :return: `DefaultExtra(full_data=False)`
+    :rtype: DefaultExtra
     """
     return extra_factory(full_data=False, cache_id=f'{__name__}.default_extra:singleton')

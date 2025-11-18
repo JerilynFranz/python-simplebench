@@ -46,6 +46,11 @@ def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable
     """A broken benchmark case function that is missing the required 'bench' parameter.
 
     The function signature is intentionally incorrect for testing purposes.
+
+    :param kwargs: Keyword arguments.
+    :type kwargs: Any
+    :return: A dummy Results instance.
+    :rtype: Results
     """
     # Nothing inside this actually runs since it's just for testing Reporter's
     # error handling for an invalid function type signature.
@@ -61,6 +66,11 @@ def broken_benchcase_missing_kwargs(
     """A broken benchmark case function that is missing the required 'kwargs' parameter.
 
     The function signature is intentionally incorrect for testing purposes.
+
+    :param bench: The benchmark runner.
+    :type bench: SimpleRunner
+    :return: A dummy Results instance.
+    :rtype: Results
     """
     # Nothing inside this actually runs since it's just for testing Reporter's
     # error handling for an invalid function type signature.
@@ -98,7 +108,17 @@ class GoodReporter(Reporter):
         return
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
-        """Dummy render method for testing."""
+        """Dummy render method for testing.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An empty string.
+        :rtype: str
+        """
         return ""
 
 
@@ -323,7 +343,11 @@ def test_factory_reporter_subclassing() -> None:
         expected=FactoryReporter)),
 ])
 def test_reporter_init(testspec: TestSpec) -> None:
-    """Test Reporter init parameters."""
+    """Test Reporter init parameters.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -497,7 +521,11 @@ def test_reporter_init(testspec: TestSpec) -> None:
         exception=TypeError)),
 ])
 def test_report(testspec: TestSpec) -> None:
-    """Test Reporter.report() method."""
+    """Test Reporter.report() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -549,7 +577,11 @@ def test_report(testspec: TestSpec) -> None:
         exception_tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)),
 ])
 def test_add_choice(testspec: TestSpec) -> None:
-    """Test Reporter.add_choice() method."""
+    """Test Reporter.add_choice() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -592,12 +624,20 @@ def test_add_choice(testspec: TestSpec) -> None:
         exception=AttributeError)),
 ])
 def test_reporter_instance_attributes(testspec: TestSpec) -> None:
-    """Test Reporter attributes."""
+    """Test Reporter attributes.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def reporter_class_methods_testspecs() -> list[TestSpec]:
-    """Generate TestSpecs for Reporter class methods."""
+    """Generate TestSpecs for Reporter class methods.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspec: list[TestSpec] = [
         idspec('CLASS_METHODS_001', TestAction(
             name="Reporter.get_hardcoded_default_options() class method returns expected value with expected type",
@@ -630,10 +670,8 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         the get_default_options() class method should return the same object instance as
         returned by the get_hardcoded_default_options() class method.
 
-        Returns:
-            None
-        Raises:
-            AssertionError if the test fails.
+        :return: None
+        :raises AssertionError: if the test fails.
         """
         FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
         hard_coded_options = FactoryReporter.get_hardcoded_default_options()
@@ -655,10 +693,8 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         Additionally, after resetting the default options by calling set_default_options(None),
         get_default_options() should again return the original hard coded instance.
 
-        Returns:
-            None
-        Raises:
-            AssertionError if the test fails.
+        :return: None
+        :raises AssertionError: if the test fails.
         """
         FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
         hardcoded_options = FactoryReporter.get_default_options()
@@ -683,10 +719,8 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         than it did before the set_default_options() call and that after resetting the default options
         by calling set_default_options(None), get_default_options() again returns the original hard coded instance
 
-        Returns:
-            None
-        Raises:
-            AssertionError if the test fails.
+        :return: None
+        :raises AssertionError: if the test fails.
         """
         FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
         hardcoded_options: FactoryReporterOptions = FactoryReporter.get_hardcoded_default_options()
@@ -712,12 +746,20 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize('testspec', reporter_class_methods_testspecs())
 def test_reporter_class_methods(testspec: TestSpec) -> None:
-    """Test Reporter class methods and properties."""
+    """Test Reporter class methods and properties.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def find_options_by_type_testspecs() -> list[TestSpec]:
-    """Generate TestSpecs the find_options_by_type instance method."""
+    """Generate TestSpecs the find_options_by_type instance method.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
 
     class ReporterOptionsOne(ReporterOptions):
         """A dummy ReporterOptions subclass for testing purposes."""
@@ -788,12 +830,20 @@ def find_options_by_type_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize('testspec', find_options_by_type_testspecs())
 def test_find_options_by_type(testspec: TestSpec) -> None:
-    """Test Reporter.find_options_by_type() method."""
+    """Test Reporter.find_options_by_type() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def run_report_testspecs() -> list[TestSpec]:
-    """Generate TestSpecs for Reporter.run_report()."""
+    """Generate TestSpecs for Reporter.run_report().
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = [
         idspec('RUN_REPORT_001', TestAction(
             name="run_report() with all valid args runs successfully",
@@ -821,5 +871,9 @@ def run_report_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize('testspec', run_report_testspecs())
 def test_run_report(testspec: TestSpec) -> None:
-    """Test Reporter.run_report() method."""
+    """Test Reporter.run_report() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

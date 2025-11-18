@@ -34,10 +34,7 @@ from ....factories.reporter.reporter_methods import (
     render_by_case_kwargs_factory,
     render_by_section_kwargs_factory,
 )
-from ....kwargs.reporters.reporter import (
-    RenderByCaseMethodKWArgs,
-    RenderBySectionMethodKWArgs,
-)
+from ....kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderBySectionMethodKWArgs
 from ....testspec import Assert, TestAction, TestGet, TestSpec, idspec
 
 Output: TypeAlias = str | bytes | Text | Table
@@ -62,8 +59,8 @@ class FactoryReporterForOrchestration(FactoryReporter):
     def __init__(self, choices: ChoicesConf) -> None:
         """Initialize the FactoryReporterForOrchestration with mock method spies.
 
-        Args:
-            choices (ChoicesConf): The choices configuration for the reporter.
+        :param choices: The choices configuration for the reporter.
+        :type choices: ChoicesConf
         """
 
         reporter_kwargs = reporter_kwargs_factory().replace(
@@ -83,6 +80,15 @@ class FactoryReporterForOrchestration(FactoryReporter):
 
         Unlike the base FactoryReporter, this method uses a RenderSpy
         to record calls for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: The rendered output.
+        :rtype: Output
         """
         return self.render_spy(case=case, section=section, options=options)
 
@@ -91,7 +97,19 @@ def _orchestration_reporter_factory(choice_name: str,
                                     sections: set[Section] | None = None,
                                     targets: set[Target] | None = None,
                                     default_targets: set[Target] | None = None) -> FactoryReporterForOrchestration:
-    """Generate a FactoryReporterForOrchestration testing instance."""
+    """Generate a FactoryReporterForOrchestration testing instance.
+
+    :param choice_name: The name of the choice.
+    :type choice_name: str
+    :param sections: The sections to include.
+    :type sections: set[Section] | None
+    :param targets: The targets to include.
+    :type targets: set[Target] | None
+    :param default_targets: The default targets.
+    :type default_targets: set[Target] | None
+    :return: A factory reporter for orchestration.
+    :rtype: FactoryReporterForOrchestration
+    """
     sections = sections or {Section.MEMORY, Section.OPS, Section.TIMING, Section.PEAK_MEMORY}
     default_targets = default_targets or {Target.CONSOLE}
     targets = targets or {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
@@ -115,7 +133,17 @@ def _setup_good_path(
     choice_name: str,
     sections: set[Section] | None = None
 ) -> tuple[FactoryReporterForOrchestration, T]:
-    """Generic helper to arrange a 'good path' test scenario."""
+    """Generic helper to arrange a 'good path' test scenario.
+
+    :param kwargs_class: The kwargs class.
+    :type kwargs_class: type[T]
+    :param choice_name: The name of the choice.
+    :type choice_name: str
+    :param sections: The sections to include.
+    :type sections: set[Section] | None
+    :return: A tuple containing the reporter and the kwargs.
+    :rtype: tuple[FactoryReporterForOrchestration, T]
+    """
     reporter = _orchestration_reporter_factory(choice_name=choice_name, sections=sections)
     choice = reporter.choices[choice_name]
     flag_name: str = next(iter(choice.flags))
@@ -140,7 +168,17 @@ def _setup_bad_target_path(
     choice_name: str,
     sections: set[Section] | None = None
 ) -> tuple[FactoryReporterForOrchestration, T]:
-    """Generic helper to arrange a 'bad target' test scenario."""
+    """Generic helper to arrange a 'bad target' test scenario.
+
+    :param kwargs_class: The kwargs class.
+    :type kwargs_class: type[T]
+    :param choice_name: The name of the choice.
+    :type choice_name: str
+    :param sections: The sections to include.
+    :type sections: set[Section] | None
+    :return: A tuple containing the reporter and the kwargs.
+    :rtype: tuple[FactoryReporterForOrchestration, T]
+    """
     reporter = _orchestration_reporter_factory(
         choice_name=choice_name,
         sections=sections,
@@ -166,7 +204,11 @@ def _setup_bad_target_path(
 
 
 def _setup_render_by_case_good_path() -> tuple[FactoryReporterForOrchestration, RenderByCaseMethodKWArgs]:
-    """Helper to arrange the 'good path' test scenario for render_by_case."""
+    """Helper to arrange the 'good path' test scenario for render_by_case.
+
+    :return: A tuple containing the reporter and the kwargs.
+    :rtype: tuple[FactoryReporterForOrchestration, RenderByCaseMethodKWArgs]
+    """
     return _setup_good_path(  # type: ignore[return-value]
         kwargs_class=RenderByCaseMethodKWArgs,
         choice_name="test_choice"
@@ -174,7 +216,11 @@ def _setup_render_by_case_good_path() -> tuple[FactoryReporterForOrchestration, 
 
 
 def _setup_render_by_section_good_path() -> tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]:
-    """Helper to arrange the 'good path' test scenario for render_by_section."""
+    """Helper to arrange the 'good path' test scenario for render_by_section.
+
+    :return: A tuple containing the reporter and the kwargs.
+    :rtype: tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]
+    """
     return _setup_good_path(  # type: ignore[return-value]
         kwargs_class=RenderBySectionMethodKWArgs,
         choice_name="test_choice_by_section",
@@ -183,7 +229,11 @@ def _setup_render_by_section_good_path() -> tuple[FactoryReporterForOrchestratio
 
 
 def _setup_render_by_case_bad_target_path() -> tuple[FactoryReporterForOrchestration, RenderByCaseMethodKWArgs]:
-    """Helper to arrange the 'bad target' test scenario for render_by_case."""
+    """Helper to arrange the 'bad target' test scenario for render_by_case.
+
+    :return: A tuple containing the reporter and the kwargs.
+    :rtype: tuple[FactoryReporterForOrchestration, RenderByCaseMethodKWArgs]
+    """
     return _setup_bad_target_path(  # type: ignore[return-value]
         kwargs_class=RenderByCaseMethodKWArgs,
         choice_name="bad_target_choice"
@@ -191,7 +241,11 @@ def _setup_render_by_case_bad_target_path() -> tuple[FactoryReporterForOrchestra
 
 
 def _setup_render_by_section_bad_target_path() -> tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]:
-    """Helper to arrange the 'bad target' test scenario for render_by_section."""
+    """Helper to arrange the 'bad target' test scenario for render_by_section.
+
+    :return: A tuple containing the reporter and the kwargs.
+    :rtype: tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]
+    """
     return _setup_bad_target_path(  # type: ignore[return-value]
         kwargs_class=RenderBySectionMethodKWArgs,
         choice_name="bad_target_choice_by_section"
@@ -199,7 +253,11 @@ def _setup_render_by_section_bad_target_path() -> tuple[FactoryReporterForOrches
 
 
 def render_by_case_testspecs() -> list[TestSpec]:
-    """Generate test specifications for the render_by_case method tests."""
+    """Generate test specifications for the render_by_case method tests.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     # --- Good Path Test Group ---
@@ -293,7 +351,11 @@ def render_by_case_testspecs() -> list[TestSpec]:
 
 
 def render_by_section_testspecs() -> list[TestSpec]:
-    """Generate test specifications for the render_by_section method tests."""
+    """Generate test specifications for the render_by_section method tests.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     # --- Good Path Test Group ---
@@ -391,18 +453,30 @@ def render_by_section_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", render_by_case_testspecs())
 def test_render_by_case(testspec: TestSpec) -> None:
-    """Test the render_by_case method of the OrchestrationMixin."""
+    """Test the render_by_case method of the OrchestrationMixin.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 @pytest.mark.parametrize("testspec", render_by_section_testspecs())
 def test_render_by_section(testspec: TestSpec) -> None:
-    """Test the render_by_section method of the OrchestrationMixin."""
+    """Test the render_by_section method of the OrchestrationMixin.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def dispatch_to_targets_params_testspecs() -> list[TestSpec]:
-    """Generate test specifications for the dispatch_to_targets method tests."""
+    """Generate test specifications for the dispatch_to_targets method tests.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     reporter = _orchestration_reporter_factory(choice_name="dispatch_test_choice")
@@ -468,7 +542,11 @@ def dispatch_to_targets_params_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", dispatch_to_targets_params_testspecs())
 def test_dispatch_to_targets_params(testspec: TestSpec):
-    """Tests for parameter validation of the dispatch_to_targets method."""
+    """Tests for parameter validation of the dispatch_to_targets method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 # We don't need to explicitly test the individual targets for dispatch_to_targets

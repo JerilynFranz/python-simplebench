@@ -1,17 +1,17 @@
-"""Tests for validate_reporter_callback function."""
+"""Tests for :func:`~simplebench.reporters.validators.validate_reporter_callback`."""
 from __future__ import annotations
+
 from typing import Any
 
 import pytest
 
-from tests.testspec import TestSpec, TestAction, idspec, Assert
-
 from simplebench.case import Case
-from simplebench.enums import Section, Format
+from simplebench.enums import Format, Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.validators import validate_reporter_callback
 from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
+from tests.testspec import Assert, TestAction, TestSpec, idspec
 
 
 def mock_callback_valid(  # pylint: disable=unused-argument

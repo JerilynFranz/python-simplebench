@@ -19,35 +19,44 @@ class TestAction(TestSpec):
     It allow tests to be specified declaratively while providing a large amount
     of flexibility.
 
-    Args:
-        name (str):
-            Identifying name for the test.
-        action (Callable[..., Any] | Deferred, default = no_assigned_action):
-            A reference to a callable function or method to be invoked for the test. If no
-            action is assigned, the special function `no_assigned_action` is used which
-            raises NotImplementedError when called.
-        args (Sequence[Any] | Deferred, default = []):
-            Sequence of positional arguments to be passed to the `action` function or method.
-        kwargs (dict[str, Any] | Deferred, default = {}):
-            Dictionary containing keyword arguments to be passed to the `action` function or method.
-        assertion (Assert, default=Assert.EQUAL):
-            The assertion operator to use when comparing the expected and found values.
-        expected (Any, default=NO_EXPECTED_VALUE ):
-            Expected value (if any) for the `action` function or method.
-            This is used with the `assertion` operator to validate the return value of the function or method.
-
-            If there is no expected value, the special class NoExpectedValue is used to flag it.
-            This is used so that the specific return value of None can be distinguished from no
-            particular value or any value at all is expected to be returned from the function or method.
-        obj: Optional[Any] = None
-        validate_obj: Optional[Callable[[Any], bool] | Deferred] = None
-        validate_result: Optional[Callable[[Any], bool] | Deferred] = None
-        exception: Optional[type[BaseException]] = None
-        exception_tag: Optional[str] = None
-        on_fail: Callable[[str], NoReturn] = pytest.fail
-            Function to call on test failure. (default is pytest.fail)
-        extra (Any): Extra data for use by test frameworks. It is not used by the TestAction class itself.
-            Default is None.
+    :param name: Identifying name for the test.
+    :type name: str
+    :param action: A reference to a callable function or method to be invoked for the test.
+                   If no action is assigned, the special function `no_assigned_action` is used which
+                   raises NotImplementedError when called.
+                   Defaults to no_assigned_action.
+    :type action: Callable[..., Any] | Deferred, optional
+    :param args: Sequence of positional arguments to be passed to the `action` function or method.
+                 Defaults to [].
+    :type args: Sequence[Any] | Deferred, optional
+    :param kwargs: Dictionary containing keyword arguments to be passed to the `action` function or method.
+                   Defaults to {}.
+    :type kwargs: dict[str, Any] | Deferred, optional
+    :param assertion: The assertion operator to use when comparing the expected and found values.
+                      Defaults to Assert.EQUAL.
+    :type assertion: Assert, optional
+    :param expected: Expected value (if any) for the `action` function or method.
+                     This is used with the `assertion` operator to validate the return value of the function or method.
+                     If there is no expected value, the special class NoExpectedValue is used to flag it.
+                     This is used so that the specific return value of None can be distinguished from no
+                     particular value or any value at all is expected to be returned from the function or method.
+                     Defaults to NO_EXPECTED_VALUE.
+    :type expected: Any, optional
+    :param obj: Optional object to be validated. Defaults to None.
+    :type obj: Optional[Any], optional
+    :param validate_obj: Function to validate the optional object. Defaults to None.
+    :type validate_obj: Optional[Callable[[Any], bool] | Deferred], optional
+    :param validate_result: Function to validate the result of the action. Defaults to None.
+    :type validate_result: Optional[Callable[[Any], bool] | Deferred], optional
+    :param exception: Expected exception type (if any) to be raised by the action. Defaults to None.
+    :type exception: Optional[type[BaseException]], optional
+    :param exception_tag: Expected tag (if any) to be found in the exception message. Defaults to None.
+    :type exception_tag: Optional[str], optional
+    :param on_fail: Function to call on test failure. Defaults to pytest.fail.
+    :type on_fail: Callable[[str], NoReturn], optional
+    :param extra: Extra data for use by test frameworks. It is not used by the TestAction class itself.
+                  Defaults to None.
+    :type extra: Any, optional
     """
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
@@ -93,8 +102,8 @@ class TestAction(TestSpec):
         This function executes the action specified in the entry, checks the result against
         the expected value, and reports any errors.
 
-        Args:
-            self (TestSpec): The test configuration entry containing all necessary information for the test.
+        :param self: The test configuration entry containing all necessary information for the test.
+        :type self: TestSpec
         """
         # hide traceback for this function in pytest output
         __tracebackhide__ = True  # pylint: disable=unused-variable

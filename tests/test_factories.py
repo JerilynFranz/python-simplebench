@@ -5,18 +5,18 @@ from pathlib import Path
 
 import pytest
 
+from simplebench import utils
 from simplebench.case import Case
-from simplebench.enums import Section, Target, Format, FlagType
+from simplebench.enums import FlagType, Format, Section, Target
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.runners import SimpleRunner
 from simplebench.session import Session
-from simplebench import utils
 
 from . import factories
-from .kwargs import ReporterKWArgs, ChoiceConfKWArgs, CaseKWArgs, ChoicesConfKWArgs
-from .testspec import TestSpec, TestAction, idspec, Assert
+from .kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterKWArgs
+from .testspec import Assert, TestAction, TestSpec, idspec
 
 
 @pytest.mark.parametrize("testspec", [
@@ -265,7 +265,11 @@ from .testspec import TestSpec, TestAction, idspec, Assert
 
 ])
 def test_factories(testspec: TestSpec) -> None:
-    """Test the various factories."""
+    """Test the various factories.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -297,5 +301,9 @@ def test_factories(testspec: TestSpec) -> None:
         expected=0)),
 ])
 def test_list_of_strings_flag_factory(testspec: TestSpec) -> None:
-    """Test the list_of_strings_flag_factory function."""
+    """Test the list_of_strings_flag_factory function.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestSpec
+    """
     testspec.run()

@@ -10,38 +10,37 @@ class Deferred:
 
     Usage case examples:
 
-    ```python
+    .. code-block:: python
 
-    @pytest.mark.parametrize('testspec', [
-        # ... other tests ...
+        @pytest.mark.parametrize('testspec', [
+            # ... other tests ...
 
-        # Example of using context instance identity
-        idspec('REPORTER_XXX',
-            (lambda: (
-                context := Context(reporter=reporter_instance(cache_id='special_reporter')),
-                TestAction(
-                    name="Action and kwarg refer to the same reporter",
-                    action=Deferred(lambda: context.reporter.some_method),
-                    kwargs=Deferred(lambda: {
-                        'reporter_to_check': context.reporter,
-                        'other_param': 'foo'
-                    }),
-                    # ...
-                )
-            ))()
-        ),
-    ])
-    def test_reporter(testspec: TestAction) -> None:
-        testspec.run()
-    ```
+            # Example of using context instance identity
+            idspec('REPORTER_XXX',
+                (lambda: (
+                    context := Context(reporter=reporter_instance(cache_id='special_reporter')),
+                    TestAction(
+                        name="Action and kwarg refer to the same reporter",
+                        action=Deferred(lambda: context.reporter.some_method),
+                        kwargs=Deferred(lambda: {
+                            'reporter_to_check': context.reporter,
+                            'other_param': 'foo'
+                        }),
+                        # ...
+                    )
+                ))()
+            ),
+        ])
+        def test_reporter(testspec: TestAction) -> None:
+            testspec.run()
     """
     __slots__ = ('_factory',)
 
     def __init__(self, factory: Callable[..., Any]):
         """Initialize the Deferred context instance with a factory function.
 
-        Args:
-            factory (Callable[[], Any]): A callable that produces the actual value when called.
+        :param factory: A callable that produces the actual value when called.
+        :type factory: Callable[[], Any]
         """
         if not callable(factory):
             raise TypeError("factory must be a callable that takes no arguments")
@@ -49,7 +48,11 @@ class Deferred:
         """Callable that produces the actual value when called."""
 
     def resolve(self) -> Any:
-        """Execute the factory to get the actual value."""
+        """Execute the factory to get the actual value.
+
+        :return: The resolved value.
+        :rtype: Any
+        """
         return self._factory()
 
 
@@ -63,14 +66,12 @@ def _resolve_deferred_value(value: Any, default: Any = None) -> Any:
     calls its resolve method to get the actual value. Otherwise, it
     returns the value unchanged.
 
-    Args:
-        value (Any):
-            The value to resolve.
-        default (Any, default=None):
-            The default value to return if the passed value is None.
-
-    Returns:
-        Any: The resolved value.
+    :param value: The value to resolve.
+    :type value: Any
+    :param default: The default value to return if the passed value is None.
+    :type default: Any
+    :return: The resolved value.
+    :rtype: Any
     """
     if value is None:
         return default

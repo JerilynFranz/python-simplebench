@@ -23,13 +23,18 @@ class TargetFilesystemMethodKWArgs(KWArgs):
     to the Reporter class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
 
-    Args:
-        path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-        subdir (str): The subdirectory within the path to save the file to.
-        filename (str): The filename to save the output as.
-        output (str | bytes | Text | Table): The report data to write to the file.
-        unique (bool): If True, ensure the filename is unique by prepending a counter as needed.
-        append (bool): If True, append to the file if it already exists. Otherwise, raise an error.
+    :param path: The path to the directory where the CSV file(s) will be saved.
+    :type path: Path | None
+    :param subdir: The subdirectory within the path to save the file to.
+    :type subdir: str
+    :param filename: The filename to save the output as.
+    :type filename: str
+    :param output: The report data to write to the file.
+    :type output: str | bytes | Text | Table
+    :param unique: If True, ensure the filename is unique by prepending a counter as needed.
+    :type unique: bool
+    :param append: If True, append to the file if it already exists. Otherwise, raise an error.
+    :type append: bool
     """
     def __init__(  # pylint: disable=unused-argument
             self,
@@ -46,12 +51,17 @@ class TargetFilesystemMethodKWArgs(KWArgs):
         This class is used to hold keyword arguments for calling the Reporter().target_filesystem()
         instance method in tests.
 
-        Args:
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            subdir (str): The subdirectory within the path to save the file to.
-            filename (str): The filename to save the output as.
-            output (str | bytes | Text | Table): The report data to write to the file.
-            unique (bool): If True, ensure the filename is unique by prepending a counter as needed.
-            append (bool): If True, append to the file if it already exists. Otherwise, raise an error.
+        :param path: The path to the directory where the CSV file(s) will be saved.
+        :type path: Path | None
+        :param subdir: The subdirectory within the path to save the file to.
+        :type subdir: str
+        :param filename: The filename to save the output as.
+        :type filename: str
+        :param output: The report data to write to the file.
+        :type output: str | bytes | Text | Table
+        :param unique: If True, ensure the filename is unique by prepending a counter as needed.
+        :type unique: bool
+        :param append: If True, append to the file if it already exists. Otherwise, raise an error.
+        :type append: bool
         """
         super().__init__(call=Reporter.target_filesystem, kwargs=locals())

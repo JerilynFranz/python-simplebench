@@ -38,4 +38,4 @@ __all__ = [
     "FactoryReporter",
     "default_options_type",
 ]
-"""'*' imports for factories related to Reporters."""
+""":all: '*' imports for factories related to Reporters."""

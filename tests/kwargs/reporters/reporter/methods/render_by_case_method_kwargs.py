@@ -24,17 +24,22 @@ class RenderByCaseMethodKWArgs(KWArgs):
     to the Reporter class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
 
-    Args:
-        renderer (ReportRenderer): The method to be used for actually rendering the report.
-        args (Namespace): The parsed command-line arguments.
-        case (Case): The Case instance representing the benchmarked code.
-        choice (Choice): The Choice instance specifying the report configuration.
-        path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-        session (Optional[Session]): The Session instance containing benchmark results.
-        callback (Optional[ReporterCallback]):
-            A callback function for additional processing of the report.
-            The function should accept two arguments: the Case instance and the CSV data as a string.
-            Leave as None if no callback is needed.
+    :param renderer: The method to be used for actually rendering the report.
+    :type renderer: ReportRenderer
+    :param args: The parsed command-line arguments.
+    :type args: Namespace
+    :param case: The Case instance representing the benchmarked code.
+    :type case: Case
+    :param choice: The Choice instance specifying the report configuration.
+    :type choice: Choice
+    :param path: The path to the directory where the CSV file(s) will be saved.
+    :type path: Path | None
+    :param session: The Session instance containing benchmark results.
+    :type session: Session | None
+    :param callback: A callback function for additional processing of the report.
+                     The function should accept two arguments: the Case instance and the CSV data as a string.
+                     Leave as None if no callback is needed.
+    :type callback: ReporterCallback | None
     """
     def __init__(  # pylint: disable=unused-argument
             self,
@@ -51,16 +56,21 @@ class RenderByCaseMethodKWArgs(KWArgs):
         This class is used to hold keyword arguments for calling the Reporter().render_by_case()
         instance method in tests.
 
-        Args:
-            renderer (ReportRenderer): The method to be used for actually rendering the report.
-            args (Namespace): The parsed command-line arguments.
-            case (Case): The Case instance representing the benchmarked code.
-            choice (Choice): The Choice instance specifying the report configuration.
-            path (Optional[Path]): The path to the directory where the CSV file(s) will be saved.
-            session (Optional[Session]): The Session instance containing benchmark results.
-            callback (Optional[ReporterCallback]):
-                A callback function for additional processing of the report.
-                The function should accept two arguments: the Case instance and the CSV data as a string.
-                Leave as None if no callback is needed.
+        :param renderer: The method to be used for actually rendering the report.
+        :type renderer: ReportRenderer
+        :param args: The parsed command-line arguments.
+        :type args: Namespace
+        :param case: The Case instance representing the benchmarked code.
+        :type case: Case
+        :param choice: The Choice instance specifying the report configuration.
+        :type choice: Choice
+        :param path: The path to the directory where the CSV file(s) will be saved.
+        :type path: Path | None
+        :param session: The Session instance containing benchmark results.
+        :type session: Session | None
+        :param callback: A callback function for additional processing of the report.
+                         The function should accept two arguments: the Case instance and the CSV data as a string.
+                         Leave as None if no callback is needed.
+        :type callback: ReporterCallback | None
         """
         super().__init__(call=Reporter.render_by_case, kwargs=locals())

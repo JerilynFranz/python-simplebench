@@ -18,12 +18,16 @@ class TargetCallbackMethodKWArgs(KWArgs):
     to the Reporter class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
 
-    Args:
-        callback (ReporterCallback | None): The callback function to send the output to.
-        case (Case): The Case instance representing the benchmarked code.
-        section (Section): The Section of the report.
-        output_format (Format): The Format of the report.
-        output (str | bytes): The report data to pass to the callback function.
+    :param callback: The callback function to send the output to.
+    :type callback: ReporterCallback | None
+    :param case: The Case instance representing the benchmarked code.
+    :type case: Case
+    :param section: The Section of the report.
+    :type section: Section
+    :param output_format: The Format of the report.
+    :type output_format: Format
+    :param output: The report data to pass to the callback function.
+    :type output: str | bytes
     """
     def __init__(  # pylint: disable=unused-argument
             self,
@@ -39,11 +43,15 @@ class TargetCallbackMethodKWArgs(KWArgs):
         This class is used to hold keyword arguments for calling the Reporter().target_callback()
         instance method in tests.
 
-        Args:
-            callback (ReporterCallback | None): The callback function to send the output to.
-            case (Case): The Case instance representing the benchmarked code.
-            section (Section): The Section of the report.
-            output_format (Format): The Format of the report.
-            output (str | bytes): The report data to pass to the callback function.
+        :param callback: The callback function to send the output to.
+        :type callback: ReporterCallback | None
+        :param case: The Case instance representing the benchmarked code.
+        :type case: Case
+        :param section: The Section of the report.
+        :type section: Section
+        :param output_format: The Format of the report.
+        :type output_format: Format
+        :param output: The report data to pass to the callback function.
+        :type output: str | bytes
         """
         super().__init__(call=Reporter.target_callback, kwargs=locals())

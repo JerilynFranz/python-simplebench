@@ -62,12 +62,10 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
 
     They can't be in the same set because the global state would interfere with each other.
 
-    Args:
-        reporter_default_options (ReporterOptions | None):
-            The default ReporterOptions to use in the FactoryReporter.
-    Returns:
-        list[TestSpec]: A list of TestSpec instances for testing.
-
+    :param reporter_default_options: The default ReporterOptions to use in the FactoryReporter.
+    :type reporter_default_options: ReporterOptions | None
+    :return: A list of TestSpec instances for testing.
+    :rtype: list[TestSpec]
     """
 
     default_options_title = 'without' if reporter_default_options is None else 'with'
@@ -121,11 +119,10 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
     def prioritize_options_testspec(testcase: PrioritizeOptionsTest) -> TestSpec:
         """Create a TestSpec for a prioritization test case.
 
-        Args:
-            testcase (PrioritizeOptionsTest): The test case to create a TestSpec for.
-
-        Returns:
-            TestSpec: The created TestSpec.
+        :param testcase: The test case to create a TestSpec for.
+        :type testcase: PrioritizeOptionsTest
+        :return: The created TestSpec.
+        :rtype: TestSpec
         """
         reporter_kwargs = reporter_kwargs_factory().replace(choices=testcase.choices)
         reporter = FactoryReporter(**reporter_kwargs)
@@ -149,7 +146,19 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
             case: Case,
             choice: Choice,
             default_reporter_options: ReporterOptions | None) -> ReporterOptions:
-        """Helper function to call get_prioritized_options and handle failures."""
+        """Helper function to call get_prioritized_options and handle failures.
+
+        :param reporter: The reporter instance.
+        :type reporter: FactoryReporter
+        :param case: The case instance.
+        :type case: Case
+        :param choice: The choice instance.
+        :type choice: Choice
+        :param default_reporter_options: The default reporter options.
+        :type default_reporter_options: ReporterOptions | None
+        :return: The prioritized reporter options.
+        :rtype: ReporterOptions
+        """
         FactoryReporter.set_default_options(default_reporter_options)
         return reporter.get_prioritized_options(
                 case=case,
@@ -250,6 +259,9 @@ def test_get_prioritized_options_with_reporter_default_options(testspec: TestSpe
     """Test the get_prioritized_options method of PrioritizationMixin.
 
     Tested with FactoryReporter default options set.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
     """
     testspec.run()
 
@@ -261,6 +273,9 @@ def test_get_prioritized_options_without_reporter_default_options(testspec: Test
     """Test the get_prioritized_options method of PrioritizationMixin.
 
     Tested without FactoryReporter default options set.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
     """
     testspec.run()
 
@@ -268,9 +283,8 @@ def test_get_prioritized_options_without_reporter_default_options(testspec: Test
 def get_prioritized_default_targets_testspecs() -> list[TestSpec]:
     """Get test specifications for get_prioritized_default_targets method.
 
-    Returns:
-        list[TestSpec]: A list of TestSpec instances for testing.
-
+    :return: A list of TestSpec instances for testing.
+    :rtype: list[TestSpec]
     """
     testspecs: list[TestSpec] = []
 
@@ -325,16 +339,19 @@ def get_prioritized_default_targets_testspecs() -> list[TestSpec]:
 @pytest.mark.parametrize("testspec",
                          get_prioritized_default_targets_testspecs())
 def test_get_prioritized_default_targets(testspec: TestSpec) -> None:
-    """Test the get_prioritized_default_targets method of PrioritizationMixin."""
+    """Test the get_prioritized_default_targets method of PrioritizationMixin.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def get_prioritized_subdir_testspecs() -> list[TestSpec]:
     """Get test specifications for get_prioritized_subdir method.
 
-    Returns:
-        list[TestSpec]: A list of TestSpec instances for testing.
-
+    :return: A list of TestSpec instances for testing.
+    :rtype: list[TestSpec]
     """
     testspecs: list[TestSpec] = []
 
@@ -389,15 +406,19 @@ def get_prioritized_subdir_testspecs() -> list[TestSpec]:
 @pytest.mark.parametrize("testspec",
                          get_prioritized_subdir_testspecs())
 def test_get_prioritized_subdir(testspec: TestSpec) -> None:
-    """Test the get_prioritized_subdir method of PrioritizationMixin."""
+    """Test the get_prioritized_subdir method of PrioritizationMixin.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def get_prioritized_file_suffix_testspecs() -> list[TestSpec]:
     """Get test specifications for get_prioritized_file_suffix method.
 
-    Returns:
-        list[TestSpec]: A list of TestSpec instances for testing.
+    :return: A list of TestSpec instances for testing.
+    :rtype: list[TestSpec]
     """
     testspecs: list[TestSpec] = []
 
@@ -455,7 +476,11 @@ def get_prioritized_file_suffix_testspecs() -> list[TestSpec]:
 @pytest.mark.parametrize("testspec",
                          get_prioritized_file_suffix_testspecs())
 def test_get_prioritized_file_suffix(testspec: TestSpec) -> None:
-    """Test the get_prioritized_file_suffix method of PrioritizationMixin."""
+    """Test the get_prioritized_file_suffix method of PrioritizationMixin.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -467,8 +492,8 @@ def get_prioritized_file_append_and_unique_testspecs() -> list[TestSpec]:
     have opposite boolean values making them complementary and so easily tested together
     with the same setup.
 
-    Returns:
-        list[TestSpec]: A list of TestSpec instances for testing.
+    :return: A list of TestSpec instances for testing.
+    :rtype: list[TestSpec]
     """
     testspecs: list[TestSpec] = []
 
@@ -630,5 +655,8 @@ def test_get_prioritized_file_append_and_unique(testspec: TestSpec) -> None:
 
     They are tested together because they always have opposite boolean values making them complementary
     and so easily tested.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
     """
     testspec.run()

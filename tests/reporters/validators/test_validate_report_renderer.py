@@ -47,68 +47,195 @@ class MockReporter(Reporter):
                    path: Path | None = None,
                    session: Session | None = None,
                    callback: ReporterCallback | None = None) -> None:
-        """A mock run_report method."""
+        """A mock run_report method.
+
+        :param args: The command-line arguments.
+        :type args: Namespace
+        :param case: The benchmark case.
+        :type case: Case
+        :param choice: The reporter choice.
+        :type choice: Choice
+        :param path: The output path.
+        :type path: Path | None
+        :param session: The benchmark session.
+        :type session: Session | None
+        :param callback: The reporter callback.
+        :type callback: ReporterCallback | None
+        """
         self.render_by_section(  # pragma: no cover
             renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
 
     def render(
             self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
-        """A mock render method."""
+        """A mock render method.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: A mock report.
+        :rtype: str
+        """
         return "Mock Report"  # pragma: no cover
 
     def invalid_render_no_options(
             self, *, case: Case, section: Section) -> str:  # pylint: disable=unused-argument
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that is missing options parameter"  # pragma: no cover
 
     def invalid_render_options_wrong_type(
             self, *, case: Case, section: Section, options: str) -> str:  # pylint: disable=unused-argument  # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: str
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that has options parameter of wrong type"  # pragma: no cover
 
     def invalid_render_options_missing_type_hint(
             self, *, case: Case, section: Section, options) -> str:  # pylint: disable=unused-argument  # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that has options parameter missing type hint"  # pragma: no cover
 
     def invalid_render_no_section(
             self, *, case: Case, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that is missing section parameter"  # pragma: no cover
 
     def invalid_render_section_wrong_type(
             self, *, case: Case, section: str, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: str
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that has section parameter of wrong type"  # pragma: no cover
 
     def invalid_render_section_missing_type_hint(
             self, *, case: Case, section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that has section parameter missing type hint"  # pragma: no cover
 
     def invalid_render_no_case(
             self, *, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that is missing case parameter"  # pragma: no cover
 
     def invalid_render_case_wrong_type(
             self, *, case: str, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: str
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that has case parameter of wrong type"  # pragma: no cover
 
     def invalid_render_case_missing_type_hint(
             self, *, case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that has case parameter missing type hint"  # pragma: no cover
 
     def invalid_render_extra_parameter(
             self, *, case: Case, section: Section, options: ReporterOptions, extra: str) -> str:  # pylint: disable=unused-argument # noqa: E501
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :param extra: An extra parameter.
+        :type extra: str
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that has an extra parameter"  # pragma: no cover
 
     def invalid_render_not_keyword_only(
             self, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An error message.
+        :rtype: str
+        """
         return "Invalid Mock Report render method that has non-keyword-only parameters"  # pragma: no cover
 
     def invalid_render_wrong_return_type(  # pylint: disable=unused-argument
@@ -116,7 +243,17 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> tuple[int, float]:
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An invalid return type.
+        :rtype: tuple[int, float]
+        """
         return (42, 3.14)  # Invalid return type (should be str, bytes, Text, or Table) # pragma: no cover
 
     def invalid_render_missing_return_type(  # pylint: disable=unused-argument
@@ -124,7 +261,15 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions):
-        """An invalid render method for testing purposes."""
+        """An invalid render method for testing purposes.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        """
         return "Invalid Mock Report render method that is missing return type annotation"  # pragma: no cover
 
     def valid_render_with_all_possible_return_types(  # pylint: disable=unused-argument
@@ -132,7 +277,17 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> bytes | str | Text | Table:
-        """A valid render method that declares all allowed return types."""
+        """A valid render method that declares all allowed return types.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: A valid return type.
+        :rtype: bytes | str | Text | Table
+        """
         return b"Valid Mock Report render method returning bytes"  # pragma: no cover
 
     def invalid_render_with_extra_return_type(  # pylint: disable=unused-argument
@@ -140,7 +295,17 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> str | int:
-        """An invalid render method that declares an extra disallowed return type."""
+        """An invalid render method that declares an extra disallowed return type.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An invalid return type.
+        :rtype: str | int
+        """
         return "Invalid Mock Report render method returning str and int"  # pragma: no cover
 
     def invalid_render_with_unexpected_return_type(  # pylint: disable=unused-argument
@@ -148,7 +313,17 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> float:
-        """An invalid render method that declares an unexpected return type."""
+        """An invalid render method that declares an unexpected return type.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An invalid return type.
+        :rtype: float
+        """
         return 3.14  # pragma: no cover
 
     def invalid_render_with_any_return_type(  # pylint: disable=unused-argument
@@ -156,7 +331,17 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> Any:
-        """An invalid render method that declares an unexpected return type."""
+        """An invalid render method that declares an unexpected return type.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An invalid return type.
+        :rtype: Any
+        """
         return 3.14  # pragma: no cover
 
     def invalid_render_with_none_return_type(  # pylint: disable=unused-argument
@@ -164,7 +349,15 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> None:
-        """An invalid render method that declares a None return type."""
+        """An invalid render method that declares a None return type.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        """
         return None  # pragma: no cover
 
     def invalid_render_with_union_including_none(  # pylint: disable=unused-argument
@@ -172,7 +365,17 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> str | None:
-        """An invalid render method that declares a union with None."""
+        """An invalid render method that declares a union with None.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An invalid return type.
+        :rtype: str | None
+        """
         return "Invalid"  # pragma: no cover
 
     def invalid_render_with_typevar_return_type(  # pylint: disable=unused-argument
@@ -180,7 +383,17 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> T:  # type: ignore[reportInvalidTypeVarUse, type-var]
-        """An invalid render method that declares a TypeVar return type."""
+        """An invalid render method that declares a TypeVar return type.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: An invalid return type.
+        :rtype: T
+        """
         return "Invalid"  # type: ignore[return-value]  # pragma: no cover
 
     def valid_render_with_forward_ref(  # pylint: disable=unused-argument
@@ -188,7 +401,17 @@ class MockReporter(Reporter):
             case: Case,
             section: Section,
             options: ReporterOptions) -> 'str':
-        """A valid render method that uses a forward reference string."""
+        """A valid render method that uses a forward reference string.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: A valid return type.
+        :rtype: 'str'
+        """
         return "Valid"  # pragma: no cover
 
 
@@ -345,5 +568,9 @@ valid_render_with_forward_ref = MOCK_REPORTER_INSTANCE.valid_render_with_forward
         )),
     ])
 def test_validate_report_renderer_valid(testspec: TestSpec) -> None:
-    """Test validate_report_renderer with valid and invalid report renderers."""
+    """Test validate_report_renderer with valid and invalid report renderers.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

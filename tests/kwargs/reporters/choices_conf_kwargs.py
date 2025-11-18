@@ -1,10 +1,9 @@
 """Choice KWArgs package for SimpleBench tests."""
 from typing import Iterable
 
-from tests.kwargs import NoDefaultValue, KWArgs
-
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
+from tests.kwargs import KWArgs, NoDefaultValue
 
 
 class ChoicesConfKWArgs(KWArgs):
@@ -24,8 +23,7 @@ class ChoicesConfKWArgs(KWArgs):
         """Constructs a ChoicesKWArgs instance. This class is used to hold keyword arguments for
         initializing a Choices instance in tests.
 
-        Args:
-            choices (Iterable[ChoiceConf] | ChoicesConf | NoDefaultValue, default=NoDefaultValue()):
-                An iterable of ChoiceConf instances.
+        :param choices: An iterable of ChoiceConf instances.
+        :type choices: Iterable[ChoiceConf] | ChoicesConf | NoDefaultValue
         """
         super().__init__(call=ChoicesConf.__init__, kwargs=locals())

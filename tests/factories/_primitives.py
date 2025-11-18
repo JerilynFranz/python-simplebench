@@ -23,8 +23,8 @@ Output: TypeAlias = str | bytes | Text | Table
 def default_output_str() -> str:
     """Return default output for testing purposes.
 
-    Returns:
-        str: "Default Output"
+    :return: "Default Output"
+    :rtype: str
     """
     return "Default Output"
 
@@ -32,8 +32,8 @@ def default_output_str() -> str:
 def default_output() -> Output:
     """Return default output for testing purposes.
 
-    Returns:
-        Output: Text("Default Output")
+    :return: Text("Default Output")
+    :rtype: Output
     """
     return Text("Default Output")
 
@@ -41,8 +41,8 @@ def default_output() -> Output:
 def default_format() -> Format:
     """Return a default Format for testing purposes.
 
-    Returns:
-        Format: Format.RICH_TEXT
+    :return: Format.RICH_TEXT
+    :rtype: Format
     """
     return Format.RICH_TEXT
 
@@ -50,8 +50,8 @@ def default_format() -> Format:
 def default_format_plain() -> Format:
     """Return a default Format.PLAIN_TEXT for testing purposes.
 
-    Returns:
-        Format: Format.PLAIN_TEXT
+    :return: Format.PLAIN_TEXT
+    :rtype: Format
     """
     return Format.PLAIN_TEXT
 
@@ -59,8 +59,8 @@ def default_format_plain() -> Format:
 def default_section() -> Section:
     """Return a single default Section for testing purposes.
 
-    Returns:
-        Section: Section.OPS
+    :return: Section.OPS
+    :rtype: Section
     """
     return Section.OPS
 
@@ -70,8 +70,8 @@ def default_filename_base() -> str:
 
     It has to be a valid filename stem (alphanumeric, no spaces, not empty or blank).
 
-    Returns:
-        str: "ReportName"
+    :return: "ReportName"
+    :rtype: str
     """
     return "ReportName"
 
@@ -88,12 +88,11 @@ def output_path_factory() -> Path:
     This function is cached by default to return the same Path instance
     for identical calls, unless a different cache_id is provided.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        Path: A Path object pointing to a directory in the temporary directory.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Path object pointing to a directory in the temporary directory.
+    :rtype: Path
     """
 
 
@@ -106,12 +105,11 @@ def output_path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
     This function is cached by default to return the same Path instance
     for identical calls, unless a different cache_id is provided.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        Path: A Path object pointing to a directory in the temporary directory.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Path object pointing to a directory in the temporary directory.
+    :rtype: Path
     """
 
 
@@ -124,12 +122,11 @@ def output_path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
     This function is cached by default to return the same Path instance
     for identical calls, unless a different cache_id is provided.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        Path: A Path object pointing to a file in the temporary directory.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Path object pointing to a file in the temporary directory.
+    :rtype: Path
     """
     return path_factory(cache_id=cache_id)
 
@@ -138,8 +135,8 @@ def output_path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
 def n_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:
     """Return a default number of iterations or rounds for testing purposes.
 
-    Returns:
-        int: `1`
+    :return: `1`
+    :rtype: int
     """
     return 1
 
@@ -148,14 +145,11 @@ def n_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:
 def case_group_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a default group string for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        str: `"default_case_group"`
-
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `"default_case_group"`
+    :rtype: str
     """
     return "default_case_group"
 
@@ -165,8 +159,8 @@ def default_case_group() -> str:
 
     It always returns the same group string created by case_group_factory().
 
-    Returns:
-        str: `"default_case_group"`
+    :return: `"default_case_group"`
+    :rtype: str
     """
     return case_group_factory(cache_id=f'{__name__}.default_case_group:singleton')
 
@@ -175,13 +169,11 @@ def default_case_group() -> str:
 def title_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a title string for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        str: `"Default Title"`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `"Default Title"`
+    :rtype: str
     """
     return "Default Title"
 
@@ -191,8 +183,8 @@ def default_title() -> str:
 
     It always returns the same title string created by title_factory().
 
-    Returns:
-        str: `"Default Title"`
+    :return: `"Default Title"`
+    :rtype: str
     """
     return title_factory(cache_id=f'{__name__}.default_title:singleton')
 
@@ -201,13 +193,11 @@ def default_title() -> str:
 def subdir_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a default subdir string for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        str: `"asubdir"`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `"asubdir"`
+    :rtype: str
     """
     return "asubdir"
 
@@ -217,8 +207,8 @@ def default_subdir() -> str:
 
     It always returns the same subdir string created by subdir_factory().
 
-    Returns:
-        str: `"asubdir"`
+    :return: `"asubdir"`
+    :rtype: str
     """
     return subdir_factory(cache_id=f'{__name__}.default_subdir:singleton')
 
@@ -227,14 +217,11 @@ def default_subdir() -> str:
 def sections_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Section, ...]:
     """Return a default tuple of Sections for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        tuple[Section]: `(Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY)`
-
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `(Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY)`
+    :rtype: tuple[Section]
     """
     return (Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY)
 
@@ -244,8 +231,8 @@ def default_sections() -> tuple[Section, ...]:
 
     It always returns the same tuple instance of Sections created by sections_factory().
 
-    Returns:
-        tuple[Section]: `(Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY)`
+    :return: `(Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY)`
+    :rtype: tuple[Section]
     """
     return sections_factory(cache_id=f'{__name__}.default_sections:singleton')
 
@@ -254,13 +241,11 @@ def default_sections() -> tuple[Section, ...]:
 def targets_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Target, ...]:
     """Return a default tuple of Targets for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        tuple[Target]: `(Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM)`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `(Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM)`
+    :rtype: tuple[Target]
     """
     return (Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM)
 
@@ -270,8 +255,8 @@ def default_targets() -> tuple[Target, ...]:
 
     It always returns the same tuple instance of Targets created by targets_factory().
 
-    Returns:
-        tuple[Target]: `(Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM)`
+    :return: `(Target.CONSOLE, Target.CALLBACK, Target.FILESYSTEM)`
+    :rtype: tuple[Target]
     """
     return targets_factory(cache_id=f'{__name__}.default_targets:singleton')
 
@@ -280,13 +265,11 @@ def default_targets() -> tuple[Target, ...]:
 def default_targets_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Target]:
     """Return a default tuple for default_targets for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        tuple[Target]: `(Target.CONSOLE,)`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `(Target.CONSOLE,)`
+    :rtype: tuple[Target]
     """
     return (Target.CONSOLE, )
 
@@ -294,8 +277,8 @@ def default_targets_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Targe
 def default_default_targets() -> tuple[Target]:
     """Return a default tuple for default_targets for testing purposes.
 
-    Returns:
-        tuple[Target]: `(Target.CONSOLE,)`
+    :return: `(Target.CONSOLE,)`
+    :rtype: tuple[Target]
     """
     return default_targets_factory(cache_id=f'{__name__}.default_default_targets:singleton')
 
@@ -304,22 +287,22 @@ def default_default_targets() -> tuple[Target]:
 def formats_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Format]:
     """Return a default tuple of Formats for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        tuple[Format]: `(Format.RICH_TEXT,)`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `(Format.RICH_TEXT,)`
+    :rtype: tuple[Format]
     """
     return (Format.RICH_TEXT, )
 
 
 def default_formats() -> tuple[Format]:
     """Return a default tuple of Formats for testing purposes.
+
     It always returns the same tuple instance of Formats created by formats_factory().
-    Returns:
-        tuple[Format]: `(Format.RICH_TEXT,)`
+
+    :return: `(Format.RICH_TEXT,)`
+    :rtype: tuple[Format]
     """
     return formats_factory(cache_id=f'{__name__}.default_formats:singleton')
 
@@ -328,13 +311,11 @@ def default_formats() -> tuple[Format]:
 def output_format_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Format:
     """Return a default Format for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        Format: `Format.RICH_TEXT`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `Format.RICH_TEXT`
+    :rtype: Format
     """
     return Format.RICH_TEXT
 
@@ -344,8 +325,8 @@ def default_output_format() -> Format:
 
     It always returns the same Format instance created by output_format_factory().
 
-    Returns:
-        Format: `Format.RICH_TEXT`
+    :return: `Format.RICH_TEXT`
+    :rtype: Format
     """
     return output_format_factory(cache_id=f'{__name__}.default_output_format:singleton')
 
@@ -354,13 +335,11 @@ def default_output_format() -> Format:
 def description_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a description string for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        str: `"A description for testing."`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `"A description for testing."`
+    :rtype: str
     """
     return "A description for testing."
 
@@ -370,8 +349,8 @@ def default_description() -> str:
 
     It always returns the same description string created by description_factory().
 
-    Returns:
-        str: `"A description for testing."`
+    :return: `"A description for testing."`
+    :rtype: str
     """
     return description_factory(cache_id=f'{__name__}.default_description:singleton')
 
@@ -380,13 +359,11 @@ def default_description() -> str:
 def reporter_name_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a default reporter name string for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        str: `"default_reporter_name"`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `"default_reporter_name"`
+    :rtype: str
     """
     return "default_reporter_name"
 
@@ -396,8 +373,8 @@ def default_reporter_name() -> str:
 
     It always returns the same reporter name string created by reporter_name_factory().
 
-    Returns:
-        str: `"default_reporter_name"`
+    :return: `"default_reporter_name"`
+    :rtype: str
     """
     return reporter_name_factory(cache_id=f'{__name__}.default_reporter_name:singleton')
 
@@ -406,13 +383,11 @@ def default_reporter_name() -> str:
 def choice_name_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a choice name string for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        str: `"choice_name"`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `"choice_name"`
+    :rtype: str
     """
     return "choice_name"
 
@@ -421,8 +396,9 @@ def flag_name_factory() -> str:
     """Return a default flag name string for testing purposes.
 
     It always returns the same flag name string.
-    Returns:
-        str: `"--default-flag"`
+
+    :return: `"--default-flag"`
+    :rtype: str
     """
     return '--default-flag'
 
@@ -432,8 +408,8 @@ def default_choice_name() -> str:
 
     It always returns the same choice name string created by choice_name_factory().
 
-    Returns:
-        str: `"choice_name"`
+    :return: `"choice_name"`
+    :rtype: str
     """
     return choice_name_factory(cache_id=f'{__name__}.default_choice_name:singleton')
 
@@ -442,13 +418,11 @@ def default_choice_name() -> str:
 def choice_flags_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[str, ...]:
     """Return a tuple of flags for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        (tuple[str, ...]): `tuple(['--default-flag'])`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `tuple(['--default-flag'])`
+    :rtype: tuple[str, ...]
     """
     return tuple([flag_name_factory()])
 
@@ -458,8 +432,8 @@ def default_choice_flags() -> tuple[str, ...]:
 
     It always returns the same tuple of flags created by choice_flags_factory().
 
-    Returns:
-        (tuple[str, ...]): `tuple(['--default-flag'])`
+    :return: `tuple(['--default-flag'])`
+    :rtype: tuple[str, ...]
     """
     return choice_flags_factory(cache_id=f'{__name__}.default_choice_flags:singleton')
 
@@ -468,12 +442,11 @@ def default_choice_flags() -> tuple[str, ...]:
 def flag_type_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> FlagType:
     """Return a FlagType for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        FlagType: `FlagType.TARGET_LIST`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `FlagType.TARGET_LIST`
+    :rtype: FlagType
     """
     return FlagType.TARGET_LIST
 
@@ -483,8 +456,8 @@ def default_flag_type() -> FlagType:
 
     It always returns the same FlagType created by flag_type_factory().
 
-    Returns:
-        FlagType: `FlagType.TARGET_LIST`
+    :return: `FlagType.TARGET_LIST`
+    :rtype: FlagType
     """
     return flag_type_factory(cache_id=f'{__name__}.default_flag_type:singleton')
 
@@ -493,13 +466,11 @@ def default_flag_type() -> FlagType:
 def file_suffix_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a default file suffix string for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        str: `"suffix"`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `"suffix"`
+    :rtype: str
     """
     return "suffix"
 
@@ -509,8 +480,8 @@ def default_file_suffix() -> str:
 
     It always returns the same file suffix string created by file_suffix_factory().
 
-    Returns:
-        str: `"suffix"`
+    :return: `"suffix"`
+    :rtype: str
     """
     return file_suffix_factory(cache_id=f'{__name__}.default_file_suffix:singleton')
 
@@ -524,8 +495,8 @@ def file_unique_factory() -> bool:
     This is coordinated with `default_file_append()` to ensure that
     file_unique is `True` and file_append is `False`, which are compatible settings.
 
-    Returns:
-        bool: `True`
+    :return: `True`
+    :rtype: bool
     """
     return True
 
@@ -535,8 +506,8 @@ def default_file_unique() -> bool:
 
     It always returns the same boolean created by file_unique_factory().
 
-    Returns:
-        bool: `True`
+    :return: `True`
+    :rtype: bool
     """
     return file_unique_factory(cache_id=f'{__name__}.default_file_unique:singleton')
 
@@ -550,8 +521,8 @@ def file_append_factory() -> bool:
     This is coordinated with `default_file_unique()` to ensure that
     file_unique is `True` and file_append is `False`, which are compatible settings.
 
-    Returns:
-        bool: `False`
+    :return: `False`
+    :rtype: bool
     """
     return False
 
@@ -561,8 +532,8 @@ def default_file_append() -> bool:
 
     It always returns the same boolean created by file_append_factory().
 
-    Returns:
-        bool: `False`
+    :return: `False`
+    :rtype: bool
     """
     return file_append_factory(cache_id=f'{__name__}.default_file_append:singleton')
 
@@ -571,12 +542,11 @@ def default_file_append() -> bool:
 def report_output_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a report output string for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        str: `"Rendered Report"`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `"Rendered Report"`
+    :rtype: str
     """
     return "Rendered Report"
 
@@ -586,8 +556,8 @@ def default_report_output() -> str:
 
     It always returns the same report output string created by report_output_factory().
 
-    Returns:
-        str: `"Rendered Report"`
+    :return: `"Rendered Report"`
+    :rtype: str
     """
     return report_output_factory(cache_id=f'{__name__}.default_report_output:singleton')
 
@@ -598,8 +568,8 @@ def iterations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:
 
     This is for use in configuring benchmark cases in tests.
 
-    Returns:
-        int: `100`
+    :return: `100`
+    :rtype: int
     """
     return 100
 
@@ -609,8 +579,8 @@ def default_iterations() -> int:
 
     It always returns the same number instance created by iterations_factory().
 
-    Returns:
-        int: `100`
+    :return: `100`
+    :rtype: int
     """
     return iterations_factory(cache_id=f'{__name__}.default_iterations:singleton')
 
@@ -621,8 +591,8 @@ def warmup_iterations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:
 
     This is for use in configuring benchmark cases in tests.
 
-    Returns:
-        int: `100`
+    :return: `100`
+    :rtype: int
     """
     return 100
 
@@ -632,8 +602,8 @@ def default_warmup_iterations() -> int:
 
     It always returns the same number instance created by warmup_iterations_factory().
 
-    Returns:
-        int: `100`
+    :return: `100`
+    :rtype: int
     """
     return warmup_iterations_factory(cache_id=f'{__name__}.default_warmup_iterations:singleton')
 
@@ -649,8 +619,8 @@ def rounds_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> int:
     any positive integer number of rounds but there are internal optimizations
     that may behave differently with higher numbers of rounds.
 
-    Returns:
-        int: `1500`
+    :return: `1500`
+    :rtype: int
     """
     return 1500
 
@@ -660,8 +630,8 @@ def default_rounds() -> int:
 
     It always returns the same number instance created by rounds_factory().
 
-    Returns:
-        int: `1500`
+    :return: `1500`
+    :rtype: int
     """
     return rounds_factory(cache_id=f'{__name__}.default_rounds:singleton')
 
@@ -672,8 +642,8 @@ def min_time_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
 
     This is for use in configuring benchmark cases in tests.
 
-    Returns:
-        float: `0.1`
+    :return: `0.1`
+    :rtype: float
     """
     return 0.1
 
@@ -683,8 +653,8 @@ def default_min_time() -> float:
 
     It always returns the same number instance created by min_time_factory().
 
-    Returns:
-        float: `0.1`
+    :return: `0.1`
+    :rtype: float
     """
     return min_time_factory(cache_id=f'{__name__}.default_min_time:singleton')
 
@@ -693,15 +663,13 @@ def default_min_time() -> float:
 def max_time_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
     """Return a default maximum time for testing purposes.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
     This is for use in configuring benchmark cases in tests.
 
-    Returns:
-        float: `0.2`
+    :return: `0.2`
+    :rtype: float
     """
     return 0.2
 
@@ -711,8 +679,8 @@ def default_max_time() -> float:
 
     It always returns the same number instance created by max_time_factory().
 
-    Returns:
-        float: `0.2`
+    :return: `0.2`
+    :rtype: float
     """
     return max_time_factory(cache_id=f'{__name__}.default_max_time:singleton')
 
@@ -725,13 +693,11 @@ def variation_cols_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, st
 
     This is a minimal case without any variation columns.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        (dict[str, str]): `{}`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `{}`
+    :rtype: dict[str, str]
     """
     return {}
 
@@ -744,13 +710,11 @@ def kwargs_variations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
 
     This is a minimal case without any kwargs variations.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        (dict[str, list[Any]]): `{}`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: `{}`
+    :rtype: dict[str, list[Any]]
     """
     return {}
 
@@ -759,8 +723,8 @@ def kwargs_variations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
 def total_elapsed_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
     """Return a default total elapsed time for testing purposes.
 
-    Returns:
-        float: `6.0`
+    :return: `6.0`
+    :rtype: float
     """
     return 6.0
 
@@ -769,8 +733,8 @@ def total_elapsed_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
 def interval_unit_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a default interval unit for testing purposes.
 
-    Returns:
-        str: `"s"`
+    :return: `"s"`
+    :rtype: str
     """
     return "s"
 
@@ -779,8 +743,8 @@ def interval_unit_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
 def interval_scale_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
     """Return a default interval scale for testing purposes.
 
-    Returns:
-        float: `1.0`
+    :return: `1.0`
+    :rtype: float
     """
     return 1.0
 
@@ -789,8 +753,8 @@ def interval_scale_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
 def ops_per_interval_unit_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a default ops per interval unit for testing purposes.
 
-    Returns:
-        str: `Ops/s`
+    :return: `Ops/s`
+    :rtype: str
     """
     return 'Ops/s'
 
@@ -799,8 +763,8 @@ def ops_per_interval_unit_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
 def ops_per_interval_scale_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
     """Return a default ops per interval scale for testing purposes.
 
-    Returns:
-        float: `1.0`
+    :return: `1.0`
+    :rtype: float
     """
     return 1.0
 
@@ -809,8 +773,8 @@ def ops_per_interval_scale_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> floa
 def memory_unit_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
     """Return a default memory unit for testing purposes.
 
-    Returns:
-        str: `"bytes"`
+    :return: `"bytes"`
+    :rtype: str
     """
     return "bytes"
 
@@ -819,8 +783,8 @@ def memory_unit_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> str:
 def memory_scale_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
     """Return a default memory scale for testing purposes.
 
-    Returns:
-        float: `1.0`
+    :return: `1.0`
+    :rtype: float
     """
     return 1.0
 
@@ -829,7 +793,7 @@ def memory_scale_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
 def variation_marks_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, str]:
     """Return a default dictionary of variation marks for testing purposes.
 
-    Returns:
-        dict[str, str]: `{}`
+    :return: `{}`
+    :rtype: dict[str, str]
     """
     return {}

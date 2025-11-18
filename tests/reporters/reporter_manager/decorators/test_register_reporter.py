@@ -44,7 +44,21 @@ class MockReporter(Reporter):
                    path: Path | None = None,
                    session: Session | None = None,
                    callback: ReporterCallback | None = None) -> None:
-        """A mock run_report method."""
+        """A mock run_report method.
+
+        :param args: The command-line arguments.
+        :type args: Namespace
+        :param case: The benchmark case.
+        :type case: Case
+        :param choice: The reporter choice.
+        :type choice: Choice
+        :param path: The output path.
+        :type path: Path | None
+        :param session: The benchmark session.
+        :type session: Session | None
+        :param callback: The reporter callback.
+        :type callback: ReporterCallback | None
+        """
         self.render_by_section(  # pragma: no cover
             renderer=self.render,
             args=args,
@@ -55,7 +69,17 @@ class MockReporter(Reporter):
             callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
-        """A mock render method."""
+        """A mock render method.
+
+        :param case: The benchmark case.
+        :type case: Case
+        :param section: The report section.
+        :type section: Section
+        :param options: The reporter options.
+        :type options: ReporterOptions
+        :return: A mock report.
+        :rtype: str
+        """
         return "Mock Report"  # pragma: no cover
 
 
@@ -82,7 +106,21 @@ def test_register_reporter() -> None:
                        path: Path | None = None,
                        session: Session | None = None,
                        callback: ReporterCallback | None = None) -> None:
-            """A mock run_report method."""
+            """A mock run_report method.
+
+            :param args: The command-line arguments.
+            :type args: Namespace
+            :param case: The benchmark case.
+            :type case: Case
+            :param choice: The reporter choice.
+            :type choice: Choice
+            :param path: The output path.
+            :type path: Path | None
+            :param session: The benchmark session.
+            :type session: Session | None
+            :param callback: The reporter callback.
+            :type callback: ReporterCallback | None
+            """
             self.render_by_section(  # pragma: no cover
                 renderer=self.render,
                 args=args,
@@ -93,7 +131,17 @@ def test_register_reporter() -> None:
                 callback=callback)
 
         def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
-            """A mock render method."""
+            """A mock render method.
+
+            :param case: The benchmark case.
+            :type case: Case
+            :param section: The report section.
+            :type section: Section
+            :param options: The reporter options.
+            :type options: ReporterOptions
+            :return: A mock report.
+            :rtype: str
+            """
             return "Mock Report"  # pragma: no cover
 
     registered_reporters = get_registered_reporters()

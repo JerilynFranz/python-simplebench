@@ -3,7 +3,7 @@ import pytest
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from simplebench.enums import Section
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, IterationErrorTag
+from simplebench.exceptions import IterationErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.iteration import Iteration
 
 from .testspec import TestAction, idspec
@@ -137,7 +137,11 @@ from .testspec import TestAction, idspec
         exception_tag=IterationErrorTag.PEAK_MEMORY_ARG_TYPE)),
     ])
 def test_iteration_init(testspec: TestAction) -> None:
-    """Test the initialization of the Iteration class."""
+    """Test the initialization of the Iteration class.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
@@ -176,12 +180,16 @@ def test_iteration_init(testspec: TestAction) -> None:
         exception_tag=IterationErrorTag.ITERATION_SECTION_INVALID_SECTION_ARG_TYPE))
 ])
 def test_iteration_section(testspec: TestAction) -> None:
-    """Test the iteration_section method of the Iteration class."""
+    """Test the iteration_section method of the Iteration class.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
 def test_repr() -> None:
-    """Test the __repr__ method of the Iteration class."""
+    """Test the ``__repr__`` method of the Iteration class."""
     it = Iteration(n=10, elapsed=5.0, unit='ms', scale=1e-3, memory=512, peak_memory=1024)
     repr_str = repr(it)
     expected_str = ("Iteration(n=10, elapsed=5.0, unit='ms', "

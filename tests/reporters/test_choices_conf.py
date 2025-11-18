@@ -2,12 +2,10 @@
 # pylint: disable=unnecessary-direct-lambda-call
 import pytest
 
-from simplebench.exceptions import (SimpleBenchKeyError, SimpleBenchTypeError,
-                                    SimpleBenchValueError)
+from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choices import ChoicesConf, ChoicesErrorTag
 
-from ..factories import (choice_conf_factory, choices_conf_factory,
-                         default_choice_name)
+from ..factories import choice_conf_factory, choices_conf_factory, default_choice_name
 from ..kwargs import ChoicesConfKWArgs
 from ..testspec import Assert, TestAction, TestSpec, idspec
 
@@ -57,12 +55,19 @@ def test_choices_init(testspec: TestSpec):
     using different combinations of parameters provided through the
     ChoicesConfKWArgs class and that it raises appropriate exceptions for invalid
     inputs.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
     """
     testspec.run()
 
 
 def choices_conf_add_testspecs() -> list[TestSpec]:
-    """Returns a list of TestSpec instances for testing ChoicesConf add()"""
+    """Returns a list of TestSpec instances for testing ChoicesConf add().
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def add_choice_conf_to_empty_choices_with_keyword_arg() -> None:
@@ -161,16 +166,19 @@ def choices_conf_add_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", choices_conf_add_testspecs())
 def test_choices_conf_add_method(testspec: TestSpec) -> None:
-    """Test the ChoicesConf().add() method."""
+    """Test the ChoicesConf().add() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def choices_conf_extend_testspecs() -> list[TestSpec]:
     """Returns a list of TestSpec instances for testing ChoicesConf extend() method.
 
-    Returns:
-        list[TestSpec]:
-            A list of TestSpec instances for testing the extend() method of ChoicesConf.
+    :return: A list of TestSpec instances for testing the extend() method of ChoicesConf.
+    :rtype: list[TestSpec]
     """
     testspecs = []
     prefix = f"{__file__}:test_choices_extend_testspecs"
@@ -230,16 +238,19 @@ def choices_conf_extend_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", choices_conf_extend_testspecs())
 def test_choices_extend(testspec: TestSpec) -> None:
-    """Test the Choices extend() method."""
+    """Test the Choices extend() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def choices_conf_remove_testspecs() -> list[TestSpec]:
     """Returns a list of TestSpec instances for testing ChoicesConf remove() method.
 
-    Returns:
-        list[TestSpec]:
-            A list of TestSpec instances for testing the remove() method of ChoicesConf.
+    :return: A list of TestSpec instances for testing the remove() method of ChoicesConf.
+    :rtype: list[TestSpec]
     """
     testspecs = []
 
@@ -274,16 +285,19 @@ def choices_conf_remove_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", choices_conf_remove_testspecs())
 def test_choices_remove(testspec: TestSpec) -> None:
-    """Test the Choices.remove() method."""
+    """Test the Choices.remove() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def setitem_dunder_method_testspecs() -> list[TestSpec]:
     """Returns a list of TestSpec instances for testing ChoicesConf __setitem__ method.
 
-    Returns:
-        list[TestSpec]:
-            A list of TestSpec instances for testing the __setitem__ method of ChoicesConf.
+    :return: A list of TestSpec instances for testing the __setitem__ method of ChoicesConf.
+    :rtype: list[TestSpec]
     """
     testspecs = []
 
@@ -368,5 +382,9 @@ def setitem_dunder_method_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", setitem_dunder_method_testspecs())
 def test_setitem_dunder_method(testspec: TestSpec) -> None:
-    """Test that the __setitem__ dunder method of Choices works correctly."""
+    """Test that the __setitem__ dunder method of Choices works correctly.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

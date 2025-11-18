@@ -13,8 +13,8 @@ _MODELED_CALL = _MODELED_CLASS.target_console
 def target_console_method_kwargs_testspecs() -> list[TestSpec]:
     """Generates TestSpecs for testing TargetConsoleMethodKWArgs.
 
-    Returns:
-        list[TestSpec]: A list of TestSpec instances for testing TargetConsole  MethodKWArgs.
+    :return: A list of TestSpec instances for testing TargetConsole  MethodKWArgs.
+    :rtype: list[TestSpec]
     """
     testspecs: list[TestSpec] = [
         idspec("KWARGS_001", TestAction(

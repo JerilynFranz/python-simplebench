@@ -1,5 +1,6 @@
 """TestSpec framework - TestSet class."""
 from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, NoReturn, Optional
@@ -21,32 +22,35 @@ class TestSet(TestSpec):
     during the set operation and can call a custom validation function after setting
     the attribute.
 
-    Args:
-        name (str):
-            Identifying name for the test.
-        obj (Optional[object] | Deferred, default=NO_OBJ_ASSIGNED):
-            The object whose attribute is to be tested. If not provided, the special sentinel value
-            NO_OBJ_ASSIGNED is used. The object must not be None and must be an instance of object.
-            It must be provided to run the test.
-        attribute (str):
-            The name of the attribute to be tested by setting.
-        value (Any):
-            Value to set the attribute to.
-        exception (Optional[type[Exception]], default=None):
-            Expected exception type (if any) to be raised by setting the attribute.
-        exception_tag (Optional[str | Enum], default=None):
-            Expected tag (if any) to be found in the exception message.
-        validate (Optional[Callable[[TestSet, Any], bool] | Deferred], default=None):
-            Function to validate obj after setting the attribute. It should return True if the object state is valid.
-
-            This provides a way to perform post-set validation of the entire object state.
-
-            It is passed two arguments, the TestSet instance and the object being validated.
-        on_fail (Callable[[str], NoReturn], default=pytest.fail):
-            Function to call on test failure to raise an exception
-        extra (Any):
-            Extra fields for use by test frameworks. It is not used by the TestSet class itself.
-            Default is None.
+    :param name: Identifying name for the test.
+    :type name: str
+    :param obj: The object whose attribute is to be tested. If not provided, the special sentinel value
+                NO_OBJ_ASSIGNED is used. The object must not be None and must be an instance of object.
+                It must be provided to run the test.
+                Defaults to NO_OBJ_ASSIGNED.
+    :type obj: Optional[object] | Deferred, optional
+    :param attribute: The name of the attribute to be tested by setting.
+    :type attribute: str
+    :param value: Value to set the attribute to.
+    :type value: Any
+    :param exception: Expected exception type (if any) to be raised by setting the attribute.
+                      Defaults to None.
+    :type exception: Optional[type[Exception]], optional
+    :param exception_tag: Expected tag (if any) to be found in the exception message.
+                          Defaults to None.
+    :type exception_tag: Optional[str | Enum], optional
+    :param validate: Function to validate obj after setting the attribute.
+                     It should return True if the object state is valid.
+                     This provides a way to perform post-set validation of the entire object state.
+                     It is passed two arguments, the TestSet instance and the object being validated.
+                     Defaults to None.
+    :type validate: Optional[Callable[[TestSet, Any], bool] | Deferred], optional
+    :param on_fail: Function to call on test failure to raise an exception.
+                    Defaults to pytest.fail.
+    :type on_fail: Callable[[str], NoReturn], optional
+    :param extra: Extra fields for use by test frameworks. It is not used by the TestSet class itself.
+                  Defaults to None.
+    :type extra: Any, optional
     """
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
@@ -111,10 +115,9 @@ class TestSet(TestSpec):
         - An expected exception is raised, but the exception tag does not match the expected tag.
         - The validate function raises an exception indicating the object is not in a valid state.
 
-        Raises:
-            pytest Fail: If the test fails.
-            RuntimeError: If the obj attribute is not assigned to a valid object.
-            RuntimeError: If the test fails and the on_fail function does not raise an exception.
+        :raises pytest.Fail: If the test fails.
+        :raises RuntimeError: If the obj attribute is not assigned to a valid object.
+        :raises RuntimeError: If the test fails and the on_fail function does not raise an exception.
         """
         # disabled because we are using the __setattr__ dunder method directly
         # for testing purposes because there is no other way to set testing for

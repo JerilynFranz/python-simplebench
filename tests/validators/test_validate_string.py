@@ -2,9 +2,9 @@
 import pytest
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.validators import validate_string, ValidatorsErrorTag
+from simplebench.validators import ValidatorsErrorTag, validate_string
 
-from ..testspec import TestSpec, Assert, idspec, TestAction
+from ..testspec import Assert, TestAction, TestSpec, idspec
 
 
 class GenericErrorTag(ErrorTag):
@@ -152,7 +152,11 @@ class GenericErrorTag(ErrorTag):
         exception_tag=ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE)),
 ])
 def test_param(testspec: TestSpec):
-    """Test validate_string calling parameters."""
+    """Test validate_string calling parameters.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 # Lessons Learned: Combining too many interacting parameter options in a single
@@ -426,5 +430,9 @@ def test_param(testspec: TestSpec):
         expected="")),
 ])
 def test_validate_string(testspec: TestSpec):
-    """Test validate_string function."""
+    """Test validate_string function.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

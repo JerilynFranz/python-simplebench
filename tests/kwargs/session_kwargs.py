@@ -37,13 +37,19 @@ class SessionKWArgs(KWArgs):
         """Constructs a SessionKWArgs instance. This class is used to hold keyword arguments for
         initializing a Session instance in tests.
 
-        Args:
-            cases (Sequence[Case]): A sequence of Case instances.
-            verbosity (Verbosity): The verbosity level for the session.
-            default_runner (type[SimpleRunner]): The default runner class to use for the session.
-            args_parser (ArgumentParser): The argument parser instance for the session.
-            progress (bool): Whether to show progress information during the session.
-            output_path (Path): The output path for the session results.
-            console (Console): The console instance to use for the session.
+        :param cases: A sequence of Case instances.
+        :type cases: Sequence[Case]
+        :param verbosity: The verbosity level for the session.
+        :type verbosity: Verbosity
+        :param default_runner: The default runner class to use for the session.
+        :type default_runner: type[SimpleRunner]
+        :param args_parser: The argument parser instance for the session.
+        :type args_parser: ArgumentParser
+        :param progress: Whether to show progress information during the session.
+        :type progress: bool
+        :param output_path: The output path for the session results.
+        :type output_path: Path
+        :param console: The console instance to use for the session.
+        :type console: Console
         """
         super().__init__(call=Session.__init__, kwargs=locals())

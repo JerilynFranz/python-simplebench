@@ -19,9 +19,10 @@ class TargetConsoleMethodKWArgs(KWArgs):
     to the Reporter class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
 
-    Args:
-        session (Optional[Session]): The Session instance containing benchmark results.
-        output (str | bytes | Text | Table): The report data to write to the console.
+    :param session: The Session instance containing benchmark results.
+    :type session: Session | None
+    :param output: The report data to write to the console.
+    :type output: str | bytes | Text | Table
     """
     def __init__(  # pylint: disable=unused-argument
             self,
@@ -34,8 +35,9 @@ class TargetConsoleMethodKWArgs(KWArgs):
         This class is used to hold keyword arguments for calling the Reporter().target_console()
         instance method in tests.
 
-        Args:
-            session (Optional[Session]): The Session instance containing benchmark results.
-            output (str | bytes | Text | Table): The report data to write to the console.
+        :param session: The Session instance containing benchmark results.
+        :type session: Session | None
+        :param output: The report data to write to the console.
+        :type output: str | bytes | Text | Table
         """
         super().__init__(call=Reporter.target_console, kwargs=locals())

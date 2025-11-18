@@ -20,17 +20,14 @@ class Context(dict[str, Any]):
 
             context = Context(param1=42, param2="value")
 
-        Args:
-            **kwargs: Key-value pairs to initialize the context dictionary.
-
+        :param kwargs: Key-value pairs to initialize the context dictionary.
             They must be valid python identifiers as keys (str) and can have any type as values.
-
-        Raises:
-            TypeError:
-                - If any key in kwargs is not of type str.
-                - If any key in kwargs is not a valid python identifier (str).
-                - If any key in kwargs shadows existing attributes or methods of the Context class.
-                - If any key in kwargs starts or ends with double underscores '__'.
+        :type kwargs: Any
+        :raises TypeError:
+            - If any key in kwargs is not of type str.
+            - If any key in kwargs is not a valid python identifier (str).
+            - If any key in kwargs shadows existing attributes or methods of the Context class.
+            - If any key in kwargs starts or ends with double underscores '__'.
         """
         # pylint: disable=consider-iterating-dictionary
         if not all(isinstance(key, str) for key in kwargs.keys()):
@@ -44,7 +41,14 @@ class Context(dict[str, Any]):
         super().__init__(**kwargs)
 
     def __getattr__(self, name):
-        """Get an attribute from the context dictionary."""
+        """Get an attribute from the context dictionary.
+
+        :param name: The name of the attribute to get.
+        :type name: str
+        :return: The value of the attribute.
+        :rtype: Any
+        :raises AttributeError: If the attribute is not found.
+        """
         try:
             return self[name]
         except KeyError:

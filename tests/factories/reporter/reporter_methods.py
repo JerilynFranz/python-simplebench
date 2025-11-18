@@ -62,18 +62,18 @@ def target_callback_kwargs_factory(
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
     Defaults:
-        callback (ReporterCallback): `default_reporter_callback()`
-        case (Case): `case_factory(cache_id=cache_id)`
-        section (Section): `default_section()`
-        output_format (Format): `default_format_plain()`
-        output (Output): `default_output_str()`
+        - callback (ReporterCallback): `default_reporter_callback()`
+        - case (Case): `case_factory(cache_id=cache_id)`
+        - section (Section): `default_section()`
+        - output_format (Format): `default_format_plain()`
+        - output (Output): `default_output_str()`
 
-    Args:
-        kwargs (dict[str, Any] | None, default=None): Specific keyword arguments to override defaults.
-        cache_id (CacheId, default=None): The cache identifier.
-
-    Returns:
-        TargetCallbackMethodKWArgs: The constructed keyword arguments.
+    :param kwargs: Specific keyword arguments to override defaults.
+    :type kwargs: dict[str, Any] | None
+    :param cache_id: The cache identifier.
+    :type cache_id: CacheId, optional
+    :return: The constructed keyword arguments.
+    :rtype: TargetCallbackMethodKWArgs
     """
     defaults = TargetCallbackMethodKWArgs(
         callback=default_reporter_callback,
@@ -97,15 +97,15 @@ def target_console_kwargs_factory(
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
     Defaults:
-        session (Session): `session_factory(cache_id=cache_id)`
-        output (Output): `default_output()`
+        - session (Session): `session_factory(cache_id=cache_id)`
+        - output (Output): `default_output()`
 
-    Args:
-        kwargs (dict[str, Any] | None, default=None): Specific keyword arguments to override defaults.
-        cache_id (CacheId, default=None): The cache identifier.
-
-    Returns:
-        TargetConsoleMethodKWArgs: The constructed keyword arguments.
+    :param kwargs: Specific keyword arguments to override defaults.
+    :type kwargs: dict[str, Any] | None
+    :param cache_id: The cache identifier.
+    :type cache_id: CacheId, optional
+    :return: The constructed keyword arguments.
+    :rtype: TargetConsoleMethodKWArgs
     """
     defaults = TargetConsoleMethodKWArgs(
         session=session_factory(cache_id=cache_id),
@@ -126,19 +126,19 @@ def target_filesystem_kwargs_factory(
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
     Defaults:
-        path (Path): `path_factory(cache_id=cache_id)`
-        subdir (str): `default_subdir()`
-        filename (str): `default_filename_base()`
-        output (Output): `default_output()`
-        unique (bool): `True`
-        append (bool): `False`
+        - path (Path): `path_factory(cache_id=cache_id)`
+        - subdir (str): `default_subdir()`
+        - filename (str): `default_filename_base()`
+        - output (Output): `default_output()`
+        - unique (bool): `True`
+        - append (bool): `False`
 
-    Args:
-        kwargs (dict[str, Any] | None, default=None): Specific keyword arguments to override defaults.
-        cache_id (CacheId, default=None): The cache identifier.
-
-    Returns:
-        TargetFilesystemMethodKWArgs: The constructed keyword arguments.
+    :param kwargs: Specific keyword arguments to override defaults.
+    :type kwargs: dict[str, Any] | None
+    :param cache_id: The cache identifier.
+    :type cache_id: CacheId, optional
+    :return: The constructed keyword arguments.
+    :rtype: TargetFilesystemMethodKWArgs
     """
     defaults = TargetFilesystemMethodKWArgs(
         path=path_factory(cache_id=cache_id),
@@ -164,22 +164,22 @@ def dispatch_to_targets_kwargs_factory(
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
     Defaults:
-        args (Namespace): `namespace_factory(cache_id=cache_id)`
-        case (Case): `case_factory(cache_id=cache_id)`
-        choice (Choice): `choice_factory(cache_id=cache_id)`
-        path (Path): `path_factory(cache_id=cache_id)`
-        session (Session): `session_factory(cache_id=cache_id)`
-        section (Section): `default_section()`
-        callback (ReporterCallback): `default_reporter_callback()`
-        output (Output): `default_output()`
-        filename_base (str): `default_filename_base()`
+        - args (Namespace): `namespace_factory(cache_id=cache_id)`
+        - case (Case): `case_factory(cache_id=cache_id)`
+        - choice (Choice): `choice_factory(cache_id=cache_id)`
+        - path (Path): `path_factory(cache_id=cache_id)`
+        - session (Session): `session_factory(cache_id=cache_id)`
+        - section (Section): `default_section()`
+        - callback (ReporterCallback): `default_reporter_callback()`
+        - output (Output): `default_output()`
+        - filename_base (str): `default_filename_base()`
 
-    Args:
-        kwargs (DispatchToTargetsMethodKWArgs | None, default=None): Specific keyword arguments to override defaults.
-        cache_id (CacheId, default=None): The cache identifier.
-
-    Returns:
-        DispatchToTargetsMethodKWArgs: The constructed keyword arguments dataclass.
+    :param kwargs: Specific keyword arguments to override defaults.
+    :type kwargs: DispatchToTargetsMethodKWArgs | None
+    :param cache_id: The cache identifier.
+    :type cache_id: CacheId, optional
+    :return: The constructed keyword arguments dataclass.
+    :rtype: DispatchToTargetsMethodKWArgs
     """
     defaults = DispatchToTargetsMethodKWArgs(
         args=namespace_factory(),
@@ -206,28 +206,21 @@ def render_by_case_kwargs_factory(
 
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
-     Defaults:
-        renderer (ReportRenderer):
-            `RenderRecorder()`
-        args (Namespace):
-            `namespace_factory(cache_id=cache_id)`
-        case (Case):
-            `case_factory(cache_id=cache_id)`
-        choice (Choice):
-            `choice_factory(cache_id=cache_id)`
-        path (Path):
-            `path_factory(cache_id=cache_id)`
-        session (Session):
-            `session_factory(cache_id=cache_id)`
-        callback (ReporterCallback):
-            `default_reporter_callback`
+    Defaults:
+        - renderer (ReportRenderer): `RenderRecorder()`
+        - args (Namespace): `namespace_factory(cache_id=cache_id)`
+        - case (Case): `case_factory(cache_id=cache_id)`
+        - choice (Choice): `choice_factory(cache_id=cache_id)`
+        - path (Path): `path_factory(cache_id=cache_id)`
+        - session (Session): `session_factory(cache_id=cache_id)`
+        - callback (ReporterCallback): `default_reporter_callback`
 
-    Args:
-        kwargs (RenderByCaseMethodKWArgs | None, default=None): Specific keyword arguments to override defaults.
-        cache_id (CacheId, default=CACHE_DEFAULT): The cache identifier.
-
-    Returns:
-        RenderByCaseMethodKWArgs: The constructed keyword arguments dataclass.
+    :param kwargs: Specific keyword arguments to override defaults.
+    :type kwargs: RenderByCaseMethodKWArgs | None
+    :param cache_id: The cache identifier.
+    :type cache_id: CacheId, optional
+    :return: The constructed keyword arguments dataclass.
+    :rtype: RenderByCaseMethodKWArgs
     """
 
 
@@ -243,28 +236,21 @@ def render_by_case_kwargs_factory(
 
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
-     Defaults:
-        renderer (ReportRenderer):
-            `RenderRecorder()`
-        args (Namespace):
-            `namespace_factory(cache_id=cache_id)`
-        case (Case):
-            `case_factory(cache_id=cache_id)`
-        choice (Choice):
-            `choice_factory(cache_id=cache_id)`
-        path (Path):
-            `path_factory(cache_id=cache_id)`
-        session (Session):
-            `session_factory(cache_id=cache_id)`
-        callback (ReporterCallback):
-            `default_reporter_callback`
+    Defaults:
+        - renderer (ReportRenderer): `RenderRecorder()`
+        - args (Namespace): `namespace_factory(cache_id=cache_id)`
+        - case (Case): `case_factory(cache_id=cache_id)`
+        - choice (Choice): `choice_factory(cache_id=cache_id)`
+        - path (Path): `path_factory(cache_id=cache_id)`
+        - session (Session): `session_factory(cache_id=cache_id)`
+        - callback (ReporterCallback): `default_reporter_callback`
 
-    Args:
-        kwargs (RenderByCaseMethodKWArgs | None, default=None): Specific keyword arguments to override defaults.
-        cache_id (CacheId, default=CACHE_DEFAULT): The cache identifier.
-
-    Returns:
-        RenderByCaseMethodKWArgs: The constructed keyword arguments dataclass.
+    :param kwargs: Specific keyword arguments to override defaults.
+    :type kwargs: RenderByCaseMethodKWArgs | None
+    :param cache_id: The cache identifier.
+    :type cache_id: CacheId, optional
+    :return: The constructed keyword arguments dataclass.
+    :rtype: RenderByCaseMethodKWArgs
     """
 
 
@@ -282,27 +268,20 @@ def render_by_case_kwargs_factory(
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
     Defaults:
-        renderer (ReportRenderer):
-            `RenderRecorder()`
-        args (Namespace):
-            `namespace_factory(cache_id=cache_id)`
-        case (Case):
-            `case_factory(cache_id=cache_id)`
-        choice (Choice):
-            `choice_factory(cache_id=cache_id)`
-        path (Path):
-            `path_factory(cache_id=cache_id)`
-        session (Session):
-            `session_factory(cache_id=cache_id)`
-        callback (ReporterCallback):
-            `default_reporter_callback`
+        - renderer (ReportRenderer): `RenderRecorder()`
+        - args (Namespace): `namespace_factory(cache_id=cache_id)`
+        - case (Case): `case_factory(cache_id=cache_id)`
+        - choice (Choice): `choice_factory(cache_id=cache_id)`
+        - path (Path): `path_factory(cache_id=cache_id)`
+        - session (Session): `session_factory(cache_id=cache_id)`
+        - callback (ReporterCallback): `default_reporter_callback`
 
-    Args:
-        kwargs (RenderByCaseMethodKWArgs | None, default=None): Specific keyword arguments to override defaults.
-        cache_id (CacheId, default=CACHE_DEFAULT): The cache identifier.
-
-    Returns:
-        RenderByCaseMethodKWArgs: The constructed keyword arguments dataclass.
+    :param kwargs: Specific keyword arguments to override defaults.
+    :type kwargs: RenderByCaseMethodKWArgs | None
+    :param cache_id: The cache identifier.
+    :type cache_id: CacheId, optional
+    :return: The constructed keyword arguments dataclass.
+    :rtype: RenderByCaseMethodKWArgs
     """
     defaults = RenderByCaseMethodKWArgs(
         renderer=RenderSpy(),
@@ -330,20 +309,20 @@ def render_by_section_kwargs_factory(
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
     Defaults:
-        renderer (ReportRenderer): `RenderSpy()`
-        args (Namespace): `namespace_factory()`
-        case (Case): `case_factory(cache_id=cache_id)`
-        choice (Choice): `choice_factory(cache_id=cache_id)`
-        path (Path): `path_factory(cache_id=cache_id)`
-        session (Session): `session_factory(cache_id=cache_id)`
-        callback (ReporterCallback): `default_reporter_callback`
+        - renderer (ReportRenderer): `RenderSpy()`
+        - args (Namespace): `namespace_factory()`
+        - case (Case): `case_factory(cache_id=cache_id)`
+        - choice (Choice): `choice_factory(cache_id=cache_id)`
+        - path (Path): `path_factory(cache_id=cache_id)`
+        - session (Session): `session_factory(cache_id=cache_id)`
+        - callback (ReporterCallback): `default_reporter_callback`
 
-    Args:
-        kwargs (RenderBySectionMethodKWArgs | None, default=None): Specific keyword arguments to override defaults.
-        cache_id (CacheId, default=None): The cache identifier.
-
-    Returns:
-        RenderBySectionMethodKWArgs: The constructed keyword arguments dataclass.
+    :param kwargs: Specific keyword arguments to override defaults.
+    :type kwargs: RenderBySectionMethodKWArgs | None
+    :param cache_id: The cache identifier.
+    :type cache_id: CacheId, optional
+    :return: The constructed keyword arguments dataclass.
+    :rtype: RenderBySectionMethodKWArgs
     """
     defaults = RenderBySectionMethodKWArgs(
         renderer=RenderSpy(),
@@ -361,13 +340,18 @@ def render_by_section_kwargs_factory(
 class FileSystemCall:
     """Data class to store a filesystem target call.
 
-    Attributes:
-        path (Path): The path to the directory where the file will be saved.
-        subdir (str): The subdirectory within the path.
-        filename (str): The name of the file to be saved.
-        output (Output): The content to be written to the file.
-        unique (bool): Whether to ensure a unique filename.
-        append (bool): Whether to append to the file if it exists.
+    :ivar path: The path to the directory where the file will be saved.
+    :vartype path: Path
+    :ivar subdir: The subdirectory within the path.
+    :vartype subdir: str
+    :ivar filename: The name of the file to be saved.
+    :vartype filename: str
+    :ivar output: The content to be written to the file.
+    :vartype output: Output
+    :ivar unique: Whether to ensure a unique filename.
+    :vartype unique: bool
+    :ivar append: Whether to append to the file if it exists.
+    :vartype append: bool
     """
     path: Path
     subdir: str
@@ -383,8 +367,8 @@ class FileSystemSpy:
     This class records each call made to the filesystem target method,
     storing the parameters in a list for later inspection.
 
-    Attributes:
-        calls (list[FileSystemCall]): List of recorded filesystem calls.
+    :ivar calls: List of recorded filesystem calls.
+    :vartype calls: list[FileSystemCall]
     """
 
     def __init__(self) -> None:
@@ -411,8 +395,8 @@ class FileSystemSpy:
     def count(self) -> int:
         """Get the number of recorded filesystem calls.
 
-        Returns:
-            int: The count of recorded calls.
+        :return: The count of recorded calls.
+        :rtype: int
         """
         return len(self.calls)
 
@@ -421,9 +405,10 @@ class FileSystemSpy:
 class ConsoleCall:
     """Data class to store a console target call.
 
-    Attributes:
-        session (Session | None): The session instance, if any.
-        output (Output): The content to be output to the console.
+    :ivar session: The session instance, if any.
+    :vartype session: Session | None
+    :ivar output: The content to be output to the console.
+    :vartype output: Output
     """
     session: Session | None
     output: Output
@@ -435,8 +420,8 @@ class ConsoleSpy:
     This class records each call made to the console target method,
     storing the parameters in a list for later inspection.
 
-    Attributes:
-        calls (list[ConsoleCall]): List of recorded console calls.
+    :ivar calls: List of recorded console calls.
+    :vartype calls: list[ConsoleCall]
     """
 
     def __init__(self) -> None:
@@ -455,8 +440,8 @@ class ConsoleSpy:
     def count(self) -> int:
         """Get the number of recorded console calls.
 
-        Returns:
-            int: The count of recorded calls.
+        :return: The count of recorded calls.
+        :rtype: int
         """
         return len(self.calls)
 
@@ -465,12 +450,16 @@ class ConsoleSpy:
 class CallbackCall:
     """Data class to store a callback target call.
 
-    Attributes:
-        callback (ReporterCallback): The callback function.
-        case (Case): The Case instance.
-        section (Section): The Section of the report.
-        output_format (Format): The Format of the report.
-        output (Any): The report data sent to the callback.
+    :ivar callback: The callback function.
+    :vartype callback: ReporterCallback
+    :ivar case: The Case instance.
+    :vartype case: Case
+    :ivar section: The Section of the report.
+    :vartype section: Section
+    :ivar output_format: The Format of the report.
+    :vartype output_format: Format
+    :ivar output: The report data sent to the callback.
+    :vartype output: Any
     """
     callback: ReporterCallback
     case: Case
@@ -485,8 +474,8 @@ class CallbackSpy():
     This class records each call made to the callback target method,
     storing the parameters in a list for later inspection.
 
-    Attributes:
-        calls (list[CallbackCall]): List of recorded callback calls.
+    :ivar calls: List of recorded callback calls.
+    :vartype calls: list[CallbackCall]
     """
     def __init__(self) -> None:
         self.calls: list[CallbackCall] = []
@@ -511,8 +500,8 @@ class CallbackSpy():
     def count(self) -> int:
         """Get the number of recorded callback calls.
 
-        Returns:
-            int: The count of recorded calls.
+        :return: The count of recorded calls.
+        :rtype: int
         """
         return len(self.calls)
 
@@ -521,10 +510,12 @@ class CallbackSpy():
 class RenderCall:
     """Data class to store a render method call.
 
-    Attributes:
-        case (Case): The Case instance.
-        section (Section): The Section of the report.
-        options (ReporterOptions): The ReporterOptions used for rendering.
+    :ivar case: The Case instance.
+    :vartype case: Case
+    :ivar section: The Section of the report.
+    :vartype section: Section
+    :ivar options: The ReporterOptions used for rendering.
+    :vartype options: ReporterOptions
     """
     case: Case
     section: Section
@@ -556,7 +547,7 @@ class RenderSpy(ReportRenderer):
     def count(self) -> int:
         """Get the number of recorded render calls.
 
-        Returns:
-            int: The count of recorded calls.
+        :return: The count of recorded calls.
+        :rtype: int
         """
         return len(self.calls)

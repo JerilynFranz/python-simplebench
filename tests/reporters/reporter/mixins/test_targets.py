@@ -22,7 +22,11 @@ from ....testspec import TestAction, TestSpec, idspec
 
 
 def target_filesystem_params_testspecs() -> list[TestSpec]:
-    """Test specifications for parameter validation of the target_filesystem method."""
+    """Test specifications for parameter validation of the target_filesystem method.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = [
         idspec("PARAMS_001", TestAction(
             name="Valid parameters for target_filesystem method (no exceptions raised)",
@@ -149,5 +153,9 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize("testspec", target_filesystem_params_testspecs())
 def test_target_filesystem_params(testspec: TestSpec):
-    """Tests for parameter validation of the target_filesystem method."""
+    """Tests for parameter validation of the target_filesystem method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

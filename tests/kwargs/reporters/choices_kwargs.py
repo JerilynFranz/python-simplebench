@@ -28,8 +28,7 @@ class ChoicesKWArgs(KWArgs):
         """Constructs a ChoicesKWArgs instance. This class is used to hold keyword arguments for
         initializing a Choices instance in tests.
 
-        Args:
-            choices (Iterable[Choice] | Choices | NoDefaultValue, default=NoDefaultValue()):
-                An iterable of Choice instances.
+        :param choices: An iterable of Choice instances.
+        :type choices: Iterable[Choice] | Choices | NoDefaultValue
         """
         super().__init__(call=Choices.__init__, kwargs=locals())

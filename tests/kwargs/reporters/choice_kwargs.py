@@ -1,10 +1,10 @@
 """simplebench.reporters.choice.Choice KWArgs package for SimpleBench tests."""
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from tests.kwargs import NoDefaultValue, KWArgs
-
 from simplebench.reporters.choice import Choice, ChoiceConf
+from tests.kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
     from simplebench.reporters.reporter import Reporter
@@ -28,10 +28,9 @@ class ChoiceKWArgs(KWArgs):
         """Constructs a ChoiceKWArgs instance. This class is used to hold keyword arguments for
         initializing a Choice instance in tests.
 
-        Args:
-            reporter (Reporter| NoDefaultValue, default=NoDefaultValue()):
-                An instance of a Reporter subclass.
-            choice_conf (ChoiceConf | NoDefaultValue, default=NoDefaultValue()):
-                An instance of ChoiceConf containing configuration for the Choice reporter.
+        :param reporter: An instance of a Reporter subclass.
+        :type reporter: Reporter | NoDefaultValue
+        :param choice_conf: An instance of ChoiceConf containing configuration for the Choice reporter.
+        :type choice_conf: ChoiceConf | NoDefaultValue
         """
         super().__init__(call=Choice.__init__, kwargs=locals())

@@ -1,20 +1,25 @@
 """Tests for the simplebench/results.py module."""
 from __future__ import annotations
+
 from enum import Enum
 from functools import cache
 
 import pytest
 
-from simplebench.defaults import (DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT,
-                                  DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT)
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, ResultsErrorTag
+from simplebench.defaults import (
+    DEFAULT_INTERVAL_SCALE,
+    DEFAULT_INTERVAL_UNIT,
+    DEFAULT_MEMORY_SCALE,
+    DEFAULT_MEMORY_UNIT,
+)
+from simplebench.enums import Section
+from simplebench.exceptions import ResultsErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.iteration import Iteration
 from simplebench.results import Results
-from simplebench.enums import Section
-from simplebench.stats import OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage, Stats
+from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
 
 from .kwargs import ResultsKWArgs
-from .testspec import TestAction, TestGet, idspec, Assert
+from .testspec import Assert, TestAction, TestGet, idspec
 
 
 class Nonsense(str, Enum):
@@ -24,7 +29,11 @@ class Nonsense(str, Enum):
 
 @cache
 def base_iterations() -> list[Iteration]:
-    """Create a base list of Iteration instances for testing."""
+    """Create a base list of Iteration instances for testing.
+
+    :return: A list of Iteration instances.
+    :rtype: list[Iteration]
+    """
     return [
         Iteration(n=1, unit='s', elapsed=1.0, scale=1.0, memory=100, peak_memory=150)
     ]
@@ -557,13 +566,21 @@ def base_iterations() -> list[Iteration]:
         exception_tag=ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
 ])
 def test_results_init(testspec: TestAction) -> None:
-    """Test Results initialization."""
+    """Test Results initialization.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestAction
+    """
     testspec.run()
 
 
 @cache
 def base_results() -> Results:
-    """Create a base Results instance for testing."""
+    """Create a base Results instance for testing.
+
+    :return: A Results instance.
+    :rtype: Results
+    """
     return Results(
         group='test_group',
         title='test_title',
@@ -577,7 +594,11 @@ def base_results() -> Results:
 
 @cache
 def getattribute_results() -> Results:
-    """Create a Results instance for testing getting attributes."""
+    """Create a Results instance for testing getting attributes.
+
+    :return: A Results instance.
+    :rtype: Results
+    """
     return Results(
         group='test_group',
         title='test_title',
@@ -713,13 +734,21 @@ def getattribute_results() -> Results:
         expected={})),
 ])
 def test_getattribute(testspec: TestGet) -> None:
-    """Test getting attributes from Results."""
+    """Test getting attributes from Results.
+
+    :param testspec: The test specification to run.
+    :type testspec: TestGet
+    """
     testspec.run()
 
 
 @cache
 def base_operations_per_interval() -> OperationsPerInterval:
-    """Create a base OperationsPerInterval instance for testing."""
+    """Create a base OperationsPerInterval instance for testing.
+
+    :return: An OperationsPerInterval instance.
+    :rtype: OperationsPerInterval
+    """
     return OperationsPerInterval(
         unit='ops/second',
         scale=1.0,
@@ -729,7 +758,11 @@ def base_operations_per_interval() -> OperationsPerInterval:
 
 @cache
 def base_per_round_timings() -> OperationTimings:
-    """Create a base OperationTimings instance for testing."""
+    """Create a base OperationTimings instance for testing.
+
+    :return: An OperationTimings instance.
+    :rtype: OperationTimings
+    """
     return OperationTimings(
         unit='seconds',
         scale=1.0,
@@ -744,7 +777,11 @@ def base_per_round_timings() -> OperationTimings:
     pytest.param(Section.PEAK_MEMORY, id="Section.PEAK_MEMORY"),
 ])
 def test_results_sections(section: Section) -> None:
-    """Test Results sections property."""
+    """Test Results sections property.
+
+    :param section: The section to test.
+    :type section: Section
+    """
     results = base_results()
     section_value = results.results_section(section)
     assert isinstance(section_value, Stats), (

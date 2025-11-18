@@ -8,14 +8,20 @@ from simplebench.case import Case
 from simplebench.results import Results
 from simplebench.runners import SimpleRunner
 
-from ..cache_factory import (CACHE_DEFAULT, CacheId, cached_factory,
-                             uncached_factory)
+from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from ..kwargs import CaseKWArgs
-from ._primitives import (default_case_group, default_description,
-                          default_iterations, default_max_time,
-                          default_min_time, default_rounds, default_title,
-                          default_warmup_iterations, kwargs_variations_factory,
-                          variation_cols_factory)
+from ._primitives import (
+    default_case_group,
+    default_description,
+    default_iterations,
+    default_max_time,
+    default_min_time,
+    default_rounds,
+    default_title,
+    default_warmup_iterations,
+    kwargs_variations_factory,
+    variation_cols_factory,
+)
 from .reporter_callback import default_reporter_callback
 from .reporter_options import default_reporter_options_tuple
 
@@ -23,14 +29,14 @@ from .reporter_options import default_reporter_options_tuple
 def default_benchcase(bench: SimpleRunner, **kwargs) -> Results:
     """A simple benchmark case function.
 
-    ```python
-    def default_benchcase(bench: SimpleRunner, **kwargs) -> Results:
+    .. code-block:: python
 
-        def action() -> None:
-            '''A simple benchmark case function.'''
-            sum(range(10))  # Example operation to benchmark
-        return bench.run(n=10, action=action, **kwargs)
-    ```
+        def default_benchcase(bench: SimpleRunner, **kwargs) -> Results:
+
+            def action() -> None:
+                '''A simple benchmark case function.'''
+                sum(range(10))  # Example operation to benchmark
+            return bench.run(n=10, action=action, **kwargs)
     """
 
     def action() -> None:
@@ -47,17 +53,15 @@ def minimal_case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWA
     Only the required attribute `action` is set to an explicit value.
     All other attributes will take their default values.
 
-    ```python
+    .. code-block:: python
+
        CaseKWArgs(action=default_benchcase)
-    ```
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        CaseKWArgs: A minimally configured CaseKWArgs instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A minimally configured CaseKWArgs instance.
+    :rtype: CaseKWArgs
     """
     return CaseKWArgs(action=default_benchcase)
 
@@ -67,8 +71,8 @@ def default_minimal_case_kwargs() -> CaseKWArgs:
 
     It always returns the same CaseKWArgs instance created by minimal_case_kwargs_factory().
 
-    Returns:
-        CaseKWArgs: A minimally configured CaseKWArgs instance.
+    :return: A minimally configured CaseKWArgs instance.
+    :rtype: CaseKWArgs
     """
     return minimal_case_kwargs_factory(cache_id=f'{__name__}.default_minimal_case_kwargs:singleton')
 
@@ -79,8 +83,8 @@ def runner_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> type[SimpleRunner]:
 
     This is for use in configuring benchmark cases in tests.
 
-    Returns:
-        type[SimpleRunner]: `SimpleRunner`
+    :return: `SimpleRunner`
+    :rtype: type[SimpleRunner]
     """
     return SimpleRunner
 
@@ -90,8 +94,8 @@ def default_runner() -> type[SimpleRunner]:
 
     This is for use in configuring benchmark cases in tests.
 
-    Returns:
-        type[SimpleRunner]: `SimpleRunner`
+    :return: `SimpleRunner`
+    :rtype: type[SimpleRunner]
     """
     return runner_factory(cache_id=f'{__name__}.default_runner:singleton')
 
@@ -105,43 +109,26 @@ def case_kwargs_factory() -> CaseKWArgs:
 
     The following parameters are all set to explicit values for testing purposes:
 
-    Attributes:
+    :ivar group: `default_case_group()`
+    :ivar title: `default_title()`
+    :ivar description: `default_description()`
+    :ivar action: `default_benchcase`
+    :ivar iterations: `default_iterations()`
+    :ivar warmup_iterations: `default_warmup_iterations()`
+    :ivar rounds: `default_rounds()`
+    :ivar min_time: `default_min_time()`
+    :ivar max_time: `default_max_time()`
+    :ivar variation_cols: `default_variation_cols()`
+    :ivar kwargs_variations: `default_kwargs_variations()`
+    :ivar runner: `default_runner()`
+    :ivar callback: `default_reporter_callback`
+    :ivar options: `default_reporter_options()`
 
-        group = `default_case_group()`
-
-        title = `default_title()`
-
-        description = `default_description()`
-
-        action = `default_benchcase`
-
-        iterations = `default_iterations()`
-
-        warmup_iterations = `default_warmup_iterations()`
-
-        rounds = `default_rounds()`
-
-        min_time = `default_min_time()`
-
-        max_time = `default_max_time()`
-
-        variation_cols = `default_variation_cols()`
-
-        kwargs_variations = `default_kwargs_variations()`
-
-        runner = `default_runner()`
-
-        callback = `default_reporter_callback`
-
-        options = `default_reporter_options()`
-
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        CaseKWArgs: A fully configured CaseKWArgs instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A fully configured CaseKWArgs instance.
+    :rtype: CaseKWArgs
     """
 
 
@@ -153,42 +140,26 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
 
     The following parameters are all set to explicit values for testing purposes:
 
-    Attributes:
+    :ivar group: `default_case_group()`
+    :ivar title: `default_title()`
+    :ivar description: `default_description()`
+    :ivar action: `default_benchcase`
+    :ivar iterations: `default_iterations()`
+    :ivar warmup_iterations: `default_warmup_iterations()`
+    :ivar rounds: `default_rounds()`
+    :ivar min_time: `default_min_time()`
+    :ivar max_time: `default_max_time()`
+    :ivar variation_cols: `default_variation_cols()`
+    :ivar kwargs_variations: `default_kwargs_variations()`
+    :ivar runner: `default_runner()`
+    :ivar callback: `default_reporter_callback`
+    :ivar options: `default_reporter_options()`
 
-        group = `default_case_group()`
-
-        title = `default_title()`
-
-        description = `default_description()`
-
-        action = `default_benchcase`
-
-        iterations = `default_iterations()`
-
-        warmup_iterations = `default_warmup_iterations()`
-
-        rounds = `default_rounds()`
-
-        min_time = `default_min_time()`
-
-        max_time = `default_max_time()`
-
-        variation_cols = `default_variation_cols()`
-
-        kwargs_variations = `default_kwargs_variations()`
-
-        runner = `default_runner()`
-
-        callback = `default_reporter_callback`
-
-        options = `default_reporter_options()`
-
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        CaseKWArgs: A fully configured CaseKWArgs instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A fully configured CaseKWArgs instance.
+    :rtype: CaseKWArgs
     """
 
 
@@ -200,43 +171,26 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
 
     The following parameters are all set to explicit values for testing purposes:
 
-    Attributes:
+    :ivar group: `default_case_group()`
+    :ivar title: `default_title()`
+    :ivar description: `default_description()`
+    :ivar action: `default_benchcase`
+    :ivar iterations: `default_iterations()`
+    :ivar warmup_iterations: `default_warmup_iterations()`
+    :ivar rounds: `default_rounds()`
+    :ivar min_time: `default_min_time()`
+    :ivar max_time: `default_max_time()`
+    :ivar variation_cols: `default_variation_cols()`
+    :ivar kwargs_variations: `default_kwargs_variations()`
+    :ivar runner: `default_runner()`
+    :ivar callback: `default_reporter_callback`
+    :ivar options: `default_reporter_options()`
 
-        group = `default_case_group()`
-
-        title = `default_title()`
-
-        description = `default_description()`
-
-        action = `default_benchcase`
-
-        iterations = `default_iterations()`
-
-        warmup_iterations = `default_warmup_iterations()`
-
-        rounds = `default_rounds()`
-
-        min_time = `default_min_time()`
-
-        max_time = `default_max_time()`
-
-        variation_cols = `default_variation_cols()`
-
-        kwargs_variations = `default_kwargs_variations()`
-
-        runner = `default_runner()`
-
-        callback = `default_reporter_callback`
-
-        options = `default_reporter_options()`
-
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        CaseKWArgs: A fully configured CaseKWArgs instance.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A fully configured CaseKWArgs instance.
+    :rtype: CaseKWArgs
     """
     # pylint: disable=import-outside-toplevel
     return CaseKWArgs(group=default_case_group(),
@@ -274,10 +228,9 @@ def case_factory() -> Case:
     it is important to use cache_id appropriately to avoid unintended side effects
     from shared instances in tests.
 
-    Args:
-        cache_id (CacheId, default=None):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
     """
 
 
@@ -299,10 +252,9 @@ def case_factory(*, cache_id: CacheId = None) -> Case:
     it is important to use cache_id appropriately to avoid unintended side effects
     from shared instances in tests.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
     """
 
 
@@ -324,10 +276,9 @@ def case_factory(*, cache_id: CacheId = None) -> Case:
     it is important to use cache_id appropriately to avoid unintended side effects
     from shared instances in tests.
 
-    Args:
-        cache_id (CacheId, default=None):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
     """
     return Case(**case_kwargs_factory())
 
@@ -339,10 +290,9 @@ def post_run_case_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Case:
     The Case is initialized with default attributes and includes benchmark results
     based on the `default_benchcase` function.
 
-    Args:
-        cache_id (CacheId, default=CACHE_DEFAULT):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
     """
     case = Case(**case_kwargs_factory())
     case.run()

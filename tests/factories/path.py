@@ -12,7 +12,11 @@ atexit.register(_TEMP_DIR.cleanup)
 
 
 def temp_dir() -> Path:
-    """Return the temporary directory path used for testing."""
+    """Return the temporary directory path used for testing.
+
+    :return: The temporary directory path.
+    :rtype: Path
+    """
     return Path(_TEMP_DIR.name)
 
 
@@ -26,12 +30,11 @@ def path_factory() -> Path:
     This function is cached by default to return the same Path instance
     for identical calls, unless a different cache_id is provided.
 
-    Args:
-        cache_id (CacheId, default=CacheDefault):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        Path: `Path('/tmp/mock_report.txt')`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Path instance pointing to a temporary file.
+    :rtype: Path
     """
 
 
@@ -42,12 +45,11 @@ def path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
     This function is cached by default to return the same Path instance
     for identical calls, unless a different cache_id is provided.
 
-    Args:
-        cache_id (CacheId, default=CacheDefault):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-    Returns:
-        Path: `Path('/tmp/mock_report.txt')`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Path instance pointing to a temporary file.
+    :rtype: Path
     """
 
 
@@ -58,12 +60,10 @@ def path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:  # pylint: disab
     This function is cached by default to return the same Path instance
     for identical calls, unless a different cache_id is provided.
 
-    Args:
-        cache_id (CacheId, default=CacheDefault):
-            An optional identifier to distinguish different cached instances.
-            If None, caching is disabled for this call.
-
-    Returns:
-        Path: `Path('/tmp/mock_report.txt')`
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Path instance pointing to a temporary file.
+    :rtype: Path
     """
     return temp_dir()

@@ -1,22 +1,26 @@
 """Tests for the simplebench/stats.py module."""
 # Conflicts with pytest fixtures
 # pylint: disable=redefined-outer-name
-from enum import Enum
 import statistics
+from enum import Enum
 from typing import Any, Sequence
 
 import pytest
 
 from simplebench.enums import Section
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SimpleBenchKeyError
+from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.iteration import Iteration
-from simplebench.stats import (Stats, StatsSummary, OperationsPerInterval, OperationTimings,
-                               MemoryUsage, PeakMemoryUsage)
-from simplebench.stats.exceptions import (StatsErrorTag, StatsSummaryErrorTag,
-                                          MemoryUsageErrorTag, PeakMemoryUsageErrorTag,
-                                          OperationsPerIntervalErrorTag, OperationTimingsErrorTag)
+from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats, StatsSummary
+from simplebench.stats.exceptions import (
+    MemoryUsageErrorTag,
+    OperationsPerIntervalErrorTag,
+    OperationTimingsErrorTag,
+    PeakMemoryUsageErrorTag,
+    StatsErrorTag,
+    StatsSummaryErrorTag,
+)
 
-from .testspec import TestAction, TestGet, TestSet, idspec, Assert, TestSpec, NO_EXPECTED_VALUE
+from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
 
 
 class Nonsense(str, Enum):
@@ -26,7 +30,11 @@ class Nonsense(str, Enum):
 
 @pytest.fixture()
 def stats_classes() -> list[type[Stats]]:
-    """Fixture to return list of stats classes."""
+    """Fixture to return list of stats classes.
+
+    :return: List of stats classes.
+    :rtype: list[type[Stats]]
+    """
     return [Stats, OperationsPerInterval, OperationTimings, MemoryUsage, PeakMemoryUsage]
 
 
@@ -84,7 +92,13 @@ def stats_classes() -> list[type[Stats]]:
             isinstance(obj, Stats) and obj.unit == 'a unit' and obj.scale == 1.0 and obj.data == (1.0, 2.0, 3.0)))),
 ])
 def test_stats_init(stats_classes: list[type[Stats]], test: TestAction) -> None:
-    """Test that the stats module is initialized correctly for shared aspects of init."""
+    """Test that the stats module is initialized correctly for shared aspects of init.
+
+    :param stats_classes: List of stats classes.
+    :type stats_classes: list[type[Stats]]
+    :param test: Test action.
+    :type test: TestAction
+    """
     for stats_class in stats_classes:
         test.name = f"{test.name} - {stats_class.__name__}"
         test.action = stats_class
@@ -220,13 +234,21 @@ def test_stats_init(stats_classes: list[type[Stats]], test: TestAction) -> None:
         exception_tag=OperationTimingsErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
 ])
 def test_stats_subclasses_init(testspec: TestSpec) -> None:
-    """Test aspects of init that vary by subclass."""
+    """Test aspects of init that vary by subclass.
+
+    :param testspec: Test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 @pytest.fixture()
 def stats_instances() -> list[Stats]:
-    """Fixture to return a minimal Stats instance for each class and subclass for testing."""
+    """Fixture to return a minimal Stats instance for each class and subclass for testing.
+
+    :return: List of stats instances.
+    :rtype: list[Stats]
+    """
     return [Stats(unit='unit', scale=1.0, data=[1.0, 2.0, 3.0]),
             OperationsPerInterval(unit='ops/s', scale=1.0, data=[1.0, 2.0, 3.0]),
             OperationTimings(unit='s', scale=1.0, data=[1.0, 2.0, 3.0])]
@@ -250,7 +272,13 @@ def stats_instances() -> list[Stats]:
         exception=AttributeError)),
 ])
 def test_stats_set(stats_instances: list[Stats], test: TestSet) -> None:
-    """Test stats class property setters."""
+    """Test stats class property setters.
+
+    :param stats_instances: List of stats instances.
+    :type stats_instances: list[Stats]
+    :param test: Test set.
+    :type test: TestSet
+    """
     for stats_instance in stats_instances:
         test.name = f"{test.name} ({type(stats_instance).__name__})"
         test.obj = stats_instance
@@ -267,7 +295,15 @@ def test_stats_set(stats_instances: list[Stats], test: TestSet) -> None:
     pytest.param('percentiles', {50: 10.0}, id="COMPUTED_PROPS_007 percentiles"),
 ])
 def test_computed_stats_read_only(stats_instances: list[Stats], attribute: str, value: Any) -> None:
-    """Test that computed stats properties exist and are read-only."""
+    """Test that computed stats properties exist and are read-only.
+
+    :param stats_instances: List of stats instances.
+    :type stats_instances: list[Stats]
+    :param attribute: Attribute name.
+    :type attribute: str
+    :param value: Value to set.
+    :type value: Any
+    """
     for stats_instance in stats_instances:
         # only way this should happen is if someone messes up the parametrize above
         if not hasattr(stats_instance, attribute):
@@ -284,6 +320,9 @@ def test_computed_stats_read_only(stats_instances: list[Stats], attribute: str, 
 ])
 def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
     """Test that computed stats properties return correct values.
+
+    :param stats_data: Sequence of stats data.
+    :type stats_data: Sequence[float | int]
     """
     stats_instance = Stats(unit='unit', scale=1.0, data=list(stats_data))
     data = stats_instance.data
@@ -330,7 +369,11 @@ def test_computed_stats_values(stats_data: Sequence[float | int]) -> None:
     pytest.param((3.0, 3.0, 3.0, 3.0, 3.0), id="COMPUTED_VALUES_004 identical data points"),
 ])
 def test_as_dict(stats_data: Sequence[float | int]) -> None:
-    """Test that as_dict returns correct values."""
+    """Test that as_dict returns correct values.
+
+    :param stats_data: Sequence of stats data.
+    :type stats_data: Sequence[float | int]
+    """
     stats_instance = Stats(unit='unit', scale=1.0, data=list(stats_data))
     stats_only_dict = stats_instance.stats_summary.as_dict
     stats_and_data_dict = stats_instance.as_dict
@@ -368,7 +411,11 @@ def test_as_dict(stats_data: Sequence[float | int]) -> None:
 
 
 def supported_stats_sections() -> set[Section]:
-    """Return a list of supported Section enum values for stats classes."""
+    """Return a list of supported Section enum values for stats classes.
+
+    :return: Set of supported sections.
+    :rtype: set[Section]
+    """
     return {Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY}
 
 
@@ -376,7 +423,11 @@ def supported_stats_sections() -> set[Section]:
     pytest.param(section, id=f"Section.{section.name}") for section in supported_stats_sections()
 ])
 def test_stats_initalization(section: Section) -> None:
-    """Test that data is correctly initialized in stats classes."""
+    """Test that data is correctly initialized in stats classes.
+
+    :param section: Section to test.
+    :type section: Section
+    """
     iterations: list[Iteration] = []
     data: dict[str, tuple[int | float, ...]] = {
         Section.OPS: (1.0, 2.0, 4.0, 5.0, 10.0),
@@ -803,7 +854,11 @@ def test_stats_initalization(section: Section) -> None:
         exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
 ])
 def test_stats_from_dict(testspec: TestSpec) -> None:
-    """Test the from_dict class method of the Stats class and sub-classes."""
+    """Test the from_dict class method of the Stats class and sub-classes.
+
+    :param testspec: Test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -831,12 +886,22 @@ def test_stats_from_dict(testspec: TestSpec) -> None:
     )),
 ])
 def test_stats_summary(testspec: TestSpec) -> None:
-    """Test the StatsSummary class."""
+    """Test the StatsSummary class.
+
+    :param testspec: Test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def compare_stats(stats1: Stats, stats2: Stats) -> None:
-    """Helper function to compare two Stats objects for equality, considering scale and unit."""
+    """Helper function to compare two Stats objects for equality, considering scale and unit.
+
+    :param stats1: First stats object.
+    :type stats1: Stats
+    :param stats2: Second stats object.
+    :type stats2: Stats
+    """
     if stats1 != stats2:
         error = f"""Stats objects are not equal:
         stats1 = {stats1.as_dict}
@@ -1018,7 +1083,11 @@ def compare_stats(stats1: Stats, stats2: Stats) -> None:
         exception=AssertionError)),
 ])
 def test_stats_equality(testspec: TestSpec) -> None:
-    """Test the equality operator of the Stats class and sub-classes."""
+    """Test the equality operator of the Stats class and sub-classes.
+
+    :param testspec: Test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
@@ -1031,5 +1100,9 @@ def test_stats_equality(testspec: TestSpec) -> None:
         exception_tag=StatsSummaryErrorTag.FROM_STATS_INVALID_STATS_ARG_TYPE)),
 ])
 def test_stats_summaryfrom_stats_error_cases(testspec: TestSpec) -> None:
-    """Test StatsSummary.from_stats()"""
+    """Test StatsSummary.from_stats()
+
+    :param testspec: Test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

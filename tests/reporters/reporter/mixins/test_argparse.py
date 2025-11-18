@@ -9,9 +9,15 @@ from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 
-from ....factories import (FactoryReporter, choice_conf_kwargs_factory,
-                           choice_factory, flag_name_factory, reporter_factory,
-                           reporter_kwargs_factory, reporter_namespace_factory)
+from ....factories import (
+    FactoryReporter,
+    choice_conf_kwargs_factory,
+    choice_factory,
+    flag_name_factory,
+    reporter_factory,
+    reporter_kwargs_factory,
+    reporter_namespace_factory,
+)
 from ....testspec import Assert, TestAction, TestSpec, idspec
 
 
@@ -94,16 +100,28 @@ from ....testspec import Assert, TestAction, TestSpec, idspec
         exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)),
 ])
 def test_select_targets_from_args(testspec: TestSpec) -> None:
-    """Test Reporter.select_targets_from_args() method."""
+    """Test Reporter.select_targets_from_args() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def add_flags_to_argparse_testspecs() -> list[TestSpec]:
-    """Generate TestSpecs for testing add_flags_to_argparse method."""
+    """Generate TestSpecs for testing add_flags_to_argparse method.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def add_a_boolean_flag() -> ArgumentParser:
-        """Create an ArgumentParser with a boolean flag added by the reporter."""
+        """Create an ArgumentParser with a boolean flag added by the reporter.
+
+        :return: An argument parser.
+        :rtype: ArgumentParser
+        """
         choice_conf_kwargs = choice_conf_kwargs_factory().replace(
             flag_type=FlagType.BOOLEAN, flags=['--boolean-flag'])
         choices_conf = ChoicesConf(choices=[ChoiceConf(**choice_conf_kwargs)])
@@ -130,7 +148,11 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
     ])
 
     def add_a_target_list_flag() -> ArgumentParser:
-        """Create an ArgumentParser with a target list flag added by the reporter."""
+        """Create an ArgumentParser with a target list flag added by the reporter.
+
+        :return: An argument parser.
+        :rtype: ArgumentParser
+        """
         choice_conf_kwargs = choice_conf_kwargs_factory().replace(
             flag_type=FlagType.TARGET_LIST,
             flags=['--targets-list-flag'],
@@ -175,6 +197,9 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
 
     def add_unsupported_flag_type_to_argparse() -> ArgumentParser:
         """Create an ArgumentParser with an unsupported flag type added by the reporter.
+
+        :return: An argument parser.
+        :rtype: ArgumentParser
         """
         choice_conf_kwargs = choice_conf_kwargs_factory().replace(
             flag_type=FlagType.INVALID, flags=['--invalid-flag'])
@@ -204,16 +229,28 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize('testspec', add_flags_to_argparse_testspecs())
 def test_add_flags_to_argparse(testspec: TestSpec) -> None:
-    """Test Reporter.add_flags_to_argparse() method."""
+    """Test Reporter.add_flags_to_argparse() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def add_target_list_flags_to_argparse_testspecs() -> list[TestSpec]:
-    """Generate TestSpecs for testing add_list_of_targets_flags_to_argparse method."""
+    """Generate TestSpecs for testing add_list_of_targets_flags_to_argparse method.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def add_target_list_flag() -> ArgumentParser:
-        """Create an ArgumentParser with a target list flag added by the reporter."""
+        """Create an ArgumentParser with a target list flag added by the reporter.
+
+        :return: An argument parser.
+        :rtype: ArgumentParser
+        """
         choice_name: str = 'targets-list-choice'
         choice_conf_kwargs = choice_conf_kwargs_factory().replace(
             name=choice_name,
@@ -296,16 +333,28 @@ def add_target_list_flags_to_argparse_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize('testspec', add_target_list_flags_to_argparse_testspecs())
 def test_add_list_of_targets_flags_to_argparse(testspec: TestSpec) -> None:
-    """Test Reporter.add_list_of_targets_flags_to_argparse() method."""
+    """Test Reporter.add_list_of_targets_flags_to_argparse() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()
 
 
 def add_boolean_flags_to_argparse_testspecs() -> list[TestSpec]:
-    """Generate TestSpecs for testing add_boolean_flags_to_argparse method."""
+    """Generate TestSpecs for testing add_boolean_flags_to_argparse method.
+
+    :return: A list of test specifications.
+    :rtype: list[TestSpec]
+    """
     testspecs: list[TestSpec] = []
 
     def add_boolean_flag() -> ArgumentParser:
-        """Create an ArgumentParser with a boolean flag added by the reporter."""
+        """Create an ArgumentParser with a boolean flag added by the reporter.
+
+        :return: An argument parser.
+        :rtype: ArgumentParser
+        """
         choice_name: str = 'boolean-flag-choice'
         choice_conf_kwargs = choice_conf_kwargs_factory().replace(
             name=choice_name,
@@ -360,5 +409,9 @@ def add_boolean_flags_to_argparse_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize('testspec', add_boolean_flags_to_argparse_testspecs())
 def test_add_boolean_flags_to_argparse(testspec: TestSpec) -> None:
-    """Test Reporter.add_boolean_flags_to_argparse() method."""
+    """Test Reporter.add_boolean_flags_to_argparse() method.
+
+    :param testspec: The test specification.
+    :type testspec: TestSpec
+    """
     testspec.run()

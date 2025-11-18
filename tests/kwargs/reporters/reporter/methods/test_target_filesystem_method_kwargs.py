@@ -13,8 +13,8 @@ _MODELED_CALL = _MODELED_CLASS.target_filesystem
 def target_filesystem_method_kwargs_testspecs() -> list[TestSpec]:
     """Generates TestSpecs for testing TargetFilesystemMethodKWArgs.
 
-    Returns:
-        list[TestSpec]: A list of TestSpec instances for testing TargetFilesystemMethodKWArgs.
+    :return: A list of TestSpec instances for testing TargetFilesystemMethodKWArgs.
+    :rtype: list[TestSpec]
     """
     testspecs: list[TestSpec] = [
         idspec("KWARGS_001", TestAction(
