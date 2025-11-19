@@ -35,8 +35,8 @@ from ...factories import (
     namespace_factory,
     path_factory,
     report_parameters_factory,
-    reporter_factory,
     reporter_config_factory,
+    reporter_factory,
     session_factory,
 )
 from ...testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
@@ -157,28 +157,28 @@ def test_factory_reporter_subclassing() -> None:
         name="abstract base class Reporter() cannot be instantiated directly",
         action=Reporter,
         exception=TypeError)),
-    idspec('REPORTER_004', TestAction(
+    idspec('REPORTER_002', TestAction(
         name="reporter_factory() is creating valid FactoryReporter instances",
         action=reporter_factory,
         assertion=Assert.ISINSTANCE,
         expected=FactoryReporter)),
-    idspec('REPORTER_005', TestAction(
+    idspec('REPORTER_003', TestAction(
         name="Correctly configured subclass of Reporter() can call report() successfully",
         action=reporter_factory().report,
         kwargs=report_parameters_factory(),
         validate_result=lambda result: result is None)),
-    idspec('REPORTER_006', TestAction(
+    idspec('REPORTER_004', TestAction(
         name="FactoryReporter() can be instantiated with parameters from reporter_config_factory()",
         action=FactoryReporter,
         args=[reporter_config_factory()],
         assertion=Assert.ISINSTANCE,
         expected=FactoryReporter)),
-    idspec('REPORTER_007', TestAction(
+    idspec('REPORTER_005', TestAction(
         name="Correctly configured Reporter() can call report() successfully",
         action=FactoryReporter(reporter_config_factory()).report,
         kwargs=report_parameters_factory(),
         expected=NO_EXPECTED_VALUE)),
-    idspec('REPORTER_022', TestAction(
+    idspec('REPORTER_006', TestAction(
         name="Attempt to directly instantiate Reporter raises TypeError",
         action=Reporter,
         args=[reporter_config_factory()],
