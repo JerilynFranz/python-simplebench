@@ -4,7 +4,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.validators.exceptions import _ValidatorsErrorTag
 
 from ....factories import reporter_factory
@@ -39,7 +39,7 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
             kwargs=target_filesystem_kwargs_factory().replace(
                 path="not_a_path_instance"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE,
         )),
         idspec("PARAMS_003", TestAction(
             name="Invalid subdir parameter type (not a string)",
@@ -47,7 +47,7 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
             kwargs=target_filesystem_kwargs_factory().replace(
                 subdir=123),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE,
         )),
         idspec("PARAMS_004", TestAction(
             name="Invalid filename parameter type (not a string)",
@@ -63,7 +63,7 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
             kwargs=target_filesystem_kwargs_factory().replace(
                 append="not_a_bool"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE,
         )),
         idspec("PARAMS_006", TestAction(
             name="Invalid unique parameter type (not a bool)",
@@ -71,7 +71,7 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
             kwargs=target_filesystem_kwargs_factory().replace(
                 unique="not_a_bool"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE,
         )),
         idspec("PARAMS_007", TestAction(
             name="Both append and unique parameters set to True (incompatible)",
@@ -81,7 +81,7 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
                 unique=True,
             ),
             exception=SimpleBenchValueError,
-            exception_tag=ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS,
+            exception_tag=_ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS,
         )),
         idspec("PARAMS_008", TestAction(
             name="Both append and unique parameters set to False (incompatible)",
@@ -91,7 +91,7 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
                 unique=False,
             ),
             exception=SimpleBenchValueError,
-            exception_tag=ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS,
+            exception_tag=_ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS,
         )),
         idspec("PARAMS_009", TestAction(
             name="append parameter is True, unique is False (valid)",
@@ -144,7 +144,7 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
                 output=12345,
             ),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE,
         )),
     ]
 

@@ -12,14 +12,14 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter_manager.decorators import (
-    RegisterReporterErrorTag,
+    _RegisterReporterErrorTag,
     clear_registered_reporters,
     get_registered_reporters,
     register_reporter,
 )
 from simplebench.session import Session
 
-from ....factories import reporter_config_kwargs_factory, reporter_config_factory
+from ....factories import reporter_config_factory, reporter_config_kwargs_factory
 
 
 class MockReporterOptions(ReporterOptions):
@@ -169,7 +169,7 @@ def test_register_reporter_invalid_type():
         f"REGISTER_004 - Expected SimpleBenchTypeError, got {exc_info.type.__name__}.")
     if hasattr(exc_info.value, 'tag_code'):
         error_tag = getattr(exc_info.value, 'tag_code')
-        assert error_tag == RegisterReporterErrorTag.INVALID_REPORTER_TYPE_ARG, (
+        assert error_tag == _RegisterReporterErrorTag.INVALID_REPORTER_TYPE_ARG, (
             f"REGISTER_005 - Expected tag INVALID_REPORTER_TYPE_ARG, got {error_tag}.")
     else:
         pytest.fail("REGISTER_006 - Exception does not have a 'tag_code' attribute.")

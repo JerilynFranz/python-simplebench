@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class PrioritizedErrorTag(ErrorTag):
+class _PrioritizedErrorTag(ErrorTag):
     """Error tags for prioritized reporter configurations"""
     INIT_INVALID_REPORTER_ARG_TYPE = "INIT_INVALID_REPORTER_ARG_TYPE"
     """The reporter argument provided to Prioritized.__init__() is not a Reporter instance."""

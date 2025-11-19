@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.reporter.exceptions import PrioritizedErrorTag
+from simplebench.reporters.reporter.exceptions import _PrioritizedErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.type_proxies import is_case, is_choice, is_reporter
@@ -50,15 +50,15 @@ class Prioritized:
         if not is_reporter(reporter) or not isinstance(reporter, ReporterProtocol):
             raise SimpleBenchTypeError(
                 f"Invalid reporter argument: expected Reporter instance, got {type(reporter).__name__}",
-                tag=PrioritizedErrorTag.INIT_INVALID_REPORTER_ARG_TYPE)
+                tag=_PrioritizedErrorTag.INIT_INVALID_REPORTER_ARG_TYPE)
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
-                tag=PrioritizedErrorTag.INIT_INVALID_CHOICE_ARG_TYPE)
+                tag=_PrioritizedErrorTag.INIT_INVALID_CHOICE_ARG_TYPE)
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"Invalid case argument: expected Case instance, got {type(case).__name__}",
-                tag=PrioritizedErrorTag.INIT_INVALID_CASE_ARG_TYPE)
+                tag=_PrioritizedErrorTag.INIT_INVALID_CASE_ARG_TYPE)
         self._reporter: Reporter = reporter
         self._choice: Choice = choice
         self._case: Case = case

@@ -148,72 +148,6 @@ of a <a class="reference internal" href="simplebench.reporters.csv.html#simplebe
 <section id="module-simplebench.reporters.csv.reporter.exceptions">
 <span id="simplebench-reporters-csv-reporter-exceptions-module"></span><h2>simplebench.reporters.csv.reporter.exceptions module<a class="headerlink" href="#module-simplebench.reporters.csv.reporter.exceptions" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.reporters.csv.reporter.exceptions'">¶</a></h2>
 <p>ErrorTags for <a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVReporter" title="simplebench.reporters.csv.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a> exceptions.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.exceptions.</span></span><span class="sig-name descname"><span class="pre">CSVReporterErrorTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></p>
-<p>Error tags for <a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVReporter" title="simplebench.reporters.csv.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a> class related exceptions.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE">
-<span class="sig-name descname"><span class="pre">GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE'">¶</a></dt>
-<dd><p>Invalid options argument type:
-- must be of type <cite>Iterable[ReporterOptions]</cite> or <cite>None</cite>.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE">
-<span class="sig-name descname"><span class="pre">GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE'">¶</a></dt>
-<dd><p>Invalid options argument value:
-- options argument iterable contains something other than <cite>ReporterOptions</cite> instances.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_CASE">
-<span class="sig-name descname"><span class="pre">RENDER_INVALID_CASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RENDER_INVALID_CASE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_CASE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_CASE'">¶</a></dt>
-<dd><p>Something other than a valid Case instance was passed to the CSVReporter.render() method.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_OPTIONS">
-<span class="sig-name descname"><span class="pre">RENDER_INVALID_OPTIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RENDER_INVALID_OPTIONS'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_OPTIONS" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_OPTIONS'">¶</a></dt>
-<dd></dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_SECTION">
-<span class="sig-name descname"><span class="pre">RENDER_INVALID_SECTION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RENDER_INVALID_SECTION'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_SECTION" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_SECTION'">¶</a></dt>
-<dd><p>Something other than a valid Section enum member was passed to the CSVReporter.render() method.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS">
-<span class="sig-name descname"><span class="pre">RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS'">¶</a></dt>
-<dd><p>The default_targets attribute for a Choice contains unsupported Target values.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET">
-<span class="sig-name descname"><span class="pre">RUN_REPORT_UNSUPPORTED_TARGET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RUN_REPORT_UNSUPPORTED_TARGET'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET'">¶</a></dt>
-<dd><p>An unsupported Target was passed to the CSVReporter.run_report() method in the choice.targets</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE">
-<span class="sig-name descname"><span class="pre">SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE'">¶</a></dt>
-<dd><p>Invalid subdir argument type:
-- must be of type <cite>str</cite> or <cite>None.</cite></p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE">
-<span class="sig-name descname"><span class="pre">SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE'">¶</a></dt>
-<dd><p>Invalid subdir argument value:
-- must be a <cite>str</cite> of only alphanumeric characters (A-Z, a-z, 0-9) or <cite>None</cite>.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE">
-<span class="sig-name descname"><span class="pre">SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE'">¶</a></dt>
-<dd><p>Invalid targets argument type:
-- must be of type <cite>frozenset[Target]</cite> or <cite>None.</cite></p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE">
-<span class="sig-name descname"><span class="pre">SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE'">¶</a></dt>
-<dd><p>Invalid targets argument value:
-- must be a <cite>frozenset</cite> of <cite>Target</cite> enum members.</p>
-</dd></dl>
-</dd></dl>
 </section>
 <section id="module-simplebench.reporters.csv.reporter.reporter">
 <span id="simplebench-reporters-csv-reporter-reporter-module"></span><h2>simplebench.reporters.csv.reporter.reporter module<a class="headerlink" href="#module-simplebench.reporters.csv.reporter.reporter" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.reporters.csv.reporter.reporter'">¶</a></h2>
@@ -374,72 +308,6 @@ benchmarked code.</p></li>
 </dl>
 </dd></dl>
 </dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVReporterErrorTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></p>
-<p>Error tags for <a class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporter" title="simplebench.reporters.csv.reporter.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a> class related exceptions.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE">
-<span class="sig-name descname"><span class="pre">GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE'">¶</a></dt>
-<dd><p>Invalid options argument type:
-- must be of type <cite>Iterable[ReporterOptions]</cite> or <cite>None</cite>.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE">
-<span class="sig-name descname"><span class="pre">GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE'">¶</a></dt>
-<dd><p>Invalid options argument value:
-- options argument iterable contains something other than <cite>ReporterOptions</cite> instances.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_CASE">
-<span class="sig-name descname"><span class="pre">RENDER_INVALID_CASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RENDER_INVALID_CASE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_CASE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_CASE'">¶</a></dt>
-<dd><p>Something other than a valid Case instance was passed to the CSVReporter.render() method.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_OPTIONS">
-<span class="sig-name descname"><span class="pre">RENDER_INVALID_OPTIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RENDER_INVALID_OPTIONS'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_OPTIONS" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_OPTIONS'">¶</a></dt>
-<dd></dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_SECTION">
-<span class="sig-name descname"><span class="pre">RENDER_INVALID_SECTION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RENDER_INVALID_SECTION'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_SECTION" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_SECTION'">¶</a></dt>
-<dd><p>Something other than a valid Section enum member was passed to the CSVReporter.render() method.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS">
-<span class="sig-name descname"><span class="pre">RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS'">¶</a></dt>
-<dd><p>The default_targets attribute for a Choice contains unsupported Target values.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET">
-<span class="sig-name descname"><span class="pre">RUN_REPORT_UNSUPPORTED_TARGET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RUN_REPORT_UNSUPPORTED_TARGET'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET'">¶</a></dt>
-<dd><p>An unsupported Target was passed to the CSVReporter.run_report() method in the choice.targets</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE">
-<span class="sig-name descname"><span class="pre">SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE'">¶</a></dt>
-<dd><p>Invalid subdir argument type:
-- must be of type <cite>str</cite> or <cite>None.</cite></p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE">
-<span class="sig-name descname"><span class="pre">SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE'">¶</a></dt>
-<dd><p>Invalid subdir argument value:
-- must be a <cite>str</cite> of only alphanumeric characters (A-Z, a-z, 0-9) or <cite>None</cite>.</p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE">
-<span class="sig-name descname"><span class="pre">SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE'">¶</a></dt>
-<dd><p>Invalid targets argument type:
-- must be of type <cite>frozenset[Target]</cite> or <cite>None.</cite></p>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE">
-<span class="sig-name descname"><span class="pre">SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE'</span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE'">¶</a></dt>
-<dd><p>Invalid targets argument value:
-- must be a <cite>frozenset</cite> of <cite>Target</cite> enum members.</p>
-</dd></dl>
-</dd></dl>
 </section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
@@ -451,23 +319,7 @@ benchmarked code.</p></li>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.config.CSVConfig'" class="reference internal" href="#simplebench.reporters.csv.reporter.config.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#module-simplebench.reporters.csv.reporter.exceptions'" class="reference internal" href="#module-simplebench.reporters.csv.reporter.exceptions">simplebench.reporters.csv.reporter.exceptions module</a><ul>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag</span></code></a><ul>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_CASE'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_CASE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RENDER_INVALID_CASE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_OPTIONS'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_OPTIONS"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RENDER_INVALID_OPTIONS</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_SECTION'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RENDER_INVALID_SECTION"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RENDER_INVALID_SECTION</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE'" class="reference internal" href="#simplebench.reporters.csv.reporter.exceptions.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a :data-current="activeSection === '#module-simplebench.reporters.csv.reporter.exceptions'" class="reference internal" href="#module-simplebench.reporters.csv.reporter.exceptions">simplebench.reporters.csv.reporter.exceptions module</a></li>
 <li><a :data-current="activeSection === '#module-simplebench.reporters.csv.reporter.reporter'" class="reference internal" href="#module-simplebench.reporters.csv.reporter.reporter">simplebench.reporters.csv.reporter.reporter module</a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.reporter.CSVReporter'" class="reference internal" href="#simplebench.reporters.csv.reporter.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.reporter.CSVReporter.render'" class="reference internal" href="#simplebench.reporters.csv.reporter.reporter.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
@@ -481,20 +333,6 @@ benchmarked code.</p></li>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVOptionsErrorTag'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVOptionsErrorTag"><code class="docutils literal notranslate"><span class="pre">CSVOptionsErrorTag</span></code></a></li>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporter'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporter.render'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
-</ul>
-</li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag</span></code></a><ul>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_TYPE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.GET_OPTIONS_INVALID_OPTIONS_ARG_VALUE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_CASE'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_CASE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RENDER_INVALID_CASE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_OPTIONS'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_OPTIONS"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RENDER_INVALID_OPTIONS</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_SECTION'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RENDER_INVALID_SECTION"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RENDER_INVALID_SECTION</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_DEFAULT_TARGETS</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.RUN_REPORT_UNSUPPORTED_TARGET</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_TYPE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.SET_DEFAULT_SUBDIR_INVALID_SUBDIR_ARG_VALUE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE'" class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE"><code class="docutils literal notranslate"><span class="pre">CSVReporterErrorTag.SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_VALUE</span></code></a></li>
 </ul>
 </li>
 </ul>

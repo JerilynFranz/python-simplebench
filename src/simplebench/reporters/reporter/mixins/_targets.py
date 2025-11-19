@@ -12,7 +12,7 @@ from rich.text import Text
 from simplebench.enums import Format, Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.validators import validate_filename, validate_string, validate_type
 
@@ -67,27 +67,27 @@ class _ReporterTargetMixin:
         """
         path = validate_type(
             path, Path, 'path',
-            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
+            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
         subdir = validate_string(
             subdir, 'subdir',
-            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE,
-            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_VALUE,
+            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE,
+            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_VALUE,
             strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
         filename = validate_filename(filename)
         append = validate_type(
             append, bool, 'append',
-            ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE)
+            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE)
         unique = validate_type(
             unique, bool, 'unique',
-            error_tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE)
+            error_tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE)
         if not isinstance(output, (str, bytes, Text, Table)):
             raise SimpleBenchTypeError(
                 "output must be of type str, bytes, Text, or Table",
-                tag=ReporterErrorTag.TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE)
+                tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE)
         if append == unique:
             raise SimpleBenchValueError(
                 "one, and only one, of append or unique must be True when writing to filesystem",
-                tag=ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS)
+                tag=_ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS)
         if unique:
             counter = 1
             while (path / subdir / f"{counter:03d}_{filename}").exists():
@@ -178,7 +178,7 @@ class _ReporterTargetMixin:
             raise SimpleBenchTypeError(
                 f'rich_text argument is of invalid type: {type(rich_text)}. '
                 f'Must be rich.Text or rich.Table.',
-                tag=ReporterErrorTag.RICH_TEXT_TO_PLAIN_TEXT_INVALID_RICH_TEXT_ARG_TYPE)
+                tag=_ReporterErrorTag.RICH_TEXT_TO_PLAIN_TEXT_INVALID_RICH_TEXT_ARG_TYPE)
 
         output_io = StringIO()  # just a string buffer to capture console output
         console = Console(file=output_io, width=None, record=True)

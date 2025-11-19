@@ -28,14 +28,6 @@ simplebench.reporters.choices.exceptions module
    :undoc-members:
    :show-inheritance:
 
-simplebench.reporters.choices.metaclasses module
-------------------------------------------------
-
-.. automodule:: simplebench.reporters.choices.metaclasses
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

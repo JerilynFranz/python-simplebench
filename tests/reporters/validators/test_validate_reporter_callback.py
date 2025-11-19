@@ -10,7 +10,7 @@ from simplebench.enums import Format, Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.validators import validate_reporter_callback
-from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
+from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 
 from ...testspec import Assert, TestAction, TestSpec, idspec
 
@@ -110,77 +110,77 @@ def mock_callback_extra_param(  # pylint: disable=unused-argument
         name="invalid callback not keyword-only parameter",
         action=validate_reporter_callback, args=[mock_callback_not_keyword_only],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("CALLBACK_003", TestAction(
         name="invalid callback missing 'output' parameter",
         action=validate_reporter_callback, args=[mock_callback_missing_output],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("CALLBACK_004", TestAction(
         name="invalid callback wrong type for 'output' parameter",
         action=validate_reporter_callback, args=[mock_callback_wrong_type_output],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("CALLBACK_005", TestAction(
         name="invalid callback missing type hint for 'output' parameter",
         action=validate_reporter_callback, args=[mock_callback_missing_output_type_hint],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
     idspec("CALLBACK_006", TestAction(
         name="invalid callback missing 'output_format' parameter",
         action=validate_reporter_callback, args=[mock_callback_missing_output_format],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("CALLBACK_007", TestAction(
         name="invalid callback missing type hint for 'output_format' parameter",
         action=validate_reporter_callback, args=[mock_callback_missing_output_format_type_hint],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
     idspec("CALLBACK_008", TestAction(
         name="invalid callback wrong type for 'output_format' parameter",
         action=validate_reporter_callback, args=[mock_callback_wrong_type_output_format],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("CALLBACK_009", TestAction(
         name="invalid callback missing 'section' parameter",
         action=validate_reporter_callback, args=[mock_callback_missing_section],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("CALLBACK_010", TestAction(
         name="invalid callback wrong type for 'section' parameter",
         action=validate_reporter_callback, args=[mock_callback_wrong_type_section],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("CALLBACK_011", TestAction(
         name="invalid callback missing type hint for 'section' parameter",
         action=validate_reporter_callback, args=[mock_callback_missing_section_type_hint],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
     idspec("CALLBACK_012", TestAction(
         name="invalid callback missing 'case' parameter",
         action=validate_reporter_callback, args=[mock_callback_missing_case],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("CALLBACK_013", TestAction(
         name="invalid callback wrong type for 'case' parameter",
         action=validate_reporter_callback, args=[mock_callback_wrong_type_case],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("CALLBACK_0014", TestAction(
         name="invalid callback missing type hint for 'case' parameter",
         action=validate_reporter_callback, args=[mock_callback_missing_case_type_hint],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
+        exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)),
     idspec("CALLBACK_015", TestAction(
         name="invalid callback not returning None",
         action=validate_reporter_callback, args=[mock_callback_not_none],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE)),
+        exception_tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE)),
     idspec("CALLBACK_016", TestAction(
         name="invalid callback with extra parameter",
         action=validate_reporter_callback, args=[mock_callback_extra_param],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)),
+        exception_tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)),
     idspec("CALLBACK_017", TestAction(
         name="Callback is None with allow_none=True",
         action=validate_reporter_callback, args=[None], kwargs={"allow_none": True},
@@ -189,12 +189,12 @@ def mock_callback_extra_param(  # pylint: disable=unused-argument
         name="Callback is None with allow_none=False",
         action=validate_reporter_callback, args=[None], kwargs={"allow_none": False},
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)),
+        exception_tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)),
     idspec("CALLBACK_019", TestAction(
         name="Callback is missing return type annotation",
         action=validate_reporter_callback, args=[mock_callback_missing_return_type],
         exception=SimpleBenchTypeError,
-        exception_tag=ReportersValidatorsErrorTag.REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION)),
+        exception_tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION)),
 ])
 def test_validate_reporter_callback(testspec: TestSpec) -> None:
     """Test validate_reporter_callback function."""

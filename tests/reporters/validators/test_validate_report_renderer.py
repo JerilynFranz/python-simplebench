@@ -15,7 +15,7 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_report_renderer
-from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
+from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.session import Session
 
 from ...factories import reporter_config_factory
@@ -439,85 +439,85 @@ valid_render_with_forward_ref = MOCK_REPORTER_INSTANCE.valid_render_with_forward
             name="invalid report renderer missing options parameter",
             action=validate_report_renderer, args=[MockReporter().invalid_render_no_options],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER
         )),
         idspec("PROTOCOL_003", TestAction(
             name="invalid report renderer options parameter wrong type",
             action=validate_report_renderer, args=[MockReporter().invalid_render_options_wrong_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE
         )),
         idspec("PROTOCOL_004", TestAction(
             name="invalid report renderer options parameter missing type hint",
             action=validate_report_renderer, args=[MockReporter().invalid_render_options_missing_type_hint],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT
         )),
         idspec("PROTOCOL_005", TestAction(
             name="invalid report renderer missing section parameter",
             action=validate_report_renderer, args=[MockReporter().invalid_render_no_section],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER
         )),
         idspec("PROTOCOL_006", TestAction(
             name="invalid report renderer section parameter wrong type",
             action=validate_report_renderer, args=[MockReporter().invalid_render_section_wrong_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE
         )),
         idspec("PROTOCOL_007", TestAction(
             name="invalid report renderer section parameter missing type hint",
             action=validate_report_renderer, args=[MockReporter().invalid_render_section_missing_type_hint],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT
         )),
         idspec("PROTOCOL_008", TestAction(
             name="invalid report renderer missing case parameter",
             action=validate_report_renderer, args=[MockReporter().invalid_render_no_case],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER
         )),
         idspec("PROTOCOL_009", TestAction(
             name="invalid report renderer case parameter wrong type",
             action=validate_report_renderer, args=[MockReporter().invalid_render_case_wrong_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE
         )),
         idspec("PROTOCOL_010", TestAction(
             name="invalid report renderer case parameter missing type hint",
             action=validate_report_renderer, args=[MockReporter().invalid_render_case_missing_type_hint],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT
         )),
         idspec("PROTOCOL_011", TestAction(
             name="invalid report renderer with extra parameter",
             action=validate_report_renderer, args=[MockReporter().invalid_render_extra_parameter],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS
         )),
         idspec("PROTOCOL_012", TestAction(
             name="invalid report renderer with non-keyword-only parameters",
             action=validate_report_renderer, args=[MockReporter().invalid_render_not_keyword_only],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY
+            exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY
         )),
         idspec("PROTOCOL_013", TestAction(
             name="invalid report renderer not callable",
             action=validate_report_renderer, args=["not_a_callable"],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_NOT_CALLABLE
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_NOT_CALLABLE
         )),
         idspec("PROTOCOL_014", TestAction(
             name="invalid report renderer with incorrect return type",
             action=validate_report_renderer, args=[MockReporter().invalid_render_wrong_return_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
         )),
         idspec("PROTOCOL_015", TestAction(
             name="invalid report renderer missing return type annotation",
             action=validate_report_renderer, args=[MockReporter().invalid_render_missing_return_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_MISSING_RETURN_ANNOTATION
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_MISSING_RETURN_ANNOTATION
         )),
         idspec("PROTOCOL_016", TestAction(
             name="valid report renderer with all possible return types",
@@ -528,38 +528,38 @@ valid_render_with_forward_ref = MOCK_REPORTER_INSTANCE.valid_render_with_forward
             name="invalid report renderer with extra return type",
             action=validate_report_renderer, args=[invalid_render_with_extra_return_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE
         )),
         idspec("PROTOCOL_018", TestAction(
             name="invalid report renderer with unexpected return type",
             action=validate_report_renderer, args=[invalid_render_with_unexpected_return_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
         )),
         idspec("PROTOCOL_019", TestAction(
             name="invalid report renderer with Any return type",
             action=validate_report_renderer, args=[invalid_render_with_any_return_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
         )),
 
         idspec("PROTOCOL_020", TestAction(
             name="invalid report renderer with None return type",
             action=validate_report_renderer, args=[invalid_render_with_none_return_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
         )),
         idspec("PROTOCOL_021", TestAction(
             name="invalid report renderer with union including None",
             action=validate_report_renderer, args=[invalid_render_with_union_including_none],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE
         )),
         idspec("PROTOCOL_022", TestAction(
             name="invalid report renderer with TypeVar return type",
             action=validate_report_renderer, args=[invalid_render_with_typevar_return_type],
             exception=SimpleBenchTypeError,
-            exception_tag=ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
+            exception_tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE
         )),
         idspec("PROTOCOL_023", TestAction(
             name="valid report renderer with forward reference return type",

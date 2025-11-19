@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.exceptions.config import ReporterConfigErrorTag
+from simplebench.reporters.reporter.exceptions.config import _ReporterConfigErrorTag
 from simplebench.validators import validate_dirpath, validate_iterable_of_type, validate_string, validate_type
 
 
@@ -107,62 +107,62 @@ class ReporterConfig:
         # 1. Perform all validations on the raw, incoming attribute values
         validate_string(
             self.name, 'name',
-            type_error_tag=ReporterConfigErrorTag.INVALID_NAME_TYPE,
-            value_error_tag=ReporterConfigErrorTag.INVALID_NAME_VALUE,
+            type_error_tag=_ReporterConfigErrorTag.INVALID_NAME_TYPE,
+            value_error_tag=_ReporterConfigErrorTag.INVALID_NAME_VALUE,
             allow_empty=False, allow_blank=False
         )
         validate_string(
             self.description, 'description',
-            type_error_tag=ReporterConfigErrorTag.INVALID_DESCRIPTION_TYPE,
-            value_error_tag=ReporterConfigErrorTag.INVALID_DESCRIPTION_VALUE,
+            type_error_tag=_ReporterConfigErrorTag.INVALID_DESCRIPTION_TYPE,
+            value_error_tag=_ReporterConfigErrorTag.INVALID_DESCRIPTION_VALUE,
             allow_empty=False, allow_blank=False
         )
         validate_iterable_of_type(
             self.sections, Section, 'sections',
-            type_tag=ReporterConfigErrorTag.INVALID_SECTIONS_TYPE,
-            value_tag=ReporterConfigErrorTag.INVALID_SECTIONS_VALUE,
+            type_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_TYPE,
+            value_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_VALUE,
             allow_empty=True
         )
         validate_iterable_of_type(
             self.targets, Target, 'targets',
-            type_tag=ReporterConfigErrorTag.INVALID_TARGETS_TYPE,
-            value_tag=ReporterConfigErrorTag.INVALID_TARGETS_VALUE,
+            type_tag=_ReporterConfigErrorTag.INVALID_TARGETS_TYPE,
+            value_tag=_ReporterConfigErrorTag.INVALID_TARGETS_VALUE,
             allow_empty=False
         )
 
         validate_iterable_of_type(
             self.default_targets, Target, 'default_targets',
-            type_tag=ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_TYPE,
-            value_tag=ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_VALUE
+            type_tag=_ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_TYPE,
+            value_tag=_ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_VALUE
         )
         validate_iterable_of_type(
             self.formats, Format, 'formats',
-            type_tag=ReporterConfigErrorTag.INVALID_FORMATS_TYPE,
-            value_tag=ReporterConfigErrorTag.INVALID_FORMATS_VALUE,
+            type_tag=_ReporterConfigErrorTag.INVALID_FORMATS_TYPE,
+            value_tag=_ReporterConfigErrorTag.INVALID_FORMATS_VALUE,
             allow_empty=False
         )
         validate_type(
             self.choices, ChoicesConf, 'choices',
-            error_tag=ReporterConfigErrorTag.INVALID_CHOICES_TYPE
+            error_tag=_ReporterConfigErrorTag.INVALID_CHOICES_TYPE
         )
         validate_string(
             self.file_suffix, 'file_suffix',
-            type_error_tag=ReporterConfigErrorTag.INVALID_FILE_SUFFIX_TYPE,
-            value_error_tag=ReporterConfigErrorTag.INVALID_FILE_SUFFIX_VALUE,
+            type_error_tag=_ReporterConfigErrorTag.INVALID_FILE_SUFFIX_TYPE,
+            value_error_tag=_ReporterConfigErrorTag.INVALID_FILE_SUFFIX_VALUE,
             allow_empty=False, allow_blank=False, alphanumeric_only=True
         )
         if len(self.file_suffix) > 10:
             raise SimpleBenchValueError(
                 "file_suffix must be 10 characters or less in length.",
-                tag=ReporterConfigErrorTag.INVALID_FILE_SUFFIX_VALUE_TOO_LONG
+                tag=_ReporterConfigErrorTag.INVALID_FILE_SUFFIX_VALUE_TOO_LONG
             )
         validate_type(
             self.file_unique, bool, 'file_unique',
-            error_tag=ReporterConfigErrorTag.INVALID_FILE_UNIQUE_TYPE
+            error_tag=_ReporterConfigErrorTag.INVALID_FILE_UNIQUE_TYPE
         )
         validate_type(
             self.file_append, bool, 'file_append',
-            error_tag=ReporterConfigErrorTag.INVALID_FILE_UNIQUE_TYPE
+            error_tag=_ReporterConfigErrorTag.INVALID_FILE_UNIQUE_TYPE
         )
         subdir = validate_dirpath(self.subdir, allow_empty=True)
 
@@ -170,13 +170,13 @@ class ReporterConfig:
         if not self.file_append and not self.file_unique:
             raise SimpleBenchValueError(
                 "One of file_append or file_unique must be True.",
-                tag=ReporterConfigErrorTag.INVALID_FILE_APPEND_FILE_UNIQUE_ONE_MUST_BE_TRUE
+                tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_FILE_UNIQUE_ONE_MUST_BE_TRUE
             )
         # If the first check passes, this check now correctly isolates the (True, True) case
         if self.file_append and self.file_unique:
             raise SimpleBenchValueError(
                 "file_append and file_unique cannot both be True.",
-                tag=ReporterConfigErrorTag.INVALID_FILE_APPEND_FILE_UNIQUE_COMBINATION
+                tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_FILE_UNIQUE_COMBINATION
             )
 
         # After validation, convert iterables to frozenset for immutability
@@ -192,5 +192,5 @@ class ReporterConfig:
         if not self.default_targets.issubset(self.targets):
             raise SimpleBenchValueError(
                 "default_targets must be a subset of targets",
-                tag=ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_VALUE
+                tag=_ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_VALUE
             )

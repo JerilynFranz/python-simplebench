@@ -1,12 +1,12 @@
 """JSON Reporter package for simplebench."""
-from simplebench.reporters.json.reporter.reporter import JSONReporter
-from simplebench.reporters.json.reporter.exceptions import JSONReporterErrorTag
+from simplebench.reporters.json.reporter.exceptions import _JSONReporterErrorTag
 from simplebench.reporters.json.reporter.options import JSONOptions
 from simplebench.reporters.json.reporter.options.exceptions import JSONOptionsErrorTag
+from simplebench.reporters.json.reporter.reporter import JSONReporter
 
 __all__ = [
     'JSONReporter',
-    'JSONReporterErrorTag',
+    '_JSONReporterErrorTag',
     'JSONOptions',
     'JSONOptionsErrorTag',
 ]

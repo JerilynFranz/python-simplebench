@@ -7,15 +7,15 @@ from simplebench.enums import FlagType, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 
 from ....factories import (
     FactoryReporter,
     choice_conf_kwargs_factory,
     choice_factory,
     flag_name_factory,
-    reporter_factory,
     reporter_config_factory,
+    reporter_factory,
     reporter_namespace_factory,
 )
 from ....testspec import Assert, TestAction, TestSpec, idspec
@@ -52,7 +52,7 @@ from ....testspec import Assert, TestAction, TestSpec, idspec
         action=reporter_factory().select_targets_from_args,
         kwargs={'args': "not_a_namespace", 'choice': choice_factory(), 'default_targets': {Target.FILESYSTEM}},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)),
+        exception_tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)),
     idspec('SELECT_TARGETS_FROM_ARGS_006', TestAction(
         name=("select_targets_from_args() incorrect choice type raises SimpleBenchTypeError"),
         action=reporter_factory().select_targets_from_args,
@@ -60,7 +60,7 @@ from ....testspec import Assert, TestAction, TestSpec, idspec
                 'choice': "not_a_choice_instance",
                 'default_targets': {Target.FILESYSTEM}},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)),
+        exception_tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)),
     idspec('SELECT_TARGETS_FROM_ARGS_007', TestAction(
         name=("select_targets_from_args() incorrect default_targets type raises SimpleBenchTypeError"),
         action=reporter_factory().select_targets_from_args,
@@ -68,7 +68,7 @@ from ....testspec import Assert, TestAction, TestSpec, idspec
                 'choice': choice_factory(),
                 'default_targets': "not_a_set_of_targets"},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG)),
+        exception_tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG)),
     idspec('SELECT_TARGETS_FROM_ARGS_008', TestAction(
         name="select_targets_from_args() with args including unsupported target raises SimpleBenchValueError",
         action=reporter_factory().select_targets_from_args,
@@ -78,7 +78,7 @@ from ....testspec import Assert, TestAction, TestSpec, idspec
                 'choice': choice_factory(),
                 'default_targets': {Target.FILESYSTEM}},
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)),
+        exception_tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)),
     idspec('SELECT_TARGETS_FROM_ARGS_009', TestAction(
         name=("select_targets_from_args() with an arg that does not match any "
               "Target enums raises SimpleBenchValueError"),
@@ -89,7 +89,7 @@ from ....testspec import Assert, TestAction, TestSpec, idspec
                 'choice': choice_factory(),
                 'default_targets': {Target.FILESYSTEM}},
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)),
+        exception_tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)),
     idspec('SELECT_TARGETS_FROM_ARGS_010', TestAction(
         name="select_targets_from_args() with default target not supported by choice raises SimpleBenchValueError",
         action=reporter_factory().select_targets_from_args,
@@ -97,7 +97,7 @@ from ....testspec import Assert, TestAction, TestSpec, idspec
                 'choice': choice_factory(),
                 'default_targets': {Target.CUSTOM}},
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)),
+        exception_tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)),
 ])
 def test_select_targets_from_args(testspec: TestSpec) -> None:
     """Test Reporter.select_targets_from_args() method.
@@ -213,7 +213,7 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
         name="add_flags_to_argparse() with unsupported flag type raises SimpleBenchValueError",
         action=add_unsupported_flag_type_to_argparse,
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.ADD_FLAGS_UNSUPPORTED_FLAG_TYPE,
+        exception_tag=_ReporterErrorTag.ADD_FLAGS_UNSUPPORTED_FLAG_TYPE,
     )))
 
     testspecs.append(idspec('ADD_FLAGS_TO_ARGPARSE_007', TestAction(
@@ -221,7 +221,7 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
         action=reporter_factory().add_flags_to_argparse,
         kwargs={'parser': "not_an_argument_parser"},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
+        exception_tag=_ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
     )))
 
     return testspecs
@@ -286,7 +286,7 @@ def add_target_list_flags_to_argparse_testspecs() -> list[TestSpec]:
                 'choice': choice_factory(),
             },
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
         )),
         idspec('ADD_LIST_OF_TARGETS_FLAGS_TO_ARGPARSE_003', TestAction(
             name="add_list_of_targets_flags_to_argparse() with invalid choice arg type raises SimpleBenchTypeError",
@@ -296,7 +296,7 @@ def add_target_list_flags_to_argparse_testspecs() -> list[TestSpec]:
                 'choice': "not_a_choice_instance",
             },
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE,
         )),
         idspec('ADD_LIST_OF_TARGETS_FLAGS_TO_ARGPARSE_004', TestAction(
             name=("add_list_of_targets_flags_to_argparse() adds parseable "
@@ -390,7 +390,7 @@ def add_boolean_flags_to_argparse_testspecs() -> list[TestSpec]:
                 'choice': choice_factory(),
             },
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
         )),
         idspec('ADD_BOOLEAN_FLAGS_TO_ARGPARSE_004', TestAction(
             name="add_boolean_flags_to_argparse() with invalid choice arg type raises SimpleBenchTypeError",
@@ -400,7 +400,7 @@ def add_boolean_flags_to_argparse_testspecs() -> list[TestSpec]:
                 'choice': "not_a_choice_instance",
             },
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE,
+            exception_tag=_ReporterErrorTag.ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE,
         )),
     ])
 

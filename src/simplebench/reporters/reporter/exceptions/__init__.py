@@ -1,11 +1,11 @@
 """Reporter exceptions package."""
-from .config import ReporterConfigErrorTag
-from .prioritized import PrioritizedErrorTag
-from .reporter import ReporterErrorTag
+from .config import _ReporterConfigErrorTag
+from .prioritized import _PrioritizedErrorTag
+from .reporter import _ReporterErrorTag
 
 __all__ = [
-    "ReporterConfigErrorTag",
-    "PrioritizedErrorTag",
-    "ReporterErrorTag",
+    "_ReporterConfigErrorTag",
+    "_PrioritizedErrorTag",
+    "_ReporterErrorTag",
 ]
 """:data:`__all__` for the reporter exceptions package."""

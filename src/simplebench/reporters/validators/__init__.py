@@ -5,13 +5,13 @@ Exports:
     - validate_report_renderer
     - ReportersValidatorsErrorTag
 """
+from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.reporters.validators.validators import validate_report_renderer, validate_reporter_callback
-from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
 
 __all__ = [
     "validate_report_renderer",
     "validate_reporter_callback",
-    "ReportersValidatorsErrorTag",
+    "_ReportersValidatorsErrorTag",
 ]
 """'*' exports for simplebench.reporters.validators package.
 

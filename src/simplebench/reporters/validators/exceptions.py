@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class ReportersValidatorsErrorTag(ErrorTag):
+class _ReportersValidatorsErrorTag(ErrorTag):
     """ErrorTags for simplebench.reporters.validators exceptions."""
     # validate_reporter_callback() tags
     REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE = "INVALID_REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE"

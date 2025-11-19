@@ -21,14 +21,6 @@ simplebench.reporters.reporter.config module
    :undoc-members:
    :show-inheritance:
 
-simplebench.reporters.reporter.metaclasses module
--------------------------------------------------
-
-.. automodule:: simplebench.reporters.reporter.metaclasses
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 simplebench.reporters.reporter.options module
 ---------------------------------------------
 

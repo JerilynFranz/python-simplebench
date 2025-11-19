@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class ReporterConfigErrorTag(ErrorTag):
+class _ReporterConfigErrorTag(ErrorTag):
     """Error tags for reporter configurations."""
     INVALID_NAME_TYPE = "INVALID_NAME_TYPE"
     """The 'name' argument is not a string."""

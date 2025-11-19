@@ -72,14 +72,6 @@ simplebench.iteration module
    :undoc-members:
    :show-inheritance:
 
-simplebench.metaclasses module
-------------------------------
-
-.. automodule:: simplebench.metaclasses
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 simplebench.protocols module
 ----------------------------
 

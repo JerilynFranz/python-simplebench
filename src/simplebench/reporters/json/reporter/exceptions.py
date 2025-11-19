@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class JSONReporterErrorTag(ErrorTag):
+class _JSONReporterErrorTag(ErrorTag):
     """ErrorTags for the :class:`~.JSONReporter` class."""
     RENDER_INVALID_CASE = "RENDER_INVALID_CASE"
     """An invalid :class:`~simplebench.case.Case` instance was passed to the

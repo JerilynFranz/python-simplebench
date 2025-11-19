@@ -7,7 +7,7 @@ from typing import Iterable
 from simplebench.enums import FlagType, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice import Choice
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.utils import collect_arg_list
 from simplebench.validators import validate_iterable_of_type, validate_type
@@ -46,20 +46,20 @@ class _ReporterArgparseMixin:
         :raises SimpleBenchValueError: If an unsupported target is specified in the arguments.
         """
         args = validate_type(args, Namespace, 'args',
-                             ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)
+                             _ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)
         choice = validate_type(choice, Choice, 'choice',
-                               ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)
+                               _ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)
         default_targets = validate_iterable_of_type(
             default_targets, Target, 'default_targets',
-            ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG,
-            ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG,
+            _ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG,
+            _ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_DEFAULT_TARGETS_ARG,
             allow_empty=True)
 
         for target in default_targets:
             if target not in choice.targets:
                 raise SimpleBenchValueError(
                     f"Default target {target} is not supported by the choice.",
-                    tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)
+                    tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_DEFAULT_TARGET_UNSUPPORTED)
 
         # Look for flags specified by choice, collect specified targets from command-line arguments
         # and cross-validate with supported targets for the choice. Add to selected_targets set.
@@ -75,13 +75,13 @@ class _ReporterArgparseMixin:
                 if target_enum is None:
                     raise SimpleBenchValueError(
                         f"Unknown output target {name} specified for {flag}.",
-                        tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)
+                        tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNKNOWN_TARGET_IN_ARGS)
                 if target_enum in choice.targets:
                     selected_targets.add(target_enum)
                 else:
                     raise SimpleBenchValueError(
                         f"Output target {name} is not supported by {flag}.",
-                        tag=ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)
+                        tag=_ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_UNSUPPORTED_TARGET)
 
         return set(default_targets) if not selected_targets else selected_targets
 
@@ -100,7 +100,7 @@ class _ReporterArgparseMixin:
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 "parser arg must be an argparse.ArgumentParser instance",
-                tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
+                tag=_ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
             )
         for choice in self.choices.values():
             match choice.flag_type:
@@ -111,7 +111,7 @@ class _ReporterArgparseMixin:
                 case _:
                     raise SimpleBenchValueError(
                         f"Unsupported flag type: {choice.flag_type}",
-                        tag=ReporterErrorTag.ADD_FLAGS_UNSUPPORTED_FLAG_TYPE,
+                        tag=_ReporterErrorTag.ADD_FLAGS_UNSUPPORTED_FLAG_TYPE,
                     )
 
     def add_list_of_targets_flags_to_argparse(
@@ -149,12 +149,12 @@ class _ReporterArgparseMixin:
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 "parser arg must be an argparse.ArgumentParser instance",
-                tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
+                tag=_ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
             )
         if not isinstance(choice, Choice):
             raise SimpleBenchTypeError(
                 "choice arg must be a Choice instance",
-                tag=ReporterErrorTag.ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE,
+                tag=_ReporterErrorTag.ADD_LIST_OF_TARGETS_FLAGS_INVALID_CHOICE_ARG_TYPE,
             )
         targets = [target.value for target in choice.targets]
         for flag in choice.flags:
@@ -185,12 +185,12 @@ class _ReporterArgparseMixin:
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 "parser arg must be an argparse.ArgumentParser instance",
-                tag=ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
+                tag=_ReporterErrorTag.ADD_FLAGS_INVALID_PARSER_ARG_TYPE,
             )
         if not isinstance(choice, Choice):
             raise SimpleBenchTypeError(
                 "choice arg must be a Choice instance",
-                tag=ReporterErrorTag.ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE,
+                tag=_ReporterErrorTag.ADD_BOOLEAN_FLAGS_INVALID_CHOICE_ARG_TYPE,
             )
         for flag in choice.flags:
             parser.add_argument(flag, action='store_true', help=choice.description)

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.type_proxies import is_case, is_choice
 
@@ -44,11 +44,11 @@ class _ReporterPrioritizationMixin:
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"Invalid case argument: expected Case instance, got {type(case).__name__}",
-                tag=ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE)
+                tag=_ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE)
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
-                tag=ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE)
+                tag=_ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE)
 
         cls = self.__class__
         options_cls = self._OPTIONS_TYPE
@@ -79,7 +79,7 @@ class _ReporterPrioritizationMixin:
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
-                tag=ReporterErrorTag.GET_PRIORITIZED_DEFAULT_TARGETS_INVALID_CHOICE_ARG_TYPE)
+                tag=_ReporterErrorTag.GET_PRIORITIZED_DEFAULT_TARGETS_INVALID_CHOICE_ARG_TYPE)
         if choice.default_targets:
             return choice.default_targets
         return self.default_targets
@@ -104,7 +104,7 @@ class _ReporterPrioritizationMixin:
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
-                tag=ReporterErrorTag.GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE)
+                tag=_ReporterErrorTag.GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE)
         if choice.subdir is not None:
             return choice.subdir
         return self.subdir
@@ -124,7 +124,7 @@ class _ReporterPrioritizationMixin:
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
-                tag=ReporterErrorTag.GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE)
+                tag=_ReporterErrorTag.GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE)
         if choice.file_suffix is not None:
             return choice.file_suffix
         return self.file_suffix
@@ -144,7 +144,7 @@ class _ReporterPrioritizationMixin:
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
-                tag=ReporterErrorTag.GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE)
+                tag=_ReporterErrorTag.GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE)
         if choice.file_unique is not None:
             return choice.file_unique
         return self.file_unique
@@ -164,7 +164,7 @@ class _ReporterPrioritizationMixin:
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
-                tag=ReporterErrorTag.GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE)
+                tag=_ReporterErrorTag.GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE)
         if choice.file_append is not None:
             return choice.file_append
         return self.file_append

@@ -16,7 +16,7 @@ from simplebench.utils import get_machine_info, sigfigs
 from simplebench.validators import validate_type
 
 from .config import JSONConfig
-from .exceptions import JSONReporterErrorTag
+from .exceptions import _JSONReporterErrorTag
 from .options import JSONOptions
 
 Options: TypeAlias = JSONOptions
@@ -164,11 +164,11 @@ class JSONReporter(Reporter):
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
-                tag=JSONReporterErrorTag.RENDER_INVALID_CASE)
+                tag=_JSONReporterErrorTag.RENDER_INVALID_CASE)
         section = validate_type(section, Section, 'section',
-                                JSONReporterErrorTag.RENDER_INVALID_SECTION)
+                                _JSONReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options',
-                                JSONReporterErrorTag.RENDER_INVALID_OPTIONS)
+                                _JSONReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         full_data: bool = options.full_data if isinstance(options, Options) else False
         with StringIO() as jsonfile:
@@ -180,7 +180,7 @@ class JSONReporter(Reporter):
             except Exception as exc:
                 raise SimpleBenchTypeError(
                     f'Error generating JSON output for case {case.title}: {exc}',
-                    tag=JSONReporterErrorTag.JSON_OUTPUT_ERROR) from exc
+                    tag=_JSONReporterErrorTag.JSON_OUTPUT_ERROR) from exc
             return jsonfile.read()
 
     def mean_change(self, first: Case, second: Case, section: Section) -> float | None:

@@ -9,7 +9,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 
 from ....factories import (
@@ -19,8 +19,8 @@ from ....factories import (
     case_kwargs_factory,
     choice_conf_kwargs_factory,
     choice_factory,
-    reporter_factory,
     reporter_config_factory,
+    reporter_factory,
     reporter_options_factory,
 )
 from ....testspec import Assert, TestAction, TestSpec, idspec
@@ -223,7 +223,7 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
                 'choice': choice_factory(),
             },
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CASE_ARG_TYPE)),
         idspec("PRIORITIZE_OPTIONS_005", TestAction(
             name="Invalid choice arg type raises SimpleBenchTypeError",
             action=reporter_factory().get_prioritized_options,
@@ -232,7 +232,7 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
                 'choice': 'not_a_real_choice_instance',
             },
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.GET_PRIORITIZED_OPTIONS_INVALID_CHOICE_ARG_TYPE)),
         idspec("PRIORITIZE_OPTIONS_007", TestAction(
             name="Missing case arg raises TypeError",
             action=reporter_factory().get_prioritized_options,
@@ -331,7 +331,7 @@ def get_prioritized_default_targets_testspecs() -> list[TestSpec]:
             action=reporter.get_prioritized_default_targets,
             args=['not_a_real_choice_instance'],
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.GET_PRIORITIZED_DEFAULT_TARGETS_INVALID_CHOICE_ARG_TYPE,)),
+            exception_tag=_ReporterErrorTag.GET_PRIORITIZED_DEFAULT_TARGETS_INVALID_CHOICE_ARG_TYPE,)),
     ])
     return testspecs
 
@@ -398,7 +398,7 @@ def get_prioritized_subdir_testspecs() -> list[TestSpec]:
             action=reporter.get_prioritized_subdir,
             args=['not_a_real_choice_instance'],
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE,)),
+            exception_tag=_ReporterErrorTag.GET_PRIORITIZED_SUBDIR_INVALID_CHOICE_ARG_TYPE,)),
     ])
     return testspecs
 
@@ -468,7 +468,7 @@ def get_prioritized_file_suffix_testspecs() -> list[TestSpec]:
             action=reporter.get_prioritized_file_suffix,
             args=['not_a_real_choice_instance'],
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE,)),
+            exception_tag=_ReporterErrorTag.GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE,)),
     ])
     return testspecs
 
@@ -580,7 +580,7 @@ def get_prioritized_file_append_and_unique_testspecs() -> list[TestSpec]:
             action=reporter_append_true.get_prioritized_file_append,
             args=['not_a_real_choice_instance'],
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE,)),
+            exception_tag=_ReporterErrorTag.GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE,)),
         idspec("FILE_UNIQUE_001", TestAction(
             name="Reporter with file_unique=False, Choice with file_unique=False -> False (Choice file unique)",
             action=reporter_append_false.get_prioritized_file_unique,
@@ -614,7 +614,7 @@ def get_prioritized_file_append_and_unique_testspecs() -> list[TestSpec]:
             action=reporter_append_true.get_prioritized_file_unique,
             args=['not_a_real_choice_instance'],
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE,)),
+            exception_tag=_ReporterErrorTag.GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE,)),
         # Tests for when Choice has neither file_append nor file_unique set
         idspec("FILE_APPEND_AND_UNIQUE_NONE_001", TestAction(
             name="Reporter with file_append=True, Choice without file_append -> True (Reporter file append)",

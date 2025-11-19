@@ -10,7 +10,7 @@ from simplebench.enums import Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 
 from ....factories import (
@@ -297,7 +297,7 @@ def render_by_case_testspecs() -> list[TestSpec]:
         action=bad_target_reporter.render_by_case,
         kwargs=bad_target_kwargs,
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)))
+        exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)))
 
     # --- Parameter Validation Tests ---
     render_by_case_kwargs = render_by_case_kwargs_factory(cache_id=None)
@@ -307,43 +307,43 @@ def render_by_case_testspecs() -> list[TestSpec]:
             action=good_reporter.render_by_case,
             kwargs=render_by_case_kwargs.replace(renderer="invalid_renderer"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)),
         idspec("BY_CASE_007", TestAction(
             name="Verify that invalid 'args' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_case,
             kwargs=render_by_case_kwargs.replace(args="invalid_args"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)),
         idspec("BY_CASE_008", TestAction(
             name="Verify that invalid 'case' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_case,
             kwargs=render_by_case_kwargs.replace(case="invalid_case"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)),
         idspec("BY_CASE_009", TestAction(
             name="Verify that invalid 'choice' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_case,
             kwargs=render_by_case_kwargs.replace(choice="invalid_choice"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)),
         idspec("BY_CASE_010", TestAction(
             name="Verify that invalid 'path' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_case,
             kwargs=render_by_case_kwargs.replace(path="invalid_path"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)),
         idspec("BY_CASE_011", TestAction(
             name="Verify that invalid 'session' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_case,
             kwargs=render_by_case_kwargs.replace(session="invalid_session"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)),
         idspec("BY_CASE_012", TestAction(
             name="Verify that invalid 'callback' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_case,
             kwargs=render_by_case_kwargs.replace(callback="invalid_callback"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)),
     ])
 
     return testspecs
@@ -398,7 +398,7 @@ def render_by_section_testspecs() -> list[TestSpec]:
         action=bad_target_reporter.render_by_section,
         kwargs=bad_target_kwargs,
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)))
+        exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)))
 
     # --- Parameter Validation Tests ---
     render_by_section_kwargs = render_by_section_kwargs_factory(cache_id=None)
@@ -408,43 +408,43 @@ def render_by_section_testspecs() -> list[TestSpec]:
             action=good_reporter.render_by_section,
             kwargs=render_by_section_kwargs.replace(renderer="invalid_renderer"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)),
         idspec("BY_SECTION_007", TestAction(
             name="Verify that invalid 'args' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_section,
             kwargs=render_by_section_kwargs.replace(args="invalid_args"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)),
         idspec("BY_SECTION_008", TestAction(
             name="Verify that invalid 'case' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_section,
             kwargs=render_by_section_kwargs.replace(case="invalid_case"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)),
         idspec("BY_SECTION_009", TestAction(
             name="Verify that invalid 'choice' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_section,
             kwargs=render_by_section_kwargs.replace(choice="invalid_choice"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)),
         idspec("BY_SECTION_010", TestAction(
             name="Verify that invalid 'path' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_section,
             kwargs=render_by_section_kwargs.replace(path="invalid_path"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)),
         idspec("BY_SECTION_011", TestAction(
             name="Verify that invalid 'session' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_section,
             kwargs=render_by_section_kwargs.replace(session="invalid_session"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)),
         idspec("BY_SECTION_012", TestAction(
             name="Verify that invalid 'callback' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_section,
             kwargs=render_by_section_kwargs.replace(callback="invalid_callback"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)),
     ])
 
     return testspecs
@@ -491,49 +491,49 @@ def dispatch_to_targets_params_testspecs() -> list[TestSpec]:
             action=reporter.dispatch_to_targets,
             kwargs=kwargs.replace(args="invalid_args"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE)),
         idspec("DISPATCH_003", TestAction(
             name="Verify that invalid 'case' argument raises SimpleBenchTypeError",
             action=reporter.dispatch_to_targets,
             kwargs=kwargs.replace(case="invalid_case"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE)),
         idspec("DISPATCH_004", TestAction(
             name="Verify that invalid 'choice' argument raises SimpleBenchTypeError",
             action=reporter.dispatch_to_targets,
             kwargs=kwargs.replace(choice="invalid_choice"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE)),
         idspec("DISPATCH_005", TestAction(
             name="Verify that invalid 'path' argument raises SimpleBenchTypeError",
             action=reporter.dispatch_to_targets,
             kwargs=kwargs.replace(path="invalid_path"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)),
         idspec("DISPATCH_006", TestAction(
             name="Verify that invalid 'session' argument raises SimpleBenchTypeError",
             action=reporter.dispatch_to_targets,
             kwargs=kwargs.replace(session="invalid_session"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE)),
         idspec("DISPATCH_007", TestAction(
             name="Verify that invalid 'callback' argument raises SimpleBenchTypeError",
             action=reporter.dispatch_to_targets,
             kwargs=kwargs.replace(callback="invalid_callback"),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE)),
         idspec("DISPATCH_008", TestAction(
             name="Verify that invalid 'output' argument raises SimpleBenchTypeError",
             action=reporter.dispatch_to_targets,
             kwargs=kwargs.replace(output=123),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)),
         idspec("DISPATCH_009", TestAction(
             name="Verify that invalide 'filename_base' argument raises SimpleBenchTypeError",
             action=reporter.dispatch_to_targets,
             kwargs=kwargs.replace(filename_base=456),
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE)),
     ])
 
     return testspecs

@@ -22,7 +22,7 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 from .config import CSVConfig
-from .exceptions import CSVReporterErrorTag
+from .exceptions import _CSVReporterErrorTag
 from .options import CSVOptions
 
 if TYPE_CHECKING:
@@ -110,11 +110,11 @@ class CSVReporter(Reporter):
         if not is_case(case):  # Handle deferred import type checking
             raise SimpleBenchTypeError(
                 f"Invalid case argument: expected Case instance, got {type(case).__name__}",
-                tag=CSVReporterErrorTag.RENDER_INVALID_CASE)
+                tag=_CSVReporterErrorTag.RENDER_INVALID_CASE)
         section = validate_type(section, Section, 'section',
-                                CSVReporterErrorTag.RENDER_INVALID_SECTION)
+                                _CSVReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, self.options_type, 'options',
-                                CSVReporterErrorTag.RENDER_INVALID_OPTIONS)
+                                _CSVReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         base_unit: str = self.get_base_unit_for_section(section=section)
         results: list[Results] = case.results

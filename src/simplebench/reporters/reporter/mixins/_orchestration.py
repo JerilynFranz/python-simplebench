@@ -17,7 +17,7 @@ from simplebench.enums import Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.prioritized import Prioritized
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.type_proxies import is_case, is_choice, is_session
@@ -79,36 +79,36 @@ class _ReporterOrchestrationMixin:
         if renderer is not None and not callable(renderer):
             raise SimpleBenchTypeError(
                 "renderer must be a callable ReportRenderer or None",
-                tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)
 
         args = validate_type(
             args, Namespace, 'args',
-            ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)
+            _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)
         # is_* checks handle deferred import runtime type checking for Case, Choice, and Session
         if not is_case(case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance for case argument",
-                tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)
 
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance for choice argument",
-                tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)
 
         if not is_session(session) and session is not None:
             raise SimpleBenchTypeError(
                 "session must be a Session instance if provided",
-                tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)
 
         if callback is not None and not isinstance(callback, ReporterCallback):
             raise SimpleBenchTypeError(
                 "callback must be a callable ReporterCallback if provided",
-                tag=ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)
 
         if path is not None:
             path = validate_type(
                 path, Path, 'path',
-                ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)
+                _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)
 
     def render_by_case(self: ReporterProtocol, *,
                        renderer: ReportRenderer | None = None,
@@ -345,41 +345,41 @@ class _ReporterOrchestrationMixin:
         output = validate_type(output,
                                (str, bytes, Text, Table),
                                'output',
-                               ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)
+                               _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)
         filename_base = validate_string(
                             filename_base, 'filename_base',
-                            ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE,
-                            ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_VALUE,
+                            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE,
+                            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_VALUE,
                             allow_empty=False,
                             strip=True,
                             alphanumeric_only=False,
                             allow_blank=False)
         args = validate_type(
             args, Namespace, 'args',
-            ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE)
+            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE)
         if not is_case(case):
             raise SimpleBenchTypeError(
                 "Expected a Case instance for case argument",
-                tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE)
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE)
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance for choice argument",
-                tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE)
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE)
         if not is_session(session) and session is not None:
             raise SimpleBenchTypeError(
                 "session must be a Session instance if provided",
-                tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE)
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE)
         section = validate_type(
             section, Section, 'section',
-            ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE)
+            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE)
         if callback is not None and not isinstance(callback, ReporterCallback):
             raise SimpleBenchTypeError(
                 "callback must be a callable ReporterCallback if provided",
-                tag=ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE)
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE)
         if path is not None:
             path = validate_type(
                 path, Path, 'path',
-                ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)
+                _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)
 
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         targets: set[Target] = self.select_targets_from_args(
@@ -416,4 +416,4 @@ class _ReporterOrchestrationMixin:
                 case _:
                     raise SimpleBenchValueError(
                         f'Unsupported target for {type(self)}: {output_target}',
-                        tag=ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)
+                        tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)

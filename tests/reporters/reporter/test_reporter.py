@@ -15,7 +15,7 @@ from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
-from simplebench.reporters.reporter.exceptions import ReporterErrorTag
+from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.results import Results
 from simplebench.runners import SimpleRunner
@@ -202,7 +202,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'case': "not_a_case_instance",
                 'choice': choice_conf_factory()},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.REPORT_INVALID_CASE_ARG)),
+        exception_tag=_ReporterErrorTag.REPORT_INVALID_CASE_ARG)),
     idspec('REPORT_002', TestAction(
         name=("report() with non-Choice arg raises "
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG"),
@@ -211,7 +211,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'case': case_factory(),
                 'choice': "not_a_choice_conf_instance"},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
+        exception_tag=_ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_003', TestAction(
         name=("report() with non-Choice choice arg raises "
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG"),
@@ -220,7 +220,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'case': case_factory(),
                 'choice': Choices()},  # passing Choices instead of Choice
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
+        exception_tag=_ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_004', TestAction(
         name=("report() with Section not in Reporter's sections raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_SECTION"),
@@ -232,7 +232,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                     choice_conf=ChoiceConf(
                         **choice_conf_kwargs_factory().replace(sections=[Section.NULL])))},
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)),
+        exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)),
     idspec('REPORT_005', TestAction(
         name=("report() with Target not in Reporter's targets raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_TARGET"),
@@ -244,7 +244,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                     choice_conf=ChoiceConf(
                         **choice_conf_kwargs_factory().replace(targets=[Target.CUSTOM])))},
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)),
+        exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)),
     idspec('REPORT_006', TestAction(
         name=("report() with output_format not in Reporter's formats raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_FORMAT"),
@@ -256,7 +256,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                     choice_conf=ChoiceConf(
                         **choice_conf_kwargs_factory().replace(output_format=Format.CUSTOM)))},
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)),
+        exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)),
     idspec('REPORT_007', TestAction(
         name="report() with valid Case and Choice runs successfully",
         action=reporter_factory().report,
@@ -288,7 +288,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                         **choice_conf_kwargs_factory().replace(targets=[Target.CALLBACK]))),
                 'callback': "not_a_callback"},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.REPORT_INVALID_CALLBACK_ARG)),
+        exception_tag=_ReporterErrorTag.REPORT_INVALID_CALLBACK_ARG)),
     idspec('REPORT_010', TestAction(
         name="report() with valid path runs successfully",
         action=reporter_factory().report,
@@ -306,7 +306,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'choice': choice_factory(),
                 'path': "not_a_path"},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.REPORT_INVALID_PATH_ARG)),
+        exception_tag=_ReporterErrorTag.REPORT_INVALID_PATH_ARG)),
     idspec('REPORT_012', TestAction(
         name=("report() with valid session runs successfully"),
         action=reporter_factory().report,
@@ -326,7 +326,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'path': path_factory(),
                 'session': "not_a_session"},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.REPORT_INVALID_SESSION_ARG)),
+        exception_tag=_ReporterErrorTag.REPORT_INVALID_SESSION_ARG)),
     idspec('REPORT_014', TestAction(
         name="report() invalid args type raises SimpleBenchTypeError/REPORT_INVALID_ARGS_ARG_TYPE",
         action=reporter_factory().report,
@@ -336,7 +336,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'path': path_factory(),
                 'session': session_factory()},
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.REPORT_INVALID_ARGS_ARG_TYPE)),
+        exception_tag=_ReporterErrorTag.REPORT_INVALID_ARGS_ARG_TYPE)),
     idspec('REPORT_015', TestAction(
         name="report() with missing args raises TypeError",
         action=reporter_factory().report,
@@ -386,7 +386,7 @@ def test_report(testspec: TestSpec) -> None:
         action=reporter_factory().add_choice,
         args=["not_a_choice_conf_instance"],
         exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)),
+        exception_tag=_ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)),
     idspec('REPORTER_ADD_CHOICE_003', TestAction(
         name=("Passing Choice with a section not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_SECTION_ARG"),
@@ -396,7 +396,7 @@ def test_report(testspec: TestSpec) -> None:
                 choice_conf=ChoiceConf(
                     **choice_conf_kwargs_factory().replace(sections=[Section.NULL])))],
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)),
+        exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)),
     idspec('REPORTER_ADD_CHOICE_004', TestAction(
         name=("Passing Choice with a target not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_TARGET_ARG"),
@@ -406,7 +406,7 @@ def test_report(testspec: TestSpec) -> None:
             choice_conf=ChoiceConf(
                 **choice_conf_kwargs_factory().replace(targets=[Target.CUSTOM])))],
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)),
+        exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)),
     idspec('REPORTER_ADD_CHOICE_005', TestAction(
         name=("Passing Choice with a output_format not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/ADD_FORMAT_UNSUPPORTED_FORMAT"),
@@ -416,7 +416,7 @@ def test_report(testspec: TestSpec) -> None:
             choice_conf=ChoiceConf(
                 **choice_conf_kwargs_factory().replace(output_format=Format.CUSTOM)))],
         exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)),
+        exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)),
 ])
 def test_add_choice(testspec: TestSpec) -> None:
     """Test Reporter.add_choice() method.
@@ -502,7 +502,7 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
             action=FactoryReporter.set_default_options,
             args=["not_a_reporter_options_instance"],
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE)),
     ]
 
     def vanilla_default_options_is_hardcoded_default_options() -> None:
@@ -645,21 +645,21 @@ def find_options_by_type_testspecs() -> list[TestSpec]:
             action=reporter.find_options_by_type,
             kwargs={'options': fully_populated_options_list, 'cls': "not_a_reporter_options_type"},
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE)),
+            exception_tag=_ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE)),
         idspec('FIND_OPTIONS_BY_TYPE_006', TestAction(
             name=("find_options_by_type() with invalid options arg raises "
                   "SimpleBenchTypeError/FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG"),
             action=reporter.find_options_by_type,
             kwargs={'options': "not_a_list", 'cls': ReporterOptionsOne},
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG)),
+            exception_tag=_ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG)),
         idspec('FIND_OPTIONS_BY_TYPE_007', TestAction(
             name=("find_options_by_type() with options arg containing invalid item type raises "
                   "SimpleBenchTypeError/FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG"),
             action=reporter.find_options_by_type,
             kwargs={'options': [options_one, "not_a_reporter_options_instance"], 'cls': ReporterOptionsOne},
             exception=SimpleBenchTypeError,
-            exception_tag=ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG)),
+            exception_tag=_ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG)),
         idspec('FIND_OPTIONS_BY_TYPE_008', TestAction(
             name="find_options_by_type() with None options arg returns None",
             action=reporter.find_options_by_type,

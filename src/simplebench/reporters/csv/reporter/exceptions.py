@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class CSVReporterErrorTag(ErrorTag):
+class _CSVReporterErrorTag(ErrorTag):
     """Error tags for :class:`~.CSVReporter` class related exceptions."""
     SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE = "SET_DEFAULT_TARGETS_INVALID_TARGETS_ARG_TYPE"
     """Invalid targets argument type:

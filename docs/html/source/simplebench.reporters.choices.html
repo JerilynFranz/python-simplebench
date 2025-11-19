@@ -406,20 +406,6 @@ in the container</p>
 </dd></dl>
 </dd></dl>
 </section>
-<section id="module-simplebench.reporters.choices.metaclasses">
-<span id="simplebench-reporters-choices-metaclasses-module"></span><h2>simplebench.reporters.choices.metaclasses module<a class="headerlink" href="#module-simplebench.reporters.choices.metaclasses" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.reporters.choices.metaclasses'">¶</a></h2>
-<p>Metaclasses for <a class="reference internal" href="#module-simplebench.reporters.choices" title="simplebench.reporters.choices"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simplebench.reporters.choices</span></code></a></p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.reporters.choices.metaclasses.IChoices">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.choices.metaclasses.</span></span><span class="sig-name descname"><span class="pre">IChoices</span></span><a class="headerlink" href="#simplebench.reporters.choices.metaclasses.IChoices" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.choices.metaclasses.IChoices'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Interface for <a class="reference internal" href="#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> classes.</p>
-<p>This metaclass is used to identify <a class="reference internal" href="#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> subclasses for type checking
-without creating circular import dependencies.</p>
-<p>Because <a class="reference internal" href="#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> inherits from this metaclass, any subclass of
-<a class="reference internal" href="#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> will also inherit from this metaclass.</p>
-</dd></dl>
-</section>
 <section id="module-simplebench.reporters.choices">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.reporters.choices" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.reporters.choices'">¶</a></h2>
 <p>simplebench.reporters.choices package.</p>
@@ -694,16 +680,6 @@ in the container</p>
 <dd><p>The key used to assign an instance does not match the name attribute</p>
 </dd></dl>
 </dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.reporters.choices.IChoices">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.choices.</span></span><span class="sig-name descname"><span class="pre">IChoices</span></span><a class="headerlink" href="#simplebench.reporters.choices.IChoices" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.choices.IChoices'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Interface for <a class="reference internal" href="#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> classes.</p>
-<p>This metaclass is used to identify <a class="reference internal" href="#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> subclasses for type checking
-without creating circular import dependencies.</p>
-<p>Because <a class="reference internal" href="#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> inherits from this metaclass, any subclass of
-<a class="reference internal" href="#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> will also inherit from this metaclass.</p>
-</dd></dl>
 </section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
@@ -750,10 +726,6 @@ without creating circular import dependencies.</p>
 </li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#module-simplebench.reporters.choices.metaclasses'" class="reference internal" href="#module-simplebench.reporters.choices.metaclasses">simplebench.reporters.choices.metaclasses module</a><ul>
-<li><a :data-current="activeSection === '#simplebench.reporters.choices.metaclasses.IChoices'" class="reference internal" href="#simplebench.reporters.choices.metaclasses.IChoices"><code class="docutils literal notranslate"><span class="pre">IChoices</span></code></a></li>
-</ul>
-</li>
 <li><a :data-current="activeSection === '#module-simplebench.reporters.choices'" class="reference internal" href="#module-simplebench.reporters.choices">Module contents</a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.choices.Choices'" class="reference internal" href="#simplebench.reporters.choices.Choices"><code class="docutils literal notranslate"><span class="pre">Choices</span></code></a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.choices.Choices.add'" class="reference internal" href="#simplebench.reporters.choices.Choices.add"><code class="docutils literal notranslate"><span class="pre">Choices.add()</span></code></a></li>
@@ -785,7 +757,6 @@ without creating circular import dependencies.</p>
 <li><a :data-current="activeSection === '#simplebench.reporters.choices.ChoicesErrorTag.SETITEM_KEY_NAME_MISMATCH'" class="reference internal" href="#simplebench.reporters.choices.ChoicesErrorTag.SETITEM_KEY_NAME_MISMATCH"><code class="docutils literal notranslate"><span class="pre">ChoicesErrorTag.SETITEM_KEY_NAME_MISMATCH</span></code></a></li>
 </ul>
 </li>
-<li><a :data-current="activeSection === '#simplebench.reporters.choices.IChoices'" class="reference internal" href="#simplebench.reporters.choices.IChoices"><code class="docutils literal notranslate"><span class="pre">IChoices</span></code></a></li>
 </ul>
 </li>
 </ul>

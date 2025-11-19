@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class RegisterReporterErrorTag(ErrorTag):
+class _RegisterReporterErrorTag(ErrorTag):
     """Error tags for :func:`~.register_reporter` decorator."""
     # @register_reporter decorator errors
     NOT_REPORTER = "NOT_REPORTER"
