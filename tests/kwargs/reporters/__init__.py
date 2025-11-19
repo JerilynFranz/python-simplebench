@@ -7,7 +7,7 @@ from .reporter import (
     DispatchToTargetsMethodKWArgs,
     RenderByCaseMethodKWArgs,
     RenderBySectionMethodKWArgs,
-    ReporterKWArgs,
+    ReporterConfigKWArgs,
 )
 
 __all__ = [
@@ -16,7 +16,7 @@ __all__ = [
     'ChoicesKWArgs',
     'ChoicesConfKWArgs',
     'DispatchToTargetsMethodKWArgs',
-    'ReporterKWArgs',
     'RenderByCaseMethodKWArgs',
     'RenderBySectionMethodKWArgs',
+    'ReporterConfigKWArgs',
 ]

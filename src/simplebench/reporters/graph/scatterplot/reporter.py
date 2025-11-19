@@ -10,10 +10,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
@@ -21,6 +19,8 @@ from simplebench.type_proxies import is_case
 from simplebench.validators import validate_type
 
 from ..matplotlib import MatPlotLibReporter
+
+from .config import ScatterPlotConfig
 from .exceptions import ScatterPlotReporterErrorTag
 from .options import ScatterPlotOptions
 
@@ -62,7 +62,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
     :vartype: ~typing.ClassVar[dict[str, ~typing.Any]]
     """
 
-    def __init__(self) -> None:
+    def __init__(self, config: ScatterPlotConfig | None = None) -> None:
         """Initialize the ScatterPlotReporter.
 
         .. note::
@@ -72,60 +72,19 @@ class ScatterPlotReporter(MatPlotLibReporter):
             defined in any subclass of :class:`ScatterPlotReporter` to ensure proper
             functionality.
 
-            In simple use, these exceptions should never be raised, as
-            :class:`ScatterPlotReporter` provides valid implementations. They are documented
-            here for completeness.
+        :param config: An optional configuration object to override default reporter settings.
+                       If not provided, default settings will be used.
+        :type config: ScatterPlotConfig | None
 
         :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration
             types are invalid.
         :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration
             values are invalid.
         """
-        super().__init__(
-            name='scatter-plot',
-            description='Outputs benchmark results as scatter plot graphs.',
-            sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
-            targets={Target.FILESYSTEM, Target.CALLBACK},
-            formats={Format.GRAPH},
-            file_suffix='svg',
-            file_unique=True,
-            file_append=False,
-            choices=ChoicesConf([
-                ChoiceConf(
-                    flags=['--scatter-plot'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='scatter-plot',
-                    description='Output scatter plot graphs of benchmark results',
-                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
-                    default_targets=[Target.FILESYSTEM],
-                    output_format=Format.GRAPH),
-                ChoiceConf(
-                    flags=['--scatter-plot.ops'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='scatter-plot-ops',
-                    description='Create scatter plots of operations per second results.',
-                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
-                    output_format=Format.GRAPH),
-                ChoiceConf(
-                    flags=['--scatter-plot.timings'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='scatter-plot-timings',
-                    description='Create scatter plots of timing results.',
-                    sections=[Section.TIMING],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
-                    output_format=Format.GRAPH),
-                ChoiceConf(
-                    flags=['--scatter-plot.memory'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='scatter-plot-memory',
-                    description='Create scatter plots of memory usage results.',
-                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
-                    output_format=Format.GRAPH),
-            ])
-        )
+        if config is None:
+            config = ScatterPlotConfig()
+
+        super().__init__(config)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
         """Render the scatter plot graph and return it as bytes.

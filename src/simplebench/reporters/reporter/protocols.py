@@ -11,6 +11,7 @@ from rich.text import Text
 
 from simplebench.enums import Format, Section, Target
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
+from simplebench.reporters.reporter.config import ReporterConfig
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -50,28 +51,15 @@ class ReporterProtocol(Protocol):
         """Return the supported formats for this reporter."""
         ...
 
-    _name: str
-    """The name of the reporter (private backend attribute)."""
-    _description: str
-    """The description of the reporter (private backend attribute)."""
-    _sections: frozenset[Section]
-    """The supported sections for this reporter (private backend attribute)."""
-    _targets: frozenset[Target]
-    """The supported targets for this reporter (private backend attribute)."""
-    _formats: frozenset[Format]
-    """The supported formats for this reporter (private backend attribute)."""
+    _config: ReporterConfig
+    """The configuration of the reporter (private backend attribute)."""
     _choices: Choices
     """The choices for this reporter (private backend attribute)."""
-    _default_targets: frozenset[Target]
-    """The default targets for this reporter (private backend attribute)."""
-    _subdir: str
-    """The default subdirectory for this reporter (private backend attribute)."""
-    _file_suffix: str
-    """The default file suffix for this reporter (private backend attribute)."""
-    _file_unique: bool
-    """The default file unique flag for this reporter (private backend attribute)."""
-    _file_append: bool
-    """The default file append flag for this reporter (private backend attribute)."""
+
+    @property
+    def config(self) -> ReporterConfig:
+        """The configuration of the reporter."""
+        ...
 
     @property
     def choices(self) -> Choices:

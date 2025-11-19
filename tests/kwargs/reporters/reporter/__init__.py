@@ -7,11 +7,11 @@ from .methods import (
     TargetConsoleMethodKWArgs,
     TargetFilesystemMethodKWArgs,
 )
-from .reporter_kwargs import ReporterKWArgs
+from .reporter_config_kwargs import ReporterConfigKWArgs
 
 __all__ = [
     "DispatchToTargetsMethodKWArgs",
-    "ReporterKWArgs",
+    "ReporterConfigKWArgs",
     "RenderByCaseMethodKWArgs",
     "RenderBySectionMethodKWArgs",
     "TargetCallbackMethodKWArgs",

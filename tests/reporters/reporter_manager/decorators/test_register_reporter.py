@@ -19,7 +19,7 @@ from simplebench.reporters.reporter_manager.decorators import (
 )
 from simplebench.session import Session
 
-from ....factories import reporter_kwargs_factory
+from ....factories import reporter_config_kwargs_factory, reporter_config_factory
 
 
 class MockReporterOptions(ReporterOptions):
@@ -34,7 +34,8 @@ class MockReporter(Reporter):
     """Keyword arguments for constructing a MockReporterOptions hardcoded default instance: `{}`"""
 
     def __init__(self, name: str = 'mock') -> None:
-        super().__init__(**reporter_kwargs_factory(cache_id=None))
+        config = reporter_config_factory(**reporter_config_kwargs_factory(name=name))
+        super().__init__(config)
 
     def run_report(self,
                    *,

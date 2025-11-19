@@ -110,10 +110,10 @@ from .reporter import (
     default_choices_conf,
     default_choices_conf_kwargs,
     default_options_type,
-    default_reporter_kwargs,
     report_parameters_factory,
+    reporter_config_factory,
+    reporter_config_kwargs_factory,
     reporter_factory,
-    reporter_kwargs_factory,
 )
 from .reporter_callback import default_reporter_callback
 from .reporter_options import (
@@ -238,8 +238,6 @@ __all__ = [
     'reporter_factory',
     'choice_factory',
     'choices_factory',
-    'reporter_kwargs_factory',
-    'default_reporter_kwargs',
     'reporter_options_type_factory',
     'default_reporter_options_type',
     'reporter_options_factory',
@@ -259,6 +257,8 @@ __all__ = [
     'FactoryReporter',
     'FactoryReporterOptions',
     'default_options_type',
+    'reporter_config_kwargs_factory',
+    'reporter_config_factory',
 
     # Results factories
     'results_kwargs_factory',

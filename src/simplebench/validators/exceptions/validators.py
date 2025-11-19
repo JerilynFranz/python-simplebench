@@ -1,11 +1,30 @@
 """ErrorTags for simplebench.validators in SimpleBench."""
-from simplebench.exceptions import ErrorTag
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
 class ValidatorsErrorTag(ErrorTag):
     """ErrorTags for validator-related exceptions."""
+    # validate_dirpath() tags
+    VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE = "VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE"
+    """The 'dirpath' argument must be a str."""
+    VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE = "VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE"
+    """The 'dirpath' argument has an invalid value."""
+    VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE = "VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE"
+    """The 'allow_empty' argument must be a bool."""
+    VALIDATE_DIRPATH_INVALID_CHARACTERS = "VALIDATE_DIRPATH_INVALID_CHARACTERS"
+    """The 'dirpath' argument contains invalid characters."""
+    VALIDATE_DIRPATH_INVALID_START_END = "VALIDATE_DIRPATH_INVALID_START_END"
+    """The 'dirpath' argument cannot start or end with a slash or backslash."""
+    VALIDATE_DIRPATH_ELEMENT_HAS_INVALID_CHARACTERS = "VALIDATE_DIRPATH_ELEMENT_HAS_INVALID_CHARACTERS"
+    """An element of the 'dirpath' argument contains invalid characters."""
+    VALIDATE_DIRPATH_ELEMENT_EMPTY = "VALIDATE_DIRPATH_ELEMENT_EMPTY"
+    """An element of the 'dirpath' argument is empty."""
+    VALIDATE_DIRPATH_ELEMENT_TOO_LONG = "VALIDATE_DIRPATH_ELEMENT_TOO_LONG"
+    """An element of the 'dirpath' argument is too long (max 64 characters)."""
+    VALIDATE_DIRPATH_TOO_LONG = "VALIDATE_DIRPATH_TOO_LONG"
+    """The 'dirpath' argument is too long (max 255 characters)."""
 
     # validate_bool() tags
     VALIDATE_BOOL_INVALID_NAME_ARG_TYPE = "VALIDATE_BOOL_INVALID_NAME_ARG_TYPE"

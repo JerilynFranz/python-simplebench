@@ -22,7 +22,7 @@ from ....factories import (
     default_reporter_callback,
     list_of_strings_flag_factory,
     path_factory,
-    reporter_kwargs_factory,
+    reporter_config_factory,
     session_factory,
 )
 from ....factories.reporter.reporter_methods import (
@@ -62,11 +62,10 @@ class FactoryReporterForOrchestration(FactoryReporter):
         :param choices: The choices configuration for the reporter.
         :type choices: ChoicesConf
         """
-
-        reporter_kwargs = reporter_kwargs_factory().replace(
+        reporter_options = reporter_config_factory(
             choices=choices,
             targets={Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK, Target.INVALID},)
-        super().__init__(**reporter_kwargs)
+        super().__init__(reporter_options)
         self.render_spy: RenderSpy = RenderSpy()
         self.target_console = ConsoleSpy()  # type: ignore[method-assign,assignment,reporterAttributeAccessIssue]
         """Spy for console target method calls."""

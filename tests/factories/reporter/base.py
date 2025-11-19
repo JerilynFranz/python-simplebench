@@ -1,18 +1,18 @@
 """Factories for creating Reporter, Choice, and Choices test objects."""
 # pylint: disable=unused-argument
-from typing import Any, ClassVar, Iterable, TypeAlias, overload
+from typing import Any, ClassVar, TypeAlias, overload
 
 from rich.table import Table
 from rich.text import Text
 
 from simplebench.case import Case
-from simplebench.enums import Format, Section, Target
+from simplebench.enums import Section
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
-from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.reporters.reporter import Reporter, ReporterConfig, ReporterOptions
 
 from ...cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
-from ...kwargs import ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterKWArgs
+from ...kwargs import ChoiceConfKWArgs, ChoicesConfKWArgs
 from .._primitives import (
     default_choice_flags,
     default_choice_name,
@@ -22,10 +22,8 @@ from .._primitives import (
     default_file_suffix,
     default_file_unique,
     default_flag_type,
-    default_formats,
     default_output_format,
     default_report_output,
-    default_reporter_name,
     default_sections,
     default_subdir,
     default_targets,
@@ -37,6 +35,7 @@ from ..path import path_factory
 from ..reporter_callback import default_reporter_callback
 from ..reporter_options import FactoryReporterOptions, default_reporter_options
 from ..session import session_factory
+from .reporter_config import reporter_config_factory, reporter_config_kwargs_factory
 
 
 @uncached_factory
@@ -84,68 +83,14 @@ class FactoryReporter(Reporter):
 
     def __init__(  # pylint: disable=redefined-outer-name
                 self,
-                *,
-                name: str,
-                description: str,
-                sections: Iterable[Section],
-                targets: Iterable[Target],
-                default_targets: Iterable[Target] | None = None,
-                subdir: str = '',
-                file_suffix: str,
-                file_unique: bool,
-                file_append: bool,
-                formats: Iterable[Format],
-                choices: ChoicesConf) -> None:
+                reporter_config: ReporterConfig) -> None:
         """Initialize Reporter with provided kwargs.
 
-        :param name: Name of the reporter.
-        :type name: str
-        :param description: Description of the reporter.
-        :type description: str
-        :param sections: Supported sections for the reporter.
-        :type sections: Iterable[Section]
-        :param targets: Supported targets for the reporter.
-        :type targets: Iterable[Target]
-        :param default_targets: Default targets for the reporter.
-        :type default_targets: Iterable[Target] | None
-        :param formats: Supported formats for the reporter.
-        :type formats: Iterable[Format]
-        :param choices: ChoicesConf for the reporter.
-        :type choices: ChoicesConf
-        :param subdir: Subdirectory for the reporter.
-        :type subdir: str
-        :param file_suffix: File suffix for the reporter.
-        :type file_suffix: str
-        :param file_unique: File unique flag for the reporter.
-        :type file_unique: bool
-        :param file_append: File append flag for the reporter.
-        :type file_append: bool
+        :param reporter_config: The ReporterConfig instance to use for this reporter.
+        :type reporter_config: ReporterConfig
         """
-        kwargs: dict[str, Any] = {}
-        if name is not None:
-            kwargs['name'] = name
-        if description is not None:
-            kwargs['description'] = description
-        if sections is not None:
-            kwargs['sections'] = sections
-        if targets is not None:
-            kwargs['targets'] = targets
-        if default_targets is not None:
-            kwargs['default_targets'] = default_targets
-        if formats is not None:
-            kwargs['formats'] = formats
-        if choices is not None:
-            kwargs['choices'] = choices
-        if subdir is not None:
-            kwargs['subdir'] = subdir
-        if file_suffix is not None:
-            kwargs['file_suffix'] = file_suffix
-        if file_unique is not None:
-            kwargs['file_unique'] = file_unique
-        if file_append is not None:
-            kwargs['file_append'] = file_append
-
-        super().__init__(**kwargs)  # pylint: disable=missing-kwoa  # type: ignore[misc]
+        config = reporter_config_factory() if reporter_config is None else reporter_config
+        super().__init__(config)
 
     def render(
             self, *, case: Case, section: Section, options: ReporterOptions) -> str | bytes | Text | Table:
@@ -170,161 +115,6 @@ def default_options_type() -> type[Options]:
     :rtype: type[FactoryReporterOptions]
     """
     return Options
-
-
-# overloads provide tooltips and docstrings for the cache_factory decorated function
-@overload
-def reporter_kwargs_factory() -> ReporterKWArgs:
-    """Return a preconfigured ReporterKWArgs instance for testing purposes.
-
-    The returned ReporterKWArgs instance is preconfigured for testing and is immutable.
-
-    It is cached by default to ensure that repeated calls return the same instance.
-    This is safe because ReporterKWArgs is immutable and will always return the same values
-    for the same attributes, behaving consistently across tests.
-
-    If there is a need for a fresh instance, provide a unique cache_id or set cache_id to `None`.
-
-    It contains all parameters set to explicit default values for testing purposes:
-
-    .. code-block:: python
-
-        ReporterKWArgs(
-            name=default_name(),
-            description=default_description(),
-            options_type=default_options_type(),
-            sections=default_sections(),
-            targets=default_targets(),
-            default_targets=default_default_targets(),
-            formats=default_formats(),
-            choices=default_choices_confs(),
-            file_suffix=default_file_suffix(),
-            file_unique=default_file_unique(),
-            file_append=default_file_append()
-        )
-
-    :param cache_id: An optional identifier to distinguish different cached instances.
-                     If None, caching is disabled for this call.
-    :type cache_id: CacheId, optional
-    :return: A preconfigured instance with default values for testing.
-    :rtype: ReporterKWArgs
-    """
-
-
-@overload
-def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWArgs:
-    """Return a preconfigured ReporterKWArgs instance for testing purposes.
-
-    The returned ReporterKWArgs instance is preconfigured for testing and is immutable.
-
-    It is cached by default to ensure that repeated calls return the same instance.
-    This is safe because ReporterKWArgs is immutable and will always return the same values
-    for the same attributes, behaving consistently across tests.
-
-    If there is a need for a fresh instance, provide a unique cache_id or set cache_id to `None`.
-
-    It contains all parameters set to explicit default values for testing purposes:
-
-    .. code-block:: python
-
-        ReporterKWArgs(
-            name=default_name(),
-            description=default_description(),
-            options_type=default_options_type(),
-            sections=default_sections(),
-            targets=default_targets(),
-            default_targets=default_default_targets(),
-            formats=default_formats(),
-            choices=default_choices_confs(),
-            file_suffix=default_file_suffix(),
-            file_unique=default_file_unique(),
-            file_append=default_file_append()
-        )
-
-    :param cache_id: An optional identifier to distinguish different cached instances.
-                     If None, caching is disabled for this call.
-    :type cache_id: CacheId, optional
-    :return: A preconfigured instance with default values for testing.
-    :rtype: ReporterKWArgs
-    """
-
-
-@cached_factory
-def reporter_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ReporterKWArgs:
-    """Return a preconfigured ReporterKWArgs instance for testing purposes.
-
-    The returned ReporterKWArgs instance is preconfigured for testing and is immutable.
-
-    It is cached by default to ensure that repeated calls return the same instance.
-    This is safe because ReporterKWArgs is immutable and will always return the same values
-    for the same attributes, behaving consistently across tests.
-
-    If there is a need for a fresh instance, provide a unique cache_id or set cache_id to `None`.
-
-    It contains all parameters set to explicit default values for testing purposes:
-
-    .. code-block:: python
-
-        ReporterKWArgs(
-            name=default_name(),
-            description=default_description(),
-            options_type=default_options_type(),
-            sections=default_sections(),
-            targets=default_targets(),
-            default_targets=default_default_targets(),
-            formats=default_formats(),
-            choices=default_choices_confs(),
-            file_suffix=default_file_suffix(),
-            file_unique=default_file_unique(),
-            file_append=default_file_append()
-        )
-
-    :param cache_id: An optional identifier to distinguish different cached instances.
-                     If None, caching is disabled for this call.
-    :type cache_id: CacheId, optional
-    :return: A preconfigured instance with default values for testing.
-    :rtype: ReporterKWArgs
-    """
-    return ReporterKWArgs(
-        name=default_reporter_name(),
-        description=default_description(),
-        sections=default_sections(),
-        targets=default_targets(),
-        default_targets=default_default_targets(),
-        formats=default_formats(),
-        choices=default_choices_conf(),
-        subdir="",
-        file_suffix=default_file_suffix(),
-        file_unique=default_file_unique(),
-        file_append=default_file_append(),
-    )
-
-
-def default_reporter_kwargs() -> ReporterKWArgs:
-    """A preconfigured ReporterKWArgs instance for testing purposes.
-
-    It always returns the same ReporterKWArgs instance created by reporter_kwargs_factory().
-
-    .. code-block:: python
-
-        ReporterKWArgs(
-            name=default_name(),
-            description=default_description(),
-            options_type=default_options_type(),
-            sections=default_sections(),
-            targets=default_targets(),
-            default_targets=default_default_targets(),
-            formats=default_formats(),
-            choices=default_choices_confs(),
-            file_suffix=default_file_suffix(),
-            file_unique=default_file_unique(),
-            file_append=default_file_append()
-        )
-
-    :return: A preconfigured instance with default values for testing.
-    :rtype: ReporterKWArgs
-    """
-    return reporter_kwargs_factory(cache_id=f'{__name__}.default_reporter_kwargs:singleton')
 
 
 @overload
@@ -763,11 +553,14 @@ def choice_factory(*,
         raise TypeError(f"Invalid type for flags argument: {flags!r}")
     if not is_default:
         choices_conf = choices_conf_factory(cache_id=cache_id,
-                                            choices=(choice_conf_factory(cache_id=cache_id, name=name, flags=flags), ))
+                                            choices=(choice_conf_factory(cache_id=cache_id,
+                                                                         name=name,
+                                                                         flags=flags), ))
     else:
         choices_conf = choices_conf_factory(cache_id=cache_id)
-    kwargs = default_reporter_kwargs().replace(choices=choices_conf)
-    reporter = reporter_factory(cache_id=cache_id, reporter_kwargs=kwargs)
+    kwargs = reporter_config_kwargs_factory().replace(choices=choices_conf)
+    config = ReporterConfig(**kwargs)
+    reporter = reporter_factory(cache_id=cache_id, reporter_config=config)
     return reporter.choices[name]
 
 
@@ -872,7 +665,7 @@ def reporter_factory() -> FactoryReporter:
 @overload
 def reporter_factory(*,
                      cache_id: CacheId = CACHE_DEFAULT,
-                     reporter_kwargs: ReporterKWArgs | None = None) -> FactoryReporter:
+                     reporter_config: ReporterConfig | None = None) -> FactoryReporter:
     """Factory function to return an uncached FactortyReporter instance for testing.
 
     By default, it uses default_reporter_kwargs() to provide a set of parameters
@@ -886,9 +679,9 @@ def reporter_factory(*,
     :param cache_id: An identifier to cache different UnconfiguredReporter instances if needed.
                      If None, caching is disabled for this call.
     :type cache_id: CacheId, optional
-    :param reporter_kwargs: Keyword arguments to initialize the UnconfiguredReporter.
-                            If none, default_reporter_kwargs() is used to provide a default set of parameters.
-    :type reporter_kwargs: ReporterKWArgs | None
+    :param reporter_config: ReporterConfig to initialize the UnconfiguredReporter.
+                            If none, default_reporter_config() is used to provide a default config.
+    :type reporter_config: ReporterConfig | None
     :return: A FactoryReporter instance.
     :rtype: FactoryReporter
     """
@@ -897,7 +690,7 @@ def reporter_factory(*,
 @uncached_factory
 def reporter_factory(*,
                      cache_id: CacheId = CACHE_DEFAULT,
-                     reporter_kwargs: ReporterKWArgs | None = None) -> FactoryReporter:
+                     reporter_config: ReporterConfig | None = None) -> FactoryReporter:
     """Factory function to return an uncached FactortyReporter instance for testing.
 
     By default, it uses default_reporter_kwargs() to provide a set of parameters
@@ -913,16 +706,16 @@ def reporter_factory(*,
     :param cache_id: An identifier to cache different UnconfiguredReporter instances if needed.
                      If None, caching is disabled for this call.
     :type cache_id: CacheId, optional
-    :param reporter_kwargs: Keyword arguments to initialize the UnconfiguredReporter.
-                            If none, default_reporter_kwargs() is used to provide a default set of parameters.
-    :type reporter_kwargs: ReporterKWArgs | None
+    :param reporter_config: ReporterConfig to initialize the UnconfiguredReporter.
+                            If none, default_reporter_config_kwargs() is used to provide a default set of parameters.
+    :type reporter_config: ReporterConfig | None
     :return: A FactoryReporter instance.
     :rtype: FactoryReporter
     """
-    if reporter_kwargs is not None and not isinstance(reporter_kwargs, ReporterKWArgs):
-        raise TypeError(f"Invalid type for reporter_kwargs argument: {reporter_kwargs!r}")
-    kwargs = default_reporter_kwargs() if reporter_kwargs is None else reporter_kwargs
-    return FactoryReporter(**kwargs)
+    if reporter_config is not None and not isinstance(reporter_config, ReporterConfig):
+        raise TypeError(f"Invalid type for reporter_config argument: {reporter_config!r}")
+    config = reporter_config_factory() if reporter_config is None else reporter_config
+    return FactoryReporter(reporter_config=config)
 
 
 @cached_factory
@@ -949,6 +742,7 @@ def choices_factory(*,
     else:
         raise TypeError(f"Invalid type for choices argument: {choices!r}")
 
-    kwargs = default_reporter_kwargs().replace(choices=choices_conf)
-    reporter = reporter_factory(cache_id=cache_id, reporter_kwargs=kwargs)
+    kwargs = reporter_config_kwargs_factory().replace(choices=choices_conf)
+    config = ReporterConfig(**kwargs)
+    reporter = reporter_factory(cache_id=cache_id, reporter_config=config)
     return reporter.choices

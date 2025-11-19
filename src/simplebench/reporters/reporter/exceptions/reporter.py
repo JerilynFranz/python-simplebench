@@ -6,6 +6,10 @@ from simplebench.exceptions.base import ErrorTag
 @enum_docstrings
 class ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :mod:`simplebench.reporters.reporter` module."""
+    # __init__()
+    CONFIG_INVALID_ARG_TYPE = "CONFIG_INVALID_ARG_TYPE"
+    """Invalid type for ``config`` argument in __init__()"""
+
     # dispatch_to_targets()
     DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE = (
         "DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE")

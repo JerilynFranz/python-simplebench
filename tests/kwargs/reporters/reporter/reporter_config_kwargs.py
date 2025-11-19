@@ -6,20 +6,20 @@ from typing import Iterable
 from simplebench.enums import Format, Section, Target
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter import Reporter
+from simplebench.reporters.reporter.config import ReporterConfig
 
 from ....kwargs import KWArgs, NoDefaultValue
 
 
-class ReporterKWArgs(KWArgs):
-    """A class to hold keyword arguments for initializing a Reporter instance.
+class ReporterConfigKWArgs(KWArgs):
+    """A class to hold keyword arguments for initializing a ReporterConfig instance.
 
-    This class is primarily used to facilitate testing of the Reporter class initialization
+    This class is primarily used to facilitate testing of the ReporterConfig class initialization
     with various combinations of parameters, including those that are optional and those
     that have no default value.
 
     It provides a convenient way to construct a dictionary of parameters to be passed
-    to the Reporter class during initialization with linting tools guiding the types of each
+    to the ReporterConfig class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
     """
     def __init__(  # pylint: disable=unused-argument
@@ -67,4 +67,4 @@ class ReporterKWArgs(KWArgs):
                         and formats supported by the reporter. Must have at least one Choice.
         :type choices: Iterable[ChoiceConf] | Choices
         """
-        super().__init__(call=Reporter.__init__, kwargs=locals())
+        super().__init__(call=ReporterConfig.__init__, kwargs=locals())

@@ -10,12 +10,9 @@ from io import StringIO
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
 # simplebench.reporters imports
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.csv.reporter.options import CSVOptions
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.results import Results
@@ -24,7 +21,9 @@ from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
+from .config import CSVConfig
 from .exceptions import CSVReporterErrorTag
+from .options import CSVOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -71,9 +70,8 @@ class CSVReporter(Reporter):
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
     """:meta private:"""
 
-    def __init__(self) -> None:
-        """Initialize the :class:`~.CSVReporter` with its name, description, choices,
-        targets, and formats.
+    def __init__(self, config: CSVConfig | None = None) -> None:
+        """Initialize the :class:`~.CSVReporter`.
 
         .. note::
 
@@ -82,64 +80,17 @@ class CSVReporter(Reporter):
             correctly defined in any subclass of :class:`~.CSVReporter` to ensure proper
             functionality.
 
-            In simple use, these exceptions should never be raised, as :class:`~.CSVReporter`
-            provides valid implementations. They are documented here for completeness.
+        :param config: An optional configuration object to override default reporter settings.
+                       If not provided, default settings will be used.
+        :type config: CSVConfig | None
 
         :raises SimpleBenchTypeError: If the subclass configuration types are invalid.
         :raises SimpleBenchValueError: If the subclass configuration values are invalid.
         """
-        super().__init__(
-            name='csv',
-            description='Outputs benchmark results to CSV files.',
-            sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
-            targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
-            formats={Format.CSV},
-            file_suffix='csv',
-            file_unique=True,
-            file_append=False,
-            choices=ChoicesConf([
-                ChoiceConf(
-                    flags=['--csv'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='csv',
-                    description=(
-                        'Output all results to CSV (filesystem, console, callback, default=filesystem)'),
-                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
-                    output_format=Format.CSV,
-                ),
-                ChoiceConf(
-                    flags=['--csv.ops'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='csv-ops',
-                    description=(
-                        'Output ops/second results to CSV (filesystem, console, callback, default=filesystem)'),
-                    sections=[Section.OPS],
-                    targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
-                    output_format=Format.CSV,
-                ),
-                ChoiceConf(
-                    flags=['--csv.timing'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='csv-timing',
-                    description=(
-                        'Output timing results to CSV (filesystem, console, callback, default=filesystem)'),
-                    sections=[Section.TIMING],
-                    targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
-                    output_format=Format.CSV,
-                ),
-                ChoiceConf(
-                    flags=['--csv.memory'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='csv-memory',
-                    description=(
-                        'Output memory results to CSV (filesystem, console, callback, default=filesystem)'),
-                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
-                    output_format=Format.CSV,
-                ),
-            ])
-        )
+        if config is None:
+            config = CSVConfig()
+
+        super().__init__(config)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Renders the benchmark results as tagged CSV data and returns it as a string.

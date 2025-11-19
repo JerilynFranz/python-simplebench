@@ -18,7 +18,7 @@ from simplebench.reporters.validators import validate_report_renderer
 from simplebench.reporters.validators.exceptions import ReportersValidatorsErrorTag
 from simplebench.session import Session
 
-from ...factories import reporter_kwargs_factory
+from ...factories import reporter_config_factory
 from ...testspec import Assert, TestAction, TestSpec, idspec
 
 T = TypeVar('T')
@@ -37,7 +37,7 @@ class MockReporter(Reporter):
     """The default keyword arguments for the MockReporterOptions subclass."""
 
     def __init__(self):
-        super().__init__(**reporter_kwargs_factory(cache_id=None))
+        super().__init__(reporter_config_factory())
 
     def run_report(self,
                    *,

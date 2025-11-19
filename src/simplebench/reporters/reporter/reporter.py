@@ -28,9 +28,9 @@ from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
-from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols import ReporterCallback
 # simplebench.reporters.reporter
+from simplebench.reporters.reporter.config import ReporterConfig
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
 from simplebench.reporters.reporter.metaclasses import IReporter
 from simplebench.reporters.reporter.mixins import (
@@ -43,16 +43,21 @@ from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.results import Results
 from simplebench.type_proxies import is_case, is_choice, is_session
-from simplebench.validators import validate_bool, validate_iterable_of_type, validate_string, validate_type
+from simplebench.validators import validate_iterable_of_type, validate_type
 
 Options: TypeAlias = ReporterOptions
 
 T = TypeVar('T')
 
+_CORE_IMPORTS_DONE: bool = False
+
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
+    _CORE_IMPORTS_DONE = True
+else:
+    Choice = None  # pylint: disable=invalid-name
 
 
 def deferred_core_imports() -> None:
@@ -63,8 +68,9 @@ def deferred_core_imports() -> None:
     in creating :class:`~simplebench.reporters.choice.choice.Choice` instances from
     :class:`~simplebench.reporters.choice.choice_conf.ChoiceConf` instances.
     """
-    global Choice  # pylint: disable=global-statement
+    global Choice, _CORE_IMPORTS_DONE  # pylint: disable=global-statement
     from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
+    _CORE_IMPORTS_DONE = True
 
 
 class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
@@ -221,156 +227,23 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
                 return user_default
         return cls.get_hardcoded_default_options()
 
-    def __init__(self,
-                 *,
-                 name: str,
-                 description: str,
-                 sections: Iterable[Section],
-                 targets: Iterable[Target],
-                 default_targets: Iterable[Target] | None = None,
-                 subdir: str = '',
-                 file_suffix: str,
-                 file_unique: bool,
-                 file_append: bool,
-                 formats: Iterable[Format],
-                 choices: ChoicesConf) -> None:
+    def __init__(self, config: ReporterConfig) -> None:
         """Initialize the Reporter instance.
 
-        .. note::
-            Exactly one of ``file_unique`` or ``file_append`` must be ``True``.
-            If both are ``False``, or if both are ``True``, an exception will be raised.
-
-        :param name: The unique identifying name of the reporter. Must be a non-empty string.
-        :type name: str
-        :param description: A brief description of the reporter. Must be a non-empty string.
-        :type description: str
-        :param sections: An iterable of all :class:`~simplebench.enums.Section` supported by the reporter.
-                         Must include at least one :class:`~simplebench.enums.Section`.
-        :type sections: Iterable[Section]
-        :param targets: An iterable of all :class:`~simplebench.enums.Target` supported by the reporter.
-                        Must include at least one :class:`~simplebench.enums.Target`.
-        :type targets: Iterable[Target]
-        :param default_targets: An iterable of default :class:`~simplebench.enums.Target` for the reporter,
-                                defaults to None
-        :type default_targets: Iterable[Target] | None, optional
-        :param subdir: The subdirectory where report files will be saved. May be an empty string
-                       to indicate the base output directory. Cannot contain non-alphanumeric
-                       characters and cannot be longer than 64 characters. Defaults to ''.
-        :type subdir: str, optional
-        :param file_suffix: An optional file suffix for reporter output files. May be an empty
-                            string. Cannot contain non-alphanumeric characters and cannot be
-                            longer than 10 characters.
-        :type file_suffix: str
-        :param file_unique: Whether output files should have unique names by default.
-        :type file_unique: bool
-        :param file_append: Whether output files should be appended to by default.
-        :type file_append: bool
-        :param formats: An iterable of all :class:`~simplebench.enums.Format` supported by the reporter.
-                        Must include at least one :class:`~simplebench.enums.Format`.
-        :type formats: Iterable[Format]
-        :param choices: An iterable of :class:`~simplebench.reporters.choice.choice_conf.ChoiceConf`
-                        instances defining the sections, output targets, and formats supported
-                        by the reporter. Must have at least one
-                        :class:`~simplebench.reporters.choice.choice_conf.ChoiceConf`.
-        :type choices: :class:`~simplebench.reporters.choices.choices_conf.ChoicesConf`
-        :raises SimpleBenchValueError: If any of the provided parameters have invalid values.
-        :raises SimpleBenchTypeError: If any of the provided parameters are of incorrect types.
+        :param config: The configuration object for the reporter.
+        :type config: ReporterConfig
+        :raises SimpleBenchTypeError: If the provided config is not a ReporterConfig instance.
         """
         deferred_core_imports()
         self.__class__._validate_subclass_config()
 
-        self._name: str = validate_string(
-            name, 'name',
-            ReporterErrorTag.NAME_INVALID_ARG_TYPE,
-            ReporterErrorTag.NAME_INVALID_ARG_VALUE,
-            allow_empty=False, allow_blank=False)
-        """The unique identifying name of the reporter (private backing field)"""
-
-        self._description: str = validate_string(
-            description, 'description',
-            ReporterErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
-            ReporterErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
-            allow_empty=False, allow_blank=False)
-        """A brief description of the reporter (private backing field)"""
-
-        self._sections: frozenset[Section] = frozenset(
-            validate_iterable_of_type(
-                sections, Section, 'sections',
-                ReporterErrorTag.SECTIONS_INVALID_ARG_TYPE,
-                ReporterErrorTag.SECTIONS_ITEMS_ARG_VALUE,
-                allow_empty=False))
-        """The set of supported Sections for the reporter (private backing field)"""
-
-        self._targets: frozenset[Target] = frozenset(
-            validate_iterable_of_type(
-                targets, Target, 'targets',
-                ReporterErrorTag.TARGETS_INVALID_ARG_TYPE,
-                ReporterErrorTag.TARGETS_ITEMS_ARG_VALUE,
-                allow_empty=False))
-        """The set of supported Targets for the reporter (private backing field)"""
-
-        self._default_targets: frozenset[Target] = frozenset(
-            validate_iterable_of_type(
-                default_targets if default_targets is not None else set(),
-                Target, 'default_targets',
-                ReporterErrorTag.DEFAULT_TARGETS_INVALID_ARG_TYPE,
-                ReporterErrorTag.DEFAULT_TARGETS_ITEMS_ARG_VALUE,                allow_empty=True))
-        """The default set of Targets for the reporter (private backing field)"""
-
-        subdir = validate_string(
-            subdir, 'subdir',
-            ReporterErrorTag.SUBDIR_INVALID_ARG_TYPE,
-            ReporterErrorTag.SUBDIR_INVALID_ARG_VALUE,
-            strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
-        if len(subdir) > 64:
-            raise SimpleBenchValueError(
-                "subdir cannot be longer than 64 characters (passed subdir was '{subdir}')",
-                tag=ReporterErrorTag.SUBDIR_TOO_LONG)
-        self._subdir: str = subdir
-        """The subdirectory where report files will be saved (private backing field)"""
-
-        file_suffix = validate_string(
-            file_suffix, 'file_suffix',
-            ReporterErrorTag.FILE_SUFFIX_INVALID_ARG_TYPE,
-            ReporterErrorTag.FILE_SUFFIX_INVALID_ARG_VALUE,
-            strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
-        if len(file_suffix) > 10:
-            raise SimpleBenchValueError(
-                f"file_suffix cannot be longer than 10 characters (passed suffix was '{file_suffix}')",
-                tag=ReporterErrorTag.FILE_SUFFIX_ARG_TOO_LONG)
-        self._file_suffix: str = file_suffix
-        """The file suffix for reporter output files (private backing field)"""
-
-        self._file_unique: bool = validate_bool(
-            file_unique, 'file_unique',
-            ReporterErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE)
-        """Whether output files should have unique names (private backing field)"""
-
-        self._file_append: bool = validate_bool(
-            file_append, 'file_append',
-            ReporterErrorTag.FILE_APPEND_INVALID_ARG_TYPE)
-        """Whether output files should be appended to private backing field)"""
-
-        if self._file_unique == self._file_append:
-            raise SimpleBenchValueError(
-                "Exactly one of file_unique or file_append must be True",
-                tag=ReporterErrorTag.FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED)
-
-        self._formats: frozenset[Format] = frozenset(
-            validate_iterable_of_type(
-                formats, Format, 'formats',
-                ReporterErrorTag.FORMATS_INVALID_ARG_TYPE,
-                ReporterErrorTag.FORMATS_ITEMS_ARG_VALUE,
-                allow_empty=False))
-        """The set of supported Formats for the reporter (private backing field)"""
-
-        choices = validate_type(
-            choices, ChoicesConf, 'choices',
-            ReporterErrorTag.CHOICES_INVALID_ARG_TYPE)
+        validate_type(config, ReporterConfig, 'config', ReporterErrorTag.CONFIG_INVALID_ARG_TYPE)
+        self._config: ReporterConfig = config
+        """The configuration object for the reporter (private backing field)."""
 
         choices_list: list[Choice] = []
-        for item in choices.values():
-            choices_list.append(Choice(reporter=self, choice_conf=item))  # pylint: disable=used-before-assignment
+        for item in self.config.choices.values():
+            choices_list.append(Choice(reporter=self, choice_conf=item))
 
         self._choices = Choices(choices_list)
         """An instance of `Choices` containing the `Choice` instances for the `Reporter`.
@@ -608,6 +481,11 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         self.choices.add(choice)
 
     @property
+    def config(self) -> ReporterConfig:
+        """The configuration object for the reporter."""
+        return self._config
+
+    @property
     def choices(self) -> Choices:
         """The :class:`~simplebench.reporters.choices.choices.Choices` for the reporter.
 
@@ -627,12 +505,12 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
     @property
     def name(self) -> str:
         """The unique identifying name of the reporter."""
-        return self._name
+        return self.config.name
 
     @property
     def description(self) -> str:
         """A brief description of the reporter."""
-        return self._description
+        return self.config.description
 
     @property
     def options_type(self) -> type[Options]:
@@ -642,27 +520,27 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
     @property
     def subdir(self) -> str:
         """The subdirectory where report files will be saved."""
-        return self._subdir
+        return self.config.subdir
 
     @property
     def default_targets(self) -> frozenset[Target]:
         """The default set of Targets for the reporter."""
-        return self._default_targets
+        return self.config.default_targets
 
     @property
     def file_suffix(self) -> str:
         """The file suffix for reporter output files."""
-        return self._file_suffix
+        return self.config.file_suffix
 
     @property
     def file_unique(self) -> bool:
         """Whether output files should have unique names."""
-        return self._file_unique
+        return self.config.file_unique
 
     @property
     def file_append(self) -> bool:
         """Whether output files should be appended to."""
-        return self._file_append
+        return self.config.file_append
 
     def supported_sections(self) -> frozenset[Section]:
         """The set of supported :class:`~simplebench.enums.Section` for the reporter.
@@ -673,7 +551,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include
         :class:`~simplebench.enums.Section` that are declared in this set.
         """
-        return self._sections
+        return self.config.sections
 
     def supported_targets(self) -> frozenset[Target]:
         """The set of supported :class:`~simplebench.enums.Target` for the reporter.
@@ -683,7 +561,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include
         :class:`~simplebench.enums.Target` that are declared in this set.
         """
-        return self._targets
+        return self.config.targets
 
     def supported_formats(self) -> frozenset[Format]:
         """The set of supported :class:`~simplebench.enums.Format` for the reporter.
@@ -693,7 +571,7 @@ class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMix
         Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include
         :class:`~simplebench.enums.Format` that are declared in this set.
         """
-        return self._formats
+        return self.config.formats
 
     def get_base_unit_for_section(self, section: Section) -> str:
         """Return the base unit for the specified section.

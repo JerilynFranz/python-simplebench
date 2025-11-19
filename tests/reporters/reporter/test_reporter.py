@@ -36,7 +36,7 @@ from ...factories import (
     path_factory,
     report_parameters_factory,
     reporter_factory,
-    reporter_kwargs_factory,
+    reporter_config_factory,
     session_factory,
 )
 from ...testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
@@ -95,7 +95,7 @@ class GoodReporter(Reporter):
     """Keyword arguments for constructing a GoodReporterOptions hardcoded default instance: `{}`"""
 
     def __init__(self) -> None:
-        super().__init__(**reporter_kwargs_factory(cache_id=None))
+        super().__init__(reporter_config_factory())
 
     def run_report(self,  # pylint: disable=useless-parent-delegation
                    *,
@@ -139,7 +139,7 @@ def test_good_reporter_subclassing() -> None:
 
 def test_factory_reporter_subclassing() -> None:
     """Test that FactoryReporter subclass can be instantiated and run_report works."""
-    reporter = FactoryReporter(**reporter_kwargs_factory())
+    reporter = FactoryReporter(reporter_config_factory())
     if not isinstance(reporter, ReporterProtocol):  # type: ignore[reportGeneralTypeIssue]
         raise AssertionError("FactoryReporter does not conform to ReporterProtocol")
 
@@ -168,179 +168,21 @@ def test_factory_reporter_subclassing() -> None:
         kwargs=report_parameters_factory(),
         validate_result=lambda result: result is None)),
     idspec('REPORTER_006', TestAction(
-        name="FactoryReporter() can be instantiated with parameters from reporter_kwargs_factory()",
+        name="FactoryReporter() can be instantiated with parameters from reporter_config_factory()",
         action=FactoryReporter,
-        kwargs=reporter_kwargs_factory(),
+        args=[reporter_config_factory()],
         assertion=Assert.ISINSTANCE,
         expected=FactoryReporter)),
     idspec('REPORTER_007', TestAction(
         name="Correctly configured Reporter() can call report() successfully",
-        action=FactoryReporter(**reporter_kwargs_factory()).report,
+        action=FactoryReporter(reporter_config_factory()).report,
         kwargs=report_parameters_factory(),
         expected=NO_EXPECTED_VALUE)),
-    idspec('REPORTER_008', TestAction(
-        name="Init of Reporter with missing name raises TypeError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory() - ['name'],
-        exception=TypeError)),
-    idspec('REPORTER_009', TestAction(
-        name="Init of Reporter with missing description raises TypeError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory() - ['description'],
-        exception=TypeError)),
-    idspec('REPORTER_010', TestAction(
-        name="Init of Reporter with missing sections raises TypeError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory() - ['sections'],
-        exception=TypeError)),
-    idspec('REPORTER_011', TestAction(
-        name=("Init of FactoryReporter with empty targets raises "
-              "SimpleBenchValueError/TARGETS_INVALID_ARG_TYPE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(targets=set()),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.TARGETS_ITEMS_ARG_VALUE)),
-    idspec('REPORTER_012', TestAction(
-        name=("Init of FactoryReporter with empty formats raises "
-              "SimpleBenchValueError/SECTIONS_ITEMS_ARG_VALUE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(formats=set()),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.FORMATS_ITEMS_ARG_VALUE)),
-    idspec('REPORTER_013', TestAction(
-        name="Init of FactoryReporter with missing choices raises TypeError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory() - ['choices'],
-        exception=TypeError)),
-    idspec('REPORTER_014', TestAction(
-        name=("Init of FactoryReporter with choices not being a Choices instance raises "
-              "SimpleBenchTypeError/INVALID_CHOICES_ARG_TYPE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(choices="not_a_choices_instance"),
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.CHOICES_INVALID_ARG_TYPE)),
-    idspec('REPORTER_015', TestAction(
-        name=("Init of FactoryReporter with sections containing a non-Section enum raises "
-              "SimpleBenchTypeError/SECTION_INVALID_ENTRY_TYPE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(sections={Section.OPS, "not_a_section_enum"}),
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.SECTIONS_INVALID_ARG_TYPE)),
-    idspec('REPORTER_016', TestAction(
-        name=("Init of FactoryReporter with targets containing non-Target enum raises "
-              "SimpleBenchTypeError/TARGETS_INVALID_ARG_TYPE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(targets={Target.CONSOLE, "not_a_target_enum"}),
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.TARGETS_INVALID_ARG_TYPE)),
-    idspec('REPORTER_017', TestAction(
-        name=("Init of FactoryReporter with formats set to a non-Format enum raises "
-              "SimpleBenchTypeError/FORMATS_INVALID_ARG_TYPE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(formats={Format.JSON, "not_a_format_enum"}),
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.FORMATS_INVALID_ARG_TYPE)),
-    idspec('REPORTER_018', TestAction(
-        name=("Init of FactoryReporter with empty name raises "
-              "SimpleBenchValueError/NAME_INVALID_ARG_VALUE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(name=''),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.NAME_INVALID_ARG_VALUE)),
-    idspec('REPORTER_019', TestAction(
-        name=("Init of FactoryReporter with blank name raises "
-              "SimpleBenchValueError/NAME_INVALID_ARGVALUE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(name='  '),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.NAME_INVALID_ARG_VALUE)),
-    idspec('REPORTER_020', TestAction(
-        name=("Init of FactoryReporter with empty description raises "
-              "SimpleBenchValueError/DESCRIPTION_INVALID_ARG_VALUE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(description=''),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.DESCRIPTION_INVALID_ARG_VALUE)),
-    idspec('REPORTER_021', TestAction(
-        name=("Init of FactoryReporter with blank description raises "
-              "SimpleBenchValueError/DESCRIPTION_INVALID_ARG_VALUE"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(description='   '),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.DESCRIPTION_INVALID_ARG_VALUE)),
     idspec('REPORTER_022', TestAction(
         name="Attempt to directly instantiate Reporter raises TypeError",
         action=Reporter,
-        kwargs=reporter_kwargs_factory(),
+        kwargs=reporter_config_factory(),
         exception=TypeError)),
-    idspec('REPORTER_024', TestAction(
-        name="Init of FactoryReporter with subdir name longer than 64 characters raises SimpleBenchValueError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(subdir='a' * 65),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.SUBDIR_TOO_LONG)),
-    idspec('REPORTER_025', TestAction(
-        name=("Init of FactoryReporter with subdir name containing "
-              "non-alphanumeric characters raises SimpleBenchValueError"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(subdir='invalid/subdir!'),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.SUBDIR_INVALID_ARG_VALUE)),
-    idspec('REPORTER_026', TestAction(
-        name="Init of FactoryReporter with file_suffix as non-string raises SimpleBenchTypeError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_suffix=123),
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.FILE_SUFFIX_INVALID_ARG_TYPE)),
-    idspec('REPORTER_027', TestAction(
-        name="Init of FactoryReporter with file_suffix longer than 10 characters raises SimpleBenchValueError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_suffix='a' * 11),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.FILE_SUFFIX_ARG_TOO_LONG)),
-    idspec('REPORTER_028', TestAction(
-        name=("Init of FactoryReporter with file_suffix containing "
-              "non-alphanumeric characters raises SimpleBenchValueError"),
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_suffix='invalid!'),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.FILE_SUFFIX_INVALID_ARG_VALUE)),
-    idspec('REPORTER_029', TestAction(
-        name="Init of FactoryReporter with file_unique as a non-boolean raises SimpleBenchTypeError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_unique='not_a_bool'),
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE)),
-    idspec('REPORTER_030', TestAction(
-        name="Init of FactoryReporter with file_append as a non-boolean raises SimpleBenchTypeError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_append='not_a_bool'),
-        exception=SimpleBenchTypeError,
-        exception_tag=ReporterErrorTag.FILE_APPEND_INVALID_ARG_TYPE)),
-    idspec('REPORTER_031', TestAction(
-        name="Init of FactoryReporter with file_unique and file_append both True raises SimpleBenchValueError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_unique=True, file_append=True),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED)),
-    idspec('REPORTER_032', TestAction(
-        name="Init of FactoryReporter with file_unique and file_append both False raises SimpleBenchValueError",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_unique=False, file_append=False),
-        exception=SimpleBenchValueError,
-        exception_tag=ReporterErrorTag.FILE_UNIQUE_AND_FILE_APPEND_EXACTLY_ONE_REQUIRED)),
-    idspec('REPORTER_033', TestAction(
-        name="Init of FactoryReporter with file_append as True and file_unique as False works",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_append=True, file_unique=False),
-        assertion=Assert.ISINSTANCE,
-        expected=FactoryReporter)),
-    idspec('REPORTER_034', TestAction(
-        name="Init of FactoryReporter with file_unique as False and file_append as True works",
-        action=FactoryReporter,
-        kwargs=reporter_kwargs_factory().replace(file_unique=False, file_append=True),
-        assertion=Assert.ISINSTANCE,
-        expected=FactoryReporter)),
 ])
 def test_reporter_init(testspec: TestSpec) -> None:
     """Test Reporter init parameters.

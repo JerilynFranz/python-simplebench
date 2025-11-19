@@ -7,16 +7,15 @@ from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.type_proxies import is_case
 from simplebench.utils import get_machine_info, sigfigs
 from simplebench.validators import validate_type
 
+from .config import JSONConfig
 from .exceptions import JSONReporterErrorTag
 from .options import JSONOptions
 
@@ -85,10 +84,8 @@ class JSONReporter(Reporter):
     :vartype: ~typing.ClassVar[dict[str, ~typing.Any]]
     """
 
-    def __init__(self) -> None:
-        """Initialize the JSONReporter with its name, description, choices, targets, and formats.
-
-        All sections are always included in the JSON output.
+    def __init__(self, config: JSONConfig | None = None) -> None:
+        """Initialize the JSONReporter.
 
         .. note::
 
@@ -96,45 +93,19 @@ class JSONReporter(Reporter):
             class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly
             defined in any subclass of :class:`~.JSONReporter` to ensure proper functionality.
 
-            In simple use, these exceptions should never be raised, as :class:`~.JSONReporter`
-            provides valid implementations. They are documented here for completeness.
+        :param config: An optional configuration object to override default reporter settings.
+                       If not provided, default settings will be used.
+        :type config: JSONConfig | None
 
         :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration
             types are invalid.
         :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration
             values are invalid.
         """
-        super().__init__(
-            name='json',
-            description='Outputs benchmark results to JSON files.',
-            sections={Section.NULL},
-            targets={Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
-            formats={Format.JSON},
-            file_suffix='json',
-            file_unique=True,
-            file_append=False,
-            choices=ChoicesConf([
-                ChoiceConf(
-                    flags=['--json'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='json',
-                    description='statistical results to JSON (filesystem, console, callback, default=filesystem)',
-                    sections=[Section.NULL],  # All sections are always included
-                    targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
-                    output_format=Format.JSON,
-                    options=Options(full_data=False)),
-                ChoiceConf(
-                    flags=['--json-data'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='json-data',
-                    description=('statistical results + full data to JSON '
-                                 '(filesystem, console, callback, default=filesystem)'),
-                    sections=[Section.NULL],  # All sections are always included
-                    targets=[Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE],
-                    output_format=Format.JSON,
-                    options=Options(full_data=True)),
-            ]),
-        )
+        if config is None:
+            config = JSONConfig()
+
+        super().__init__(config)
 
     def run_report(self,
                    *,

@@ -941,7 +941,7 @@ def validate_float_range(
 # Validate filename stem regex: alphanumeric characters, dashes, and underscores only,
 # at least one character long, cannot start or end with an underscore or dash.
 # Length is checked separately.
-_FILENAME_STEM_RE = re.compile(r'^[A-Za-z0-9]$|^[A-Za-z0-9][-_A-Za-z0-9]*[A-Za-z0-9]$')
+_FILENAME_STEM_RE = re.compile(r'^[A-Za-z0-9](?:[-_A-Za-z0-9]*[A-Za-z0-9])?$')
 
 
 def validate_filename(filename: Any) -> str:
@@ -950,7 +950,9 @@ def validate_filename(filename: Any) -> str:
     It validates that:
         - The filename is a string.
         - The filename suffix (if present) is alphanumeric and no longer than 10 characters.
-        - The filename stem (name without suffix) is alphanumeric or underscores and at least one character long.
+        - The filename stem (name without suffix) is made of alphanumeric characters,
+          underscores, or dashes, and is at least one character long.
+        - The filename stem does not start or end with an underscore or dash.
         - The total filename length does not exceed 255 characters.
 
     :param str filename: The filename to validate.
@@ -964,7 +966,7 @@ def validate_filename(filename: Any) -> str:
         ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE)
 
     file = Path(filename)
-    file_suffix = file.suffix.replace('.', '')
+    file_suffix = file.suffix.replace('.', '', 1)
     if file_suffix != '' and len(file_suffix) > 10:
         raise SimpleBenchValueError(
             f"Filename suffix cannot be longer than 10 characters (passed suffix was '{file_suffix}')",
@@ -976,13 +978,13 @@ def validate_filename(filename: Any) -> str:
     file_stem = file.stem
     if file_stem == '':
         raise SimpleBenchValueError(
-            "Filename must have a valid stem (name without suffix)> It cannot be empty or blank",
+            "Filename must have a valid stem (name without suffix). It cannot be empty or blank.",
             tag=ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_STEM)
     if not re.match(_FILENAME_STEM_RE, file_stem):
         raise SimpleBenchValueError(
             "Filename stem (name without suffix) must consist of "
-            "only alphanumeric (A-Z, a-z, 0-9) or underscore (_) characters, "
-            "cannot start or end with an underscore, and must be "
+            "only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, "
+            "cannot start or end with an underscore or dash, and must be "
             "at least one character long "
             f"(passed stem was '{file_stem}')",
             tag=ValidatorsErrorTag.VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC)
@@ -991,6 +993,91 @@ def validate_filename(filename: Any) -> str:
             f"Filename cannot be longer than 255 characters (passed filename was '{filename}')",
             tag=ValidatorsErrorTag.VALIDATE_FILENAME_TOO_LONG)
     return filename
+
+
+# Validate directory path element regex: alphanumeric characters, dashes, and underscores only,
+# at least one character long, cannot start or end with an underscore or dash.
+#
+_DIRPATH_ELEMENT_RE = re.compile(r'^[A-Za-z0-9](?:[-_A-Za-z0-9]*[A-Za-z0-9])?$')
+
+
+def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
+    """Validate a directory path for use in the filesystem.
+
+    It validates that:
+        - The directory path is a string.
+        - The complete directory path is no longer than 255 characters.
+        - The directory path does not contain characters other than alphanumeric characters (A-Za-z0-9),
+          underscores (-), dashes (-), slashes ( / ), or backslashes ( \\ ).
+        - That individual directory path element names do not start or end with a dash (-) or underscore (_).
+        - That individual directory path element names are at least one character long but no longer than 64 characters.
+          (this does not apply to the full path, only to each element between slashes or backslashes and is checked
+          separately).
+        - If allow_empty is False, that the directory path is not an empty string. If allow_empty is True,
+          an empty string is considered to be a valid dirpath (default is False).
+
+    Backslashes ( \\ ) are converted to slashes ( / ) for validation purposes.
+
+    :param str dirpath: The directory path to validate.
+    :param bool allow_empty: Whether to allow an empty directory path. Defaults to False.
+    :return: The validated directory path.
+    :rtype: str
+    :raises SimpleBenchTypeError: If the directory path is not a string.
+    :raises SimpleBenchValueError: If the directory path is invalid.
+    """
+    if not isinstance(allow_empty, bool):
+        raise SimpleBenchTypeError(
+            f'Invalid allow_empty type: {type(allow_empty)}. Must be a bool.',
+            tag=ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE)
+
+    dir_string = validate_string(
+        dirpath, 'dirpath',
+        ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE,
+        ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE,
+        allow_empty=allow_empty)
+
+    if not dir_string and allow_empty:
+        return ""
+
+    if len(dir_string) > 255:
+        raise SimpleBenchValueError(
+            f"Directory path cannot be longer than 255 characters (passed directory path was '{dir_string}')",
+            tag=ValidatorsErrorTag.VALIDATE_DIRPATH_TOO_LONG)
+
+    if not re.match(r'^[A-Za-z0-9_\\/-]+$', dir_string):
+        raise SimpleBenchValueError(
+            "Directory path must consist of only alphanumeric characters (A-Za-z0-9), underscores (_), dashes (-), "
+            f"slashes (/) or backslashes (\\) (passed directory path was '{dir_string}')",
+            tag=ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS)
+
+    # Use the validated 'dir_string' variable consistently and simplify the check.
+    if dir_string.startswith(('/', '\\')) or dir_string.endswith(('/', '\\')):
+        raise SimpleBenchValueError(
+            "Directory path cannot start or end with a slash (/) or backslash (\\)",
+            tag=ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_START_END)
+
+    path = Path(dir_string)
+    for element in path.parts:
+        if not element:
+            raise SimpleBenchValueError(
+                "Directory path cannot contain empty elements, which can be caused by "
+                f"consecutive slashes (e.g., '//') (passed directory path was '{dir_string}')",
+                tag=ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_EMPTY)
+
+        if not re.match(_DIRPATH_ELEMENT_RE, element):
+            raise SimpleBenchValueError(
+                "Directory path elements (names between slashes or backslashes) must consist of "
+                "only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, "
+                "cannot start or end with an underscore or dash, and must be "
+                f"at least one character long (invalid element was '{element}')",
+                tag=ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_HAS_INVALID_CHARACTERS)
+        if len(element) > 64:
+            raise SimpleBenchValueError(
+                "Directory path elements (names between slashes or backslashes) cannot be longer than 64 characters "
+                f"(invalid element was '{element}')",
+                tag=ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG)
+
+    return path.as_posix()
 
 
 __all__ = [

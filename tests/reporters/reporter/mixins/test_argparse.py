@@ -15,7 +15,7 @@ from ....factories import (
     choice_factory,
     flag_name_factory,
     reporter_factory,
-    reporter_kwargs_factory,
+    reporter_config_factory,
     reporter_namespace_factory,
 )
 from ....testspec import Assert, TestAction, TestSpec, idspec
@@ -125,8 +125,8 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
         choice_conf_kwargs = choice_conf_kwargs_factory().replace(
             flag_type=FlagType.BOOLEAN, flags=['--boolean-flag'])
         choices_conf = ChoicesConf(choices=[ChoiceConf(**choice_conf_kwargs)])
-        reporter_kwargs = reporter_kwargs_factory().replace(choices=choices_conf)
-        reporter = FactoryReporter(**reporter_kwargs)
+        reporter_config = reporter_config_factory(choices=choices_conf)
+        reporter = FactoryReporter(reporter_config)
         arg_parser = ArgumentParser(prog='test_reporter')
         reporter.add_flags_to_argparse(arg_parser)
         return arg_parser
@@ -159,10 +159,10 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
             targets={Target.CONSOLE, Target.FILESYSTEM},
             default_targets={Target.CONSOLE})
         choices_conf = ChoicesConf(choices=[ChoiceConf(**choice_conf_kwargs)])
-        reporter_kwargs = reporter_kwargs_factory().replace(
+        reporter_config = reporter_config_factory(
             targets={Target.CONSOLE, Target.FILESYSTEM},
             choices=choices_conf)
-        reporter = FactoryReporter(**reporter_kwargs)
+        reporter = FactoryReporter(reporter_config)
         arg_parser = ArgumentParser(prog='test_reporter')
         reporter.add_flags_to_argparse(arg_parser)
         return arg_parser
@@ -204,8 +204,8 @@ def add_flags_to_argparse_testspecs() -> list[TestSpec]:
         choice_conf_kwargs = choice_conf_kwargs_factory().replace(
             flag_type=FlagType.INVALID, flags=['--invalid-flag'])
         choices_conf = ChoicesConf(choices=[ChoiceConf(**choice_conf_kwargs)])
-        reporter_kwargs = reporter_kwargs_factory().replace(choices=choices_conf)
-        reporter = FactoryReporter(**reporter_kwargs)
+        reporter_config = reporter_config_factory(choices=choices_conf)
+        reporter = FactoryReporter(reporter_config)
         arg_parser = ArgumentParser(prog='test_reporter')
         reporter.add_flags_to_argparse(arg_parser)
         return arg_parser  # pragma: no cover   # should raise before this point
@@ -259,10 +259,10 @@ def add_target_list_flags_to_argparse_testspecs() -> list[TestSpec]:
             targets={Target.CONSOLE, Target.FILESYSTEM},
             default_targets={Target.CONSOLE})
         choices_conf = ChoicesConf(choices=[ChoiceConf(**choice_conf_kwargs)])
-        reporter_kwargs = reporter_kwargs_factory().replace(
+        reporter_config = reporter_config_factory(
             targets={Target.CONSOLE, Target.FILESYSTEM},
             choices=choices_conf)
-        reporter = FactoryReporter(**reporter_kwargs)
+        reporter = FactoryReporter(reporter_config)
         choice = reporter.choices[choice_name]
         arg_parser = ArgumentParser(prog='test_reporter')
         reporter.add_list_of_targets_flags_to_argparse(parser=arg_parser, choice=choice)
@@ -361,8 +361,8 @@ def add_boolean_flags_to_argparse_testspecs() -> list[TestSpec]:
             flag_type=FlagType.BOOLEAN,
             flags=['--boolean-flag'])
         choices_conf = ChoicesConf(choices=[ChoiceConf(**choice_conf_kwargs)])
-        reporter_kwargs = reporter_kwargs_factory().replace(choices=choices_conf)
-        reporter = FactoryReporter(**reporter_kwargs)
+        reporter_config = reporter_config_factory(choices=choices_conf)
+        reporter = FactoryReporter(reporter_config)
         choice = reporter.choices[choice_name]
         arg_parser = ArgumentParser(prog='test_reporter')
         reporter.add_boolean_flags_to_argparse(parser=arg_parser, choice=choice)

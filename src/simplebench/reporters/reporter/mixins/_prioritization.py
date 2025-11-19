@@ -25,18 +25,19 @@ class _ReporterPrioritizationMixin:
         checking the `case` options first, then the `choice` options, and finally
         falling back to the reporter's default options if none are found.
 
-        The actual type of `ReporterOptions` to retrieve is determined by the
-        reporter's `options_type` property - it will always be a specific subclass
-        of `ReporterOptions` defined by the reporter.
+        The actual type of :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+        to retrieve is determined by the reporter's `options_type` property - it will always
+        be a specific subclass of :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+        defined by the reporter.
 
         :param case: The Case instance containing benchmark results.
-        :type case: Case
+        :type case: :class:`~simplebench.case.Case`
         :param choice: The Choice instance specifying the report configuration.
-        :type choice: Choice
+        :type choice: :class:`~simplebench.reporters.reporter.choice.Choice`
         :return: The prioritized instance of the class `ReporterOptions`.
             More specifically, it will be an instance of the reporter's specific
             `ReporterOptions` subclass as defined by the reporter's `options_type` property.
-        :rtype: ReporterOptions
+        :rtype: :class:`~simplebench.reporters.reporter.options.ReporterOptions`
         :raises SimpleBenchNotImplementedError: If no ReporterOptions instance can be found.
         """
         # is_* checks handle deferred import runtime type checking for Case and Choice
@@ -71,7 +72,7 @@ class _ReporterPrioritizationMixin:
         default targets.
 
         :param choice: The Choice instance specifying the report configuration.
-        :type choice: Choice
+        :type choice: :class:`~simplebench.reporters.reporter.choice.Choice`
         :return: The set of default targets.
         :rtype: frozenset[Target]
         """
@@ -96,7 +97,7 @@ class _ReporterPrioritizationMixin:
         within the output directory.
 
         :param choice: The Choice instance specifying the report configuration.
-        :type choice: Choice
+        :type choice: :class:`~simplebench.reporters.reporter.choice.Choice`
         :return: The subdirectory for saving report files.
         :rtype: str
         """
@@ -116,7 +117,7 @@ class _ReporterPrioritizationMixin:
         file_suffix.
 
         :param choice: The Choice instance specifying the report configuration.
-        :type choice: Choice
+        :type choice: :class:`~simplebench.reporters.reporter.choice.Choice`
         :return: The file suffix for report files.
         :rtype: str
         """
@@ -126,7 +127,7 @@ class _ReporterPrioritizationMixin:
                 tag=ReporterErrorTag.GET_PRIORITIZED_FILE_SUFFIX_INVALID_CHOICE_ARG_TYPE)
         if choice.file_suffix is not None:
             return choice.file_suffix
-        return self._file_suffix
+        return self.file_suffix
 
     def get_prioritized_file_unique(self: ReporterProtocol, choice: Choice) -> bool:
         """Get the prioritized file unique flag from the choice or reporter.
@@ -136,7 +137,7 @@ class _ReporterPrioritizationMixin:
         file_unique.
 
         :param choice: The Choice instance specifying the report configuration.
-        :type choice: Choice
+        :type choice: :class:`~simplebench.reporters.reporter.choice.Choice`
         :return: The file unique flag for report files.
         :rtype: bool
         """
@@ -146,7 +147,7 @@ class _ReporterPrioritizationMixin:
                 tag=ReporterErrorTag.GET_PRIORITIZED_FILE_UNIQUE_INVALID_CHOICE_ARG_TYPE)
         if choice.file_unique is not None:
             return choice.file_unique
-        return self._file_unique
+        return self.file_unique
 
     def get_prioritized_file_append(self: ReporterProtocol, choice: Choice) -> bool:
         """Get the prioritized file append flag from the choice or reporter.
@@ -156,7 +157,7 @@ class _ReporterPrioritizationMixin:
         file_append.
 
         :param choice: The Choice instance specifying the report configuration.
-        :type choice: Choice
+        :type choice: :class:`~simplebench.reporters.reporter.choice.Choice`
         :return: The file append flag for report files.
         :rtype: bool
         """
@@ -166,4 +167,4 @@ class _ReporterPrioritizationMixin:
                 tag=ReporterErrorTag.GET_PRIORITIZED_FILE_APPEND_INVALID_CHOICE_ARG_TYPE)
         if choice.file_append is not None:
             return choice.file_append
-        return self._file_append
+        return self.file_append

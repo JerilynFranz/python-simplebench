@@ -15,7 +15,7 @@ from simplebench.runners import SimpleRunner
 from simplebench.session import Session
 
 from . import factories
-from .kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterKWArgs
+from .kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterConfigKWArgs
 from .testspec import Assert, TestAction, TestSpec, idspec
 
 
@@ -251,10 +251,10 @@ from .testspec import Assert, TestAction, TestSpec, idspec
         expected=ChoicesConfKWArgs),
     ),
     idspec('FACTORY_043', TestAction(
-        name="reporter_kwargs_factory produces a valid ReporterKWArgs instance",
-        action=factories.reporter_kwargs_factory,
+        name="reporter_config_kwargs_factory produces a valid ReporterConfigKWArgs instance",
+        action=factories.reporter_config_kwargs_factory,
         assertion=Assert.ISINSTANCE,
-        expected=ReporterKWArgs),
+        expected=ReporterConfigKWArgs),
     ),
     idspec('FACTORY_044', TestAction(
         name="choice_conf_kwargs_factory produces a valid ChoiceConfKWArgs instance",

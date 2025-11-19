@@ -6,20 +6,19 @@ from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 from rich.table import Table
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
 # simplebench.reporters imports
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter import Reporter, ReporterOptions
-# simplebench.reporters.rich_table imports
-from simplebench.reporters.rich_table.reporter.exceptions import RichTableReporterErrorTag
-from simplebench.reporters.rich_table.reporter.options import RichTableOptions
 from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
+
+from .config import RichTableConfig
+from .exceptions import RichTableReporterErrorTag
+from .options import RichTableOptions
 
 Options: TypeAlias = RichTableOptions
 
@@ -59,7 +58,7 @@ class RichTableReporter(Reporter):
     _OPTIONS_TYPE: ClassVar[type[RichTableOptions]] = RichTableOptions  # pylint: disable=line-too-long # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
 
-    def __init__(self) -> None:
+    def __init__(self, config: RichTableConfig | None = None) -> None:
         """Initialize the RichTableReporter.
 
         .. note::
@@ -73,60 +72,19 @@ class RichTableReporter(Reporter):
             :class:`~.RichTableReporter` provides valid implementations. They are documented
             here for completeness.
 
+        :param config: An optional configuration object to override default reporter settings.
+                       If not provided, default settings will be used.
+        :type config: RichTableConfig | None
+
         :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration
             types are invalid.
         :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration
             values are invalid.
         """
-        super().__init__(
-            name='rich-table',
-            description='Displays benchmark results as a rich text table on the console.',
-            sections={Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
-            targets={Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK},
-            default_targets={Target.CONSOLE},
-            formats={Format.RICH_TEXT},
-            file_suffix='txt',
-            file_unique=False,
-            file_append=True,
-            choices=ChoicesConf([
-                 ChoiceConf(
-                    flags=['--rich-table'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='rich-table',
-                    description=(
-                        'All results as rich text tables (filesystem, console, callback, default=console)'),
-                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--rich-table.ops'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='rich-table-ops',
-                    description=(
-                        'Ops/second results as rich text tables (filesystem, console, callback, default=console)'),
-                    sections=[Section.OPS],
-                    targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--rich-table.timing'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='rich-table-timing',
-                    description=(
-                        'Timing results as rich text tables (filesystem, console, callback, default=console)'),
-                    sections=[Section.TIMING],
-                    targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--rich-table.memory'],
-                    flag_type=FlagType.TARGET_LIST,
-                    name='rich-table-memory',
-                    description=(
-                        'Memory results as rich text tables (filesystem, console, callback, default=console)'),
-                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
-                    targets=[Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK],
-                    output_format=Format.RICH_TEXT),
-            ])
-        )
+        if config is None:
+            config = RichTableConfig()
+
+        super().__init__(config)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> Table:
         """Prints the benchmark results in a rich table format if available.

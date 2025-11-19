@@ -20,7 +20,7 @@ from ....factories import (
     choice_conf_kwargs_factory,
     choice_factory,
     reporter_factory,
-    reporter_kwargs_factory,
+    reporter_config_factory,
     reporter_options_factory,
 )
 from ....testspec import Assert, TestAction, TestSpec, idspec
@@ -124,8 +124,8 @@ def get_prioritized_options_testspecs(reporter_default_options: ReporterOptions 
         :return: The created TestSpec.
         :rtype: TestSpec
         """
-        reporter_kwargs = reporter_kwargs_factory().replace(choices=testcase.choices)
-        reporter = FactoryReporter(**reporter_kwargs)
+        reporter_config = reporter_config_factory(choices=testcase.choices)
+        reporter = FactoryReporter(reporter_config)
         reporter.set_default_options(testcase.reporter_default_options)
         choice = next(iter(reporter.choices.values()))
         return idspec(testcase.test_id, TestAction(
@@ -303,10 +303,10 @@ def get_prioritized_default_targets_testspecs() -> list[TestSpec]:
                                    choice_conf_without_default_targets])
 
     reporter_default_targets = frozenset({Target.FILESYSTEM})
-    reporter_kwargs = reporter_kwargs_factory().replace(
+    reporter_config = reporter_config_factory(
                             choices=choices,
                             default_targets=reporter_default_targets)
-    reporter = FactoryReporter(**reporter_kwargs)
+    reporter = FactoryReporter(reporter_config)
 
     choice_with_default_targets = reporter.choices['choice_with_default_targets']
     choice_without_default_targets = reporter.choices['choice_without_default_targets']
@@ -370,10 +370,10 @@ def get_prioritized_subdir_testspecs() -> list[TestSpec]:
                                    choice_conf_without_subdir])
 
     reporter_default_subdir = 'reporterdefaultsubdir'
-    reporter_kwargs = reporter_kwargs_factory().replace(
+    reporter_config = reporter_config_factory(
                             choices=choices,
                             subdir=reporter_default_subdir)
-    reporter = FactoryReporter(**reporter_kwargs)
+    reporter = FactoryReporter(reporter_config)
 
     choice_with_subdir = reporter.choices['choice_with_subdir']
     choice_without_subdir = reporter.choices['choice_without_subdir']
@@ -422,8 +422,8 @@ def get_prioritized_file_suffix_testspecs() -> list[TestSpec]:
     """
     testspecs: list[TestSpec] = []
 
-    reporter_kwargs = reporter_kwargs_factory()
-    reporter = FactoryReporter(**reporter_kwargs)
+    reporter_config = reporter_config_factory()
+    reporter = FactoryReporter(reporter_config)
 
     choice_suffix = ''
     choice_conf_kwargs_with_file_suffix = choice_conf_kwargs_factory().replace(
@@ -440,10 +440,10 @@ def get_prioritized_file_suffix_testspecs() -> list[TestSpec]:
                                    choice_conf_without_file_suffix])
 
     reporter_suffix = 'reporterfs'
-    reporter_kwargs = reporter_kwargs_factory().replace(
+    reporter_config = reporter_config_factory(
                             choices=choices,
                             file_suffix=reporter_suffix)
-    reporter = FactoryReporter(**reporter_kwargs)
+    reporter = FactoryReporter(reporter_config)
 
     choice_with_file_suffix = reporter.choices['choice_with_file_suffix']
     choice_without_file_suffix = reporter.choices['choice_without_file_suffix']
@@ -530,15 +530,15 @@ def get_prioritized_file_append_and_unique_testspecs() -> list[TestSpec]:
                                    choice_conf_with_file_append_false_unique_true,
                                    choice_conf_without_file_append_or_unique])
 
-    reporter_kwargs_append_true = reporter_kwargs_factory().replace(choices=choices,
-                                                                    file_append=True,
-                                                                    file_unique=False)
-    reporter_kwargs_append_false = reporter_kwargs_factory().replace(choices=choices,
-                                                                     file_append=False,
-                                                                     file_unique=True)
+    reporter_config_append_true = reporter_config_factory(choices=choices,
+                                                          file_append=True,
+                                                          file_unique=False)
+    reporter_config_append_false = reporter_config_factory(choices=choices,
+                                                           file_append=False,
+                                                           file_unique=True)
 
-    reporter_append_false = FactoryReporter(**reporter_kwargs_append_false)
-    reporter_append_true = FactoryReporter(**reporter_kwargs_append_true)
+    reporter_append_false = FactoryReporter(reporter_config_append_false)
+    reporter_append_true = FactoryReporter(reporter_config_append_true)
 
     choice_with_file_append_true_unique_false = reporter_append_false.choices[
                                                     choice_name_with_file_append_true_unique_false]
