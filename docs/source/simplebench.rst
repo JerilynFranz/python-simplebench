@@ -7,7 +7,11 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   simplebench.exceptions
    simplebench.reporters
+   simplebench.stats
+   simplebench.type_proxies
+   simplebench.validators
 
 Submodules
 ----------
@@ -28,18 +32,26 @@ simplebench.cli module
    :undoc-members:
    :show-inheritance:
 
-simplebench.constants module
-----------------------------
-
-.. automodule:: simplebench.constants
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 simplebench.decorators module
 -----------------------------
 
 .. automodule:: simplebench.decorators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+simplebench.defaults module
+---------------------------
+
+.. automodule:: simplebench.defaults
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+simplebench.doc\_utils module
+-----------------------------
+
+.. automodule:: simplebench.doc_utils
    :members:
    :undoc-members:
    :show-inheritance:
@@ -52,18 +64,26 @@ simplebench.enums module
    :undoc-members:
    :show-inheritance:
 
-simplebench.exceptions module
------------------------------
-
-.. automodule:: simplebench.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 simplebench.iteration module
 ----------------------------
 
 .. automodule:: simplebench.iteration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+simplebench.metaclasses module
+------------------------------
+
+.. automodule:: simplebench.metaclasses
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+simplebench.protocols module
+----------------------------
+
+.. automodule:: simplebench.protocols
    :members:
    :undoc-members:
    :show-inheritance:
@@ -92,10 +112,10 @@ simplebench.session module
    :undoc-members:
    :show-inheritance:
 
-simplebench.stats module
-------------------------
+simplebench.si\_units module
+----------------------------
 
-.. automodule:: simplebench.stats
+.. automodule:: simplebench.si_units
    :members:
    :undoc-members:
    :show-inheritance:
