@@ -4,7 +4,7 @@ from typing import Any, Iterable, Sequence
 
 from simplebench.enums import FlagType, Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.choice.exceptions import ChoiceConfErrorTag
+from simplebench.reporters.choice.exceptions import _ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.validators import (
@@ -173,8 +173,8 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         """
         self._flags: frozenset[str] = frozenset(validate_sequence_of_str(
             flags, "flags",
-            ChoiceConfErrorTag.FLAGS_INVALID_ARG_TYPE,
-            ChoiceConfErrorTag.FLAGS_INVALID_ARGS_VALUE,
+            _ChoiceConfErrorTag.FLAGS_INVALID_ARG_TYPE,
+            _ChoiceConfErrorTag.FLAGS_INVALID_ARGS_VALUE,
             allow_empty=False, allow_blank=False, allow_whitespace=False))
         """Flags associated with the choice. These are used for command-line selection.
         They must be unique across all choices for all reporters. This is enforced
@@ -190,35 +190,35 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         """
         self._flag_type = validate_type(
             flag_type, FlagType, "flag_type",
-            ChoiceConfErrorTag.FLAG_TYPE_INVALID_ARG_TYPE)
+            _ChoiceConfErrorTag.FLAG_TYPE_INVALID_ARG_TYPE)
         """The type of command-line flag (e.g., FlagType.BOOLEAN, FlagType.TARGET_LIST, etc.)
         (private backing field for attribute)"""
 
         self._name: str = validate_string(
             name, "name",
-            ChoiceConfErrorTag.NAME_INVALID_ARG_TYPE,
-            ChoiceConfErrorTag.NAME_INVALID_ARG_VALUE,
+            _ChoiceConfErrorTag.NAME_INVALID_ARG_TYPE,
+            _ChoiceConfErrorTag.NAME_INVALID_ARG_VALUE,
             allow_empty=False, allow_blank=False)
         """Name of the choice (private backing field for attribute)"""
 
         self._description: str = validate_string(
             description, "description",
-            ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
-            ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
+            _ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
+            _ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
             allow_empty=False, allow_blank=False)
         """Description of the choice (private backing field for attribute)"""
 
         self._sections: frozenset[Section] = frozenset(validate_iterable_of_type(
             sections, Section, "sections",
-            ChoiceConfErrorTag.SECTIONS_INVALID_ARG_TYPE,
-            ChoiceConfErrorTag.SECTIONS_INVALID_ARG_VALUE,
+            _ChoiceConfErrorTag.SECTIONS_INVALID_ARG_TYPE,
+            _ChoiceConfErrorTag.SECTIONS_INVALID_ARG_VALUE,
             allow_empty=False))
         """Sections included in the choice (private backing field for attribute)"""
 
         self._targets: frozenset[Target] = frozenset(validate_iterable_of_type(
             targets, Target, "targets",
-            ChoiceConfErrorTag.TARGETS_INVALID_ARG_TYPE,
-            ChoiceConfErrorTag.TARGETS_INVALID_ARG_VALUE,
+            _ChoiceConfErrorTag.TARGETS_INVALID_ARG_TYPE,
+            _ChoiceConfErrorTag.TARGETS_INVALID_ARG_VALUE,
             allow_empty=False))
         """Output targets for the choice (private backing field for attribute)"""
 
@@ -227,8 +227,8 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         if default_targets is not None:
             self._default_targets = frozenset(validate_iterable_of_type(
                 default_targets, Target, "default_targets",
-                ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_TYPE,
-                ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_VALUE,
+                _ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_TYPE,
+                _ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_VALUE,
                 allow_empty=True))
 
         self._subdir: str | None = None
@@ -236,38 +236,38 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         if subdir is not None:
             self._subdir = validate_string(
                 subdir, "subdir",
-                ChoiceConfErrorTag.SUBDIR_INVALID_ARG_TYPE,
-                ChoiceConfErrorTag.SUBDIR_INVALID_ARG_VALUE,
+                _ChoiceConfErrorTag.SUBDIR_INVALID_ARG_TYPE,
+                _ChoiceConfErrorTag.SUBDIR_INVALID_ARG_VALUE,
                 allow_empty=True,
                 alphanumeric_only=True)
             if len(self._subdir) > 64:
                 raise SimpleBenchTypeError(
                     "subdir cannot be longer than 64 characters",
-                    tag=ChoiceConfErrorTag.SUBDIR_TOO_LONG)
+                    tag=_ChoiceConfErrorTag.SUBDIR_TOO_LONG)
 
         self._file_suffix: str | None = None
         """An optional file suffix for output files (private backing field for attribute)"""
         if file_suffix is not None:
             file_suffix = validate_string(
                 file_suffix, "file_suffix",
-                ChoiceConfErrorTag.FILE_SUFFIX_INVALID_ARG_TYPE,
-                ChoiceConfErrorTag.FILE_SUFFIX_INVALID_ARG_VALUE,
+                _ChoiceConfErrorTag.FILE_SUFFIX_INVALID_ARG_TYPE,
+                _ChoiceConfErrorTag.FILE_SUFFIX_INVALID_ARG_VALUE,
                 allow_empty=True, allow_blank=False, alphanumeric_only=True)
             if len(file_suffix) > 10:
                 raise SimpleBenchTypeError(
                     "file_suffix cannot be longer than 10 characters",
-                    tag=ChoiceConfErrorTag.FILE_SUFFIX_TOO_LONG)
+                    tag=_ChoiceConfErrorTag.FILE_SUFFIX_TOO_LONG)
             self._file_suffix = file_suffix
 
         self._file_unique: bool | None = validate_bool(
             file_unique, 'file_unique',
-            ChoiceConfErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE,
+            _ChoiceConfErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE,
             allow_none=True)
         """Whether to make output file names unique (private backing field for attribute)"""
 
         self._file_append: bool | None = validate_bool(
             file_append, 'file_append',
-            ChoiceConfErrorTag.FILE_APPEND_INVALID_ARG_TYPE,
+            _ChoiceConfErrorTag.FILE_APPEND_INVALID_ARG_TYPE,
             allow_none=True)
         """Whether to append to existing output files (private backing field for attribute)"""
 
@@ -286,11 +286,11 @@ class ChoiceConf(Hashable, ChoiceProtocol):
             raise SimpleBenchTypeError(
                 "file_unique and file_append are mutually exclusive; "
                 "both cannot be True or False at the same time",
-                tag=ChoiceConfErrorTag.FILE_UNIQUE_FILE_APPEND_MUTUALLY_EXCLUSIVE)
+                tag=_ChoiceConfErrorTag.FILE_UNIQUE_FILE_APPEND_MUTUALLY_EXCLUSIVE)
 
         self._output_format: Format = validate_type(
             output_format, Format, "output_format",
-            ChoiceConfErrorTag.OUTPUT_FORMAT_INVALID_ARG_TYPE)
+            _ChoiceConfErrorTag.OUTPUT_FORMAT_INVALID_ARG_TYPE)
         """Output format for the choice (private backing field for attribute)"""
 
         self._options: ReporterOptions | None = None
@@ -299,7 +299,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         if options is not None:
             self._options = validate_type(
                 options, ReporterOptions, "options",
-                ChoiceConfErrorTag.OPTIONS_INVALID_ARG_TYPE)
+                _ChoiceConfErrorTag.OPTIONS_INVALID_ARG_TYPE)
 
         self._extra: Any = extra
         """Additional metadata associated with the choice (private backing field for attribute)"""

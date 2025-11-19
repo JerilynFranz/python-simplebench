@@ -2,7 +2,7 @@
 import pytest
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.validators import ValidatorsErrorTag, validate_string
+from simplebench.validators import _ValidatorsErrorTag, validate_string
 
 from ..testspec import Assert, TestAction, TestSpec, idspec
 
@@ -89,7 +89,7 @@ class GenericErrorTag(ErrorTag):
             GenericErrorTag.INVALID_ARG_VALUE],
         kwargs={'strip': None},
         exception=SimpleBenchTypeError,
-        exception_tag=ValidatorsErrorTag.INVALID_STRIP_ARG_TYPE)),
+        exception_tag=_ValidatorsErrorTag.INVALID_STRIP_ARG_TYPE)),
     idspec("PARAM_011", TestAction(
         name="allow_empty set to True - returns a string",
         action=validate_string,
@@ -109,7 +109,7 @@ class GenericErrorTag(ErrorTag):
             GenericErrorTag.INVALID_ARG_VALUE],
         kwargs={'allow_empty': 'yes'},
         exception=SimpleBenchTypeError,
-        exception_tag=ValidatorsErrorTag.INVALID_ALLOW_EMPTY_ARG_TYPE)),
+        exception_tag=_ValidatorsErrorTag.INVALID_ALLOW_EMPTY_ARG_TYPE)),
     idspec("PARAM_013", TestAction(
         name="allow_blank set to False - returns a string",
         action=validate_string,
@@ -129,7 +129,7 @@ class GenericErrorTag(ErrorTag):
             GenericErrorTag.INVALID_ARG_VALUE],
         kwargs={'allow_blank': 0},
         exception=SimpleBenchTypeError,
-        exception_tag=ValidatorsErrorTag.INVALID_ALLOW_BLANK_ARG_TYPE)),
+        exception_tag=_ValidatorsErrorTag.INVALID_ALLOW_BLANK_ARG_TYPE)),
     idspec("PARAM_015", TestAction(
         name="alphanumeric_only set to True - returns a string",
         action=validate_string,
@@ -149,7 +149,7 @@ class GenericErrorTag(ErrorTag):
             GenericErrorTag.INVALID_ARG_VALUE],
         kwargs={'alphanumeric_only': 'no'},
         exception=SimpleBenchTypeError,
-        exception_tag=ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE)),
+        exception_tag=_ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE)),
 ])
 def test_param(testspec: TestSpec):
     """Test validate_string calling parameters.

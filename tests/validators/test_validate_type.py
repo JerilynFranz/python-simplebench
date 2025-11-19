@@ -2,7 +2,7 @@
 import pytest
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
-from simplebench.validators import ValidatorsErrorTag, validate_type
+from simplebench.validators import _ValidatorsErrorTag, validate_type
 
 from ..testspec import Assert, TestAction, TestSpec, idspec
 
@@ -27,7 +27,7 @@ TEST_STRING: str = 'asbc'
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
-        exception_tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE)),
+        exception_tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE)),
     idspec("PARAM_002", TestAction(
         name="Attempt to pass expected as a tuple with a non-type item raises correct SimpleBenchTypeError",
         action=validate_type,
@@ -38,7 +38,7 @@ TEST_STRING: str = 'asbc'
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
-        exception_tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE)),
+        exception_tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE)),
     idspec("PARAM_003", TestAction(
         name="Attempt to pass name as non-str raises correct SimpleBenchTypeError",
         action=validate_type,
@@ -49,7 +49,7 @@ TEST_STRING: str = 'asbc'
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
-        exception_tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE)),
+        exception_tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE)),
     idspec("PARAM_004", TestAction(
         name="Attempt to pass error_tag as non-ErrorTag raises correct SimpleBenchTypeError",
         action=validate_type,
@@ -60,7 +60,7 @@ TEST_STRING: str = 'asbc'
             "error_tag": "not_an_errortag",
         },
         exception=SimpleBenchTypeError,
-        exception_tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)),
+        exception_tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)),
 ])
 def test_param(testspec: TestSpec):
     """Tests for validate_string parameters validation.

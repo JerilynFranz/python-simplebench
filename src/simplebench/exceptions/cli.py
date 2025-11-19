@@ -1,10 +1,10 @@
 """ErrorTags for simplebench.cli related exceptions in SimpleBench."""
-from .base import ErrorTag
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class CLIErrorTag(ErrorTag):
+class _CLIErrorTag(ErrorTag):
     """ErrorTags for CLI-related exceptions."""
     CLI_INVALID_EXTRA_ARGS_TYPE = "CLI_INVALID_EXTRA_ARGS_TYPE"
     """The 'extra_args' argument must either be None or a list of str."""

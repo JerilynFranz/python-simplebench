@@ -1,14 +1,12 @@
 """simplebench.reporters.choice package."""
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choice.exceptions import ChoiceErrorTag, ChoiceConfErrorTag
-from simplebench.reporters.choice.metaclasses import IChoice
+from simplebench.reporters.choice.exceptions import _ChoiceConfErrorTag, _ChoiceErrorTag
 
 __all__ = [
     "Choice",
     "ChoiceConf",
-    "ChoiceErrorTag",
-    "ChoiceConfErrorTag",
-    "IChoice",
+    "_ChoiceErrorTag",
+    "_ChoiceConfErrorTag",
 ]
 """'*' Exported names for simplebench.reporters.choice package."""

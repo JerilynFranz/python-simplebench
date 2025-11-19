@@ -4,7 +4,7 @@ from ..exceptions import ErrorTag
 
 
 @enum_docstrings
-class RichTaskErrorTag(ErrorTag):
+class _RichTaskErrorTag(ErrorTag):
     """Error tags for the RichTasks class."""
     INIT_INVALID_NAME_ARG = "INIT_INVALID_NAME_ARG"
     """Something other than a string was passed to the RichTask() constructor"""
@@ -29,7 +29,7 @@ class RichTaskErrorTag(ErrorTag):
 
 
 @enum_docstrings
-class RichProgressTasksErrorTag(ErrorTag):
+class _RichProgressTasksErrorTag(ErrorTag):
     """Error tags for the RichProgressTasks class."""
     DELITEM_INVALID_NAME_ARG = "DELITEM_INVALID_NAME_ARG"
     """Something other than a string was passed to the RichProgressTask() __delitem__ method"""

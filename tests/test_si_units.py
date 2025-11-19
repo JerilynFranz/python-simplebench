@@ -3,7 +3,7 @@
 import pytest
 
 from simplebench import si_units
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, SIUnitsErrorTag
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _SIUnitsErrorTag
 
 from .testspec import TestAction
 
@@ -29,7 +29,7 @@ from .testspec import TestAction
         kwargs={'unit': 1, 'base_unit': 's'},
         action=si_units.si_scale,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_INVALID_UNIT_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_INVALID_UNIT_ARG_TYPE),
         id="SI_SCALE_003"),
     pytest.param(TestAction(
         name="Invalid base_unit arg type (int)",
@@ -37,7 +37,7 @@ from .testspec import TestAction
         kwargs={'unit': 's', 'base_unit': 1},
         action=si_units.si_scale,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_INVALID_BASE_UNIT_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_INVALID_BASE_UNIT_ARG_TYPE),
         id="SI_SCALE_004"),
     pytest.param(TestAction(
         name="Empty base_unit arg",
@@ -45,7 +45,7 @@ from .testspec import TestAction
         kwargs={'unit': 's', 'base_unit': ''},
         action=si_units.si_scale,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_EMPTY_BASE_UNIT_ARG),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_EMPTY_BASE_UNIT_ARG),
         id="SI_SCALE_005"),
     pytest.param(TestAction(
         name="unit does not end with base_unit",
@@ -53,7 +53,7 @@ from .testspec import TestAction
         kwargs={'unit': 'ms', 'base_unit': 'm'},
         action=si_units.si_scale,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT),
         id="SI_SCALE_006"),
     pytest.param(TestAction(
         name="Unknown prefix in unit",
@@ -61,7 +61,7 @@ from .testspec import TestAction
         kwargs={'unit': 'xs', 'base_unit': 's'},
         action=si_units.si_scale,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_UNKNOWN_SI_UNIT_PREFIX),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_UNKNOWN_SI_UNIT_PREFIX),
         id="SI_SCALE_007"),
     pytest.param(TestAction(
         name="Valid unit 's'",
@@ -178,7 +178,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': 1, 'current_unit': 's', 'target_unit': 's'},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE),
         id="SI_SCALE_TO_UNIT_004"),
     pytest.param(TestAction(
         name="invalid current_unit arg type (int)",
@@ -186,7 +186,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': 's', 'current_unit': 1, 'target_unit': 's'},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_CURRENT_UNIT_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_CURRENT_UNIT_ARG_TYPE),
         id="SI_SCALE_TO_UNIT_005"),
     pytest.param(TestAction(
         name="invalid target_unit arg type (int)",
@@ -194,7 +194,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': 's', 'current_unit': 's', 'target_unit': 1},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_TARGET_UNIT_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_TARGET_UNIT_ARG_TYPE),
         id="SI_SCALE_TO_UNIT_006"),
     pytest.param(TestAction(
         name="empty base_unit arg",
@@ -202,7 +202,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': '', 'current_unit': 's', 'target_unit': 's'},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_BASE_UNIT_ARG),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_BASE_UNIT_ARG),
         id="SI_SCALE_TO_UNIT_007"),
     pytest.param(TestAction(
         name="empty current_unit arg",
@@ -210,7 +210,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': 's', 'current_unit': '', 'target_unit': 's'},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_CURRENT_UNIT_ARG),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_CURRENT_UNIT_ARG),
         id="SI_SCALE_TO_UNIT_008"),
     pytest.param(TestAction(
         name="empty target_unit arg",
@@ -218,7 +218,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': 's', 'current_unit': 's', 'target_unit': ''},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_TARGET_UNIT_ARG),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_TARGET_UNIT_ARG),
         id="SI_SCALE_TO_UNIT_009"),
     pytest.param(TestAction(
         name="base_unit does not match other units",
@@ -226,7 +226,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': 'm', 'current_unit': 'ms', 'target_unit': 'ms'},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
         id="SI_SCALE_TO_UNIT_010"),
     pytest.param(TestAction(
         name="current_unit does not match other units",
@@ -234,7 +234,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': 'ms', 'current_unit': 'm', 'target_unit': 'ms'},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
         id="SI_SCALE_TO_UNIT_011"),
     pytest.param(TestAction(
         name="target_unit does not match other units",
@@ -242,7 +242,7 @@ def test_si_scale(testspec: TestAction) -> None:
         kwargs={'base_unit': 'ms', 'current_unit': 'ms', 'target_unit': 'm'},
         action=si_units.si_scale_to_unit,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS),
         id="SI_SCALE_TO_UNIT_012"),
     pytest.param(TestAction(
         name="valid args, no scaling (s to s)",
@@ -287,14 +287,14 @@ def test_si_scale_to_unit(testspec: TestAction) -> None:
         args=[1],
         action=si_units.si_unit_base,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_UNIT_BASE_INVALID_UNIT_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_UNIT_BASE_INVALID_UNIT_ARG_TYPE),
         id="SI_UNIT_BASE_002"),
     pytest.param(TestAction(
         name="Empty unit arg",
         args=[''],
         action=si_units.si_unit_base,
         exception=SimpleBenchValueError,
-        exception_tag=SIUnitsErrorTag.SI_UNIT_BASE_EMPTY_UNIT_ARG),
+        exception_tag=_SIUnitsErrorTag.SI_UNIT_BASE_EMPTY_UNIT_ARG),
         id="SI_UNIT_BASE_003"),
     pytest.param(TestAction(
         name="No known prefix in unit",
@@ -324,28 +324,28 @@ def test_si_unit_base(testspec: TestAction) -> None:
         kwargs={'numbers': 1, 'base_unit': 's'},
         action=si_units.si_scale_for_smallest,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE),
         id="SI_SCALE_FOR_SMALLEST_002"),
     pytest.param(TestAction(
         name="Invalid numbers arg type (str)",
         kwargs={'numbers': 'not_a_list_of_numbers', 'base_unit': 's'},
         action=si_units.si_scale_for_smallest,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE),
         id="SI_SCALE_FOR_SMALLEST_003"),
     pytest.param(TestAction(
         name="Invalid numbers arg type (bytes)",
         kwargs={'numbers': b'not_a_list_of_numbers', 'base_unit': 's'},
         action=si_units.si_scale_for_smallest,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE),
         id="SI_SCALE_FOR_SMALLEST_004"),
     pytest.param(TestAction(
         name="Invalid numbers arg value type (list with str)",
         kwargs={'numbers': [1, 2, 'not_a_number'], 'base_unit': 's'},
         action=si_units.si_scale_for_smallest,
         exception=SimpleBenchTypeError,
-        exception_tag=SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_VALUES_TYPE),
+        exception_tag=_SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_VALUES_TYPE),
         id="SI_SCALE_FOR_SMALLEST_005"),
     pytest.param(TestAction(
         name="Empty numbers list",

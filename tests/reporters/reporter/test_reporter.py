@@ -181,7 +181,7 @@ def test_factory_reporter_subclassing() -> None:
     idspec('REPORTER_022', TestAction(
         name="Attempt to directly instantiate Reporter raises TypeError",
         action=Reporter,
-        kwargs=reporter_config_factory(),
+        args=[reporter_config_factory()],
         exception=TypeError)),
 ])
 def test_reporter_init(testspec: TestSpec) -> None:

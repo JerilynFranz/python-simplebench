@@ -2,7 +2,7 @@
 """Utility functions for handling SI units"""
 from typing import Sequence
 
-from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, SIUnitsErrorTag
+from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, _SIUnitsErrorTag
 
 # SI prefixes from tera (T) to pico (p)
 # We don't go beyond pico (p) because it's not commonly used in benchmarking
@@ -48,11 +48,11 @@ def si_scale_for_smallest(numbers: Sequence[float | int], base_unit: str) -> tup
     if not isinstance(numbers, Sequence) or isinstance(numbers, (str, bytes)):
         raise SimpleBenchTypeError(
             "numbers arg must be a Sequence of int or float",
-            tag=SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE)
+            tag=_SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE)
     if not all(isinstance(n, (int, float)) for n in numbers):
         raise SimpleBenchTypeError(
             "all items in numbers arg sequence must be type int or float",
-            tag=SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_VALUES_TYPE)
+            tag=_SIUnitsErrorTag.SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_VALUES_TYPE)
     if not numbers or all(n == 0 for n in numbers):
         return base_unit, 1.0
 
@@ -89,24 +89,24 @@ def si_scale(unit: str, base_unit: str) -> float:
     if not isinstance(unit, str):
         raise SimpleBenchTypeError(
             "unit arg must be a str",
-            tag=SIUnitsErrorTag.SI_SCALE_INVALID_UNIT_ARG_TYPE)
+            tag=_SIUnitsErrorTag.SI_SCALE_INVALID_UNIT_ARG_TYPE)
     if not isinstance(base_unit, str):
         raise SimpleBenchTypeError(
             "base_unit arg must be a str",
-            tag=SIUnitsErrorTag.SI_SCALE_INVALID_BASE_UNIT_ARG_TYPE)
+            tag=_SIUnitsErrorTag.SI_SCALE_INVALID_BASE_UNIT_ARG_TYPE)
     if base_unit == '':
         raise SimpleBenchValueError(
             "base_unit arg must not be an empty string",
-            tag=SIUnitsErrorTag.SI_SCALE_EMPTY_BASE_UNIT_ARG)
+            tag=_SIUnitsErrorTag.SI_SCALE_EMPTY_BASE_UNIT_ARG)
     if not unit.endswith(base_unit):
         raise SimpleBenchValueError(
             f'Unit "{unit}" does not end with base unit "{base_unit}"',
-            tag=SIUnitsErrorTag.SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT)
+            tag=_SIUnitsErrorTag.SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT)
     si_prefix = unit[:-len(base_unit)]
     if si_prefix in _SI_PREFIXES_SCALE:
         return _SI_PREFIXES_SCALE[si_prefix]
     raise SimpleBenchValueError(
-        f'Unknown SI unit: {unit}', tag=SIUnitsErrorTag.SI_SCALE_UNKNOWN_SI_UNIT_PREFIX)
+        f'Unknown SI unit: {unit}', tag=_SIUnitsErrorTag.SI_SCALE_UNKNOWN_SI_UNIT_PREFIX)
 
 
 def si_unit_base(unit: str) -> str:
@@ -143,11 +143,11 @@ def si_unit_base(unit: str) -> str:
     if not isinstance(unit, str):
         raise SimpleBenchTypeError(
             "unit arg must be a str",
-            tag=SIUnitsErrorTag.SI_UNIT_BASE_INVALID_UNIT_ARG_TYPE)
+            tag=_SIUnitsErrorTag.SI_UNIT_BASE_INVALID_UNIT_ARG_TYPE)
     if len(unit) == 0:
         raise SimpleBenchValueError(
             "unit arg must not be an empty string",
-            tag=SIUnitsErrorTag.SI_UNIT_BASE_EMPTY_UNIT_ARG)
+            tag=_SIUnitsErrorTag.SI_UNIT_BASE_EMPTY_UNIT_ARG)
     if len(unit) == 1:
         return unit
     prefix = unit[:1]
@@ -182,33 +182,33 @@ def si_scale_to_unit(base_unit: str, current_unit: str, target_unit: str) -> flo
     if not isinstance(base_unit, str):
         raise SimpleBenchTypeError(
             "base_unit arg must be a str",
-            tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE)
+            tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE)
     if base_unit == '':
         raise SimpleBenchValueError(
             "base_unit arg must not be an empty string",
-            tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_BASE_UNIT_ARG)
+            tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_BASE_UNIT_ARG)
     if not isinstance(current_unit, str):
         raise SimpleBenchTypeError(
             "current_unit arg must be a str",
-            tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_CURRENT_UNIT_ARG_TYPE)
+            tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_CURRENT_UNIT_ARG_TYPE)
     if current_unit == '':
         raise SimpleBenchValueError(
             "current_unit arg must not be an empty string",
-            tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_CURRENT_UNIT_ARG)
+            tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_CURRENT_UNIT_ARG)
     if not isinstance(target_unit, str):
         raise SimpleBenchTypeError(
             "target_unit arg must be a str",
-            tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_TARGET_UNIT_ARG_TYPE)
+            tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INVALID_TARGET_UNIT_ARG_TYPE)
     if target_unit == '':
         raise SimpleBenchValueError(
             "target_unit arg must not be an empty string",
-            tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_TARGET_UNIT_ARG)
+            tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_EMPTY_TARGET_UNIT_ARG)
 
     if not si_unit_base(base_unit) == si_unit_base(current_unit) == si_unit_base(target_unit):
         raise SimpleBenchValueError(
             (f'Units are not compatible: base_unit="{base_unit}", current_unit="{current_unit}", '
                 f'target_unit="{target_unit}"'),
-            tag=SIUnitsErrorTag.SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS)
+            tag=_SIUnitsErrorTag.SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS)
     current_scale = si_scale(current_unit, base_unit)
     target_scale = si_scale(target_unit, base_unit)
     return target_scale / current_scale

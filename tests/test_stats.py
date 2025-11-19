@@ -12,12 +12,12 @@ from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, Si
 from simplebench.iteration import Iteration
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats, StatsSummary
 from simplebench.stats.exceptions import (
-    MemoryUsageErrorTag,
-    OperationsPerIntervalErrorTag,
-    OperationTimingsErrorTag,
-    PeakMemoryUsageErrorTag,
-    StatsErrorTag,
-    StatsSummaryErrorTag,
+    _MemoryUsageErrorTag,
+    _OperationsPerIntervalErrorTag,
+    _OperationTimingsErrorTag,
+    _PeakMemoryUsageErrorTag,
+    _StatsErrorTag,
+    _StatsSummaryErrorTag,
 )
 
 from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
@@ -49,42 +49,42 @@ def stats_classes() -> list[type[Stats]]:
         name="invalid unit type (int)",
         kwargs={'unit': 123, 'scale': 1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchTypeError,
-        exception_tag=StatsErrorTag.INVALID_UNIT_ARG_TYPE)),
+        exception_tag=_StatsErrorTag.INVALID_UNIT_ARG_TYPE)),
     idspec("STATS_004", TestAction(
         name="invalid unit value (empty str)",
         kwargs={'unit': '', 'scale': 1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
-        exception_tag=StatsErrorTag.INVALID_UNIT_ARG_VALUE)),
+        exception_tag=_StatsErrorTag.INVALID_UNIT_ARG_VALUE)),
     idspec("STATS_005", TestAction(
         name="invalid scale type (str)",
         kwargs={'unit': 'a unit', 'scale': 'not_a_number', 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchTypeError,
-        exception_tag=StatsErrorTag.INVALID_SCALE_ARG_TYPE)),
+        exception_tag=_StatsErrorTag.INVALID_SCALE_ARG_TYPE)),
     idspec("STATS_006", TestAction(
         name="invalid scale value (zero)",
         kwargs={'unit': 'a unit', 'scale': 0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
-        exception_tag=StatsErrorTag.INVALID_SCALE_ARG_VALUE)),
+        exception_tag=_StatsErrorTag.INVALID_SCALE_ARG_VALUE)),
     idspec("STATS_007", TestAction(
         name="invalid scale value (negative)",
         kwargs={'unit': 'a unit', 'scale': -1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
-        exception_tag=StatsErrorTag.INVALID_SCALE_ARG_VALUE)),
+        exception_tag=_StatsErrorTag.INVALID_SCALE_ARG_VALUE)),
     idspec("STATS_008", TestAction(
         name="invalid rounds type (str)",
         kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 'not_a_number', 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchTypeError,
-        exception_tag=StatsErrorTag.INVALID_ROUNDS_ARG_TYPE)),
+        exception_tag=_StatsErrorTag.INVALID_ROUNDS_ARG_TYPE)),
     idspec("STATS_009", TestAction(
         name="invalid rounds value (zero)",
         kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 0, 'data': [1.0, 2.0, 3.0]},
         exception=SimpleBenchValueError,
-        exception_tag=StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)),
+        exception_tag=_StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)),
     idspec("STATS_010", TestAction(
         name="invalid data type (str)",
         kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 1, 'data': 'not_a_list'},
         exception=SimpleBenchTypeError,
-        exception_tag=StatsErrorTag.INVALID_DATA_ARG_TYPE)),
+        exception_tag=_StatsErrorTag.INVALID_DATA_ARG_TYPE)),
     idspec("STATS_011", TestAction(
         name="valid initial values, correctly set",
         kwargs={'unit': 'a unit', 'scale': 1.0, 'rounds': 1, 'data': [1.0, 2.0, 3.0]},
@@ -111,127 +111,127 @@ def test_stats_init(stats_classes: list[type[Stats]], test: TestAction) -> None:
         action=Stats,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
         exception=SimpleBenchTypeError,
-        exception_tag=StatsErrorTag.INVALID_DATA_ARG_TYPE)),
+        exception_tag=_StatsErrorTag.INVALID_DATA_ARG_TYPE)),
     idspec("SUBCLASS_INIT_002", TestAction(
         name="MemoryUsage - invalid data type (str)",
         action=MemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
         exception=SimpleBenchTypeError,
-        exception_tag=MemoryUsageErrorTag.INVALID_DATA_ARG_TYPE)),
+        exception_tag=_MemoryUsageErrorTag.INVALID_DATA_ARG_TYPE)),
     idspec("SUBCLASS_INIT_003", TestAction(
         name="MemoryUsage - no data or iterations provided",
         action=MemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0},
         exception=SimpleBenchTypeError,
-        exception_tag=MemoryUsageErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)),
+        exception_tag=_MemoryUsageErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)),
     idspec("SUBCLASS_INIT_004", TestAction(
         name="MemoryUsage - invalid iterations type (int)",
         action=MemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 123},
         exception=SimpleBenchTypeError,
-        exception_tag=MemoryUsageErrorTag.INVALID_ITERATIONS_ARG_TYPE)),
+        exception_tag=_MemoryUsageErrorTag.INVALID_ITERATIONS_ARG_TYPE)),
     idspec("SUBCLASS_INIT_005", TestAction(
         name="MemoryUsage - invalid iterations type (str)",
         action=MemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 'not_a_number'},
         exception=SimpleBenchTypeError,
-        exception_tag=MemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+        exception_tag=_MemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
     idspec("SUBCLASS_INIT_006", TestAction(
         name="MemoryUsage - invalid iterations item type (list with str)",
         action=MemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': [1, 'not_a_number']},
         exception=SimpleBenchTypeError,
-        exception_tag=MemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+        exception_tag=_MemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
     idspec("SUBCLASS_INIT_007", TestAction(
         name="PeakMemoryUsage - invalid data type (str)",
         action=PeakMemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
         exception=SimpleBenchTypeError,
-        exception_tag=PeakMemoryUsageErrorTag.INVALID_DATA_ARG_TYPE)),
+        exception_tag=_PeakMemoryUsageErrorTag.INVALID_DATA_ARG_TYPE)),
     idspec("SUBCLASS_INIT_008", TestAction(
         name="PeakMemoryUsage - no data or iterations provided",
         action=PeakMemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0},
         exception=SimpleBenchTypeError,
-        exception_tag=PeakMemoryUsageErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)),
+        exception_tag=_PeakMemoryUsageErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)),
     idspec("SUBCLASS_INIT_009", TestAction(
         name="PeakMemoryUsage - invalid iterations type (int)",
         action=PeakMemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 123},
         exception=SimpleBenchTypeError,
-        exception_tag=PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ARG_TYPE)),
+        exception_tag=_PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ARG_TYPE)),
     idspec("SUBCLASS_INIT_010", TestAction(
         name="PeakMemoryUsage - invalid iterations type (str)",
         action=PeakMemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 'not_a_number'},
         exception=SimpleBenchTypeError,
-        exception_tag=PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+        exception_tag=_PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
     idspec("SUBCLASS_INIT_011", TestAction(
         name="PeakMemoryUsage - invalid iterations item type (list with str)",
         action=PeakMemoryUsage,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': [1, 'not_a_number']},
         exception=SimpleBenchTypeError,
-        exception_tag=PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+        exception_tag=_PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
     idspec("SUBCLASS_INIT_012", TestAction(
         name="OperationsPerInterval - invalid data type (str)",
         action=OperationsPerInterval,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': 'not_a_list'},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationsPerIntervalErrorTag.INVALID_DATA_ARG_TYPE)),
+        exception_tag=_OperationsPerIntervalErrorTag.INVALID_DATA_ARG_TYPE)),
     idspec("SUBCLASS_INIT_013", TestAction(
         name="OperationsPerInterval - no data or iterations provided",
         action=OperationsPerInterval,
         kwargs={'unit': 'a unit', 'scale': 1.0},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationsPerIntervalErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)),
+        exception_tag=_OperationsPerIntervalErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)),
     idspec("SUBCLASS_INIT_014", TestAction(
         name="OperationsPerInterval - invalid iterations type (int)",
         action=OperationsPerInterval,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 123},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationsPerIntervalErrorTag.INVALID_ITERATIONS_ARG_TYPE)),
+        exception_tag=_OperationsPerIntervalErrorTag.INVALID_ITERATIONS_ARG_TYPE)),
     idspec("SUBCLASS_INIT_015", TestAction(
         name="OperationsPerInterval - invalid iterations type (str)",
         action=OperationsPerInterval,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 'not_a_number'},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationsPerIntervalErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+        exception_tag=_OperationsPerIntervalErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
     idspec("SUBCLASS_INIT_016", TestAction(
         name="OperationsPerInterval - invalid iterations item type (list with str)",
         action=OperationsPerInterval,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': [1, 'not_a_number']},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationsPerIntervalErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+        exception_tag=_OperationsPerIntervalErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
     idspec("SUBCLASS_INIT_017", TestAction(
         name="OperationTimings - invalid data value type (list with str)",
         action=OperationTimings,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 'not_a_number', 3.0]},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationTimingsErrorTag.INVALID_DATA_ARG_TYPE)),
+        exception_tag=_OperationTimingsErrorTag.INVALID_DATA_ARG_TYPE)),
     idspec("SUBCLASS_INIT_018", TestAction(
         name="OperationTimings - no data or iterations provided",
         action=OperationTimings,
         kwargs={'unit': 'a unit', 'scale': 1.0},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationTimingsErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)),
+        exception_tag=_OperationTimingsErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)),
     idspec("SUBCLASS_INIT_019", TestAction(
         name="OperationTimings - invalid iterations type (int)",
         action=OperationTimings,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 123},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationTimingsErrorTag.INVALID_ITERATIONS_ARG_TYPE)),
+        exception_tag=_OperationTimingsErrorTag.INVALID_ITERATIONS_ARG_TYPE)),
     idspec("SUBCLASS_INIT_020", TestAction(
         name="OperationTimings - invalid iterations type (str)",
         action=OperationTimings,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': 'not_a_number'},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationTimingsErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+        exception_tag=_OperationTimingsErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
     idspec("SUBCLASS_INIT_021", TestAction(
         name="OperationTimings - invalid iterations item type (list with str)",
         action=OperationTimings,
         kwargs={'unit': 'a unit', 'scale': 1.0, 'data': [1.0, 2.0, 3.0], 'iterations': [1, 'not_a_number']},
         exception=SimpleBenchTypeError,
-        exception_tag=OperationTimingsErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
+        exception_tag=_OperationTimingsErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)),
 ])
 def test_stats_subclasses_init(testspec: TestSpec) -> None:
     """Test aspects of init that vary by subclass.
@@ -563,7 +563,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsErrorTag.FROM_DICT_MISSING_UNIT_KEY)),
+        exception_tag=_StatsErrorTag.FROM_DICT_MISSING_UNIT_KEY)),
     idspec("STATS_FROM_DICT_007", TestAction(
         name="Stats - data arg is not a dict (str)",
         action=Stats.from_dict,
@@ -571,7 +571,7 @@ def test_stats_initalization(section: Section) -> None:
             'data': 'not_a_dict'
         },
         exception=SimpleBenchTypeError,
-        exception_tag=StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE
+        exception_tag=_StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE
     )),
     idspec("STATS_FROM_DICT_008", TestAction(
         name="Stats - missing scale key in data dictionary",
@@ -585,7 +585,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsErrorTag.FROM_DICT_MISSING_SCALE_KEY)),
+        exception_tag=_StatsErrorTag.FROM_DICT_MISSING_SCALE_KEY)),
     idspec("STATS_FROM_DICT_009", TestAction(
         name="Stats - missing data key in data dictionary",
         action=Stats.from_dict,
@@ -598,7 +598,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsErrorTag.FROM_DICT_MISSING_DATA_KEY)),
+        exception_tag=_StatsErrorTag.FROM_DICT_MISSING_DATA_KEY)),
     idspec("STATS_FROM_DICT_010", TestAction(
         name="Stats - data argument not a dictionary",
         action=Stats.from_dict,
@@ -606,7 +606,7 @@ def test_stats_initalization(section: Section) -> None:
             'data': ['not', 'a', 'dict']
         },
         exception=SimpleBenchTypeError,
-        exception_tag=StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)),
+        exception_tag=_StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)),
     idspec("STATS_FROM_DICT_011", TestAction(
         name="StatsSummary - data argument not a dictionary",
         action=StatsSummary.from_dict,
@@ -614,7 +614,7 @@ def test_stats_initalization(section: Section) -> None:
             'data': ['not', 'a', 'dict']
         },
         exception=SimpleBenchTypeError,
-        exception_tag=StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)),
+        exception_tag=_StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)),
     idspec("STATS_FROM_DICT_012", TestAction(
         name="StatsSummary - All valid keys and values",
         action=StatsSummary.from_dict,
@@ -657,7 +657,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_014", TestAction(
         name="StatsSummary - Missing scale key in data dictionary",
         action=StatsSummary.from_dict,
@@ -677,7 +677,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_015", TestAction(
         name="StatsSummary - Missing mean key in data dictionary",
         action=StatsSummary.from_dict,
@@ -697,7 +697,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_016", TestAction(
         name="StatsSummary - Missing median key in data dictionary",
         action=StatsSummary.from_dict,
@@ -717,7 +717,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_017", TestAction(
         name="StatsSummary - Missing minimum key in data dictionary",
         action=StatsSummary.from_dict,
@@ -737,7 +737,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_018", TestAction(
         name="StatsSummary - Missing maximum key in data dictionary",
         action=StatsSummary.from_dict,
@@ -757,7 +757,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_019", TestAction(
         name="StatsSummary - Missing standard_deviation key in data dictionary",
         action=StatsSummary.from_dict,
@@ -777,7 +777,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_020", TestAction(
         name="StatsSummary - Missing relative_standard_deviation key in data dictionary",
         action=StatsSummary.from_dict,
@@ -797,7 +797,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_021", TestAction(
         name="StatsSummary - Missing percentiles key in data dictionary",
         action=StatsSummary.from_dict,
@@ -816,7 +816,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
     idspec("STATS_FROM_DICT_022", TestAction(
         name="Stats - missing rounds key in data dictionary",
         action=Stats.from_dict,
@@ -830,7 +830,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsErrorTag.FROM_DICT_MISSING_ROUNDS_KEY)),
+        exception_tag=_StatsErrorTag.FROM_DICT_MISSING_ROUNDS_KEY)),
     idspec("STATS_FROM_DICT_023", TestAction(
         name="StatsSummary - missing rounds key in data dictionary",
         action=StatsSummary.from_dict,
@@ -851,7 +851,7 @@ def test_stats_initalization(section: Section) -> None:
             }
         },
         exception=SimpleBenchKeyError,
-        exception_tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
+        exception_tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)),
 ])
 def test_stats_from_dict(testspec: TestSpec) -> None:
     """Test the from_dict class method of the Stats class and sub-classes.
@@ -1097,7 +1097,7 @@ def test_stats_equality(testspec: TestSpec) -> None:
         action=StatsSummary.from_stats,
         args=['not_a_stats_instance'],
         exception=SimpleBenchTypeError,
-        exception_tag=StatsSummaryErrorTag.FROM_STATS_INVALID_STATS_ARG_TYPE)),
+        exception_tag=_StatsSummaryErrorTag.FROM_STATS_INVALID_STATS_ARG_TYPE)),
 ])
 def test_stats_summaryfrom_stats_error_cases(testspec: TestSpec) -> None:
     """Test StatsSummary.from_stats()

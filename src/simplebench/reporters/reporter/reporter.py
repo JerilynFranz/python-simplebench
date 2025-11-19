@@ -32,7 +32,6 @@ from simplebench.reporters.protocols import ReporterCallback
 # simplebench.reporters.reporter
 from simplebench.reporters.reporter.config import ReporterConfig
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
-from simplebench.reporters.reporter.metaclasses import IReporter
 from simplebench.reporters.reporter.mixins import (
     _ReporterArgparseMixin,
     _ReporterOrchestrationMixin,
@@ -73,7 +72,7 @@ def deferred_core_imports() -> None:
     _CORE_IMPORTS_DONE = True
 
 
-class Reporter(ABC, IReporter, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
+class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
                _ReporterPrioritizationMixin, _ReporterTargetMixin, ReporterProtocol):
     """Base class for Reporter classes.
 

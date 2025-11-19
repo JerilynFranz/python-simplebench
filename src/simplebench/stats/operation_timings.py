@@ -9,7 +9,7 @@ from ..exceptions import SimpleBenchTypeError
 from ..iteration import Iteration
 from ..validators import validate_sequence_of_numbers
 from . import Stats, StatsSummary
-from .exceptions.operation_timings import OperationTimingsErrorTag
+from .exceptions.operation_timings import _OperationTimingsErrorTag
 
 
 class OperationTimings(Stats):
@@ -63,24 +63,24 @@ class OperationTimings(Stats):
         if iterations is None and data is None:
             raise SimpleBenchTypeError(
                 "either iterations or data must be provided",
-                tag=OperationTimingsErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)
+                tag=_OperationTimingsErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)
         if data is None:
             data = []
         imported_data: list[int | float] = list(validate_sequence_of_numbers(
                 data, 'data',
-                type_tag=OperationTimingsErrorTag.INVALID_DATA_ARG_TYPE,
-                value_tag=OperationTimingsErrorTag.INVALID_DATA_ARG_VALUE))
+                type_tag=_OperationTimingsErrorTag.INVALID_DATA_ARG_TYPE,
+                value_tag=_OperationTimingsErrorTag.INVALID_DATA_ARG_VALUE))
 
         if iterations is not None:
             if not isinstance(iterations, Sequence):
                 raise SimpleBenchTypeError(
                     "passed iterations arg is not a Sequence",
-                    tag=OperationTimingsErrorTag.INVALID_ITERATIONS_ARG_TYPE)
+                    tag=_OperationTimingsErrorTag.INVALID_ITERATIONS_ARG_TYPE)
 
             if not all(isinstance(iteration, Iteration) for iteration in iterations):
                 raise SimpleBenchTypeError(
                     "There are items in the iterations arg sequence that are not Iteration objects",
-                    tag=OperationTimingsErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)
+                    tag=_OperationTimingsErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)
             imported_data.extend(iteration.per_round_elapsed for iteration in iterations)
 
         super().__init__(unit=unit, scale=scale, rounds=rounds, data=imported_data)

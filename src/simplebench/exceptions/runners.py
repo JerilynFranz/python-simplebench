@@ -1,10 +1,10 @@
 """ErrorTags for the runners module."""
-from .base import ErrorTag
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class RunnersErrorTag(ErrorTag):
+class _RunnersErrorTag(ErrorTag):
     """ErrorTags for the runners module."""
     RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED = "RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED"
     """Failed to create the timers module spec"""

@@ -1,10 +1,10 @@
 """ErrorTags for the simplebench.stats module."""
-from simplebench.exceptions.base import ErrorTag
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions.base import ErrorTag
 
 
 @enum_docstrings
-class StatsErrorTag(ErrorTag):
+class _StatsErrorTag(ErrorTag):
     """ErrorTags for the Stats class."""
     INVALID_UNIT_ARG_TYPE = "INVALID_UNIT_ARG_TYPE"
     """Invalid unit argument passed to the Stats() constructor - must be a str"""
@@ -39,7 +39,7 @@ class StatsErrorTag(ErrorTag):
 
 
 @enum_docstrings
-class StatsSummaryErrorTag(ErrorTag):
+class _StatsSummaryErrorTag(ErrorTag):
     """ErrorTags for the StatsSummary class."""
     INVALID_UNIT_ARG_TYPE = "INVALID_UNIT_ARG_TYPE"
     """Invalid unit argument passed to the StatsSummary() constructor - must be a str"""

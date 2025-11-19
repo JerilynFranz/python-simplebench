@@ -1,10 +1,10 @@
 """ErrorTags for the simplebench.stats.memory_usage module."""
-from simplebench.exceptions import ErrorTag
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class MemoryUsageErrorTag(ErrorTag):
+class _MemoryUsageErrorTag(ErrorTag):
     """ErrorTags for the MemoryUsage class."""
     INVALID_ITERATIONS_ARG_TYPE = "INVALID_ITERATIONS_ARG_TYPE"
     """Invalid iterations argument passed to the MemoryUsage() constructor

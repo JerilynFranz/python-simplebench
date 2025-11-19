@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class ReporterManagerErrorTag(ErrorTag):
+class _ReporterManagerErrorTag(ErrorTag):
     """ErrorTags for the :class:`~simplebench.reporters.reporter_manager.ReporterManager` class."""
     CANNOT_REGISTER_BASE_CLASS = "CANNOT_REGISTER_BASE_CLASS"
     """The base :class:`~simplebench.reporters.reporter.Reporter` class cannot be registered

@@ -1,10 +1,10 @@
 """ErrorTags for simplebench.utils in SimpleBench."""
-from .base import ErrorTag
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class UtilsErrorTag(ErrorTag):
+class _UtilsErrorTag(ErrorTag):
     """ErrorTags for simplebench.utils in SimpleBench."""
     # utils.sanitize_filename() tags
     SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE = "SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE"

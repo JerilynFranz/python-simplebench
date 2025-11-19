@@ -5,7 +5,7 @@ from rich.text import Text
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.reporter.exceptions import ReporterErrorTag
-from simplebench.validators.exceptions import ValidatorsErrorTag
+from simplebench.validators.exceptions import _ValidatorsErrorTag
 
 from ....factories import reporter_factory
 from ....factories.reporter.reporter_methods import (
@@ -55,7 +55,7 @@ def target_filesystem_params_testspecs() -> list[TestSpec]:
             kwargs=target_filesystem_kwargs_factory().replace(
                 filename=456),
             exception=SimpleBenchTypeError,
-            exception_tag=ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE,
+            exception_tag=_ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE,
         )),
         idspec("PARAMS_005", TestAction(
             name="Invalid append parameter type (not a bool)",

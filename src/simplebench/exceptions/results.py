@@ -1,10 +1,10 @@
 """Exception ErrorTags for the results module."""
-from .base import ErrorTag
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class ResultsErrorTag(ErrorTag):
+class _ResultsErrorTag(ErrorTag):
     """ErrorTags for exceptions in the Results module."""
     GROUP_INVALID_ARG_TYPE = "GROUP_INVALID_ARG_TYPE"
     """Something other than a str was passed as the group"""

@@ -7,7 +7,7 @@ from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.reporter import ReporterConfig
 from simplebench.reporters.reporter.exceptions import ReporterConfigErrorTag
-from simplebench.validators.exceptions import ValidatorsErrorTag
+from simplebench.validators.exceptions import _ValidatorsErrorTag
 
 from ...factories import reporter_config_kwargs_factory
 from ...testspec import Assert, TestAction, TestSpec, idspec
@@ -113,14 +113,14 @@ from ...testspec import Assert, TestAction, TestSpec, idspec
         action=ReporterConfig,
         kwargs=reporter_config_kwargs_factory(subdir='a' * 65),
         exception=SimpleBenchValueError,
-        exception_tag=ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG)),
+        exception_tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG)),
     idspec('INIT_025', TestAction(
         name=("Init of ReporterConfig with subdir name containing "
               "non-alphanumeric characters raises SimpleBenchValueError"),
         action=ReporterConfig,
         kwargs=reporter_config_kwargs_factory().replace(subdir='invalid subdir!'),
         exception=SimpleBenchValueError,
-        exception_tag=ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS)),
+        exception_tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS)),
     idspec('INIT_026', TestAction(
         name="Init of ReporterConfig with file_suffix as non-string raises SimpleBenchTypeError",
         action=ReporterConfig,

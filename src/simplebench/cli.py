@@ -11,7 +11,7 @@ from rich.console import Console
 
 from .decorators import get_registered_cases
 from .enums import Verbosity
-from .exceptions import CLIErrorTag, SimpleBenchTypeError
+from .exceptions import SimpleBenchTypeError, _CLIErrorTag
 from .session import Session
 
 if TYPE_CHECKING:
@@ -47,13 +47,13 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None,
             raise SimpleBenchTypeError(
                 "'extra_args' argument must either be None or a list of str: "
                 f"type of passed 'extra_args' was {type(extra_args).__name__}",
-                tag=CLIErrorTag.CLI_INVALID_EXTRA_ARGS_TYPE)
+                tag=_CLIErrorTag.CLI_INVALID_EXTRA_ARGS_TYPE)
         extra_args = list(extra_args)
         if not all(isinstance(item, str) for item in extra_args):
             raise SimpleBenchTypeError(
                 "'extra_args' argument must either be None or a list of str: "
                 "A non-str item was found in the passed list",
-                tag=CLIErrorTag.CLI_INVALID_EXTRA_ARGS_ITEM_TYPE)
+                tag=_CLIErrorTag.CLI_INVALID_EXTRA_ARGS_ITEM_TYPE)
 
     if extra_args is not None:
         if argv is None:

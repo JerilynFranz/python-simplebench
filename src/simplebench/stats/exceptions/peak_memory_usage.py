@@ -1,10 +1,10 @@
 """ErrorTags for the simplebench.stats.peak_memory_usage module."""
-from simplebench.exceptions import ErrorTag
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class PeakMemoryUsageErrorTag(ErrorTag):
+class _PeakMemoryUsageErrorTag(ErrorTag):
     """ErrorTags for the PeakMemoryUsage class."""
     INVALID_ITERATIONS_ARG_TYPE = "INVALID_ITERATIONS_ARG_TYPE"
     """Invalid iterations argument passed to the PeakMemoryUsage() constructor

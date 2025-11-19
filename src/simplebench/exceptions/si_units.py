@@ -1,10 +1,10 @@
 """ErrorTags for the si_units module."""
-from .base import ErrorTag
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class SIUnitsErrorTag(ErrorTag):
+class _SIUnitsErrorTag(ErrorTag):
     """ErrorTags for si_units module."""
 
     # si_units.si_scale() tags

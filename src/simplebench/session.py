@@ -11,8 +11,7 @@ from rich.progress import Progress
 
 from simplebench.case import Case
 from simplebench.enums import Color, Target, Verbosity
-from simplebench.exceptions import SessionErrorTag, SimpleBenchArgumentError, SimpleBenchTypeError
-from simplebench.metaclasses import ISession
+from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
@@ -25,7 +24,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.reporter import Reporter
 
 
-class Session(ISession):
+class Session():
     """Container for session related information while running benchmarks.
 
     :ivar args: The command line arguments for the session.
@@ -127,12 +126,12 @@ class Session(ISession):
                 raise SimpleBenchTypeError(
                     "'args' argument must either be None or a list of str: "
                     f"type of passed 'args' was {type(args).__name__}",
-                    tag=SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)
+                    tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)
             args = tuple(args)
             if not all(isinstance(arg, str) for arg in args):
                 raise SimpleBenchTypeError(
                     "'args' argument must either be None or a list of str: A non-str item was found in the passed list",
-                    tag=SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)
+                    tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)
 
         self._args = self._args_parser.parse_args(args=args)
 
@@ -169,7 +168,7 @@ class Session(ISession):
             raise SimpleBenchArgumentError(
                 argument_name=arg_err.argument_name,
                 message=f'Error adding reporter flags to ArgumentParser: {arg_err.message}',
-                tag=SessionErrorTag.ARGUMENT_ERROR_ADDING_FLAGS
+                tag=_SessionErrorTag.ARGUMENT_ERROR_ADDING_FLAGS
             ) from arg_err
 
     def run(self) -> None:
@@ -267,7 +266,7 @@ class Session(ISession):
             if not isinstance(choice, Choice):
                 raise SimpleBenchTypeError(
                     "choice must be a Choice instance",
-                    tag=SessionErrorTag.REPORT_INVALID_CHOICE_RETRIEVED
+                    tag=_SessionErrorTag.REPORT_INVALID_CHOICE_RETRIEVED
                 )
             # If we have already processed this Choice (there can be multiple
             # possible valid triggering args defined for a single Choice), then skip it.
@@ -296,7 +295,7 @@ class Session(ISession):
                         flag: str = '--' + key.replace('_', '-')
                         raise SimpleBenchTypeError(
                             f'output_path must be set to generate Choice {choice.name} / {flag} report',
-                            tag=SessionErrorTag.REPORT_OUTPUT_PATH_NOT_SET
+                            tag=_SessionErrorTag.REPORT_OUTPUT_PATH_NOT_SET
                         )
                     group_path = sanitize_filename(case.group)
                     output_path = output_path / platform_name / group_path / timestamp
@@ -342,7 +341,7 @@ class Session(ISession):
         if value is not None and not (isinstance(value, type) and issubclass(value, SimpleRunner)):
             raise SimpleBenchTypeError(
                 f'default_runner must be a subclass of SimpleRunner or None - cannot be a {type(value)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
             )
         self._default_runner = value
 
@@ -361,7 +360,7 @@ class Session(ISession):
         if not isinstance(value, ArgumentParser):
             raise SimpleBenchTypeError(
                 f'args_parser must be an ArgumentParser instance - cannot be a {type(value)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_ARGSPARSER_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_ARGSPARSER_ARG
             )
         self._args_parser = value
 
@@ -381,7 +380,7 @@ class Session(ISession):
         if not isinstance(value, Namespace):
             raise SimpleBenchTypeError(
                 f'args must be a Namespace instance - cannot be a {type(value)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_ARGS_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_ARGS_ARG
             )
         self._args = value
 
@@ -406,7 +405,7 @@ class Session(ISession):
         if not isinstance(value, bool):
             raise SimpleBenchTypeError(
                 f'progress must be a bool - cannot be a {type(value)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_PROGRESS_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_PROGRESS_ARG
             )
         self._show_progress = value
 
@@ -431,7 +430,7 @@ class Session(ISession):
         if not isinstance(value, Verbosity):
             raise SimpleBenchTypeError(
                 f'verbosity must be a Verbosity instance - cannot be a {type(value)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_VERBOSITY_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_VERBOSITY_ARG
             )
         self._verbosity = value
 
@@ -451,14 +450,14 @@ class Session(ISession):
         if not isinstance(value, Sequence):
             raise SimpleBenchTypeError(
                 f'value must be a Sequence of Case - cannot be a {type(value)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_CASES_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG
             )
         for case in value:
             if not isinstance(case, Case):
                 error_text = f'items in Sequence must be Case instances - cannot be a {type(case)}'
                 raise SimpleBenchTypeError(
                     error_text,
-                    tag=SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
+                    tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
                 )
         self._cases = value
 
@@ -472,7 +471,7 @@ class Session(ISession):
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 f'case must be a Case instance - cannot be a {type(case)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_CASE_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG
             )
         self._cases = list(self._cases) + [case]
 
@@ -486,14 +485,14 @@ class Session(ISession):
         if not isinstance(cases, Sequence):
             raise SimpleBenchTypeError(
                 f'cases must be a Sequence of Case - cannot be a {type(cases)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_CASES_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG
             )
         for case in cases:
             if not isinstance(case, Case):
                 error_text = f'items in Sequence must be Case instances - cannot be a {type(case)}'
                 raise SimpleBenchTypeError(
                     error_text,
-                    tag=SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
+                    tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
                 )
         self._cases = list(self._cases) + list(cases)
 
@@ -512,7 +511,7 @@ class Session(ISession):
         if value is not None and not isinstance(value, Path):
             raise SimpleBenchTypeError(
                 f'output_path must be a Path instance - cannot be a {type(value)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_OUTPUT_PATH_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_OUTPUT_PATH_ARG
             )
         self._output_path = value
 
@@ -531,6 +530,6 @@ class Session(ISession):
         if not isinstance(value, Console):
             raise SimpleBenchTypeError(
                 f'console must be a Console instance - cannot be a {type(value)}',
-                tag=SessionErrorTag.PROPERTY_INVALID_CONSOLE_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_CONSOLE_ARG
             )
         self._console = value

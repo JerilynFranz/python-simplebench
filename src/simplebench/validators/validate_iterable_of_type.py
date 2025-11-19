@@ -2,7 +2,7 @@
 from typing import Any, Iterable, TypeVar, overload
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.validators.exceptions.validators import ValidatorsErrorTag
+from simplebench.validators.exceptions.validators import _ValidatorsErrorTag
 
 T = TypeVar("T")
 
@@ -92,37 +92,37 @@ def validate_iterable_of_type(
         if not all(isinstance(t, type) for t in types):
             raise SimpleBenchTypeError(
                 f'Invalid types argument: {types}. Must be a type or tuple of types.',
-                tag=ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_TYPES_ARG
+                tag=_ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_TYPES_ARG
             )
 
     if not isinstance(field_name, str):
         raise SimpleBenchTypeError(
             f'Invalid field_name argument type: {type(field_name)}. Must be a str.',
-            tag=ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_FIELD_NAME_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_FIELD_NAME_ARG_TYPE
         )
 
     if not isinstance(type_tag, ErrorTag):
         raise SimpleBenchTypeError(
             f'Invalid type_tag argument type: {type(type_tag)}. Must be an ErrorTag.',
-            tag=ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_TYPE_TAG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_TYPE_TAG_TYPE
         )
 
     if not isinstance(value_tag, ErrorTag):
         raise SimpleBenchTypeError(
             f'Invalid value_tag argument type: {type(value_tag)}. Must be an ErrorTag.',
-            tag=ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_VALUE_TAG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_VALUE_TAG_TYPE
         )
 
     if not isinstance(allow_empty, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_empty argument type: {type(allow_empty)}. Must be a bool.',
-            tag=ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_ALLOW_EMPTY_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_ALLOW_EMPTY_ARG_TYPE
         )
 
     if not isinstance(exact_type, bool):
         raise SimpleBenchTypeError(
             f'Invalid exact_type argument type: {type(exact_type)}. Must be a bool.',
-            tag=ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_ITERABLE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE
         )
 
     if len(value) == 0 and not allow_empty:

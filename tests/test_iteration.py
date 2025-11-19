@@ -3,7 +3,7 @@ import pytest
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from simplebench.enums import Section
-from simplebench.exceptions import IterationErrorTag, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _IterationErrorTag
 from simplebench.iteration import Iteration
 
 from .testspec import TestAction, idspec
@@ -26,63 +26,63 @@ from .testspec import TestAction, idspec
         args=[],
         kwargs={'n': 'a'},
         exception=SimpleBenchTypeError,
-        exception_tag=IterationErrorTag.N_ARG_TYPE)),
+        exception_tag=_IterationErrorTag.N_ARG_TYPE)),
     idspec("ITERATION_003", TestAction(
         name="Bad n arg value (< 1)",
         action=Iteration,
         args=[],
         kwargs={'n': 0},
         exception=SimpleBenchValueError,
-        exception_tag=IterationErrorTag.N_ARG_VALUE)),
+        exception_tag=_IterationErrorTag.N_ARG_VALUE)),
     idspec("ITERATION_004", TestAction(
         name="Bad n arg value (float)",
         action=Iteration,
         args=[],
         kwargs={'n': 1.0},
         exception=SimpleBenchTypeError,
-        exception_tag=IterationErrorTag.N_ARG_TYPE)),
+        exception_tag=_IterationErrorTag.N_ARG_TYPE)),
     idspec("ITERATION_005", TestAction(
         name="Bad elapsed arg type (str)",
         action=Iteration,
         args=[],
         kwargs={'elapsed': 'a'},
         exception=SimpleBenchTypeError,
-        exception_tag=IterationErrorTag.ELAPSED_ARG_TYPE)),
+        exception_tag=_IterationErrorTag.ELAPSED_ARG_TYPE)),
     idspec("ITERATION_006", TestAction(
         name="Bad elapsed arg value (negative)",
         action=Iteration,
         args=[],
         kwargs={'elapsed': -1.0},
         exception=SimpleBenchValueError,
-        exception_tag=IterationErrorTag.ELAPSED_ARG_VALUE)),
+        exception_tag=_IterationErrorTag.ELAPSED_ARG_VALUE)),
     idspec("ITERATION_007", TestAction(
         name="Bad unit arg type (int)",
         action=Iteration,
         args=[],
         kwargs={'unit': 1},
         exception=SimpleBenchTypeError,
-        exception_tag=IterationErrorTag.UNIT_ARG_TYPE)),
+        exception_tag=_IterationErrorTag.UNIT_ARG_TYPE)),
     idspec("ITERATION_008", TestAction(
         name="Bad unit arg value (empty string)",
         action=Iteration,
         args=[],
         kwargs={'unit': ''},
         exception=SimpleBenchValueError,
-        exception_tag=IterationErrorTag.UNIT_ARG_VALUE)),
+        exception_tag=_IterationErrorTag.UNIT_ARG_VALUE)),
     idspec("ITERATION_009", TestAction(
         name="bad scale arg type (str)",
         action=Iteration,
         args=[],
         kwargs={'scale': '1'},
         exception=SimpleBenchTypeError,
-        exception_tag=IterationErrorTag.SCALE_ARG_TYPE)),
+        exception_tag=_IterationErrorTag.SCALE_ARG_TYPE)),
     idspec("ITERATION_010", TestAction(
         name="bad scale arg value (non-positive float)",
         action=Iteration,
         args=[],
         kwargs={'scale': 0.0},
         exception=SimpleBenchValueError,
-        exception_tag=IterationErrorTag.SCALE_ARG_VALUE)),
+        exception_tag=_IterationErrorTag.SCALE_ARG_VALUE)),
     idspec("ITERATION_011", TestAction(
         name="Good args",
         action=Iteration,
@@ -127,14 +127,14 @@ from .testspec import TestAction, idspec
         args=[],
         kwargs={'memory': 1.0},
         exception=SimpleBenchTypeError,
-        exception_tag=IterationErrorTag.MEMORY_ARG_TYPE)),
+        exception_tag=_IterationErrorTag.MEMORY_ARG_TYPE)),
     idspec("ITERATION_016", TestAction(
         name="Bad peak_memory arg type (float)",
         action=Iteration,
         args=[],
         kwargs={'peak_memory': 1.0},
         exception=SimpleBenchTypeError,
-        exception_tag=IterationErrorTag.PEAK_MEMORY_ARG_TYPE)),
+        exception_tag=_IterationErrorTag.PEAK_MEMORY_ARG_TYPE)),
     ])
 def test_iteration_init(testspec: TestAction) -> None:
     """Test the initialization of the Iteration class.
@@ -171,13 +171,13 @@ def test_iteration_init(testspec: TestAction) -> None:
         action=Iteration().iteration_section,
         args=[Section.NULL],
         exception=SimpleBenchValueError,
-        exception_tag=IterationErrorTag.ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE)),
+        exception_tag=_IterationErrorTag.ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE)),
     idspec("ITERATION_006", TestAction(
         name="Iteration Section - Bad section type (str)",
         action=Iteration().iteration_section,
         args=['bad_section'],
         exception=SimpleBenchTypeError,
-        exception_tag=IterationErrorTag.ITERATION_SECTION_INVALID_SECTION_ARG_TYPE))
+        exception_tag=_IterationErrorTag.ITERATION_SECTION_INVALID_SECTION_ARG_TYPE))
 ])
 def test_iteration_section(testspec: TestAction) -> None:
     """Test the iteration_section method of the Iteration class.

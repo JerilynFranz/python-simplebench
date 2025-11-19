@@ -9,8 +9,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Optional
 
 from .defaults import DEFAULT_ITERATIONS, DEFAULT_MAX_TIME, DEFAULT_MIN_TIME, DEFAULT_ROUNDS, DEFAULT_WARMUP_ITERATIONS
 from .enums import Color, Section
-from .exceptions import CaseErrorTag, SimpleBenchRuntimeError, SimpleBenchTypeError, SimpleBenchValueError
-from .metaclasses import ICase
+from .exceptions import SimpleBenchRuntimeError, SimpleBenchTypeError, SimpleBenchValueError, _CaseErrorTag
 from .protocols import ActionRunner
 from .reporters.protocols import ReporterCallback
 from .reporters.reporter.options import ReporterOptions
@@ -29,7 +28,7 @@ if TYPE_CHECKING:
     from .session import Session
 
 
-class Case(ICase):
+class Case:
     '''Declaration of a benchmark case.
 
     A benchmark case defines the specific benchmark to be run, including the
@@ -43,14 +42,14 @@ class Case(ICase):
     The min_time, max_time, iterations, and warmup_iterations parameters control how
     the benchmark is executed and measured and interact with each other as follows when
     using the default SimpleRunner:
-        - The benchmark will perform `warmup_iterations` iterations before starting the timing
-          and measurement phase. This is done to allow for any setup or caching effects to stabilize.
-          This is separate from the main benchmark iterations and does not count towards the
-          `iterations` count or the `min_time`/`max_time` limits.
-        - The benchmark will run for at least `min_time` wall clock seconds, but will stop on
-          completing the first iteration that ends after `max_time` seconds during the timing phase.
-        - If the benchmark completes `iterations` iterations after `min_time` but before
-          reaching `max_time`, it will stop.
+    - The benchmark will perform `warmup_iterations` iterations before starting the timing
+        and measurement phase. This is done to allow for any setup or caching effects to stabilize.
+        This is separate from the main benchmark iterations and does not count towards the
+        `iterations` count or the `min_time`/`max_time` limits.
+    - The benchmark will run for at least `min_time` wall clock seconds, but will stop on
+        completing the first iteration that ends after `max_time` seconds during the timing phase.
+    - If the benchmark completes `iterations` iterations after `min_time` but before
+        reaching `max_time`, it will stop.
 
     This means that the benchmark will run for at least `min_time` seconds and
     for at least one iteration during the timing phase. If `min_time` is reached
@@ -91,13 +90,15 @@ class Case(ICase):
     of Results objects. Each Results object corresponds to a specific combination of
     keyword argument variations.
 
-    Minimal example:
-    .. code-block:: python
+    .. code-block:: python3
+      :caption: Minimal Example
 
-        from simplebench import Case, SimpleRunner, Results, main
+        from simplebench import (
+            Case, SimpleRunner, Results, main)
 
 
-        def my_benchmark_action(bench: SimpleRunner, **kwargs) -> Results:
+        def my_benchmark_action(bench: SimpleRunner,
+                                **kwargs) -> Results:
             # Perform benchmark action here
             def benchmark_operation():
                 sum(range(1000))  # Example operation to benchmark
@@ -146,16 +147,29 @@ class Case(ICase):
         Each key is a keyword argument name, and the value is a list of possible values.
 
         When tests are run, the benchmark will be executed for each combination of the specified
-        keyword argument variations. For example, if `kwargs_variations` is:
-            {
-                'size': [10, 100],
-                'mode': ['fast', 'accurate']
-            }
+        keyword argument variations. For example, if `kwargs_variations` is
+
+        .. code-block:: python3
+          :caption: `kwargs_variations` argument example
+
+            ...
+            kwargs_variations = {
+                    'size': [10, 100],
+                    'mode': ['fast', 'accurate']
+                },
+            ...
+
         The benchmark will be run 4 times with the following combinations of keyword arguments:
-            1. size=10, mode='fast'
-            2. size=10, mode='accurate'
-            3. size=100, mode='fast'
-            4. size=100, mode='accurate'
+
+        .. code-block:: python3
+          :linenos:
+          :caption: Keyword (`**kwargs`) Argument Combinations
+
+            {size=10, mode='fast'}
+            {size=10, mode='accurate'}
+            {size=100, mode='fast'}
+            {size=100, mode='accurate'}
+
         The action function will be called with these keyword arguments accordingly and must
         accept them.
     :vartype kwargs_variations: dict[str, list[Any]]
@@ -185,7 +199,7 @@ class Case(ICase):
     __slots__ = ('_group', '_title', '_description', '_action',
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
                  '_variation_cols', '_kwargs_variations', '_runner',
-                 '_callback', '_results', '_options')
+                 '_callback', '_results', '_options', '_rounds')
 
     def __init__(self, *,
                  action: ActionRunner,
@@ -282,40 +296,40 @@ class Case(ICase):
         """
         self._group = validate_non_blank_string(
                         group, "group",
-                        CaseErrorTag.INVALID_GROUP_TYPE,
-                        CaseErrorTag.INVALID_GROUP_VALUE)
+                        _CaseErrorTag.INVALID_GROUP_TYPE,
+                        _CaseErrorTag.INVALID_GROUP_VALUE)
         self._action = Case.validate_action_signature(action)
         title = action.__name__ if title is None else title  # type: ignore[attr-defined]
         self._title = validate_non_blank_string(
                         title, "title",
-                        CaseErrorTag.INVALID_TITLE_TYPE,
-                        CaseErrorTag.INVALID_TITLE_VALUE)
+                        _CaseErrorTag.INVALID_TITLE_TYPE,
+                        _CaseErrorTag.INVALID_TITLE_VALUE)
         if description is None:
             description = action.__doc__ if action.__doc__ else '(no description)'
         self._description = validate_non_blank_string(
                         description, "description",
-                        CaseErrorTag.INVALID_DESCRIPTION_TYPE,
-                        CaseErrorTag.INVALID_DESCRIPTION_VALUE)
+                        _CaseErrorTag.INVALID_DESCRIPTION_TYPE,
+                        _CaseErrorTag.INVALID_DESCRIPTION_VALUE)
         self._iterations = validate_positive_int(
                         iterations, "iterations",
-                        CaseErrorTag.INVALID_ITERATIONS_TYPE,
-                        CaseErrorTag.INVALID_ITERATIONS_VALUE)
+                        _CaseErrorTag.INVALID_ITERATIONS_TYPE,
+                        _CaseErrorTag.INVALID_ITERATIONS_VALUE)
         self._warmup_iterations = validate_non_negative_int(
                         warmup_iterations, "warmup_iterations",
-                        CaseErrorTag.INVALID_WARMUP_ITERATIONS_TYPE,
-                        CaseErrorTag.INVALID_WARMUP_ITERATIONS_VALUE)
+                        _CaseErrorTag.INVALID_WARMUP_ITERATIONS_TYPE,
+                        _CaseErrorTag.INVALID_WARMUP_ITERATIONS_VALUE)
         self._rounds = validate_positive_int(
                         rounds, "rounds",
-                        CaseErrorTag.INVALID_ROUNDS_TYPE,
-                        CaseErrorTag.INVALID_ROUNDS_VALUE)
+                        _CaseErrorTag.INVALID_ROUNDS_TYPE,
+                        _CaseErrorTag.INVALID_ROUNDS_VALUE)
         self._min_time = validate_positive_float(
                         min_time, "min_time",
-                        CaseErrorTag.INVALID_MIN_TIME_TYPE,
-                        CaseErrorTag.INVALID_MIN_TIME_VALUE)
+                        _CaseErrorTag.INVALID_MIN_TIME_TYPE,
+                        _CaseErrorTag.INVALID_MIN_TIME_VALUE)
         self._max_time = validate_positive_float(
                         max_time, "max_time",
-                        CaseErrorTag.INVALID_MAX_TIME_TYPE,
-                        CaseErrorTag.INVALID_MAX_TIME_VALUE)
+                        _CaseErrorTag.INVALID_MAX_TIME_TYPE,
+                        _CaseErrorTag.INVALID_MAX_TIME_VALUE)
         self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
         self._variation_cols = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
         self._runner = Case.validate_runner(runner)
@@ -337,7 +351,7 @@ class Case(ICase):
         if min_time > max_time:
             raise SimpleBenchValueError(
                 f'Invalid time range: min_time {min_time} > max_time {max_time}.',
-                tag=CaseErrorTag.INVALID_TIME_RANGE)
+                tag=_CaseErrorTag.INVALID_TIME_RANGE)
 
     @staticmethod
     def validate_action_signature(action: ActionRunner) -> ActionRunner:
@@ -358,24 +372,24 @@ class Case(ICase):
         if not callable(action):
             raise SimpleBenchTypeError(
                 f'Invalid action: {action}. Must be a callable.',
-                tag=CaseErrorTag.INVALID_ACTION_NOT_CALLABLE
+                tag=_CaseErrorTag.INVALID_ACTION_NOT_CALLABLE
                 )
         action_signature = inspect.signature(action)
         if 'bench' not in action_signature.parameters:
             raise SimpleBenchTypeError(
                 f'Invalid action: {action}. Must accept a "bench" parameter.',
-                tag=CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER
+                tag=_CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER
                 )
         kwargs_param = action_signature.parameters.get('kwargs')
         if kwargs_param is None or kwargs_param.kind not in (inspect.Parameter.VAR_KEYWORD,):
             raise SimpleBenchTypeError(
                 f'Invalid action: {action}. Must accept "**kwargs" parameter.',
-                tag=CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER
+                tag=_CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER
                 )
         if len(action_signature.parameters) != 2:
             raise SimpleBenchValueError(
                 f'Invalid action: {action}. Must accept exactly 2 parameters: bench and **kwargs.',
-                tag=CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT
+                tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT
             )
         return action
 
@@ -405,30 +419,30 @@ class Case(ICase):
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid kwargs_variations: {value}. Must be a dictionary.',
-                tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT
+                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT
                 )
         validated_dict = {}
         for key, kw_value in value.items():
             if not isinstance(key, str):
                 raise SimpleBenchTypeError(
                     f'Invalid kwargs_variations entry key: {key}. Keys must be of type str.',
-                    tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE
+                    tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE
                     )
             if not key.isidentifier():
                 raise SimpleBenchValueError(
                     f'Invalid kwargs_variations entry key: {key}. Keys must be valid Python identifiers.',
-                    tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER
+                    tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER
                     )
             if not isinstance(kw_value, list):
                 raise SimpleBenchTypeError(
                     f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. Values must be in a list.',
-                    tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST
+                    tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST
                     )
             if not kw_value:
                 raise SimpleBenchValueError(
                     (f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. '
                      'Values cannot be empty lists.'),
-                    tag=CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST
+                    tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST
                     )
             validated_dict[key] = copy(kw_value)
         return validated_dict
@@ -456,24 +470,24 @@ class Case(ICase):
         if not isinstance(variation_cols, dict):
             raise SimpleBenchTypeError(
                 f'Invalid variation_cols: {variation_cols}. Must be a dictionary.',
-                tag=CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT
+                tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT
                 )
         validated_dict: dict[str, str] = {}
         for key, vc_value in variation_cols.items():
             if key not in kwargs_variations:
                 raise SimpleBenchValueError(
                     f'Invalid variation_cols entry key: {key}. Key not found in kwargs_variations.',
-                    tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
+                    tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
             if not isinstance(vc_value, str):
                 raise SimpleBenchTypeError(
                     f'Invalid variation_cols entry value for entry "{key}": "{vc_value}". Values must be of type str.',
-                    tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING
+                    tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING
                     )
             stripped_value = vc_value.strip()
             if stripped_value == '':
                 raise SimpleBenchValueError(
                     f'Invalid variation_cols entry value: "{vc_value}". Values cannot be blank strings.',
-                    tag=CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK
+                    tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK
                     )
             validated_dict[key] = stripped_value
         return validated_dict
@@ -493,7 +507,7 @@ class Case(ICase):
         if not (isinstance(value, type) and issubclass(value, SimpleRunner)):
             raise SimpleBenchTypeError(
                 f'Invalid runner: {value}. Must be a subclass of SimpleRunner or None.',
-                tag=CaseErrorTag.INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS
+                tag=_CaseErrorTag.INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS
                 )
         return value
 
@@ -512,13 +526,13 @@ class Case(ICase):
         if not isinstance(value, Iterable):
             raise SimpleBenchTypeError(
                 f'Invalid options: {value}. Must be an iterable.',
-                tag=CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE)
+                tag=_CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE)
         options_list: list[ReporterOptions] = list(value)
         for option in options_list:
             if not isinstance(option, ReporterOptions):
                 raise SimpleBenchTypeError(
                     f'Invalid option: {option}. Must be of type ReporterOption or a sub-class.',
-                    tag=CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
+                    tag=_CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
                     )
         return options_list
 
@@ -545,7 +559,8 @@ class Case(ICase):
         arbitrary keyword arguments ('**kwargs') and return a Results object.
 
         Example:
-        .. code-block:: python
+
+        .. code-block:: python3
 
             def my_benchmark_action(*, bench: SimpleRunner, **kwargs) -> Results:
                 def setup_function(size: int) -> None:
@@ -696,7 +711,7 @@ class Case(ICase):
                 raise SimpleBenchRuntimeError(
                     f'Error running benchmark action {str(self.action)} for case '
                     f'"{self.title}" with kwargs {kwargs}: {e}, {type(e)}',
-                    tag=CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION
+                    tag=_CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION
                     ) from e
             self._results.append(results)
             progress_tracker.update(
@@ -752,12 +767,12 @@ class Case(ICase):
         if not isinstance(section, Section):
             raise SimpleBenchTypeError(
                 f'Invalid section type: {type(section)}. Must be of type Section.',
-                tag=CaseErrorTag.SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT
+                tag=_CaseErrorTag.SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT
                 )
         if section not in (Section.OPS, Section.TIMING):
             raise SimpleBenchValueError(
                 f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
-                tag=CaseErrorTag.SECTION_MEAN_INVALID_SECTION_ARGUMENT
+                tag=_CaseErrorTag.SECTION_MEAN_INVALID_SECTION_ARGUMENT
                 )
 
         if not self.results:

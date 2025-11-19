@@ -9,7 +9,7 @@ from typing import Any, Sequence, TypeVar, cast, overload
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.type_proxies.lazy_type_proxy import LazyTypeProxy
-from simplebench.validators.exceptions import ValidatorsErrorTag
+from simplebench.validators.exceptions import _ValidatorsErrorTag
 
 T = TypeVar('T')
 
@@ -85,17 +85,17 @@ def validate_bool(
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
             f'Invalid name argument type: {type(name)}. Must be a str.',
-            tag=ValidatorsErrorTag.VALIDATE_BOOL_INVALID_NAME_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_NAME_ARG_TYPE
         )
     if not isinstance(error_tag, ErrorTag):
         raise SimpleBenchTypeError(
             f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
-            tag=ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ERROR_TAG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ERROR_TAG_TYPE
         )
     if not isinstance(allow_none, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_none argument type: {type(allow_none)}. Must be a bool.',
-            tag=ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ALLOW_NONE_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ALLOW_NONE_ARG_TYPE
         )
 
     if not isinstance(value, bool):
@@ -179,24 +179,24 @@ def validate_type(
     if not isinstance(types, (type, tuple, LazyTypeProxy)):
         raise SimpleBenchTypeError(
             f'Invalid expected argument type: {type(types)}. Must be a type, tuple of types, or LazyType.',
-            tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE
         )
     if isinstance(types, tuple):
         for item in types:
             if not isinstance(item, (type, LazyTypeProxy)):
                 raise SimpleBenchTypeError(
                     f'Invalid expected argument item type in tuple: {type(item)}. Must be a type or LazyType.',
-                    tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE
+                    tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE
                 )
     if not isinstance(field_name, str):
         raise SimpleBenchTypeError(
             f'Invalid name argument type: {type(field_name)}. Must be a str.',
-            tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE
         )
     if not isinstance(error_tag, ErrorTag):
         raise SimpleBenchTypeError(
             f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
-            tag=ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)
+            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)
 
     # We use `cast` here to inform the static type checker that we know
     # LazyTypeProxy is a valid type for `isinstance` due to its metaclass.
@@ -269,22 +269,22 @@ def validate_string(
     if not isinstance(strip, bool):
         raise SimpleBenchTypeError(
             f'Invalid strip type: {type(strip)}. Must be a bool.',
-            tag=ValidatorsErrorTag.INVALID_STRIP_ARG_TYPE
+            tag=_ValidatorsErrorTag.INVALID_STRIP_ARG_TYPE
         )
     if not isinstance(allow_empty, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_empty type: {type(allow_empty)}. Must be a bool.',
-            tag=ValidatorsErrorTag.INVALID_ALLOW_EMPTY_ARG_TYPE
+            tag=_ValidatorsErrorTag.INVALID_ALLOW_EMPTY_ARG_TYPE
         )
     if not isinstance(allow_blank, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_blank type: {type(allow_blank)}. Must be a bool.',
-            tag=ValidatorsErrorTag.INVALID_ALLOW_BLANK_ARG_TYPE
+            tag=_ValidatorsErrorTag.INVALID_ALLOW_BLANK_ARG_TYPE
         )
     if not isinstance(alphanumeric_only, bool):
         raise SimpleBenchTypeError(
             f'Invalid alphanumeric_only type: {type(alphanumeric_only)}. Must be a bool.',
-            tag=ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE
+            tag=_ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE
         )
     if not isinstance(value, str):
         raise SimpleBenchTypeError(
@@ -862,20 +862,20 @@ def validate_int_range(number: Any,
     if not isinstance(field_name, str):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_int_range: field_name type: {type(field_name)}. Must be a str.',
-            tag=ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
     if not isinstance(min_value, int):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_int_range: min_value type {type(min_value)}. Must be an int.',
-            tag=ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE)
     if not isinstance(max_value, int):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_int_range: max_value type {type(max_value)}. Must be an int.',
-            tag=ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE)
     if min_value > max_value:
         raise SimpleBenchValueError(
             f'Invalid call to validate_int_range: min_value ({min_value}) '
             f'cannot be greater than max_value ({max_value}).',
-            tag=ValidatorsErrorTag.INVALID_RANGE)
+            tag=_ValidatorsErrorTag.INVALID_RANGE)
     if not isinstance(number, int):
         raise SimpleBenchTypeError(
             f'Invalid {field_name} type: {type(number)}. Must be an int.',
@@ -912,20 +912,20 @@ def validate_float_range(
     if not isinstance(field_name, str):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_float_range: field_name type: {type(field_name)}. Must be a str.',
-            tag=ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
     if not isinstance(min_value, float):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_float_range: min_value type {type(min_value)}. Must be a float.',
-            tag=ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE)
     if not isinstance(max_value, float):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_float_range: max_value type {type(max_value)}. Must be a float.',
-            tag=ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE)
     if min_value > max_value:
         raise SimpleBenchValueError(
             f'Invalid call to validate_float_range: min_value ({min_value}) '
             f'cannot be greater than max_value ({max_value}).',
-            tag=ValidatorsErrorTag.INVALID_RANGE)
+            tag=_ValidatorsErrorTag.INVALID_RANGE)
     if not isinstance(number, float):
         raise SimpleBenchTypeError(
             f'Invalid {field_name} type: {type(number)}. Must be a float.',
@@ -963,23 +963,23 @@ def validate_filename(filename: Any) -> str:
     """
     filename = validate_type(
         filename, str, 'filename',
-        ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE)
+        _ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE)
 
     file = Path(filename)
     file_suffix = file.suffix.replace('.', '', 1)
     if file_suffix != '' and len(file_suffix) > 10:
         raise SimpleBenchValueError(
             f"Filename suffix cannot be longer than 10 characters (passed suffix was '{file_suffix}')",
-            tag=ValidatorsErrorTag.VALIDATE_FILENAME_SUFFIX_TOO_LONG)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_SUFFIX_TOO_LONG)
     if file_suffix != '' and not file_suffix.isalnum():
         raise SimpleBenchValueError(
             "Filename suffix must be alphanumeric (contain only A-Z, a-z, 0-9)",
-            tag=ValidatorsErrorTag.VALIDATE_FILENAME_SUFFIX_NOT_ALPHANUMERIC)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_SUFFIX_NOT_ALPHANUMERIC)
     file_stem = file.stem
     if file_stem == '':
         raise SimpleBenchValueError(
             "Filename must have a valid stem (name without suffix). It cannot be empty or blank.",
-            tag=ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_STEM)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_STEM)
     if not re.match(_FILENAME_STEM_RE, file_stem):
         raise SimpleBenchValueError(
             "Filename stem (name without suffix) must consist of "
@@ -987,11 +987,11 @@ def validate_filename(filename: Any) -> str:
             "cannot start or end with an underscore or dash, and must be "
             "at least one character long "
             f"(passed stem was '{file_stem}')",
-            tag=ValidatorsErrorTag.VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC)
     if len(filename) > 255:
         raise SimpleBenchValueError(
             f"Filename cannot be longer than 255 characters (passed filename was '{filename}')",
-            tag=ValidatorsErrorTag.VALIDATE_FILENAME_TOO_LONG)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_TOO_LONG)
     return filename
 
 
@@ -1028,12 +1028,12 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
     if not isinstance(allow_empty, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_empty type: {type(allow_empty)}. Must be a bool.',
-            tag=ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE)
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE)
 
     dir_string = validate_string(
         dirpath, 'dirpath',
-        ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE,
-        ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE,
+        _ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE,
+        _ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE,
         allow_empty=allow_empty)
 
     if not dir_string and allow_empty:
@@ -1042,19 +1042,19 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
     if len(dir_string) > 255:
         raise SimpleBenchValueError(
             f"Directory path cannot be longer than 255 characters (passed directory path was '{dir_string}')",
-            tag=ValidatorsErrorTag.VALIDATE_DIRPATH_TOO_LONG)
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_TOO_LONG)
 
     if not re.match(r'^[A-Za-z0-9_\\/-]+$', dir_string):
         raise SimpleBenchValueError(
             "Directory path must consist of only alphanumeric characters (A-Za-z0-9), underscores (_), dashes (-), "
             f"slashes (/) or backslashes (\\) (passed directory path was '{dir_string}')",
-            tag=ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS)
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS)
 
     # Use the validated 'dir_string' variable consistently and simplify the check.
     if dir_string.startswith(('/', '\\')) or dir_string.endswith(('/', '\\')):
         raise SimpleBenchValueError(
             "Directory path cannot start or end with a slash (/) or backslash (\\)",
-            tag=ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_START_END)
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_START_END)
 
     path = Path(dir_string)
     for element in path.parts:
@@ -1062,7 +1062,7 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
             raise SimpleBenchValueError(
                 "Directory path cannot contain empty elements, which can be caused by "
                 f"consecutive slashes (e.g., '//') (passed directory path was '{dir_string}')",
-                tag=ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_EMPTY)
+                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_EMPTY)
 
         if not re.match(_DIRPATH_ELEMENT_RE, element):
             raise SimpleBenchValueError(
@@ -1070,12 +1070,12 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
                 "only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, "
                 "cannot start or end with an underscore or dash, and must be "
                 f"at least one character long (invalid element was '{element}')",
-                tag=ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_HAS_INVALID_CHARACTERS)
+                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_HAS_INVALID_CHARACTERS)
         if len(element) > 64:
             raise SimpleBenchValueError(
                 "Directory path elements (names between slashes or backslashes) cannot be longer than 64 characters "
                 f"(invalid element was '{element}')",
-                tag=ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG)
+                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG)
 
     return path.as_posix()
 

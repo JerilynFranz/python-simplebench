@@ -13,7 +13,7 @@ from simplebench.defaults import (
     DEFAULT_MEMORY_UNIT,
 )
 from simplebench.enums import Section
-from simplebench.exceptions import ResultsErrorTag, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
 from simplebench.iteration import Iteration
 from simplebench.results import Results
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
@@ -105,7 +105,7 @@ def base_iterations() -> list[Iteration]:
             iterations=base_iterations()
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.N_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.N_INVALID_ARG_VALUE)),
     idspec("RESULTS_003", TestAction(
         name="non-integer n",
         action=Results,
@@ -120,7 +120,7 @@ def base_iterations() -> list[Iteration]:
             iterations=base_iterations()
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.N_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.N_INVALID_ARG_TYPE)),
     idspec("RESULTS_004", TestAction(
         name="non-string group",
         action=Results,
@@ -135,7 +135,7 @@ def base_iterations() -> list[Iteration]:
             iterations=base_iterations()
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.GROUP_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.GROUP_INVALID_ARG_TYPE)),
     idspec("RESULTS_005", TestAction(
         name="non-string title",
         action=Results,
@@ -149,7 +149,7 @@ def base_iterations() -> list[Iteration]:
             iterations=base_iterations()
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.TITLE_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.TITLE_INVALID_ARG_TYPE)),
     idspec("RESULTS_006", TestAction(
         name="non-string description",
         action=Results,
@@ -164,7 +164,7 @@ def base_iterations() -> list[Iteration]:
             iterations=base_iterations()
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.DESCRIPTION_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.DESCRIPTION_INVALID_ARG_TYPE)),
     idspec("RESULTS_007", TestAction(
         name="non-dict variation_cols",
         action=Results,
@@ -175,7 +175,7 @@ def base_iterations() -> list[Iteration]:
             variation_cols=[]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.VARIATION_COLS_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_TYPE)),
     idspec("RESULTS_008", TestAction(
         name="non-string variation_cols key",
         action=Results,
@@ -186,7 +186,7 @@ def base_iterations() -> list[Iteration]:
             variation_cols={1: 'value'}  # type: ignore[dict-item]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_TYPE)),
+        exception_tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_TYPE)),
     idspec("RESULTS_009", TestAction(
         name="non-string variation_cols value",
         action=Results,
@@ -197,7 +197,7 @@ def base_iterations() -> list[Iteration]:
             variation_cols={'key': 1}  # type: ignore[dict-item]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE)),
+        exception_tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE)),
     idspec("RESULTS_010", TestAction(
         name="non-string interval_unit",
         action=Results,
@@ -207,7 +207,7 @@ def base_iterations() -> list[Iteration]:
             interval_unit=123  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.INTERVAL_UNIT_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.INTERVAL_UNIT_INVALID_ARG_TYPE)),
     idspec("RESULTS_011", TestAction(
         name="non-float interval_scale",
         action=Results,
@@ -217,7 +217,7 @@ def base_iterations() -> list[Iteration]:
             interval_scale='large'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_TYPE)),
     idspec("RESULTS_012", TestAction(
         name="non-list iterations with dict",
         action=Results,
@@ -227,7 +227,7 @@ def base_iterations() -> list[Iteration]:
             iterations={}  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE)),
     idspec("RESULTS_013", TestAction(
         name="non-list iterations with string",
         action=Results,
@@ -238,7 +238,7 @@ def base_iterations() -> list[Iteration]:
             iterations='not_a_list'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE)),
+        exception_tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE)),
     idspec("RESULTS_014", TestAction(
         name="non-Iteration iterations elements",
         action=Results,
@@ -248,7 +248,7 @@ def base_iterations() -> list[Iteration]:
             iterations=[1.0, 3.0]  # type: ignore[list-item]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE)),
+        exception_tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE)),
     idspec("RESULTS_015", TestAction(
         name="non-OperationsPerInterval ops_per_second",
         action=Results,
@@ -259,7 +259,7 @@ def base_iterations() -> list[Iteration]:
             ops_per_second={}  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.OPS_PER_SECOND_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.OPS_PER_SECOND_INVALID_ARG_TYPE)),
     idspec("RESULTS_016", TestAction(
         name="non-OperationTimings per_round_timings",
         action=Results,
@@ -269,7 +269,7 @@ def base_iterations() -> list[Iteration]:
             per_round_timings=[]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.PER_ROUND_TIMINGS_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.PER_ROUND_TIMINGS_INVALID_ARG_TYPE)),
     idspec("RESULTS_017", TestAction(
         name="non-string ops_per_interval_unit",
         action=Results,
@@ -279,7 +279,7 @@ def base_iterations() -> list[Iteration]:
             ops_per_interval_unit=123  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE)),
     idspec("RESULTS_018", TestAction(
         name="non-number ops_per_interval_scale",
         action=Results,
@@ -289,7 +289,7 @@ def base_iterations() -> list[Iteration]:
             ops_per_interval_scale='large'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE)),
     idspec("RESULTS_019", TestAction(
         name="non-number total_elapsed",
         action=Results,
@@ -299,7 +299,7 @@ def base_iterations() -> list[Iteration]:
             total_elapsed='fast'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.TOTAL_ELAPSED_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.TOTAL_ELAPSED_INVALID_ARG_TYPE)),
     idspec("RESULTS_020", TestAction(
         name="non-dict variation_marks",
         action=Results,
@@ -309,7 +309,7 @@ def base_iterations() -> list[Iteration]:
             variation_marks=[]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE)),
     idspec("RESULTS_021", TestAction(
         name="non-string variation_marks key",
         action=Results,
@@ -319,7 +319,7 @@ def base_iterations() -> list[Iteration]:
             variation_marks={1: 'value'}  # type: ignore[dict-item]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_TYPE)),
+        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_TYPE)),
     idspec("RESULTS_022", TestAction(
         name="non-dict variation_marks value",
         action=Results,
@@ -329,7 +329,7 @@ def base_iterations() -> list[Iteration]:
             variation_marks=[('key', 1)]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE)),
     idspec("RESULTS_023", TestAction(
         name="non-dict extra_info",
         action=Results,
@@ -339,7 +339,7 @@ def base_iterations() -> list[Iteration]:
             extra_info=[]  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE)),
     idspec("RESULTS_024", TestAction(
         name="empty string group",
         action=Results,
@@ -349,7 +349,7 @@ def base_iterations() -> list[Iteration]:
             group=''  # invalid empty string
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.GROUP_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.GROUP_INVALID_ARG_VALUE)),
     idspec("RESULTS_025", TestAction(
         name="empty string title",
         action=Results,
@@ -359,7 +359,7 @@ def base_iterations() -> list[Iteration]:
             title='',  # invalid empty string
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.TITLE_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.TITLE_INVALID_ARG_VALUE)),
     idspec("RESULTS_026", TestAction(
         name="empty string variation_cols key",
         action=Results,
@@ -369,7 +369,7 @@ def base_iterations() -> list[Iteration]:
             variation_cols={'': 'value'}  # invalid empty string key
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_VALUE)),
+        exception_tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_VALUE)),
     idspec("RESULTS_027", TestAction(
         name="empty string interval_unit",
         action=Results,
@@ -379,7 +379,7 @@ def base_iterations() -> list[Iteration]:
             interval_unit=''  # invalid empty string
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.INTERVAL_UNIT_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.INTERVAL_UNIT_INVALID_ARG_VALUE)),
     idspec("RESULTS_028", TestAction(
         name="empty string ops_per_interval_unit",
         action=Results,
@@ -389,7 +389,7 @@ def base_iterations() -> list[Iteration]:
             ops_per_interval_unit=''  # invalid empty string
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE)),
     idspec("RESULTS_029", TestAction(
         name="negative interval_scale",
         action=Results,
@@ -399,7 +399,7 @@ def base_iterations() -> list[Iteration]:
             interval_scale=-1.0  # invalid negative value
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_VALUE)),
     idspec("RESULTS_030", TestAction(
         name="zero interval_scale",
         action=Results,
@@ -409,7 +409,7 @@ def base_iterations() -> list[Iteration]:
             interval_scale=0.0  # invalid zero value
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_VALUE)),
     idspec("RESULTS_031", TestAction(
         name="negative ops_per_interval_scale",
         action=Results,
@@ -419,7 +419,7 @@ def base_iterations() -> list[Iteration]:
             ops_per_interval_scale=-1.0  # invalid negative value
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)),
     idspec("RESULTS_032", TestAction(
         name="zero ops_per_interval_scale",
         action=Results,
@@ -429,7 +429,7 @@ def base_iterations() -> list[Iteration]:
             ops_per_interval_scale=0.0  # invalid zero value
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)),
     idspec("RESULTS_033", TestAction(
         name="negative total_elapsed",
         action=Results,
@@ -439,7 +439,7 @@ def base_iterations() -> list[Iteration]:
             total_elapsed=-1.0  # invalid negative value
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.TOTAL_ELAPSED_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.TOTAL_ELAPSED_INVALID_ARG_VALUE)),
     idspec("RESULTS_034", TestAction(
         name="blank string variation_marks key",
         action=Results,
@@ -448,7 +448,7 @@ def base_iterations() -> list[Iteration]:
             n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
             variation_marks={' ': 'value'}),  # invalid blank string key
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE)),
+        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE)),
     idspec("RESULTS_035", TestAction(
         name="Wrong type for peak_memory argument (str instead of PeakMemoryUsage)",
         action=Results,
@@ -458,7 +458,7 @@ def base_iterations() -> list[Iteration]:
             peak_memory='invalid_type'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.PEAK_MEMORY_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.PEAK_MEMORY_INVALID_ARG_TYPE)),
     idspec("RESULTS_036", TestAction(
         name="Correct type for peak_memory argument (PeakMemoryUsage)",
         action=Results,
@@ -477,7 +477,7 @@ def base_iterations() -> list[Iteration]:
             memory='invalid_type'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.MEMORY_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.MEMORY_INVALID_ARG_TYPE)),
     idspec("RESULTS_038", TestAction(
         name="Correct type for memory argument (MemoryUsage)",
         action=Results,
@@ -497,7 +497,7 @@ def base_iterations() -> list[Iteration]:
             per_round_timings='invalid_type'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.PER_ROUND_TIMINGS_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.PER_ROUND_TIMINGS_INVALID_ARG_TYPE)),
     idspec("RESULTS_040", TestAction(
         name="Correct type for per_round_timings argument (OperationTimings)",
         action=Results,
@@ -517,7 +517,7 @@ def base_iterations() -> list[Iteration]:
             ops_per_second='invalid_type'  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.OPS_PER_SECOND_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.OPS_PER_SECOND_INVALID_ARG_TYPE)),
     idspec("RESULTS_042", TestAction(
         name="Correct type for ops_per_second argument (OperationsPerInterval)",
         action=Results,
@@ -545,7 +545,7 @@ def base_iterations() -> list[Iteration]:
             n=1, rounds='invalid_type', total_elapsed=1.0, iterations=base_iterations()  # type: ignore[arg-type]
         ),
         exception=SimpleBenchTypeError,
-        exception_tag=ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE)),
+        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE)),
     idspec("RESULTS_045", TestAction(
         name="Negative value for rounds argument",
         action=Results,
@@ -554,7 +554,7 @@ def base_iterations() -> list[Iteration]:
             n=1, rounds=-1, total_elapsed=1.0, iterations=base_iterations()
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
     idspec("RESULTS_046", TestAction(
         name="Zero value for rounds argument",
         action=Results,
@@ -563,7 +563,7 @@ def base_iterations() -> list[Iteration]:
             n=1, rounds=0, total_elapsed=1.0, iterations=base_iterations()
         ),
         exception=SimpleBenchValueError,
-        exception_tag=ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
 ])
 def test_results_init(testspec: TestAction) -> None:
     """Test Results initialization.
@@ -793,12 +793,12 @@ def test_results_sections_invalid() -> None:
     results = base_results()
     with pytest.raises(SimpleBenchValueError) as excinfo:
         results.results_section(Section.NULL)
-    assert excinfo.value.tag_code == ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE, (
+    assert excinfo.value.tag_code == _ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE, (
         f"Expected SimpleBenchValueError for unsupported section {Section.NULL}"
     )
 
     with pytest.raises(SimpleBenchTypeError) as excinfo1:
         results.results_section(Nonsense.NONSENSE)  # type: ignore[arg-type]
-    assert excinfo1.value.tag_code == ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE, (
+    assert excinfo1.value.tag_code == _ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE, (
         f"Expected SimpleBenchTypeError for invalid section type {type(Nonsense.NONSENSE)}"
     )

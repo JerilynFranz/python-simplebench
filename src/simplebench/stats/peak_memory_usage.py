@@ -9,7 +9,7 @@ from ..exceptions import SimpleBenchTypeError
 from ..iteration import Iteration
 from ..validators import validate_sequence_of_numbers
 from . import Stats, StatsSummary
-from .exceptions.peak_memory_usage import PeakMemoryUsageErrorTag
+from .exceptions.peak_memory_usage import _PeakMemoryUsageErrorTag
 
 
 class PeakMemoryUsage(Stats):
@@ -64,24 +64,24 @@ class PeakMemoryUsage(Stats):
         if iterations is None and data is None:
             raise SimpleBenchTypeError(
                 "either iterations or data must be provided",
-                tag=PeakMemoryUsageErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)
+                tag=_PeakMemoryUsageErrorTag.NO_DATA_OR_ITERATIONS_PROVIDED)
         if data is None:
             data = []
         imported_data: list[int | float] = list(validate_sequence_of_numbers(
                 data, 'data',
-                type_tag=PeakMemoryUsageErrorTag.INVALID_DATA_ARG_TYPE,
-                value_tag=PeakMemoryUsageErrorTag.INVALID_DATA_ARG_VALUE))
+                type_tag=_PeakMemoryUsageErrorTag.INVALID_DATA_ARG_TYPE,
+                value_tag=_PeakMemoryUsageErrorTag.INVALID_DATA_ARG_VALUE))
 
         if iterations is not None:
             if not isinstance(iterations, Sequence):
                 raise SimpleBenchTypeError(
                     "passed iterations arg is not a Sequence",
-                    tag=PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ARG_TYPE)
+                    tag=_PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ARG_TYPE)
 
             if not all(isinstance(iteration, Iteration) for iteration in iterations):
                 raise SimpleBenchTypeError(
                     "There are items in the iterations arg sequence that are not Iteration objects",
-                    tag=PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)
+                    tag=_PeakMemoryUsageErrorTag.INVALID_ITERATIONS_ITEM_ARG_TYPE)
             imported_data.extend(iteration.peak_memory for iteration in iterations)
 
         super().__init__(unit=unit, scale=scale, rounds=rounds, data=imported_data)

@@ -1,11 +1,13 @@
-"""ErrorTags for simplebench.case related exceptions in SimpleBench."""
-from .base import ErrorTag
+"""ErrorTags for simplebench.case related exceptions in SimpleBench.
+"""
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class CaseErrorTag(ErrorTag):
-    """ErrorTags for case-related exceptions."""
+class _CaseErrorTag(ErrorTag):
+    """ErrorTags for case-related exceptions.
+    """
     INVALID_GROUP_TYPE = "INVALID_GROUP_TYPE"
     """Invalid group argument type passed to the Case() constructor"""
     INVALID_GROUP_VALUE = "INVALID_GROUP_VALUE"

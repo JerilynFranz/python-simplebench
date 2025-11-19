@@ -1,10 +1,10 @@
 """ErrorTags for simplebench.iterations in SimpleBench."""
-from .base import ErrorTag
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class IterationErrorTag(ErrorTag):
+class _IterationErrorTag(ErrorTag):
     """ErrorTags for simplebench.iterations in SimpleBench."""
     N_ARG_TYPE = "N_ARG_TYPE"
     """Invalid n argument passed to the Iteration() constructor - must be an int"""

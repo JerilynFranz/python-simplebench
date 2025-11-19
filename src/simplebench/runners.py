@@ -11,9 +11,8 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_TIMER, MIN_MEASURED_ITERATIONS
 from .enums import Color
-from .exceptions import RunnersErrorTag, SimpleBenchImportError
+from .exceptions import SimpleBenchImportError, _RunnersErrorTag
 from .iteration import Iteration
-from .metaclasses import ISimpleRunner
 from .results import Results
 from .tasks import ProgressTracker
 from .validators import validate_positive_int
@@ -38,7 +37,7 @@ def _create_timers_module() -> ModuleType:
     if spec is None:
         raise SimpleBenchImportError(
             'Could not create spec for simplebench._timers module',
-            tag=RunnersErrorTag.RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED)
+            tag=_RunnersErrorTag.RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED)
     if 'simplebench._timers' in sys.modules:
         return sys.modules['simplebench._timers']
     timers_module = importlib.util.module_from_spec(spec)
@@ -55,7 +54,7 @@ def _mock_action(**kwargs) -> None:  # pylint: disable=unused-argument
     return None
 
 
-class SimpleRunner(ISimpleRunner):
+class SimpleRunner:
     """A class to run benchmarks for various actions.
 
     :param case: The benchmark case to run.
@@ -130,8 +129,8 @@ class SimpleRunner(ISimpleRunner):
         """
         rounds = validate_positive_int(
             rounds, 'rounds',
-            RunnersErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE,
-            RunnersErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE)
+            _RunnersErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE,
+            _RunnersErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE)
 
         # If the timer function for the specified rounds does not exist, create it.
         # We create a new function for each rounds value to avoid the overhead of a loop

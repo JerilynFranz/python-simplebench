@@ -1,10 +1,10 @@
 """ErrorTags for the session module."""
-from .base import ErrorTag
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class SessionErrorTag(ErrorTag):
+class _SessionErrorTag(ErrorTag):
     """ErrorTags for the session module."""
     INVALID_CASES_SEQUENCE_ARG = "INVALID_CASES_SEQUENCE_ARG"
     """Something other than a Sequence of Case instances was passed to the Session() constructor"""

@@ -16,7 +16,7 @@ from ..validators import (
     validate_positive_int,
     validate_sequence_of_numbers,
 )
-from .exceptions.stats import StatsErrorTag, StatsSummaryErrorTag
+from .exceptions.stats import _StatsErrorTag, _StatsSummaryErrorTag
 
 
 class Stats:
@@ -54,23 +54,23 @@ class Stats:
         """
         self._unit: str = validate_non_blank_string(
                                 unit, 'unit',
-                                StatsErrorTag.INVALID_UNIT_ARG_TYPE,
-                                StatsErrorTag.INVALID_UNIT_ARG_VALUE)
+                                _StatsErrorTag.INVALID_UNIT_ARG_TYPE,
+                                _StatsErrorTag.INVALID_UNIT_ARG_VALUE)
         self._scale: float = validate_positive_float(
                                 scale, 'scale',
-                                StatsErrorTag.INVALID_SCALE_ARG_TYPE,
-                                StatsErrorTag.INVALID_SCALE_ARG_VALUE)
+                                _StatsErrorTag.INVALID_SCALE_ARG_TYPE,
+                                _StatsErrorTag.INVALID_SCALE_ARG_VALUE)
         self._rounds: int = validate_positive_int(
                                 rounds, 'rounds',
-                                StatsErrorTag.INVALID_ROUNDS_ARG_TYPE,
-                                StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)
+                                _StatsErrorTag.INVALID_ROUNDS_ARG_TYPE,
+                                _StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)
         # data is left unsorted to allow for time series data to be preserved
         self._data: tuple[int | float, ...] = tuple(validate_sequence_of_numbers(
                                             value=data,
                                             field_name='data',
                                             allow_empty=False,
-                                            type_tag=StatsErrorTag.INVALID_DATA_ARG_TYPE,
-                                            value_tag=StatsErrorTag.INVALID_DATA_ARG_ITEM_TYPE))
+                                            type_tag=_StatsErrorTag.INVALID_DATA_ARG_TYPE,
+                                            value_tag=_StatsErrorTag.INVALID_DATA_ARG_ITEM_TYPE))
         self._percentiles: tuple[float, ...] | None = None
         self._mean: float | None = None
         self._median: float | None = None
@@ -251,19 +251,19 @@ class Stats:
         """
         if not isinstance(data, dict):
             raise SimpleBenchTypeError('The data argument must be a dictionary.',
-                                       tag=StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)
+                                       tag=_StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)
         if 'unit' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "unit" key.',
-                                      tag=StatsErrorTag.FROM_DICT_MISSING_UNIT_KEY)
+                                      tag=_StatsErrorTag.FROM_DICT_MISSING_UNIT_KEY)
         if 'scale' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "scale" key.',
-                                      tag=StatsErrorTag.FROM_DICT_MISSING_SCALE_KEY)
+                                      tag=_StatsErrorTag.FROM_DICT_MISSING_SCALE_KEY)
         if 'rounds' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "rounds" key.',
-                                      tag=StatsErrorTag.FROM_DICT_MISSING_ROUNDS_KEY)
+                                      tag=_StatsErrorTag.FROM_DICT_MISSING_ROUNDS_KEY)
         if 'data' not in data:
             raise SimpleBenchKeyError('The data dictionary is missing the required "data" key.',
-                                      tag=StatsErrorTag.FROM_DICT_MISSING_DATA_KEY)
+                                      tag=_StatsErrorTag.FROM_DICT_MISSING_DATA_KEY)
 
         return cls(unit=data['unit'],
                    scale=data['scale'],
@@ -382,41 +382,41 @@ class StatsSummary:
         """
         self._unit = validate_non_blank_string(
                         unit, 'unit',
-                        StatsSummaryErrorTag.INVALID_UNIT_ARG_TYPE,
-                        StatsSummaryErrorTag.INVALID_UNIT_ARG_VALUE)
+                        _StatsSummaryErrorTag.INVALID_UNIT_ARG_TYPE,
+                        _StatsSummaryErrorTag.INVALID_UNIT_ARG_VALUE)
         self._scale = validate_positive_float(
                         scale, 'scale',
-                        StatsSummaryErrorTag.INVALID_SCALE_ARG_TYPE,
-                        StatsSummaryErrorTag.INVALID_SCALE_ARG_VALUE)
+                        _StatsSummaryErrorTag.INVALID_SCALE_ARG_TYPE,
+                        _StatsSummaryErrorTag.INVALID_SCALE_ARG_VALUE)
         self._rounds = validate_positive_int(
                         rounds, 'rounds',
-                        StatsSummaryErrorTag.INVALID_ROUNDS_ARG_TYPE,
-                        StatsSummaryErrorTag.INVALID_ROUNDS_ARG_VALUE)
+                        _StatsSummaryErrorTag.INVALID_ROUNDS_ARG_TYPE,
+                        _StatsSummaryErrorTag.INVALID_ROUNDS_ARG_VALUE)
         self._mean = validate_float(
                         mean, 'mean',
-                        StatsSummaryErrorTag.INVALID_MEAN_ARG_TYPE)
+                        _StatsSummaryErrorTag.INVALID_MEAN_ARG_TYPE)
         self._median = validate_float(
                         median, 'median',
-                        StatsSummaryErrorTag.INVALID_MEDIAN_ARG_TYPE)
+                        _StatsSummaryErrorTag.INVALID_MEDIAN_ARG_TYPE)
         self._minimum = validate_float(
                         minimum, 'minimum',
-                        StatsSummaryErrorTag.INVALID_MINIMUM_ARG_TYPE)
+                        _StatsSummaryErrorTag.INVALID_MINIMUM_ARG_TYPE)
         self._maximum = validate_float(
                         maximum, 'maximum',
-                        StatsSummaryErrorTag.INVALID_MAXIMUM_ARG_TYPE)
+                        _StatsSummaryErrorTag.INVALID_MAXIMUM_ARG_TYPE)
         self._standard_deviation = validate_non_negative_float(
                         standard_deviation, 'standard_deviation',
-                        StatsSummaryErrorTag.INVALID_STANDARD_DEVIATION_ARG_TYPE,
-                        StatsSummaryErrorTag.INVALID_STANDARD_DEVIATION_ARG_VALUE)
+                        _StatsSummaryErrorTag.INVALID_STANDARD_DEVIATION_ARG_TYPE,
+                        _StatsSummaryErrorTag.INVALID_STANDARD_DEVIATION_ARG_VALUE)
         self._relative_standard_deviation = validate_non_negative_float(
                         relative_standard_deviation, 'relative_standard_deviation',
-                        StatsSummaryErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_ARG_TYPE,
-                        StatsSummaryErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_ARG_VALUE)
+                        _StatsSummaryErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_ARG_TYPE,
+                        _StatsSummaryErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_ARG_VALUE)
         self._percentiles = tuple(validate_sequence_of_numbers(
                         percentiles, 'percentiles',
                         allow_empty=False,
-                        type_tag=StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_TYPE,
-                        value_tag=StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_VALUE))
+                        type_tag=_StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_TYPE,
+                        value_tag=_StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_VALUE))
         self._adjusted_standard_deviation: float | None = None
         self._adjusted_relative_standard_deviation: float | None = None
         self._statistics_as_dict = None
@@ -555,7 +555,7 @@ class StatsSummary:
         if not isinstance(stats, Stats):
             raise SimpleBenchTypeError(
                 "The stats argument must be a Stats object.",
-                tag=StatsSummaryErrorTag.FROM_STATS_INVALID_STATS_ARG_TYPE)
+                tag=_StatsSummaryErrorTag.FROM_STATS_INVALID_STATS_ARG_TYPE)
         return cls(
             unit=stats.unit,
             scale=stats.scale,
@@ -604,7 +604,7 @@ class StatsSummary:
         """
         if not isinstance(data, dict):
             raise SimpleBenchTypeError('The data argument must be a dictionary.',
-                                       tag=StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)
+                                       tag=_StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)
 
         required_keys = [
             'unit', 'scale', 'rounds', 'mean', 'median', 'minimum', 'maximum',
@@ -614,7 +614,7 @@ class StatsSummary:
         for key in required_keys:
             if key not in data:
                 raise SimpleBenchKeyError(f"The data dictionary is missing the required '{key}' key.",
-                                          tag=StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)
+                                          tag=_StatsSummaryErrorTag.FROM_DICT_MISSING_KEY)
             keys_for_construction[key] = data[key]
         return cls(**keys_for_construction)  # type: ignore[arg-type]  # pylint: disable=missing-kwoa
 

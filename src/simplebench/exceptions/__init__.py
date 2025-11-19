@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 """Custom exceptions for the simplebench package."""
 import argparse
-from textwrap import dedent
-from enum import Enum
 import re
+from enum import Enum
+from textwrap import dedent
 from typing import Any, Generic, TypeVar
 
 from .base import ErrorTag
-from .case import CaseErrorTag
-from .cli import CLIErrorTag
-from .decorators import DecoratorsErrorTag
-from .iteration import IterationErrorTag
-from .results import ResultsErrorTag
-from .runners import RunnersErrorTag
-from .session import SessionErrorTag
-from .si_units import SIUnitsErrorTag
-from .utils import UtilsErrorTag
-from .tasks import RichTaskErrorTag, RichProgressTasksErrorTag
+from .case import _CaseErrorTag
+from .cli import _CLIErrorTag
+from .decorators import _DecoratorsErrorTag
+from .iteration import _IterationErrorTag
+from .results import _ResultsErrorTag
+from .runners import _RunnersErrorTag
+from .session import _SessionErrorTag
+from .si_units import _SIUnitsErrorTag
+from .tasks import _RichProgressTasksErrorTag, _RichTaskErrorTag
+from .utils import _UtilsErrorTag
 
 __all__ = [
     "TaggedException",
@@ -29,17 +29,17 @@ __all__ = [
     "SimpleBenchArgumentError",
     "SimpleBenchImportError",
     "ErrorTag",
-    "CaseErrorTag",
-    "CLIErrorTag",
-    "DecoratorsErrorTag",
-    "IterationErrorTag",
-    "RichProgressTasksErrorTag",
-    "RichTaskErrorTag",
-    "ResultsErrorTag",
-    "RunnersErrorTag",
-    "SessionErrorTag",
-    "SIUnitsErrorTag",
-    "UtilsErrorTag",
+    "_CaseErrorTag",
+    "_CLIErrorTag",
+    "_DecoratorsErrorTag",
+    "_IterationErrorTag",
+    "_RichProgressTasksErrorTag",
+    "_RichTaskErrorTag",
+    "_ResultsErrorTag",
+    "_RunnersErrorTag",
+    "_SessionErrorTag",
+    "_SIUnitsErrorTag",
+    "_UtilsErrorTag",
 ]
 
 

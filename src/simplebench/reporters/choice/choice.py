@@ -6,8 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 from simplebench.enums import FlagType, Format, Section, Target
 from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choice.exceptions import ChoiceErrorTag
-from simplebench.reporters.choice.metaclasses import IChoice
+from simplebench.reporters.choice.exceptions import _ChoiceErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.validators import validate_type
@@ -31,7 +30,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.reporter.reporter import Reporter
 
 
-class Choice(Hashable, IChoice, ChoiceProtocol):
+class Choice(Hashable, ChoiceProtocol):
     """Definition of a :class:`~.Choice` option for live use by reporters.
 
     A :class:`~.Choice` represents a specific configuration of a
@@ -145,13 +144,13 @@ class Choice(Hashable, IChoice, ChoiceProtocol):
         # concrete subclasses of Reporter, not the abstract Reporter itself.
         self._reporter: Reporter = validate_type(
             reporter, Reporter, "reporter",  # type: ignore[type-abstract]
-            error_tag=ChoiceErrorTag.REPORTER_INVALID_ARG_TYPE)
+            error_tag=_ChoiceErrorTag.REPORTER_INVALID_ARG_TYPE)
         """The Reporter subclass instance associated with the choice
         (private backing field for attribute)"""
 
         self._choice_conf: ChoiceConf = validate_type(
             choice_conf, ChoiceConf, "choice_conf",
-            error_tag=ChoiceErrorTag.CHOICE_CONF_INVALID_ARG_TYPE)
+            error_tag=_ChoiceErrorTag.CHOICE_CONF_INVALID_ARG_TYPE)
         """The ChoiceConf instance used to create the choice
         (private backing field for attribute)"""
 

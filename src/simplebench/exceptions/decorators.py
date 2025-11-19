@@ -1,10 +1,10 @@
 """ErrorTags for simplebench.decorators in SimpleBench."""
-from .base import ErrorTag
 from ..enums import enum_docstrings
+from .base import ErrorTag
 
 
 @enum_docstrings
-class DecoratorsErrorTag(ErrorTag):
+class _DecoratorsErrorTag(ErrorTag):
     """ErrorTags for simplebench.decorators in SimpleBench."""
     BENCHMARK_GROUP_TYPE = "BENCHMARK_GROUP_TYPE"
     """Something other than a str was passed as the group"""

@@ -1,5 +1,5 @@
 """Validator functions for SimpleBench."""
-from simplebench.validators.exceptions.validators import ValidatorsErrorTag
+from simplebench.validators.exceptions.validators import _ValidatorsErrorTag
 from simplebench.validators.misc import (
     validate_bool,
     validate_dirpath,
@@ -24,7 +24,7 @@ from simplebench.validators.validate_iterable_of_type import validate_iterable_o
 from simplebench.validators.validate_sequence_of_type import validate_sequence_of_type
 
 __all__ = [
-    "ValidatorsErrorTag",
+    "_ValidatorsErrorTag",
     "validate_dirpath",
     "validate_bool",
     "validate_float",

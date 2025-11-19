@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class ChoiceConfErrorTag(ErrorTag):
+class _ChoiceConfErrorTag(ErrorTag):
     """ErrorTags for ChoiceConf class."""
     FLAG_TYPE_INVALID_ARG_TYPE = "FLAG_TYPE_INVALID_ARG_TYPE"
     """The flag_type argument is not a FlagType enum value."""

@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class ValidatorsErrorTag(ErrorTag):
+class _ValidatorsErrorTag(ErrorTag):
     """ErrorTags for validator-related exceptions."""
     # validate_dirpath() tags
     VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE = "VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE"

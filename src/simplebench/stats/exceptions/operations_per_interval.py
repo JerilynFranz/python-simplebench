@@ -1,10 +1,10 @@
 """ErrorTags for the simplebench.stats.operations_per_interval module."""
-from simplebench.exceptions import ErrorTag
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class OperationsPerIntervalErrorTag(ErrorTag):
+class _OperationsPerIntervalErrorTag(ErrorTag):
     """Error tags for the OperationsPerInterval class."""
     INVALID_ITERATIONS_ARG_TYPE = "INVALID_ITERATIONS_ARG_TYPE"
     """Invalid iterations argument passed to the OperationsPerInterval() constructor

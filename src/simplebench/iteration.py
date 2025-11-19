@@ -2,7 +2,7 @@
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from .doc_utils import format_docstring
 from .enums import Section
-from .exceptions import IterationErrorTag, SimpleBenchTypeError, SimpleBenchValueError
+from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, _IterationErrorTag
 from .validators import (
     validate_int,
     validate_non_blank_string,
@@ -42,10 +42,10 @@ class Iteration:
     :ivar rounds: The number of rounds in the iteration. (read only)
     :vartype rounds: int
     :ivar unit: The unit of measurement for the elapsed time.
-        It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`. (read only)
+        It gets its default value from :class:`~simplebench.defaults.DEFAULT_INTERVAL_UNIT`. (read only)
     :vartype unit: str
     :ivar scale: The scale factor for the elapsed time.
-        It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_SCALE`. (read only)
+        It gets its default value from :class:`~simplebench.defaults.DEFAULT_INTERVAL_SCALE`. (read only)
     :vartype scale: float
     :ivar elapsed: The elapsed time for the iteration. (read only)
     :vartype elapsed: float
@@ -79,10 +79,10 @@ class Iteration:
         :param rounds: The number of rounds in the iteration. Must be a positive integer.
         :type rounds: int
         :param unit: The unit of measurement for the elapsed time.
-            It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_UNIT`.
+            It gets its default value from :class:`~simplebench.defaults.DEFAULT_INTERVAL_UNIT`.
         :type unit: str
         :param scale: The scale factor for the elapsed time.
-            It gets its default value from `simplebench.defaults.DEFAULT_INTERVAL_SCALE`.
+            It gets its default value from :class:`simplebench.defaults.DEFAULT_INTERVAL_SCALE`.
         :type scale: float
         :param elapsed: The elapsed time for the iteration. Must be a non-negative float.
         :type elapsed: float
@@ -95,30 +95,30 @@ class Iteration:
         """
         self._n = validate_positive_int(
             n, 'n',
-            IterationErrorTag.N_ARG_TYPE,
-            IterationErrorTag.N_ARG_VALUE)
+            _IterationErrorTag.N_ARG_TYPE,
+            _IterationErrorTag.N_ARG_VALUE)
         self._rounds = validate_positive_int(
             rounds, 'rounds',
-            IterationErrorTag.ROUNDS_ARG_TYPE,
-            IterationErrorTag.ROUNDS_ARG_VALUE)
+            _IterationErrorTag.ROUNDS_ARG_TYPE,
+            _IterationErrorTag.ROUNDS_ARG_VALUE)
         self._unit = validate_non_blank_string(
             unit, 'unit',
-            IterationErrorTag.UNIT_ARG_TYPE,
-            IterationErrorTag.UNIT_ARG_VALUE)
+            _IterationErrorTag.UNIT_ARG_TYPE,
+            _IterationErrorTag.UNIT_ARG_VALUE)
         self._scale = validate_positive_float(
             scale, 'scale',
-            IterationErrorTag.SCALE_ARG_TYPE,
-            IterationErrorTag.SCALE_ARG_VALUE)
+            _IterationErrorTag.SCALE_ARG_TYPE,
+            _IterationErrorTag.SCALE_ARG_VALUE)
         self._elapsed = validate_non_negative_float(
             elapsed, 'elapsed',
-            IterationErrorTag.ELAPSED_ARG_TYPE,
-            IterationErrorTag.ELAPSED_ARG_VALUE)
+            _IterationErrorTag.ELAPSED_ARG_TYPE,
+            _IterationErrorTag.ELAPSED_ARG_VALUE)
         self._memory = validate_int(
             memory, 'memory',
-            IterationErrorTag.MEMORY_ARG_TYPE)
+            _IterationErrorTag.MEMORY_ARG_TYPE)
         self._peak_memory = validate_int(
             peak_memory, 'peak_memory',
-            IterationErrorTag.PEAK_MEMORY_ARG_TYPE)
+            _IterationErrorTag.PEAK_MEMORY_ARG_TYPE)
 
     def __eq__(self, other: object) -> bool:
         """Check equality between two Iteration instances.
@@ -218,7 +218,7 @@ class Iteration:
         if not isinstance(section, Section):
             raise SimpleBenchTypeError(
                 f'Invalid section type: {type(section)}. Must be of type Section.',
-                tag=IterationErrorTag.ITERATION_SECTION_INVALID_SECTION_ARG_TYPE
+                tag=_IterationErrorTag.ITERATION_SECTION_INVALID_SECTION_ARG_TYPE
             )
         match section:
             case Section.OPS:
@@ -232,7 +232,7 @@ class Iteration:
             case _:  # needed for mypy
                 raise SimpleBenchValueError(
                     f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
-                    tag=IterationErrorTag.ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
+                    tag=_IterationErrorTag.ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
                 )
 
     def __repr__(self) -> str:

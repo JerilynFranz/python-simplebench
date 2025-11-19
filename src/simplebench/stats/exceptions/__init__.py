@@ -1,16 +1,16 @@
 """ErrorTags for the simplebench.stats package."""
 
-from .stats import StatsErrorTag, StatsSummaryErrorTag
-from .memory_usage import MemoryUsageErrorTag
-from .operation_timings import OperationTimingsErrorTag
-from .operations_per_interval import OperationsPerIntervalErrorTag
-from .peak_memory_usage import PeakMemoryUsageErrorTag
+from .memory_usage import _MemoryUsageErrorTag
+from .operation_timings import _OperationTimingsErrorTag
+from .operations_per_interval import _OperationsPerIntervalErrorTag
+from .peak_memory_usage import _PeakMemoryUsageErrorTag
+from .stats import _StatsErrorTag, _StatsSummaryErrorTag
 
 __all__ = [
-    "StatsErrorTag",
-    "StatsSummaryErrorTag",
-    "MemoryUsageErrorTag",
-    "OperationTimingsErrorTag",
-    "OperationsPerIntervalErrorTag",
-    "PeakMemoryUsageErrorTag",
+    "_StatsErrorTag",
+    "_StatsSummaryErrorTag",
+    "_MemoryUsageErrorTag",
+    "_OperationTimingsErrorTag",
+    "_OperationsPerIntervalErrorTag",
+    "_PeakMemoryUsageErrorTag",
 ]

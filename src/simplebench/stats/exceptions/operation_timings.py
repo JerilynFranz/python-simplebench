@@ -1,10 +1,10 @@
 """ErrorTags for the simplebench.stats.operation_timings module."""
-from simplebench.exceptions import ErrorTag
 from simplebench.enums import enum_docstrings
+from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class OperationTimingsErrorTag(ErrorTag):
+class _OperationTimingsErrorTag(ErrorTag):
     """ErrorTags for the OperationTimings class."""
     INVALID_ITERATIONS_ARG_TYPE = "INVALID_ITERATIONS_ARG_TYPE"
     """Invalid iterations argument passed to the OperationTimings() constructor
