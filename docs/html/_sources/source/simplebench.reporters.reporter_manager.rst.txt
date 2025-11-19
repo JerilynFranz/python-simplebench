@@ -1,6 +1,11 @@
 simplebench.reporters.reporter\_manager package
 ===============================================
 
+.. automodule:: simplebench.reporters.reporter_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -13,18 +18,7 @@ Subpackages
 Submodules
 ----------
 
-simplebench.reporters.reporter\_manager.manager module
-------------------------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: simplebench.reporters.reporter_manager.manager
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: simplebench.reporters.reporter_manager
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   simplebench.reporters.reporter_manager.manager

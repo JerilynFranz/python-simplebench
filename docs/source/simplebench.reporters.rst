@@ -1,6 +1,11 @@
 simplebench.reporters package
 =============================
 
+.. automodule:: simplebench.reporters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -17,11 +22,3 @@ Subpackages
    simplebench.reporters.reporter_manager
    simplebench.reporters.rich_table
    simplebench.reporters.validators
-
-Module contents
----------------
-
-.. automodule:: simplebench.reporters
-   :members:
-   :undoc-members:
-   :show-inheritance:

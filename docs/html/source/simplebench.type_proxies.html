@@ -14,8 +14,8 @@
 <link href="../_static/theme.css?v=42baaae4" rel="stylesheet" type="text/css"/>
 <link href="../search.html" rel="search" title="Search"/>
 <link href="../genindex.html" rel="index" title="Index"/>
-<link href="simplebench.validators.html" rel="next" title="simplebench.validators package"/>
-<link href="simplebench.stats.exceptions.html" rel="prev" title="simplebench.stats.exceptions package"/>
+<link href="simplebench.type_proxies.case_type_proxy.html" rel="next" title="simplebench.type_proxies.case_type_proxy module"/>
+<link href="simplebench.stats.stats.html" rel="prev" title="simplebench.stats.stats module"/>
 <script>
     <!-- Prevent Flash of wrong theme -->
       const userPreference = localStorage.getItem('darkMode');
@@ -101,237 +101,8 @@
 <div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">simplebench.type_proxies package</span>
 </nav>
 <div id="content" role="main">
-<section id="simplebench-type-proxies-package">
-<h1>simplebench.type_proxies package<a class="headerlink" href="#simplebench-type-proxies-package" title="Link to this heading">¶</a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#submodules'">¶</a></h2>
-</section>
-<section id="module-simplebench.type_proxies.case_type_proxy">
-<span id="simplebench-type-proxies-case-type-proxy-module"></span><h2>simplebench.type_proxies.case_type_proxy module<a class="headerlink" href="#module-simplebench.type_proxies.case_type_proxy" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.type_proxies.case_type_proxy'">¶</a></h2>
-<p>Provides a mechanism to create a lazy type proxy for the <cite>Case</cite> type for runtime checks.</p>
-<p>The CaseTypeProxy class acts as a stand-in for the actual Case type, allowing for
-deferred imports and avoiding circular dependencies while still enabling runtime type
-checks and static type checking.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.type_proxies.case_type_proxy.CaseTypeProxy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.case_type_proxy.</span></span><span class="sig-name descname"><span class="pre">CaseTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.case_type_proxy.CaseTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.case_type_proxy.CaseTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code>]</p>
-<p>A special proxy class that acts like the <cite>Case</cite> type for runtime checks.</p>
-<p>It uses lazy loading to avoid circular import issues while still allowing
-runtime type checks and static type checking.</p>
-<p>It can be used in <cite>isinstance</cite> and <cite>issubclass</cite> checks as if it were
-the actual <cite>Case</cite> type.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Do not attempt to import <cite>Case</cite> directly from this module,
-as it will lead to circular import issues and will not work as intended.</p>
-</div>
-<p>It is not intended to be instantiated directly; use the actual <cite>Case</cite> class instead
-if an actual <cite>Case</cite> instance is needed.</p>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.type_proxies.case_type_proxy.is_case">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.case_type_proxy.</span></span><span class="sig-name descname"><span class="pre">is_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.case_type_proxy.is_case" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.case_type_proxy.is_case'">¶</a></dt>
-<dd><p>A type-guard function that checks if an object is an instance of <cite>Case</cite>.</p>
-<p>This function uses the <cite>CaseTypeProxy</cite> to perform the check, allowing
-for deferred imports and avoiding circular dependencies. It has the
-same effect as <cite>isinstance(obj, Case)</cite> but is safe to use without
-causing import issues. It also works seamlessly with static type checkers
-and IDEs.</p>
-<p>Usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="k">if</span> <span class="n">is_case</span><span class="p">(</span><span class="n">some_object</span><span class="p">):</span>
-</span><span id="line-2">    <span class="c1"># Now `some_object` is treated as a `Case` instance by static type checkers.</span>
-</span></code></pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><em>object</em></a>) – The object to check.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the object is an instance of <cite>Case</cite>, False otherwise</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case">Case</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-</section>
-<section id="module-simplebench.type_proxies.choice_type_proxy">
-<span id="simplebench-type-proxies-choice-type-proxy-module"></span><h2>simplebench.type_proxies.choice_type_proxy module<a class="headerlink" href="#module-simplebench.type_proxies.choice_type_proxy" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.type_proxies.choice_type_proxy'">¶</a></h2>
-<p>A mechanism to create a lazy type proxy for the <cite>Choice</cite> type for runtime checks.</p>
-<p>It allows for deferred imports and avoids circular dependencies while still enabling
-runtime type checks and static type checking.</p>
-<p>The ChoiceTypeProxy class acts as a stand-in for the actual Choice type.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.type_proxies.choice_type_proxy.ChoiceTypeProxy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.choice_type_proxy.</span></span><span class="sig-name descname"><span class="pre">ChoiceTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.choice_type_proxy.ChoiceTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.choice_type_proxy.ChoiceTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code>]</p>
-<p>A special proxy class that acts like the <cite>Choice</cite> type for runtime checks.</p>
-<p>It uses lazy loading to avoid circular import issues while still allowing
-runtime type checks and static type checking.</p>
-<p>It can be used in <cite>isinstance</cite> and <cite>issubclass</cite> checks as if it were
-the actual <cite>Choice</cite> type.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Do not attempt to import <cite>Choice</cite> directly from this module,
-as it will lead to circular import issues and will not work as intended.</p>
-</div>
-<p>It is not intended to be instantiated directly; use the actual <cite>Choice</cite> class
-instead if an actual <cite>Choice</cite> instance is needed.</p>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.type_proxies.choice_type_proxy.is_choice">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.choice_type_proxy.</span></span><span class="sig-name descname"><span class="pre">is_choice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><span class="pre">Choice</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.choice_type_proxy.is_choice" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.choice_type_proxy.is_choice'">¶</a></dt>
-<dd><p>A type-guard function that checks if an object is an instance of <cite>Choice</cite>.</p>
-<p>This function uses the <cite>ChoiceTypeProxy</cite> to perform the check, allowing
-for deferred imports and avoiding circular dependencies. It has the
-same effect as <cite>isinstance(obj, Choice)</cite> but is safe to use without
-causing import issues. It also works seamlessly with static type checkers
-and IDEs.</p>
-<p>Usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="k">if</span> <span class="n">is_choice</span><span class="p">(</span><span class="n">some_object</span><span class="p">):</span>
-</span><span id="line-2">    <span class="c1"># Now `some_object` is treated as a `Choice` instance by static type checkers.</span>
-</span></code></pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><em>object</em></a>) – The object to check.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the object is an instance of <cite>Choice</cite>, False otherwise</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice">Choice</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-</section>
-<section id="module-simplebench.type_proxies.lazy_type_proxy">
-<span id="simplebench-type-proxies-lazy-type-proxy-module"></span><h2>simplebench.type_proxies.lazy_type_proxy module<a class="headerlink" href="#module-simplebench.type_proxies.lazy_type_proxy" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.type_proxies.lazy_type_proxy'">¶</a></h2>
-<p>Provides a generic deferred import mechanism for any type.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.lazy_type_proxy.</span></span><span class="sig-name descname"><span class="pre">LazyTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<p>A generic base class for creating lazy-loading type proxies.</p>
-<p>Usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="k">class</span><span class="w"> </span><span class="nc">MyProxy</span><span class="p">(</span><span class="n">LazyTypeProxy</span><span class="p">[</span><span class="s1">'RealType'</span><span class="p">]):</span>
-</span><span id="line-2">    <span class="k">pass</span>
-</span><span id="line-3">
-</span><span id="line-4"><span class="n">register_lazy_proxy</span><span class="p">(</span><span class="n">MyProxy</span><span class="p">,</span> <span class="s1">'RealType'</span><span class="p">,</span> <span class="s1">'path.to.module'</span><span class="p">)</span>
-</span></code></pre></div>
-</div>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.type_proxies.lazy_type_proxy.register_lazy_proxy">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.lazy_type_proxy.</span></span><span class="sig-name descname"><span class="pre">register_lazy_proxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proxy_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">module_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.type_proxies.lazy_type_proxy.register_lazy_proxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.lazy_type_proxy.register_lazy_proxy'">¶</a></dt>
-<dd><p>Register a lazy proxy class with its real type information.</p>
-<p>The proxy class will use this information to perform runtime type checks
-without causing circular import issues.</p>
-<p>Usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">register_lazy_proxy</span><span class="p">(</span><span class="n">MyProxyClass</span><span class="p">,</span> <span class="s1">'RealTypeName'</span><span class="p">,</span> <span class="s1">'path.to.module'</span><span class="p">)</span>
-</span></code></pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>proxy_class</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><em>type</em></a>) – The proxy class to register.</p></li>
-<li><p><strong>real_type_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the real type being proxied.</p></li>
-<li><p><strong>module_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The module path where the real type can be imported from.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-</section>
-<section id="module-simplebench.type_proxies.reporter_type_proxy">
-<span id="simplebench-type-proxies-reporter-type-proxy-module"></span><h2>simplebench.type_proxies.reporter_type_proxy module<a class="headerlink" href="#module-simplebench.type_proxies.reporter_type_proxy" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.type_proxies.reporter_type_proxy'">¶</a></h2>
-<p>Provides a mechanism to create a lazy type proxy for the <cite>Case</cite> type for runtime checks.</p>
-<p>The CaseTypeProxy class acts as a stand-in for the actual Case type, allowing for
-deferred imports and avoiding circular dependencies while still enabling runtime type
-checks and static type checking.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.type_proxies.reporter_type_proxy.ReporterTypeProxy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.reporter_type_proxy.</span></span><span class="sig-name descname"><span class="pre">ReporterTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.reporter_type_proxy.ReporterTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.reporter_type_proxy.ReporterTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code>]</p>
-<p>A special proxy class that acts like the <cite>Reporter</cite> type for runtime checks.</p>
-<p>It uses lazy loading to avoid circular import issues while still allowing
-runtime type checks and static type checking.</p>
-<p>It can be used in <cite>isinstance</cite> and <cite>issubclass</cite> checks as if it were
-the actual <cite>Reporter</cite> type.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Do not attempt to import <cite>Reporter</cite> directly from this module,
-as it will lead to circular import issues and will not work as intended.</p>
-</div>
-<p>It is not intended to be instantiated directly; use the actual <cite>Reporter</cite> class instead
-if an actual <cite>Reporter</cite> instance is needed.</p>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.type_proxies.reporter_type_proxy.is_reporter">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.reporter_type_proxy.</span></span><span class="sig-name descname"><span class="pre">is_reporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.reporter_type_proxy.is_reporter" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.reporter_type_proxy.is_reporter'">¶</a></dt>
-<dd><p>A type-guard function that checks if an object is an instance of <cite>Reporter</cite>.</p>
-<p>This function uses the <cite>ReporterTypeProxy</cite> to perform the check, allowing
-for deferred imports and avoiding circular dependencies. It has the
-same effect as <cite>isinstance(obj, Reporter)</cite> but is safe to use without
-causing import issues. It also works seamlessly with static type checkers
-and IDEs.</p>
-<p>Usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="k">if</span> <span class="n">is_reporter</span><span class="p">(</span><span class="n">some_object</span><span class="p">):</span>
-</span><span id="line-2">    <span class="c1"># Now `some_object` is treated as a `Reporter` instance by static type checkers.</span>
-</span></code></pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><em>object</em></a>) – The object to check.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the object is an instance of <cite>Reporter</cite>, False otherwise</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter">Reporter</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-</section>
-<section id="module-simplebench.type_proxies.session_type_proxy">
-<span id="simplebench-type-proxies-session-type-proxy-module"></span><h2>simplebench.type_proxies.session_type_proxy module<a class="headerlink" href="#module-simplebench.type_proxies.session_type_proxy" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.type_proxies.session_type_proxy'">¶</a></h2>
-<p>A mechanism to create a lazy type proxy for the <cite>Session</cite> type for runtime checks.</p>
-<p>It allows for deferred imports and avoids circular dependencies while still enabling
-runtime type checks and static type checking.</p>
-<p>The <cite>SessionTypeProxy</cite> class acts as a stand-in for the actual <cite>Session</cite> type.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.type_proxies.session_type_proxy.SessionTypeProxy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.session_type_proxy.</span></span><span class="sig-name descname"><span class="pre">SessionTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.session_type_proxy.SessionTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.session_type_proxy.SessionTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code>]</p>
-<p>A special proxy class that acts like the <cite>Session</cite> type for runtime checks.</p>
-<p>It can be used in <cite>isinstance</cite> and <cite>issubclass</cite> checks as if it were
-the actual <cite>Session</cite> type.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Do not attempt to import <cite>Session</cite> directly from this module,
-as it will lead to circular import issues and will not work as intended.</p>
-</div>
-<p>It is not intended to be instantiated directly; use the actual <cite>Session</cite> class
-instead if an actual <cite>Session</cite> instance is needed.</p>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.type_proxies.session_type_proxy.is_session">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.session_type_proxy.</span></span><span class="sig-name descname"><span class="pre">is_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.session_type_proxy.is_session" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.session_type_proxy.is_session'">¶</a></dt>
-<dd><p>A type-guard function that checks if an object is an instance of <cite>Session</cite>.</p>
-<p>This function uses the <cite>SessionTypeProxy</cite> to perform the check, allowing
-for deferred imports and avoiding circular dependencies. It has the
-same effect as <cite>isinstance(obj, Session)</cite> but is safe to use without
-causing import issues. It also works seamlessly with static type checkers
-and IDEs.</p>
-<p>Usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="k">if</span> <span class="n">is_session</span><span class="p">(</span><span class="n">some_object</span><span class="p">):</span>
-</span><span id="line-2">    <span class="c1"># Now `some_object` is treated as a `Session` instance by static type checkers.</span>
-</span></code></pre></div>
-</div>
-</dd></dl>
-</section>
 <section id="module-simplebench.type_proxies">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.type_proxies" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.type_proxies'">¶</a></h2>
+<span id="simplebench-type-proxies-package"></span><h1>simplebench.type_proxies package<a class="headerlink" href="#module-simplebench.type_proxies" title="Link to this heading">¶</a></h1>
 <p>Special types used in simplebench.</p>
 <p>The primary purpose of this module is to provide deferred imports
 for core types like <cite>Case</cite> to avoid circular import issues during
@@ -359,7 +130,7 @@ used in <cite>isinstance()</cite> and <cite>issubclass()</cite> checks.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.type_proxies.CaseTypeProxy">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">CaseTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.CaseTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.CaseTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.type_proxies.lazy_type_proxy.html#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code>]</p>
 <p>A special proxy class that acts like the <cite>Case</cite> type for runtime checks.</p>
 <p>It uses lazy loading to avoid circular import issues while still allowing
 runtime type checks and static type checking.</p>
@@ -376,7 +147,7 @@ if an actual <cite>Case</cite> instance is needed.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.type_proxies.ChoiceTypeProxy">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">ChoiceTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.ChoiceTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.ChoiceTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.type_proxies.lazy_type_proxy.html#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code>]</p>
 <p>A special proxy class that acts like the <cite>Choice</cite> type for runtime checks.</p>
 <p>It uses lazy loading to avoid circular import issues while still allowing
 runtime type checks and static type checking.</p>
@@ -393,7 +164,7 @@ instead if an actual <cite>Choice</cite> instance is needed.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.type_proxies.ReporterTypeProxy">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">ReporterTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.ReporterTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.ReporterTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.type_proxies.lazy_type_proxy.html#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code>]</p>
 <p>A special proxy class that acts like the <cite>Reporter</cite> type for runtime checks.</p>
 <p>It uses lazy loading to avoid circular import issues while still allowing
 runtime type checks and static type checking.</p>
@@ -410,7 +181,7 @@ if an actual <cite>Reporter</cite> instance is needed.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.type_proxies.SessionTypeProxy">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">SessionTypeProxy</span></span><a class="headerlink" href="#simplebench.type_proxies.SessionTypeProxy" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.SessionTypeProxy'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.type_proxies.lazy_type_proxy.html#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy" title="simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code>]</p>
 <p>A special proxy class that acts like the <cite>Session</cite> type for runtime checks.</p>
 <p>It can be used in <cite>isinstance</cite> and <cite>issubclass</cite> checks as if it were
 the actual <cite>Session</cite> type.</p>
@@ -424,7 +195,7 @@ instead if an actual <cite>Session</cite> instance is needed.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.type_proxies.is_case">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">is_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.is_case" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.is_case'">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">is_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.is_case" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.is_case'">¶</a></dt>
 <dd><p>A type-guard function that checks if an object is an instance of <cite>Case</cite>.</p>
 <p>This function uses the <cite>CaseTypeProxy</cite> to perform the check, allowing
 for deferred imports and avoiding circular dependencies. It has the
@@ -444,13 +215,13 @@ and IDEs.</p>
 <dd class="field-even"><p>True if the object is an instance of <cite>Case</cite>, False otherwise</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case">Case</a>]</p>
+<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case">Case</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.type_proxies.is_choice">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">is_choice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><span class="pre">Choice</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.is_choice" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.is_choice'">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">is_choice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.is_choice" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.is_choice'">¶</a></dt>
 <dd><p>A type-guard function that checks if an object is an instance of <cite>Choice</cite>.</p>
 <p>This function uses the <cite>ChoiceTypeProxy</cite> to perform the check, allowing
 for deferred imports and avoiding circular dependencies. It has the
@@ -470,13 +241,13 @@ and IDEs.</p>
 <dd class="field-even"><p>True if the object is an instance of <cite>Choice</cite>, False otherwise</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice">Choice</a>]</p>
+<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice">Choice</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.type_proxies.is_reporter">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">is_reporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.is_reporter" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.is_reporter'">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">is_reporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><span class="pre">Reporter</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.is_reporter" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.is_reporter'">¶</a></dt>
 <dd><p>A type-guard function that checks if an object is an instance of <cite>Reporter</cite>.</p>
 <p>This function uses the <cite>ReporterTypeProxy</cite> to perform the check, allowing
 for deferred imports and avoiding circular dependencies. It has the
@@ -496,13 +267,13 @@ and IDEs.</p>
 <dd class="field-even"><p>True if the object is an instance of <cite>Reporter</cite>, False otherwise</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter">Reporter</a>]</p>
+<dd class="field-odd"><p>TypeGuard[<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter">Reporter</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.type_proxies.is_session">
-<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">is_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.is_session" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.is_session'">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.type_proxies.</span></span><span class="sig-name descname"><span class="pre">is_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><span class="pre">Session</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.type_proxies.is_session" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.type_proxies.is_session'">¶</a></dt>
 <dd><p>A type-guard function that checks if an object is an instance of <cite>Session</cite>.</p>
 <p>This function uses the <cite>SessionTypeProxy</cite> to perform the check, allowing
 for deferred imports and avoiding circular dependencies. It has the
@@ -515,38 +286,42 @@ and IDEs.</p>
 </span></code></pre></div>
 </div>
 </dd></dl>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#submodules'">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.type_proxies.case_type_proxy.html">simplebench.type_proxies.case_type_proxy module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.case_type_proxy.html#simplebench.type_proxies.case_type_proxy.CaseTypeProxy"><code class="docutils literal notranslate"><span class="pre">CaseTypeProxy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.case_type_proxy.html#simplebench.type_proxies.case_type_proxy.is_case"><code class="docutils literal notranslate"><span class="pre">is_case()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.type_proxies.choice_type_proxy.html">simplebench.type_proxies.choice_type_proxy module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.choice_type_proxy.html#simplebench.type_proxies.choice_type_proxy.ChoiceTypeProxy"><code class="docutils literal notranslate"><span class="pre">ChoiceTypeProxy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.choice_type_proxy.html#simplebench.type_proxies.choice_type_proxy.is_choice"><code class="docutils literal notranslate"><span class="pre">is_choice()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.type_proxies.lazy_type_proxy.html">simplebench.type_proxies.lazy_type_proxy module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.lazy_type_proxy.html#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.lazy_type_proxy.html#simplebench.type_proxies.lazy_type_proxy.register_lazy_proxy"><code class="docutils literal notranslate"><span class="pre">register_lazy_proxy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.type_proxies.reporter_type_proxy.html">simplebench.type_proxies.reporter_type_proxy module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.reporter_type_proxy.html#simplebench.type_proxies.reporter_type_proxy.ReporterTypeProxy"><code class="docutils literal notranslate"><span class="pre">ReporterTypeProxy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.reporter_type_proxy.html#simplebench.type_proxies.reporter_type_proxy.is_reporter"><code class="docutils literal notranslate"><span class="pre">is_reporter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.type_proxies.session_type_proxy.html">simplebench.type_proxies.session_type_proxy module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.session_type_proxy.html#simplebench.type_proxies.session_type_proxy.SessionTypeProxy"><code class="docutils literal notranslate"><span class="pre">SessionTypeProxy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.session_type_proxy.html#simplebench.type_proxies.session_type_proxy.is_session"><code class="docutils literal notranslate"><span class="pre">is_session()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#submodules'" class="reference internal" href="#submodules">Submodules</a></li>
-<li><a :data-current="activeSection === '#module-simplebench.type_proxies.case_type_proxy'" class="reference internal" href="#module-simplebench.type_proxies.case_type_proxy">simplebench.type_proxies.case_type_proxy module</a><ul>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.case_type_proxy.CaseTypeProxy'" class="reference internal" href="#simplebench.type_proxies.case_type_proxy.CaseTypeProxy"><code class="docutils literal notranslate"><span class="pre">CaseTypeProxy</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.case_type_proxy.is_case'" class="reference internal" href="#simplebench.type_proxies.case_type_proxy.is_case"><code class="docutils literal notranslate"><span class="pre">is_case()</span></code></a></li>
-</ul>
-</li>
-<li><a :data-current="activeSection === '#module-simplebench.type_proxies.choice_type_proxy'" class="reference internal" href="#module-simplebench.type_proxies.choice_type_proxy">simplebench.type_proxies.choice_type_proxy module</a><ul>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.choice_type_proxy.ChoiceTypeProxy'" class="reference internal" href="#simplebench.type_proxies.choice_type_proxy.ChoiceTypeProxy"><code class="docutils literal notranslate"><span class="pre">ChoiceTypeProxy</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.choice_type_proxy.is_choice'" class="reference internal" href="#simplebench.type_proxies.choice_type_proxy.is_choice"><code class="docutils literal notranslate"><span class="pre">is_choice()</span></code></a></li>
-</ul>
-</li>
-<li><a :data-current="activeSection === '#module-simplebench.type_proxies.lazy_type_proxy'" class="reference internal" href="#module-simplebench.type_proxies.lazy_type_proxy">simplebench.type_proxies.lazy_type_proxy module</a><ul>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy'" class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.LazyTypeProxy"><code class="docutils literal notranslate"><span class="pre">LazyTypeProxy</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.lazy_type_proxy.register_lazy_proxy'" class="reference internal" href="#simplebench.type_proxies.lazy_type_proxy.register_lazy_proxy"><code class="docutils literal notranslate"><span class="pre">register_lazy_proxy()</span></code></a></li>
-</ul>
-</li>
-<li><a :data-current="activeSection === '#module-simplebench.type_proxies.reporter_type_proxy'" class="reference internal" href="#module-simplebench.type_proxies.reporter_type_proxy">simplebench.type_proxies.reporter_type_proxy module</a><ul>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.reporter_type_proxy.ReporterTypeProxy'" class="reference internal" href="#simplebench.type_proxies.reporter_type_proxy.ReporterTypeProxy"><code class="docutils literal notranslate"><span class="pre">ReporterTypeProxy</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.reporter_type_proxy.is_reporter'" class="reference internal" href="#simplebench.type_proxies.reporter_type_proxy.is_reporter"><code class="docutils literal notranslate"><span class="pre">is_reporter()</span></code></a></li>
-</ul>
-</li>
-<li><a :data-current="activeSection === '#module-simplebench.type_proxies.session_type_proxy'" class="reference internal" href="#module-simplebench.type_proxies.session_type_proxy">simplebench.type_proxies.session_type_proxy module</a><ul>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.session_type_proxy.SessionTypeProxy'" class="reference internal" href="#simplebench.type_proxies.session_type_proxy.SessionTypeProxy"><code class="docutils literal notranslate"><span class="pre">SessionTypeProxy</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.type_proxies.session_type_proxy.is_session'" class="reference internal" href="#simplebench.type_proxies.session_type_proxy.is_session"><code class="docutils literal notranslate"><span class="pre">is_session()</span></code></a></li>
-</ul>
-</li>
-<li><a :data-current="activeSection === '#module-simplebench.type_proxies'" class="reference internal" href="#module-simplebench.type_proxies">Module contents</a><ul>
 <li><a :data-current="activeSection === '#simplebench.type_proxies.CaseTypeProxy'" class="reference internal" href="#simplebench.type_proxies.CaseTypeProxy"><code class="docutils literal notranslate"><span class="pre">CaseTypeProxy</span></code></a></li>
 <li><a :data-current="activeSection === '#simplebench.type_proxies.ChoiceTypeProxy'" class="reference internal" href="#simplebench.type_proxies.ChoiceTypeProxy"><code class="docutils literal notranslate"><span class="pre">ChoiceTypeProxy</span></code></a></li>
 <li><a :data-current="activeSection === '#simplebench.type_proxies.ReporterTypeProxy'" class="reference internal" href="#simplebench.type_proxies.ReporterTypeProxy"><code class="docutils literal notranslate"><span class="pre">ReporterTypeProxy</span></code></a></li>
@@ -555,8 +330,7 @@ and IDEs.</p>
 <li><a :data-current="activeSection === '#simplebench.type_proxies.is_choice'" class="reference internal" href="#simplebench.type_proxies.is_choice"><code class="docutils literal notranslate"><span class="pre">is_choice()</span></code></a></li>
 <li><a :data-current="activeSection === '#simplebench.type_proxies.is_reporter'" class="reference internal" href="#simplebench.type_proxies.is_reporter"><code class="docutils literal notranslate"><span class="pre">is_reporter()</span></code></a></li>
 <li><a :data-current="activeSection === '#simplebench.type_proxies.is_session'" class="reference internal" href="#simplebench.type_proxies.is_session"><code class="docutils literal notranslate"><span class="pre">is_session()</span></code></a></li>
-</ul>
-</li>
+<li><a :data-current="activeSection === '#submodules'" class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </div>
 </aside>

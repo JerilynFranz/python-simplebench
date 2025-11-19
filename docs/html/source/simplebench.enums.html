@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html :class="{'dark': darkMode === 'dark' || (darkMode === 'system' &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)}" class="scroll-smooth" data-content_root="../" lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') || localStorage.setItem('darkMode', 'system'), activeSection: '' }" x-init="$watch('darkMode', val =&gt; localStorage.setItem('darkMode', val))">
+<head>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="white" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="black" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>simplebench.enums module | SimpleBench 0.0.1 documentation</title>
+<meta content="simplebench.enums module | SimpleBench 0.0.1 documentation" property="og:title"/>
+<meta content="simplebench.enums module | SimpleBench 0.0.1 documentation" name="twitter:title"/>
+<link href="../_static/pygments.css?v=c309799c" rel="stylesheet" type="text/css"/>
+<link href="../_static/theme.css?v=42baaae4" rel="stylesheet" type="text/css"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="simplebench.iteration.html" rel="next" title="simplebench.iteration module"/>
+<link href="simplebench.doc_utils.html" rel="prev" title="simplebench.doc_utils module"/>
+<script>
+    <!-- Prevent Flash of wrong theme -->
+      const userPreference = localStorage.getItem('darkMode');
+      let mode;
+      if (userPreference === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        mode = 'dark';
+        document.documentElement.classList.add('dark');
+      } else {
+        mode = 'light';
+      }
+      if (!userPreference) {localStorage.setItem('darkMode', mode)}
+    </script>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
+<div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-sm border-border supports-backdrop-blur:bg-background/60 bg-background/95 backdrop-blur"><div class="container flex items-center h-14">
+<div class="hidden mr-4 md:flex">
+<a class="flex items-center mr-6" href="../index.html"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">SimpleBench 0.0.1 documentation</span>
+</a></div><button @click="showSidebar = true" class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden" type="button">
+<svg aria-hidden="true" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z"></path>
+</svg>
+<span class="sr-only">Toggle navigation menu</span>
+</button>
+<div class="flex items-center justify-between flex-1 space-x-2 sm:space-x-4 md:justify-end">
+<div class="flex-1 w-full md:w-auto md:flex-none"><form @keydown.k.window.meta="$refs.search.focus()" action="../search.html" class="relative flex items-center group" id="searchbox" method="get">
+<input aria-label="Search the docs" class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" id="search-input" name="q" placeholder="Search ..." type="search" x-ref="search"/>
+<kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+<span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+</div>
+<nav class="flex items-center space-x-1">
+<button @click="darkMode = darkMode === 'light' ? 'dark' : 'light'" aria-label="Color theme switcher" class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9" type="button">
+<svg class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z"></path>
+</svg>
+<svg class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+<div class="flex-1"><div class="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }" class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full shrink-0 overflow-y-auto border-r border-border md:sticky" id="left-sidebar">
+<a class="!justify-start text-sm md:!hidden bg-background" href="../index.html"><span class="font-bold text-clip whitespace-nowrap">SimpleBench 0.0.1 documentation</span>
+</a>
+<div class="relative overflow-hidden md:overflow-auto my-4 md:my-0 h-[calc(100vh-8rem)] md:h-auto">
+<div class="overflow-y-auto h-full w-full relative pr-6"><nav class="table w-full min-w-full my-6 lg:my-8">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="../usage.html">Using SimpleBench<button @click.prevent.stop="expanded = !expanded" type="button"><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul class="simple" x-show="expanded">
+</ul>
+</li>
+<li class="toctree-l1 current" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="modules.html">src<button @click.prevent.stop="expanded = !expanded" type="button"><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul class="current" x-show="expanded">
+<li class="toctree-l2 current"><a class="reference internal" href="simplebench.html">simplebench package</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<button @click="showSidebar = false" class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100" type="button">
+<svg class="h-4 w-4" fill="currentColor" height="24" stroke="none" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z"></path>
+</svg>
+</button>
+</aside>
+<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<nav aria-label="breadcrumbs" class="flex items-center mb-4 space-x-1 text-sm text-muted-foreground">
+<a class="overflow-hidden text-ellipsis whitespace-nowrap hover:text-foreground" href="../index.html">
+<span class="hidden md:inline">SimpleBench 0.0.1 documentation</span>
+<svg aria-label="Home" class="md:hidden" fill="currentColor" height="18" stroke="none" viewbox="0 96 960 960" width="18" xmlns="http://www.w3.org/2000/svg">
+<path d="M240 856h120V616h240v240h120V496L480 316 240 496v360Zm-80 80V456l320-240 320 240v480H520V696h-80v240H160Zm320-350Z"></path>
+</svg>
+</a>
+<div class="mr-1">/</div><a class="hover:text-foreground overflow-hidden text-ellipsis whitespace-nowrap" href="modules.html">src</a>
+<div class="mr-1">/</div><a class="hover:text-foreground overflow-hidden text-ellipsis whitespace-nowrap" href="simplebench.html">simplebench package</a>
+<div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">simplebench.enums module</span>
+</nav>
+<div id="content" role="main">
+<section id="module-simplebench.enums">
+<span id="simplebench-enums-module"></span><h1>simplebench.enums module<a class="headerlink" href="#module-simplebench.enums" title="Link to this heading">¶</a></h1>
+<p>Various enums for SimpleBench.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.enums.Color">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.enums.Color" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Colors for console output.</p>
+<dl class="simple">
+<dt>Defined Colors are:</dt><dd><ul class="simple">
+<li><p>BLACK: Black color.</p></li>
+<li><p>RED: Red color.</p></li>
+<li><p>GREEN: Green color.</p></li>
+<li><p>YELLOW: Yellow color.</p></li>
+<li><p>BLUE: Blue color.</p></li>
+<li><p>MAGENTA: Magenta color.</p></li>
+<li><p>CYAN: Cyan color.</p></li>
+<li><p>WHITE: White color.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Color.BLACK">
+<span class="sig-name descname"><span class="pre">BLACK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'black'</span></em><a class="headerlink" href="#simplebench.enums.Color.BLACK" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color.BLACK'">¶</a></dt>
+<dd><p>Black color.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Color.BLUE">
+<span class="sig-name descname"><span class="pre">BLUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'blue'</span></em><a class="headerlink" href="#simplebench.enums.Color.BLUE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color.BLUE'">¶</a></dt>
+<dd><p>Blue color.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Color.CYAN">
+<span class="sig-name descname"><span class="pre">CYAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cyan'</span></em><a class="headerlink" href="#simplebench.enums.Color.CYAN" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color.CYAN'">¶</a></dt>
+<dd><p>Cyan color.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Color.GREEN">
+<span class="sig-name descname"><span class="pre">GREEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'green'</span></em><a class="headerlink" href="#simplebench.enums.Color.GREEN" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color.GREEN'">¶</a></dt>
+<dd><p>Green color.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Color.MAGENTA">
+<span class="sig-name descname"><span class="pre">MAGENTA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'magenta'</span></em><a class="headerlink" href="#simplebench.enums.Color.MAGENTA" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color.MAGENTA'">¶</a></dt>
+<dd><p>Magenta color.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Color.RED">
+<span class="sig-name descname"><span class="pre">RED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'red'</span></em><a class="headerlink" href="#simplebench.enums.Color.RED" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color.RED'">¶</a></dt>
+<dd><p>Red color.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Color.WHITE">
+<span class="sig-name descname"><span class="pre">WHITE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'white'</span></em><a class="headerlink" href="#simplebench.enums.Color.WHITE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color.WHITE'">¶</a></dt>
+<dd><p>White color.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Color.YELLOW">
+<span class="sig-name descname"><span class="pre">YELLOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'yellow'</span></em><a class="headerlink" href="#simplebench.enums.Color.YELLOW" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Color.YELLOW'">¶</a></dt>
+<dd><p>Yellow color.</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.enums.FlagType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">FlagType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.enums.FlagType" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.FlagType'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Types of command-line flags for reporters.</p>
+<dl class="simple">
+<dt>Available FlagTypes are:</dt><dd><ul class="simple">
+<li><p>BOOLEAN: Boolean flag type.</p></li>
+<li><p>TARGET_LIST: List of output targets</p></li>
+<li><p>INVALID: Invalid flag type. This is a testing placeholder and should not be used.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.FlagType.BOOLEAN">
+<span class="sig-name descname"><span class="pre">BOOLEAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'boolean'</span></em><a class="headerlink" href="#simplebench.enums.FlagType.BOOLEAN" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.FlagType.BOOLEAN'">¶</a></dt>
+<dd><p>Boolean flag type.</p>
+<p>This flag type represents a simple on/off or true/false option.</p>
+<p>Example: –verbose / –no-verbose</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.FlagType.INVALID">
+<span class="sig-name descname"><span class="pre">INVALID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid'</span></em><a class="headerlink" href="#simplebench.enums.FlagType.INVALID" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.FlagType.INVALID'">¶</a></dt>
+<dd><p>Invalid flag type.</p>
+<p>This is a testing placeholder and should not be used. It is included
+to test error handling for unsupported flag types.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.FlagType.TARGET_LIST">
+<span class="sig-name descname"><span class="pre">TARGET_LIST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'target_list'</span></em><a class="headerlink" href="#simplebench.enums.FlagType.TARGET_LIST" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.FlagType.TARGET_LIST'">¶</a></dt>
+<dd><p>List of output targets</p>
+<p>This flag type represents a list of output targets for the reporter.</p>
+<p>This allows specifying multiple targets for the reporter to output to.</p>
+<p>The targets are specified as a list of strings and validated against
+the allowed Target enum values. It support passing NO targets as well,
+in which case the reporter will use the default targets.</p>
+<p>Example: –json console filesystem callback</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.enums.Format">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.enums.Format" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Format'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Categories for different output formats.</p>
+<dl class="simple">
+<dt>Defined Formats are:</dt><dd><ul class="simple">
+<li><p>PLAIN_TEXT: Plain text format.</p></li>
+<li><p>MARKDOWN: Markdown format.</p></li>
+<li><p>RICH_TEXT: Rich text format.</p></li>
+<li><p>CSV: CSV format.</p></li>
+<li><p>JSON: JSON format.</p></li>
+<li><p>GRAPH: Graphical format.</p></li>
+<li><p>CUSTOM: Custom format.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Format.CSV">
+<span class="sig-name descname"><span class="pre">CSV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'csv'</span></em><a class="headerlink" href="#simplebench.enums.Format.CSV" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Format.CSV'">¶</a></dt>
+<dd><p>CSV format</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Format.CUSTOM">
+<span class="sig-name descname"><span class="pre">CUSTOM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'custom'</span></em><a class="headerlink" href="#simplebench.enums.Format.CUSTOM" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Format.CUSTOM'">¶</a></dt>
+<dd><p>Custom format</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Format.GRAPH">
+<span class="sig-name descname"><span class="pre">GRAPH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'graph'</span></em><a class="headerlink" href="#simplebench.enums.Format.GRAPH" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Format.GRAPH'">¶</a></dt>
+<dd><p>Graphical format</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Format.JSON">
+<span class="sig-name descname"><span class="pre">JSON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'json'</span></em><a class="headerlink" href="#simplebench.enums.Format.JSON" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Format.JSON'">¶</a></dt>
+<dd><p>JSON format</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Format.MARKDOWN">
+<span class="sig-name descname"><span class="pre">MARKDOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'markdown'</span></em><a class="headerlink" href="#simplebench.enums.Format.MARKDOWN" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Format.MARKDOWN'">¶</a></dt>
+<dd><p>Markdown format</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Format.PLAIN_TEXT">
+<span class="sig-name descname"><span class="pre">PLAIN_TEXT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'plain</span> <span class="pre">text'</span></em><a class="headerlink" href="#simplebench.enums.Format.PLAIN_TEXT" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Format.PLAIN_TEXT'">¶</a></dt>
+<dd><p>Plain text format</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Format.RICH_TEXT">
+<span class="sig-name descname"><span class="pre">RICH_TEXT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rich</span> <span class="pre">text'</span></em><a class="headerlink" href="#simplebench.enums.Format.RICH_TEXT" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Format.RICH_TEXT'">¶</a></dt>
+<dd><p>Rich text format</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.enums.Section">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.enums.Section" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Section'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Categories for case results sections in reporters.</p>
+<p>This is used by reporters to specify which sections of benchmark results to include
+in their output.</p>
+<dl class="simple">
+<dt>Defined Sections are:</dt><dd><ul class="simple">
+<li><p>OPS: Operations per second section.</p></li>
+<li><p>TIMING: Time per round section.</p></li>
+<li><p>MEMORY: Memory usage section.</p></li>
+<li><p>PEAK_MEMORY: Peak memory usage section.</p></li>
+<li><p>NULL: No section. This is used when a reporter does not specify a section.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Section.MEMORY">
+<span class="sig-name descname"><span class="pre">MEMORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'memory</span> <span class="pre">usage'</span></em><a class="headerlink" href="#simplebench.enums.Section.MEMORY" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Section.MEMORY'">¶</a></dt>
+<dd><p>Memory usage section.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Section.NULL">
+<span class="sig-name descname"><span class="pre">NULL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'null</span> <span class="pre">section'</span></em><a class="headerlink" href="#simplebench.enums.Section.NULL" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Section.NULL'">¶</a></dt>
+<dd><p>No section. This is used when a reporter does not specify a section.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Section.OPS">
+<span class="sig-name descname"><span class="pre">OPS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'operations</span> <span class="pre">per</span> <span class="pre">second'</span></em><a class="headerlink" href="#simplebench.enums.Section.OPS" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Section.OPS'">¶</a></dt>
+<dd><p>Operations per second section.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Section.PEAK_MEMORY">
+<span class="sig-name descname"><span class="pre">PEAK_MEMORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'peak</span> <span class="pre">memory</span> <span class="pre">usage'</span></em><a class="headerlink" href="#simplebench.enums.Section.PEAK_MEMORY" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Section.PEAK_MEMORY'">¶</a></dt>
+<dd><p>Peak memory usage section.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Section.TIMING">
+<span class="sig-name descname"><span class="pre">TIMING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'per</span> <span class="pre">round</span> <span class="pre">timings'</span></em><a class="headerlink" href="#simplebench.enums.Section.TIMING" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Section.TIMING'">¶</a></dt>
+<dd><p>Time per round section.</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.enums.Target">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.enums.Target" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Target'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Categories for different output targets.</p>
+<p>The enums are used in generating calling parameters
+for the report() methods in the Reporter subclasses.</p>
+<dl class="simple">
+<dt>Defined Targets are:</dt><dd><ul class="simple">
+<li><p>CONSOLE: Output to console.</p></li>
+<li><p>FILESYSTEM: Output to filesystem.</p></li>
+<li><p>CALLBACK: Pass generated output to a callback function.</p></li>
+<li><p>CUSTOM: Output to a custom target.</p></li>
+<li><p>NULL: No output.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Target.CALLBACK">
+<span class="sig-name descname"><span class="pre">CALLBACK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'callback'</span></em><a class="headerlink" href="#simplebench.enums.Target.CALLBACK" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Target.CALLBACK'">¶</a></dt>
+<dd><p>Pass generated output to a callback function.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Target.CONSOLE">
+<span class="sig-name descname"><span class="pre">CONSOLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'console'</span></em><a class="headerlink" href="#simplebench.enums.Target.CONSOLE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Target.CONSOLE'">¶</a></dt>
+<dd><p>Output to console.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Target.CUSTOM">
+<span class="sig-name descname"><span class="pre">CUSTOM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'custom'</span></em><a class="headerlink" href="#simplebench.enums.Target.CUSTOM" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Target.CUSTOM'">¶</a></dt>
+<dd><p>Output to a custom target.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Target.FILESYSTEM">
+<span class="sig-name descname"><span class="pre">FILESYSTEM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'filesystem'</span></em><a class="headerlink" href="#simplebench.enums.Target.FILESYSTEM" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Target.FILESYSTEM'">¶</a></dt>
+<dd><p>Output to filesystem.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Target.INVALID">
+<span class="sig-name descname"><span class="pre">INVALID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'invalid'</span></em><a class="headerlink" href="#simplebench.enums.Target.INVALID" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Target.INVALID'">¶</a></dt>
+<dd><p>Invalid target. This is a testing placeholder and should not be used.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Target.NULL">
+<span class="sig-name descname"><span class="pre">NULL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'null'</span></em><a class="headerlink" href="#simplebench.enums.Target.NULL" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Target.NULL'">¶</a></dt>
+<dd><p>No output.</p>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.enums.Verbosity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Verbosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.enums.Verbosity" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Verbosity'">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Verbosity level enums for console output.</p>
+<dl class="simple">
+<dt>Defined levels are:</dt><dd><ul class="simple">
+<li><p>QUIET: Only requested output, errors, warnings and critical messages are shown.</p></li>
+<li><p>NORMAL: Normal messages are shown, including status displays during runs.</p></li>
+<li><p>VERBOSE: All messages are shown and status displays during runs.</p></li>
+<li><p>DEBUG: All messages are shown, including debug messages and status displays during runs.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Verbosity.DEBUG">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#simplebench.enums.Verbosity.DEBUG" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Verbosity.DEBUG'">¶</a></dt>
+<dd><p>All messages are shown, including debug messages and status displays during runs.</p>
+<p>This is incompatible with quiet.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Verbosity.NORMAL">
+<span class="sig-name descname"><span class="pre">NORMAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.enums.Verbosity.NORMAL" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Verbosity.NORMAL'">¶</a></dt>
+<dd><p>Normal messages are shown, including status displays during runs.</p>
+<p>This is the default verbosity level and is incompatible with quiet.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Verbosity.QUIET">
+<span class="sig-name descname"><span class="pre">QUIET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#simplebench.enums.Verbosity.QUIET" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Verbosity.QUIET'">¶</a></dt>
+<dd><p>Only requested output, errors, warnings and critical messages are shown.
+Status displays are not shown during runs.</p>
+<p>This is incompatible with all other output levels.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.Verbosity.VERBOSE">
+<span class="sig-name descname"><span class="pre">VERBOSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#simplebench.enums.Verbosity.VERBOSE" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.Verbosity.VERBOSE'">¶</a></dt>
+<dd><p>All messages are shown and status displays during runs.</p>
+<p>This is incompatible with quiet.</p>
+</dd></dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.enums.enum_docstrings">
+<span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">enum_docstrings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">E</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">E</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.enums.enum_docstrings" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.enums.enum_docstrings'">¶</a></dt>
+<dd><p>Attach docstrings to enum members.</p>
+<p>Docstrings are string literals that appear directly below the enum member
+assignment expression within triple-quotes.</p>
+<p>This decorator parses the source code of the enum class to find
+docstrings for each member and attaches them to the respective enum members.</p>
+<p>This allows for more detailed documentation of enum members and in tools
+that can extract and display these docstrings.</p>
+<p>This code is adapted from:
+<a class="reference external" href="https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums">https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums</a></p>
+<p class="rubric">Example</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nd">@enum_docstrings</span>
+</span><span id="line-2"><span class="k">class</span><span class="w"> </span><span class="nc">SomeEnum</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+</span><span id="line-3"><span class="w">    </span><span class="sd">'''Docstring for the SomeEnum enum'''</span>
+</span><span id="line-4">
+</span><span id="line-5">    <span class="n">foo_member</span> <span class="o">=</span> <span class="s2">"foo_value"</span>
+</span><span id="line-6"><span class="w">    </span><span class="sd">'''Docstring for the foo_member enum member'''</span>
+</span><span id="line-7">
+</span><span id="line-8"><span class="n">SomeEnum</span><span class="o">.</span><span class="n">foo_member</span><span class="o">.</span><span class="vm">__doc__</span>  <span class="c1"># 'Docstring for the foo_member enum member'</span>
+</span></code></pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><em>type</em></a><em>[</em><em>Enum</em><em>]</em>) – The enum class to process.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The same enum class with member docstrings attached.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)">type</a>[E]</p>
+</dd>
+</dl>
+</dd></dl>
+</section>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#simplebench.enums.Color'" class="reference internal" href="#simplebench.enums.Color"><code class="docutils literal notranslate"><span class="pre">Color</span></code></a><ul>
+<li><a :data-current="activeSection === '#simplebench.enums.Color.BLACK'" class="reference internal" href="#simplebench.enums.Color.BLACK"><code class="docutils literal notranslate"><span class="pre">Color.BLACK</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Color.BLUE'" class="reference internal" href="#simplebench.enums.Color.BLUE"><code class="docutils literal notranslate"><span class="pre">Color.BLUE</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Color.CYAN'" class="reference internal" href="#simplebench.enums.Color.CYAN"><code class="docutils literal notranslate"><span class="pre">Color.CYAN</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Color.GREEN'" class="reference internal" href="#simplebench.enums.Color.GREEN"><code class="docutils literal notranslate"><span class="pre">Color.GREEN</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Color.MAGENTA'" class="reference internal" href="#simplebench.enums.Color.MAGENTA"><code class="docutils literal notranslate"><span class="pre">Color.MAGENTA</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Color.RED'" class="reference internal" href="#simplebench.enums.Color.RED"><code class="docutils literal notranslate"><span class="pre">Color.RED</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Color.WHITE'" class="reference internal" href="#simplebench.enums.Color.WHITE"><code class="docutils literal notranslate"><span class="pre">Color.WHITE</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Color.YELLOW'" class="reference internal" href="#simplebench.enums.Color.YELLOW"><code class="docutils literal notranslate"><span class="pre">Color.YELLOW</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#simplebench.enums.FlagType'" class="reference internal" href="#simplebench.enums.FlagType"><code class="docutils literal notranslate"><span class="pre">FlagType</span></code></a><ul>
+<li><a :data-current="activeSection === '#simplebench.enums.FlagType.BOOLEAN'" class="reference internal" href="#simplebench.enums.FlagType.BOOLEAN"><code class="docutils literal notranslate"><span class="pre">FlagType.BOOLEAN</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.FlagType.INVALID'" class="reference internal" href="#simplebench.enums.FlagType.INVALID"><code class="docutils literal notranslate"><span class="pre">FlagType.INVALID</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.FlagType.TARGET_LIST'" class="reference internal" href="#simplebench.enums.FlagType.TARGET_LIST"><code class="docutils literal notranslate"><span class="pre">FlagType.TARGET_LIST</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#simplebench.enums.Format'" class="reference internal" href="#simplebench.enums.Format"><code class="docutils literal notranslate"><span class="pre">Format</span></code></a><ul>
+<li><a :data-current="activeSection === '#simplebench.enums.Format.CSV'" class="reference internal" href="#simplebench.enums.Format.CSV"><code class="docutils literal notranslate"><span class="pre">Format.CSV</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Format.CUSTOM'" class="reference internal" href="#simplebench.enums.Format.CUSTOM"><code class="docutils literal notranslate"><span class="pre">Format.CUSTOM</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Format.GRAPH'" class="reference internal" href="#simplebench.enums.Format.GRAPH"><code class="docutils literal notranslate"><span class="pre">Format.GRAPH</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Format.JSON'" class="reference internal" href="#simplebench.enums.Format.JSON"><code class="docutils literal notranslate"><span class="pre">Format.JSON</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Format.MARKDOWN'" class="reference internal" href="#simplebench.enums.Format.MARKDOWN"><code class="docutils literal notranslate"><span class="pre">Format.MARKDOWN</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Format.PLAIN_TEXT'" class="reference internal" href="#simplebench.enums.Format.PLAIN_TEXT"><code class="docutils literal notranslate"><span class="pre">Format.PLAIN_TEXT</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Format.RICH_TEXT'" class="reference internal" href="#simplebench.enums.Format.RICH_TEXT"><code class="docutils literal notranslate"><span class="pre">Format.RICH_TEXT</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#simplebench.enums.Section'" class="reference internal" href="#simplebench.enums.Section"><code class="docutils literal notranslate"><span class="pre">Section</span></code></a><ul>
+<li><a :data-current="activeSection === '#simplebench.enums.Section.MEMORY'" class="reference internal" href="#simplebench.enums.Section.MEMORY"><code class="docutils literal notranslate"><span class="pre">Section.MEMORY</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Section.NULL'" class="reference internal" href="#simplebench.enums.Section.NULL"><code class="docutils literal notranslate"><span class="pre">Section.NULL</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Section.OPS'" class="reference internal" href="#simplebench.enums.Section.OPS"><code class="docutils literal notranslate"><span class="pre">Section.OPS</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Section.PEAK_MEMORY'" class="reference internal" href="#simplebench.enums.Section.PEAK_MEMORY"><code class="docutils literal notranslate"><span class="pre">Section.PEAK_MEMORY</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Section.TIMING'" class="reference internal" href="#simplebench.enums.Section.TIMING"><code class="docutils literal notranslate"><span class="pre">Section.TIMING</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#simplebench.enums.Target'" class="reference internal" href="#simplebench.enums.Target"><code class="docutils literal notranslate"><span class="pre">Target</span></code></a><ul>
+<li><a :data-current="activeSection === '#simplebench.enums.Target.CALLBACK'" class="reference internal" href="#simplebench.enums.Target.CALLBACK"><code class="docutils literal notranslate"><span class="pre">Target.CALLBACK</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Target.CONSOLE'" class="reference internal" href="#simplebench.enums.Target.CONSOLE"><code class="docutils literal notranslate"><span class="pre">Target.CONSOLE</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Target.CUSTOM'" class="reference internal" href="#simplebench.enums.Target.CUSTOM"><code class="docutils literal notranslate"><span class="pre">Target.CUSTOM</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Target.FILESYSTEM'" class="reference internal" href="#simplebench.enums.Target.FILESYSTEM"><code class="docutils literal notranslate"><span class="pre">Target.FILESYSTEM</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Target.INVALID'" class="reference internal" href="#simplebench.enums.Target.INVALID"><code class="docutils literal notranslate"><span class="pre">Target.INVALID</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Target.NULL'" class="reference internal" href="#simplebench.enums.Target.NULL"><code class="docutils literal notranslate"><span class="pre">Target.NULL</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#simplebench.enums.Verbosity'" class="reference internal" href="#simplebench.enums.Verbosity"><code class="docutils literal notranslate"><span class="pre">Verbosity</span></code></a><ul>
+<li><a :data-current="activeSection === '#simplebench.enums.Verbosity.DEBUG'" class="reference internal" href="#simplebench.enums.Verbosity.DEBUG"><code class="docutils literal notranslate"><span class="pre">Verbosity.DEBUG</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Verbosity.NORMAL'" class="reference internal" href="#simplebench.enums.Verbosity.NORMAL"><code class="docutils literal notranslate"><span class="pre">Verbosity.NORMAL</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Verbosity.QUIET'" class="reference internal" href="#simplebench.enums.Verbosity.QUIET"><code class="docutils literal notranslate"><span class="pre">Verbosity.QUIET</span></code></a></li>
+<li><a :data-current="activeSection === '#simplebench.enums.Verbosity.VERBOSE'" class="reference internal" href="#simplebench.enums.Verbosity.VERBOSE"><code class="docutils literal notranslate"><span class="pre">Verbosity.VERBOSE</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#simplebench.enums.enum_docstrings'" class="reference internal" href="#simplebench.enums.enum_docstrings"><code class="docutils literal notranslate"><span class="pre">enum_docstrings()</span></code></a></li>
+</ul>
+</div>
+</aside>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025, Jerilyn Franz Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 8.1.3</a></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="../_static/documentation_options.js?v=d45e8c67"></script>
+<script src="../_static/doctools.js?v=9bcbadda"></script>
+<script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+<script defer="defer" src="../_static/theme.js?v=073f68d9"></script>
+</body>
+</html>

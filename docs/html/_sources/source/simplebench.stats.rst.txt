@@ -1,6 +1,11 @@
 simplebench.stats package
 =========================
 
+.. automodule:: simplebench.stats
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -12,50 +17,11 @@ Subpackages
 Submodules
 ----------
 
-simplebench.stats.memory\_usage module
---------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: simplebench.stats.memory_usage
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.stats.operation\_timings module
--------------------------------------------
-
-.. automodule:: simplebench.stats.operation_timings
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.stats.operations\_per\_interval module
---------------------------------------------------
-
-.. automodule:: simplebench.stats.operations_per_interval
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.stats.peak\_memory\_usage module
---------------------------------------------
-
-.. automodule:: simplebench.stats.peak_memory_usage
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.stats.stats module
-------------------------------
-
-.. automodule:: simplebench.stats.stats
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: simplebench.stats
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   simplebench.stats.memory_usage
+   simplebench.stats.operation_timings
+   simplebench.stats.operations_per_interval
+   simplebench.stats.peak_memory_usage
+   simplebench.stats.stats

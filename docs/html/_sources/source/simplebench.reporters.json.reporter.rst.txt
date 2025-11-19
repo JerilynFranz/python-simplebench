@@ -1,6 +1,11 @@
 simplebench.reporters.json.reporter package
 ===========================================
 
+.. automodule:: simplebench.reporters.json.reporter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -12,34 +17,9 @@ Subpackages
 Submodules
 ----------
 
-simplebench.reporters.json.reporter.config module
--------------------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: simplebench.reporters.json.reporter.config
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.reporters.json.reporter.exceptions module
------------------------------------------------------
-
-.. automodule:: simplebench.reporters.json.reporter.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.reporters.json.reporter.reporter module
----------------------------------------------------
-
-.. automodule:: simplebench.reporters.json.reporter.reporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: simplebench.reporters.json.reporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   simplebench.reporters.json.reporter.config
+   simplebench.reporters.json.reporter.exceptions
+   simplebench.reporters.json.reporter.reporter

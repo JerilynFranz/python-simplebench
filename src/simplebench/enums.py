@@ -28,7 +28,8 @@ def enum_docstrings(enum: type[E]) -> type[E]:
     https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
 
     Example:
-        .. code-block:: python
+
+        .. code-block:: python3
 
             @enum_docstrings
             class SomeEnum(Enum):

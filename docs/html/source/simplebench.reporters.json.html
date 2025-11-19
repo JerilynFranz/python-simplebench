@@ -15,7 +15,7 @@
 <link href="../search.html" rel="search" title="Search"/>
 <link href="../genindex.html" rel="index" title="Index"/>
 <link href="simplebench.reporters.json.reporter.html" rel="next" title="simplebench.reporters.json.reporter package"/>
-<link href="simplebench.reporters.graph.scatterplot.options.html" rel="prev" title="simplebench.reporters.graph.scatterplot.options package"/>
+<link href="simplebench.reporters.graph.options.html" rel="prev" title="simplebench.reporters.graph.options module"/>
 <script>
     <!-- Prevent Flash of wrong theme -->
       const userPreference = localStorage.getItem('darkMode');
@@ -102,72 +102,17 @@
 <div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">simplebench.reporters.json package</span>
 </nav>
 <div id="content" role="main">
-<section id="simplebench-reporters-json-package">
-<h1>simplebench.reporters.json package<a class="headerlink" href="#simplebench-reporters-json-package" title="Link to this heading">¶</a></h1>
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#subpackages'">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.json.reporter.html">simplebench.reporters.json.reporter package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html">simplebench.reporters.json.reporter.options package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html#module-simplebench.reporters.json.reporter.options.exceptions">simplebench.reporters.json.reporter.options.exceptions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html#module-simplebench.reporters.json.reporter.options.options">simplebench.reporters.json.reporter.options.options module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html#module-simplebench.reporters.json.reporter.options">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#module-simplebench.reporters.json.reporter.config">simplebench.reporters.json.reporter.config module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.config.JSONConfig"><code class="docutils literal notranslate"><span class="pre">JSONConfig</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#module-simplebench.reporters.json.reporter.exceptions">simplebench.reporters.json.reporter.exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#module-simplebench.reporters.json.reporter.reporter">simplebench.reporters.json.reporter.reporter module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.reporter.JSONReporter"><code class="docutils literal notranslate"><span class="pre">JSONReporter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.reporter.JSONReporter.mean_change"><code class="docutils literal notranslate"><span class="pre">JSONReporter.mean_change()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.reporter.JSONReporter.render"><code class="docutils literal notranslate"><span class="pre">JSONReporter.render()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.reporter.JSONReporter.run_report"><code class="docutils literal notranslate"><span class="pre">JSONReporter.run_report()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#module-simplebench.reporters.json.reporter">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONConfig"><code class="docutils literal notranslate"><span class="pre">JSONConfig</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONOptions"><code class="docutils literal notranslate"><span class="pre">JSONOptions</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONOptions.full_data"><code class="docutils literal notranslate"><span class="pre">JSONOptions.full_data</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONOptionsErrorTag"><code class="docutils literal notranslate"><span class="pre">JSONOptionsErrorTag</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONOptionsErrorTag.INVALID_FULL_DATA_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">JSONOptionsErrorTag.INVALID_FULL_DATA_ARG_TYPE</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter"><code class="docutils literal notranslate"><span class="pre">JSONReporter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.mean_change"><code class="docutils literal notranslate"><span class="pre">JSONReporter.mean_change()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.render"><code class="docutils literal notranslate"><span class="pre">JSONReporter.render()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.run_report"><code class="docutils literal notranslate"><span class="pre">JSONReporter.run_report()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
 <section id="module-simplebench.reporters.json">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.reporters.json" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.reporters.json'">¶</a></h2>
+<span id="simplebench-reporters-json-package"></span><h1>simplebench.reporters.json package<a class="headerlink" href="#module-simplebench.reporters.json" title="Link to this heading">¶</a></h1>
 <p>JSON Reporter package for simplebench.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.json.JSONOptions">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.json.</span></span><span class="sig-name descname"><span class="pre">JSONOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.json.JSONOptions" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONOptions'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
 <p>Class for holding JSON reporter specific options in a Choice or Case.</p>
 <p>This class provides additional configuration options specific to the JSON reporter.
 It is accessed via the <code class="docutils literal notranslate"><span class="pre">options</span></code> attribute of a
-<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> or <a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> or <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>
 instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
@@ -191,7 +136,7 @@ instance.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.json.JSONOptionsErrorTag">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.json.</span></span><span class="sig-name descname"><span class="pre">JSONOptionsErrorTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.json.JSONOptionsErrorTag" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONOptionsErrorTag'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></p>
 <p>Error tags for JSON options.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.reporters.json.JSONOptionsErrorTag.INVALID_FULL_DATA_ARG_TYPE">
@@ -201,8 +146,8 @@ instance.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.json.JSONReporter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.json.</span></span><span class="sig-name descname"><span class="pre">JSONReporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.config.JSONConfig" title="simplebench.reporters.json.reporter.config.JSONConfig"><span class="pre">JSONConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.json.JSONReporter" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONReporter'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.json.</span></span><span class="sig-name descname"><span class="pre">JSONReporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.json.reporter.config.html#simplebench.reporters.json.reporter.config.JSONConfig" title="simplebench.reporters.json.reporter.config.JSONConfig"><span class="pre">JSONConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.json.JSONReporter" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONReporter'">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a></p>
 <p>Class for outputting benchmark results to JSON files.</p>
 <p>It supports reporting statistics for various sections,
 either separately or together, to the filesystem, via a callback function,
@@ -231,17 +176,17 @@ to JSON with full data.</p></li>
 <li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A brief description of the reporter.</p></li>
 <li><p><strong>choices</strong> (<a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><em>Choices</em></a>) – A collection of <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> instances
 defining the reporter instance, CLI flags, <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a>
-name, supported <a class="reference internal" href="simplebench.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> objects, supported output
-<a class="reference internal" href="simplebench.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a> objects, and supported output
-<a class="reference internal" href="simplebench.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> objects for the reporter.</p></li>
-<li><p><strong>targets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><em>set</em></a><em>[</em><a class="reference internal" href="simplebench.html#simplebench.enums.Target" title="simplebench.enums.Target"><em>Target</em></a><em>]</em>) – The supported output targets for the reporter.</p></li>
-<li><p><strong>formats</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><em>set</em></a><em>[</em><a class="reference internal" href="simplebench.html#simplebench.enums.Format" title="simplebench.enums.Format"><em>Format</em></a><em>]</em>) – The supported output formats for the reporter.</p></li>
+name, supported <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> objects, supported output
+<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a> objects, and supported output
+<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> objects for the reporter.</p></li>
+<li><p><strong>targets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><em>set</em></a><em>[</em><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><em>Target</em></a><em>]</em>) – The supported output targets for the reporter.</p></li>
+<li><p><strong>formats</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><em>set</em></a><em>[</em><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><em>Format</em></a><em>]</em>) – The supported output formats for the reporter.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.json.JSONReporter.mean_change">
-<span class="sig-name descname"><span class="pre">mean_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">second</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.mean_change" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONReporter.mean_change'">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">second</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.mean_change" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONReporter.mean_change'">¶</a></dt>
 <dd><p>Compare two Case instances for a given section and return the change as a float ratio.</p>
 <p>The float ratio is calculated as <code class="docutils literal notranslate"><span class="pre">(value2</span> <span class="pre">-</span> <span class="pre">value1)</span> <span class="pre">/</span> <span class="pre">value1</span></code>, where <code class="docutils literal notranslate"><span class="pre">value1</span></code> and
 <code class="docutils literal notranslate"><span class="pre">value2</span></code> are the mean values for the specified section in the first and second
@@ -256,9 +201,9 @@ the change is defined as <code class="docutils literal notranslate"><span class=
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>first</strong> – The first <a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance to compare.</p></li>
-<li><p><strong>second</strong> – The second <a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance to compare.</p></li>
-<li><p><strong>section</strong> – The <a class="reference internal" href="simplebench.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> to compare.</p></li>
+<li><p><strong>first</strong> – The first <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance to compare.</p></li>
+<li><p><strong>second</strong> – The second <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance to compare.</p></li>
+<li><p><strong>section</strong> – The <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> to compare.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -270,31 +215,31 @@ incomparable.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.json.JSONReporter.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.render" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONReporter.render'">¶</a></dt>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.render" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONReporter.render'">¶</a></dt>
 <dd><p>Convert the Case data for all sections to a JSON string.</p>
 <p>Machine info is included in the JSON output under the ‘metadata’ key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>case</strong> – The <a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance holding the benchmarked
+<li><p><strong>case</strong> – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance holding the benchmarked
 code statistics.</p></li>
-<li><p><strong>section</strong> – The <a class="reference internal" href="simplebench.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> to render (ignored, all
+<li><p><strong>section</strong> – The <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> to render (ignored, all
 sections are included).</p></li>
 <li><p><strong>options</strong> – The <a class="reference internal" href="#simplebench.reporters.json.JSONOptions" title="simplebench.reporters.json.JSONOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONOptions</span></code></a> instance specifying rendering options
 or <code class="docutils literal notranslate"><span class="pre">None</span></code> if not provided. (<a class="reference internal" href="#simplebench.reporters.json.JSONOptions" title="simplebench.reporters.json.JSONOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONOptions</span></code></a> is a subclass of
-<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a>.)</p></li>
+<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a>.)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The JSON string representation of the <a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> data.</p>
+<dd class="field-even"><p>The JSON string representation of the <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> data.</p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.json.JSONReporter.run_report">
-<span class="sig-name descname"><span class="pre">run_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><span class="pre">Choice</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.reporter_callback.ReporterCallback" title="simplebench.reporters.protocols.reporter_callback.ReporterCallback"><span class="pre">ReporterCallback</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.run_report" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONReporter.run_report'">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.ReporterCallback" title="simplebench.reporters.protocols.ReporterCallback"><span class="pre">ReporterCallback</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.run_report" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.json.JSONReporter.run_report'">¶</a></dt>
 <dd><p>Output the benchmark results to a file as tagged JSON if available.</p>
-<p>This method is called by the base class’s <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter.report" title="simplebench.reporters.reporter.reporter.Reporter.report"><code class="xref py py-meth docutils literal notranslate"><span class="pre">report()</span></code></a> method after
+<p>This method is called by the base class’s <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter.report" title="simplebench.reporters.reporter.Reporter.report"><code class="xref py py-meth docutils literal notranslate"><span class="pre">report()</span></code></a> method after
 validation. The base class handles validation of the arguments, so subclasses can
 assume the arguments are valid without a large amount of boilerplate code. The base
 class also handles lazy loading of the reporter classes, so subclasses can assume
@@ -308,15 +253,15 @@ this case). The rendering method must conform with the
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – The parsed command-line arguments.</p></li>
-<li><p><strong>case</strong> – The <a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the
+<li><p><strong>case</strong> – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the
 benchmarked code.</p></li>
 <li><p><strong>choice</strong> – The <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance specifying
 the report configuration.</p></li>
 <li><p><strong>path</strong> – The path to the directory where the JSON file(s) will be saved.</p></li>
-<li><p><strong>session</strong> – The <a class="reference internal" href="simplebench.html#simplebench.session.Session" title="simplebench.session.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a> instance containing
+<li><p><strong>session</strong> – The <a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a> instance containing
 benchmark results.</p></li>
 <li><p><strong>callback</strong> – A callback function for additional processing of the report.
-The function should accept two arguments: the <a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>
+The function should accept two arguments: the <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>
 instance and the JSON data as a string. Leave as <code class="docutils literal notranslate"><span class="pre">None</span></code> if no callback is
 needed.</p></li>
 </ul>
@@ -324,13 +269,56 @@ needed.</p></li>
 </dl>
 </dd></dl>
 </dd></dl>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#subpackages'">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.json.reporter.html">simplebench.reporters.json.reporter package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONConfig"><code class="docutils literal notranslate"><span class="pre">JSONConfig</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONOptions"><code class="docutils literal notranslate"><span class="pre">JSONOptions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONOptions.full_data"><code class="docutils literal notranslate"><span class="pre">JSONOptions.full_data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONOptionsErrorTag"><code class="docutils literal notranslate"><span class="pre">JSONOptionsErrorTag</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONOptionsErrorTag.INVALID_FULL_DATA_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">JSONOptionsErrorTag.INVALID_FULL_DATA_ARG_TYPE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter"><code class="docutils literal notranslate"><span class="pre">JSONReporter</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.mean_change"><code class="docutils literal notranslate"><span class="pre">JSONReporter.mean_change()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.render"><code class="docutils literal notranslate"><span class="pre">JSONReporter.render()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.run_report"><code class="docutils literal notranslate"><span class="pre">JSONReporter.run_report()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html">simplebench.reporters.json.reporter.options package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html#simplebench.reporters.json.reporter.options.JSONOptions"><code class="docutils literal notranslate"><span class="pre">JSONOptions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html#simplebench.reporters.json.reporter.options.JSONOptionsErrorTag"><code class="docutils literal notranslate"><span class="pre">JSONOptionsErrorTag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.options.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.config.html">simplebench.reporters.json.reporter.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.config.html#simplebench.reporters.json.reporter.config.JSONConfig"><code class="docutils literal notranslate"><span class="pre">JSONConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.exceptions.html">simplebench.reporters.json.reporter.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.reporter.html">simplebench.reporters.json.reporter.reporter module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.reporter.reporter.html#simplebench.reporters.json.reporter.reporter.JSONReporter"><code class="docutils literal notranslate"><span class="pre">JSONReporter</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#subpackages'" class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a :data-current="activeSection === '#module-simplebench.reporters.json'" class="reference internal" href="#module-simplebench.reporters.json">Module contents</a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.json.JSONOptions'" class="reference internal" href="#simplebench.reporters.json.JSONOptions"><code class="docutils literal notranslate"><span class="pre">JSONOptions</span></code></a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.json.JSONOptions.full_data'" class="reference internal" href="#simplebench.reporters.json.JSONOptions.full_data"><code class="docutils literal notranslate"><span class="pre">JSONOptions.full_data</span></code></a></li>
 </ul>
@@ -345,8 +333,7 @@ needed.</p></li>
 <li><a :data-current="activeSection === '#simplebench.reporters.json.JSONReporter.run_report'" class="reference internal" href="#simplebench.reporters.json.JSONReporter.run_report"><code class="docutils literal notranslate"><span class="pre">JSONReporter.run_report()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li><a :data-current="activeSection === '#subpackages'" class="reference internal" href="#subpackages">Subpackages</a></li>
 </ul>
 </div>
 </aside>

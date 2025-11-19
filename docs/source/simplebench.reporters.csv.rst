@@ -1,6 +1,11 @@
 simplebench.reporters.csv package
 =================================
 
+.. automodule:: simplebench.reporters.csv
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -8,11 +13,3 @@ Subpackages
    :maxdepth: 4
 
    simplebench.reporters.csv.reporter
-
-Module contents
----------------
-
-.. automodule:: simplebench.reporters.csv
-   :members:
-   :undoc-members:
-   :show-inheritance:

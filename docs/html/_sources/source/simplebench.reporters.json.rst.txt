@@ -1,6 +1,11 @@
 simplebench.reporters.json package
 ==================================
 
+.. automodule:: simplebench.reporters.json
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -8,11 +13,3 @@ Subpackages
    :maxdepth: 4
 
    simplebench.reporters.json.reporter
-
-Module contents
----------------
-
-.. automodule:: simplebench.reporters.json
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,6 +1,11 @@
 simplebench.validators package
 ==============================
 
+.. automodule:: simplebench.validators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -12,34 +17,9 @@ Subpackages
 Submodules
 ----------
 
-simplebench.validators.misc module
-----------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: simplebench.validators.misc
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.validators.validate\_iterable\_of\_type module
-----------------------------------------------------------
-
-.. automodule:: simplebench.validators.validate_iterable_of_type
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.validators.validate\_sequence\_of\_type module
-----------------------------------------------------------
-
-.. automodule:: simplebench.validators.validate_sequence_of_type
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: simplebench.validators
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   simplebench.validators.misc
+   simplebench.validators.validate_iterable_of_type
+   simplebench.validators.validate_sequence_of_type

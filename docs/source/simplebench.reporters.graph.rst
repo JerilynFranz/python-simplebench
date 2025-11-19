@@ -1,6 +1,11 @@
 simplebench.reporters.graph package
 ===================================
 
+.. automodule:: simplebench.reporters.graph
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -14,18 +19,7 @@ Subpackages
 Submodules
 ----------
 
-simplebench.reporters.graph.options module
-------------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: simplebench.reporters.graph.options
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: simplebench.reporters.graph
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   simplebench.reporters.graph.options

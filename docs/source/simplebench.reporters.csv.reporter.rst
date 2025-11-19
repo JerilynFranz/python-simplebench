@@ -1,6 +1,11 @@
 simplebench.reporters.csv.reporter package
 ==========================================
 
+.. automodule:: simplebench.reporters.csv.reporter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -12,34 +17,9 @@ Subpackages
 Submodules
 ----------
 
-simplebench.reporters.csv.reporter.config module
-------------------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: simplebench.reporters.csv.reporter.config
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.reporters.csv.reporter.exceptions module
-----------------------------------------------------
-
-.. automodule:: simplebench.reporters.csv.reporter.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.reporters.csv.reporter.reporter module
---------------------------------------------------
-
-.. automodule:: simplebench.reporters.csv.reporter.reporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: simplebench.reporters.csv.reporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   simplebench.reporters.csv.reporter.config
+   simplebench.reporters.csv.reporter.exceptions
+   simplebench.reporters.csv.reporter.reporter

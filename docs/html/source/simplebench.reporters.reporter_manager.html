@@ -15,7 +15,7 @@
 <link href="../search.html" rel="search" title="Search"/>
 <link href="../genindex.html" rel="index" title="Index"/>
 <link href="simplebench.reporters.reporter_manager.decorators.html" rel="next" title="simplebench.reporters.reporter_manager.decorators package"/>
-<link href="simplebench.reporters.reporter.mixins.html" rel="prev" title="simplebench.reporters.reporter.mixins package"/>
+<link href="simplebench.reporters.reporter.reporter.html" rel="prev" title="simplebench.reporters.reporter.reporter module"/>
 <script>
     <!-- Prevent Flash of wrong theme -->
       const userPreference = localStorage.getItem('darkMode');
@@ -102,208 +102,8 @@
 <div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">simplebench.reporters.reporter_manager package</span>
 </nav>
 <div id="content" role="main">
-<section id="simplebench-reporters-reporter-manager-package">
-<h1>simplebench.reporters.reporter_manager package<a class="headerlink" href="#simplebench-reporters-reporter-manager-package" title="Link to this heading">¶</a></h1>
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#subpackages'">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html">simplebench.reporters.reporter_manager.decorators package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html">simplebench.reporters.reporter_manager.decorators.register_reporter package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html#module-simplebench.reporters.reporter_manager.decorators.register_reporter.exceptions">simplebench.reporters.reporter_manager.decorators.register_reporter.exceptions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html#module-simplebench.reporters.reporter_manager.decorators.register_reporter.register_reporter">simplebench.reporters.reporter_manager.decorators.register_reporter.register_reporter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html#module-simplebench.reporters.reporter_manager.decorators.register_reporter">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#module-simplebench.reporters.reporter_manager.decorators">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#simplebench.reporters.reporter_manager.decorators.clear_registered_reporters"><code class="docutils literal notranslate"><span class="pre">clear_registered_reporters()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#simplebench.reporters.reporter_manager.decorators.get_registered_reporters"><code class="docutils literal notranslate"><span class="pre">get_registered_reporters()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#simplebench.reporters.reporter_manager.decorators.register_reporter"><code class="docutils literal notranslate"><span class="pre">register_reporter()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.reporter_manager.exceptions.html">simplebench.reporters.reporter_manager.exceptions package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.exceptions.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.exceptions.html#module-simplebench.reporters.reporter_manager.exceptions.manager">simplebench.reporters.reporter_manager.exceptions.manager module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.exceptions.html#module-simplebench.reporters.reporter_manager.exceptions">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#submodules'">¶</a></h2>
-</section>
-<section id="module-simplebench.reporters.reporter_manager.manager">
-<span id="simplebench-reporters-reporter-manager-manager-module"></span><h2>simplebench.reporters.reporter_manager.manager module<a class="headerlink" href="#module-simplebench.reporters.reporter_manager.manager" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.reporters.reporter_manager.manager'">¶</a></h2>
-<p>ReporterManager for benchmark results.</p>
-<p>This module contains the <a class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager" title="simplebench.reporters.reporter_manager.manager.ReporterManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterManager</span></code></a> class, which manages the registration,
-retrieval, and unregistration of <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
-classes and instances.</p>
-<p>This registry is global. When a <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> is registered,
-it is added to the global registry, and when it is unregistered, it is removed from the
-global registry.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.reporter_manager.manager.</span></span><span class="sig-name descname"><span class="pre">ReporterManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_defaults</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager'">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Manager for all available <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> classes.</p>
-<p>This class maintains a registry of <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
-instances and their associated CLI arguments. It allows for the registration, retrieval,
-and unregistration of <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances.</p>
-<p>Initially, it registers a set of built-in <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
-instances: <a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter" title="simplebench.reporters.csv.reporter.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a>,
-<a class="reference internal" href="simplebench.reporters.graph.scatterplot.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter" title="simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a>,
-and <a class="reference internal" href="simplebench.reporters.rich_table.reporter.html#simplebench.reporters.rich_table.reporter.RichTableReporter" title="simplebench.reporters.rich_table.reporter.RichTableReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTableReporter</span></code></a>.</p>
-<p>New <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances can be added using the
-<a class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.register" title="simplebench.reporters.reporter_manager.manager.ReporterManager.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a> method, and existing ones can be removed using the <a class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister" title="simplebench.reporters.reporter_manager.manager.ReporterManager.unregister"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unregister()</span></code></a>
-or <a class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_by_name" title="simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_by_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unregister_by_name()</span></code></a> methods.</p>
-<p><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances are required to have unique
-names and CLI arguments in their <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> to avoid
-conflicts and the manager will raise exceptions if duplicates are detected during registration.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">reporter_manager</span> <span class="o">=</span> <span class="n">ReporterManager</span><span class="p">()</span>
-</span><span id="line-2"><span class="n">my_custom_reporter</span> <span class="o">=</span> <span class="n">CustomReporter</span><span class="p">()</span>
-</span><span id="line-3"><span class="n">reporter_manager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">my_custom_reporter</span><span class="p">)</span>
-</span></code></pre></div>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.add_reporters_to_argparse">
-<span class="sig-name descname"><span class="pre">add_reporters_to_argparse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><span class="pre">ArgumentParser</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.add_reporters_to_argparse" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager.add_reporters_to_argparse'">¶</a></dt>
-<dd><p>Add all registered reporter choices to an <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>.</p>
-<p>This method adds the CLI arguments for all registered reporters
-to the provided <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> instance using the
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_flags_to_argparse()</span></code> method
-of each <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> to add the flags to.</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.all_reporters">
-<span class="sig-name descname"><span class="pre">all_reporters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.all_reporters" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager.all_reporters'">¶</a></dt>
-<dd><p>Return all available <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances
-as a dictionary keyed by their names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary of all <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
-instances with their names as keys.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict[str, <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>]</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.choice_for_arg">
-<span class="sig-name descname"><span class="pre">choice_for_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><span class="pre">Choice</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.choice_for_arg" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager.choice_for_arg'">¶</a></dt>
-<dd><p>Return the <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance for a given CLI argument.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>arg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The CLI argument to look up.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The corresponding <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance,
-or <code class="docutils literal notranslate"><span class="pre">None</span></code> if not found.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> | None</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.choices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">choices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><span class="pre">Choices</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.choices" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager.choices'">¶</a></dt>
-<dd><p>Return a <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> instance containing all
-registered reporter choices.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> instance with all
-registered reporter choices.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.register">
-<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.register" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager.register'">¶</a></dt>
-<dd><p>Register a new <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>.</p>
-<p>This method adds a new <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> to the registry.
-Unlike the predefined reporters and the <a class="reference internal" href="simplebench.html#simplebench.register_reporter" title="simplebench.register_reporter"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_reporter()</span></code></a> decorator which both
-register by class, this method requires an instance of the
-<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>.</p>
-<p>This allows for more flexibility, such as registering
-<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances with custom
-initialization parameters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>reporter</strong> (<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>) – The <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> to register.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If a <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
-with the same name or CLI argument is already registered.</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided reporter is not an instance of
-<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.unregister">
-<span class="sig-name descname"><span class="pre">unregister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister'">¶</a></dt>
-<dd><p>Unregister a <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> by an instance exemplar.</p>
-<p>It looks up the reporter by its name and removes it from the registry.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">reporter_manager</span><span class="o">.</span><span class="n">unregister</span><span class="p">(</span><span class="n">MyCustomReporter</span><span class="p">())</span>
-</span></code></pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>reporter</strong> (<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>) – <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instance exemplar
-to unregister.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchKeyError" title="simplebench.exceptions.SimpleBenchKeyError"><strong>SimpleBenchKeyError</strong></a> – If no reporter with the given name is registered.</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided reporter is not an instance of
-<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_all">
-<span class="sig-name descname"><span class="pre">unregister_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_all" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_all'">¶</a></dt>
-<dd><p>Unregister all <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances.</p>
-<p>This clears the entire registry of <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
-instances.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_by_name">
-<span class="sig-name descname"><span class="pre">unregister_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_by_name" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_by_name'">¶</a></dt>
-<dd><p>Unregister a <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> by its name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
-to unregister.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchKeyError" title="simplebench.exceptions.SimpleBenchKeyError"><strong>SimpleBenchKeyError</strong></a> – If no reporter with the given name is registered.</p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-</section>
 <section id="module-simplebench.reporters.reporter_manager">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.reporters.reporter_manager" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.reporters.reporter_manager'">¶</a></h2>
+<span id="simplebench-reporters-reporter-manager-package"></span><h1>simplebench.reporters.reporter_manager package<a class="headerlink" href="#module-simplebench.reporters.reporter_manager" title="Link to this heading">¶</a></h1>
 <p>Reporter manager for benchmark results.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.ReporterManager">
@@ -315,7 +115,7 @@ instances and their associated CLI arguments. It allows for the registration, re
 and unregistration of <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances.</p>
 <p>Initially, it registers a set of built-in <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
 instances: <a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter" title="simplebench.reporters.csv.reporter.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a>,
-<a class="reference internal" href="simplebench.reporters.graph.scatterplot.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter" title="simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a>,
+<a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter" title="simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a>,
 and <a class="reference internal" href="simplebench.reporters.rich_table.reporter.html#simplebench.reporters.rich_table.reporter.RichTableReporter" title="simplebench.reporters.rich_table.reporter.RichTableReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTableReporter</span></code></a>.</p>
 <p>New <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances can be added using the
 <a class="reference internal" href="#simplebench.reporters.reporter_manager.ReporterManager.register" title="simplebench.reporters.reporter_manager.ReporterManager.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a> method, and existing ones can be removed using the <a class="reference internal" href="#simplebench.reporters.reporter_manager.ReporterManager.unregister" title="simplebench.reporters.reporter_manager.ReporterManager.unregister"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unregister()</span></code></a>
@@ -344,7 +144,7 @@ of each <a class="reference internal" href="simplebench.reporters.reporter.html#
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.ReporterManager.all_reporters">
-<span class="sig-name descname"><span class="pre">all_reporters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.all_reporters" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.all_reporters'">¶</a></dt>
+<span class="sig-name descname"><span class="pre">all_reporters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.all_reporters" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.all_reporters'">¶</a></dt>
 <dd><p>Return all available <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances
 as a dictionary keyed by their names.</p>
 <dl class="field-list simple">
@@ -359,7 +159,7 @@ instances with their names as keys.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.ReporterManager.choice_for_arg">
-<span class="sig-name descname"><span class="pre">choice_for_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><span class="pre">Choice</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.choice_for_arg" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.choice_for_arg'">¶</a></dt>
+<span class="sig-name descname"><span class="pre">choice_for_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><span class="pre">Choice</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.choice_for_arg" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.choice_for_arg'">¶</a></dt>
 <dd><p>Return the <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance for a given CLI argument.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -376,7 +176,7 @@ or <code class="docutils literal notranslate"><span class="pre">None</span></cod
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.ReporterManager.choices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">choices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><span class="pre">Choices</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.choices" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.choices'">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">choices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><span class="pre">Choices</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.choices" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.choices'">¶</a></dt>
 <dd><p>Return a <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> instance containing all
 registered reporter choices.</p>
 <dl class="field-list simple">
@@ -391,7 +191,7 @@ registered reporter choices.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.ReporterManager.register">
-<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.register" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.register'">¶</a></dt>
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.register" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.register'">¶</a></dt>
 <dd><p>Register a new <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>.</p>
 <p>This method adds a new <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> to the registry.
 Unlike the predefined reporters and the <a class="reference internal" href="simplebench.html#simplebench.register_reporter" title="simplebench.register_reporter"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_reporter()</span></code></a> decorator which both
@@ -416,7 +216,7 @@ with the same name or CLI argument is already registered.</p></li>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.ReporterManager.unregister">
-<span class="sig-name descname"><span class="pre">unregister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.unregister" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.unregister'">¶</a></dt>
+<span class="sig-name descname"><span class="pre">unregister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reporter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><span class="pre">Reporter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#simplebench.reporters.reporter_manager.ReporterManager.unregister" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.reporter_manager.ReporterManager.unregister'">¶</a></dt>
 <dd><p>Unregister a <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> by an instance exemplar.</p>
 <p>It looks up the reporter by its name and removes it from the registry.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">reporter_manager</span><span class="o">.</span><span class="n">unregister</span><span class="p">(</span><span class="n">MyCustomReporter</span><span class="p">())</span>
@@ -458,28 +258,61 @@ to unregister.</p>
 </dl>
 </dd></dl>
 </dd></dl>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#subpackages'">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html">simplebench.reporters.reporter_manager.decorators package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#simplebench.reporters.reporter_manager.decorators.clear_registered_reporters"><code class="docutils literal notranslate"><span class="pre">clear_registered_reporters()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#simplebench.reporters.reporter_manager.decorators.get_registered_reporters"><code class="docutils literal notranslate"><span class="pre">get_registered_reporters()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#simplebench.reporters.reporter_manager.decorators.register_reporter"><code class="docutils literal notranslate"><span class="pre">register_reporter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html">simplebench.reporters.reporter_manager.decorators.register_reporter package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html#simplebench.reporters.reporter_manager.decorators.register_reporter.clear_registered_reporters"><code class="docutils literal notranslate"><span class="pre">clear_registered_reporters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html#simplebench.reporters.reporter_manager.decorators.register_reporter.get_registered_reporters"><code class="docutils literal notranslate"><span class="pre">get_registered_reporters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html#simplebench.reporters.reporter_manager.decorators.register_reporter.register_reporter"><code class="docutils literal notranslate"><span class="pre">register_reporter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.reporter_manager.decorators.register_reporter.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.reporter_manager.exceptions.html">simplebench.reporters.reporter_manager.exceptions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.exceptions.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.exceptions.manager.html">simplebench.reporters.reporter_manager.exceptions.manager module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#submodules'">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html">simplebench.reporters.reporter_manager.manager module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager"><code class="docutils literal notranslate"><span class="pre">ReporterManager</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager.add_reporters_to_argparse"><code class="docutils literal notranslate"><span class="pre">ReporterManager.add_reporters_to_argparse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager.all_reporters"><code class="docutils literal notranslate"><span class="pre">ReporterManager.all_reporters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager.choice_for_arg"><code class="docutils literal notranslate"><span class="pre">ReporterManager.choice_for_arg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager.choices"><code class="docutils literal notranslate"><span class="pre">ReporterManager.choices</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager.register"><code class="docutils literal notranslate"><span class="pre">ReporterManager.register()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister"><code class="docutils literal notranslate"><span class="pre">ReporterManager.unregister()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_all"><code class="docutils literal notranslate"><span class="pre">ReporterManager.unregister_all()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter_manager.manager.html#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_by_name"><code class="docutils literal notranslate"><span class="pre">ReporterManager.unregister_by_name()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#subpackages'" class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a :data-current="activeSection === '#submodules'" class="reference internal" href="#submodules">Submodules</a></li>
-<li><a :data-current="activeSection === '#module-simplebench.reporters.reporter_manager.manager'" class="reference internal" href="#module-simplebench.reporters.reporter_manager.manager">simplebench.reporters.reporter_manager.manager module</a><ul>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager"><code class="docutils literal notranslate"><span class="pre">ReporterManager</span></code></a><ul>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager.add_reporters_to_argparse'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.add_reporters_to_argparse"><code class="docutils literal notranslate"><span class="pre">ReporterManager.add_reporters_to_argparse()</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager.all_reporters'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.all_reporters"><code class="docutils literal notranslate"><span class="pre">ReporterManager.all_reporters()</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager.choice_for_arg'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.choice_for_arg"><code class="docutils literal notranslate"><span class="pre">ReporterManager.choice_for_arg()</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager.choices'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.choices"><code class="docutils literal notranslate"><span class="pre">ReporterManager.choices</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager.register'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.register"><code class="docutils literal notranslate"><span class="pre">ReporterManager.register()</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister"><code class="docutils literal notranslate"><span class="pre">ReporterManager.unregister()</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_all'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_all"><code class="docutils literal notranslate"><span class="pre">ReporterManager.unregister_all()</span></code></a></li>
-<li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_by_name'" class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.unregister_by_name"><code class="docutils literal notranslate"><span class="pre">ReporterManager.unregister_by_name()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a :data-current="activeSection === '#module-simplebench.reporters.reporter_manager'" class="reference internal" href="#module-simplebench.reporters.reporter_manager">Module contents</a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.ReporterManager'" class="reference internal" href="#simplebench.reporters.reporter_manager.ReporterManager"><code class="docutils literal notranslate"><span class="pre">ReporterManager</span></code></a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.ReporterManager.add_reporters_to_argparse'" class="reference internal" href="#simplebench.reporters.reporter_manager.ReporterManager.add_reporters_to_argparse"><code class="docutils literal notranslate"><span class="pre">ReporterManager.add_reporters_to_argparse()</span></code></a></li>
 <li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.ReporterManager.all_reporters'" class="reference internal" href="#simplebench.reporters.reporter_manager.ReporterManager.all_reporters"><code class="docutils literal notranslate"><span class="pre">ReporterManager.all_reporters()</span></code></a></li>
@@ -491,8 +324,8 @@ to unregister.</p>
 <li><a :data-current="activeSection === '#simplebench.reporters.reporter_manager.ReporterManager.unregister_by_name'" class="reference internal" href="#simplebench.reporters.reporter_manager.ReporterManager.unregister_by_name"><code class="docutils literal notranslate"><span class="pre">ReporterManager.unregister_by_name()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li><a :data-current="activeSection === '#subpackages'" class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a :data-current="activeSection === '#submodules'" class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </div>
 </aside>

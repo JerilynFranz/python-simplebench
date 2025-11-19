@@ -1,6 +1,11 @@
 simplebench package
 ===================
 
+.. automodule:: simplebench
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -16,122 +21,20 @@ Subpackages
 Submodules
 ----------
 
-simplebench.case module
------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: simplebench.case
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.cli module
-----------------------
-
-.. automodule:: simplebench.cli
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.decorators module
------------------------------
-
-.. automodule:: simplebench.decorators
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.defaults module
----------------------------
-
-.. automodule:: simplebench.defaults
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.doc\_utils module
------------------------------
-
-.. automodule:: simplebench.doc_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.enums module
-------------------------
-
-.. automodule:: simplebench.enums
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.iteration module
-----------------------------
-
-.. automodule:: simplebench.iteration
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.protocols module
-----------------------------
-
-.. automodule:: simplebench.protocols
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.results module
---------------------------
-
-.. automodule:: simplebench.results
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.runners module
---------------------------
-
-.. automodule:: simplebench.runners
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.session module
---------------------------
-
-.. automodule:: simplebench.session
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.si\_units module
-----------------------------
-
-.. automodule:: simplebench.si_units
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.tasks module
-------------------------
-
-.. automodule:: simplebench.tasks
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-simplebench.utils module
-------------------------
-
-.. automodule:: simplebench.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: simplebench
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   simplebench.case
+   simplebench.cli
+   simplebench.decorators
+   simplebench.defaults
+   simplebench.doc_utils
+   simplebench.enums
+   simplebench.iteration
+   simplebench.protocols
+   simplebench.results
+   simplebench.runners
+   simplebench.session
+   simplebench.si_units
+   simplebench.tasks
+   simplebench.utils

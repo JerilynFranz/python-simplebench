@@ -15,7 +15,7 @@
 <link href="../search.html" rel="search" title="Search"/>
 <link href="../genindex.html" rel="index" title="Index"/>
 <link href="simplebench.reporters.csv.reporter.html" rel="next" title="simplebench.reporters.csv.reporter package"/>
-<link href="simplebench.reporters.choices.html" rel="prev" title="simplebench.reporters.choices package"/>
+<link href="simplebench.reporters.choices.exceptions.html" rel="prev" title="simplebench.reporters.choices.exceptions module"/>
 <script>
     <!-- Prevent Flash of wrong theme -->
       const userPreference = localStorage.getItem('darkMode');
@@ -102,75 +102,30 @@
 <div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">simplebench.reporters.csv package</span>
 </nav>
 <div id="content" role="main">
-<section id="simplebench-reporters-csv-package">
-<h1>simplebench.reporters.csv package<a class="headerlink" href="#simplebench-reporters-csv-package" title="Link to this heading">¶</a></h1>
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#subpackages'">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.csv.reporter.html">simplebench.reporters.csv.reporter package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html">simplebench.reporters.csv.reporter.options package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#module-simplebench.reporters.csv.reporter.options.exceptions">simplebench.reporters.csv.reporter.options.exceptions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#module-simplebench.reporters.csv.reporter.options.options">simplebench.reporters.csv.reporter.options.options module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#module-simplebench.reporters.csv.reporter.options">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#module-simplebench.reporters.csv.reporter.config">simplebench.reporters.csv.reporter.config module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.config.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#module-simplebench.reporters.csv.reporter.exceptions">simplebench.reporters.csv.reporter.exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#module-simplebench.reporters.csv.reporter.reporter">simplebench.reporters.csv.reporter.reporter module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.reporter.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#module-simplebench.reporters.csv.reporter">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptionsErrorTag"><code class="docutils literal notranslate"><span class="pre">CSVOptionsErrorTag</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
 <section id="module-simplebench.reporters.csv">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.reporters.csv" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#module-simplebench.reporters.csv'">¶</a></h2>
+<span id="simplebench-reporters-csv-package"></span><h1>simplebench.reporters.csv package<a class="headerlink" href="#module-simplebench.reporters.csv" title="Link to this heading">¶</a></h1>
 <p>CSV reporter package for simplebench.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.CSVOptions">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.</span></span><span class="sig-name descname"><span class="pre">CSVOptions</span></span><a class="headerlink" href="#simplebench.reporters.csv.CSVOptions" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.CSVOptions'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
 <p>Class for holding CSV reporter specific options.</p>
 <p>This class provides additional configuration options specific to the CSV reporter.
 It is accessed via the <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice.options" title="simplebench.reporters.choice.Choice.options"><code class="xref py py-attr docutils literal notranslate"><span class="pre">options</span></code></a>
 attribute of a <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance or a
-<a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
+<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
 <p>It is currently only a stub for future expansion.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.CSVOptionsErrorTag">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.</span></span><span class="sig-name descname"><span class="pre">CSVOptionsErrorTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.csv.CSVOptionsErrorTag" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.CSVOptionsErrorTag'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></p>
 <p>ErrorTags for <a class="reference internal" href="#simplebench.reporters.csv.CSVOptions" title="simplebench.reporters.csv.CSVOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVOptions</span></code></a> class related exceptions.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.CSVReporter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.</span></span><span class="sig-name descname"><span class="pre">CSVReporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.config.CSVConfig" title="simplebench.reporters.csv.reporter.config.CSVConfig"><span class="pre">CSVConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.csv.CSVReporter" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.CSVReporter'">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.</span></span><span class="sig-name descname"><span class="pre">CSVReporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.csv.reporter.config.html#simplebench.reporters.csv.reporter.config.CSVConfig" title="simplebench.reporters.csv.reporter.config.CSVConfig"><span class="pre">CSVConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.reporters.csv.CSVReporter" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.CSVReporter'">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a></p>
 <p>Class for outputting benchmark results to CSV files.</p>
 <p>It supports reporting statistics for various sections,
 either separately or together, to the filesystem, via a callback function,
@@ -193,28 +148,28 @@ description, and units for clarity.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unique identifying name of the reporter.</p></li>
 <li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A brief description of the reporter.</p></li>
-<li><p><strong>choices</strong> (Iterable[<a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a>]) – Iterable of <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> instances defining
-the reporter instance, CLI flags, <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> name, supported
-<a class="reference internal" href="simplebench.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> objects, supported output
-<a class="reference internal" href="simplebench.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a> objects, and supported output
-<a class="reference internal" href="simplebench.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> for the reporter.</p></li>
-<li><p><strong>targets</strong> (set[<a class="reference internal" href="simplebench.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a>]) – The supported output targets for the reporter.</p></li>
-<li><p><strong>formats</strong> (set[<a class="reference internal" href="simplebench.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a>]) – The supported output formats for the reporter.</p></li>
+<li><p><strong>choices</strong> (Iterable[<a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.ChoicesConf" title="simplebench.reporters.choices.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a>]) – Iterable of <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.ChoicesConf" title="simplebench.reporters.choices.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> instances defining
+the reporter instance, CLI flags, <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> name, supported
+<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> objects, supported output
+<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a> objects, and supported output
+<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> for the reporter.</p></li>
+<li><p><strong>targets</strong> (set[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a>]) – The supported output targets for the reporter.</p></li>
+<li><p><strong>formats</strong> (set[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a>]) – The supported output formats for the reporter.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.CSVReporter.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#simplebench.reporters.csv.CSVReporter.render" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.CSVReporter.render'">¶</a></dt>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#simplebench.reporters.csv.CSVReporter.render" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#simplebench.reporters.csv.CSVReporter.render'">¶</a></dt>
 <dd><p>Renders the benchmark results as tagged CSV data and returns it as a string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>case</strong> (<a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>) – The <a class="reference internal" href="simplebench.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the
+<li><p><strong>case</strong> (<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>) – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the
 benchmarked code.</p></li>
-<li><p><strong>section</strong> (<a class="reference internal" href="simplebench.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – The section to output (eg. <a class="reference internal" href="simplebench.html#simplebench.enums.Section.OPS" title="simplebench.enums.Section.OPS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">OPS</span></code></a> or
-<a class="reference internal" href="simplebench.html#simplebench.enums.Section.TIMING" title="simplebench.enums.Section.TIMING"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TIMING</span></code></a>).</p></li>
-<li><p><strong>options</strong> (<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a>) – The options for the CSV report. (Currently unused.)</p></li>
+<li><p><strong>section</strong> (<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – The section to output (eg. <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section.OPS" title="simplebench.enums.Section.OPS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">OPS</span></code></a> or
+<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section.TIMING" title="simplebench.enums.Section.TIMING"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TIMING</span></code></a>).</p></li>
+<li><p><strong>options</strong> (<a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a>) – The options for the CSV report. (Currently unused.)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -229,21 +184,55 @@ benchmarked code.</p></li>
 </dl>
 </dd></dl>
 </dd></dl>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#subpackages'">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.csv.reporter.html">simplebench.reporters.csv.reporter package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptionsErrorTag"><code class="docutils literal notranslate"><span class="pre">CSVOptionsErrorTag</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html">simplebench.reporters.csv.reporter.options package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptionsErrorTag"><code class="docutils literal notranslate"><span class="pre">CSVOptionsErrorTag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.config.html">simplebench.reporters.csv.reporter.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.config.html#simplebench.reporters.csv.reporter.config.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.exceptions.html">simplebench.reporters.csv.reporter.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.reporter.html">simplebench.reporters.csv.reporter.reporter module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.reporter.html#simplebench.reporters.csv.reporter.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#subpackages'" class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a :data-current="activeSection === '#module-simplebench.reporters.csv'" class="reference internal" href="#module-simplebench.reporters.csv">Module contents</a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.CSVOptions'" class="reference internal" href="#simplebench.reporters.csv.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.CSVOptionsErrorTag'" class="reference internal" href="#simplebench.reporters.csv.CSVOptionsErrorTag"><code class="docutils literal notranslate"><span class="pre">CSVOptionsErrorTag</span></code></a></li>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.CSVReporter'" class="reference internal" href="#simplebench.reporters.csv.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
 <li><a :data-current="activeSection === '#simplebench.reporters.csv.CSVReporter.render'" class="reference internal" href="#simplebench.reporters.csv.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li><a :data-current="activeSection === '#subpackages'" class="reference internal" href="#subpackages">Subpackages</a></li>
 </ul>
 </div>
 </aside>
