@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Benchmark case declaration and execution."""
 from __future__ import annotations
 
@@ -111,90 +110,6 @@ class Case:
                 Case(action=my_benchmark_action)
             ]
             main(cases_list)
-
-    :ivar action: The function to perform the benchmark. This function must
-        accept a `bench` parameter of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
-        It must return a Results object.
-    :vartype action: ActionRunner
-    :ivar group: The benchmark reporting group to which the benchmark case belongs for selection
-        and reporting purposes. Cannot be blank. It is used to categorize and filter benchmark cases.
-    :vartype group: str
-    :ivar title: The name of the benchmark case. If not specified, defaults to the name of the action function.
-        Cannot be blank.
-    :vartype title: str
-    :ivar description: A brief description of the benchmark case. If not specified, defaults to the
-        docstring of the action function or '(no description)' if no docstring is available.
-        Cannot be blank.
-    :vartype description: str
-    :ivar iterations: The minimum number of iterations to run for the benchmark.
-    :vartype iterations: int
-    :ivar rounds: The number of rounds to run for the benchmark for each iteration. Rounds are
-        multiple runs of the entire benchmark to get a better average for an iteration. Each iteration will
-        run the specified number of rounds after setup and before teardown. (default: 1)
-    :vartype rounds: int
-    :ivar warmup_iterations: The number of warmup iterations to run before the benchmark.
-    :vartype warmup_iterations: int
-    :ivar min_time: The minimum time for the benchmark in seconds.
-    :vartype min_time: float
-    :ivar max_time: The maximum time for the benchmark in seconds.
-    :vartype max_time: float
-    :ivar variation_cols: kwargs to be used for cols to denote kwarg variations in reports.
-        Each key is a keyword argument name, and the value is the column label to use for that argument.
-        Only keywords that are also in `kwargs_variations` can be used here. These fields will be
-        added to the output of reporters that support them as columns of data with the specified labels.
-    :vartype variation_cols: dict[str, str]
-    :ivar kwargs_variations: A mapping of keyword argument names to their variations.
-        Each key is a keyword argument name, and the value is a list of possible values.
-
-        When tests are run, the benchmark will be executed for each combination of the specified
-        keyword argument variations. For example, if `kwargs_variations` is
-
-        .. code-block:: python3
-          :caption: `kwargs_variations` argument example
-
-            ...
-            kwargs_variations = {
-                    'size': [10, 100],
-                    'mode': ['fast', 'accurate']
-                },
-            ...
-
-        The benchmark will be run 4 times with the following combinations of keyword arguments:
-
-        .. code-block:: python3
-          :linenos:
-          :caption: Keyword (`**kwargs`) Argument Combinations
-
-            {size=10, mode='fast'}
-            {size=10, mode='accurate'}
-            {size=100, mode='fast'}
-            {size=100, mode='accurate'}
-
-        The action function will be called with these keyword arguments accordingly and must
-        accept them.
-    :vartype kwargs_variations: dict[str, list[Any]]
-    :ivar expanded_kwargs_variations: A list of all combinations of keyword argument
-        variations.
-    :vartype expanded_kwargs_variations: list[dict[str, Any]]
-    :ivar runner: A custom runner class for the benchmark.
-        If None, the default SimpleRunner is used.  (default: None)
-
-        A custom runner class must be a subclass of SimpleRunner and must have a method
-        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
-        The action function will be called with a `bench` parameter that is an instance of the
-        custom runner.
-
-        It may also accept additional parameters to the run method as needed. If additional
-        parameters are required, they must be specified in the `action` function signature.
-    :vartype runner: type[SimpleRunner] | None
-    :ivar callback: A callback function to be called with the benchmark
-        results in a reporter. This function should accept four arguments: the Case instance, the Section,
-        the ReporterOption, and the output object. Leave as None if no callback is needed.
-        (default: None)
-    :vartype callback: Optional[ReporterCallback]
-    :ivar results: The benchmark results for the case. This is populated by the
-        action function during the benchmark run.
-    :vartype results: list[Results]
     '''
     __slots__ = ('_group', '_title', '_description', '_action',
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
@@ -538,17 +453,28 @@ class Case:
 
     @property
     def group(self) -> str:
-        """The benchmark reporting group to which the benchmark case belongs."""
+        """The benchmark reporting group to which the benchmark case belongs for selection
+        and reporting purposes.
+
+        Cannot be blank. It is used to categorize and filter benchmark cases."""
         return self._group
 
     @property
     def title(self) -> str:
-        """The name of the benchmark case."""
+        """The name of the benchmark case.
+
+        If not specified, defaults to the name of the action function.
+        Cannot be blank."""
         return self._title
 
     @property
     def description(self) -> str:
-        """A brief description of the benchmark case."""
+        """ A brief description of the benchmark case.
+
+        If not specified, defaults to the docstring of the action function or
+        '(no description)' if no docstring is available.
+
+        Cannot be blank."""
         return self._description
 
     @property
@@ -596,7 +522,10 @@ class Case:
 
     @property
     def rounds(self) -> int:
-        """The number of rounds to run for each iteration in the benchmark."""
+        """The number of rounds to run for the benchmark for each iteration.
+
+        Rounds are multiple runs of the entire benchmark to get a better average for an iteration.
+        Each iteration will run the specified number of rounds after setup and before teardown. (default: 1)"""
         return self._rounds
 
     @property
@@ -613,6 +542,10 @@ class Case:
     def variation_cols(self) -> dict[str, str]:
         """Keyword arguments to be used for columns to denote kwarg variations.
 
+        Each key is a keyword argument name, and the value is the column label to use for that argument.
+        Only keywords that are also in `kwargs_variations` can be used here. These fields will be
+        added to the output of reporters that support them as columns of data with the specified labels.
+
         Note that all keys in variation_cols must be present in kwargs_variations and
         updating it may require changes to both variation_cols and kwargs_variations_cols.
 
@@ -620,15 +553,45 @@ class Case:
 
         :return: A dictionary mapping keyword argument names to column labels.
         :rtype: dict[str, str]
-
-        Each key is a keyword argument name, and the value is the column label to use for that argument.
         """
         # shallow copy to prevent external modification of internal dict
         return copy(self._variation_cols) if self._variation_cols is not None else {}
 
     @property
     def kwargs_variations(self) -> dict[str, list[Any]]:
-        """Variations of keyword arguments for the benchmark."""
+        """Variations of keyword arguments for the benchmark.
+
+        Each key is a keyword argument name, and the value is the column label to use for that argument.
+        Only keywords that are also in `kwargs_variations` can be used here. These fields will be
+        added to the output of reporters that support them as columns of data with the specified labels.
+
+        When tests are run, the benchmark will be executed for each combination of the specified
+        keyword argument variations. For example, if `kwargs_variations` is
+
+        .. code-block:: python3
+          :caption: `kwargs_variations` argument example
+
+            ...
+            kwargs_variations = {
+                    'size': [10, 100],
+                    'mode': ['fast', 'accurate']
+                },
+            ...
+
+        The benchmark will be run 4 times with the following combinations of keyword arguments:
+
+        .. code-block:: python3
+          :linenos:
+          :caption: Keyword (`**kwargs`) Argument Combinations
+
+            {size=10, mode='fast'}
+            {size=10, mode='accurate'}
+            {size=100, mode='fast'}
+            {size=100, mode='accurate'}
+
+        The action function will be called with these keyword arguments accordingly and must
+        accept them.
+        """
         if self._kwargs_variations is None:
             return {}
         # shallow copy to prevent external modification of internal dict
@@ -636,12 +599,29 @@ class Case:
 
     @property
     def runner(self) -> type[SimpleRunner] | None:
-        """A custom runner for the benchmark. If None, the default SimpleRunner is used."""
+        """A custom runner class for the benchmark.
+
+        If None, the default SimpleRunner is used.  (default: None)
+
+        A custom runner class must be a subclass of SimpleRunner and must have a method
+        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
+        The action function will be called with a `bench` parameter that is an instance of the
+        custom runner.
+
+        It may also accept additional parameters to the run method as needed. If additional
+        parameters are required, they must be specified in the `action` function signature.
+        """
         return self._runner
 
     @property
     def callback(self) -> ReporterCallback | None:
-        """A callback function for additional processing of a report."""
+        """A callback function for additional processing of a report.
+
+        A callback function to be called with the benchmark results in a reporter.
+        This function should accept four arguments: the Case instance, the Section,
+        the ReporterOption, and the output object. Leave as None if no callback is needed.
+        (default: None)
+        """
         return self._callback
 
     @property
@@ -665,6 +645,37 @@ class Case:
     @property
     def expanded_kwargs_variations(self) -> list[dict[str, Any]]:
         """All combinations of keyword arguments from the specified kwargs_variations.
+
+        A mapping of keyword argument names to their variations.
+
+        Each key is a keyword argument name, and the value is a list of possible values.
+
+        When tests are run, the benchmark will be executed for each combination of the specified
+        keyword argument variations. For example, if `kwargs_variations` is
+
+        .. code-block:: python3
+          :caption: `kwargs_variations` argument example
+
+            ...
+            kwargs_variations = {
+                    'size': [10, 100],
+                    'mode': ['fast', 'accurate']
+                },
+            ...
+
+        The benchmark will be run 4 times with the following combinations of keyword arguments:
+
+        .. code-block:: python3
+          :linenos:
+          :caption: Keyword (`**kwargs`) Argument Combinations
+
+            {size=10, mode='fast'}
+            {size=10, mode='accurate'}
+            {size=100, mode='fast'}
+            {size=100, mode='accurate'}
+
+        The action function will be called with these keyword arguments accordingly and must
+        accept them.
 
         :return: A list of dictionaries, each representing a unique combination of keyword arguments.
         :rtype: list[dict[str, Any]]
