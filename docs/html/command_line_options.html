@@ -7,7 +7,7 @@
 
     <title>Command-Line Options &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2d86562d" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=88588f62" />
     
     <script src="_static/documentation_options.js?v=9a12e387"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
@@ -41,72 +41,219 @@
             
   <section id="command-line-options">
 <h1>Command-Line Options<a class="headerlink" href="#command-line-options" title="Link to this heading">🔗</a></h1>
-<p>SimpleBench provides a variety of command-line options to customize the behavior
-of your benchmarks. You can specify these options when running your benchmark
-scripts to control output formats, reporting styles, and other features.</p>
-<section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Link to this heading">🔗</a></h2>
-<blockquote>
-<div><dl class="option-list">
-<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
-<dd><p>show a help message and exit</p>
-</dd>
-<dt><kbd><span class="option">--verbose</span></kbd></dt>
-<dd><p>Enable verbose output</p>
-</dd>
-<dt><kbd><span class="option">--quiet</span></kbd></dt>
-<dd><p>Enable quiet output</p>
-</dd>
-<dt><kbd><span class="option">--debug</span></kbd></dt>
-<dd><p>Enable debug output</p>
-</dd>
-<dt><kbd><span class="option">--progress</span></kbd></dt>
-<dd><p>Enable progress output</p>
-</dd>
-<dt><kbd><span class="option">--list</span></kbd></dt>
-<dd><p>List all available benchmarks</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>–run &lt;benchmark&gt; [&lt;benchmark&gt; …]</dt><dd><p>Run specific benchmarks selected by group name or “all” for all benchmarks (default: all)</p>
-</dd>
-</dl>
-<dl class="option-list">
-<dt><kbd><span class="option">--output_path <var>&lt;path&gt;</var></span></kbd></dt>
-<dd><p>Output destination directory (default: .benchmarks)</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>–csv [{callback,console,filesystem} …]</dt><dd><p>Output all results to CSV (filesystem, console, callback, default=filesystem)</p>
-</dd>
-<dt>–csv.ops [{callback,console,filesystem} …]</dt><dd><p>Output ops/second results to CSV (filesystem, console, callback, default=filesystem)</p>
-</dd>
-<dt>–csv.timing [{callback,console,filesystem} …]</dt><dd><p>Output timing results to CSV (filesystem, console, callback, default=filesystem)</p>
-</dd>
-<dt>–csv.memory [{callback,console,filesystem} …]</dt><dd><p>Output memory results to CSV (filesystem, console, callback, default=filesystem)</p>
-</dd>
-<dt>–scatter-plot [{callback,filesystem} …]</dt><dd><p>Output scatter plot graphs of benchmark results</p>
-</dd>
-<dt>–scatter-plot.ops [{callback,filesystem} …]</dt><dd><p>Create scatter plots of operations per second results.</p>
-</dd>
-<dt>–scatter-plot.timings [{callback,filesystem} …]</dt><dd><p>Create scatter plots of timing results.</p>
-</dd>
-<dt>–scatter-plot.memory [{callback,filesystem} …]</dt><dd><p>Create scatter plots of memory usage results.</p>
-</dd>
-<dt>–rich-table [{callback,console,filesystem} …]</dt><dd><p>All results as rich text tables (filesystem, console, callback, default=console)</p>
-</dd>
-<dt>–rich-table.ops [{callback,console,filesystem} …]</dt><dd><p>Ops/second results as rich text tables (filesystem, console, callback, default=console)</p>
-</dd>
-<dt>–rich-table.timing [{callback,console,filesystem} …]</dt><dd><p>Timing results as rich text tables (filesystem, console, callback, default=console)</p>
-</dd>
-<dt>–rich-table.memory [{callback,console,filesystem} …]</dt><dd><p>Memory results as rich text tables (filesystem, console, callback, default=console)</p>
-</dd>
-<dt>–json [{callback,console,filesystem} …]</dt><dd><p>statistical results to JSON (filesystem, console, callback, default=filesystem)</p>
-</dd>
-<dt>–json-data [{callback,console,filesystem} …]</dt><dd><p>statistical results + full data to JSON (filesystem, console, callback, default=filesystem)</p>
-</dd>
-</dl>
-</div></blockquote>
+<p id="id1">SimpleBench provides a variety of command-line options to customize the behavior
+of your benchmark.</p>
+<section id="general-options">
+<h2>General Options<a class="headerlink" href="#general-options" title="Link to this heading">🔗</a></h2>
+<p>These options control the overall behavior of the SimpleBench framework.</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-h">
+<span id="cmdoption-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-h" title="Link to this definition">🔗</a></dt>
+<dd><p>Show a help message and exit.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-version" title="Link to this definition">🔗</a></dt>
+<dd><p>Show SimpleBench’s version and exit.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-verbose" title="Link to this definition">🔗</a></dt>
+<dd><p>Enable verbose output for more detailed information during execution.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-quiet">
+<span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-quiet" title="Link to this definition">🔗</a></dt>
+<dd><p>Suppress most output. This is useful for automated environments.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-progress">
+<span class="sig-name descname"><span class="pre">--progress</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-progress" title="Link to this definition">🔗</a></dt>
+<dd><p>Display a progress bar during benchmark execution.</p>
+</dd></dl>
+
+</section>
+<section id="reporting-options">
+<h2>Reporting Options<a class="headerlink" href="#reporting-options" title="Link to this heading">🔗</a></h2>
+<p>These options control which benchmarks are run and where results are saved.</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-list">
+<span class="sig-name descname"><span class="pre">--list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-list" title="Link to this definition">🔗</a></dt>
+<dd><p>List all available benchmarks by group and name, then exit.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-run">
+<span id="cmdoption-arg-..."></span><span class="sig-name descname"><span class="pre">--run</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;benchmark-group</span></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">...&gt;</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-run" title="Link to this definition">🔗</a></dt>
+<dd><p>Run specific benchmarks selected by group. Multiple groups can be specified
+by separating them with spaces. You can see a list of available benchmark
+groups by using the <a class="reference internal" href="#cmdoption-list"><code class="xref std std-option docutils literal notranslate"><span class="pre">--list</span></code></a> option.</p>
+<p>Defaults to running all benchmark groups if not specified.</p>
+<p>Example of running specific benchmark groups:</p>
+<div class="literal-block-wrapper docutils container" id="run-specific-benchmark-groups">
+<div class="code-block-caption"><span class="caption-text">Running specific benchmark groups</span><a class="headerlink" href="#run-specific-benchmark-groups" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_script.py<span class="w"> </span>--run<span class="w"> </span>group1<span class="w"> </span>group2
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-output-path">
+<span class="sig-name descname"><span class="pre">--output-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-output-path" title="Link to this definition">🔗</a></dt>
+<dd><p>Set the output directory for reports saved to the filesystem.
+Defaults to <code class="docutils literal notranslate"><span class="pre">.benchmarks</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="report-types">
+<h2>Report Types<a class="headerlink" href="#report-types" title="Link to this heading">🔗</a></h2>
+<p>The following sections detail the options for each report type. Most reports can
+be sent to one or more destinations using space separated values from the following list:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">console</span></code>: Print the report to the terminal.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filesystem</span></code>: Save the report to a file in the output path.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">callback</span></code>: Pass the report object to a user-defined callback function.</p></li>
+</ul>
+<p>Each report type has an appropriate default destination if none is explicitly specified.</p>
+<p>This example report type option generates a rich table report with all result types,
+printing it to the console and saving it to the filesystem.</p>
+<div class="literal-block-wrapper docutils container" id="report-destinations-example">
+<div class="code-block-caption"><span class="caption-text">Report Type Destination Selection Example</span><a class="headerlink" href="#report-destinations-example" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>--rich-table<span class="w"> </span>console<span class="w"> </span>filesystem
+</pre></div>
+</div>
+</div>
+<p>Reports can often be filtered to only include specific result types, such as
+operations-per-second, timing, or memory usage.</p>
+<p>This example generates a rich table report with only operations-per-second results,
+saving it to the filesystem</p>
+<div class="literal-block-wrapper docutils container" id="report-result-filtering-example">
+<div class="code-block-caption"><span class="caption-text">Report Type Result Filtering Example</span><a class="headerlink" href="#report-result-filtering-example" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>--rich-table.ops<span class="w"> </span>filesystem
+</pre></div>
+</div>
+</div>
+<section id="rich-table-reports">
+<h3>Rich Table Reports<a class="headerlink" href="#rich-table-reports" title="Link to this heading">🔗</a></h3>
+<p>Generates formatted tables for display in the console. The default destination
+is <code class="docutils literal notranslate"><span class="pre">console</span></code>.</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-rich-table">
+<span class="sig-name descname"><span class="pre">--rich-table</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-rich-table" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate tables for all result types.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-rich-table.ops">
+<span class="sig-name descname"><span class="pre">--rich-table.ops</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-rich-table.ops" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate tables only for operations-per-second results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-rich-table.timing">
+<span class="sig-name descname"><span class="pre">--rich-table.timing</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-rich-table.timing" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate tables only for timing results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-rich-table.memory">
+<span class="sig-name descname"><span class="pre">--rich-table.memory</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-rich-table.memory" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate tables only for memory usage results.</p>
+</dd></dl>
+
+</section>
+<section id="csv-reports">
+<h3>CSV Reports<a class="headerlink" href="#csv-reports" title="Link to this heading">🔗</a></h3>
+<p>Exports results to CSV format.</p>
+<p>These are easily imported into spreadsheet applications or data analysis tools.
+The default destination is <code class="docutils literal notranslate"><span class="pre">filesystem</span></code>.</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-csv">
+<span class="sig-name descname"><span class="pre">--csv</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-csv" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate CSV reports for all results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-csv.ops">
+<span class="sig-name descname"><span class="pre">--csv.ops</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-csv.ops" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate CSV reports only for operations-per-second results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-csv.timing">
+<span class="sig-name descname"><span class="pre">--csv.timing</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-csv.timing" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate CSV reports only for timing results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-csv.memory">
+<span class="sig-name descname"><span class="pre">--csv.memory</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-csv.memory" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate CSV reports only for memory usage results.</p>
+</dd></dl>
+
+</section>
+<section id="graph-reports">
+<h3>Graph Reports<a class="headerlink" href="#graph-reports" title="Link to this heading">🔗</a></h3>
+<p>Graph reports generate visual representations of benchmark results,
+including line graphs and scatter plots. These visualizations can help you
+better understand statistical characteristics and comparisons across parameterized
+inputs.</p>
+<p>They can only be saved to the filesystem or handled via a callback function.</p>
+<p>The default destination for all graph reports is <code class="docutils literal notranslate"><span class="pre">filesystem</span></code>.</p>
+<section id="scatter-plot-reports">
+<h4>Scatter Plot Reports<a class="headerlink" href="#scatter-plot-reports" title="Link to this heading">🔗</a></h4>
+<p>Scatter plot reports display individual benchmark results as points on a graph,
+allowing for easy comparison of performance across different benchmark
+parameter values.</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scatter-plot">
+<span class="sig-name descname"><span class="pre">--scatter-plot</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-scatter-plot" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate scatter plot graphs for all results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scatter-plot.ops">
+<span class="sig-name descname"><span class="pre">--scatter-plot.ops</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-scatter-plot.ops" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate scatter plot graphs only for operations-per-second results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scatter-plot.timing">
+<span class="sig-name descname"><span class="pre">--scatter-plot.timing</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-scatter-plot.timing" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate scatter plot graphs only for timing results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scatter-plot.memory">
+<span class="sig-name descname"><span class="pre">--scatter-plot.memory</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-scatter-plot.memory" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate scatter plot graphs only for memory usage results.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="json-reports">
+<h3>JSON Reports<a class="headerlink" href="#json-reports" title="Link to this heading">🔗</a></h3>
+<p>JSON report options allow you to export benchmark results in JSON format,
+which is useful for programmatic consumption and integration with other tools.</p>
+<p>The default destination is <code class="docutils literal notranslate"><span class="pre">filesystem</span></code>.</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-json">
+<span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-json" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate JSON reports only for statistical results.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-json-data">
+<span class="sig-name descname"><span class="pre">--json-data</span></span><span class="sig-prename descclassname"> <span class="pre">[{callback,console,filesystem}</span> <span class="pre">...]</span></span><a class="headerlink" href="#cmdoption-json-data" title="Link to this definition">🔗</a></dt>
+<dd><p>Generate JSON reports for statistical results and the full raw data.</p>
+</dd></dl>
+
+</section>
 </section>
 </section>
 
@@ -121,7 +268,18 @@ scripts to control output formats, reporting styles, and other features.</p>
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Command-Line Options</a><ul>
-<li><a class="reference internal" href="#options">Options</a></li>
+<li><a class="reference internal" href="#general-options">General Options</a></li>
+<li><a class="reference internal" href="#reporting-options">Reporting Options</a></li>
+<li><a class="reference internal" href="#report-types">Report Types</a><ul>
+<li><a class="reference internal" href="#rich-table-reports">Rich Table Reports</a></li>
+<li><a class="reference internal" href="#csv-reports">CSV Reports</a></li>
+<li><a class="reference internal" href="#graph-reports">Graph Reports</a><ul>
+<li><a class="reference internal" href="#scatter-plot-reports">Scatter Plot Reports</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#json-reports">JSON Reports</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
