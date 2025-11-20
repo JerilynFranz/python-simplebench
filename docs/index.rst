@@ -8,13 +8,9 @@ SimpleBench documentation
 
 **SimpleBench** is a Python library for benchmarking and performance testing of code.
 
-Check out the :doc:`usage` section for further information, including
-how to do :ref:`simplebench-installation` of the project.
-
 .. note::
 
    This project is under active development and the API is still subject to change.
-   Please refer to the documentation for the most up-to-date information.
 
 Contents
 --------

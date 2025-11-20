@@ -3,52 +3,46 @@ Rich Table Report
 
 .. _rich-table-report:
 
-.. toctree::
-   :maxdepth: 4
-
-.. index::
-
 Rich Tables are a popular way to display benchmark results in a clear and
 concise manner. SimpleBench leverages the `rich <https://github.com/Textualize/rich>`_
 library to generate these tables, providing visually appealing and easy-to-read reports.
 
-To generate a Rich Table report, you can use the `--rich-table.ops` command-line
-option when running your benchmarks. This will produce tables that summarize the
-performance metrics for each benchmark, including operations per second, average
-time per operation, memory usage, and peak memory usage.
+.. note::
 
-Here is an example of how to run a benchmark script with Rich Table reporting:
+   Rich Table reports are just one of several reporting options available in SimpleBench.
+   You can also generate CSV reports, graph reports, and JSON reports, each providing
+   different perspectives on your benchmark results.
+
+   Refer to the :doc:`command_line_options` section for more details on how to
+   generate and customize these reports.
+
+To generate a Rich Table report, you can use an option like `--rich-table.ops`
+when running your benchmarks. For example:
 
 .. code-block:: shell
-  :caption: Running a benchmark with Rich Table report
+  :caption: Running a benchmark with a Rich Table report
   :name: run-benchmark-rich-table
 
     python my_benchmark_script.py --rich-table.ops --progress
 
-This command will execute the benchmarks defined in `my_benchmark_script.py` and
-generate a Rich Table report displaying the operations-per-second results in
-the terminal. A progress bar will also be shown during the execution of the benchmarks.
-
-A basic Rich Table output will look something like this:
+This command executes the benchmarks in `my_benchmark_script.py` and generates
+a Rich Table in the terminal displaying the operations-per-second results.
+A basic output will look something like this:
 
 .. code-block:: text
-  :caption: Basic Sample Rich Table Output
-  :name: basic-sample-rich-table-output
+  :caption: Sample Rich Table Output (operations per second)
+  :name: sample-rich-table-output
 
-                                                                 addition_benchmark
-                                                                operations per second
+                                                                     addition_benchmark
+                                                                  operations per second
 
-                                            A simple addition benchmark of Python's built-in sum function.
-    ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┓
-    ┃        ┃            ┃        ┃ Elapsed ┃    mean    ┃   median   ┃           ┃            ┃            ┃             ┃  std dev   ┃        ┃
-    ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃   kOps/s   ┃   kOps/s   ┃ min Ops/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃   kOps/s   ┃  rsd%  ┃
-    ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━┩
-    │      1 │    46701   │      1 │  0.32   │    148.00  │    149.00  │   876.00  │    153.00  │    143.00  │    151.00   │      8.99  │  6.08% │
-    └────────┴────────────┴────────┴─────────┴────────────┴────────────┴───────────┴────────────┴────────────┴─────────────┴────────────┴────────┘
-
-The table includes various statistics such as the number of iterations, rounds,
-elapsed time, mean and median operations per second, minimum and maximum operations
-per second, as well as standard deviation and relative standard deviation (rsd%).
+                                             A simple addition benchmark of Python's built-in sum function.
+   ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+   ┃        ┃            ┃        ┃ Elapsed ┃             ┃               ┃            ┃            ┃            ┃             ┃                ┃        ┃
+   ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃ mean kOps/s ┃ median kOps/s ┃ min kOps/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃ std dev kOps/s ┃  rsd%  ┃
+   ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+   │      1 │    44872   │      1 │  0.32   │    143.00   │     144.00    │      1.07  │    153.00  │    140.00  │    150.00   │        9.28    │  6.51% │
+   └────────┴────────────┴────────┴─────────┴─────────────┴───────────────┴────────────┴────────────┴────────────┴─────────────┴────────────────┴────────┘
 
 .. note::
    To avoid "false precision", statistical results are shown to three significant digits.
@@ -58,7 +52,89 @@ per second, as well as standard deviation and relative standard deviation (rsd%)
    This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
    measurement in the real world.
 
-The basic fields always displayed in a Rich Table report are:
+Report Variations and Destinations
+----------------------------------
+
+The example above shows an operations-per-second report printed to the console.
+SimpleBench provides several variations:
+
+- `--rich-table`: Generates tables for all result types (ops, timing, and memory).
+- `--rich-table.ops`: Generates tables only for operations-per-second results.
+- `--rich-table.timing`: Generates tables only for timing results.
+- `--rich-table.memory`: Generates tables only for memory usage results.
+
+By default, reports are displayed in the console. You can send a report to other
+destinations, such as the filesystem, by appending the destination name. For example,
+to save the report to a file instead of printing it:
+
+.. code-block:: shell
+  :caption: Saving a Rich Table report to the filesystem
+  :name: rich-table-ops-filesystem
+
+    python my_benchmark_script.py --rich-table.ops filesystem
+
+
+Advanced Features
+-----------------
+
+Beyond the basic fields shown above, SimpleBench's Rich Table reports
+also support advanced features such as:
+
+Parameterized Benchmarks
+  Displaying results for benchmarks that take parameters,
+  allowing for analysis of performance across different input sizes or configurations.
+
+Custom Complexity Weightings:
+  Including Big-O complexity weight/size annotations to help analyze how performance
+  scales with input size.
+
+These features make Rich Table reports a powerful tool for understanding
+the performance characteristics of your code in a clear and structured manner.
+
+Parameterized Benchmarks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When benchmarks are parameterized, SimpleBench generates additional columns in the
+Rich Table report for each parameter value requested for display.
+
+This allows you to easily compare performance across different configurations.
+For example, if you have a benchmark that takes an input size
+parameter, the report can show how performance varies with different input sizes.
+
+See the :doc:`defining_benchmarks` section for more details on defining and using
+parameterized benchmarks.
+
+Custom Complexity Weightings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Related to parameterized benchmarks, SimpleBench allows you to specify
+custom complexity weightings (number/size weighting)for your benchmarks. These weightings
+are displayed in the Rich Table report as the N value, helping you analyze
+how performance scales with input size and parameterization.
+
+For example, you might specify that a benchmark set covers input sizes 1, 20, 100, 1000,
+which will be indicated in the N column of the report with a row for each size.
+
+When defining a parameterized benchmark, you can provide complexity weightings that
+reflect the expected performance characteristics of the code being benchmarked and
+are matched with the parameters being used. This helps in understanding how the performance
+of the benchmarked code changes as the input size or other parameters vary.
+
+These advanced features make Rich Table reports a powerful tool for analyzing
+the performance of parameterized benchmarks and understanding the scalability
+of your code.
+
+
+Operations Per Second
+---------------------
+
+The `operations per second` Rich Table report provides a detailed overview of
+the performance of the benchmarked code in terms of how many operations it can
+perform per second. This is a common metric used to evaluate the efficiency of
+code, especially in performance-critical applications.
+
+Output numbers are scaled to appropriate units (Ops/s, kOps/s, MOps/s, etc) for easier readability.
+
+The basic fields always displayed in an `operations per second` Rich Table report are:
 
 N
   A complexity weighting used to indicate the input size for a benchmark.
@@ -146,5 +222,128 @@ rsd%
 
   The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
   deviation by the mean and multiplying by 100. It provides a normalized measure of variability, allowing for easier 
-  comparison of consistency across different benchmarks or configurations. A lower RSD% indicates more consistent
+  comparison of consistency across different benchmarks or parameter configurations. A lower RSD% indicates more consistent
   performance relative to the mean, while a higher RSD% suggests greater variability in the results.
+
+Timing
+------
+
+A `timing` Rich Table report focuses on the time taken to execute the benchmarked
+code, rather than the number of operations per second. It provides insights into
+the average time per operation and other timing-related statistics. 
+
+Output numbers are scaled to appropriate units (seconds, milliseconds, microseconds, etc)
+for easier readability.
+
+The fields in this report include:
+
+Mean s/op
+  The average time in seconds per operation.
+
+  The arithmetic mean average time in seconds per operation (s/op). This metric is calculated by dividing the total
+  elapsed time by the total number of operations. It provides a direct measure of how long a single operation
+  takes on average.
+
+Median s/op
+  The 50th percentile (middle value) of seconds per operation.
+
+  The median (50th percentile) time in seconds per operation. This metric represents the middle value of the timing
+  measurements, providing a robust measure of central tendency that is less affected by unusually fast or slow
+  iterations (outliers).
+
+Min s/op
+  The lowest (fastest) time per operation recorded across all iterations.
+
+  The minimum time in seconds per operation recorded during the benchmark. This metric indicates the best-case
+  performance observed, showcasing the fastest execution time for a single operation.
+
+Max s/op
+  The highest (slowest) time per operation recorded across all iterations.
+
+  The maximum time in seconds per operation recorded during the benchmark. This metric indicates the worst-case
+  performance observed, which can be useful for identifying potential bottlenecks or performance stalls.
+
+5th s/op
+  The 5th percentile of seconds per operation. 5% of iterations were faster than this.
+
+  The 5th percentile time in seconds per operation. This metric indicates that 5% of the timing measurements were
+  faster than this value, providing insight into the best-case end of the performance distribution.
+
+95th s/op
+  The 95th percentile of seconds per operation. 95% of iterations were faster than this.
+
+  The 95th percentile time in seconds per operation. This metric indicates that 95% of the timing measurements were
+  faster than this value, providing insight into the typical worst-case performance, excluding extreme outliers.
+
+Std Dev s/op
+  A measure of the variation or inconsistency in the time per operation.
+
+  The standard deviation of the seconds per operation (s/op) measurements. This metric quantifies the amount of
+  variation in the timing values. A lower standard deviation indicates more consistent, predictable execution times.
+
+rsd%
+  A normalized measure of timing inconsistency, expressed as a percentage.
+
+  The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+  deviation by the mean time. It provides a normalized measure of variability, allowing for easier comparison of
+  timing consistency across different benchmarks.
+
+Memory Usage
+------------
+A `memory usage` Rich Table report provides information about the memory consumption
+of the benchmarked code. It includes statistics on average and peak memory usage
+during the benchmark runs. Output numbers are scaled to appropriate units (bytes, kB, MB, etc)
+for easier readability.
+
+For a `memory usage` Rich Table report, two tables are generated: one for average
+memory usage and another for peak memory usage. The key fields in these tables include:
+
+Mean bytes
+  The average memory allocated per operation, in bytes.
+
+  The arithmetic mean average memory allocated per operation. This metric provides a general overview of the
+  benchmark's memory footprint under typical execution.
+
+Median bytes
+  The 50th percentile (middle value) of memory allocated per operation.
+
+  The median (50th percentile) of memory allocated per operation. This provides a robust measure of the typical
+  memory usage that is less affected by iterations with unusually high or low memory consumption.
+
+Min bytes
+  The minimum memory allocated per operation across all iterations.
+
+  The minimum memory allocated per operation recorded during the benchmark. This metric indicates the lowest
+  memory footprint observed, representing the best-case scenario for memory efficiency.
+
+Max bytes
+  The maximum memory allocated per operation across all iterations.
+
+  The maximum memory allocated per operation recorded during the benchmark. This metric indicates the highest
+  memory footprint observed, which is crucial for understanding peak memory demand and potential memory-related issues.
+
+5th bytes
+  The 5th percentile of memory allocated per operation.
+
+  The 5th percentile of memory allocated per operation. This metric indicates that 5% of the iterations used
+  less memory than this value, providing insight into the lower end of the memory usage distribution.
+
+95th bytes
+  The 95th percentile of memory allocated per operation.
+
+  The 95th percentile of memory allocated per operation. This metric indicates that 95% of the iterations used
+  less memory than this value, which is useful for understanding the typical upper bound of memory usage, excluding
+  extreme outliers.
+
+Std Dev bytes
+  A measure of the variation in memory allocation per operation.
+
+  The standard deviation of the memory allocation measurements. This metric quantifies the amount of variation
+  in memory usage across iterations. A lower value indicates more consistent and predictable memory behavior.
+
+rsd%
+  A normalized measure of memory usage inconsistency, expressed as a percentage.
+
+  The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+  deviation by the mean memory usage. It provides a normalized measure of variability, allowing for easier comparison
+  of memory consistency across different benchmarks.

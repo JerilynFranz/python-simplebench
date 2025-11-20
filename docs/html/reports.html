@@ -45,44 +45,43 @@
 </div>
 <section id="rich-table-report">
 <h2>Rich Table Report<a class="headerlink" href="#rich-table-report" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound" id="id1">
-</div>
-<p>Rich Tables are a popular way to display benchmark results in a clear and
+<p id="id1">Rich Tables are a popular way to display benchmark results in a clear and
 concise manner. SimpleBench leverages the <a class="reference external" href="https://github.com/Textualize/rich">rich</a>
 library to generate these tables, providing visually appealing and easy-to-read reports.</p>
-<p>To generate a Rich Table report, you can use the <cite>–rich-table.ops</cite> command-line
-option when running your benchmarks. This will produce tables that summarize the
-performance metrics for each benchmark, including operations per second, average
-time per operation, memory usage, and peak memory usage.</p>
-<p>Here is an example of how to run a benchmark script with Rich Table reporting:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Rich Table reports are just one of several reporting options available in SimpleBench.
+You can also generate CSV reports, graph reports, and JSON reports, each providing
+different perspectives on your benchmark results.</p>
+<p>Refer to the <a class="reference internal" href="command_line_options.html"><span class="doc">Command-Line Options</span></a> section for more details on how to
+generate and customize these reports.</p>
+</div>
+<p>To generate a Rich Table report, you can use an option like <cite>–rich-table.ops</cite>
+when running your benchmarks. For example:</p>
 <div class="literal-block-wrapper docutils container" id="run-benchmark-rich-table">
-<div class="code-block-caption"><span class="caption-text">Running a benchmark with Rich Table report</span><a class="headerlink" href="#run-benchmark-rich-table" title="Link to this code">🔗</a></div>
+<div class="code-block-caption"><span class="caption-text">Running a benchmark with a Rich Table report</span><a class="headerlink" href="#run-benchmark-rich-table" title="Link to this code">🔗</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--rich-table.ops<span class="w"> </span>--progress
 </pre></div>
 </div>
 </div>
-<p>This command will execute the benchmarks defined in <cite>my_benchmark_script.py</cite> and
-generate a Rich Table report displaying the operations-per-second results in
-the terminal. A progress bar will also be shown during the execution of the benchmarks.</p>
-<p>A basic Rich Table output will look something like this:</p>
-<div class="literal-block-wrapper docutils container" id="basic-sample-rich-table-output">
-<div class="code-block-caption"><span class="caption-text">Basic Sample Rich Table Output</span><a class="headerlink" href="#basic-sample-rich-table-output" title="Link to this code">🔗</a></div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                                                               addition_benchmark
-                                                              operations per second
+<p>This command executes the benchmarks in <cite>my_benchmark_script.py</cite> and generates
+a Rich Table in the terminal displaying the operations-per-second results.
+A basic output will look something like this:</p>
+<div class="literal-block-wrapper docutils container" id="sample-rich-table-output">
+<div class="code-block-caption"><span class="caption-text">Sample Rich Table Output (operations per second)</span><a class="headerlink" href="#sample-rich-table-output" title="Link to this code">🔗</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                                                                   addition_benchmark
+                                                                operations per second
 
-                                          A simple addition benchmark of Python&#39;s built-in sum function.
-  ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┓
-  ┃        ┃            ┃        ┃ Elapsed ┃    mean    ┃   median   ┃           ┃            ┃            ┃             ┃  std dev   ┃        ┃
-  ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃   kOps/s   ┃   kOps/s   ┃ min Ops/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃   kOps/s   ┃  rsd%  ┃
-  ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━┩
-  │      1 │    46701   │      1 │  0.32   │    148.00  │    149.00  │   876.00  │    153.00  │    143.00  │    151.00   │      8.99  │  6.08% │
-  └────────┴────────────┴────────┴─────────┴────────────┴────────────┴───────────┴────────────┴────────────┴─────────────┴────────────┴────────┘
+                                           A simple addition benchmark of Python&#39;s built-in sum function.
+ ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+ ┃        ┃            ┃        ┃ Elapsed ┃             ┃               ┃            ┃            ┃            ┃             ┃                ┃        ┃
+ ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃ mean kOps/s ┃ median kOps/s ┃ min kOps/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃ std dev kOps/s ┃  rsd%  ┃
+ ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+ │      1 │    44872   │      1 │  0.32   │    143.00   │     144.00    │      1.07  │    153.00  │    140.00  │    150.00   │        9.28    │  6.51% │
+ └────────┴────────────┴────────┴─────────┴─────────────┴───────────────┴────────────┴────────────┴────────────┴─────────────┴────────────────┴────────┘
 </pre></div>
 </div>
 </div>
-<p>The table includes various statistics such as the number of iterations, rounds,
-elapsed time, mean and median operations per second, minimum and maximum operations
-per second, as well as standard deviation and relative standard deviation (rsd%).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>To avoid “false precision”, statistical results are shown to three significant digits.
@@ -91,7 +90,75 @@ typically meaningless statistical noise.</p>
 <p>This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
 measurement in the real world.</p>
 </div>
-<p>The basic fields always displayed in a Rich Table report are:</p>
+<section id="report-variations-and-destinations">
+<h3>Report Variations and Destinations<a class="headerlink" href="#report-variations-and-destinations" title="Link to this heading">🔗</a></h3>
+<p>The example above shows an operations-per-second report printed to the console.
+SimpleBench provides several variations:</p>
+<ul class="simple">
+<li><p><cite>–rich-table</cite>: Generates tables for all result types (ops, timing, and memory).</p></li>
+<li><p><cite>–rich-table.ops</cite>: Generates tables only for operations-per-second results.</p></li>
+<li><p><cite>–rich-table.timing</cite>: Generates tables only for timing results.</p></li>
+<li><p><cite>–rich-table.memory</cite>: Generates tables only for memory usage results.</p></li>
+</ul>
+<p>By default, reports are displayed in the console. You can send a report to other
+destinations, such as the filesystem, by appending the destination name. For example,
+to save the report to a file instead of printing it:</p>
+<div class="literal-block-wrapper docutils container" id="rich-table-ops-filesystem">
+<div class="code-block-caption"><span class="caption-text">Saving a Rich Table report to the filesystem</span><a class="headerlink" href="#rich-table-ops-filesystem" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--rich-table.ops<span class="w"> </span>filesystem
+</pre></div>
+</div>
+</div>
+</section>
+<section id="advanced-features">
+<h3>Advanced Features<a class="headerlink" href="#advanced-features" title="Link to this heading">🔗</a></h3>
+<p>Beyond the basic fields shown above, SimpleBench’s Rich Table reports
+also support advanced features such as:</p>
+<dl class="simple">
+<dt>Parameterized Benchmarks</dt><dd><p>Displaying results for benchmarks that take parameters,
+allowing for analysis of performance across different input sizes or configurations.</p>
+</dd>
+<dt>Custom Complexity Weightings:</dt><dd><p>Including Big-O complexity weight/size annotations to help analyze how performance
+scales with input size.</p>
+</dd>
+</dl>
+<p>These features make Rich Table reports a powerful tool for understanding
+the performance characteristics of your code in a clear and structured manner.</p>
+<section id="parameterized-benchmarks">
+<h4>Parameterized Benchmarks<a class="headerlink" href="#parameterized-benchmarks" title="Link to this heading">🔗</a></h4>
+<p>When benchmarks are parameterized, SimpleBench generates additional columns in the
+Rich Table report for each parameter value requested for display.</p>
+<p>This allows you to easily compare performance across different configurations.
+For example, if you have a benchmark that takes an input size
+parameter, the report can show how performance varies with different input sizes.</p>
+<p>See the <span class="xref std std-doc">defining_benchmarks</span> section for more details on defining and using
+parameterized benchmarks.</p>
+</section>
+<section id="custom-complexity-weightings">
+<h4>Custom Complexity Weightings<a class="headerlink" href="#custom-complexity-weightings" title="Link to this heading">🔗</a></h4>
+<p>Related to parameterized benchmarks, SimpleBench allows you to specify
+custom complexity weightings (number/size weighting)for your benchmarks. These weightings
+are displayed in the Rich Table report as the N value, helping you analyze
+how performance scales with input size and parameterization.</p>
+<p>For example, you might specify that a benchmark set covers input sizes 1, 20, 100, 1000,
+which will be indicated in the N column of the report with a row for each size.</p>
+<p>When defining a parameterized benchmark, you can provide complexity weightings that
+reflect the expected performance characteristics of the code being benchmarked and
+are matched with the parameters being used. This helps in understanding how the performance
+of the benchmarked code changes as the input size or other parameters vary.</p>
+<p>These advanced features make Rich Table reports a powerful tool for analyzing
+the performance of parameterized benchmarks and understanding the scalability
+of your code.</p>
+</section>
+</section>
+<section id="operations-per-second">
+<h3>Operations Per Second<a class="headerlink" href="#operations-per-second" title="Link to this heading">🔗</a></h3>
+<p>The <cite>operations per second</cite> Rich Table report provides a detailed overview of
+the performance of the benchmarked code in terms of how many operations it can
+perform per second. This is a common metric used to evaluate the efficiency of
+code, especially in performance-critical applications.</p>
+<p>Output numbers are scaled to appropriate units (Ops/s, kOps/s, MOps/s, etc) for easier readability.</p>
+<p>The basic fields always displayed in an <cite>operations per second</cite> Rich Table report are:</p>
 <dl>
 <dt>N</dt><dd><p>A complexity weighting used to indicate the input size for a benchmark.</p>
 <p>A Big-O (<em>O</em>(<em>n</em>), etc) complexity weighting. This is used to indicate the ‘size’ of the
@@ -155,10 +222,102 @@ deviation suggests greater variability in the results.</p>
 <dt>rsd%</dt><dd><p>A normalized measure of performance inconsistency, expressed as a percentage.</p>
 <p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
 deviation by the mean and multiplying by 100. It provides a normalized measure of variability, allowing for easier
-comparison of consistency across different benchmarks or configurations. A lower RSD% indicates more consistent
+comparison of consistency across different benchmarks or parameter configurations. A lower RSD% indicates more consistent
 performance relative to the mean, while a higher RSD% suggests greater variability in the results.</p>
 </dd>
 </dl>
+</section>
+<section id="timing">
+<h3>Timing<a class="headerlink" href="#timing" title="Link to this heading">🔗</a></h3>
+<p>A <cite>timing</cite> Rich Table report focuses on the time taken to execute the benchmarked
+code, rather than the number of operations per second. It provides insights into
+the average time per operation and other timing-related statistics.</p>
+<p>Output numbers are scaled to appropriate units (seconds, milliseconds, microseconds, etc)
+for easier readability.</p>
+<p>The fields in this report include:</p>
+<dl>
+<dt>Mean s/op</dt><dd><p>The average time in seconds per operation.</p>
+<p>The arithmetic mean average time in seconds per operation (s/op). This metric is calculated by dividing the total
+elapsed time by the total number of operations. It provides a direct measure of how long a single operation
+takes on average.</p>
+</dd>
+<dt>Median s/op</dt><dd><p>The 50th percentile (middle value) of seconds per operation.</p>
+<p>The median (50th percentile) time in seconds per operation. This metric represents the middle value of the timing
+measurements, providing a robust measure of central tendency that is less affected by unusually fast or slow
+iterations (outliers).</p>
+</dd>
+<dt>Min s/op</dt><dd><p>The lowest (fastest) time per operation recorded across all iterations.</p>
+<p>The minimum time in seconds per operation recorded during the benchmark. This metric indicates the best-case
+performance observed, showcasing the fastest execution time for a single operation.</p>
+</dd>
+<dt>Max s/op</dt><dd><p>The highest (slowest) time per operation recorded across all iterations.</p>
+<p>The maximum time in seconds per operation recorded during the benchmark. This metric indicates the worst-case
+performance observed, which can be useful for identifying potential bottlenecks or performance stalls.</p>
+</dd>
+<dt>5th s/op</dt><dd><p>The 5th percentile of seconds per operation. 5% of iterations were faster than this.</p>
+<p>The 5th percentile time in seconds per operation. This metric indicates that 5% of the timing measurements were
+faster than this value, providing insight into the best-case end of the performance distribution.</p>
+</dd>
+<dt>95th s/op</dt><dd><p>The 95th percentile of seconds per operation. 95% of iterations were faster than this.</p>
+<p>The 95th percentile time in seconds per operation. This metric indicates that 95% of the timing measurements were
+faster than this value, providing insight into the typical worst-case performance, excluding extreme outliers.</p>
+</dd>
+<dt>Std Dev s/op</dt><dd><p>A measure of the variation or inconsistency in the time per operation.</p>
+<p>The standard deviation of the seconds per operation (s/op) measurements. This metric quantifies the amount of
+variation in the timing values. A lower standard deviation indicates more consistent, predictable execution times.</p>
+</dd>
+<dt>rsd%</dt><dd><p>A normalized measure of timing inconsistency, expressed as a percentage.</p>
+<p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+deviation by the mean time. It provides a normalized measure of variability, allowing for easier comparison of
+timing consistency across different benchmarks.</p>
+</dd>
+</dl>
+</section>
+<section id="memory-usage">
+<h3>Memory Usage<a class="headerlink" href="#memory-usage" title="Link to this heading">🔗</a></h3>
+<p>A <cite>memory usage</cite> Rich Table report provides information about the memory consumption
+of the benchmarked code. It includes statistics on average and peak memory usage
+during the benchmark runs. Output numbers are scaled to appropriate units (bytes, kB, MB, etc)
+for easier readability.</p>
+<p>For a <cite>memory usage</cite> Rich Table report, two tables are generated: one for average
+memory usage and another for peak memory usage. The key fields in these tables include:</p>
+<dl>
+<dt>Mean bytes</dt><dd><p>The average memory allocated per operation, in bytes.</p>
+<p>The arithmetic mean average memory allocated per operation. This metric provides a general overview of the
+benchmark’s memory footprint under typical execution.</p>
+</dd>
+<dt>Median bytes</dt><dd><p>The 50th percentile (middle value) of memory allocated per operation.</p>
+<p>The median (50th percentile) of memory allocated per operation. This provides a robust measure of the typical
+memory usage that is less affected by iterations with unusually high or low memory consumption.</p>
+</dd>
+<dt>Min bytes</dt><dd><p>The minimum memory allocated per operation across all iterations.</p>
+<p>The minimum memory allocated per operation recorded during the benchmark. This metric indicates the lowest
+memory footprint observed, representing the best-case scenario for memory efficiency.</p>
+</dd>
+<dt>Max bytes</dt><dd><p>The maximum memory allocated per operation across all iterations.</p>
+<p>The maximum memory allocated per operation recorded during the benchmark. This metric indicates the highest
+memory footprint observed, which is crucial for understanding peak memory demand and potential memory-related issues.</p>
+</dd>
+<dt>5th bytes</dt><dd><p>The 5th percentile of memory allocated per operation.</p>
+<p>The 5th percentile of memory allocated per operation. This metric indicates that 5% of the iterations used
+less memory than this value, providing insight into the lower end of the memory usage distribution.</p>
+</dd>
+<dt>95th bytes</dt><dd><p>The 95th percentile of memory allocated per operation.</p>
+<p>The 95th percentile of memory allocated per operation. This metric indicates that 95% of the iterations used
+less memory than this value, which is useful for understanding the typical upper bound of memory usage, excluding
+extreme outliers.</p>
+</dd>
+<dt>Std Dev bytes</dt><dd><p>A measure of the variation in memory allocation per operation.</p>
+<p>The standard deviation of the memory allocation measurements. This metric quantifies the amount of variation
+in memory usage across iterations. A lower value indicates more consistent and predictable memory behavior.</p>
+</dd>
+<dt>rsd%</dt><dd><p>A normalized measure of memory usage inconsistency, expressed as a percentage.</p>
+<p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+deviation by the mean memory usage. It provides a normalized measure of variability, allowing for easier comparison
+of memory consistency across different benchmarks.</p>
+</dd>
+</dl>
+</section>
 </section>
 </section>
 
@@ -173,7 +332,18 @@ performance relative to the mean, while a higher RSD% suggests greater variabili
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Reports</a><ul>
-<li><a class="reference internal" href="#rich-table-report">Rich Table Report</a></li>
+<li><a class="reference internal" href="#rich-table-report">Rich Table Report</a><ul>
+<li><a class="reference internal" href="#report-variations-and-destinations">Report Variations and Destinations</a></li>
+<li><a class="reference internal" href="#advanced-features">Advanced Features</a><ul>
+<li><a class="reference internal" href="#parameterized-benchmarks">Parameterized Benchmarks</a></li>
+<li><a class="reference internal" href="#custom-complexity-weightings">Custom Complexity Weightings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operations-per-second">Operations Per Second</a></li>
+<li><a class="reference internal" href="#timing">Timing</a></li>
+<li><a class="reference internal" href="#memory-usage">Memory Usage</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
