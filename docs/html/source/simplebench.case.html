@@ -7,7 +7,7 @@
 
     <title>simplebench.case module &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=88588f62" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=9063aa17" />
     
     <script src="../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -100,8 +100,8 @@ benchmark cases remain consistent throughout their lifecycle.</p>
 <p>The results of the benchmark runs are stored in the <cite>results</cite> property, which is a list
 of Results objects. Each Results object corresponds to a specific combination of
 keyword argument variations.</p>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">Minimal Example</span><a class="headerlink" href="#id7" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Minimal Example</span><a class="headerlink" href="#id5" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
       <span class="n">Case</span><span class="p">,</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="n">Results</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span>
 
@@ -123,84 +123,12 @@ keyword argument variations.</p>
 </pre></div>
 </div>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>action</strong> (<a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><em>ActionRunner</em></a>) – The function to perform the benchmark. This function must
-accept a <cite>bench</cite> parameter of type SimpleRunner and arbitrary keyword arguments (’<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs’).
-It must return a Results object.</p></li>
-<li><p><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The benchmark reporting group to which the benchmark case belongs for selection
-and reporting purposes. Cannot be blank. It is used to categorize and filter benchmark cases.</p></li>
-<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the benchmark case. If not specified, defaults to the name of the action function.
-Cannot be blank.</p></li>
-<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A brief description of the benchmark case. If not specified, defaults to the
-docstring of the action function or ‘(no description)’ if no docstring is available.
-Cannot be blank.</p></li>
-<li><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The minimum number of iterations to run for the benchmark.</p></li>
-<li><p><strong>rounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of rounds to run for the benchmark for each iteration. Rounds are
-multiple runs of the entire benchmark to get a better average for an iteration. Each iteration will
-run the specified number of rounds after setup and before teardown. (default: 1)</p></li>
-<li><p><strong>warmup_iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of warmup iterations to run before the benchmark.</p></li>
-<li><p><strong>min_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The minimum time for the benchmark in seconds.</p></li>
-<li><p><strong>max_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The maximum time for the benchmark in seconds.</p></li>
-<li><p><strong>variation_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – kwargs to be used for cols to denote kwarg variations in reports.
-Each key is a keyword argument name, and the value is the column label to use for that argument.
-Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These fields will be
-added to the output of reporters that support them as columns of data with the specified labels.</p></li>
-<li><p><strong>kwargs_variations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><em>Any</em><em>]</em><em>]</em>) – <p>A mapping of keyword argument names to their variations.
-Each key is a keyword argument name, and the value is a list of possible values.</p>
-<p>When tests are run, the benchmark will be executed for each combination of the specified
-keyword argument variations. For example, if <cite>kwargs_variations</cite> is</p>
-<div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id8" title="Link to this code">🔗</a></div>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="o">...</span>
-  <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="p">{</span>
-          <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
-          <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;fast&#39;</span><span class="p">,</span> <span class="s1">&#39;accurate&#39;</span><span class="p">]</span>
-      <span class="p">},</span>
-  <span class="o">...</span>
-</pre></div>
-</div>
-</div>
-<p>The benchmark will be run 4 times with the following combinations of keyword arguments:</p>
-<div class="literal-block-wrapper docutils container" id="id9">
-<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id9" title="Link to this code">🔗</a></div>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
-<span class="linenos">2</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
-<span class="linenos">3</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
-<span class="linenos">4</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<p>The action function will be called with these keyword arguments accordingly and must
-accept them.</p>
-</p></li>
-<li><p><strong>expanded_kwargs_variations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em>) – A list of all combinations of keyword argument
-variations.</p></li>
-<li><p><strong>runner</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><em>type</em></a><em>[</em><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><em>SimpleRunner</em></a><em>] </em><em>| </em><em>None</em>) – <p>A custom runner class for the benchmark.
-If None, the default SimpleRunner is used.  (default: None)</p>
-<p>A custom runner class must be a subclass of SimpleRunner and must have a method
-named <cite>run</cite> that accepts the same parameters as SimpleRunner.run and returns a Results object.
-The action function will be called with a <cite>bench</cite> parameter that is an instance of the
-custom runner.</p>
-<p>It may also accept additional parameters to the run method as needed. If additional
-parameters are required, they must be specified in the <cite>action</cite> function signature.</p>
-</p></li>
-<li><p><strong>callback</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.ReporterCallback" title="simplebench.reporters.protocols.ReporterCallback"><em>ReporterCallback</em></a><em>]</em>) – A callback function to be called with the benchmark
-results in a reporter. This function should accept four arguments: the Case instance, the Section,
-the ReporterOption, and the output object. Leave as None if no callback is needed.
-(default: None)</p></li>
-<li><p><strong>results</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="simplebench.html#simplebench.Results" title="simplebench.Results"><em>Results</em></a><em>]</em>) – The benchmark results for the case. This is populated by the
-action function during the benchmark run.</p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.action">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">action</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></em><a class="headerlink" href="#simplebench.case.Case.action" title="Link to this definition">🔗</a></dt>
 <dd><p>The function to perform the benchmark.</p>
 <p>The function must accept a <cite>bench</cite> parameter of type SimpleRunner and
-arbitrary keyword arguments (’<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs’) and return a Results object.</p>
+arbitrary keyword arguments (’<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs’) and return a Results object.</p>
 <p>Example:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">my_benchmark_action</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup_function</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -248,18 +176,52 @@ set <cite>full_data</cite> to True.</p>
 <dt class="sig sig-object py" id="simplebench.case.Case.callback">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">callback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.protocols.reporter_callback.html#simplebench.reporters.protocols.reporter_callback.ReporterCallback" title="simplebench.reporters.protocols.reporter_callback.ReporterCallback"><span class="pre">ReporterCallback</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.case.Case.callback" title="Link to this definition">🔗</a></dt>
 <dd><p>A callback function for additional processing of a report.</p>
+<p>A callback function to be called with the benchmark results in a reporter.
+This function should accept four arguments: the Case instance, the Section,
+the ReporterOption, and the output object. Leave as None if no callback is needed.
+(default: None)</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.description">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.case.Case.description" title="Link to this definition">🔗</a></dt>
 <dd><p>A brief description of the benchmark case.</p>
+<p>If not specified, defaults to the docstring of the action function or
+‘(no description)’ if no docstring is available.</p>
+<p>Cannot be blank.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.expanded_kwargs_variations">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expanded_kwargs_variations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.case.Case.expanded_kwargs_variations" title="Link to this definition">🔗</a></dt>
 <dd><p>All combinations of keyword arguments from the specified kwargs_variations.</p>
+<p>A mapping of keyword argument names to their variations.</p>
+<p>Each key is a keyword argument name, and the value is a list of possible values.</p>
+<p>When tests are run, the benchmark will be executed for each combination of the specified
+keyword argument variations. For example, if <cite>kwargs_variations</cite> is</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id6" title="Link to this code">🔗</a></div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="o">...</span>
+  <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+          <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;fast&#39;</span><span class="p">,</span> <span class="s1">&#39;accurate&#39;</span><span class="p">]</span>
+      <span class="p">},</span>
+  <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<p>The benchmark will be run 4 times with the following combinations of keyword arguments:</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id7" title="Link to this code">🔗</a></div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
+<span class="linenos">2</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
+<span class="linenos">3</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
+<span class="linenos">4</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>The action function will be called with these keyword arguments accordingly and must
+accept them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A list of dictionaries, each representing a unique combination of keyword arguments.</p>
@@ -273,7 +235,9 @@ set <cite>full_data</cite> to True.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.group">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">group</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.case.Case.group" title="Link to this definition">🔗</a></dt>
-<dd><p>The benchmark reporting group to which the benchmark case belongs.</p>
+<dd><p>The benchmark reporting group to which the benchmark case belongs for selection
+and reporting purposes.</p>
+<p>Cannot be blank. It is used to categorize and filter benchmark cases.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -286,6 +250,34 @@ set <cite>full_data</cite> to True.</p>
 <dt class="sig sig-object py" id="simplebench.case.Case.kwargs_variations">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kwargs_variations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.case.Case.kwargs_variations" title="Link to this definition">🔗</a></dt>
 <dd><p>Variations of keyword arguments for the benchmark.</p>
+<p>Each key is a keyword argument name, and the value is the column label to use for that argument.
+Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These fields will be
+added to the output of reporters that support them as columns of data with the specified labels.</p>
+<p>When tests are run, the benchmark will be executed for each combination of the specified
+keyword argument variations. For example, if <cite>kwargs_variations</cite> is</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id8" title="Link to this code">🔗</a></div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="o">...</span>
+  <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+          <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;fast&#39;</span><span class="p">,</span> <span class="s1">&#39;accurate&#39;</span><span class="p">]</span>
+      <span class="p">},</span>
+  <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<p>The benchmark will be run 4 times with the following combinations of keyword arguments:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id9" title="Link to this code">🔗</a></div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
+<span class="linenos">2</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
+<span class="linenos">3</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
+<span class="linenos">4</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>The action function will be called with these keyword arguments accordingly and must
+accept them.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -316,7 +308,7 @@ set <cite>full_data</cite> to True.</p>
 <dd class="field-odd"><p>A list of Results objects for each variation run of the benchmark case.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.html#simplebench.Results" title="simplebench.Results">Results</a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.results.html#simplebench.results.Results" title="simplebench.results.Results">Results</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -324,7 +316,9 @@ set <cite>full_data</cite> to True.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.rounds">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rounds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.case.Case.rounds" title="Link to this definition">🔗</a></dt>
-<dd><p>The number of rounds to run for each iteration in the benchmark.</p>
+<dd><p>The number of rounds to run for the benchmark for each iteration.</p>
+<p>Rounds are multiple runs of the entire benchmark to get a better average for an iteration.
+Each iteration will run the specified number of rounds after setup and before teardown. (default: 1)</p>
 </dd></dl>
 
 <dl class="py method">
@@ -346,7 +340,14 @@ control verbosity, and pass CLI arguments to the benchmark runner.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.runner">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">runner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.case.Case.runner" title="Link to this definition">🔗</a></dt>
-<dd><p>A custom runner for the benchmark. If None, the default SimpleRunner is used.</p>
+<dd><p>A custom runner class for the benchmark.</p>
+<p>If None, the default SimpleRunner is used.  (default: None)</p>
+<p>A custom runner class must be a subclass of SimpleRunner and must have a method
+named <cite>run</cite> that accepts the same parameters as SimpleRunner.run and returns a Results object.
+The action function will be called with a <cite>bench</cite> parameter that is an instance of the
+custom runner.</p>
+<p>It may also accept additional parameters to the run method as needed. If additional
+parameters are required, they must be specified in the <cite>action</cite> function signature.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -379,6 +380,8 @@ statistical analysis.</p>
 <dt class="sig sig-object py" id="simplebench.case.Case.title">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.case.Case.title" title="Link to this definition">🔗</a></dt>
 <dd><p>The name of the benchmark case.</p>
+<p>If not specified, defaults to the name of the action function.
+Cannot be blank.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -388,7 +391,7 @@ statistical analysis.</p>
 <dl class="simple">
 <dt>An action function must accept the following two parameters:</dt><dd><ul class="simple">
 <li><p>bench: SimpleRunner</p></li>
-<li><p><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Arbitrary keyword arguments</p></li>
+<li><p><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Arbitrary keyword arguments</p></li>
 </ul>
 </dd>
 </dl>
@@ -531,6 +534,9 @@ value is a blank string.</p></li>
 <dt class="sig sig-object py" id="simplebench.case.Case.variation_cols">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.case.Case.variation_cols" title="Link to this definition">🔗</a></dt>
 <dd><p>Keyword arguments to be used for columns to denote kwarg variations.</p>
+<p>Each key is a keyword argument name, and the value is the column label to use for that argument.
+Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These fields will be
+added to the output of reporters that support them as columns of data with the specified labels.</p>
 <p>Note that all keys in variation_cols must be present in kwargs_variations and
 updating it may require changes to both variation_cols and kwargs_variations_cols.</p>
 <p>Updating variation_cols does not automatically update kwargs_variations, and vice versa.</p>
@@ -542,7 +548,6 @@ updating it may require changes to both variation_cols and kwargs_variations_col
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
 </dd>
 </dl>
-<p>Each key is a keyword argument name, and the value is the column label to use for that argument.</p>
 </dd></dl>
 
 <dl class="py property">

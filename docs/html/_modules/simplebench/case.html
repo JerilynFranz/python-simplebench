@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>simplebench.case &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=88588f62" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=9063aa17" />
     
     <script src="../../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
@@ -36,8 +36,7 @@
           <div class="body" role="main">
             
   <h1>Source code for simplebench.case</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Benchmark case declaration and execution.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Benchmark case declaration and execution.&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
@@ -151,90 +150,6 @@
 <span class="sd">                Case(action=my_benchmark_action)</span>
 <span class="sd">            ]</span>
 <span class="sd">            main(cases_list)</span>
-
-<span class="sd">    :ivar action: The function to perform the benchmark. This function must</span>
-<span class="sd">        accept a `bench` parameter of type SimpleRunner and arbitrary keyword arguments (&#39;**kwargs&#39;).</span>
-<span class="sd">        It must return a Results object.</span>
-<span class="sd">    :vartype action: ActionRunner</span>
-<span class="sd">    :ivar group: The benchmark reporting group to which the benchmark case belongs for selection</span>
-<span class="sd">        and reporting purposes. Cannot be blank. It is used to categorize and filter benchmark cases.</span>
-<span class="sd">    :vartype group: str</span>
-<span class="sd">    :ivar title: The name of the benchmark case. If not specified, defaults to the name of the action function.</span>
-<span class="sd">        Cannot be blank.</span>
-<span class="sd">    :vartype title: str</span>
-<span class="sd">    :ivar description: A brief description of the benchmark case. If not specified, defaults to the</span>
-<span class="sd">        docstring of the action function or &#39;(no description)&#39; if no docstring is available.</span>
-<span class="sd">        Cannot be blank.</span>
-<span class="sd">    :vartype description: str</span>
-<span class="sd">    :ivar iterations: The minimum number of iterations to run for the benchmark.</span>
-<span class="sd">    :vartype iterations: int</span>
-<span class="sd">    :ivar rounds: The number of rounds to run for the benchmark for each iteration. Rounds are</span>
-<span class="sd">        multiple runs of the entire benchmark to get a better average for an iteration. Each iteration will</span>
-<span class="sd">        run the specified number of rounds after setup and before teardown. (default: 1)</span>
-<span class="sd">    :vartype rounds: int</span>
-<span class="sd">    :ivar warmup_iterations: The number of warmup iterations to run before the benchmark.</span>
-<span class="sd">    :vartype warmup_iterations: int</span>
-<span class="sd">    :ivar min_time: The minimum time for the benchmark in seconds.</span>
-<span class="sd">    :vartype min_time: float</span>
-<span class="sd">    :ivar max_time: The maximum time for the benchmark in seconds.</span>
-<span class="sd">    :vartype max_time: float</span>
-<span class="sd">    :ivar variation_cols: kwargs to be used for cols to denote kwarg variations in reports.</span>
-<span class="sd">        Each key is a keyword argument name, and the value is the column label to use for that argument.</span>
-<span class="sd">        Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
-<span class="sd">        added to the output of reporters that support them as columns of data with the specified labels.</span>
-<span class="sd">    :vartype variation_cols: dict[str, str]</span>
-<span class="sd">    :ivar kwargs_variations: A mapping of keyword argument names to their variations.</span>
-<span class="sd">        Each key is a keyword argument name, and the value is a list of possible values.</span>
-
-<span class="sd">        When tests are run, the benchmark will be executed for each combination of the specified</span>
-<span class="sd">        keyword argument variations. For example, if `kwargs_variations` is</span>
-
-<span class="sd">        .. code-block:: python3</span>
-<span class="sd">          :caption: `kwargs_variations` argument example</span>
-
-<span class="sd">            ...</span>
-<span class="sd">            kwargs_variations = {</span>
-<span class="sd">                    &#39;size&#39;: [10, 100],</span>
-<span class="sd">                    &#39;mode&#39;: [&#39;fast&#39;, &#39;accurate&#39;]</span>
-<span class="sd">                },</span>
-<span class="sd">            ...</span>
-
-<span class="sd">        The benchmark will be run 4 times with the following combinations of keyword arguments:</span>
-
-<span class="sd">        .. code-block:: python3</span>
-<span class="sd">          :linenos:</span>
-<span class="sd">          :caption: Keyword (`**kwargs`) Argument Combinations</span>
-
-<span class="sd">            {size=10, mode=&#39;fast&#39;}</span>
-<span class="sd">            {size=10, mode=&#39;accurate&#39;}</span>
-<span class="sd">            {size=100, mode=&#39;fast&#39;}</span>
-<span class="sd">            {size=100, mode=&#39;accurate&#39;}</span>
-
-<span class="sd">        The action function will be called with these keyword arguments accordingly and must</span>
-<span class="sd">        accept them.</span>
-<span class="sd">    :vartype kwargs_variations: dict[str, list[Any]]</span>
-<span class="sd">    :ivar expanded_kwargs_variations: A list of all combinations of keyword argument</span>
-<span class="sd">        variations.</span>
-<span class="sd">    :vartype expanded_kwargs_variations: list[dict[str, Any]]</span>
-<span class="sd">    :ivar runner: A custom runner class for the benchmark.</span>
-<span class="sd">        If None, the default SimpleRunner is used.  (default: None)</span>
-
-<span class="sd">        A custom runner class must be a subclass of SimpleRunner and must have a method</span>
-<span class="sd">        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.</span>
-<span class="sd">        The action function will be called with a `bench` parameter that is an instance of the</span>
-<span class="sd">        custom runner.</span>
-
-<span class="sd">        It may also accept additional parameters to the run method as needed. If additional</span>
-<span class="sd">        parameters are required, they must be specified in the `action` function signature.</span>
-<span class="sd">    :vartype runner: type[SimpleRunner] | None</span>
-<span class="sd">    :ivar callback: A callback function to be called with the benchmark</span>
-<span class="sd">        results in a reporter. This function should accept four arguments: the Case instance, the Section,</span>
-<span class="sd">        the ReporterOption, and the output object. Leave as None if no callback is needed.</span>
-<span class="sd">        (default: None)</span>
-<span class="sd">    :vartype callback: Optional[ReporterCallback]</span>
-<span class="sd">    :ivar results: The benchmark results for the case. This is populated by the</span>
-<span class="sd">        action function during the benchmark run.</span>
-<span class="sd">    :vartype results: list[Results]</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_group&#39;</span><span class="p">,</span> <span class="s1">&#39;_title&#39;</span><span class="p">,</span> <span class="s1">&#39;_description&#39;</span><span class="p">,</span> <span class="s1">&#39;_action&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_warmup_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_min_time&#39;</span><span class="p">,</span> <span class="s1">&#39;_max_time&#39;</span><span class="p">,</span>
@@ -596,17 +511,28 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The benchmark reporting group to which the benchmark case belongs.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The benchmark reporting group to which the benchmark case belongs for selection</span>
+<span class="sd">        and reporting purposes.</span>
+
+<span class="sd">        Cannot be blank. It is used to categorize and filter benchmark cases.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the benchmark case.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the benchmark case.</span>
+
+<span class="sd">        If not specified, defaults to the name of the action function.</span>
+<span class="sd">        Cannot be blank.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A brief description of the benchmark case.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; A brief description of the benchmark case.</span>
+
+<span class="sd">        If not specified, defaults to the docstring of the action function or</span>
+<span class="sd">        &#39;(no description)&#39; if no docstring is available.</span>
+
+<span class="sd">        Cannot be blank.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
 
     <span class="nd">@property</span>
@@ -654,7 +580,10 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of rounds to run for each iteration in the benchmark.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of rounds to run for the benchmark for each iteration.</span>
+
+<span class="sd">        Rounds are multiple runs of the entire benchmark to get a better average for an iteration.</span>
+<span class="sd">        Each iteration will run the specified number of rounds after setup and before teardown. (default: 1)&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span>
 
     <span class="nd">@property</span>
@@ -671,6 +600,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Keyword arguments to be used for columns to denote kwarg variations.</span>
 
+<span class="sd">        Each key is a keyword argument name, and the value is the column label to use for that argument.</span>
+<span class="sd">        Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
+<span class="sd">        added to the output of reporters that support them as columns of data with the specified labels.</span>
+
 <span class="sd">        Note that all keys in variation_cols must be present in kwargs_variations and</span>
 <span class="sd">        updating it may require changes to both variation_cols and kwargs_variations_cols.</span>
 
@@ -678,15 +611,45 @@
 
 <span class="sd">        :return: A dictionary mapping keyword argument names to column labels.</span>
 <span class="sd">        :rtype: dict[str, str]</span>
-
-<span class="sd">        Each key is a keyword argument name, and the value is the column label to use for that argument.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># shallow copy to prevent external modification of internal dict</span>
         <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">kwargs_variations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Variations of keyword arguments for the benchmark.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Variations of keyword arguments for the benchmark.</span>
+
+<span class="sd">        Each key is a keyword argument name, and the value is the column label to use for that argument.</span>
+<span class="sd">        Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
+<span class="sd">        added to the output of reporters that support them as columns of data with the specified labels.</span>
+
+<span class="sd">        When tests are run, the benchmark will be executed for each combination of the specified</span>
+<span class="sd">        keyword argument variations. For example, if `kwargs_variations` is</span>
+
+<span class="sd">        .. code-block:: python3</span>
+<span class="sd">          :caption: `kwargs_variations` argument example</span>
+
+<span class="sd">            ...</span>
+<span class="sd">            kwargs_variations = {</span>
+<span class="sd">                    &#39;size&#39;: [10, 100],</span>
+<span class="sd">                    &#39;mode&#39;: [&#39;fast&#39;, &#39;accurate&#39;]</span>
+<span class="sd">                },</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        The benchmark will be run 4 times with the following combinations of keyword arguments:</span>
+
+<span class="sd">        .. code-block:: python3</span>
+<span class="sd">          :linenos:</span>
+<span class="sd">          :caption: Keyword (`**kwargs`) Argument Combinations</span>
+
+<span class="sd">            {size=10, mode=&#39;fast&#39;}</span>
+<span class="sd">            {size=10, mode=&#39;accurate&#39;}</span>
+<span class="sd">            {size=100, mode=&#39;fast&#39;}</span>
+<span class="sd">            {size=100, mode=&#39;accurate&#39;}</span>
+
+<span class="sd">        The action function will be called with these keyword arguments accordingly and must</span>
+<span class="sd">        accept them.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{}</span>
         <span class="c1"># shallow copy to prevent external modification of internal dict</span>
@@ -694,12 +657,29 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">runner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A custom runner for the benchmark. If None, the default SimpleRunner is used.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A custom runner class for the benchmark.</span>
+
+<span class="sd">        If None, the default SimpleRunner is used.  (default: None)</span>
+
+<span class="sd">        A custom runner class must be a subclass of SimpleRunner and must have a method</span>
+<span class="sd">        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.</span>
+<span class="sd">        The action function will be called with a `bench` parameter that is an instance of the</span>
+<span class="sd">        custom runner.</span>
+
+<span class="sd">        It may also accept additional parameters to the run method as needed. If additional</span>
+<span class="sd">        parameters are required, they must be specified in the `action` function signature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runner</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A callback function for additional processing of a report.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A callback function for additional processing of a report.</span>
+
+<span class="sd">        A callback function to be called with the benchmark results in a reporter.</span>
+<span class="sd">        This function should accept four arguments: the Case instance, the Section,</span>
+<span class="sd">        the ReporterOption, and the output object. Leave as None if no callback is needed.</span>
+<span class="sd">        (default: None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span>
 
     <span class="nd">@property</span>
@@ -723,6 +703,37 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">expanded_kwargs_variations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;All combinations of keyword arguments from the specified kwargs_variations.</span>
+
+<span class="sd">        A mapping of keyword argument names to their variations.</span>
+
+<span class="sd">        Each key is a keyword argument name, and the value is a list of possible values.</span>
+
+<span class="sd">        When tests are run, the benchmark will be executed for each combination of the specified</span>
+<span class="sd">        keyword argument variations. For example, if `kwargs_variations` is</span>
+
+<span class="sd">        .. code-block:: python3</span>
+<span class="sd">          :caption: `kwargs_variations` argument example</span>
+
+<span class="sd">            ...</span>
+<span class="sd">            kwargs_variations = {</span>
+<span class="sd">                    &#39;size&#39;: [10, 100],</span>
+<span class="sd">                    &#39;mode&#39;: [&#39;fast&#39;, &#39;accurate&#39;]</span>
+<span class="sd">                },</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        The benchmark will be run 4 times with the following combinations of keyword arguments:</span>
+
+<span class="sd">        .. code-block:: python3</span>
+<span class="sd">          :linenos:</span>
+<span class="sd">          :caption: Keyword (`**kwargs`) Argument Combinations</span>
+
+<span class="sd">            {size=10, mode=&#39;fast&#39;}</span>
+<span class="sd">            {size=10, mode=&#39;accurate&#39;}</span>
+<span class="sd">            {size=100, mode=&#39;fast&#39;}</span>
+<span class="sd">            {size=100, mode=&#39;accurate&#39;}</span>
+
+<span class="sd">        The action function will be called with these keyword arguments accordingly and must</span>
+<span class="sd">        accept them.</span>
 
 <span class="sd">        :return: A list of dictionaries, each representing a unique combination of keyword arguments.</span>
 <span class="sd">        :rtype: list[dict[str, Any]]</span>
