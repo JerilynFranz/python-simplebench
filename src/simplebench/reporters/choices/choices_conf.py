@@ -21,10 +21,10 @@ from typing import Iterable
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices._base import _BaseChoices
-from simplebench.reporters.choices.exceptions import ChoicesErrorTag
+from simplebench.reporters.choices.exceptions import _ChoicesErrorTag
 
 
-class ChoicesConf(_BaseChoices[ChoiceConf, ChoicesErrorTag]):
+class ChoicesConf(_BaseChoices[ChoiceConf, _ChoicesErrorTag]):
     """A dictionary-like container for
     :class:`~simplebench.reporters.choice.ChoiceConf` instances.
 
@@ -47,7 +47,7 @@ class ChoicesConf(_BaseChoices[ChoiceConf, ChoicesErrorTag]):
             :class:`~.ChoicesConf` | None
         """
         super().__init__(item_type=ChoiceConf,
-                         error_tag_enum=ChoicesErrorTag,
+                         error_tag_enum=_ChoicesErrorTag,
                          choices=choices)
 
     def add(self, choice: ChoiceConf) -> None:

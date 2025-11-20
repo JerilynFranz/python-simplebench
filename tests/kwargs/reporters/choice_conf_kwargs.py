@@ -4,7 +4,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Sequence
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
-from tests.kwargs import KWArgs, NoDefaultValue
+
+from ..kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
     from simplebench.enums import FlagType, Format, Section, Target

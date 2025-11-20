@@ -3,7 +3,8 @@ from typing import Iterable
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
-from tests.kwargs import KWArgs, NoDefaultValue
+
+from ..kwargs import KWArgs, NoDefaultValue
 
 
 class ChoicesConfKWArgs(KWArgs):

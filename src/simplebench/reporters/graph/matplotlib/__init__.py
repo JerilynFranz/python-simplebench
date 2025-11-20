@@ -3,18 +3,18 @@
 This package provides common functionality for Matplotlib-based graph reporters.
 """
 from simplebench.reporters.graph.matplotlib.constants import SUPPORTED_IMAGE_TYPES
-from simplebench.reporters.graph.matplotlib.options import MatPlotLibOptions, MatPlotLibOptionsErrorTag
-from simplebench.reporters.graph.matplotlib.reporter import MatPlotLibReporter
-from simplebench.reporters.graph.matplotlib.exceptions import MatPlotLibReporterErrorTag
 from simplebench.reporters.graph.matplotlib.enums import Style
+from simplebench.reporters.graph.matplotlib.exceptions import _MatPlotLibReporterErrorTag
+from simplebench.reporters.graph.matplotlib.options import MatPlotLibOptions, _MatPlotLibOptionsErrorTag
+from simplebench.reporters.graph.matplotlib.reporter import MatPlotLibReporter
 from simplebench.reporters.graph.matplotlib.theme import Theme
 
 __all__ = [
     "SUPPORTED_IMAGE_TYPES",
     "MatPlotLibOptions",
-    "MatPlotLibOptionsErrorTag",
+    "_MatPlotLibOptionsErrorTag",
     "MatPlotLibReporter",
-    "MatPlotLibReporterErrorTag",
+    "_MatPlotLibReporterErrorTag",
     "Style",
     "Theme",
 ]

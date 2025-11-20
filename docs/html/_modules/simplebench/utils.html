@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.utils &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.utils</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Utility functions&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">cpuinfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_cpu_info</span>  <span class="c1"># type: ignore[import-untyped]</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SIGNIFICANT_FIGURES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span><span class="p">,</span> <span class="n">_UtilsErrorTag</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MachineInfo">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.MachineInfo">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MachineInfo</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TypedDict for machine info returned by :func:`get_machine_info`.</span>
+
+<span class="sd">    :ivar node: Computer&#39;s network name.</span>
+<span class="sd">    :vartype node: str</span>
+<span class="sd">    :ivar processor: Processor name.</span>
+<span class="sd">    :vartype processor: str</span>
+<span class="sd">    :ivar machine: Machine type.</span>
+<span class="sd">    :vartype machine: str</span>
+<span class="sd">    :ivar python_compiler: Python compiler used.</span>
+<span class="sd">    :vartype python_compiler: str</span>
+<span class="sd">    :ivar python_implementation: Python implementation name.</span>
+<span class="sd">    :vartype python_implementation: str</span>
+<span class="sd">    :ivar python_implementation_version: Python implementation version.</span>
+<span class="sd">    :vartype python_implementation_version: str</span>
+<span class="sd">    :ivar python_version: Python version.</span>
+<span class="sd">    :vartype python_version: str</span>
+<span class="sd">    :ivar python_build: Python build information.</span>
+<span class="sd">    :vartype python_build: tuple[str, str]</span>
+<span class="sd">    :ivar release: Operating system release.</span>
+<span class="sd">    :vartype release: str</span>
+<span class="sd">    :ivar system: Operating system name.</span>
+<span class="sd">    :vartype system: str</span>
+<span class="sd">    :ivar cpu: CPU information.</span>
+<span class="sd">    :vartype cpu: dict[str, str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">node</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">processor</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">python_compiler</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">python_implementation</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">python_implementation_version</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">python_version</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">python_build</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="n">release</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">system</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">cpu</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="python_implementation_version">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.python_implementation_version">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">python_implementation_version</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the Python implementation version.</span>
+
+<span class="sd">    For CPython, this is the same as :func:`platform.python_version`.</span>
+<span class="sd">    For PyPy, this is the PyPy version (e.g., &#39;7.3.5&#39;).</span>
+
+<span class="sd">    :return: The Python implementation version.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">python_implementation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_implementation</span><span class="p">()</span>
+    <span class="n">py_implementation_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">python_implementation</span> <span class="o">==</span> <span class="s1">&#39;PyPy&#39;</span><span class="p">:</span>
+        <span class="n">version_info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;pypy_version_info&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">version_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">py_implementation_version</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">version_info</span><span class="o">.</span><span class="n">minor</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">version_info</span><span class="o">.</span><span class="n">micro</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;-</span><span class="si">{</span><span class="n">version_info</span><span class="o">.</span><span class="n">releaselevel</span><span class="si">:</span><span class="s1">d</span><span class="si">}{</span><span class="n">version_info</span><span class="o">.</span><span class="n">serial</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">py_implementation_version</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>
+    <span class="k">return</span> <span class="n">py_implementation_version</span></div>
+
+
+
+<div class="viewcode-block" id="get_machine_info">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.get_machine_info">[docs]</a>
+<span class="nd">@cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_machine_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">MachineInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a dictionary of information about the current machine and Python version.&quot;&quot;&quot;</span>
+    <span class="n">python_implementation</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_implementation</span><span class="p">()</span>
+    <span class="n">machine_info</span><span class="p">:</span> <span class="n">MachineInfo</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;node&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">node</span><span class="p">(),</span>
+        <span class="s1">&#39;processor&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">processor</span><span class="p">(),</span>
+        <span class="s1">&#39;machine&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">(),</span>
+        <span class="s1">&#39;python_compiler&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_compiler</span><span class="p">(),</span>
+        <span class="s1">&#39;python_implementation&#39;</span><span class="p">:</span> <span class="n">python_implementation</span><span class="p">,</span>
+        <span class="s1">&#39;python_implementation_version&#39;</span><span class="p">:</span> <span class="n">python_implementation_version</span><span class="p">(),</span>
+        <span class="s1">&#39;python_version&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">(),</span>
+        <span class="s1">&#39;python_build&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_build</span><span class="p">(),</span>
+        <span class="s1">&#39;release&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">release</span><span class="p">(),</span>
+        <span class="s1">&#39;system&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">(),</span>
+        <span class="s1">&#39;cpu&#39;</span><span class="p">:</span> <span class="n">get_cpu_info</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">machine_info</span></div>
+
+
+
+<div class="viewcode-block" id="platform_id">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.platform_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">platform_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a string that uniquely identifies the current machine and Python version.</span>
+
+<span class="sd">    The platform ID is a lowercase string that combines the operating system, Python implementation,</span>
+<span class="sd">    Python version, and architecture.</span>
+
+<span class="sd">    :return: The platform ID.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{system}</span><span class="s1">-</span><span class="si">{python_impl}</span><span class="s1">-</span><span class="si">{python_version}</span><span class="s1">-</span><span class="si">{arch}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>  <span class="c1"># pylint: disable=consider-using-f-string</span>
+          <span class="n">system</span><span class="o">=</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">(),</span>
+          <span class="n">python_impl</span><span class="o">=</span><span class="n">platform</span><span class="o">.</span><span class="n">python_implementation</span><span class="p">(),</span>
+          <span class="n">python_version</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">python_version_tuple</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]),</span>
+          <span class="n">arch</span><span class="o">=</span><span class="n">platform</span><span class="o">.</span><span class="n">architecture</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Finds all characters that are not a-z, A-Z, 0-9, _ (underline), or - (dash)</span>
+<span class="n">_SANITIZE_FILENAME_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^-a-zA-Z0-9_]+&#39;</span><span class="p">)</span>
+<span class="c1"># Finds one or more sequential _ (underline) characters</span>
+<span class="n">_COLLAPSE_UNDERSCORES_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;_+&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="sanitize_filename">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.sanitize_filename">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sanitize_filename</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sanitizes a filename by replacing invalid characters with _ (underline).</span>
+
+<span class="sd">    Only a-z, A-Z, 0-9, _  (underline), and - (dash) characters are allowed. All other</span>
+<span class="sd">    characters are replaced with _ and multiple sequential _ characters are then</span>
+<span class="sd">    collapsed to single _ characters. Leading and trailing _ and - characters are removed.</span>
+
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python3</span>
+
+<span class="sd">        sanitize_filename(&quot;My File-Name.txt&quot;)  # returns &quot;My_File-Name_txt&quot;</span>
+<span class="sd">        sanitize_filename(&quot;Invalid/Chars\\In:Name*?&quot;)  # returns &quot;Invalid_Chars_In_Name&quot;</span>
+<span class="sd">        sanitize_filename(&quot;   Leading and Trailing   &quot;)  # returns &quot;Leading_and_Trailing&quot;</span>
+<span class="sd">        sanitize_filename(&quot;!!!&quot;)  # returns &quot;_&quot;</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This function does not check for reserved filenames on any operating system.</span>
+
+<span class="sd">        It is the caller&#39;s responsibility to ensure the sanitized filename is valid</span>
+<span class="sd">        for the target filesystem.</span>
+
+<span class="sd">        If a filename becomes completely empty after sanitization, the function will return</span>
+<span class="sd">        a single underscore (&#39;_&#39;) character. This is the one exception to the rule that</span>
+<span class="sd">        leading and trailing _ and - characters are removed.</span>
+
+<span class="sd">    :param name: The filename to sanitize.</span>
+<span class="sd">    :type name: str</span>
+<span class="sd">    :return: The sanitized filename.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the ``name`` arg is not a str.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the ``name`` arg is an empty string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;name arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;name arg must not be an empty string&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">SANITIZE_FILENAME_EMPTY_NAME_ARG</span><span class="p">)</span>
+    <span class="n">first_pass</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_SANITIZE_FILENAME_RE</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">second_pass</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_COLLAPSE_UNDERSCORES_RE</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">first_pass</span><span class="p">)</span>
+    <span class="n">third_pass</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">second_pass</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;_-&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;_&#39;</span> <span class="k">if</span> <span class="n">third_pass</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="k">else</span> <span class="n">third_pass</span></div>
+
+
+
+<div class="viewcode-block" id="sigfigs">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.sigfigs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sigfigs</span><span class="p">(</span><span class="n">number</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">figures</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_SIGNIFICANT_FIGURES</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rounds a floating point number to the specified number of significant figures.</span>
+
+<span class="sd">    If the number of significant figures is not specified, it defaults to</span>
+<span class="sd">    :data:`~.defaults.DEFAULT_SIGNIFICANT_FIGURES`.</span>
+
+<span class="sd">    * 14.2 to 2 digits of significant figures becomes 14</span>
+<span class="sd">    * 0.234 to 2 digits of significant figures becomes 0.23</span>
+<span class="sd">    * 0.0234 to 2 digits of significant figures becomes 0.023</span>
+<span class="sd">    * 14.5 to 2 digits of significant figures becomes 15</span>
+<span class="sd">    * 0.235 to 2 digits of significant figures becomes 0.24</span>
+
+<span class="sd">    :param number: The number to round.</span>
+<span class="sd">    :type number: float</span>
+<span class="sd">    :param figures: The number of significant figures to round to.</span>
+<span class="sd">    :type figures: int</span>
+<span class="sd">    :raises TypeError: If the ``number`` arg is not a float or the ``figures`` arg is not an int.</span>
+<span class="sd">    :raises ValueError: If the ``figures`` arg is not at least 1.</span>
+<span class="sd">    :return: The rounded number as a float.</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;number arg must be a float&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">SIGFIGS_INVALID_NUMBER_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">figures</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;figures arg must be an int&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">SIGFIGS_INVALID_FIGURES_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">figures</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;figures arg must be at least 1&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">SIGFIGS_INVALID_FIGURES_ARG_VALUE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">number</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">figures</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">number</span><span class="p">))))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="kwargs_variations">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.kwargs_variations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kwargs_variations</span><span class="p">(</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Variations of keyword arguments for the benchmark.</span>
+
+<span class="sd">    This function takes a dictionary where each key is a keyword argument name</span>
+<span class="sd">    and the value is a Sequence of possible values for that argument. It returns a list</span>
+<span class="sd">    of dictionaries, each dictionary representing a unique combination of keyword arguments and</span>
+<span class="sd">    their values.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        kwargs_variations({</span>
+<span class="sd">            &#39;arg1&#39;: [1, 2],</span>
+<span class="sd">            &#39;arg2&#39;: [&#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">        })</span>
+<span class="sd">        # output:</span>
+<span class="sd">        # [</span>
+<span class="sd">        #     {&#39;arg1&#39;: 1, &#39;arg2&#39;: &#39;a&#39;},</span>
+<span class="sd">        #     {&#39;arg1&#39;: 1, &#39;arg2&#39;: &#39;b&#39;},</span>
+<span class="sd">        #     {&#39;arg1&#39;: 2, &#39;arg2&#39;: &#39;a&#39;},</span>
+<span class="sd">        #     {&#39;arg1&#39;: 2, &#39;arg2&#39;: &#39;b&#39;}</span>
+<span class="sd">        # ]</span>
+
+<span class="sd">    :param kwargs: A dictionary of keyword arguments and their possible values.</span>
+<span class="sd">        The value must be a Sequence (e.g., list, tuple, set), but not a str or bytes instance.</span>
+<span class="sd">    :type kwargs: dict[str, Sequence[Any]]</span>
+<span class="sd">    :return: A list of dictionaries, each representing a unique combination of keyword arguments and values.</span>
+<span class="sd">    :rtype: list[dict[str, Any]]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;kwargs arg must be a dict or dict sub-class&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">KWARGS_VARIATIONS_INVALID_KWARGS_ARG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;kwargs arg values must be a Sequence (not str or bytes); &quot;</span>
+                 <span class="sa">f</span><span class="s2">&quot;key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; has invalid value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">KWARGS_VARIATIONS_INVALID_KWARGS_VALUE_TYPE</span>
+            <span class="p">)</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[{}]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="flag_to_arg">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.flag_to_arg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flag_to_arg</span><span class="p">(</span><span class="n">flag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a command-line flag to a valid Python argument name.</span>
+
+<span class="sd">    This function takes a command-line flag (e.g., &#39;--my-flag&#39;) and converts it</span>
+<span class="sd">    to a valid Python argument name (e.g., &#39;my_flag&#39;) as expected in a :class:`~argparse.Namespace`</span>
+<span class="sd">    result by removing leading dashes and replacing hyphens with underscores.</span>
+
+<span class="sd">    :param flag: The command-line flag to convert.</span>
+<span class="sd">    :type flag: str</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the ``flag`` arg is not a str.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the ``flag`` arg is an empty string or does not start with &#39;--&#39;.</span>
+<span class="sd">    :return: The corresponding Python argument name.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;flag arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">FLAG_TO_ARG_INVALID_FLAG_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">flag</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;flag arg must not be an empty string&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">FLAG_TO_ARG_EMPTY_FLAG_ARG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">flag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;flag arg must start with &#39;--&#39; and have additional characters&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">FLAG_TO_ARG_INVALID_FLAG_ARG_VALUE</span><span class="p">)</span>
+
+    <span class="n">arg_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">flag</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">arg_name</span></div>
+
+
+
+<div class="viewcode-block" id="arg_to_flag">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.arg_to_flag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">arg_to_flag</span><span class="p">(</span><span class="n">arg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a Python argument name to a command-line flag.</span>
+
+<span class="sd">    This function takes a Python argument name (e.g., &#39;my_flag&#39;) and converts it</span>
+<span class="sd">    to a command-line flag (e.g., &#39;--my-flag&#39;) by adding leading dashes and</span>
+<span class="sd">    replacing underscores with hyphens.</span>
+
+<span class="sd">    :param arg: The Python argument name to convert.</span>
+<span class="sd">    :type arg: str</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the ``arg`` argument is not a str.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the ``arg`` argument is an empty string.</span>
+<span class="sd">    :return: The corresponding command-line flag.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;arg arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">ARG_TO_FLAG_INVALID_FLAG_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">arg</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;arg arg must not be an empty string&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">ARG_TO_FLAG_EMPTY_FLAG_ARG</span><span class="p">)</span>
+
+    <span class="n">flag_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span> <span class="o">+</span> <span class="n">arg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">flag_name</span></div>
+
+
+
+<span class="n">NO_ATTRIBUTE</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="collect_arg_list">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.collect_arg_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_arg_list</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">flag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collects a list of argument values from a Namespace for a given flag.</span>
+
+<span class="sd">    This function retrieves the values associated with the specified flag from</span>
+<span class="sd">    the provided :class:`~argparse.Namespace` object. If the value is a sequence (excluding str and bytes),</span>
+<span class="sd">    it returns the values as a list. If the value is a single item, it returns a list</span>
+<span class="sd">    containing that single item. If the flag does not exist in the Namespace,</span>
+<span class="sd">    it returns an empty list.</span>
+
+<span class="sd">    argparse lists consist of lists of lists of strings and so they have to be flattened</span>
+<span class="sd">    to be processed.</span>
+
+<span class="sd">    :param args: The :class:`~argparse.Namespace` object containing argument values.</span>
+<span class="sd">    :type args: Namespace</span>
+<span class="sd">    :param flag: The command-line flag whose value is to be collected.</span>
+<span class="sd">    :type flag: str</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the ``args`` argument is not a :class:`~argparse.Namespace` or</span>
+<span class="sd">        if the retrieved argument value is of an unexpected type.</span>
+<span class="sd">    :return: A list of unique argument values associated with the specified flag.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;args arg must be an argparse.Namespace instance&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;flag arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">COLLECT_ARG_LIST_INVALID_FLAG_ARG_TYPE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^--[A-Za-z0-9\-_.]+$&#39;</span><span class="p">,</span> <span class="n">flag</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">((</span>
+            <span class="s2">&quot;flag arg contains invalid characters for a command-line flag. &quot;</span>
+            <span class="s2">&quot;It must be prefixed with &#39;--&#39; and only letters, numbers, hyphens, underscores, &quot;</span>
+            <span class="s2">&quot;and periods are allowed after the prefix.&quot;</span><span class="p">),</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">COLLECT_ARG_LIST_INVALID_FLAG_ARG_VALUE</span><span class="p">)</span>
+
+    <span class="n">arg_name</span> <span class="o">=</span> <span class="n">flag_to_arg</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+    <span class="n">arg_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">NO_ATTRIBUTE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">arg_value</span> <span class="ow">is</span> <span class="n">NO_ATTRIBUTE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># flatten the argparse list of lists structure</span>
+    <span class="n">intermediate_values</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg_value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">arg_value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">intermediate_values</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">subitem</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">subitem</span> <span class="ow">in</span> <span class="n">item</span><span class="p">):</span>
+                <span class="n">intermediate_values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Argument value items must be str or sequence of str&quot;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">COLLECT_ARG_LIST_INVALID_ARG_VALUE_ITEM_TYPE</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Argument value must be a Sequence (but not str or bytes): found: </span><span class="si">{</span><span class="n">arg_value</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_UtilsErrorTag</span><span class="o">.</span><span class="n">COLLECT_ARG_LIST_INVALID_ARG_VALUE_TYPE</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">intermediate_values</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="first_not_none">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.first_not_none">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">first_not_none</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the first not None element from a sequence of items. If all are None, return None.</span>
+
+<span class="sd">    This utility method is used to prioritize non-None values when determining</span>
+<span class="sd">    configuration settings, such as default options or targets.</span>
+
+<span class="sd">    :param items: The sequence of items to check.</span>
+<span class="sd">    :type items: Sequence[T]</span>
+<span class="sd">    :return: The first not None element from items, or None if all are None.</span>
+<span class="sd">    :rtype: T or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">element</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.utils</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

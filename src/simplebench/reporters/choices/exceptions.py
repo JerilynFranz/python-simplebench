@@ -4,7 +4,7 @@ from simplebench.exceptions.base import ErrorTag
 
 
 @enum_docstrings
-class ChoicesErrorTag(ErrorTag):
+class _ChoicesErrorTag(ErrorTag):
     """ErrorTags for :mod:`simplebench.reporters.choices` package."""
     CHOICES_INVALID_ARG_TYPE = "CHOICES_INVALID_ARG_TYPE"
     """Something other than a Iterable of correct type instances or a container

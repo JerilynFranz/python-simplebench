@@ -23,7 +23,6 @@ __all__ = [
     "reporter_factory",
     "choice_factory",
     "choices_factory",
-    "default_reporter_kwargs",
     "choice_conf_kwargs_factory",
     "default_choice_conf_kwargs",
     "choices_conf_kwargs_factory",

@@ -2,7 +2,7 @@
 import pytest
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.choices import Choices, ChoicesErrorTag
+from simplebench.reporters.choices import Choices, _ChoicesErrorTag
 
 from ..factories import choice_conf_factory, choice_factory, choices_factory, default_choice_name, reporter_factory
 from ..kwargs import ChoicesKWArgs
@@ -45,14 +45,14 @@ from ..testspec import Assert, TestAction, TestGet, TestSpec, idspec
             action=Choices,
             kwargs=ChoicesKWArgs(choices='not_a_sequence'),  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE,
         )),
         idspec('INIT_007', TestAction(
             name="Choices with invalid item in choices argument - raises SimpleBenchTypeError",
             action=Choices,
             kwargs=ChoicesKWArgs(choices=[choice_conf_factory(), 'not_a_choice']),  # type: ignore[list-item]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE
+            exception_tag=_ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE
         )),
     ]
 )
@@ -108,7 +108,7 @@ def choices_add_testspecs() -> list[TestSpec]:
             action=choices_factory(cache_id=None).add,
             args=['not_a_choice'],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.ADD_CHOICE_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.ADD_CHOICE_INVALID_ARG_TYPE,
         )))
 
     def add_second_unique_choice_to_choices() -> None:
@@ -139,7 +139,7 @@ def choices_add_testspecs() -> list[TestSpec]:
             name="Add duplicate name Choice to Choices - raises SimpleBenchValueError",
             action=add_duplicate_name_choice_to_choices_raises,
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
+            exception_tag=_ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
         )))
 
     return testspecs
@@ -243,7 +243,7 @@ def test_choices_all_choice_flags_method(testspec: TestSpec) -> None:
             ]).get_choice_for_arg,
             args=[123],  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE,
         )),
     ])
 def test_choices_get_choice_for_arg_method(testspec: TestSpec) -> None:
@@ -299,14 +299,14 @@ def choices_extend_testspecs() -> list[TestSpec]:
             action=choices_factory(cache_id=f'{prefix}:EXTENDS_003', choices=()).extend,
             args=['not_a_sequence'],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
         )),
         idspec("EXTENDS_004", TestAction(
             name="Choices extend - add invalid element in multi-item list (raises SimpleBenchTypeError)",
             action=choices_factory(cache_id=f'{prefix}:EXTENDS_004', choices=()).extend,
             args=[[choice_factory(), 'something_invalid']],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
         )),
     ])
 
@@ -350,7 +350,7 @@ def choices_remove_testspecs() -> list[TestSpec]:
             action=choices_factory(choices=None, cache_id=None).remove,
             args=['non_existing_choice'],
             exception=SimpleBenchKeyError,
-            exception_tag=ChoicesErrorTag.DELITEM_UNKNOWN_CHOICE_NAME,
+            exception_tag=_ChoicesErrorTag.DELITEM_UNKNOWN_CHOICE_NAME,
         )))
 
     return testspecs
@@ -391,21 +391,21 @@ def choices_setitem_testspecs() -> list[TestSpec]:
             action=choices_factory(choices=(), cache_id=None).__setitem__,
             args=[123, choice_factory(cache_id=None)],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.SETITEM_INVALID_KEY_TYPE,
+            exception_tag=_ChoicesErrorTag.SETITEM_INVALID_KEY_TYPE,
         )),
         idspec("SETITEM_003", TestAction(
             name="Set item via __setitem__ method with invalid type (raises SimpleBenchTypeError)",
             action=choices_factory(choices=(), cache_id=None).__setitem__,
             args=['invalid_choice', 'not_a_choice_instance'],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.SETITEM_INVALID_VALUE_TYPE,
+            exception_tag=_ChoicesErrorTag.SETITEM_INVALID_VALUE_TYPE,
         )),
         idspec("SETITEM_004", TestAction(
             name="Set item via __setitem__ method with mismatched choice name (raises SimpleBenchValueError)",
             action=choices_factory(choices=(), cache_id=None).__setitem__,
             args=['mismatched_name', choice_factory(name='actual_name', flags=('--some-flag',), cache_id=None)],
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_KEY_NAME_MISMATCH,
+            exception_tag=_ChoicesErrorTag.SETITEM_KEY_NAME_MISMATCH,
         )),
         idspec("SETITEM_005", TestAction(
             name="Set item via __setitem__ method with duplicate choice name (raises SimpleBenchValueError)",
@@ -415,7 +415,7 @@ def choices_setitem_testspecs() -> list[TestSpec]:
             args=['duplicate_choice',
                   choice_factory(name='duplicate_choice', flags=('--another-flag',), cache_id=None)],
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
+            exception_tag=_ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
         )),
         idspec("SETITEM_006", TestAction(
             name="Set item via __setitem__ method with duplicate flag (across choices) (raises SimpleBenchValueError)",
@@ -424,7 +424,7 @@ def choices_setitem_testspecs() -> list[TestSpec]:
                 cache_id=None).__setitem__,
             args=['new_choice', choice_factory(name='new_choice', flags=('--duplicate-flag',), cache_id=None)],
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_FLAG,
+            exception_tag=_ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_FLAG,
         )),
     ])
     return testspecs

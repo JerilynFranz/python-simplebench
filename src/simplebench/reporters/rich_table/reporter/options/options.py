@@ -3,7 +3,7 @@
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.validators import validate_int_range
 
-from .exceptions import RichTableOptionsErrorTag
+from .exceptions import _RichTableOptionsErrorTag
 
 
 class RichTableOptions(ReporterOptions):
@@ -40,8 +40,8 @@ class RichTableOptions(ReporterOptions):
         else:
             self._virtual_width = validate_int_range(
                 virtual_width, 'virtual_width',
-                RichTableOptionsErrorTag.INVALID_VIRTUAL_WIDTH_TYPE,
-                RichTableOptionsErrorTag.INVALID_VIRTUAL_WIDTH_VALUE,
+                _RichTableOptionsErrorTag.INVALID_VIRTUAL_WIDTH_TYPE,
+                _RichTableOptionsErrorTag.INVALID_VIRTUAL_WIDTH_VALUE,
                 min_value=80, max_value=10000)
 
     @property

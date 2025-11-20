@@ -4,5 +4,5 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class ScatterPlotOptionsErrorTag(ErrorTag):
+class _ScatterPlotOptionsErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :class:`~.ScatterPlotOptions` class."""

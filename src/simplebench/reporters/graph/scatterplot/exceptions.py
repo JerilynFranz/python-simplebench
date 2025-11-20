@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class ScatterPlotReporterErrorTag(ErrorTag):
+class _ScatterPlotReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :class:`~.ScatterPlotReporter` class."""
     # render()
     RENDER_INVALID_CASE = "SCATTERPLOT_REPORTER_RENDER_INVALID_CASE"

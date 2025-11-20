@@ -17,7 +17,7 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 from .config import RichTableConfig
-from .exceptions import RichTableReporterErrorTag
+from .exceptions import _RichTableReporterErrorTag
 from .options import RichTableOptions
 
 Options: TypeAlias = RichTableOptions
@@ -104,11 +104,11 @@ class RichTableReporter(Reporter):
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
-                tag=RichTableReporterErrorTag.RENDER_INVALID_CASE)
+                tag=_RichTableReporterErrorTag.RENDER_INVALID_CASE)
         section = validate_type(section, Section, 'section',
-                                RichTableReporterErrorTag.RENDER_INVALID_SECTION)
+                                _RichTableReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options',
-                                RichTableReporterErrorTag.RENDER_INVALID_OPTIONS)
+                                _RichTableReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         base_unit: str = self.get_base_unit_for_section(section=section)
         results: list[Results] = case.results

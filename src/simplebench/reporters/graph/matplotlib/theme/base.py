@@ -10,7 +10,7 @@ from matplotlib import RcParams
 
 from simplebench.exceptions import SimpleBenchNotImplementedError
 
-from .exceptions import ThemeErrorTag
+from .exceptions import _ThemeErrorTag
 
 
 class Theme(RcParams):
@@ -54,7 +54,7 @@ class Theme(RcParams):
         """
         if self._immutable:
             raise SimpleBenchNotImplementedError("Cannot modify items in a Theme.",
-                                                 tag=ThemeErrorTag.THEME_IMMUTABLE)
+                                                 tag=_ThemeErrorTag.THEME_IMMUTABLE)
         super().__setitem__(key, value)
 
     def __delitem__(self, key: str) -> None:
@@ -72,7 +72,7 @@ class Theme(RcParams):
         """
         if self._immutable:
             raise SimpleBenchNotImplementedError("Cannot delete items from a Theme.",
-                                                 tag=ThemeErrorTag.THEME_IMMUTABLE)
+                                                 tag=_ThemeErrorTag.THEME_IMMUTABLE)
         super().__delitem__(key)
 
     def replace(self, rcparams: dict[str, Any]) -> Theme:

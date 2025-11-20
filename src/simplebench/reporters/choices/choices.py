@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Iterable
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choices._base import _BaseChoices
-from simplebench.reporters.choices.exceptions import ChoicesErrorTag
+from simplebench.reporters.choices.exceptions import _ChoicesErrorTag
 
 _CHOICE_IMPORTED: bool = False
 """Indicates whether :class:`~simplebench.reporters.choice.Choice` has been imported yet."""
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.choice.choice import Choice
 
 
-class Choices(_BaseChoices['Choice', ChoicesErrorTag]):
+class Choices(_BaseChoices['Choice', _ChoicesErrorTag]):
     """A dictionary-like container for :class:`~simplebench.reporters.choice.Choice` instances.
 
     This class enforces that only :class:`~simplebench.reporters.choice.Choice` instances
@@ -47,7 +47,7 @@ class Choices(_BaseChoices['Choice', ChoicesErrorTag]):
         """
         deferred_choice_import()
         super().__init__(item_type=Choice,
-                         error_tag_enum=ChoicesErrorTag,
+                         error_tag_enum=_ChoicesErrorTag,
                          choices=choices)
 
     def add(self, choice: Choice) -> None:
@@ -100,7 +100,7 @@ class Choices(_BaseChoices['Choice', ChoicesErrorTag]):
         if not isinstance(arg, str):
             raise SimpleBenchTypeError(
                 "arg must be a string",
-                tag=ChoicesErrorTag.GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
+                tag=_ChoicesErrorTag.GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
         return self._args_index.get(arg, None)
 
     def extend(  # type: ignore[reportIncompatibleMethodOverride, override]

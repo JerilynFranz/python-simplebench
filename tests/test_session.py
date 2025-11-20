@@ -15,8 +15,9 @@ from simplebench.exceptions import SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.runners import SimpleRunner
 from simplebench.utils import collect_arg_list
-from tests.kwargs import SessionKWArgs
-from tests.testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestSpec, idspec
+
+from .kwargs import SessionKWArgs
+from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestSpec, idspec
 
 _SAVED_ARGV = sys.argv.copy()
 """Saved copy of sys.argv for restoring after tests."""

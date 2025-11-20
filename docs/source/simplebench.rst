@@ -10,7 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 6
 
    simplebench.exceptions
    simplebench.reporters
@@ -22,7 +22,7 @@ Submodules
 ----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 6
 
    simplebench.case
    simplebench.cli
@@ -31,6 +31,7 @@ Submodules
    simplebench.doc_utils
    simplebench.enums
    simplebench.iteration
+   simplebench.reporters
    simplebench.protocols
    simplebench.results
    simplebench.runners

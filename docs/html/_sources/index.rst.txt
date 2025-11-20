@@ -20,8 +20,10 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :name: contents
+   :maxdepth: 3
+   :caption: Table of Contents
 
+   installation
    usage
-   source/modules
+   source/modules <modules>

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.reporters.reporter.protocols &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.protocols</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.reporters.reporter.protocols</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Protocols for the Reporter class and its mixins.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=unnecessary-ellipsis,line-too-long</span>
+<span class="c1"># noqa: E501</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">Namespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">runtime_checkable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span><span class="p">,</span> <span class="n">ReportRenderer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choices</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ReporterProtocol">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReporterProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Protocol for the Reporter class and its mixins.&quot;&quot;&quot;</span>
+    <span class="n">_OPTIONS_TYPE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]]</span>
+    <span class="n">_OPTIONS_KWARGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unique identifying name of the reporter.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A brief description of the reporter.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="ReporterProtocol.supported_sections">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.supported_sections">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supported_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Section</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Section` for the reporter.</span>
+
+<span class="sd">        This is the set of :class:`~simplebench.enums.Section` that the reporter can include</span>
+<span class="sd">        in its reports.</span>
+
+<span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
+<span class="sd">        :class:`~simplebench.enums.Section` that are declared in this set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.supported_targets">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.supported_targets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supported_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Target` for the reporter.</span>
+
+<span class="sd">        This is the set of :class:`~simplebench.enums.Target` that the reporter can output to.</span>
+
+<span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
+<span class="sd">        :class:`~simplebench.enums.Target` that are declared in this set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.supported_formats">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.supported_formats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supported_formats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Format</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Format` for the reporter.</span>
+
+<span class="sd">        This is the set of :class:`~simplebench.enums.Format` that the reporter can output in.</span>
+
+<span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
+<span class="sd">        :class:`~simplebench.enums.Format` that are declared in this set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+    <span class="n">_config</span><span class="p">:</span> <span class="n">ReporterConfig</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The configuration object for the reporter (private backing field).&quot;&quot;&quot;</span>
+    <span class="n">_choices</span><span class="p">:</span> <span class="n">Choices</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An instance of `Choices` containing the `Choice` instances for the `Reporter`.</span>
+
+<span class="sd">        This is constructed from an iterable of `Choice` instances (private backing field)&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterConfig</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The configuration object for the reporter.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">choices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Choices</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The :class:`~simplebench.reporters.choices.choices.Choices` for the reporter.</span>
+
+<span class="sd">        The :class:`~simplebench.reporters.choices.choices.Choices` instance contains one or more</span>
+<span class="sd">        :class:`~simplebench.reporters.choice.choice.Choice` instances, each representing a</span>
+<span class="sd">        specific combination of sections, targets, and formats, command line flags,</span>
+<span class="sd">        and descriptions.</span>
+
+<span class="sd">        This property allows access to the reporter&#39;s choices for generating reports</span>
+<span class="sd">        and customizing report output and available options.</span>
+
+<span class="sd">        :return: The :class:`~simplebench.reporters.choices.choices.Choices` instance for the reporter.</span>
+<span class="sd">        :rtype: :class:`~simplebench.reporters.choices.choices.Choices`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The default set of Targets for the reporter.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The subdirectory where report files will be saved.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The file suffix for reporter output files.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether output files should have unique names.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether output files should be appended to.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="ReporterProtocol.get_hardcoded_default_options">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_hardcoded_default_options">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hardcoded_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterOptions</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the built-in hardcoded default options for the reporter.</span>
+
+<span class="sd">        This abstract method must be implemented by all :class:`~.Reporter` subclasses.</span>
+<span class="sd">        It defines the base class default options for a reporter and must</span>
+<span class="sd">        be available in all :class:`~.Reporter` subclasses.</span>
+
+<span class="sd">        It returns the hardcoded default :class:`~.ReporterOptions` sub-class instance</span>
+<span class="sd">        specific to the reporter.</span>
+
+<span class="sd">        Sub-classes must implement the following class variables:</span>
+
+<span class="sd">            _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions</span>
+<span class="sd">            _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}</span>
+
+<span class="sd">        or the method will raise an exception.</span>
+
+<span class="sd">        :return: The built-in hardcoded default :class:`~.ReporterOptions` instance.</span>
+<span class="sd">        :raises SimpleBenchNotImplementedError: If required class variables are not implemented</span>
+<span class="sd">            or are of incorrect types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.set_default_options">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.set_default_options">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the default options for the reporter.</span>
+
+<span class="sd">        :param options: The options to set as the default, defaults to None</span>
+<span class="sd">        :type options: :class:`~.ReporterOptions` or None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_default_options">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_default_options">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterOptions</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the default options for the reporter.</span>
+
+<span class="sd">        Returns the default options set via :meth:`~.set_default_options` if set,</span>
+<span class="sd">        otherwise returns the built-in hardcoded default options from</span>
+<span class="sd">        :meth:`~.get_hardcoded_default_options`.</span>
+
+<span class="sd">        :return: The default options.</span>
+<span class="sd">        :rtype: :class:`~.ReporterOptions`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.find_options_by_type">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.find_options_by_type">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_options_by_type</span><span class="p">(</span><span class="n">options</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve an instance of type ``cls`` (if present) from a collection of :class:`~.ReporterOptions`.</span>
+
+<span class="sd">        This is used to extract reporter specific options from an iterable container of generic</span>
+<span class="sd">        :class:`~.ReporterOptions` such as those associated with a</span>
+<span class="sd">        :class:`~simplebench.reporters.choice.choice.Choice` or :class:`~simplebench.case.Case`.</span>
+
+<span class="sd">        For example, a ``CSVReporter`` may define a ``CSVReporterOptions`` class that extends</span>
+<span class="sd">        :class:`~.ReporterOptions` and use this method to extract the ``CSVReporterOptions`` instance</span>
+<span class="sd">        from the options iterable:</span>
+
+<span class="sd">            options = Reporter.find_options_by_type(case.options, CSVReporterOptions)</span>
+
+<span class="sd">        :param options: An iterable of :class:`~.ReporterOptions` instances.</span>
+<span class="sd">        :type options: Iterable[:class:`~.ReporterOptions`]</span>
+<span class="sd">        :param cls: The specific subclass type of :class:`~.ReporterOptions` to find.</span>
+<span class="sd">        :type cls: type[T]</span>
+<span class="sd">        :return: The instance of the class ``cls`` if found, otherwise ``None``.</span>
+<span class="sd">        :rtype: T | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.add_choice">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.add_choice">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_choice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a :class:`~simplebench.reporters.choice.choice.Choice` to the reporter&#39;s choices.</span>
+
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance to add.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the provided choice is not a</span>
+<span class="sd">            :class:`~simplebench.reporters.choice.choice.Choice` instance.</span>
+<span class="sd">        :raises SimpleBenchValueError: If the choice&#39;s sections, targets, or formats</span>
+<span class="sd">            are not supported by the reporter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.add_flags_to_argparse">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.add_flags_to_argparse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_flags_to_argparse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add command-line flags for the reporter&#39;s choices to an :class:`~argparse.ArgumentParser`.</span>
+
+<span class="sd">        This method iterates through the reporter&#39;s choices and adds the appropriate</span>
+<span class="sd">        command-line flags for each choice to the provided :class:`~argparse.ArgumentParser`.</span>
+
+<span class="sd">        :param parser: The :class:`~argparse.ArgumentParser` to add the flags to.</span>
+<span class="sd">        :type parser: :class:`~argparse.ArgumentParser`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.add_list_of_targets_flags_to_argparse">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.add_list_of_targets_flags_to_argparse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_list_of_targets_flags_to_argparse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a list of target flags for a :class:`~simplebench.reporters.choice.choice.Choice` \</span>
+<span class="sd">            to an :class:`~argparse.ArgumentParser`.</span>
+
+<span class="sd">        This method adds a ``--&lt;choice.flag&gt;-targets`` flag to the parser, allowing users</span>
+<span class="sd">        to specify a comma-separated list of output targets for the choice.</span>
+
+<span class="sd">        :param parser: The :class:`~argparse.ArgumentParser` to add the flags to.</span>
+<span class="sd">        :type parser: :class:`~argparse.ArgumentParser`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` to add the flags for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.add_boolean_flags_to_argparse">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.add_boolean_flags_to_argparse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_boolean_flags_to_argparse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add boolean flags for a :class:`~simplebench.reporters.choice.choice.Choice` to an \</span>
+<span class="sd">            :class:`~argparse.ArgumentParser`.</span>
+
+<span class="sd">        This method adds a ``--&lt;choice.flag&gt;`` flag to the parser, which acts as a boolean</span>
+<span class="sd">        switch to enable the choice.</span>
+
+<span class="sd">        :param parser: The :class:`~argparse.ArgumentParser` to add the flags to.</span>
+<span class="sd">        :type parser: :class:`~argparse.ArgumentParser`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` to add the flags for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.select_targets_from_args">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.select_targets_from_args">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">select_targets_from_args</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">default_targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select output targets based on command-line arguments and \</span>
+<span class="sd">            :class:`~simplebench.reporters.choice.choice.Choice` configuration.</span>
+
+<span class="sd">        This method determines the final set of output targets for a given choice by</span>
+<span class="sd">        prioritizing command-line arguments over the choice&#39;s default targets.</span>
+
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` to select targets for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param default_targets: The default targets to use if no command-line arguments are provided.</span>
+<span class="sd">        :type default_targets: Iterable[:class:`~simplebench.enums.Target`]</span>
+<span class="sd">        :return: A set of the selected output targets.</span>
+<span class="sd">        :rtype: set[:class:`~simplebench.enums.Target`]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_prioritized_default_targets">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_prioritized_default_targets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_prioritized_default_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the prioritized default targets from the choice or reporter defaults.</span>
+
+<span class="sd">        :param choice: The choice to get the prioritized default targets for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :return: The prioritized default targets.</span>
+<span class="sd">        :rtype: frozenset[:class:`~simplebench.enums.Target`]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_prioritized_subdir">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_prioritized_subdir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_prioritized_subdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the prioritized subdirectory from the choice or reporter defaults.</span>
+
+<span class="sd">        :param choice: The choice to get the prioritized subdirectory for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :return: The prioritized subdirectory.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_prioritized_options">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_prioritized_options">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_prioritized_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterOptions</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the prioritized :class:`~.ReporterOptions` for the given case and choice.</span>
+
+<span class="sd">        :param case: The case to get the prioritized options for.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The choice to get the prioritized options for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :return: The prioritized options.</span>
+<span class="sd">        :rtype: :class:`~.ReporterOptions`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_prioritized_file_suffix">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_prioritized_file_suffix">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_prioritized_file_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the prioritized file suffix from the choice or reporter.</span>
+
+<span class="sd">        :param choice: The choice to get the prioritized file suffix for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :return: The prioritized file suffix.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_prioritized_file_unique">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_prioritized_file_unique">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_prioritized_file_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the prioritized file unique flag from the choice or reporter.</span>
+
+<span class="sd">        :param choice: The choice to get the prioritized file unique flag for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :return: The prioritized file unique flag.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_prioritized_file_append">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_prioritized_file_append">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_prioritized_file_append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the prioritized file append flag from the choice or reporter.</span>
+
+<span class="sd">        :param choice: The choice to get the prioritized file append flag for.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :return: The prioritized file append flag.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.report">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.report">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+        <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a report based on the benchmark results.</span>
+
+<span class="sd">        This method performs validation and then calls the subclass&#39;s :meth:`~.run_report` method.</span>
+
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
+<span class="sd">                       the report configuration.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param path: The path to the directory where the report can be saved if needed.</span>
+<span class="sd">                     Leave as ``None`` if not saving to the filesystem. Defaults to ``None``.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.</span>
+<span class="sd">                        Defaults to ``None``.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
+<span class="sd">        :param callback: A callback function for additional processing of the report. Defaults to ``None``.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.render">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="s2">&quot;Section&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;ReporterOptions&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the report for a specific case and section.</span>
+
+<span class="sd">        This abstract method must be implemented by all :class:`~.Reporter` subclasses.</span>
+<span class="sd">        It is responsible for generating the actual report content for a given case and section,</span>
+<span class="sd">        based on the provided options.</span>
+
+<span class="sd">        The output can be a string, bytes, or a Rich object (:class:`~rich.text.Text` or</span>
+<span class="sd">        :class:`~rich.table.Table`).</span>
+
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing the benchmark results.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param section: The specific :class:`~simplebench.enums.Section` of the results to render.</span>
+<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :param options: The reporter-specific :class:`~.ReporterOptions` for rendering.</span>
+<span class="sd">        :type options: :class:`~.ReporterOptions`</span>
+<span class="sd">        :return: The rendered report content.</span>
+<span class="sd">        :rtype: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
+<span class="sd">        :raises NotImplementedError: If the method is not implemented in a subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.run_report">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.run_report">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+        <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Orchestration hook for report generation.</span>
+
+<span class="sd">        This method is the primary customization point for controlling how a report is generated.</span>
+<span class="sd">        It is called by the public :meth:`~.report` method after all inputs have been validated.</span>
+
+<span class="sd">        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_section`,</span>
+<span class="sd">        which is suitable for most reporters. Subclasses can override this method to provide</span>
+<span class="sd">        alternative orchestration, such as calling</span>
+<span class="sd">        :meth:`~._ReporterOrchestrationMixin.render_by_case` for reports that are generated</span>
+<span class="sd">        once per case.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This is also the correct place to implement custom logic for non-standard</span>
+<span class="sd">            targets like :attr:`~simplebench.enums.Target.CUSTOM`.</span>
+
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
+<span class="sd">                       the report configuration.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param path: The path to the directory where report files will be saved. Defaults to ``None``.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.</span>
+<span class="sd">                        Defaults to ``None``.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
+<span class="sd">        :param callback: A callback function for additional processing. Defaults to ``None``.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.render_by_section">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render_by_section">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_by_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                          <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
+                          <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+                          <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+                          <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+                          <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render a report by iterating through each section specified in the choice.</span>
+
+<span class="sd">        This method is suitable for reporters that generate a separate output for each</span>
+<span class="sd">        section of the benchmark results (e.g., OPS, TIMING, MEMORY).</span>
+
+<span class="sd">        :param renderer: A callable that takes a case, section, and options, and returns the rendered output.</span>
+<span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance for the report.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param path: The output path for filesystem targets. Defaults to ``None``.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance for the report. Defaults to ``None``.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
+<span class="sd">        :param callback: A callback function for callback targets. Defaults to ``None``.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.render_by_case">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render_by_case">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_by_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                       <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
+                       <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+                       <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+                       <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+                       <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render a single report for the entire case.</span>
+
+<span class="sd">        This method is suitable for reporters that generate a single, consolidated output</span>
+<span class="sd">        for all sections of the benchmark results.</span>
+
+<span class="sd">        :param renderer: A callable that takes a case, section (which will be ``None``), and options,</span>
+<span class="sd">                         and returns the rendered output.</span>
+<span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance for the report.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param path: The output path for filesystem targets. Defaults to ``None``.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance for the report. Defaults to ``None``.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
+<span class="sd">        :param callback: A callback function for callback targets. Defaults to ``None``.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.target_filesystem">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.target_filesystem">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_filesystem</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
+        <span class="n">unique</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write report data to the filesystem.</span>
+
+<span class="sd">        This method handles the logic for writing report output to a file, including</span>
+<span class="sd">        creating directories, handling unique filenames, and appending to existing files.</span>
+
+<span class="sd">        :param path: The base output path.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None</span>
+<span class="sd">        :param subdir: The subdirectory within the base path to write to.</span>
+<span class="sd">        :type subdir: str</span>
+<span class="sd">        :param filename: The name of the file to write.</span>
+<span class="sd">        :type filename: str</span>
+<span class="sd">        :param output: The content to write to the file.</span>
+<span class="sd">        :type output: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
+<span class="sd">        :param unique: Whether to generate a unique filename if the file already exists.</span>
+<span class="sd">        :type unique: bool</span>
+<span class="sd">        :param append: Whether to append to the file if it already exists.</span>
+<span class="sd">        :type append: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.target_callback">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.target_callback">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_callback</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+        <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span>
+        <span class="n">output_format</span><span class="p">:</span> <span class="n">Format</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send report data to a callback function.</span>
+
+<span class="sd">        :param callback: The callback function to call.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param section: The :class:`~simplebench.enums.Section` of the report.</span>
+<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :param output_format: The :class:`~simplebench.enums.Format` of the output.</span>
+<span class="sd">        :type output_format: :class:`~simplebench.enums.Format`</span>
+<span class="sd">        :param output: The report content to send.</span>
+<span class="sd">        :type output: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.target_console">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.target_console">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_console</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output report data to the console.</span>
+
+<span class="sd">        This method uses the console associated with the :class:`~simplebench.session.Session`</span>
+<span class="sd">        to print the report output.</span>
+
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing the console.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None</span>
+<span class="sd">        :param output: The content to print to the console.</span>
+<span class="sd">        :type output: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.rich_text_to_plain_text">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.rich_text_to_plain_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rich_text_to_plain_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rich_text</span><span class="p">:</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a Rich :class:`~rich.text.Text` or :class:`~rich.table.Table` object to plain text.</span>
+
+<span class="sd">        :param rich_text: The Rich object to convert.</span>
+<span class="sd">        :type rich_text: :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
+<span class="sd">        :return: The plain text representation of the Rich object.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_base_unit_for_section">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_base_unit_for_section">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_base_unit_for_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the base unit for the specified section.</span>
+
+<span class="sd">        :param section: The section to get the base unit for.</span>
+<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :return: The base unit for the section.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.get_all_stats_values">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_all_stats_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_stats_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gathers all primary statistical values for a given section across multiple results.</span>
+
+<span class="sd">        It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,</span>
+<span class="sd">        from each :class:`~simplebench.results.Results` instance for the specified section.</span>
+
+<span class="sd">        This method is useful in determining appropriate scaling factors or units</span>
+<span class="sd">        for reporting by analyzing the range of values across all results.</span>
+
+<span class="sd">        Adjusted standard deviation is not included in this collection because it can</span>
+<span class="sd">        be ``NaN`` for results with insufficient data points, or orders of magnitude different</span>
+<span class="sd">        from the other statistics, which can skew scaling calculations.</span>
+
+<span class="sd">        :param results: A list of :class:`~simplebench.results.Results` instances to gather</span>
+<span class="sd">                        statistics from.</span>
+<span class="sd">        :type results: list[:class:`~simplebench.results.Results`]</span>
+<span class="sd">        :param section: The section to gather statistics for.</span>
+<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :return: A list of all gathered statistical values.</span>
+<span class="sd">        :rtype: list[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_render_by_args</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+        <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+        <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate common arguments for render_by_case and render_by_section methods.</span>
+
+<span class="sd">        :param renderer: The renderer callable to validate.</span>
+<span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param path: The output path. Defaults to ``None``.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance. Defaults to ``None``.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
+<span class="sd">        :param callback: The callback function. Defaults to ``None``.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="ReporterProtocol.dispatch_to_targets">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.dispatch_to_targets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch_to_targets</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
+            <span class="n">filename_base</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+            <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+            <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+            <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span>
+            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deliver the rendered output to the specified targets.</span>
+
+<span class="sd">        This method orchestrates sending the generated report content to the various</span>
+<span class="sd">        output targets (console, filesystem, callback) based on the selected options.</span>
+
+<span class="sd">        :param output: The rendered report content.</span>
+<span class="sd">        :type output: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
+<span class="sd">        :param filename_base: The base name for the output file.</span>
+<span class="sd">        :type filename_base: str</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance for the report.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param section: The :class:`~simplebench.enums.Section` of the report.</span>
+<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :param path: The output path for filesystem targets. Defaults to ``None``.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance for the report. Defaults to ``None``.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
+<span class="sd">        :param callback: A callback function for callback targets. Defaults to ``None``.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+</div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.protocols</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

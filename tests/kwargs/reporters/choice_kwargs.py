@@ -4,7 +4,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from simplebench.reporters.choice import Choice, ChoiceConf
-from tests.kwargs import KWArgs, NoDefaultValue
+
+from ..kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
     from simplebench.reporters.reporter import Reporter

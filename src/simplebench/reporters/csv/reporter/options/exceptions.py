@@ -4,5 +4,5 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class CSVOptionsErrorTag(ErrorTag):
+class _CSVOptionsErrorTag(ErrorTag):
     """ErrorTags for :class:`~.CSVOptions` class related exceptions."""

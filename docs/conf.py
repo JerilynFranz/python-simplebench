@@ -12,25 +12,24 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-
 # pylint: disable=invalid-name, missing-module-docstring
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path('..', 'src').resolve()))
+
+import simplebench._meta as metadata  # pylint: disable=wrong-import-position  # noqa: E402
 
 # -- Project information -----------------------------------------------------
 
-project = 'SimpleBench'
-copyright = '2025, Jerilyn Franz'  # pylint: disable=redefined-builtin
-author = 'Jerilyn Franz'
+project: str = metadata.__project__
+copyright: str = metadata.__copyright__  # pylint: disable=redefined-builtin
+author: str = metadata.__author__
 
 # The short X.Y version
-version = '0.0'
+version: str = metadata.__version__
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release: str = metadata.__release__
 
 
 # -- General configuration ---------------------------------------------------
@@ -49,6 +48,8 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'sphinx.ext.githubpages',
+    'sphinx.ext.viewcode',
 ]
 
 
@@ -92,6 +93,7 @@ exclude_patterns = [
     '.venv-3.11',
     '.venv-3.12',
     '.venv-3.13',
+    '.venv-3.14',
     ]
 
 # The name of the Pygments (syntax highlighting) style to use.
@@ -103,7 +105,8 @@ pygments_style = "github-dark"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinxawesome_theme'
+# html_theme = 'sphinxawesome_theme'
+html_theme = 'classic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -126,6 +129,8 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 
+# Icon to use for the permalink to the current page.
+html_permalinks_icon = '🔗'
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -204,3 +209,6 @@ epub_exclude_files = ['search.html']
 epub_show_urls = 'footnote'
 
 # -- Extension configuration -------------------------------------------------
+
+# By default, highlight as Python 3.
+highlight_language = 'python3'

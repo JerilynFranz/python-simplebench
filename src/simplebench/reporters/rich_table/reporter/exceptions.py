@@ -4,7 +4,7 @@ from simplebench.exceptions.base import ErrorTag
 
 
 @enum_docstrings
-class RichTableReporterErrorTag(ErrorTag):
+class _RichTableReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the rich_table reporter."""
     RENDER_INVALID_CASE = "RENDER_INVALID_CASE"
     """The ``case`` argument passed to :meth:`~.RichTableReporter.render` is not a

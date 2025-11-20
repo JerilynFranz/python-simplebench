@@ -6,7 +6,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class MatPlotLibOptionsErrorTag(ErrorTag):
+class _MatPlotLibOptionsErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :class:`~.MatPlotLibOptions` class."""
     INVALID_DEFAULT_STYLE_ARG_TYPE = "INVALID_DEFAULT_STYLE_ARG_TYPE"
     """The default style specified in the MatPlotLibOptions must be a Style enum member or None."""

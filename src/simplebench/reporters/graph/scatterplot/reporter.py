@@ -19,9 +19,8 @@ from simplebench.type_proxies import is_case
 from simplebench.validators import validate_type
 
 from ..matplotlib import MatPlotLibReporter
-
 from .config import ScatterPlotConfig
-from .exceptions import ScatterPlotReporterErrorTag
+from .exceptions import _ScatterPlotReporterErrorTag
 from .options import ScatterPlotOptions
 
 Options: TypeAlias = ScatterPlotOptions
@@ -104,12 +103,12 @@ class ScatterPlotReporter(MatPlotLibReporter):
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
-                tag=ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
+                tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
         section = validate_type(section, Section, 'section',
-                                ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
+                                _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(
                 options, Options, 'options',
-                ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
+                _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         base_unit = self.get_base_unit_for_section(section=section)
         results: list[Results] = case.results

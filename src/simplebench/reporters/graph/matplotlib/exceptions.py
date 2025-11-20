@@ -6,7 +6,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class MatPlotLibReporterErrorTag(ErrorTag):
+class _MatPlotLibReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :class:`~.MatPlotLibReporter` class."""
     RUN_REPORT_UNSUPPORTED_SECTION = "RUN_REPORT_UNSUPPORTED_SECTION"
     """The section specified in the MatPlotLibReporter.run_report method is not supported."""

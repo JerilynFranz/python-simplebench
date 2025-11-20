@@ -3,7 +3,7 @@
 import pytest
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.choices import ChoicesConf, ChoicesErrorTag
+from simplebench.reporters.choices import ChoicesConf, _ChoicesErrorTag
 
 from ..factories import choice_conf_factory, choices_conf_factory, default_choice_name
 from ..kwargs import ChoicesConfKWArgs
@@ -37,14 +37,14 @@ from ..testspec import Assert, TestAction, TestSpec, idspec
             action=ChoicesConf,
             kwargs=ChoicesConfKWArgs(choices='not_a_sequence_of_ChoiceConf'),  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE,
         )),
         idspec('INIT_005', TestAction(
             name="Choices with invalid item in choices argument iterable - raises SimpleBenchTypeError",
             action=ChoicesConf,
             kwargs=ChoicesConfKWArgs(choices=[choice_conf_factory(), 'not_a_choice']),  # type: ignore[list-item]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE
+            exception_tag=_ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE
         )),
     ]
 )
@@ -114,7 +114,7 @@ def choices_conf_add_testspecs() -> list[TestSpec]:
             action=choices_conf_factory(cache_id=None).add,
             args=['not_a_choice'],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.ADD_CHOICE_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.ADD_CHOICE_INVALID_ARG_TYPE,
         )))
 
     def add_second_unique_choice_to_choices() -> None:
@@ -144,7 +144,7 @@ def choices_conf_add_testspecs() -> list[TestSpec]:
             name="Add duplicate name Choice to Choices - raises SimpleBenchValueError",
             action=add_duplicate_name_choice_to_choices_raises,
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
+            exception_tag=_ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
         )))
 
     def add_duplicate_flag_choice_to_choices_raises() -> None:
@@ -158,7 +158,7 @@ def choices_conf_add_testspecs() -> list[TestSpec]:
             name="Add duplicate flag Choice to Choices - raises SimpleBenchValueError",
             action=add_duplicate_flag_choice_to_choices_raises,
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_FLAG,
+            exception_tag=_ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_FLAG,
         )))
 
     return testspecs
@@ -219,7 +219,7 @@ def choices_conf_extend_testspecs() -> list[TestSpec]:
             action=choices_conf_factory(cache_id=f'{prefix}:EXTENDS_003').extend,
             args=['not_a_sequence'],  # type: ignore[arg-type]
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
         )),
         idspec("EXTENDS_004", TestAction(
             name="Choices extend - add invalid element in multi-item list (raises SimpleBenchTypeError)",
@@ -230,7 +230,7 @@ def choices_conf_extend_testspecs() -> list[TestSpec]:
                 'something_invalid'
             ]],
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
+            exception_tag=_ChoicesErrorTag.EXTEND_CHOICES_INVALID_ARG_TYPE,
         )),
     ])
     return testspecs
@@ -277,7 +277,7 @@ def choices_conf_remove_testspecs() -> list[TestSpec]:
             name="Remove non-existing Choice from Choices (raises SimpleBenchKeyError)",
             action=remove_non_existing_choice_raises,
             exception=SimpleBenchKeyError,
-            exception_tag=ChoicesErrorTag.DELITEM_UNKNOWN_CHOICE_NAME,
+            exception_tag=_ChoicesErrorTag.DELITEM_UNKNOWN_CHOICE_NAME,
         )))
 
     return testspecs
@@ -323,7 +323,7 @@ def setitem_dunder_method_testspecs() -> list[TestSpec]:
             name="Set item via __setitem__ method with invalid key type (raises SimpleBenchTypeError)",
             action=setitem_invalid_key_type_raises,
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.SETITEM_INVALID_KEY_TYPE,
+            exception_tag=_ChoicesErrorTag.SETITEM_INVALID_KEY_TYPE,
         )))
 
     def setitem_invalid_value_type_raises() -> None:
@@ -334,7 +334,7 @@ def setitem_dunder_method_testspecs() -> list[TestSpec]:
             name="Set item via __setitem__ method with invalid value type (raises SimpleBenchTypeError)",
             action=setitem_invalid_value_type_raises,
             exception=SimpleBenchTypeError,
-            exception_tag=ChoicesErrorTag.SETITEM_INVALID_VALUE_TYPE,
+            exception_tag=_ChoicesErrorTag.SETITEM_INVALID_VALUE_TYPE,
         )))
 
     def setitem_mismatched_choice_name_raises() -> None:
@@ -346,7 +346,7 @@ def setitem_dunder_method_testspecs() -> list[TestSpec]:
             name="Set item via __setitem__ method with mismatched choice name (raises SimpleBenchValueError)",
             action=setitem_mismatched_choice_name_raises,
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_KEY_NAME_MISMATCH,
+            exception_tag=_ChoicesErrorTag.SETITEM_KEY_NAME_MISMATCH,
         )))
 
     def setitem_duplicate_choice_name_raises() -> None:
@@ -360,7 +360,7 @@ def setitem_dunder_method_testspecs() -> list[TestSpec]:
             name="Set item via __setitem__ method with duplicate choice name (raises SimpleBenchValueError)",
             action=setitem_duplicate_choice_name_raises,
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
+            exception_tag=_ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_NAME,
         )))
 
     def setitem_duplicate_choice_flag_raises() -> None:
@@ -374,7 +374,7 @@ def setitem_dunder_method_testspecs() -> list[TestSpec]:
             name="Set item via __setitem__ method with duplicate flag (across choices) (raises SimpleBenchValueError)",
             action=setitem_duplicate_choice_flag_raises,
             exception=SimpleBenchValueError,
-            exception_tag=ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_FLAG,
+            exception_tag=_ChoicesErrorTag.SETITEM_DUPLICATE_CHOICE_FLAG,
         )))
 
     return testspecs
