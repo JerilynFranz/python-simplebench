@@ -7,7 +7,7 @@
 
     <title>Using SimpleBench &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=198d865f" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2d86562d" />
     
     <script src="_static/documentation_options.js?v=9a12e387"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
@@ -43,6 +43,7 @@
 <h1>Using SimpleBench<a class="headerlink" href="#using-simplebench" title="Link to this heading">🔗</a></h1>
 <div class="toctree-wrapper compound" id="simplebench-installation">
 </div>
+<div class="textblock docutils container">
 <p>The <cite>simplebench</cite> module provides a benchmarking framework to measure the performance
 of Python code. It is designed to be easy to use while providing powerful
 customization and extension capabilities.</p>
@@ -50,7 +51,8 @@ customization and extension capabilities.</p>
 <cite>&#64;simplebench.benchmark</cite> and adding a call to <cite>simplebench.main()</cite> to your
 script. This instantly gives you a full-featured benchmark suite that can be
 run from the command line.</p>
-<p>This is literally all the code you need to write to create a simple benchmark:</p>
+<p>This is all the code you need to write to create a simple benchmark:</p>
+</div>
 <div class="literal-block-wrapper docutils container" id="simple-benchmark-example">
 <div class="code-block-caption"><span class="caption-text">A simple benchmark example</span><a class="headerlink" href="#simple-benchmark-example" title="Link to this code">🔗</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="kn">import</span><span class="w"> </span><span class="nn">simplebench</span>
@@ -68,24 +70,28 @@ run from the command line.</p>
 </pre></div>
 </div>
 </div>
+<div class="textblock docutils container">
 <p>Save this code to a file, for example <cite>my_benchmark_script.py</cite>, and run it from your terminal:</p>
+</div>
 <div class="literal-block-wrapper docutils container" id="run-simple-benchmark">
 <div class="code-block-caption"><span class="caption-text">Running the benchmark</span><a class="headerlink" href="#run-simple-benchmark" title="Link to this code">🔗</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--rich-table.ops<span class="w"> </span>--progress
 </pre></div>
 </div>
 </div>
+<div class="textblock docutils container">
 <p>When you run this code, SimpleBench automatically handles timing the execution of
 <cite>addition_benchmark</cite>, collecting performance and memory statistics, and generating
-a report. By simply specifying command-line options, you can generate output in
+a report. By specifying <a class="reference internal" href="command_line_options.html"><span class="doc">Command-Line Options</span></a> you can generate output in
 multiple formats, including rich text tables (like the one below), graphs, CSV
 files, and JSON reports.</p>
 <p>Note that the docstring from the <cite>addition_benchmark</cite> function is automatically
 used as the description in the output.</p>
 <p>For example, the command above produces the following table:</p>
+</div>
 <div class="literal-block-wrapper docutils container" id="example-output">
 <div class="code-block-caption"><span class="caption-text">Output</span><a class="headerlink" href="#example-output" title="Link to this code">🔗</a></div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                                                              addition_benchmark
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                                                               addition_benchmark
                                                               operations per second
 
                                           A simple addition benchmark of Python&#39;s built-in sum function.
@@ -98,12 +104,14 @@ used as the description in the output.</p>
 </pre></div>
 </div>
 </div>
+<div class="textblock docutils container">
 <p>While this simple decorator is powerful, SimpleBench is built on a rich,
 extensible API. You can easily add more advanced features like setup and
 teardown functions, multi-dimensional parameterized benchmarks, and even create
 your own custom reporters. The library is designed to handle the boilerplate,
-so you can focus on writing your benchmarks.</p>
-<p>The sections below provide more examples of these advanced features.</p>
+so you can focus on writing and using your benchmarks.</p>
+<p>The sections below provide more examples of some of these advanced features.</p>
+</div>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">🔗</a></h2>
 </section>

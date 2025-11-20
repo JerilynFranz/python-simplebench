@@ -21,9 +21,10 @@ Contents
 
 .. toctree::
    :name: contents
-   :maxdepth: 3
+   :maxdepth: 1
    :caption: Table of Contents
 
    installation
    usage
+   command_line_options
    source/modules <modules>

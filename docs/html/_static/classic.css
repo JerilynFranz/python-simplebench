@@ -260,3 +260,16 @@ div.code-block-caption {
     color: #efefef;
     background-color: #1c4e63;
 }
+
+cite {
+    font-style: normal;
+    font-weight: bold;
+    color: #35747d;
+}
+
+.textblock {
+    background-color: #f0fcfc;
+    border-radius: 15px;
+    margin: 10px 0 10px 0;
+    padding: 10px;
+}

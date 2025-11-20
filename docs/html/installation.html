@@ -7,7 +7,7 @@
 
     <title>Installation &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=198d865f" />
     
     <script src="_static/documentation_options.js?v=9a12e387"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
@@ -45,31 +45,46 @@
             
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">🔗</a></h1>
-<div class="toctree-wrapper compound" id="simplebench-installation">
-</div>
+<p id="simplebench-installation"><strong>Minimum Requirements</strong></p>
+<ul class="simple">
+<li><p>Python 3.10 or later</p></li>
+<li><p>pip</p></li>
+</ul>
 <p><strong>Via PyPI</strong></p>
+<p>This is the recommended way to install SimpleBench.</p>
 <div class="literal-block-wrapper docutils container" id="install-using-pip">
 <div class="code-block-caption"><span class="caption-text">Installing using pip</span><a class="headerlink" href="#install-using-pip" title="Link to this code">🔗</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>pip3<span class="w"> </span>install<span class="w"> </span>simplebench
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>simplebench
 </pre></div>
 </div>
 </div>
 <p><strong>From source</strong></p>
+<p>If you have downloaded the source code, you can install it directly.</p>
 <div class="literal-block-wrapper docutils container" id="install-from-source">
 <div class="code-block-caption"><span class="caption-text">Installing from source</span><a class="headerlink" href="#install-from-source" title="Link to this code">🔗</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/JerilynFranz/python-simplebench
 <span class="w">  </span><span class="nb">cd</span><span class="w"> </span>python-simplebench
-<span class="w">  </span>pip3<span class="w"> </span>install<span class="w"> </span>.
+<span class="w">  </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
 </div>
 <p><strong>For Development</strong></p>
+<p>This project uses <a class="reference external" href="https://github.com/astral-sh/uv">uv</a>, a fast, modern
+Python package installer, for managing development environments.</p>
+<p>The following commands will first install <cite>uv</cite>, then use it to create a local
+virtual environment and install all necessary dependencies.</p>
 <div class="literal-block-wrapper docutils container" id="setup-development-environment">
 <div class="code-block-caption"><span class="caption-text">Setup a development environment</span><a class="headerlink" href="#setup-development-environment" title="Link to this code">🔗</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/JerilynFranz/python-simplebench
 <span class="w">  </span><span class="nb">cd</span><span class="w"> </span>python-simplebench
-<span class="w">  </span>pip3<span class="w"> </span>install<span class="w"> </span>uv
-<span class="w">  </span>uv<span class="w"> </span>sync
+
+<span class="w">  </span><span class="c1"># 1. Install uv into your user environment</span>
+<span class="w">  </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>uv
+
+<span class="w">  </span><span class="c1"># 2. Use uv to create a .venv and install all dependencies</span>
+<span class="w">  </span>uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
+
+<span class="w">  </span><span class="c1"># 3. Activate the new environment</span>
 <span class="w">  </span><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 </pre></div>
 </div>
