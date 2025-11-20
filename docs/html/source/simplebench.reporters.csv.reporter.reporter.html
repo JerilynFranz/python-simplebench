@@ -7,7 +7,7 @@
 
     <title>simplebench.reporters.csv.reporter.reporter module &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=86b497be" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
     
     <script src="../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -42,7 +42,13 @@
 outputting benchmark results to CSV files.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.reporter.CSVReporter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVReporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.csv.reporter.config.html#simplebench.reporters.csv.reporter.config.CSVConfig" title="simplebench.reporters.csv.reporter.config.CSVConfig"><span class="pre">CSVConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/reporter.html#CSVReporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.reporter.CSVReporter" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVReporter</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.csv.reporter.config.html#simplebench.reporters.csv.reporter.config.CSVConfig" title="simplebench.reporters.csv.reporter.config.CSVConfig"><span class="pre">CSVConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/reporter.html#CSVReporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.reporter.CSVReporter" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a></p>
 <p>Class for outputting benchmark results to CSV files.</p>
 <p>It supports reporting statistics for various sections,
@@ -78,7 +84,16 @@ the reporter instance, CLI flags, <a class="reference internal" href="simplebenc
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.reporter.CSVReporter.render">
-<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/reporter.html#CSVReporter.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.reporter.CSVReporter.render" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/reporter.html#CSVReporter.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.reporter.CSVReporter.render" title="Link to this definition">🔗</a></dt>
 <dd><p>Renders the benchmark results as tagged CSV data and returns it as a string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

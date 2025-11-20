@@ -102,11 +102,14 @@ pygments_style = "github-dark"
 
 # -- Options for HTML output -------------------------------------------------
 
+# Maximum line length for signatures in the HTML docs.
+maximum_signature_line_length: int = 50
+
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
 # html_theme = 'sphinxawesome_theme'
-html_theme = 'classic'
+html_theme: str = 'classic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

@@ -7,7 +7,7 @@
 
     <title>simplebench.doc_utils module &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=86b497be" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
     
     <script src="../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -40,9 +40,24 @@
 <p>Documentation utilities.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.doc_utils.format_docstring">
-<span class="sig-prename descclassname"><span class="pre">simplebench.doc_utils.</span></span><span class="sig-name descname"><span class="pre">format_docstring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls_or_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/doc_utils.html#format_docstring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.doc_utils.format_docstring" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.doc_utils.</span></span><span class="sig-name descname"><span class="pre">format_docstring</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">cls_or_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">/</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/doc_utils.html#format_docstring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.doc_utils.format_docstring" title="Link to this definition">🔗</a></dt>
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">simplebench.doc_utils.</span></span><span class="sig-name descname"><span class="pre">format_docstring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls_or_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.doc_utils.</span></span><span class="sig-name descname"><span class="pre">format_docstring</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">cls_or_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">/</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span></dt>
 <dd><p>A decorator to format the docstring of a class or function.</p>
 <p>Can be used with or without arguments on both classes and functions.
 It closely scopes the formatting to only the decorated object and to only
