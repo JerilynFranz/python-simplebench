@@ -173,8 +173,17 @@ div.body p, div.body dd, div.body li, div.body blockquote {
     line-height: 130%;
 }
 
+div.admonition {
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    
+}
 div.admonition p.admonition-title + p {
     display: inline;
+
 }
 
 div.admonition p {
@@ -190,7 +199,7 @@ div.admonition ul, div.admonition ol {
 }
 
 div.note {
-    background-color: #eee;
+    background-color: #6db3cd;
     border: 1px solid #ccc;
 }
 
@@ -272,6 +281,15 @@ cite {
     border-radius: 15px;
     margin: 10px 0 10px 0;
     padding: 10px;
+}
+
+dl dt {
+    font-weight: bold;
+    color: #35747d;
+}
+
+dl dd {
+    margin-bottom: 10px;
 }
 
 dl.option dt {

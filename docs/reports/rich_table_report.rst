@@ -1,0 +1,150 @@
+Rich Table Report
+=================
+
+.. _rich-table-report:
+
+.. toctree::
+   :maxdepth: 4
+
+.. index::
+
+Rich Tables are a popular way to display benchmark results in a clear and
+concise manner. SimpleBench leverages the `rich <https://github.com/Textualize/rich>`_
+library to generate these tables, providing visually appealing and easy-to-read reports.
+
+To generate a Rich Table report, you can use the `--rich-table.ops` command-line
+option when running your benchmarks. This will produce tables that summarize the
+performance metrics for each benchmark, including operations per second, average
+time per operation, memory usage, and peak memory usage.
+
+Here is an example of how to run a benchmark script with Rich Table reporting:
+
+.. code-block:: shell
+  :caption: Running a benchmark with Rich Table report
+  :name: run-benchmark-rich-table
+
+    python my_benchmark_script.py --rich-table.ops --progress
+
+This command will execute the benchmarks defined in `my_benchmark_script.py` and
+generate a Rich Table report displaying the operations-per-second results in
+the terminal. A progress bar will also be shown during the execution of the benchmarks.
+
+A basic Rich Table output will look something like this:
+
+.. code-block:: text
+  :caption: Basic Sample Rich Table Output
+  :name: basic-sample-rich-table-output
+
+                                                                 addition_benchmark
+                                                                operations per second
+
+                                            A simple addition benchmark of Python's built-in sum function.
+    ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┓
+    ┃        ┃            ┃        ┃ Elapsed ┃    mean    ┃   median   ┃           ┃            ┃            ┃             ┃  std dev   ┃        ┃
+    ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃   kOps/s   ┃   kOps/s   ┃ min Ops/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃   kOps/s   ┃  rsd%  ┃
+    ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━┩
+    │      1 │    46701   │      1 │  0.32   │    148.00  │    149.00  │   876.00  │    153.00  │    143.00  │    151.00   │      8.99  │  6.08% │
+    └────────┴────────────┴────────┴─────────┴────────────┴────────────┴───────────┴────────────┴────────────┴─────────────┴────────────┴────────┘
+
+The table includes various statistics such as the number of iterations, rounds,
+elapsed time, mean and median operations per second, minimum and maximum operations
+per second, as well as standard deviation and relative standard deviation (rsd%).
+
+.. note::
+   To avoid "false precision", statistical results are shown to three significant digits.
+   Due to the inherent variability of performance measurement, any further digits are
+   typically meaningless statistical noise.
+
+   This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
+   measurement in the real world.
+
+The basic fields always displayed in a Rich Table report are:
+
+N
+  A complexity weighting used to indicate the input size for a benchmark.
+
+  A Big-O (*O*\ (*n*), etc) complexity weighting. This is used to indicate the 'size' of the
+  input to a parameterized benchmark. It defaults to 1 unless overridden by the benchmark.
+  The N value is used to help compare performance across different input sizes (if applicable)
+  and to analyze how the function scales with different input sizes.
+
+Iterations
+  The number of statistical samples taken for the benchmark.
+
+  The total number of iterations executed during the benchmark. An iteration is an execution of the benchmarked
+  function once for statistical reporting purposes. It may be composed of multiple actual rounds to improve accuracy
+  and precision, but is reported as a single count for the purposes of the table.
+
+Rounds
+  The number of times the benchmarked function is executed within a single iteration.
+
+  The number of rounds executed during an iteration. A round is a single execution of the benchmarked function.
+  Multiple rounds are often executed within an iteration to gather more accurate timing and performance data.
+  They are executed in rapid succession, and their results are aggregated to produce the final metrics for an iteration.
+
+Elapsed Seconds
+  The total CPU time spent executing the benchmarked code.
+
+  The total measured elapsed time in seconds for all iterations of the benchmark. This metric provides an overview
+  of how long the benchmark took to complete. This does not include any setup or teardown time, focusing solely
+  on the execution time of the benchmarked code. By default, this measures *CPU time*, not *wall-clock time*, to provide
+  a more accurate representation of the code's performance. It can be overridden to measure wall-clock time instead
+  if so desired.
+
+mean Ops/s
+  The average number of operations per second.
+
+  The arithmetic mean average number of of operations per second (Ops/s) performed during the benchmark.
+  This metric is calculated by dividing the total number of operations executed by the total elapsed time,
+  then scaling it an appropriate factor (for example, kOps/s) for easier readability. It provides a quick overview
+  of the benchmark's performance.
+
+median Ops/s
+  The 50th percentile (middle value) of operations per second.
+
+  The median (50th percentile) number of operations per second (Ops/s) performed during the benchmark.
+  This metric represents the middle value of the Ops/s measurements collected during the benchmark,
+  providing a robust measure of central tendency that is less affected by outliers compared to the mean.
+ 
+min Ops/s
+  The lowest (worst) performance recorded across all iterations.
+
+  The minimum number of operations per second (Ops/s) recorded during the benchmark. This metric indicates the
+  lowest performance observed during the benchmark runs, which can be useful for identifying potential bottlenecks
+  or performance issues.
+
+max Ops/s
+  The highest (best) performance recorded across all iterations.
+
+  The maximum number of operations per second (Ops/s) recorded during the benchmark. This metric indicates the
+  highest performance observed during the benchmark runs, showcasing the best-case scenario for the benchmarked code.
+
+5th Ops/s
+  The 5th percentile of operations per second.
+
+  The 5th percentile number of operations per second (Ops/s) recorded during the benchmark. This metric indicates
+  that 5% of the Ops/s measurements were below this value, providing insight into the lower end of the typical
+  performance distribution.
+
+95th Ops/s
+  The 95th percentile of operations per second.
+
+  The 95th percentile number of operations per second (Ops/s) recorded during the benchmark. This metric indicates
+  that 95% of the Ops/s measurements were below this value, providing insight into the upper end of the typical
+  performance distribution.
+
+std dev kOps/s
+  A measure of the variation or inconsistency in performance.
+
+  The standard deviation of the operations per second (Ops/s) measurements collected during the benchmark. This metric
+  quantifies the amount of variation or dispersion in the Ops/s values, providing insight into the consistency of the
+  benchmark's performance. A lower standard deviation indicates more consistent performance, while a higher standard
+  deviation suggests greater variability in the results.
+
+rsd%
+  A normalized measure of performance inconsistency, expressed as a percentage.
+
+  The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+  deviation by the mean and multiplying by 100. It provides a normalized measure of variability, allowing for easier 
+  comparison of consistency across different benchmarks or parameter configurations. A lower RSD% indicates more consistent
+  performance relative to the mean, while a higher RSD% suggests greater variability in the results.

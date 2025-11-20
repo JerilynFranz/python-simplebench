@@ -62,7 +62,7 @@ Using SimpleBench
   Note that the docstring from the `addition_benchmark` function is automatically
   used as the description in the output.
 
-  For example, the command above produces the following table:
+  For example, the command above produces the following rich table:
 
 .. code-block:: text
   :caption: Output
