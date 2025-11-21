@@ -14,7 +14,7 @@ from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.results import Results
-from simplebench.si_units import si_scale_for_smallest
+from simplebench.si_units import si_scale_for_largest
 from simplebench.type_proxies import is_case
 from simplebench.validators import validate_type
 
@@ -114,7 +114,73 @@ class ScatterPlotReporter(MatPlotLibReporter):
         results: list[Results] = case.results
 
         all_numbers = self.get_all_stats_values(results=results, section=section)
-        common_unit, common_scale = si_scale_for_smallest(numbers=all_numbers, base_unit=base_unit)
+        common_unit, common_scale = si_scale_for_largest(numbers=all_numbers, base_unit=base_unit)
+        target_name = f'{section.value} ({common_unit})'
+
+        with BytesIO() as graphfile:
+            with mpl.rc_context():
+                plot_data = []
+                x_axis_legend = 'N'
+                for result in results:
+                    n = result.n
+                    target_stats = result.results_section(section)
+                    plot_data.append((n, target_stats.mean * common_scale))
+                df = pd.DataFrame(plot_data, columns=[x_axis_legend, target_name])
+
+                # See https://matplotlib.org/stable/users/explain/customizing.html#the-matplotlibrc-file
+                benchmarking_theme = options.theme
+                mpl.rcParams.update(benchmarking_theme)
+
+                # Create the plot
+                with plt.style.context(options.style):
+                    g = sns.scatterplot(data=df, y=target_name, x=x_axis_legend)
+                    g.figure.suptitle(case.title, fontsize='large', weight='bold')
+                    g.figure.subplots_adjust(top=.9)
+                    g.figure.set_dpi(options.dpi)  # dots per inch
+                    g.figure.set_figheight(options.height / options.dpi)  # inches
+                    g.figure.set_figwidth(options.width / options.dpi)  # inches
+                    g.tick_params("x", rotation=options.x_labels_rotation)
+                    # format the labels with f-strings
+                    #for ax in g.axes.flat:
+                    #    ax.yaxis.set_major_formatter('{x}' + f' {common_unit}')
+                    if options.y_starts_at_zero:
+                        _, top = plt.ylim()
+                        plt.ylim(bottom=0, top=top * 1.10)  # Add 10% headroom
+                    plt.savefig(graphfile, format=options.image_type)
+                    plt.close()  # Close the figure to free memory
+                    graphfile.flush()
+            return graphfile.getvalue()
+
+    def old_render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
+        """Render the scatter plot graph and return it as bytes.
+
+        :param case: The :class:`~simplebench.case.Case` instance representing the
+            benchmarked code.
+        :param section: The section of the results to plot.
+        :param options: The options for rendering the scatter plot.
+        :return: The rendered graph as bytes. The format is determined by the options.
+            The defaults are defined in :class:`~.ScatterPlotOptions`.
+        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the provided arguments are not
+            of the expected types or values.
+        :raises ~simplebench.exceptions.SimpleBenchValueError: If the provided values are not
+            valid.
+        """
+        # is_* checks provide deferred import validation to avoid circular imports
+        if not is_case(case):
+            raise SimpleBenchTypeError(
+                f"'case' argument must be a Case instance, got {type(case)}",
+                tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
+        section = validate_type(section, Section, 'section',
+                                _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(
+                options, Options, 'options',
+                _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
+
+        base_unit = self.get_base_unit_for_section(section=section)
+        results: list[Results] = case.results
+
+        all_numbers = self.get_all_stats_values(results=results, section=section)
+        common_unit, common_scale = si_scale_for_largest(numbers=all_numbers, base_unit=base_unit)
         target_name = f'{section.value} ({base_unit})'
 
         with BytesIO() as graphfile:

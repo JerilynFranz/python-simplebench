@@ -67,6 +67,45 @@ def si_scale_for_smallest(numbers: Sequence[float | int], base_unit: str) -> tup
     return f'{prefix}{base_unit}', scale
 
 
+def si_scale_for_largest(numbers: Sequence[float | int], base_unit: str) -> tuple[str, float]:
+    """Get the scale factor and SI unit for the largest in a sequence of numbers.
+
+    The scale factor is the factor that should be applied to the numbers to convert
+    them to the desired unit. The SI unit is the unit that corresponds to the scale factor.
+
+    It gives the SI prefix unit and scale for the largest absolute value in the sequence.
+    If all numbers are zero, it returns the base unit and a scale factor of 1.0.
+
+
+    :param numbers: A sequence of numbers to scale.
+    :type numbers: Sequence[float | int]
+    :param base_unit: The base unit to use for scaling.
+    :type base_unit: str
+    :return: A tuple containing the scaled unit and the scaling factor.
+    :rtype: tuple[str, float]
+    """
+    if not isinstance(numbers, Sequence) or isinstance(numbers, (str, bytes)):
+        raise SimpleBenchTypeError(
+            "numbers arg must be a Sequence of int or float",
+            tag=_SIUnitsErrorTag.SI_SCALE_FOR_LARGEST_INVALID_NUMBERS_ARG_TYPE)
+    if not all(isinstance(n, (int, float)) for n in numbers):
+        raise SimpleBenchTypeError(
+            "all items in numbers arg sequence must be type int or float",
+            tag=_SIUnitsErrorTag.SI_SCALE_FOR_LARGEST_INVALID_NUMBERS_ARG_VALUES_TYPE)
+    if not numbers or all(n == 0 for n in numbers):
+        return base_unit, 1.0
+
+    max_n: float = max([abs(n) for n in numbers], default=0.0)
+
+    for threshold, prefix, scale in _SI_PREFIXES:
+        if max_n >= threshold:
+            return f'{prefix}{base_unit}', scale
+
+    # Default to the largest scale if no other matches
+    _, prefix, scale = _SI_PREFIXES[0]
+    return f'{prefix}{base_unit}', scale
+
+
 def si_scale(unit: str, base_unit: str) -> float:
     """Get the SI scale factor for a unit given the base unit.
 

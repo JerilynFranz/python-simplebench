@@ -44,7 +44,7 @@ if errorlevel 1 (
 echo.
 echo.Syncing HTML output to publish directory...
 REM Use robocopy to mirror the build output. /e = copy subdirs, /purge = delete destination files not in source.
-robocopy "%HTML_BUILD_DIR%" "%HTML_PUBLISH_DIR%" /e /purge /xf .buildinfo /xd doctrees >NUL
+robocopy "%HTML_BUILD_DIR%" "%HTML_PUBLISH_DIR%" /e /purge /xf .buildinfo /xf .buildinfo.bak /xd doctrees >NUL
 echo.Build finished. The HTML pages are in %HTML_PUBLISH_DIR%.
 goto end
 

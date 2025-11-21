@@ -29,6 +29,13 @@ class _SIUnitsErrorTag(ErrorTag):
     SI_UNIT_BASE_UNKNOWN_SI_UNIT_PREFIX = "SI_UNIT_BASE_UNKNOWN_SI_UNIT_PREFIX"
     """The specified SI unit prefix is not recognized"""
 
+    # si_units.si_scale_for_largest() tags
+    SI_SCALE_FOR_LARGEST_INVALID_NUMBERS_ARG_TYPE = "SI_SCALE_FOR_LARGEST_INVALID_NUMBERS_ARG_TYPE"
+    """The numbers argument was not a list"""
+    SI_SCALE_FOR_LARGEST_INVALID_NUMBERS_ARG_VALUES_TYPE = (
+        "SI_SCALE_FOR_LARGEST_INVALID_NUMBERS_ARG_VALUES_TYPE")
+    """One or more values in the numbers argument was not an int or float"""
+
     # si_units.si_scale_for_smallest() tags
     SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE = "SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE"
     """The numbers argument was not a list"""

@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>simplebench.si_units &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=15db7601" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
     <script src="../../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
@@ -104,6 +105,48 @@
 
     <span class="c1"># Default to the smallest scale if no other matches</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">_SI_PREFIXES</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scale</span></div>
+
+
+
+<div class="viewcode-block" id="si_scale_for_largest">
+<a class="viewcode-back" href="../../source/simplebench.si_units.html#simplebench.si_units.si_scale_for_largest">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">si_scale_for_largest</span><span class="p">(</span><span class="n">numbers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">],</span> <span class="n">base_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the scale factor and SI unit for the largest in a sequence of numbers.</span>
+
+<span class="sd">    The scale factor is the factor that should be applied to the numbers to convert</span>
+<span class="sd">    them to the desired unit. The SI unit is the unit that corresponds to the scale factor.</span>
+
+<span class="sd">    It gives the SI prefix unit and scale for the largest absolute value in the sequence.</span>
+<span class="sd">    If all numbers are zero, it returns the base unit and a scale factor of 1.0.</span>
+
+
+<span class="sd">    :param numbers: A sequence of numbers to scale.</span>
+<span class="sd">    :type numbers: Sequence[float | int]</span>
+<span class="sd">    :param base_unit: The base unit to use for scaling.</span>
+<span class="sd">    :type base_unit: str</span>
+<span class="sd">    :return: A tuple containing the scaled unit and the scaling factor.</span>
+<span class="sd">    :rtype: tuple[str, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;numbers arg must be a Sequence of int or float&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_FOR_LARGEST_INVALID_NUMBERS_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;all items in numbers arg sequence must be type int or float&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_FOR_LARGEST_INVALID_NUMBERS_ARG_VALUES_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">numbers</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">base_unit</span><span class="p">,</span> <span class="mf">1.0</span>
+
+    <span class="n">max_n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">_SI_PREFIXES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">max_n</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scale</span>
+
+    <span class="c1"># Default to the largest scale if no other matches</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">_SI_PREFIXES</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scale</span></div>
 
 

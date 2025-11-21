@@ -497,7 +497,7 @@ class Results:
 
     @property
     def n(self) -> int:
-        """The number of rounds the benchmark ran per iteration."""
+        """The complexity size/weighting."""
         return self._n
 
     @property

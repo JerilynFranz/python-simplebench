@@ -21,7 +21,7 @@ help:
 
 html: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	@$(RSYNC) -a --delete --exclude=doctrees/ --exclude=.buildinfo "$(HTML_BUILD_DIR)/" "$(HTML_PUBLISH_DIR)/"
+	@$(RSYNC) -a --delete --exclude=doctrees/ --exclude=.buildinfo --exclude=.buildinfo.bak "$(HTML_BUILD_DIR)/" "$(HTML_PUBLISH_DIR)/"
 
 clean:
 	# Clean the custom publish directory
