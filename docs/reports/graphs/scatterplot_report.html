@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Scatterplot Graph Report &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=677286bc" />
+    
+    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="JSON Report" href="../json_report.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../json_report.html" title="JSON Report"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../reports.html" accesskey="U">Reports</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Scatterplot Graph Report</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="scatterplot-graph-report">
+<h1>Scatterplot Graph Report<a class="headerlink" href="#scatterplot-graph-report" title="Link to this heading">🔗</a></h1>
+<p id="id1">Scatterplot Graphs are a good way to visualize the distribution and relationship of benchmark results.
+SimpleBench leverages the <a class="reference external" href="https://seaborn.pydata.org/">Seaborn</a> and
+<a class="reference external" href="https://matplotlib.org/">matplotlib</a> libraries to create scatterplot graphs that display
+benchmark results in a clear and informative manner.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Scatterplot Graph reports are just one of several reporting options available in SimpleBench.
+You can also generate a <a class="reference internal" href="../rich_table_report.html"><span class="doc">Rich Table Report</span></a>, a <a class="reference internal" href="../csv_report.html"><span class="doc">CSV Report</span></a>, or a <a class="reference internal" href="../json_report.html"><span class="doc">JSON Report</span></a>,
+each providing different perspectives on your benchmark results.</p>
+<p>Refer to the <a class="reference internal" href="../../command_line_options.html"><span class="doc">Command-Line Options</span></a> section for more details on how to
+generate and customize these reports.</p>
+</div>
+<p>To generate a Scatterplot Graph report, you can use an option like <cite>–scatterplot-graph.ops</cite>
+when running your benchmarks. For example:</p>
+<div class="literal-block-wrapper docutils container" id="run-benchmark-scatterplot-graph">
+<div class="code-block-caption"><span class="caption-text">Running a benchmark with a Scatterplot Graph report</span><a class="headerlink" href="#run-benchmark-scatterplot-graph" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--scatterplot-graph.ops<span class="w"> </span>--progress
+</pre></div>
+</div>
+</div>
+<p>This command executes the benchmarks in <cite>my_benchmark_script.py</cite> and generates
+a Scatterplot Graph in the terminal displaying the operations-per-second results.
+A basic output will look something like this:</p>
+<div class="literal-block-wrapper docutils container" id="sample-scatterplot-graph-output">
+<div class="code-block-caption"><span class="caption-text">Sample Scatterplot Graph Output (operations per second)</span><a class="headerlink" href="#sample-scatterplot-graph-output" title="Link to this code">🔗</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                                                                   addition_benchmark
+                                                                operations per second
+
+                                           A simple addition benchmark of Python&#39;s built-in sum function.
+ ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+ ┃        ┃            ┃        ┃ Elapsed ┃             ┃               ┃            ┃            ┃            ┃             ┃                ┃        ┃
+ ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃ mean kOps/s ┃ median kOps/s ┃ min kOps/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃ std dev kOps/s ┃  rsd%  ┃
+ ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+ │      1 │    44872   │      1 │  0.32   │    143.00   │     144.00    │      1.07  │    153.00  │    140.00  │    150.00   │        9.28    │  6.51% │
+ └────────┴────────────┴────────┴─────────┴─────────────┴───────────────┴────────────┴────────────┴────────────┴─────────────┴────────────────┴────────┘
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To avoid “false precision”, statistical results are shown to three significant digits.
+Due to the inherent variability of performance measurement, any further digits are
+typically meaningless statistical noise.</p>
+<p>This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
+measurement in the real world.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Interpreting Outliers in Benchmark Results</strong></p>
+<p>In the sample output above, you may notice that the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">kOps/s</span></code> value is
+an extreme outlier, far from the <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">median</span></code>. This is a realistic
+reflection of real-world benchmarking. System events like garbage collection,
+process scheduling, or I/O interrupts can cause individual iterations to be
+significantly slower than the typical case.</p>
+<p>This is precisely why SimpleBench provides a full suite of statistics. Instead
+of relying solely on the <code class="docutils literal notranslate"><span class="pre">mean</span></code>, you should also consider:</p>
+<ul class="simple">
+<li><p>The <strong>median</strong>, which is resistant to outliers and often gives a better
+sense of “typical” performance.</p></li>
+<li><p>The <strong>5th and 95th percentiles</strong>, which show the range of performance
+for the vast majority of iterations, excluding the most extreme outliers.</p></li>
+<li><p>The <strong>standard deviation (std dev)</strong> and <strong>RSD%</strong>, which quantify the
+level of inconsistency in the results. A high value indicates significant
+variability.</p></li>
+</ul>
+<p>By providing these metrics, SimpleBench allows you to get a complete and
+honest picture of your code’s performance, including its variability.</p>
+</div>
+<section id="report-variations-and-destinations">
+<h2>Report Variations and Destinations<a class="headerlink" href="#report-variations-and-destinations" title="Link to this heading">🔗</a></h2>
+<p>The example above shows an operations-per-second report printed to the console.
+SimpleBench provides several variations:</p>
+<ul class="simple">
+<li><p><cite>–scatterplot-graph</cite>: Generates tables for all result types (ops, timing, and memory).</p></li>
+<li><p><cite>–scatterplot-graph.ops</cite>: Generates tables only for operations-per-second results.</p></li>
+<li><p><cite>–scatterplot-graph.timing</cite>: Generates tables only for timing results.</p></li>
+<li><p><cite>–scatterplot-graph.memory</cite>: Generates tables only for memory usage results.</p></li>
+</ul>
+<p>By default, reports are displayed in the console. You can send a report to other
+destinations, such as the filesystem, by appending the destination name. For example,
+to save the report to a file instead of printing it to the terminal:</p>
+<div class="literal-block-wrapper docutils container" id="scatterplot-graph-ops-filesystem">
+<div class="code-block-caption"><span class="caption-text">Saving a Scatterplot Graph report to the filesystem</span><a class="headerlink" href="#scatterplot-graph-ops-filesystem" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--scatterplot-graph.ops<span class="w"> </span>filesystem
+</pre></div>
+</div>
+</div>
+</section>
+<section id="advanced-features">
+<h2>Advanced Features<a class="headerlink" href="#advanced-features" title="Link to this heading">🔗</a></h2>
+<p>Beyond the basic fields shown above, the reports also support advanced features such as:</p>
+<dl class="simple">
+<dt>Parameterized Benchmarks</dt><dd><p>Including esults for benchmarks that take parameters,
+allowing for analysis of performance across different input sizes or configurations.</p>
+</dd>
+<dt>Custom Complexity Weightings:</dt><dd><p>Including Big-O complexity weight/size annotations to help analyze how performance
+scales with input size.</p>
+</dd>
+</dl>
+<p>These features make these reports a powerful tool for understanding
+the performance characteristics of your code in a clear and structured manner.</p>
+<section id="parameterized-benchmarks">
+<h3>Parameterized Benchmarks<a class="headerlink" href="#parameterized-benchmarks" title="Link to this heading">🔗</a></h3>
+<p>When benchmarks are parameterized, SimpleBench generates additional columns in the
+report for each parameter value requested for generation.</p>
+<p>This allows you to easily compare performance across different configurations.
+For example, if you have a benchmark that takes an input size
+parameter, the report can include how performance varies with different input sizes.</p>
+<p>See the <span class="xref std std-doc">defining_benchmarks</span> section for more details on defining and using
+parameterized benchmarks.</p>
+</section>
+<section id="custom-complexity-weightings">
+<h3>Custom Complexity Weightings<a class="headerlink" href="#custom-complexity-weightings" title="Link to this heading">🔗</a></h3>
+<p>Related to parameterized benchmarks, SimpleBench allows you to specify
+custom complexity weightings (number/size weighting)for your benchmarks.</p>
+<p>These weightings are included in the report as the N column value, helping you analyze
+how performance scales with input size and parameterization.</p>
+<p>For example, you might specify that a benchmark set covers input sizes 1, 20, 100, 1000,
+which will be indicated in the N column of the report with a row for each size.</p>
+<p>When defining a parameterized benchmark, you can provide complexity weightings that
+reflect the expected performance characteristics of the code being benchmarked and
+are matched with the parameters being used. This helps in understanding how the performance
+of the benchmarked code changes as the input size or other parameters vary.</p>
+<p>These advanced features make these reports a powerful tool for analyzing
+the performance of parameterized benchmarks and understanding the scalability
+of your code.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Scatterplot Graph Report</a><ul>
+<li><a class="reference internal" href="#report-variations-and-destinations">Report Variations and Destinations</a></li>
+<li><a class="reference internal" href="#advanced-features">Advanced Features</a><ul>
+<li><a class="reference internal" href="#parameterized-benchmarks">Parameterized Benchmarks</a></li>
+<li><a class="reference internal" href="#custom-complexity-weightings">Custom Complexity Weightings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../json_report.html"
+                          title="previous chapter">JSON Report</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reports/graphs/scatterplot_report.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../json_report.html" title="JSON Report"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../reports.html" >Reports</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Scatterplot Graph Report</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

@@ -7,7 +7,8 @@
 
     <title>simplebench.reporters.json package &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=15db7601" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=677286bc" />
     
     <script src="../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -160,7 +161,7 @@ incomparable.</p>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/json/reporter/reporter.html#JSONReporter.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.render" title="Link to this definition">🔗</a></dt>
@@ -175,7 +176,7 @@ code statistics.</p></li>
 sections are included).</p></li>
 <li><p><strong>options</strong> – The <a class="reference internal" href="#simplebench.reporters.json.JSONOptions" title="simplebench.reporters.json.JSONOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONOptions</span></code></a> instance specifying rendering options
 or <code class="docutils literal notranslate"><span class="pre">None</span></code> if not provided. (<a class="reference internal" href="#simplebench.reporters.json.JSONOptions" title="simplebench.reporters.json.JSONOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONOptions</span></code></a> is a subclass of
-<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a>.)</p></li>
+<a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a>.)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -200,7 +201,7 @@ or <code class="docutils literal notranslate"><span class="pre">None</span></cod
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/json/reporter/reporter.html#JSONReporter.run_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.run_report" title="Link to this definition">🔗</a></dt>
 <dd><p>Output the benchmark results to a file as tagged JSON if available.</p>
-<p>This method is called by the base class’s <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter.report" title="simplebench.reporters.reporter.Reporter.report"><code class="xref py py-meth docutils literal notranslate"><span class="pre">report()</span></code></a> method after
+<p>This method is called by the base class’s <a class="reference internal" href="simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.reporter.Reporter.report" title="simplebench.reporters.reporter.reporter.Reporter.report"><code class="xref py py-meth docutils literal notranslate"><span class="pre">report()</span></code></a> method after
 validation. The base class handles validation of the arguments, so subclasses can
 assume the arguments are valid without a large amount of boilerplate code. The base
 class also handles lazy loading of the reporter classes, so subclasses can assume

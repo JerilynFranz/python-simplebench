@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>JSON Report &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
+    
+    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Scatterplot Graph Report" href="graphs/scatterplot_graph_report.html" />
+    <link rel="prev" title="CSV Report" href="csv_report.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="graphs/scatterplot_graph_report.html" title="Scatterplot Graph Report"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="csv_report.html" title="CSV Report"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reports.html" accesskey="U">Reports</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">JSON Report</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="json-report">
+<h1>JSON Report<a class="headerlink" href="#json-report" title="Link to this heading">🔗</a></h1>
+<p id="id1">JSON is a popular way to export data for programmatic consumption. SimpleBench leverages
+JSON reports to provide structured benchmark results that can be easily parsed and analyzed
+by other tools or scripts.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>JSON reports are just one of several reporting options available in SimpleBench.
+You can also generate Rich Table reports, CSV reports, and graph reports, each providing
+different perspectives on your benchmark results.</p>
+<p>Refer to the <span class="xref std std-doc">command_line_options</span> section for more details on how to
+generate and customize these reports.</p>
+</div>
+<p>To generate a JSON report, you can use an option like <cite>–json</cite>
+when running your benchmarks. For example:</p>
+<div class="literal-block-wrapper docutils container" id="run-benchmark-json">
+<div class="code-block-caption"><span class="caption-text">Running a benchmark with a JSON report</span><a class="headerlink" href="#run-benchmark-json" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--json<span class="w"> </span>--progress
+</pre></div>
+</div>
+</div>
+<p>This command executes the benchmarks in <cite>my_benchmark_script.py</cite> and generates
+a JSON file containing all the results.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>JSON reports are intended for programmatic consumption and analysis</strong></p>
+<p>Because of this, they are not as human-readable as other report formats like
+rich tables or CSV. They do not offer the options for ‘sub-reporting’ only
+specific result types (ops, timing, memory) like other report formats.</p>
+</div>
+<section id="json-report-structure">
+<h2>JSON Report Structure<a class="headerlink" href="#json-report-structure" title="Link to this heading">🔗</a></h2>
+<p>A JSON report consists of a structured representation of the benchmark results,
+including various statistical metrics for each benchmark. The structure models
+the data as a JSON serialization of a <a class="reference internal" href="../source/simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> object
+which contains multiple <code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code> objects for each
+benchmark case.</p>
+<p>Here is an example of a report generated from the <code class="docutils literal notranslate"><span class="pre">--json</span></code> option:</p>
+<div class="scrollable-block docutils container">
+</div>
+<p>Because JSON is a structured format intended for programmatic consumption, it is best
+viewed using a JSON viewer or parsed using a programming language that supports JSON.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It saves the raw statistical data for each benchmark result, allowing for detailed analysis and custom processing.
+It does not apply significant figures rounding to the data, which is typically done for human-readable reports.
+It is the responsibility of the consumer of the JSON report to format or round the data if needed.</p>
+</div>
+</section>
+<section id="report-variations-and-destinations">
+<h2>Report Variations and Destinations<a class="headerlink" href="#report-variations-and-destinations" title="Link to this heading">🔗</a></h2>
+<p>The example above shows a report saved to the filesystem.</p>
+<p>SimpleBench provides two variations:</p>
+<ul>
+<li><dl class="simple">
+<dt><cite>–json</cite>:</dt><dd><p>Generates JSON for all result types (ops, timing, and memory) but includes only summary statistics.</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><cite>–json.full-data</cite>:</dt><dd><p>Generates JSON for all result types (ops, timing, and memory)
+and includes full raw results data for each iteration in addition to the summary statistics.
+This is useful for in-depth analysis down to the level of individual iterations of the tests
+or custom processing.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Potentially Gigantic Output</strong></p>
+<p>Be aware that this can produce <em>EXTREMELY</em> large files if you have many benchmarks or
+iterations. Multi-megabyte-sized JSON output is common when using this option.</p>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+<p>By default, reports are saved to the filesystem. You can send a report to other
+destinations, such as the console, or a callback by appending the destination name. For example,
+to print the report to the terminal instead of saving it to a file:</p>
+<div class="literal-block-wrapper docutils container" id="json-console">
+<div class="code-block-caption"><span class="caption-text">Printing a JSON report to the console</span><a class="headerlink" href="#json-console" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--json<span class="w"> </span>console
+</pre></div>
+</div>
+</div>
+</section>
+<section id="advanced-features">
+<h2>Advanced Features<a class="headerlink" href="#advanced-features" title="Link to this heading">🔗</a></h2>
+<p>Beyond the basic fields shown above, the reports also support advanced features such as:</p>
+<dl class="simple">
+<dt>Parameterized Benchmarks</dt><dd><p>Including results for benchmarks that take parameters,
+allowing for analysis of performance across different input sizes or configurations.</p>
+</dd>
+<dt>Custom Complexity Weightings</dt><dd><p>Input complexity weight/size annotations to help analysis of how performance
+scales with input size and allow <em>O()</em> analysis by the consumer.</p>
+</dd>
+</dl>
+<p>These features make these reports a powerful tool for understanding
+the performance characteristics of your code in a clear and structured manner.</p>
+<section id="parameterized-benchmarks">
+<h3>Parameterized Benchmarks<a class="headerlink" href="#parameterized-benchmarks" title="Link to this heading">🔗</a></h3>
+<p>When benchmarks are parameterized, SimpleBench populates additional fields
+in the JSON report to reflect the parameters used for each benchmark run.</p>
+<p>This allows you to easily compare performance across different configurations.
+For example, if you have a benchmark that takes an input size
+parameter, the report can include how performance varies with different input sizes.</p>
+<p>See the <span class="xref std std-doc">defining_benchmarks</span> section for more details on defining and using
+parameterized benchmarks.</p>
+</section>
+<section id="custom-complexity-weightings">
+<h3>Custom Complexity Weightings<a class="headerlink" href="#custom-complexity-weightings" title="Link to this heading">🔗</a></h3>
+<p>Related to parameterized benchmarks, SimpleBench allows you to specify
+custom complexity weightings (number/size weighting) for your benchmarks.</p>
+<p>These weightings are included in the report as the N field value, helping you analyze
+how performance scales with input size and parameterization.</p>
+<p>For example, you might specify that a benchmark set covers input sizes 1, 20, 100, 1000,
+which will be indicated in the N fields of the report with a row for each size.</p>
+<p>When defining a parameterized benchmark, you can provide complexity weightings that
+reflect the expected performance characteristics of the code being benchmarked and
+are matched with the parameters being used. This helps in understanding how the performance
+of the benchmarked code changes as the input size or other parameters vary.</p>
+<p>These advanced features make these reports a powerful tool for analyzing
+the performance of parameterized benchmarks and understanding the scalability
+of your code.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">JSON Report</a><ul>
+<li><a class="reference internal" href="#json-report-structure">JSON Report Structure</a></li>
+<li><a class="reference internal" href="#report-variations-and-destinations">Report Variations and Destinations</a></li>
+<li><a class="reference internal" href="#advanced-features">Advanced Features</a><ul>
+<li><a class="reference internal" href="#parameterized-benchmarks">Parameterized Benchmarks</a></li>
+<li><a class="reference internal" href="#custom-complexity-weightings">Custom Complexity Weightings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="csv_report.html"
+                          title="previous chapter">CSV Report</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="graphs/scatterplot_graph_report.html"
+                          title="next chapter">Scatterplot Graph Report</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reports/json_report.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="graphs/scatterplot_graph_report.html" title="Scatterplot Graph Report"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="csv_report.html" title="CSV Report"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reports.html" >Reports</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">JSON Report</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>
