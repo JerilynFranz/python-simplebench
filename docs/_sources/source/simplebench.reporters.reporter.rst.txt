@@ -3,6 +3,7 @@ simplebench.reporters.reporter package
 
 .. automodule:: simplebench.reporters.reporter
    :members:
+   :inherited-members: 
    :undoc-members:
    :show-inheritance:
 

@@ -31,7 +31,7 @@ div.documentwrapper {
 }
 
 div.bodywrapper {
-    margin: 0 0 0 20em;
+    margin: 0 0 0 32em;
 }
 
 div.body {
@@ -164,7 +164,7 @@ a.headerlink {
 }
 
 a.headerlink:hover {
-    background-color: #c60f0f;
+    background-color: #0f7ac6;
     color: white;
 }
 
