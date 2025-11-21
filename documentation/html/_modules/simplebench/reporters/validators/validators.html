@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.reporters.validators.validators &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.validators.validators</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.reporters.validators.validators</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Validators for reporters stuff.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnionType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">get_type_hints</span><span class="p">,</span> <span class="n">overload</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span><span class="p">,</span> <span class="n">ReportRenderer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.validators.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReportersValidatorsErrorTag</span>
+
+<span class="c1"># Deferred imports to avoid circular dependencies. This pattern is required for any</span>
+<span class="c1"># type hints that are resolved at runtime via get_type_hints() and involve a</span>
+<span class="c1"># circular dependency (e.g., Reporter -&gt; Case -&gt; Choice -&gt; Reporter).</span>
+<span class="c1">#</span>
+<span class="c1"># Becase the reporter validators need to specifically validate callbacks that use</span>
+<span class="c1"># the Case type, we need to defer the import of that type until runtime to avoid</span>
+<span class="c1"># circular imports. If other core types are needed in the future, they can be added</span>
+<span class="c1"># here as well.</span>
+
+<span class="c1"># Define placeholders for runtime name resolution</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+    <span class="n">_CORE_TYPES_IMPORTED</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">Case</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># pylint: disable=invalid-name  # type: ignore</span>
+    <span class="n">_CORE_TYPES_IMPORTED</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_deferred_core_imports</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deferred import of core types to avoid circular imports during initialization.</span>
+
+<span class="sd">    This imports :class:`~simplebench.case.Case`, only when needed at runtime, preventing</span>
+<span class="sd">    circular import issues during module load time while still allowing its use in type</span>
+<span class="sd">    hints and runtime validations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">Case</span><span class="p">,</span> <span class="n">_CORE_TYPES_IMPORTED</span>  <span class="c1"># pylint: disable=global-statement</span>
+    <span class="k">if</span> <span class="n">_CORE_TYPES_IMPORTED</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>  <span class="c1"># pylint: disable=import-outside-toplevel,redefined-outer-name</span>
+    <span class="n">_CORE_TYPES_IMPORTED</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="resolve_type_hints">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.validators.validators.html#simplebench.reporters.validators.resolve_type_hints">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_type_hints</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the type hints for a callback function.</span>
+
+<span class="sd">    :param callback: The callback function to resolve type hints for.</span>
+<span class="sd">    :return: A dictionary mapping parameter names to their resolved types.</span>
+<span class="sd">    :raises ~simplebench.exceptions.SimpleBenchTypeError: If the type hints cannot be</span>
+<span class="sd">        resolved.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_deferred_core_imports</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">resolved_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span>
+            <span class="n">callback</span><span class="p">,</span> <span class="n">globalns</span><span class="o">=</span><span class="n">callback</span><span class="o">.</span><span class="vm">__globals__</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportAttributeAccessIssue]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">NameError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># This can happen if an annotation refers to a type that doesn&#39;t exist.</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid callback: </span><span class="si">{</span><span class="n">callback</span><span class="si">}</span><span class="s2">. Could not resolve type hints. Original error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_CALLBACK_UNRESOLVABLE_HINTS</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">return</span> <span class="n">resolved_hints</span></div>
+
+
+
+<div class="viewcode-block" id="validate_call_parameter">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.validators.validators.html#simplebench.reporters.validators.validate_call_parameter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_call_parameter</span><span class="p">(</span><span class="n">call</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+                            <span class="n">expected_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="n">Any</span><span class="p">,</span>
+                            <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a parameter of the callback function.</span>
+
+<span class="sd">    The parameter must exist, be of the expected type, and be a keyword-only parameter.</span>
+
+<span class="sd">    :param call: The callback function to validate.</span>
+<span class="sd">    :param expected_type: The expected type of the parameter.</span>
+<span class="sd">    :param param_name: The name of the parameter to validate.</span>
+<span class="sd">    :raises ~simplebench.exceptions.SimpleBenchTypeError: If the parameter is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid callback: </span><span class="si">{</span><span class="n">call</span><span class="si">}</span><span class="s1">. Must accept an &quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&quot; parameter.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER</span><span class="p">)</span>
+    <span class="n">resolved_hints</span> <span class="o">=</span> <span class="n">resolve_type_hints</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resolved_hints</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid callback: </span><span class="si">{</span><span class="n">call</span><span class="si">}</span><span class="s1">. &quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&quot; parameter does not have a type hint&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT</span><span class="p">)</span>
+    <span class="n">param_type</span> <span class="o">=</span> <span class="n">resolved_hints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">param_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">expected_type</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid callback: </span><span class="si">{</span><span class="n">call</span><span class="si">}</span><span class="s2">. &#39;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">&#39; parameter must be of type &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">expected_type</span><span class="si">}</span><span class="s2">&#39;, not &#39;</span><span class="si">{</span><span class="n">param_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE</span><span class="p">)</span>
+
+    <span class="n">callback_signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="n">callback_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">kind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">KEYWORD_ONLY</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call: </span><span class="si">{</span><span class="n">call</span><span class="si">}</span><span class="s1">. &quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&quot; parameter must be a keyword-only parameter.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_reporter_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterCallback</span><span class="p">:</span> <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_reporter_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_none</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
+
+<div class="viewcode-block" id="validate_reporter_callback">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.validators.validators.html#simplebench.reporters.validators.validate_reporter_callback">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_reporter_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate the reporter callback function.</span>
+
+<span class="sd">    Verifies the callback function has the correct signature.</span>
+
+<span class="sd">    If called without an ``allow_none`` parameter, the returned value will be guaranteed</span>
+<span class="sd">    to conform to the :class:`~.ReporterCallback` protocol and type checkers will</span>
+<span class="sd">    automatically type-narrow it.</span>
+
+<span class="sd">    If called with an ``allow_none=True`` parameter, the validator will accept **either**</span>
+<span class="sd">    a :class:`~.ReporterCallback` conformant method or ``None`` as valid.</span>
+
+<span class="sd">    If an explicit ``allow_none`` parameter is passed, regardless of whether</span>
+<span class="sd">    ``allow_none=True`` or ``allow_none=False``, the return type determined by static type</span>
+<span class="sd">    checkers will be ``ReporterCallback | None``.</span>
+
+<span class="sd">    A callback function must accept the following four keyword-only parameters:</span>
+
+<span class="sd">    * ``case: Case``</span>
+<span class="sd">    * ``section: Section``</span>
+<span class="sd">    * ``output_format: Format``</span>
+<span class="sd">    * ``output: Any``</span>
+
+<span class="sd">    :param callback: The callback function to validate.</span>
+<span class="sd">    :param allow_none: Whether to allow ``None`` as a valid value for the callback.</span>
+<span class="sd">        Defaults to ``False``.</span>
+<span class="sd">    :return: The validated callback function or ``None``.</span>
+<span class="sd">    :raises ~simplebench.exceptions.SimpleBenchTypeError: If the callback is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_deferred_core_imports</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">allow_none</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid callback: </span><span class="si">{</span><span class="n">callback</span><span class="si">}</span><span class="s1">. Must be a callable or None.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE</span><span class="p">)</span>
+    <span class="n">callback_signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+    <span class="n">validate_call_parameter</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">Case</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">)</span>
+    <span class="n">validate_call_parameter</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">)</span>
+    <span class="n">validate_call_parameter</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="s1">&#39;output_format&#39;</span><span class="p">)</span>
+    <span class="n">validate_call_parameter</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">callback_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s1">&#39;Invalid callback: </span><span class="si">{callback}</span><span class="s1">. Must accept exactly four keyword-only parameters &#39;</span>
+            <span class="s1">&#39;with the following names and types: case: Case, section: Section, &#39;</span>
+            <span class="s1">&#39;output_format: Format, output: Any&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS</span><span class="p">)</span>
+
+    <span class="n">resolved_hints</span> <span class="o">=</span> <span class="n">resolve_type_hints</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;return&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resolved_hints</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s1">&#39;Invalid call argument. Must have a return type annotation.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION</span><span class="p">)</span>
+    <span class="n">actual_type</span> <span class="o">=</span> <span class="n">resolved_hints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;return&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Normalize NoneType to None for comparison</span>
+    <span class="k">if</span> <span class="n">actual_type</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">actual_type</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">actual_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid call argument. Return type must be None, not &#39;</span><span class="si">{</span><span class="n">actual_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">ReporterCallback</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_report_renderer">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.validators.validators.html#simplebench.reporters.validators.validate_report_renderer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_report_renderer</span><span class="p">(</span><span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReportRenderer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate the report renderer method.</span>
+
+<span class="sd">    Verifies the renderer method has the correct signature.</span>
+<span class="sd">    This is functionally equivalent to the :class:`~.ReportRenderer` protocol.</span>
+
+<span class="sd">    A renderer function must accept the following three keyword-only parameters:</span>
+
+<span class="sd">    * ``case: Case``</span>
+<span class="sd">    * ``section: Section``</span>
+<span class="sd">    * ``options: ReporterOptions``</span>
+
+<span class="sd">    :param renderer: The renderer function to validate.</span>
+<span class="sd">    :return: The validated renderer function.</span>
+<span class="sd">    :raises ~simplebench.exceptions.SimpleBenchTypeError: If the renderer is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_deferred_core_imports</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">renderer</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid renderer: </span><span class="si">{</span><span class="n">renderer</span><span class="si">}</span><span class="s1">. Must be a callable.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORT_RENDERER_NOT_CALLABLE</span><span class="p">)</span>
+    <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">renderer</span><span class="p">)</span>
+    <span class="n">validate_call_parameter</span><span class="p">(</span><span class="n">renderer</span><span class="p">,</span> <span class="n">Case</span><span class="p">,</span> <span class="s1">&#39;case&#39;</span><span class="p">)</span>
+    <span class="n">validate_call_parameter</span><span class="p">(</span><span class="n">renderer</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">)</span>
+    <span class="n">validate_call_parameter</span><span class="p">(</span><span class="n">renderer</span><span class="p">,</span> <span class="n">ReporterOptions</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s1">&#39;Invalid renderer: </span><span class="si">{renderer}</span><span class="s1">. Must accept exactly three keyword-only &#39;</span>
+            <span class="s1">&#39;parameters with the following names and types: case: Case, section: Section, &#39;</span>
+            <span class="s1">&#39;options: ReporterOptions&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS</span><span class="p">)</span>
+
+    <span class="n">resolved_hints</span> <span class="o">=</span> <span class="n">resolve_type_hints</span><span class="p">(</span><span class="n">renderer</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;return&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resolved_hints</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s1">&#39;Invalid renderer return type: Must have a return type annotation.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORT_RENDERER_MISSING_RETURN_ANNOTATION</span><span class="p">)</span>
+    <span class="n">actual_return_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">resolved_hints</span><span class="p">[</span><span class="s1">&#39;return&#39;</span><span class="p">]</span>
+    <span class="n">allowed_return_types</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">type</span> <span class="o">|</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Table</span><span class="p">}</span>
+
+    <span class="c1"># just a simple type in the allowed set</span>
+    <span class="k">if</span> <span class="n">actual_return_type</span> <span class="ow">in</span> <span class="n">allowed_return_types</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">renderer</span>
+
+    <span class="c1"># A Union type, e.g., Union[str, bytes] or str | bytes</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actual_return_type</span><span class="p">,</span> <span class="n">UnionType</span><span class="p">):</span>
+        <span class="n">return_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">actual_return_type</span><span class="o">.</span><span class="n">__args__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">allowed_return_types</span><span class="o">.</span><span class="n">issuperset</span><span class="p">(</span><span class="n">return_types</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">renderer</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid renderer return type: Return type must only include types &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">allowed_return_types</span><span class="si">}</span><span class="s2">, &#39;actual return type of &#39;</span><span class="si">{</span><span class="n">actual_return_type</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="s2">&quot;includes other types&#39;.&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE</span><span class="p">)</span>
+
+    <span class="c1"># Something else entirely. Whatever it is, it is not valid.</span>
+    <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Unexpected renderer return type: Return type must be one of types &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">allowed_return_types</span><span class="si">}</span><span class="s2">&#39;, but found &#39;</span><span class="si">{</span><span class="n">actual_return_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+        <span class="n">tag</span><span class="o">=</span><span class="n">_ReportersValidatorsErrorTag</span><span class="o">.</span><span class="n">REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE</span><span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.validators.validators</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

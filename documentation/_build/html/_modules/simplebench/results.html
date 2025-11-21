@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.results &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.results</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.results</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Container for the results of a single benchmark test.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MappingProxyType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span><span class="p">,</span> <span class="n">_ResultsErrorTag</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span> <span class="n">DEFAULT_INTERVAL_UNIT</span><span class="p">,</span> <span class="n">DEFAULT_MEMORY_SCALE</span><span class="p">,</span> <span class="n">DEFAULT_MEMORY_UNIT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.iteration</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iteration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryUsage</span><span class="p">,</span> <span class="n">OperationsPerInterval</span><span class="p">,</span> <span class="n">OperationTimings</span><span class="p">,</span> <span class="n">PeakMemoryUsage</span><span class="p">,</span> <span class="n">Stats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_non_blank_string</span><span class="p">,</span> <span class="n">validate_positive_float</span><span class="p">,</span> <span class="n">validate_positive_int</span>
+
+
+<div class="viewcode-block" id="Results">
+<a class="viewcode-back" href="../../source/simplebench.results.html#simplebench.Results">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Results</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Container for the results of a single benchmark test.</span>
+
+<span class="sd">    The Results class holds all relevant information about a benchmark test&#39;s execution and its outcomes.</span>
+<span class="sd">    It is immutable after creation to ensure data integrity.</span>
+
+<span class="sd">    :ivar group: The reporting group to which the benchmark case belongs. (read only)</span>
+<span class="sd">    :vartype group: str</span>
+<span class="sd">    :ivar title: The name of the benchmark case. (read only)</span>
+<span class="sd">    :vartype title: str</span>
+<span class="sd">    :ivar description: A brief description of the benchmark case. (read only)</span>
+<span class="sd">    :vartype description: str</span>
+<span class="sd">    :ivar n: The n weighting the benchmark assigned to the iteration for purposes of Big O analysis. (read only)</span>
+<span class="sd">    :vartype n: int</span>
+<span class="sd">    :ivar rounds: The number of rounds in the benchmark case. (read only)</span>
+<span class="sd">    :vartype rounds: int</span>
+<span class="sd">    :ivar variation_marks: A dictionary of variation marks used to identify the</span>
+<span class="sd">        benchmark variation. (read only)</span>
+<span class="sd">    :vartype variation_marks: MappingProxyType[str, Any]</span>
+<span class="sd">    :ivar variation_cols: The columns to use for labelling kwarg variations in</span>
+<span class="sd">        the benchmark. (read only)</span>
+<span class="sd">    :vartype variation_cols: MappingProxyType[str, str]</span>
+<span class="sd">    :ivar interval_unit: The unit of measurement for the interval (e.g. &quot;ns&quot;). (read only)</span>
+<span class="sd">    :vartype interval_unit: str</span>
+<span class="sd">    :ivar interval_scale: The scale factor for the interval (e.g. 1e-9 for nanoseconds). (read only)</span>
+<span class="sd">    :vartype interval_scale: float</span>
+<span class="sd">    :ivar ops_per_interval_unit: The unit of measurement for operations per interval (e.g. &quot;ops/s&quot;). (read only)</span>
+<span class="sd">    :vartype ops_per_interval_unit: str</span>
+<span class="sd">    :ivar ops_per_interval_scale: The scale factor for operations per interval (e.g. 1.0 for ops/s). (read only)</span>
+<span class="sd">    :vartype ops_per_interval_scale: float</span>
+<span class="sd">    :ivar memory_unit: The unit of measurement for memory usage (e.g. &quot;bytes&quot;). (read only)</span>
+<span class="sd">    :vartype memory_unit: str</span>
+<span class="sd">    :ivar memory_scale: The scale factor for memory usage (e.g. 1.0 for bytes). (read only)</span>
+<span class="sd">    :vartype memory_scale: float</span>
+<span class="sd">    :ivar iterations: A tuple of Iteration objects representing each iteration of</span>
+<span class="sd">        the benchmark. (read only)</span>
+<span class="sd">    :vartype iterations: tuple[Iteration, ...]</span>
+<span class="sd">    :ivar ops_per_second: Statistics for operations per interval. (read only)</span>
+<span class="sd">    :vartype ops_per_second: OperationsPerInterval</span>
+<span class="sd">    :ivar per_round_timings: Statistics for per-round timings. (read only)</span>
+<span class="sd">    :vartype per_round_timings: OperationTimings</span>
+<span class="sd">    :ivar memory: Statistics for memory usage. (read only)</span>
+<span class="sd">    :vartype memory: MemoryUsage</span>
+<span class="sd">    :ivar peak_memory: Statistics for peak memory usage. (read only)</span>
+<span class="sd">    :vartype peak_memory: PeakMemoryUsage</span>
+<span class="sd">    :ivar total_elapsed: The total elapsed time for the benchmark. (read only)</span>
+<span class="sd">    :vartype total_elapsed: float</span>
+<span class="sd">    :ivar extra_info: Additional information about the benchmark run. This is a</span>
+<span class="sd">        read-only property that returns a mapping proxy to prevent external mutation. (read only)</span>
+<span class="sd">    :vartype extra_info: MappingProxyType[str, Any]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_group&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_title&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_description&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_n&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_rounds&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_variation_cols&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_variation_marks&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_interval_unit&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_interval_scale&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_ops_per_interval_unit&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_ops_per_interval_scale&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_memory&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_memory_unit&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_memory_scale&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_peak_memory&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_iterations&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_ops_per_second&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_per_round_timings&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_total_elapsed&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_extra_info&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_repr_cache&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-locals</span>
+                 <span class="o">*</span><span class="p">,</span>
+                 <span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">total_elapsed</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">iterations</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Iteration</span><span class="p">],</span>
+                 <span class="n">variation_cols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">variation_marks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">interval_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL_UNIT</span><span class="p">,</span>
+                 <span class="n">interval_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span>
+                 <span class="n">ops_per_interval_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL_UNIT</span><span class="p">,</span>
+                 <span class="n">ops_per_interval_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span>
+                 <span class="n">memory_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_MEMORY_UNIT</span><span class="p">,</span>
+                 <span class="n">memory_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_MEMORY_SCALE</span><span class="p">,</span>
+                 <span class="n">ops_per_second</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OperationsPerInterval</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">per_round_timings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OperationTimings</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">memory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MemoryUsage</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">peak_memory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PeakMemoryUsage</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">extra_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Results object.</span>
+
+<span class="sd">        :param group: The reporting group to which the benchmark case belongs.</span>
+<span class="sd">        :type group: str</span>
+<span class="sd">        :param title: The name of the benchmark case.</span>
+<span class="sd">        :type title: str</span>
+<span class="sd">        :param description: A brief description of the benchmark case.</span>
+<span class="sd">        :type description: str</span>
+<span class="sd">        :param n: The n weighting assigned to the iteration for purposes of Big O analysis.</span>
+<span class="sd">        :type n: int</span>
+<span class="sd">        :param rounds: The number of rounds in the benchmark case.</span>
+<span class="sd">        :type rounds: int</span>
+<span class="sd">        :param total_elapsed: The total elapsed time for the benchmark.</span>
+<span class="sd">        :type total_elapsed: float</span>
+<span class="sd">        :param iterations: The list of Iteration objects representing each iteration of the benchmark.</span>
+<span class="sd">        :type iterations: list[Iteration]</span>
+<span class="sd">        :param variation_cols: The columns to use for labelling kwarg variations</span>
+<span class="sd">            in the benchmark. Defaults to None, which results in an empty dictionary.</span>
+<span class="sd">        :type variation_cols: dict[str, str], optional</span>
+<span class="sd">        :param variation_marks: A dictionary of variation marks used to identify</span>
+<span class="sd">            the benchmark variation. Defaults to None, which results in an empty dictionary.</span>
+<span class="sd">        :type variation_marks: dict[str, Any], optional</span>
+<span class="sd">        :param interval_unit: The unit of measurement for the interval (e.g. &quot;ns&quot;).</span>
+<span class="sd">            Defaults to &quot;ns&quot;.</span>
+<span class="sd">        :type interval_unit: str, optional</span>
+<span class="sd">        :param interval_scale: The scale factor for the interval (e.g. 1e-9 for nanoseconds).</span>
+<span class="sd">            Defaults to 1e-9.</span>
+<span class="sd">        :type interval_scale: float, optional</span>
+<span class="sd">        :param ops_per_interval_unit: The unit of measurement for operations per interval (e.g. &quot;ops/s&quot;).</span>
+<span class="sd">            Defaults to &quot;ops/s&quot;.</span>
+<span class="sd">        :type ops_per_interval_unit: str, optional</span>
+<span class="sd">        :param ops_per_interval_scale: The scale factor for operations per interval (e.g. 1.0 for ops/s).</span>
+<span class="sd">            Defaults to 1.0.</span>
+<span class="sd">        :type ops_per_interval_scale: float, optional</span>
+<span class="sd">        :param memory_unit: The unit of measurement for memory usage (e.g. &quot;bytes&quot;).</span>
+<span class="sd">            Defaults to &quot;bytes&quot;.</span>
+<span class="sd">        :type memory_unit: str, optional</span>
+<span class="sd">        :param memory_scale: The scale factor for memory usage (e.g. 1.0 for bytes).</span>
+<span class="sd">            Defaults to 1.0.</span>
+<span class="sd">        :type memory_scale: float, optional</span>
+<span class="sd">        :param ops_per_second: The operations per second for the benchmark.</span>
+<span class="sd">            Defaults to a new OperationsPerInterval object initialized from the benchmark&#39;s iterations.</span>
+<span class="sd">        :type ops_per_second: Optional[OperationsPerInterval], optional</span>
+<span class="sd">        :param per_round_timings: The per-round timings for the benchmark.</span>
+<span class="sd">            Defaults to a new OperationTimings object initialized from the benchmark&#39;s iterations.</span>
+<span class="sd">        :type per_round_timings: Optional[OperationTimings], optional</span>
+<span class="sd">        :param memory: The memory usage for the benchmark.</span>
+<span class="sd">            Defaults to a new MemoryUsage object initialized from the benchmark&#39;s iterations.</span>
+<span class="sd">        :type memory: Optional[MemoryUsage], optional</span>
+<span class="sd">        :param peak_memory: The peak memory usage for the benchmark.</span>
+<span class="sd">            Defaults to a new PeakMemoryUsage object initialized from the benchmark&#39;s iterations.</span>
+<span class="sd">        :type peak_memory: Optional[PeakMemoryUsage], optional</span>
+<span class="sd">        :param extra_info: Any extra information to include in the benchmark results.</span>
+<span class="sd">            Defaults to {}.</span>
+<span class="sd">        :type extra_info: Optional[dict[str, Any]], optional</span>
+<span class="sd">        :raises SimpleBenchTypeError: If any of the arguments are of incorrect type.</span>
+<span class="sd">        :raises SimpleBenchValueError: If any of the arguments have invalid values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+            <span class="n">group</span><span class="p">,</span> <span class="s1">&#39;group&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">GROUP_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">GROUP_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+            <span class="n">title</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">TITLE_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">TITLE_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+            <span class="n">description</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">DESCRIPTION_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">DESCRIPTION_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">validate_positive_int</span><span class="p">(</span>
+            <span class="n">n</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">N_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">N_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">validate_positive_int</span><span class="p">(</span>
+            <span class="n">rounds</span><span class="p">,</span> <span class="s1">&#39;rounds&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">ROUNDS_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">ROUNDS_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iteration</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_iterations</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_marks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_variation_marks</span><span class="p">(</span><span class="n">variation_marks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interval_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+            <span class="n">interval_unit</span><span class="p">,</span> <span class="s1">&#39;interval_unit&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">INTERVAL_UNIT_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">INTERVAL_UNIT_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interval_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
+            <span class="n">interval_scale</span><span class="p">,</span> <span class="s1">&#39;interval_scale&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">INTERVAL_SCALE_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">INTERVAL_SCALE_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ops_per_interval_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+            <span class="n">ops_per_interval_unit</span><span class="p">,</span> <span class="s1">&#39;ops_per_interval_unit&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ops_per_interval_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
+            <span class="n">ops_per_interval_scale</span><span class="p">,</span> <span class="s1">&#39;ops_per_interval_scale&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+            <span class="n">memory_unit</span><span class="p">,</span> <span class="s1">&#39;memory_unit&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">MEMORY_UNIT_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">MEMORY_UNIT_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
+            <span class="n">memory_scale</span><span class="p">,</span> <span class="s1">&#39;memory_scale&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">MEMORY_SCALE_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">MEMORY_SCALE_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="p">:</span> <span class="n">MemoryUsage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_memory</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_peak_memory</span><span class="p">:</span> <span class="n">PeakMemoryUsage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_peak_memory</span><span class="p">(</span><span class="n">peak_memory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ops_per_second</span><span class="p">:</span> <span class="n">OperationsPerInterval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_ops_per_second</span><span class="p">(</span><span class="n">ops_per_second</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_per_round_timings</span><span class="p">:</span> <span class="n">OperationTimings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_per_round_timings</span><span class="p">(</span><span class="n">per_round_timings</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_elapsed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
+            <span class="n">total_elapsed</span><span class="p">,</span> <span class="s1">&#39;total_elapsed&#39;</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">TOTAL_ELAPSED_INVALID_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">TOTAL_ELAPSED_INVALID_ARG_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_extra_info</span><span class="p">(</span><span class="n">extra_info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_repr_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># cache for __repr__</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the variation_cols dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (dict[str, str]): The variation_cols dictionary to validate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, str]: A copy of the validated variation_cols dictionary.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            SimpleBenchTypeError: If the variation_cols is not a dictionary or if any key or</span>
+<span class="sd">                value is not a string.</span>
+<span class="sd">            SimpleBenchValueError: If any value is a blank string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid variation_cols: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">. Must be a dictionary.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">VARIATION_COLS_INVALID_ARG_TYPE</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid variation_cols key type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type str.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">VARIATION_COLS_INVALID_ARG_KEY_TYPE</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Invalid variation_cols key value: empty string. Keys must be non-empty strings.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">VARIATION_COLS_INVALID_ARG_KEY_VALUE</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid variation_cols value type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type str.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">VARIATION_COLS_INVALID_ARG_VALUE_TYPE</span>
+                <span class="p">)</span>
+        <span class="c1"># shallow copy to prevent external mutation</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Iteration</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iteration</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the iterations Sequence.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (Sequence[Iteration]): The iterations Sequence to validate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[Iteration, ...]: A copy of the validated iterations as a tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid iterations type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type list.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">ITERATIONS_INVALID_ARG_TYPE</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="n">Iteration</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid iteration element type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">iteration</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type Iteration.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">ITERATIONS_INVALID_ARG_IN_SEQUENCE</span>
+                <span class="p">)</span>
+        <span class="c1"># shallow copy to prevent external mutation of iterations sequence itself</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_variation_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the variation_marks dictionary.</span>
+
+<span class="sd">        Performs shallow copy of the dictionary to help mitigate external mutation. Because</span>
+<span class="sd">        the values can be of ANY type, including types that do not support deep copying, we do not</span>
+<span class="sd">        attempt to deep copy the values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (dict[str, Any]): The variation_marks dictionary to validate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, Any]: A shallow copy of the validated variation_marks dictionary.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            SimpleBenchTypeError: If the variation_marks is not a dictionary or if any key is not a string.</span>
+<span class="sd">            SimpleBenchValueError: If any key is a blank string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid variation_marks: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">. Must be a dictionary.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">VARIATION_MARKS_INVALID_ARG_TYPE</span>
+            <span class="p">)</span>
+
+        <span class="c1"># shallow copy to prevent external mutation</span>
+        <span class="c1"># not deep copying values because they can be of ANY type,</span>
+        <span class="c1"># including types that do not support deep copying</span>
+        <span class="n">return_value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid variation_marks key type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type str.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">VARIATION_MARKS_INVALID_ARG_KEY_TYPE</span>
+                <span class="p">)</span>
+            <span class="n">stripped_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">stripped_key</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Invalid variation_marks key value: blank string. Keys must be non-blank strings.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">VARIATION_MARKS_INVALID_ARG_KEY_VALUE</span>
+                <span class="p">)</span>
+            <span class="n">return_value</span><span class="p">[</span><span class="n">stripped_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">return_value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">PeakMemoryUsage</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PeakMemoryUsage</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the peak_memory object if passed, or create a default one if None.</span>
+
+<span class="sd">        The default PeakMemoryUsage object will have its iterations set to the same list</span>
+<span class="sd">        of Iteration objects as the Results object and initialized with the values from</span>
+<span class="sd">        `memory_unit` and `memory_scale` for unit and scale.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (PeakMemoryUsage | None): The peak_memory object to validate or None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PeakMemoryUsage: The validated or default PeakMemoryUsage object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            SimpleBenchTypeError: If the value is not None and not of type PeakMemoryUsage</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PeakMemoryUsage</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory_unit</span><span class="p">,</span>
+                                   <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory_scale</span><span class="p">,</span>
+                                   <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span><span class="p">,</span>
+                                   <span class="n">iterations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">PeakMemoryUsage</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid peak_memory type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type PeakMemoryUsage.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">PEAK_MEMORY_INVALID_ARG_TYPE</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">MemoryUsage</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MemoryUsage</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the memory object if passed, or create a default one if None.</span>
+
+<span class="sd">        The default MemoryUsage object will have its iterations set to the same list</span>
+<span class="sd">        of Iteration objects as the Results object and initialized with the values from</span>
+<span class="sd">        `memory_unit` and `memory_scale` for unit and scale.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (MemoryUsage | None): The peak_memory object to validate or None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            MemoryUsage: The validated or default MemoryUsage object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            SimpleBenchTypeError: If the value is not None and not of type MemoryUsage.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">MemoryUsage</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory_unit</span><span class="p">,</span>
+                               <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory_scale</span><span class="p">,</span>
+                               <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span><span class="p">,</span>
+                               <span class="n">iterations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MemoryUsage</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid memory type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type MemoryUsage.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">MEMORY_INVALID_ARG_TYPE</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_ops_per_second</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">OperationsPerInterval</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationsPerInterval</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the ops_per_second object if passed, or create a default one if None.</span>
+
+<span class="sd">        The default OperationsPerInterval object will have its iterations set to the same list</span>
+<span class="sd">        of Iteration objects as the Results object and initialized with the values from</span>
+<span class="sd">        `ops_per_interval_unit` and `ops_per_interval_scale` for unit and scale.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (OperationsPerInterval | None): The ops_per_second object to validate or None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            OperationsPerInterval: The validated or default OperationsPerInterval object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            SimpleBenchTypeError: If the value is not None and not of type OperationsPerInterval</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">OperationsPerInterval</span><span class="p">(</span>
+                <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ops_per_interval_unit</span><span class="p">,</span>
+                <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ops_per_interval_scale</span><span class="p">,</span>
+                <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span><span class="p">,</span>
+                <span class="n">iterations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">OperationsPerInterval</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid ops_per_second type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type OperationsPerInterval.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">OPS_PER_SECOND_INVALID_ARG_TYPE</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_per_round_timings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">OperationTimings</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationTimings</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the per_round_timings object if passed, or create a default one if None.</span>
+
+<span class="sd">        The default OperationTimings object will have its iterations set to the same list</span>
+<span class="sd">        of Iteration objects as the Results object and initialized with the values from</span>
+<span class="sd">        `interval_unit` and `interval_scale` for unit and scale.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (OperationTimings | None): The per_round_timings object to validate or None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            OperationTimings: The validated or default OperationTimings object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            SimpleBenchTypeError: If the value is not None and not of type OperationTimings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">OperationTimings</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_interval_unit</span><span class="p">,</span>
+                                    <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_interval_scale</span><span class="p">,</span>
+                                    <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span><span class="p">,</span>
+                                    <span class="n">iterations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">OperationTimings</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid per_round_timings type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type OperationTimings.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">PER_ROUND_TIMINGS_INVALID_ARG_TYPE</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_extra_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the extra_info object if passed, or create a default one if None.</span>
+
+<span class="sd">        Performs deep copy of the dictionary to help mitigate external mutation. This means</span>
+<span class="sd">        that the extra_info dict must be deepcopy-able.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (dict[str, Any] | None): The extra_info object to validate or None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, Any]: The validated or default extra_info dictionary.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            SimpleBenchTypeError: If the value is not None and not of type dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid extra_info type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type dict[str, Any].&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">EXTRA_INFO_INVALID_ARG_TYPE</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Perform deep copy to prevent external mutation</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The reporting group to which the benchmark case belongs.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the benchmark case.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A brief description of the benchmark case.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of rounds the benchmark ran per iteration.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of rounds the benchmark ran per iteration.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The columns to use for labelling kwarg variations in the benchmark.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A dictionary of variation marks used to identify the benchmark variation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variation_marks</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interval_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unit of measurement for the interval (e.g. &quot;ns&quot;).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_unit</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interval_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The scale factor for the interval (e.g. 1e-9 for nanoseconds).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_scale</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ops_per_interval_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unit of measurement for operations per interval (e.g. &quot;ops/s&quot;).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ops_per_interval_unit</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ops_per_interval_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The scale factor for operations per interval (e.g. 1.0 for ops/s).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ops_per_interval_scale</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iteration</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The tuple of Iteration objects representing each iteration of the benchmark.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ops_per_second</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationsPerInterval</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Statistics for operations per interval.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ops_per_second</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">per_round_timings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationTimings</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Statistics for per-round timings.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_per_round_timings</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">memory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MemoryUsage</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Statistics for memory usage.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">memory_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unit of measurement for memory usage (e.g. &quot;bytes&quot;).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_unit</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">memory_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The scale factor for memory usage (e.g. 1.0 for bytes).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_scale</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PeakMemoryUsage</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Statistics for peak memory usage.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_memory</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_elapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The total elapsed time for the benchmark.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_elapsed</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extra_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Additional information about the benchmark run.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Results.results_section">
+<a class="viewcode-back" href="../../source/simplebench.results.html#simplebench.Results.results_section">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">results_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the requested section of the benchmark results.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            section (Section): The section of the results to return. Must be Section.OPS or Section.TIMING.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Stats: The requested section of the benchmark results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid section type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type Section.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">RESULTS_SECTION_INVALID_SECTION_ARG_TYPE</span>
+            <span class="p">)</span>
+        <span class="k">match</span> <span class="n">section</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">OPS</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops_per_second</span>
+            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">TIMING</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">per_round_timings</span>
+            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">MEMORY</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span>
+            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">PEAK_MEMORY</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_memory</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>  <span class="c1"># should be unreachable due to the enum type check above, but mypy needs this</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid section: </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s1">. Must be Section.OPS, Section.TIMING, &#39;</span>
+                     <span class="s1">&#39;Section.MEMORY, or Section.PEAK_MEMORY.&#39;</span><span class="p">),</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Results.as_dict">
+<a class="viewcode-back" href="../../source/simplebench.results.html#simplebench.Results.as_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns the benchmark results and statistics as a JSON-serializable dictionary.&#39;&#39;&#39;</span>
+        <span class="n">results_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s1">&#39;group&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+            <span class="s1">&#39;variation_cols&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variation_cols</span><span class="p">),</span>  <span class="c1"># convert MappingProxyType to dict</span>
+            <span class="s1">&#39;interval_unit&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval_unit</span><span class="p">,</span>
+            <span class="s1">&#39;interval_scale&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval_scale</span><span class="p">,</span>
+            <span class="s1">&#39;ops_per_interval_unit&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops_per_interval_unit</span><span class="p">,</span>
+            <span class="s1">&#39;ops_per_interval_scale&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops_per_interval_scale</span><span class="p">,</span>
+            <span class="s1">&#39;memory_unit&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_unit</span><span class="p">,</span>
+            <span class="s1">&#39;memory_scale&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_scale</span><span class="p">,</span>
+            <span class="s1">&#39;total_elapsed&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_elapsed</span><span class="p">,</span>
+            <span class="s1">&#39;extra_info&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_info</span><span class="p">,</span>
+            <span class="s1">&#39;per_round_timings&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">per_round_timings</span><span class="o">.</span><span class="n">stats_summary</span><span class="o">.</span><span class="n">as_dict</span><span class="p">,</span>
+            <span class="s1">&#39;ops_per_second&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops_per_second</span><span class="o">.</span><span class="n">stats_summary</span><span class="o">.</span><span class="n">as_dict</span><span class="p">,</span>
+            <span class="s1">&#39;memory&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">stats_summary</span><span class="o">.</span><span class="n">as_dict</span><span class="p">,</span>
+            <span class="s1">&#39;peak_memory&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_memory</span><span class="o">.</span><span class="n">stats_summary</span><span class="o">.</span><span class="n">as_dict</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">full_data</span><span class="p">:</span>
+            <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;per_round_timings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">per_round_timings</span><span class="o">.</span><span class="n">as_dict</span>
+            <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;ops_per_second&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops_per_second</span><span class="o">.</span><span class="n">as_dict</span>
+            <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;memory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">as_dict</span>
+            <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;peak_memory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_memory</span><span class="o">.</span><span class="n">as_dict</span>
+        <span class="k">return</span> <span class="n">results_dict</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string representation of the Results object.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repr_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_repr_cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_repr</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repr_cache</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the string representation of the Results object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(&#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;group=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;title=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;description=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;n=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;variation_cols=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">variation_cols</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;variation_marks=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">variation_marks</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;interval_unit=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval_unit</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;interval_scale=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval_scale</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;ops_per_interval_unit=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ops_per_interval_unit</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;ops_per_interval_scale=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ops_per_interval_scale</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;memory_unit=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">memory_unit</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;memory_scale=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">memory_scale</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;total_elapsed=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_elapsed</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;iterations=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">iterations</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;ops_per_second=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ops_per_second</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;per_round_timings=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">per_round_timings</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;memory=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;peak_memory=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">peak_memory</span><span class="si">!r}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;extra_info=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">extra_info</span><span class="si">!r}</span><span class="s1">)&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.results</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

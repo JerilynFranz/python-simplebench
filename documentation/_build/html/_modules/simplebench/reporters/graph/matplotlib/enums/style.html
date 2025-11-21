@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.reporters.graph.matplotlib.enums.style &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../../../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.graph.matplotlib.enums.style</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.reporters.graph.matplotlib.enums.style</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Enums used in the :mod:`simplebench.reporters.graph` package.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">enum_docstrings</span>
+
+
+<div class="viewcode-block" id="Style">
+<a class="viewcode-back" href="../../../../../../source/simplebench.reporters.graph.matplotlib.enums.style.html#simplebench.Style">[docs]</a>
+<span class="nd">@enum_docstrings</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Style</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumeration of graph styles.</span>
+
+<span class="sd">    .. note:: The styles correspond to those available in Matplotlib 3.10.6</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BMH</span> <span class="o">=</span> <span class="s2">&quot;bmh&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Bayesian Methods for Hackers style for graphs.</span>
+
+<span class="sd">    See `Bayesian Methods for Hackers</span>
+<span class="sd">    &lt;https://github.com/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CLASSIC</span> <span class="o">=</span> <span class="s2">&quot;classic&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Light background style for graphs.</span>
+
+<span class="sd">    Classic matplotlib plotting style</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DARK_BACKGROUND</span> <span class="o">=</span> <span class="s2">&quot;dark_background&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dark background style for graphs.</span>
+
+<span class="sd">    Set black background default line colors to white.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FIVETHIRTYEIGHT</span> <span class="o">=</span> <span class="s2">&quot;fivethirtyeight&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;FiveThirtyEight style for graphs.</span>
+
+<span class="sd">    Replicated styles from FiveThirtyEight.com</span>
+
+<span class="sd">    See `dataorigami.net &lt;https://www.dataorigami.net/blogs/fivethirtyeight-mpl&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">GGPLOT</span> <span class="o">=</span> <span class="s2">&quot;ggplot&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ggplot style for graphs.</span>
+
+<span class="sd">    Replicates the style of R&#39;s ggplot library.</span>
+
+<span class="sd">    See `everyhue.me &lt;https://everyhue.me/posts/sane-color-scheme-for-matplotlib/&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">GRAYSCALE</span> <span class="o">=</span> <span class="s2">&quot;grayscale&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Grayscale style for graphs.</span>
+
+<span class="sd">    Set all colors to grayscale</span>
+
+<span class="sd">    .. note:: strings of float values are interpreted by matplotlib as gray values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PETTROF10</span> <span class="o">=</span> <span class="s2">&quot;petroff10&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Petroff10 style for graphs.</span>
+
+<span class="sd">    Color cycle survey palette from Petroff (2021):</span>
+
+<span class="sd">    See `arxiv.org &lt;https://arxiv.org/abs/2107.02270&gt;`_ and</span>
+<span class="sd">    `github.com &lt;https://github.com/mpetroff/accessible-color-cycles&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Seaborn style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_BRIGHT</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-bright&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn bright style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_COLORBLIND</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-colorblind&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn colorblind style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_DARK</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-dark&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn dark style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_DARK_PALETTE</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-dark-palette&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn dark palette style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_DARKGRID</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-darkgrid&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn darkgrid style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_DEEP</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-deep&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn deep style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_MUTED</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-muted&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn muted style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_NOTEBOOK</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-notebook&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn notebook style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_PAPER</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-paper&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn paper style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_PASTEL</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-pastel&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn pastel style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_POSTER</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-poster&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn poster style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_TALK</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-talk&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn talk style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_TICKS</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-ticks&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn ticks style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_WHITE</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-white&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn white style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SEABORN_V0_8_WHITEGRID</span> <span class="o">=</span> <span class="s2">&quot;seaborn-v0_8-whitegrid&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Seaborn whitegrid style for graphs.&quot;&quot;&quot;</span>
+    <span class="n">SOLARIZE_LIGHT2</span> <span class="o">=</span> <span class="s2">&quot;Solarize_Light2&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Solarized light style for graphs.</span>
+
+<span class="sd">    Solarized color palette taken from `ethanschoonover.com &lt;https://ethanschoonover.com/solarized/&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TABLEAU_COLORBLIND10</span> <span class="o">=</span> <span class="s2">&quot;tableau-colorblind10&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tableau colorblind10 style for graphs.&quot;&quot;&quot;</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.graph.matplotlib.enums.style</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

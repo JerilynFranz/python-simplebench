@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.runners &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.runners</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.runners</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Test runners for benchmarking.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tracemalloc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span> <span class="n">DEFAULT_TIMER</span><span class="p">,</span> <span class="n">MIN_MEASURED_ITERATIONS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchImportError</span><span class="p">,</span> <span class="n">_RunnersErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.iteration</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iteration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressTracker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_positive_int</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_timers_module</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ModuleType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a module to hold dynamically created timer functions.</span>
+
+<span class="sd">    The module is created using :mod:`importlib` and added to :data:`sys.modules`</span>
+<span class="sd">    under the name &#39;simplebench._timers&#39;. If the module already exists</span>
+<span class="sd">    in :data:`sys.modules`, it is returned as is.</span>
+
+<span class="sd">    :return: The created or existing timers module.</span>
+<span class="sd">    :rtype: ModuleType</span>
+<span class="sd">    :raises SimpleBenchImportError: If the module could not be created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_loader</span><span class="p">(</span><span class="s1">&#39;simplebench._timers&#39;</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchImportError</span><span class="p">(</span>
+            <span class="s1">&#39;Could not create spec for simplebench._timers module&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;simplebench._timers&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;simplebench._timers&#39;</span><span class="p">]</span>
+    <span class="n">timers_module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;simplebench._timers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timers_module</span>
+    <span class="k">return</span> <span class="n">timers_module</span>
+
+
+<span class="n">_timers_module</span> <span class="o">=</span> <span class="n">_create_timers_module</span><span class="p">()</span>  <span class="c1"># Ensure the timers module exists</span>
+<span class="sd">&quot;&quot;&quot;A dynamically created module to hold generated timer functions.&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mock_action</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pylint: disable=unused-argument</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A mock action that does nothing.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="SimpleRunner">
+<a class="viewcode-back" href="../../source/simplebench.runners.html#simplebench.runners.SimpleRunner">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleRunner</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to run benchmarks for various actions.</span>
+
+<span class="sd">    :param case: The benchmark case to run.</span>
+<span class="sd">    :type case: Case</span>
+<span class="sd">    :param kwargs: The keyword arguments for the benchmark case.</span>
+<span class="sd">    :type kwargs: dict[str, Any]</span>
+<span class="sd">    :param session: The session in which the benchmark is run.</span>
+<span class="sd">    :type session: Session, optional</span>
+<span class="sd">    :param runner: The function to use to run the benchmark. If None, uses :meth:`default_runner`</span>
+<span class="sd">        from :class:`SimpleRunner`.</span>
+<span class="sd">    :type runner: Callable[..., Any], optional</span>
+
+<span class="sd">    :ivar case: The benchmark case to run.</span>
+<span class="sd">    :vartype case: Case</span>
+<span class="sd">    :ivar kwargs: The keyword arguments for the benchmark case.</span>
+<span class="sd">    :vartype kwargs: dict[str, Any]</span>
+<span class="sd">    :ivar session: The session in which the benchmark is run.</span>
+<span class="sd">    :vartype session: Session, optional</span>
+<span class="sd">    :ivar run: The function to use to run the benchmark.</span>
+<span class="sd">    :vartype run: Callable[..., Any]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="o">*</span><span class="p">,</span>
+                 <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+                 <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+                 <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">runner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="p">:</span> <span class="n">Case</span> <span class="o">=</span> <span class="n">case</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The benchmark :class:`~.case.Case` to run.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The keyword arguments for the benchmark function.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">runner</span> <span class="k">if</span> <span class="n">runner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_runner</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Benchmark runner function. Defaults to :meth:`SimpleRunner.default_runner`.</span>
+
+<span class="sd">        The runner function must accept the following parameters:</span>
+<span class="sd">            n (int): The number of test rounds that will be run by the action on each iteration.</span>
+<span class="sd">            action (Callable[..., Any]): The function to benchmark.</span>
+<span class="sd">            setup (Optional[Callable[..., Any]]): A setup function to run before each iteration.</span>
+<span class="sd">            teardown (Optional[Callable[..., Any]]): A teardown function to run after each iteration.</span>
+<span class="sd">            kwargs (Optional[dict[str, Any]]): Keyword arguments to pass to the function being benchmarked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">session</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The session in which the benchmark is run.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_timer_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a timer function for the benchmark.</span>
+
+<span class="sd">        The generated function will call the action `rounds` times and return the average time taken.</span>
+<span class="sd">        The function is generated as a string and then compiled to avoid the overhead of</span>
+<span class="sd">        a loop in Python during the actual timing benchmark.</span>
+
+<span class="sd">        The generated function will have the following signature:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            def _timer_function_{rounds}(</span>
+<span class="sd">                    timer: Callable[[], float | int],</span>
+<span class="sd">                    action: Callable[..., Any],</span>
+<span class="sd">                    kwargs: dict[str, Any]) -&gt; float:</span>
+
+<span class="sd">        It is created in the module ``simplebench._timers`` to avoid polluting the global namespace.</span>
+
+<span class="sd">        By creating a new dedicated function for each needed rounds value, we avoid the overhead</span>
+<span class="sd">        of a loop in Python during the actual timing benchmark. This is particularly important</span>
+<span class="sd">        for micro-benchmarks where the action being benchmarked is very fast.</span>
+
+<span class="sd">        :param rounds: The number of test rounds that will be run by the action on each iteration. Must be &gt;= 1.</span>
+<span class="sd">        :type rounds: int</span>
+<span class="sd">        :return: A function that returns the elapsed time for the benchmark as a float.</span>
+<span class="sd">        :rtype: Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rounds</span> <span class="o">=</span> <span class="n">validate_positive_int</span><span class="p">(</span>
+            <span class="n">rounds</span><span class="p">,</span> <span class="s1">&#39;rounds&#39;</span><span class="p">,</span>
+            <span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE</span><span class="p">,</span>
+            <span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE</span><span class="p">)</span>
+
+        <span class="c1"># If the timer function for the specified rounds does not exist, create it.</span>
+        <span class="c1"># We create a new function for each rounds value to avoid the overhead of a loop</span>
+        <span class="c1"># in the timing function.</span>
+        <span class="c1"># The function is created as a string and then compiled to avoid the overhead</span>
+        <span class="c1"># of a loop in Python during the actual timing benchmark.</span>
+        <span class="n">timer_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_simplerunner_timer_function_</span><span class="si">{</span><span class="n">rounds</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_timers_module</span><span class="p">,</span> <span class="n">timer_name</span><span class="p">):</span>
+            <span class="n">time_function_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;def </span><span class="si">{</span><span class="n">timer_name</span><span class="si">}</span><span class="s1">(timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -&gt; float:&#39;</span><span class="p">)</span>  <span class="c1"># pylint: disable=line-too-long  # noqa: E501</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    start = timer()&#39;</span><span class="p">)</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;    action(**kwargs)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rounds</span><span class="p">)</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    end = timer()&#39;</span><span class="p">)</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    return float((end - start) / </span><span class="si">{</span><span class="n">rounds</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+            <span class="n">time_function_code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">time_function_lines</span><span class="p">)</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">time_function_code</span><span class="p">,</span> <span class="n">_timers_module</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>  <span class="c1"># pylint: disable=exec-used</span>
+
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_timers_module</span><span class="p">,</span> <span class="n">timer_name</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the variation marks for the benchmark.</span>
+
+<span class="sd">        The variation marks are defined by the :attr:`~.case.Case.variation_cols`</span>
+<span class="sd">        and the current keyworded arguments to the function being benchmarked.</span>
+
+<span class="sd">        The variation marks identify the specific variations being tested in a run</span>
+<span class="sd">        from the kwargs values.</span>
+
+<span class="sd">        :return: The variation marks for the benchmark.</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+<div class="viewcode-block" id="SimpleRunner.default_runner">
+<a class="viewcode-back" href="../../source/simplebench.runners.html#simplebench.runners.SimpleRunner.default_runner">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_runner</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="o">*</span><span class="p">,</span>
+            <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">action</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+            <span class="n">setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">teardown</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a generic benchmark using the specified action and test data for rounds.</span>
+
+<span class="sd">        This function will execute the benchmark for the given action and</span>
+<span class="sd">        collect the results. It is designed for macro-benchmarks (i.e., benchmarks</span>
+<span class="sd">        that measure the performance of a function over multiple iterations) where</span>
+<span class="sd">        the overhead of the function call is not significant compared with the work</span>
+<span class="sd">        done inside the function.</span>
+
+<span class="sd">        Micro-benchmarks (i.e., benchmarks that measure the performance of a fast function</span>
+<span class="sd">        over a small number of iterations) require more complex handling to account</span>
+<span class="sd">        for the overhead of the function call.</span>
+
+<span class="sd">        :param n: The O(n) &#39;n&#39; weight of the benchmark. This is used to calculate</span>
+<span class="sd">            a weight for the purpose of O(n) analysis. For example, if the action being benchmarked</span>
+<span class="sd">            is a function that sorts a list of length n, then n should be the</span>
+<span class="sd">            length of the list. If the action being benchmarked is a function</span>
+<span class="sd">            that performs a constant-time operation, then n should be 1.</span>
+<span class="sd">        :type n: int</span>
+<span class="sd">        :param action: The action to benchmark.</span>
+<span class="sd">        :type action: Callable[..., Any]</span>
+<span class="sd">        :param setup: A setup function to run before each iteration.</span>
+<span class="sd">        :type setup: Callable[..., Any], optional</span>
+<span class="sd">        :param teardown: A teardown function to run after each iteration.</span>
+<span class="sd">        :type teardown: Callable[..., Any], optional</span>
+<span class="sd">        :param kwargs: Keyword arguments to pass to the action.</span>
+<span class="sd">        :type kwargs: dict[str, Any], optional</span>
+<span class="sd">        :return: The results of the benchmark.</span>
+<span class="sd">        :rtype: Results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">group</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">title</span>
+        <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">description</span>
+        <span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">min_time</span>
+        <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">max_time</span>
+        <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">iterations</span>
+
+        <span class="c1"># We force a garbage collection before measuring memory usage to reduce noise</span>
+        <span class="c1"># from uncollected garbage. It is run separately from the timing to avoid</span>
+        <span class="c1"># it affecting the timing measurements.</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="n">tracemalloc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">start_memory_current</span><span class="p">,</span> <span class="n">start_memory_peak</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()</span>
+        <span class="n">_mock_action</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">end_memory_current</span><span class="p">,</span> <span class="n">end_memory_peak</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()</span>
+        <span class="n">tracemalloc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="n">memory_overhead</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">end_memory_current</span> <span class="o">-</span> <span class="n">start_memory_current</span>
+        <span class="n">peak_memory_overhead</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">end_memory_peak</span> <span class="o">-</span> <span class="n">start_memory_peak</span>
+
+        <span class="c1"># warmup iterations are not included in the final stats</span>
+        <span class="c1"># We start the count from -warmup_iterations to ensure we do the correct number of warmup</span>
+        <span class="c1"># iterations even if warmup_iterations is 0.</span>
+        <span class="n">iteration_pass</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">warmup_iterations</span>
+        <span class="n">time_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">DEFAULT_TIMER</span><span class="p">())</span>
+        <span class="n">max_stop_at</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_time</span> <span class="o">/</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">)</span> <span class="o">+</span> <span class="n">time_start</span>
+        <span class="n">min_stop_at</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">min_time</span> <span class="o">/</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">)</span> <span class="o">+</span> <span class="n">time_start</span>
+        <span class="n">wall_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">DEFAULT_TIMER</span><span class="p">())</span>
+        <span class="n">iterations_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">MIN_MEASURED_ITERATIONS</span><span class="p">,</span> <span class="n">iterations</span><span class="p">)</span>
+
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+        <span class="n">progress_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span>
+        <span class="n">progress_tracker</span> <span class="o">=</span> <span class="n">ProgressTracker</span><span class="p">(</span>
+            <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;SimpleRunner:case_runner&#39;</span><span class="p">,</span>
+            <span class="n">progress_max</span><span class="o">=</span><span class="n">progress_max</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Benchmarking </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s1"> (iteration </span><span class="si">{</span><span class="mi">0</span><span class="si">:</span><span class="s1">&lt;6d</span><span class="si">}</span><span class="s1">; time </span><span class="si">{</span><span class="mf">0.00</span><span class="si">:</span><span class="s1">&lt;3.2f</span><span class="si">}</span><span class="s1">s)&#39;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span><span class="p">)</span>
+
+        <span class="n">timer_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span><span class="p">)</span>
+        <span class="n">total_elapsed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">iterations_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Iteration</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">kiloround_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="p">((</span><span class="n">iteration_pass</span> <span class="o">&lt;=</span> <span class="n">iterations_min</span> <span class="ow">or</span> <span class="n">wall_time</span> <span class="o">&lt;</span> <span class="n">min_stop_at</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">wall_time</span> <span class="o">&lt;</span> <span class="n">max_stop_at</span><span class="p">):</span>
+            <span class="n">iteration_pass</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># Time the action</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+                <span class="c1"># for less than 1000 rounds, we can use the generated timer function directly</span>
+                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
+                    <span class="n">setup</span><span class="p">()</span>
+                <span class="n">elapsed</span> <span class="o">=</span> <span class="n">timer_function</span><span class="p">(</span><span class="n">DEFAULT_TIMER</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
+                    <span class="n">teardown</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a &quot;kiloround&quot;)</span>
+                <span class="c1"># to reduce the footprint of the generated timer functions and avoid hitting</span>
+                <span class="c1"># Python&#39;s function size limits. Breaking into chunks of 1000 also</span>
+                <span class="c1"># reduces the overhead of the loop in the timing function to a negligible level.</span>
+                <span class="n">elapsed</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">kiloround_chunks</span><span class="p">,</span> <span class="n">remaining_rounds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
+                    <span class="n">setup</span><span class="p">()</span>
+                <span class="k">while</span> <span class="n">kiloround_chunks</span><span class="p">:</span>
+                    <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">DEFAULT_TIMER</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">kiloround_chunks</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">remaining_rounds</span><span class="p">:</span>
+                    <span class="n">partial_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">remaining_rounds</span><span class="p">)</span>
+                    <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">DEFAULT_TIMER</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
+                    <span class="n">teardown</span><span class="p">()</span>
+
+            <span class="c1"># Measure memory usage of the action</span>
+            <span class="c1"># We force a garbage collection before measuring memory usage to reduce noise</span>
+            <span class="c1"># from uncollected garbage. It is run separately from the timing to avoid</span>
+            <span class="c1"># it affecting the timing measurements.</span>
+            <span class="c1">#</span>
+            <span class="c1"># We use the tracemalloc module to measure memory allocations during the action.</span>
+            <span class="c1"># We start and stop tracemalloc around the action to capture only the memory</span>
+            <span class="c1"># allocations made during the action.</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
+                <span class="n">setup</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">iteration_pass</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>  <span class="c1"># Only collect garbage before the first measured iteration</span>
+            <span class="n">tracemalloc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">tracemalloc</span><span class="o">.</span><span class="n">reset_peak</span><span class="p">()</span>
+            <span class="n">start_memory_current</span><span class="p">,</span> <span class="n">start_memory_peak</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()</span>
+            <span class="n">action</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">end_memory_current</span><span class="p">,</span> <span class="n">end_memory_peak</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()</span>
+            <span class="n">tracemalloc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
+                <span class="n">teardown</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">iteration_pass</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Warmup iterations not included in final stats</span>
+                <span class="k">continue</span>
+
+            <span class="n">memory</span> <span class="o">=</span> <span class="n">end_memory_current</span> <span class="o">-</span> <span class="n">start_memory_current</span> <span class="o">-</span> <span class="n">memory_overhead</span>
+            <span class="n">peak_memory</span> <span class="o">=</span> <span class="n">end_memory_peak</span> <span class="o">-</span> <span class="n">start_memory_peak</span> <span class="o">-</span> <span class="n">peak_memory_overhead</span>
+            <span class="n">iteration_result</span> <span class="o">=</span> <span class="n">Iteration</span><span class="p">(</span>
+                <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span> <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span> <span class="n">peak_memory</span><span class="o">=</span><span class="n">peak_memory</span><span class="p">)</span>
+            <span class="n">iterations_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iteration_result</span><span class="p">)</span>
+            <span class="n">total_elapsed</span> <span class="o">+=</span> <span class="n">iteration_result</span><span class="o">.</span><span class="n">elapsed</span>
+            <span class="n">wall_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">DEFAULT_TIMER</span><span class="p">())</span>
+
+            <span class="c1"># Update progress display if showing progress</span>
+            <span class="n">iteration_completion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">progress_max</span> <span class="o">*</span> <span class="n">iteration_pass</span> <span class="o">/</span> <span class="n">iterations_min</span>
+            <span class="n">wall_time_elapsed_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="n">wall_time</span> <span class="o">-</span> <span class="n">time_start</span><span class="p">)</span> <span class="o">*</span> <span class="n">DEFAULT_INTERVAL_SCALE</span>
+            <span class="n">time_completion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">progress_max</span> <span class="o">*</span> <span class="p">(</span><span class="n">wall_time</span> <span class="o">-</span> <span class="n">time_start</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">min_stop_at</span> <span class="o">-</span> <span class="n">time_start</span><span class="p">)</span>
+            <span class="n">progress_current</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">iteration_completion</span><span class="p">,</span> <span class="n">time_completion</span><span class="p">))</span>
+            <span class="n">progress_tracker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">completed</span><span class="o">=</span><span class="n">progress_current</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Benchmarking </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s1"> (iteration </span><span class="si">{</span><span class="n">iteration_pass</span><span class="si">:</span><span class="s1">6d</span><span class="si">}</span><span class="s1">; &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;time </span><span class="si">{</span><span class="n">wall_time_elapsed_seconds</span><span class="si">:</span><span class="s1">&lt;3.2f</span><span class="si">}</span><span class="s1">s)&#39;</span><span class="p">))</span>
+
+        <span class="n">benchmark_results</span> <span class="o">=</span> <span class="n">Results</span><span class="p">(</span>
+            <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+            <span class="n">variation_marks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">variation_marks</span><span class="p">,</span>
+            <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+            <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span>
+            <span class="n">iterations</span><span class="o">=</span><span class="n">iterations_list</span><span class="p">,</span>
+            <span class="n">total_elapsed</span><span class="o">=</span><span class="n">total_elapsed</span><span class="p">,</span>
+            <span class="n">extra_info</span><span class="o">=</span><span class="p">{})</span>
+        <span class="n">progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">benchmark_results</span></div>
+</div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.runners</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

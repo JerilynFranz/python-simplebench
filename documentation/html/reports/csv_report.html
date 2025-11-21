@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CSV Report &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CSV Report</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="csv-report">
+<h1>CSV Report<a class="headerlink" href="#csv-report" title="Link to this heading">🔗</a></h1>
+<p id="id1">CSV (Comma-Separated Values) reports are designed for machine readability and
+are ideal for importing benchmark results into spreadsheet applications like
+Microsoft Excel or Google Sheets, or for analysis with data processing tools
+like Pandas.</p>
+<p>To generate a CSV report, you can use an option like <cite>–csv.ops</cite> when running
+your benchmarks. By default, this will save a CSV file to the output directory
+(which defaults to <code class="docutils literal notranslate"><span class="pre">.benchmarks</span></code>).</p>
+<p>Here is an example of how to run a benchmark script and generate a CSV report:</p>
+<div class="literal-block-wrapper docutils container" id="run-benchmark-csv">
+<div class="code-block-caption"><span class="caption-text">Running a benchmark with a CSV report</span><a class="headerlink" href="#run-benchmark-csv" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--csv.ops
+</pre></div>
+</div>
+</div>
+<p>This command executes the benchmarks in <cite>my_benchmark_script.py</cite> and saves a
+CSV file containing the operations-per-second results. A basic CSV output file
+will look something like this:</p>
+<div class="literal-block-wrapper docutils container" id="sample-csv-output">
+<div class="code-block-caption"><span class="caption-text">Sample CSV Output</span><a class="headerlink" href="#sample-csv-output" title="Link to this code">🔗</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>  # title: addition_benchmark
+  # description: A simple addition benchmark of Python&#39;s built-in sum function.
+  # unit: Ops/s
+  N,Iterations,Rounds,Elapsed Seconds,mean (Ops/s),median (Ops/s),min (Ops/s),max (Ops/s),5th (Ops/s),95th (Ops/s),std dev (Ops/s),rsd (%)
+  1,42761,1,0.29235192800000004,148000.0,150000.0,962.0,154000.0,144000.0,151000.0,8220.0,5.55
+</pre></div>
+</div>
+</div>
+<p>Which corresponds to the following table:</p>
+<table class="docutils align-center">
+<thead>
+<tr class="row-odd"><th class="head"><p>N</p></th>
+<th class="head"><p>Iterations</p></th>
+<th class="head"><p>Rounds</p></th>
+<th class="head"><p>Elapsed Seconds</p></th>
+<th class="head"><p>mean (Ops/s)</p></th>
+<th class="head"><p>median (Ops/s)</p></th>
+<th class="head"><p>min (Ops/s)</p></th>
+<th class="head"><p>max (Ops/s)</p></th>
+<th class="head"><p>5th (Ops/s)</p></th>
+<th class="head"><p>95th (Ops/s)</p></th>
+<th class="head"><p>std dev (Ops/s)</p></th>
+<th class="head"><p>rsd (%)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>42761</p></td>
+<td><p>1</p></td>
+<td><p>0.29235192800000004</p></td>
+<td><p>148000.0</p></td>
+<td><p>150000.0</p></td>
+<td><p>962.0</p></td>
+<td><p>154000.0</p></td>
+<td><p>144000.0</p></td>
+<td><p>151000.0</p></td>
+<td><p>8220.0</p></td>
+<td><p>5.55</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Interpreting Outliers in Benchmark Results</strong></p>
+<p>In the sample output, you may notice that the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">(Ops/s)</span></code> value is an
+extreme outlier. This is a realistic reflection of real-world benchmarking,
+where system events like garbage collection can cause individual iterations
+to be significantly slower. This is why SimpleBench provides a full suite of
+statistics like the <strong>median</strong> (which is resistant to outliers) and <strong>RSD%</strong>
+(which quantifies inconsistency) to help you get a complete and honest
+picture of your code’s performance.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To avoid “false precision”, statistical results are output with three significant digits.
+Due to the inherent variability of performance measurement, any further digits are
+typically meaningless statistical noise.</p>
+<p>This does not apply to the raw timing measurements (e.g., Elapsed Seconds), which are
+reported in full precision for accuracy.</p>
+<p>This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
+measurement in the real world.</p>
+</div>
+<section id="report-variations-and-destinations">
+<h2>Report Variations and Destinations<a class="headerlink" href="#report-variations-and-destinations" title="Link to this heading">🔗</a></h2>
+<p>SimpleBench provides several variations of the CSV report:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--csv</span></code>: Generates a CSV file with all result types (ops, timing, and memory).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--csv.ops</span></code>: Generates a CSV file only for operations-per-second results.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--csv.timing</span></code>: Generates a CSV file only for timing results.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--csv.memory</span></code>: Generates a CSV file only for memory usage results.</p></li>
+</ul>
+<p>By default, CSV reports are saved to the <code class="docutils literal notranslate"><span class="pre">filesystem</span></code>. You can send a report to
+other destinations, such as the console, by appending the destination name. For
+example, to print the CSV content directly to the terminal:</p>
+<div class="literal-block-wrapper docutils container" id="csv-report-console">
+<div class="code-block-caption"><span class="caption-text">Printing a CSV report to the console</span><a class="headerlink" href="#csv-report-console" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--csv.ops<span class="w"> </span>console
+</pre></div>
+</div>
+</div>
+<p>The generated files are named based on the benchmarked function name and report type.
+To prevent collisions between identical benchmark names, a numeric prefix is added to
+ensure uniqueness.</p>
+<p>Examples</p>
+<div class="literal-block-wrapper docutils container" id="csv-report-filenames">
+<div class="code-block-caption"><span class="caption-text">Output file names for different CSV report types</span><a class="headerlink" href="#csv-report-filenames" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>001_addition_benchmark-memory_usage.csv
+<span class="w">  </span>001_addition_benchmark-peak_memory_usage.csv
+<span class="w">  </span>001_addition_benchmark-operations_per_second.csv
+<span class="w">  </span>001_addition_benchmark-timing.csv
+</pre></div>
+</div>
+</div>
+</section>
+<section id="advanced-features">
+<h2>Advanced Features<a class="headerlink" href="#advanced-features" title="Link to this heading">🔗</a></h2>
+<section id="parameterized-benchmarks">
+<h3>Parameterized Benchmarks<a class="headerlink" href="#parameterized-benchmarks" title="Link to this heading">🔗</a></h3>
+<p>When running parameterized benchmarks, the CSV report includes additional
+columns for each parameter variation. This makes it easy to sort, filter, and
+analyze how different input parameters affect performance.</p>
+<p>For more information on creating parameterized benchmarks, see the
+<span class="xref std std-doc">../advanced_usage</span> documentation.</p>
+</section>
+<section id="custom-complexity-weightings">
+<h3>Custom Complexity Weightings<a class="headerlink" href="#custom-complexity-weightings" title="Link to this heading">🔗</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">N</span></code> column in the CSV report represents the complexity weighting of the
+benchmark. This is particularly useful for analyzing the scalability of your
+code with different input sizes.</p>
+<p>For more details on how to use this feature, see the <span class="xref std std-doc">../advanced_usage</span>
+documentation.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">CSV Report</a><ul>
+<li><a class="reference internal" href="#report-variations-and-destinations">Report Variations and Destinations</a></li>
+<li><a class="reference internal" href="#advanced-features">Advanced Features</a><ul>
+<li><a class="reference internal" href="#parameterized-benchmarks">Parameterized Benchmarks</a></li>
+<li><a class="reference internal" href="#custom-complexity-weightings">Custom Complexity Weightings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reports/csv_report.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">CSV Report</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>
