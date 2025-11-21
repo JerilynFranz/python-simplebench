@@ -13,10 +13,10 @@ HTML_BUILD_DIR = ../docs
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile clean
+.PHONY: help Makefile clean html
 
 html:
-	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(HTML_BUILD_DIR)" $(SPHINXOPTS)
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(HTML_BUILD_DIR)" $(SPHINXOPTS)
 
 clean:
 	-rm -rf "$(HTML_BUILD_DIR)"
