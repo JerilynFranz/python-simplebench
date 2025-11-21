@@ -43,8 +43,27 @@
 <h1>Reports<a class="headerlink" href="#reports" title="Link to this heading">🔗</a></h1>
 <div class="toctree-wrapper compound" id="simplebench-reports">
 </div>
+<nav class="contents local" id="reports-table-of-contents">
+<p class="topic-title">Reports Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#rich-table-report" id="id11">Rich Table Report</a></p>
+<ul>
+<li><p><a class="reference internal" href="#report-variations-and-destinations" id="id12">Report Variations and Destinations</a></p></li>
+<li><p><a class="reference internal" href="#advanced-features" id="id13">Advanced Features</a></p></li>
+<li><p><a class="reference internal" href="#field-definitions" id="id14">Field Definitions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#csv-report" id="id15">CSV Report</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id16">Report Variations and Destinations</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id17">Advanced Features</a></p></li>
+<li><p><a class="reference internal" href="#csv-field-definitions" id="id18">CSV Field Definitions</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
 <section id="rich-table-report">
-<h2>Rich Table Report<a class="headerlink" href="#rich-table-report" title="Link to this heading">🔗</a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Rich Table Report</a><a class="headerlink" href="#rich-table-report" title="Link to this heading">🔗</a></h2>
 <p id="id1">Rich Tables are a popular way to display benchmark results in a clear and
 concise manner. SimpleBench leverages the <a class="reference external" href="https://github.com/Textualize/rich">rich</a>
 library to generate these tables, providing visually appealing and easy-to-read reports.</p>
@@ -90,8 +109,30 @@ typically meaningless statistical noise.</p>
 <p>This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
 measurement in the real world.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Interpreting Outliers in Benchmark Results</strong></p>
+<p>In the sample output above, you may notice that the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">kOps/s</span></code> value is
+an extreme outlier, far from the <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">median</span></code>. This is a realistic
+reflection of real-world benchmarking. System events like garbage collection,
+process scheduling, or I/O interrupts can cause individual iterations to be
+significantly slower than the typical case.</p>
+<p>This is precisely why SimpleBench provides a full suite of statistics. Instead
+of relying solely on the <code class="docutils literal notranslate"><span class="pre">mean</span></code>, you should also consider:</p>
+<ul class="simple">
+<li><p>The <strong>median</strong>, which is resistant to outliers and often gives a better
+sense of “typical” performance.</p></li>
+<li><p>The <strong>5th and 95th percentiles</strong>, which show the range of performance
+for the vast majority of iterations, excluding the most extreme outliers.</p></li>
+<li><p>The <strong>standard deviation (std dev)</strong> and <strong>RSD%</strong>, which quantify the
+level of inconsistency in the results. A high value indicates significant
+variability.</p></li>
+</ul>
+<p>By providing these metrics, SimpleBench allows you to get a complete and
+honest picture of your code’s performance, including its variability.</p>
+</div>
 <section id="report-variations-and-destinations">
-<h3>Report Variations and Destinations<a class="headerlink" href="#report-variations-and-destinations" title="Link to this heading">🔗</a></h3>
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Report Variations and Destinations</a><a class="headerlink" href="#report-variations-and-destinations" title="Link to this heading">🔗</a></h3>
 <p>The example above shows an operations-per-second report printed to the console.
 SimpleBench provides several variations:</p>
 <ul class="simple">
@@ -102,7 +143,7 @@ SimpleBench provides several variations:</p>
 </ul>
 <p>By default, reports are displayed in the console. You can send a report to other
 destinations, such as the filesystem, by appending the destination name. For example,
-to save the report to a file instead of printing it:</p>
+to save the report to a file instead of printing it to the terminal:</p>
 <div class="literal-block-wrapper docutils container" id="rich-table-ops-filesystem">
 <div class="code-block-caption"><span class="caption-text">Saving a Rich Table report to the filesystem</span><a class="headerlink" href="#rich-table-ops-filesystem" title="Link to this code">🔗</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--rich-table.ops<span class="w"> </span>filesystem
@@ -111,34 +152,33 @@ to save the report to a file instead of printing it:</p>
 </div>
 </section>
 <section id="advanced-features">
-<h3>Advanced Features<a class="headerlink" href="#advanced-features" title="Link to this heading">🔗</a></h3>
-<p>Beyond the basic fields shown above, SimpleBench’s Rich Table reports
-also support advanced features such as:</p>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Advanced Features</a><a class="headerlink" href="#advanced-features" title="Link to this heading">🔗</a></h3>
+<p>Beyond the basic fields shown above, the reports also support advanced features such as:</p>
 <dl class="simple">
-<dt>Parameterized Benchmarks</dt><dd><p>Displaying results for benchmarks that take parameters,
+<dt>Parameterized Benchmarks</dt><dd><p>Including esults for benchmarks that take parameters,
 allowing for analysis of performance across different input sizes or configurations.</p>
 </dd>
 <dt>Custom Complexity Weightings:</dt><dd><p>Including Big-O complexity weight/size annotations to help analyze how performance
 scales with input size.</p>
 </dd>
 </dl>
-<p>These features make Rich Table reports a powerful tool for understanding
+<p>These features make these reports a powerful tool for understanding
 the performance characteristics of your code in a clear and structured manner.</p>
 <section id="parameterized-benchmarks">
 <h4>Parameterized Benchmarks<a class="headerlink" href="#parameterized-benchmarks" title="Link to this heading">🔗</a></h4>
 <p>When benchmarks are parameterized, SimpleBench generates additional columns in the
-Rich Table report for each parameter value requested for display.</p>
+report for each parameter value requested for generation.</p>
 <p>This allows you to easily compare performance across different configurations.
 For example, if you have a benchmark that takes an input size
-parameter, the report can show how performance varies with different input sizes.</p>
+parameter, the report can include how performance varies with different input sizes.</p>
 <p>See the <span class="xref std std-doc">defining_benchmarks</span> section for more details on defining and using
 parameterized benchmarks.</p>
 </section>
 <section id="custom-complexity-weightings">
 <h4>Custom Complexity Weightings<a class="headerlink" href="#custom-complexity-weightings" title="Link to this heading">🔗</a></h4>
 <p>Related to parameterized benchmarks, SimpleBench allows you to specify
-custom complexity weightings (number/size weighting)for your benchmarks. These weightings
-are displayed in the Rich Table report as the N value, helping you analyze
+custom complexity weightings (number/size weighting)for your benchmarks.</p>
+<p>These weightings are included in the report as the N column value, helping you analyze
 how performance scales with input size and parameterization.</p>
 <p>For example, you might specify that a benchmark set covers input sizes 1, 20, 100, 1000,
 which will be indicated in the N column of the report with a row for each size.</p>
@@ -146,19 +186,17 @@ which will be indicated in the N column of the report with a row for each size.<
 reflect the expected performance characteristics of the code being benchmarked and
 are matched with the parameters being used. This helps in understanding how the performance
 of the benchmarked code changes as the input size or other parameters vary.</p>
-<p>These advanced features make Rich Table reports a powerful tool for analyzing
+<p>These advanced features make these reports a powerful tool for analyzing
 the performance of parameterized benchmarks and understanding the scalability
 of your code.</p>
 </section>
 </section>
-<section id="operations-per-second">
-<h3>Operations Per Second<a class="headerlink" href="#operations-per-second" title="Link to this heading">🔗</a></h3>
-<p>The <cite>operations per second</cite> Rich Table report provides a detailed overview of
-the performance of the benchmarked code in terms of how many operations it can
-perform per second. This is a common metric used to evaluate the efficiency of
-code, especially in performance-critical applications.</p>
-<p>Output numbers are scaled to appropriate units (Ops/s, kOps/s, MOps/s, etc) for easier readability.</p>
-<p>The basic fields always displayed in an <cite>operations per second</cite> Rich Table report are:</p>
+<section id="field-definitions">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Field Definitions</a><a class="headerlink" href="#field-definitions" title="Link to this heading">🔗</a></h3>
+<p>The descriptions of the fields included in each report type is described below.</p>
+<section id="common-report-fields">
+<h4>Common Report Fields<a class="headerlink" href="#common-report-fields" title="Link to this heading">🔗</a></h4>
+<p>The following report fields are present in all of the report types below.</p>
 <dl>
 <dt>N</dt><dd><p>A complexity weighting used to indicate the input size for a benchmark.</p>
 <p>A Big-O (<em>O</em>(<em>n</em>), etc) complexity weighting. This is used to indicate the ‘size’ of the
@@ -183,6 +221,17 @@ on the execution time of the benchmarked code. By default, this measures <em>CPU
 a more accurate representation of the code’s performance. It can be overridden to measure wall-clock time instead
 if so desired.</p>
 </dd>
+</dl>
+</section>
+<section id="operations-per-second">
+<h4>Operations Per Second<a class="headerlink" href="#operations-per-second" title="Link to this heading">🔗</a></h4>
+<p>The <cite>operations per second</cite> report provides a detailed overview of
+the performance of the benchmarked code in terms of how many operations it can
+perform per second. This is a common metric used to evaluate the efficiency of
+code, especially in performance-critical applications.</p>
+<p>Output numbers are scaled to appropriate units (Ops/s, kOps/s, MOps/s, etc) for easier readability.</p>
+<p>The fields always in an <cite>operations per second</cite> report are:</p>
+<dl>
 <dt>mean Ops/s</dt><dd><p>The average number of operations per second.</p>
 <p>The arithmetic mean average number of of operations per second (Ops/s) performed during the benchmark.
 This metric is calculated by dividing the total number of operations executed by the total elapsed time,
@@ -228,29 +277,29 @@ performance relative to the mean, while a higher RSD% suggests greater variabili
 </dl>
 </section>
 <section id="timing">
-<h3>Timing<a class="headerlink" href="#timing" title="Link to this heading">🔗</a></h3>
-<p>A <cite>timing</cite> Rich Table report focuses on the time taken to execute the benchmarked
+<h4>Timing<a class="headerlink" href="#timing" title="Link to this heading">🔗</a></h4>
+<p>A <cite>timing</cite> report focuses on the time taken to execute the benchmarked
 code, rather than the number of operations per second. It provides insights into
 the average time per operation and other timing-related statistics.</p>
 <p>Output numbers are scaled to appropriate units (seconds, milliseconds, microseconds, etc)
 for easier readability.</p>
 <p>The fields in this report include:</p>
 <dl>
-<dt>Mean s/op</dt><dd><p>The average time in seconds per operation.</p>
+<dt>mean s/op</dt><dd><p>The average time in seconds per operation.</p>
 <p>The arithmetic mean average time in seconds per operation (s/op). This metric is calculated by dividing the total
 elapsed time by the total number of operations. It provides a direct measure of how long a single operation
 takes on average.</p>
 </dd>
-<dt>Median s/op</dt><dd><p>The 50th percentile (middle value) of seconds per operation.</p>
+<dt>median s/op</dt><dd><p>The 50th percentile (middle value) of seconds per operation.</p>
 <p>The median (50th percentile) time in seconds per operation. This metric represents the middle value of the timing
 measurements, providing a robust measure of central tendency that is less affected by unusually fast or slow
 iterations (outliers).</p>
 </dd>
-<dt>Min s/op</dt><dd><p>The lowest (fastest) time per operation recorded across all iterations.</p>
+<dt>min s/op</dt><dd><p>The lowest (fastest) time per operation recorded across all iterations.</p>
 <p>The minimum time in seconds per operation recorded during the benchmark. This metric indicates the best-case
 performance observed, showcasing the fastest execution time for a single operation.</p>
 </dd>
-<dt>Max s/op</dt><dd><p>The highest (slowest) time per operation recorded across all iterations.</p>
+<dt>max s/op</dt><dd><p>The highest (slowest) time per operation recorded across all iterations.</p>
 <p>The maximum time in seconds per operation recorded during the benchmark. This metric indicates the worst-case
 performance observed, which can be useful for identifying potential bottlenecks or performance stalls.</p>
 </dd>
@@ -262,7 +311,7 @@ faster than this value, providing insight into the best-case end of the performa
 <p>The 95th percentile time in seconds per operation. This metric indicates that 95% of the timing measurements were
 faster than this value, providing insight into the typical worst-case performance, excluding extreme outliers.</p>
 </dd>
-<dt>Std Dev s/op</dt><dd><p>A measure of the variation or inconsistency in the time per operation.</p>
+<dt>std dev s/op</dt><dd><p>A measure of the variation or inconsistency in the time per operation.</p>
 <p>The standard deviation of the seconds per operation (s/op) measurements. This metric quantifies the amount of
 variation in the timing values. A lower standard deviation indicates more consistent, predictable execution times.</p>
 </dd>
@@ -274,7 +323,7 @@ timing consistency across different benchmarks.</p>
 </dl>
 </section>
 <section id="memory-usage">
-<h3>Memory Usage<a class="headerlink" href="#memory-usage" title="Link to this heading">🔗</a></h3>
+<h4>Memory Usage<a class="headerlink" href="#memory-usage" title="Link to this heading">🔗</a></h4>
 <p>A <cite>memory usage</cite> Rich Table report provides information about the memory consumption
 of the benchmarked code. It includes statistics on average and peak memory usage
 during the benchmark runs. Output numbers are scaled to appropriate units (bytes, kB, MB, etc)
@@ -282,19 +331,19 @@ for easier readability.</p>
 <p>For a <cite>memory usage</cite> Rich Table report, two tables are generated: one for average
 memory usage and another for peak memory usage. The key fields in these tables include:</p>
 <dl>
-<dt>Mean bytes</dt><dd><p>The average memory allocated per operation, in bytes.</p>
+<dt>mean bytes</dt><dd><p>The average memory allocated per operation, in bytes.</p>
 <p>The arithmetic mean average memory allocated per operation. This metric provides a general overview of the
 benchmark’s memory footprint under typical execution.</p>
 </dd>
-<dt>Median bytes</dt><dd><p>The 50th percentile (middle value) of memory allocated per operation.</p>
+<dt>median bytes</dt><dd><p>The 50th percentile (middle value) of memory allocated per operation.</p>
 <p>The median (50th percentile) of memory allocated per operation. This provides a robust measure of the typical
 memory usage that is less affected by iterations with unusually high or low memory consumption.</p>
 </dd>
-<dt>Min bytes</dt><dd><p>The minimum memory allocated per operation across all iterations.</p>
+<dt>min bytes</dt><dd><p>The minimum memory allocated per operation across all iterations.</p>
 <p>The minimum memory allocated per operation recorded during the benchmark. This metric indicates the lowest
 memory footprint observed, representing the best-case scenario for memory efficiency.</p>
 </dd>
-<dt>Max bytes</dt><dd><p>The maximum memory allocated per operation across all iterations.</p>
+<dt>max bytes</dt><dd><p>The maximum memory allocated per operation across all iterations.</p>
 <p>The maximum memory allocated per operation recorded during the benchmark. This metric indicates the highest
 memory footprint observed, which is crucial for understanding peak memory demand and potential memory-related issues.</p>
 </dd>
@@ -307,7 +356,7 @@ less memory than this value, providing insight into the lower end of the memory 
 less memory than this value, which is useful for understanding the typical upper bound of memory usage, excluding
 extreme outliers.</p>
 </dd>
-<dt>Std Dev bytes</dt><dd><p>A measure of the variation in memory allocation per operation.</p>
+<dt>std dev bytes</dt><dd><p>A measure of the variation in memory allocation per operation.</p>
 <p>The standard deviation of the memory allocation measurements. This metric quantifies the amount of variation
 in memory usage across iterations. A lower value indicates more consistent and predictable memory behavior.</p>
 </dd>
@@ -317,6 +366,370 @@ deviation by the mean memory usage. It provides a normalized measure of variabil
 of memory consistency across different benchmarks.</p>
 </dd>
 </dl>
+</section>
+</section>
+</section>
+<section id="csv-report">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">CSV Report</a><a class="headerlink" href="#csv-report" title="Link to this heading">🔗</a></h2>
+<p id="id2">CSV (Comma-Separated Values) reports are designed for machine readability and
+are ideal for importing benchmark results into spreadsheet applications like
+Microsoft Excel or Google Sheets, or for analysis with data processing tools
+like Pandas.</p>
+<p>To generate a CSV report, you can use an option like <cite>–csv.ops</cite> when running
+your benchmarks. By default, this will save a CSV file to the output directory
+(which defaults to <code class="docutils literal notranslate"><span class="pre">.benchmarks</span></code>).</p>
+<p>Here is an example of how to run a benchmark script and generate a CSV report:</p>
+<div class="literal-block-wrapper docutils container" id="run-benchmark-csv">
+<div class="code-block-caption"><span class="caption-text">Running a benchmark with a CSV report</span><a class="headerlink" href="#run-benchmark-csv" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--csv.ops
+</pre></div>
+</div>
+</div>
+<p>This command executes the benchmarks in <cite>my_benchmark_script.py</cite> and saves a
+CSV file containing the operations-per-second results. A basic CSV output file
+will look something like this:</p>
+<div class="literal-block-wrapper docutils container" id="sample-csv-output">
+<div class="code-block-caption"><span class="caption-text">Sample CSV Output</span><a class="headerlink" href="#sample-csv-output" title="Link to this code">🔗</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>  # title: addition_benchmark
+  # description: A simple addition benchmark of Python&#39;s built-in sum function.
+  # unit: Ops/s
+  N,Iterations,Rounds,Elapsed Seconds,mean (Ops/s),median (Ops/s),min (Ops/s),max (Ops/s),5th (Ops/s),95th (Ops/s),std dev (Ops/s),rsd (%)
+  1,42761,1,0.29235192800000004,148000.0,150000.0,962.0,154000.0,144000.0,151000.0,8220.0,5.55
+</pre></div>
+</div>
+</div>
+<p>Which corresponds to the following table:</p>
+<table class="docutils align-center">
+<thead>
+<tr class="row-odd"><th class="head"><p>N</p></th>
+<th class="head"><p>Iterations</p></th>
+<th class="head"><p>Rounds</p></th>
+<th class="head"><p>Elapsed Seconds</p></th>
+<th class="head"><p>mean (Ops/s)</p></th>
+<th class="head"><p>median (Ops/s)</p></th>
+<th class="head"><p>min (Ops/s)</p></th>
+<th class="head"><p>max (Ops/s)</p></th>
+<th class="head"><p>5th (Ops/s)</p></th>
+<th class="head"><p>95th (Ops/s)</p></th>
+<th class="head"><p>std dev (Ops/s)</p></th>
+<th class="head"><p>rsd (%)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>42761</p></td>
+<td><p>1</p></td>
+<td><p>0.29235192800000004</p></td>
+<td><p>148000.0</p></td>
+<td><p>150000.0</p></td>
+<td><p>962.0</p></td>
+<td><p>154000.0</p></td>
+<td><p>144000.0</p></td>
+<td><p>151000.0</p></td>
+<td><p>8220.0</p></td>
+<td><p>5.55</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Interpreting Outliers in Benchmark Results</strong></p>
+<p>In the sample output, you may notice that the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">(Ops/s)</span></code> value is an
+extreme outlier. This is a realistic reflection of real-world benchmarking,
+where system events like garbage collection can cause individual iterations
+to be significantly slower. This is why SimpleBench provides a full suite of
+statistics like the <strong>median</strong> (which is resistant to outliers) and <strong>RSD%</strong>
+(which quantifies inconsistency) to help you get a complete and honest
+picture of your code’s performance.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To avoid “false precision”, statistical results are output with three significant digits.
+Due to the inherent variability of performance measurement, any further digits are
+typically meaningless statistical noise.</p>
+<p>This does not apply to the raw timing measurements (e.g., Elapsed Seconds), which are
+reported in full precision for accuracy.</p>
+<p>This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
+measurement in the real world.</p>
+</div>
+<section id="id3">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Report Variations and Destinations</a><a class="headerlink" href="#id3" title="Link to this heading">🔗</a></h3>
+<p>SimpleBench provides several variations of the CSV report:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--csv</span></code>: Generates a CSV file with all result types (ops, timing, and memory).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--csv.ops</span></code>: Generates a CSV file only for operations-per-second results.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--csv.timing</span></code>: Generates a CSV file only for timing results.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--csv.memory</span></code>: Generates a CSV file only for memory usage results.</p></li>
+</ul>
+<p>By default, CSV reports are saved to the <code class="docutils literal notranslate"><span class="pre">filesystem</span></code>. You can send a report to
+other destinations, such as the console, by appending the destination name. For
+example, to print the CSV content directly to the terminal:</p>
+<div class="literal-block-wrapper docutils container" id="csv-report-console">
+<div class="code-block-caption"><span class="caption-text">Printing a CSV report to the console</span><a class="headerlink" href="#csv-report-console" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--csv.ops<span class="w"> </span>console
+</pre></div>
+</div>
+</div>
+<p>The generated files are named based on the benchmarked function name and report type.
+To prevent collisions between identical benchmark names, a numeric prefix is added to
+ensure uniqueness.</p>
+<p>Examples</p>
+<div class="literal-block-wrapper docutils container" id="csv-report-filenames">
+<div class="code-block-caption"><span class="caption-text">Output file names for different CSV report types</span><a class="headerlink" href="#csv-report-filenames" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>001_addition_benchmark-memory_usage.csv
+<span class="w">  </span>001_addition_benchmark-peak_memory_usage.csv
+<span class="w">  </span>001_addition_benchmark-operations_per_second.csv
+<span class="w">  </span>001_addition_benchmark-timing.csv
+</pre></div>
+</div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Advanced Features</a><a class="headerlink" href="#id4" title="Link to this heading">🔗</a></h3>
+<section id="id5">
+<h4>Parameterized Benchmarks<a class="headerlink" href="#id5" title="Link to this heading">🔗</a></h4>
+<p>When running parameterized benchmarks, the CSV report includes additional
+columns for each parameter variation. This makes it easy to sort, filter, and
+analyze how different input parameters affect performance.</p>
+<p>For more information on creating parameterized benchmarks, see the
+<span class="xref std std-doc">../advanced_usage</span> documentation.</p>
+</section>
+<section id="id6">
+<h4>Custom Complexity Weightings<a class="headerlink" href="#id6" title="Link to this heading">🔗</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">N</span></code> column in the CSV report represents the complexity weighting of the
+benchmark. This is particularly useful for analyzing the scalability of your
+code with different input sizes.</p>
+<p>For more details on how to use this feature, see the <span class="xref std std-doc">../advanced_usage</span>
+documentation.</p>
+</section>
+</section>
+<section id="csv-field-definitions">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">CSV Field Definitions</a><a class="headerlink" href="#csv-field-definitions" title="Link to this heading">🔗</a></h3>
+<p>Each report conains a set of comments and fields that provide detailed
+information about the benchmark results.</p>
+<section id="metadata-comment-lines">
+<h4>Metadata Comment Lines<a class="headerlink" href="#metadata-comment-lines" title="Link to this heading">🔗</a></h4>
+<p>At the top of each report, there are comment lines that provide metadata
+about the report generation. These comments are prefixed with a <cite>#</cite> character
+and include important information for understanding the context of the report.</p>
+<p>Most modern CSV parsers will ignore comment lines, but they can be useful
+for humans reading the report or for tools that process the report files.</p>
+<p>They will usually be read and included by spreadsheet applications to provide
+context about the data contained in the report.</p>
+<dl class="field-list simple">
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">title</span></code><span class="colon">:</span></dt>
+<dd class="field-odd"><p>The title of the report. This is the name of the benchmarked
+function.</p>
+</dd>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">description</span></code><span class="colon">:</span></dt>
+<dd class="field-even"><p>A brief description of the benchmarked function, if provided. This is
+generated from the docstring of the benchmark function.</p>
+</dd>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">unit</span></code><span class="colon">:</span></dt>
+<dd class="field-odd"><p>The unit of measurement for the report (e.g., Ops/s, seconds, bytes).</p>
+</dd>
+</dl>
+<p>Example of Metadata Comment Lines</p>
+<div class="literal-block-wrapper docutils container" id="example-report-comments">
+<div class="code-block-caption"><span class="caption-text">Example Metadata Comments</span><a class="headerlink" href="#example-report-comments" title="Link to this code">🔗</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>  # title: addition_benchmark
+  # description: A simple addition benchmark of Python&#39;s built-in sum function.
+  # unit: Ops/s
+</pre></div>
+</div>
+</div>
+</section>
+<section id="first-line-of-data">
+<h4>First Line Of Data<a class="headerlink" href="#first-line-of-data" title="Link to this heading">🔗</a></h4>
+<p>The first line of the report data contains the column headers that label
+each field in the report. These headers provide context for the numerical
+data that follows.</p>
+<p>Example of First Line of Data</p>
+<div class="literal-block-wrapper docutils container" id="example-report-header">
+<div class="code-block-caption"><span class="caption-text">Example First Line of Report Data</span><a class="headerlink" href="#example-report-header" title="Link to this code">🔗</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>  N,Iterations,Rounds,Elapsed Seconds,mean (Ops/s),median (Ops/s),min (Ops/s),max (Ops/s),5th (Ops/s),95th (Ops/s),std dev (Ops/s),rsd (%)
+</pre></div>
+</div>
+</div>
+</section>
+<section id="id7">
+<h4>Common Report Fields<a class="headerlink" href="#id7" title="Link to this heading">🔗</a></h4>
+<p>The following report fields are present in all of the report types below.</p>
+<dl>
+<dt>N</dt><dd><p>A complexity weighting used to indicate the input size for a benchmark.</p>
+<p>A Big-O (<em>O</em>(<em>n</em>), etc) complexity weighting. This is used to indicate the ‘size’ of the
+input to a parameterized benchmark. It defaults to 1 unless overridden by the benchmark.
+The N value is used to help compare performance across different input sizes (if applicable)
+and to analyze how the function scales with different input sizes.</p>
+</dd>
+<dt>Iterations</dt><dd><p>The number of statistical samples taken for the benchmark.</p>
+<p>The total number of iterations executed during the benchmark. An iteration is an execution of the benchmarked
+function once for statistical reporting purposes. It may be composed of multiple actual rounds to improve accuracy
+and precision, but is reported as a single count for the purposes of the table.</p>
+</dd>
+<dt>Rounds</dt><dd><p>The number of times the benchmarked function is executed within a single iteration.</p>
+<p>The number of rounds executed during an iteration. A round is a single execution of the benchmarked function.
+Multiple rounds are often executed within an iteration to gather more accurate timing and performance data.
+They are executed in rapid succession, and their results are aggregated to produce the final metrics for an iteration.</p>
+</dd>
+<dt>Elapsed Seconds</dt><dd><p>The total CPU time spent executing the benchmarked code.</p>
+<p>The total measured elapsed time in seconds for all iterations of the benchmark. This metric provides an overview
+of how long the benchmark took to complete. This does not include any setup or teardown time, focusing solely
+on the execution time of the benchmarked code. By default, this measures <em>CPU time</em>, not <em>wall-clock time</em>, to provide
+a more accurate representation of the code’s performance. It can be overridden to measure wall-clock time instead
+if so desired.</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h4>Operations Per Second<a class="headerlink" href="#id8" title="Link to this heading">🔗</a></h4>
+<p>The <cite>operations per second</cite> report provides a detailed overview of
+the performance of the benchmarked code in terms of how many operations it can
+perform per second. This is a common metric used to evaluate the efficiency of
+code, especially in performance-critical applications.</p>
+<p>Output numbers are scaled to appropriate units (Ops/s, kOps/s, MOps/s, etc) for easier readability.</p>
+<p>The fields always in an <cite>operations per second</cite> report are:</p>
+<dl>
+<dt>mean (Ops/s)</dt><dd><p>The average number of operations per second.</p>
+<p>The arithmetic mean average number of of operations per second (Ops/s) performed during the benchmark.
+This metric is calculated by dividing the total number of operations executed by the total elapsed time,
+then scaling it an appropriate factor (for example, kOps/s) for easier readability. It provides a quick overview
+of the benchmark’s performance.</p>
+</dd>
+<dt>median (Ops/s)</dt><dd><p>The 50th percentile (middle value) of operations per second.</p>
+<p>The median (50th percentile) number of operations per second (Ops/s) performed during the benchmark.
+This metric represents the middle value of the Ops/s measurements collected during the benchmark,
+providing a robust measure of central tendency that is less affected by outliers compared to the mean.</p>
+</dd>
+<dt>min (Ops/s)</dt><dd><p>The lowest (worst) performance recorded across all iterations.</p>
+<p>The minimum number of operations per second (Ops/s) recorded during the benchmark. This metric indicates the
+lowest performance observed during the benchmark runs, which can be useful for identifying potential bottlenecks
+or performance issues.</p>
+</dd>
+<dt>max (Ops/s)</dt><dd><p>The highest (best) performance recorded across all iterations.</p>
+<p>The maximum number of operations per second (Ops/s) recorded during the benchmark. This metric indicates the
+highest performance observed during the benchmark runs, showcasing the best-case scenario for the benchmarked code.</p>
+</dd>
+<dt>5th (Ops/s)</dt><dd><p>The 5th percentile of operations per second.</p>
+<p>The 5th percentile number of operations per second (Ops/s) recorded during the benchmark. This metric indicates
+that 5% of the Ops/s measurements were below this value, providing insight into the lower end of the typical
+performance distribution.</p>
+</dd>
+<dt>95th (Ops/s)</dt><dd><p>The 95th percentile of operations per second.</p>
+<p>The 95th percentile number of operations per second (Ops/s) recorded during the benchmark. This metric indicates
+that 95% of the Ops/s measurements were below this value, providing insight into the upper end of the typical
+performance distribution.</p>
+</dd>
+<dt>std dev (Ops/s)</dt><dd><p>A measure of the variation or inconsistency in performance.</p>
+<p>The standard deviation of the operations per second (Ops/s) measurements collected during the benchmark. This metric
+quantifies the amount of variation or dispersion in the Ops/s values, providing insight into the consistency of the
+benchmark’s performance. A lower standard deviation indicates more consistent performance, while a higher standard
+deviation suggests greater variability in the results.</p>
+</dd>
+<dt>rsd (%)</dt><dd><p>A normalized measure of performance inconsistency, expressed as a percentage.</p>
+<p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+deviation by the mean and multiplying by 100. It provides a normalized measure of variability, allowing for easier
+comparison of consistency across different benchmarks or parameter configurations. A lower RSD% indicates more consistent
+performance relative to the mean, while a higher RSD% suggests greater variability in the results.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h4>Timing<a class="headerlink" href="#id9" title="Link to this heading">🔗</a></h4>
+<p>A <cite>timing</cite> report focuses on the time taken to execute the benchmarked
+code, rather than the number of operations per second. It provides insights into
+the average time per operation and other timing-related statistics.</p>
+<p>Output numbers are scaled to appropriate units (seconds, milliseconds, microseconds, etc)
+for easier readability.</p>
+<p>The fields in this report include:</p>
+<dl>
+<dt>mean (s)</dt><dd><p>The average time in seconds per operation.</p>
+<p>The arithmetic mean average time in seconds per operation (s/op). This metric is calculated by dividing the total
+elapsed time by the total number of operations. It provides a direct measure of how long a single operation
+takes on average.</p>
+</dd>
+<dt>median (s)</dt><dd><p>The 50th percentile (middle value) of seconds per operation.</p>
+<p>The median (50th percentile) time in seconds per operation. This metric represents the middle value of the timing
+measurements, providing a robust measure of central tendency that is less affected by unusually fast or slow
+iterations (outliers).</p>
+</dd>
+<dt>min (s)</dt><dd><p>The lowest (fastest) time per operation recorded across all iterations.</p>
+<p>The minimum time in seconds per operation recorded during the benchmark. This metric indicates the best-case
+performance observed, showcasing the fastest execution time for a single operation.</p>
+</dd>
+<dt>max (s)</dt><dd><p>The highest (slowest) time per operation recorded across all iterations.</p>
+<p>The maximum time in seconds per operation recorded during the benchmark. This metric indicates the worst-case
+performance observed, which can be useful for identifying potential bottlenecks or performance stalls.</p>
+</dd>
+<dt>5th (s)</dt><dd><p>The 5th percentile of seconds per operation. 5% of iterations were faster than this.</p>
+<p>The 5th percentile time in seconds per operation. This metric indicates that 5% of the timing measurements were
+faster than this value, providing insight into the best-case end of the performance distribution.</p>
+</dd>
+<dt>95th (s)</dt><dd><p>The 95th percentile of seconds per operation. 95% of iterations were faster than this.</p>
+<p>The 95th percentile time in seconds per operation. This metric indicates that 95% of the timing measurements were
+faster than this value, providing insight into the typical worst-case performance, excluding extreme outliers.</p>
+</dd>
+<dt>std dev (s)</dt><dd><p>A measure of the variation or inconsistency in the time per operation.</p>
+<p>The standard deviation of the seconds per operation (s) measurements. This metric quantifies the amount of
+variation in the timing values. A lower standard deviation indicates more consistent, predictable execution times.</p>
+</dd>
+<dt>rsd (%)</dt><dd><p>A normalized measure of timing inconsistency, expressed as a percentage.</p>
+<p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+deviation by the mean time. It provides a normalized measure of variability, allowing for easier comparison of
+timing consistency across different benchmarks.</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h4>Memory Usage<a class="headerlink" href="#id10" title="Link to this heading">🔗</a></h4>
+<p>A <cite>memory usage</cite> report provides information about the memory consumption
+of the benchmarked code. It includes statistics on average and peak memory usage
+during the benchmark runs. Output numbers are scaled to appropriate units (bytes, kB, MB, etc)
+for easier readability.</p>
+<p>For a <cite>memory usage</cite> report, two tables are generated: one for average
+memory usage and another for peak memory usage with each table having
+its name ending in either <cite>-memory_usage.csv</cite> or <cite>-peak_memory_usage.csv</cite>
+respectively.</p>
+<p>The fields in these tables are the same,
+with the distinction being whether they refer to average or peak memory usage.</p>
+<p>The fields always in a <cite>memory usage</cite> report are:</p>
+<dl>
+<dt>mean (bytes)</dt><dd><p>The average memory allocated per operation, in bytes.</p>
+<p>The arithmetic mean average memory allocated per operation. This metric provides a general overview of the
+benchmark’s memory footprint under typical execution.</p>
+</dd>
+<dt>median (bytes)</dt><dd><p>The 50th percentile (middle value) of memory allocated per operation.</p>
+<p>The median (50th percentile) of memory allocated per operation. This provides a robust measure of the typical
+memory usage that is less affected by iterations with unusually high or low memory consumption.</p>
+</dd>
+<dt>min (bytes)</dt><dd><p>The minimum memory allocated per operation across all iterations.</p>
+<p>The minimum memory allocated per operation recorded during the benchmark. This metric indicates the lowest
+memory footprint observed, representing the best-case scenario for memory efficiency.</p>
+</dd>
+<dt>max (bytes)</dt><dd><p>The maximum memory allocated per operation across all iterations.</p>
+<p>The maximum memory allocated per operation recorded during the benchmark. This metric indicates the highest
+memory footprint observed, which is crucial for understanding peak memory demand and potential memory-related issues.</p>
+</dd>
+<dt>5th (bytes)</dt><dd><p>The 5th percentile of memory allocated per operation.</p>
+<p>The 5th percentile of memory allocated per operation. This metric indicates that 5% of the iterations used
+less memory than this value, providing insight into the lower end of the memory usage distribution.</p>
+</dd>
+<dt>95th (bytes)</dt><dd><p>The 95th percentile of memory allocated per operation.</p>
+<p>The 95th percentile of memory allocated per operation. This metric indicates that 95% of the iterations used
+less memory than this value, which is useful for understanding the typical upper bound of memory usage, excluding
+extreme outliers.</p>
+</dd>
+<dt>std dev (bytes)</dt><dd><p>A measure of the variation in memory allocation per operation.</p>
+<p>The standard deviation of the memory allocation measurements. This metric quantifies the amount of variation
+in memory usage across iterations. A lower value indicates more consistent and predictable memory behavior.</p>
+</dd>
+<dt>rsd (%)</dt><dd><p>A normalized measure of memory usage inconsistency, expressed as a percentage.</p>
+<p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+deviation by the mean memory usage. It provides a normalized measure of variability, allowing for easier comparison
+of memory consistency across different benchmarks.</p>
+</dd>
+</dl>
+</section>
 </section>
 </section>
 </section>
@@ -339,9 +752,31 @@ of memory consistency across different benchmarks.</p>
 <li><a class="reference internal" href="#custom-complexity-weightings">Custom Complexity Weightings</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#field-definitions">Field Definitions</a><ul>
+<li><a class="reference internal" href="#common-report-fields">Common Report Fields</a></li>
 <li><a class="reference internal" href="#operations-per-second">Operations Per Second</a></li>
 <li><a class="reference internal" href="#timing">Timing</a></li>
 <li><a class="reference internal" href="#memory-usage">Memory Usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#csv-report">CSV Report</a><ul>
+<li><a class="reference internal" href="#id3">Report Variations and Destinations</a></li>
+<li><a class="reference internal" href="#id4">Advanced Features</a><ul>
+<li><a class="reference internal" href="#id5">Parameterized Benchmarks</a></li>
+<li><a class="reference internal" href="#id6">Custom Complexity Weightings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#csv-field-definitions">CSV Field Definitions</a><ul>
+<li><a class="reference internal" href="#metadata-comment-lines">Metadata Comment Lines</a></li>
+<li><a class="reference internal" href="#first-line-of-data">First Line Of Data</a></li>
+<li><a class="reference internal" href="#id7">Common Report Fields</a></li>
+<li><a class="reference internal" href="#id8">Operations Per Second</a></li>
+<li><a class="reference internal" href="#id9">Timing</a></li>
+<li><a class="reference internal" href="#id10">Memory Usage</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
