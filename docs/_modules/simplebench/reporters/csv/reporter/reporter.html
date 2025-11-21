@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>simplebench.reporters.csv.reporter.reporter &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=15db7601" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=26844679" />
     
     <script src="../../../../../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
@@ -195,7 +195,7 @@
                     <span class="n">result</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
                     <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">iterations</span><span class="p">),</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">total_elapsed</span> <span class="o">*</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span>
+                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">total_elapsed</span> <span class="o">*</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
                     <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
                     <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">median</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
                     <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">minimum</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>

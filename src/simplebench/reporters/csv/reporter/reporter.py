@@ -153,7 +153,7 @@ class CSVReporter(Reporter):
                     result.n,
                     len(result.iterations),
                     result.rounds,
-                    result.total_elapsed * DEFAULT_INTERVAL_SCALE,
+                    sigfigs(result.total_elapsed * DEFAULT_INTERVAL_SCALE, 10),
                     sigfigs(stats_target.mean * common_scale),
                     sigfigs(stats_target.median * common_scale),
                     sigfigs(stats_target.minimum * common_scale),

@@ -2,4 +2,4 @@
 # description: A simple addition benchmark of Python's built-in sum function.
 # unit: Ops/s
 N,Iterations,Rounds,Elapsed Seconds,mean (Ops/s),median (Ops/s),min (Ops/s),max (Ops/s),5th (Ops/s),95th (Ops/s),std dev (Ops/s),rsd (%)
-1,42761,1,0.29235192800000004,148000.0,150000.0,962.0,154000.0,144000.0,151000.0,8220.0,5.55
+1,42801,1,0.291715587,147.0,148.0,22.0,153.0,142.0,151.0,6.77,4.6

@@ -31,8 +31,8 @@ will look something like this:
     # title: addition_benchmark
     # description: A simple addition benchmark of Python's built-in sum function.
     # unit: Ops/s
-    N,Iterations,Rounds,Elapsed Seconds,mean (Ops/s),median (Ops/s),min (Ops/s),max (Ops/s),5th (Ops/s),95th (Ops/s),std dev (Ops/s),rsd (%)
-    1,42761,1,0.29235192800000004,148000.0,150000.0,962.0,154000.0,144000.0,151000.0,8220.0,5.55
+    N,Iterations,Rounds,Elapsed Seconds,mean (kOps/s),median (kOps/s),min (kOps/s),max (kOps/s),5th (kOps/s),95th (kOps/s),std dev (kOps/s),rsd (%)
+    1,42801,1,0.291715587,147.0,148.0,22.0,153.0,142.0,151.0,6.77,4.6
 
 Which corresponds to the following table:
 
@@ -40,8 +40,8 @@ Which corresponds to the following table:
    :header-rows: 1
    :align: center
 
-   N,Iterations,Rounds,Elapsed Seconds,mean (Ops/s),median (Ops/s),min (Ops/s),max (Ops/s),5th (Ops/s),95th (Ops/s),std dev (Ops/s),rsd (%)
-   1,42761,1,0.29235192800000004,148000.0,150000.0,962.0,154000.0,144000.0,151000.0,8220.0,5.55
+   N,Iterations,Rounds,Elapsed Seconds,mean (kOps/s),median (kOps/s),min (kOps/s),max (kOps/s),5th (kOps/s),95th (kOps/s),std dev (kOps/s),rsd (%)
+   1,42801,1,0.291715587,147.0,148.0,22.0,153.0,142.0,151.0,6.77,4.6
 
 
 
@@ -60,9 +60,6 @@ Which corresponds to the following table:
    To avoid "false precision", statistical results are output with three significant digits.
    Due to the inherent variability of performance measurement, any further digits are
    typically meaningless statistical noise.
-
-   This does not apply to the raw timing measurements (e.g., Elapsed Seconds), which are
-   reported in full precision for accuracy.
 
    This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
    measurement in the real world.
