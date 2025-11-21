@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Field Definitions &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Field Definitions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="field-definitions">
+<h1>Field Definitions<a class="headerlink" href="#field-definitions" title="Link to this heading">🔗</a></h1>
+<p>The descriptions of the fields included in each report type is described below.</p>
+<section id="common-report-fields">
+<h2>Common Report Fields<a class="headerlink" href="#common-report-fields" title="Link to this heading">🔗</a></h2>
+<p>The following report fields are present in all of the report types below.</p>
+<dl>
+<dt>N</dt><dd><p>A complexity weighting used to indicate the input size for a benchmark.</p>
+<p>A Big-O (<em>O</em>(<em>n</em>), etc) complexity weighting. This is used to indicate the ‘size’ of the
+input to a parameterized benchmark. It defaults to 1 unless overridden by the benchmark.
+The N value is used to help compare performance across different input sizes (if applicable)
+and to analyze how the function scales with different input sizes.</p>
+</dd>
+<dt>Iterations</dt><dd><p>The number of statistical samples taken for the benchmark.</p>
+<p>The total number of iterations executed during the benchmark. An iteration is an execution of the benchmarked
+function once for statistical reporting purposes. It may be composed of multiple actual rounds to improve accuracy
+and precision, but is reported as a single count for the purposes of the table.</p>
+</dd>
+<dt>Rounds</dt><dd><p>The number of times the benchmarked function is executed within a single iteration.</p>
+<p>The number of rounds executed during an iteration. A round is a single execution of the benchmarked function.
+Multiple rounds are often executed within an iteration to gather more accurate timing and performance data.
+They are executed in rapid succession, and their results are aggregated to produce the final metrics for an iteration.</p>
+</dd>
+<dt>Elapsed Seconds</dt><dd><p>The total CPU time spent executing the benchmarked code.</p>
+<p>The total measured elapsed time in seconds for all iterations of the benchmark. This metric provides an overview
+of how long the benchmark took to complete. This does not include any setup or teardown time, focusing solely
+on the execution time of the benchmarked code. By default, this measures <em>CPU time</em>, not <em>wall-clock time</em>, to provide
+a more accurate representation of the code’s performance. It can be overridden to measure wall-clock time instead
+if so desired.</p>
+</dd>
+</dl>
+</section>
+<section id="operations-per-second">
+<h2>Operations Per Second<a class="headerlink" href="#operations-per-second" title="Link to this heading">🔗</a></h2>
+<p>The <cite>operations per second</cite> report provides a detailed overview of
+the performance of the benchmarked code in terms of how many operations it can
+perform per second. This is a common metric used to evaluate the efficiency of
+code, especially in performance-critical applications.</p>
+<p>Output numbers are scaled to appropriate units (Ops/s, kOps/s, MOps/s, etc) for easier readability.</p>
+<p>The fields always in an <cite>operations per second</cite> report are:</p>
+<dl>
+<dt>mean Ops/s</dt><dd><p>The average number of operations per second.</p>
+<p>The arithmetic mean average number of of operations per second (Ops/s) performed during the benchmark.
+This metric is calculated by dividing the total number of operations executed by the total elapsed time,
+then scaling it an appropriate factor (for example, kOps/s) for easier readability. It provides a quick overview
+of the benchmark’s performance.</p>
+</dd>
+<dt>median Ops/s</dt><dd><p>The 50th percentile (middle value) of operations per second.</p>
+<p>The median (50th percentile) number of operations per second (Ops/s) performed during the benchmark.
+This metric represents the middle value of the Ops/s measurements collected during the benchmark,
+providing a robust measure of central tendency that is less affected by outliers compared to the mean.</p>
+</dd>
+<dt>min Ops/s</dt><dd><p>The lowest (worst) performance recorded across all iterations.</p>
+<p>The minimum number of operations per second (Ops/s) recorded during the benchmark. This metric indicates the
+lowest performance observed during the benchmark runs, which can be useful for identifying potential bottlenecks
+or performance issues.</p>
+</dd>
+<dt>max Ops/s</dt><dd><p>The highest (best) performance recorded across all iterations.</p>
+<p>The maximum number of operations per second (Ops/s) recorded during the benchmark. This metric indicates the
+highest performance observed during the benchmark runs, showcasing the best-case scenario for the benchmarked code.</p>
+</dd>
+<dt>5th Ops/s</dt><dd><p>The 5th percentile of operations per second.</p>
+<p>The 5th percentile number of operations per second (Ops/s) recorded during the benchmark. This metric indicates
+that 5% of the Ops/s measurements were below this value, providing insight into the lower end of the typical
+performance distribution.</p>
+</dd>
+<dt>95th Ops/s</dt><dd><p>The 95th percentile of operations per second.</p>
+<p>The 95th percentile number of operations per second (Ops/s) recorded during the benchmark. This metric indicates
+that 95% of the Ops/s measurements were below this value, providing insight into the upper end of the typical
+performance distribution.</p>
+</dd>
+<dt>std dev kOps/s</dt><dd><p>A measure of the variation or inconsistency in performance.</p>
+<p>The standard deviation of the operations per second (Ops/s) measurements collected during the benchmark. This metric
+quantifies the amount of variation or dispersion in the Ops/s values, providing insight into the consistency of the
+benchmark’s performance. A lower standard deviation indicates more consistent performance, while a higher standard
+deviation suggests greater variability in the results.</p>
+</dd>
+<dt>rsd%</dt><dd><p>A normalized measure of performance inconsistency, expressed as a percentage.</p>
+<p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+deviation by the mean and multiplying by 100. It provides a normalized measure of variability, allowing for easier
+comparison of consistency across different benchmarks or parameter configurations. A lower RSD% indicates more consistent
+performance relative to the mean, while a higher RSD% suggests greater variability in the results.</p>
+</dd>
+</dl>
+</section>
+<section id="timing">
+<h2>Timing<a class="headerlink" href="#timing" title="Link to this heading">🔗</a></h2>
+<p>A <cite>timing</cite> report focuses on the time taken to execute the benchmarked
+code, rather than the number of operations per second. It provides insights into
+the average time per operation and other timing-related statistics.</p>
+<p>Output numbers are scaled to appropriate units (seconds, milliseconds, microseconds, etc)
+for easier readability.</p>
+<p>The fields in this report include:</p>
+<dl>
+<dt>mean s/op</dt><dd><p>The average time in seconds per operation.</p>
+<p>The arithmetic mean average time in seconds per operation (s/op). This metric is calculated by dividing the total
+elapsed time by the total number of operations. It provides a direct measure of how long a single operation
+takes on average.</p>
+</dd>
+<dt>median s/op</dt><dd><p>The 50th percentile (middle value) of seconds per operation.</p>
+<p>The median (50th percentile) time in seconds per operation. This metric represents the middle value of the timing
+measurements, providing a robust measure of central tendency that is less affected by unusually fast or slow
+iterations (outliers).</p>
+</dd>
+<dt>min s/op</dt><dd><p>The lowest (fastest) time per operation recorded across all iterations.</p>
+<p>The minimum time in seconds per operation recorded during the benchmark. This metric indicates the best-case
+performance observed, showcasing the fastest execution time for a single operation.</p>
+</dd>
+<dt>max s/op</dt><dd><p>The highest (slowest) time per operation recorded across all iterations.</p>
+<p>The maximum time in seconds per operation recorded during the benchmark. This metric indicates the worst-case
+performance observed, which can be useful for identifying potential bottlenecks or performance stalls.</p>
+</dd>
+<dt>5th s/op</dt><dd><p>The 5th percentile of seconds per operation. 5% of iterations were faster than this.</p>
+<p>The 5th percentile time in seconds per operation. This metric indicates that 5% of the timing measurements were
+faster than this value, providing insight into the best-case end of the performance distribution.</p>
+</dd>
+<dt>95th s/op</dt><dd><p>The 95th percentile of seconds per operation. 95% of iterations were faster than this.</p>
+<p>The 95th percentile time in seconds per operation. This metric indicates that 95% of the timing measurements were
+faster than this value, providing insight into the typical worst-case performance, excluding extreme outliers.</p>
+</dd>
+<dt>std dev s/op</dt><dd><p>A measure of the variation or inconsistency in the time per operation.</p>
+<p>The standard deviation of the seconds per operation (s/op) measurements. This metric quantifies the amount of
+variation in the timing values. A lower standard deviation indicates more consistent, predictable execution times.</p>
+</dd>
+<dt>rsd%</dt><dd><p>A normalized measure of timing inconsistency, expressed as a percentage.</p>
+<p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+deviation by the mean time. It provides a normalized measure of variability, allowing for easier comparison of
+timing consistency across different benchmarks.</p>
+</dd>
+</dl>
+</section>
+<section id="memory-usage">
+<h2>Memory Usage<a class="headerlink" href="#memory-usage" title="Link to this heading">🔗</a></h2>
+<p>A <cite>memory usage</cite> Rich Table report provides information about the memory consumption
+of the benchmarked code. It includes statistics on average and peak memory usage
+during the benchmark runs. Output numbers are scaled to appropriate units (bytes, kB, MB, etc)
+for easier readability.</p>
+<p>For a <cite>memory usage</cite> Rich Table report, two tables are generated: one for average
+memory usage and another for peak memory usage. The key fields in these tables include:</p>
+<dl>
+<dt>mean bytes</dt><dd><p>The average memory allocated per operation, in bytes.</p>
+<p>The arithmetic mean average memory allocated per operation. This metric provides a general overview of the
+benchmark’s memory footprint under typical execution.</p>
+</dd>
+<dt>median bytes</dt><dd><p>The 50th percentile (middle value) of memory allocated per operation.</p>
+<p>The median (50th percentile) of memory allocated per operation. This provides a robust measure of the typical
+memory usage that is less affected by iterations with unusually high or low memory consumption.</p>
+</dd>
+<dt>min bytes</dt><dd><p>The minimum memory allocated per operation across all iterations.</p>
+<p>The minimum memory allocated per operation recorded during the benchmark. This metric indicates the lowest
+memory footprint observed, representing the best-case scenario for memory efficiency.</p>
+</dd>
+<dt>max bytes</dt><dd><p>The maximum memory allocated per operation across all iterations.</p>
+<p>The maximum memory allocated per operation recorded during the benchmark. This metric indicates the highest
+memory footprint observed, which is crucial for understanding peak memory demand and potential memory-related issues.</p>
+</dd>
+<dt>5th bytes</dt><dd><p>The 5th percentile of memory allocated per operation.</p>
+<p>The 5th percentile of memory allocated per operation. This metric indicates that 5% of the iterations used
+less memory than this value, providing insight into the lower end of the memory usage distribution.</p>
+</dd>
+<dt>95th bytes</dt><dd><p>The 95th percentile of memory allocated per operation.</p>
+<p>The 95th percentile of memory allocated per operation. This metric indicates that 95% of the iterations used
+less memory than this value, which is useful for understanding the typical upper bound of memory usage, excluding
+extreme outliers.</p>
+</dd>
+<dt>std dev bytes</dt><dd><p>A measure of the variation in memory allocation per operation.</p>
+<p>The standard deviation of the memory allocation measurements. This metric quantifies the amount of variation
+in memory usage across iterations. A lower value indicates more consistent and predictable memory behavior.</p>
+</dd>
+<dt>rsd%</dt><dd><p>A normalized measure of memory usage inconsistency, expressed as a percentage.</p>
+<p>The relative standard deviation (RSD) expressed as a percentage. This metric is calculated by dividing the standard
+deviation by the mean memory usage. It provides a normalized measure of variability, allowing for easier comparison
+of memory consistency across different benchmarks.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Field Definitions</a><ul>
+<li><a class="reference internal" href="#common-report-fields">Common Report Fields</a></li>
+<li><a class="reference internal" href="#operations-per-second">Operations Per Second</a></li>
+<li><a class="reference internal" href="#timing">Timing</a></li>
+<li><a class="reference internal" href="#memory-usage">Memory Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/reports/rich_table_field_definitions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Field Definitions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

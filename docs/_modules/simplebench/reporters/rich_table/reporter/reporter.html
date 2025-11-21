@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.reporters.rich_table.reporter.reporter &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.rich_table.reporter.reporter</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.reporters.rich_table.reporter.reporter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Reporter for benchmark results using Rich tables on the console.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">TypeAlias</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_INTERVAL_SCALE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
+<span class="c1"># simplebench.reporters imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reporter</span><span class="p">,</span> <span class="n">ReporterOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.si_units</span><span class="w"> </span><span class="kn">import</span> <span class="n">si_scale_for_smallest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">sigfigs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_type</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">RichTableConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RichTableReporterErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">RichTableOptions</span>
+
+<span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">RichTableOptions</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+
+
+<div class="viewcode-block" id="RichTableReporter">
+<a class="viewcode-back" href="../../../../../source/simplebench.reporters.rich_table.reporter.reporter.html#simplebench.reporters.rich_table.RichTableReporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RichTableReporter</span><span class="p">(</span><span class="n">Reporter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for outputting benchmark results as Rich Tables.</span>
+
+<span class="sd">    It supports reporting operations per second and per round timing results,</span>
+<span class="sd">    either separately or together, to the console, to files, and/or via a callback function.</span>
+
+<span class="sd">    **Defined command-line flags:**</span>
+
+<span class="sd">    * ``--rich-table``: Outputs all results as rich text tables on the console.</span>
+<span class="sd">    * ``--rich-table.ops``: Outputs only operations per second results.</span>
+<span class="sd">    * ``--rich-table.timings``: Outputs only per round timing results.</span>
+<span class="sd">    * ``--rich-table.memory``: Outputs only memory usage results.</span>
+<span class="sd">    * ``--rich-table.peak-memory``: Outputs only peak memory usage results.</span>
+
+<span class="sd">    Each flag supports multiple targets: ``console``, ``filesystem``, and ``callback`` with</span>
+<span class="sd">    the default target being ``console``.</span>
+
+<span class="sd">    :ivar name: The unique identifying name of the reporter.</span>
+<span class="sd">    :vartype name: str</span>
+<span class="sd">    :ivar description: A brief description of the reporter.</span>
+<span class="sd">    :vartype description: str</span>
+<span class="sd">    :ivar choices: A collection of :class:`~simplebench.reporters.choices.Choices` instances</span>
+<span class="sd">        defining the reporter instance, CLI flags,</span>
+<span class="sd">        :class:`~simplebench.reporters.choice.Choice` name, supported</span>
+<span class="sd">        :class:`~simplebench.enums.Section` objects, supported output</span>
+<span class="sd">        :class:`~simplebench.enums.Target` objects, and supported output</span>
+<span class="sd">        :class:`~simplebench.enums.Format` objects for the reporter.</span>
+<span class="sd">    :vartype choices: ~simplebench.reporters.choices.Choices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_OPTIONS_TYPE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">RichTableOptions</span><span class="p">]]</span> <span class="o">=</span> <span class="n">RichTableOptions</span>  <span class="c1"># pylint: disable=line-too-long # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501</span>
+    <span class="n">_OPTIONS_KWARGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">RichTableConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the RichTableReporter.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            The exception documentation below refers to validation of subclass configuration</span>
+<span class="sd">            class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly</span>
+<span class="sd">            defined in any subclass of :class:`~.RichTableReporter` to ensure proper</span>
+<span class="sd">            functionality.</span>
+
+<span class="sd">            In simple use, these exceptions should never be raised, as</span>
+<span class="sd">            :class:`~.RichTableReporter` provides valid implementations. They are documented</span>
+<span class="sd">            here for completeness.</span>
+
+<span class="sd">        :param config: An optional configuration object to override default reporter settings.</span>
+<span class="sd">                       If not provided, default settings will be used.</span>
+<span class="sd">        :type config: RichTableConfig | None</span>
+
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration</span>
+<span class="sd">            types are invalid.</span>
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration</span>
+<span class="sd">            values are invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">RichTableConfig</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RichTableReporter.render">
+<a class="viewcode-back" href="../../../../../source/simplebench.reporters.rich_table.reporter.reporter.html#simplebench.reporters.rich_table.RichTableReporter.render">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prints the benchmark results in a rich table format if available.</span>
+
+<span class="sd">        It creates a :class:`~rich.table.Table` instance containing the benchmark results</span>
+<span class="sd">        for the specified section.</span>
+
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
+<span class="sd">            benchmarked code.</span>
+<span class="sd">        :param options: The options specifying the report configuration.</span>
+<span class="sd">            (:class:`~.RichTableOptions` is a subclass of :class:`~.ReporterOptions`.)</span>
+<span class="sd">        :param section: The :class:`~simplebench.enums.Section` enum value specifying the</span>
+<span class="sd">            type of results to display.</span>
+<span class="sd">        :return: The :class:`~rich.table.Table` instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># is_* checks provide deferred import validation to avoid circular imports</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;case&#39; argument must be a Case instance, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">case</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_RichTableReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_CASE</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+                                <span class="n">_RichTableReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_SECTION</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
+                                <span class="n">_RichTableReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_OPTIONS</span><span class="p">)</span>
+
+        <span class="n">base_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_unit_for_section</span><span class="p">(</span><span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span>
+
+        <span class="n">mean_unit</span><span class="p">,</span> <span class="n">mean_scale</span> <span class="o">=</span> <span class="n">si_scale_for_smallest</span><span class="p">(</span>
+            <span class="n">numbers</span><span class="o">=</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span>
+            <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+        <span class="n">median_unit</span><span class="p">,</span> <span class="n">median_scale</span> <span class="o">=</span> <span class="n">si_scale_for_smallest</span><span class="p">(</span>
+            <span class="n">numbers</span><span class="o">=</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">median</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span>
+            <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+        <span class="n">min_unit</span><span class="p">,</span> <span class="n">min_scale</span> <span class="o">=</span> <span class="n">si_scale_for_smallest</span><span class="p">(</span>
+            <span class="n">numbers</span><span class="o">=</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">minimum</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span>
+            <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+        <span class="n">max_unit</span><span class="p">,</span> <span class="n">max_scale</span> <span class="o">=</span> <span class="n">si_scale_for_smallest</span><span class="p">(</span>
+            <span class="n">numbers</span><span class="o">=</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">maximum</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span>
+            <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+        <span class="n">p5_unit</span><span class="p">,</span> <span class="n">p5_scale</span> <span class="o">=</span> <span class="n">si_scale_for_smallest</span><span class="p">(</span>
+            <span class="n">numbers</span><span class="o">=</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span>
+            <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+        <span class="n">p95_unit</span><span class="p">,</span> <span class="n">p95_scale</span> <span class="o">=</span> <span class="n">si_scale_for_smallest</span><span class="p">(</span>
+            <span class="n">numbers</span><span class="o">=</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">95</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span>
+            <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+        <span class="n">stddev_unit</span><span class="p">,</span> <span class="n">stddev_scale</span> <span class="o">=</span> <span class="n">si_scale_for_smallest</span><span class="p">(</span>
+            <span class="n">numbers</span><span class="o">=</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="o">.</span><span class="n">adjusted_standard_deviation</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span>
+            <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">section</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">case</span><span class="o">.</span><span class="n">description</span><span class="p">),</span>
+                      <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                      <span class="n">title_style</span><span class="o">=</span><span class="s1">&#39;bold green1&#39;</span><span class="p">,</span>
+                      <span class="n">header_style</span><span class="o">=</span><span class="s1">&#39;bold magenta&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;Iterations&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;Rounds&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;Elapsed Seconds&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mean </span><span class="si">{</span><span class="n">mean_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;median </span><span class="si">{</span><span class="n">median_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;min </span><span class="si">{</span><span class="n">min_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;max </span><span class="si">{</span><span class="n">max_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;5th </span><span class="si">{</span><span class="n">p5_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;95th </span><span class="si">{</span><span class="n">p95_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;std dev </span><span class="si">{</span><span class="n">stddev_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;rsd%&#39;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">stats_target</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+            <span class="n">row</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">n</span><span class="si">:</span><span class="s1">&gt;6d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">iterations</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;6d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">rounds</span><span class="si">:</span><span class="s1">&gt;6d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">total_elapsed</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">DEFAULT_INTERVAL_SCALE</span><span class="si">:</span><span class="s1">&gt;4.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">mean</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mean_scale</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;8.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">median</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">median_scale</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;8.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">minimum</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">min_scale</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;8.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">maximum</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">max_scale</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;8.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p5_scale</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;8.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">95</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p95_scale</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;8.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">adjusted_standard_deviation</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">stddev_scale</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;8.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">adjusted_relative_standard_deviation</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;5.2f</span><span class="si">}</span><span class="s1">%&#39;</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">variation_marks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">value</span><span class="si">!s}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span></div>
+</div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.rich_table.reporter.reporter</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

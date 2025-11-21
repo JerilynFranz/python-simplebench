@@ -7,7 +7,7 @@ build:
 
 python:
   install:
-    - requirements: docs/requirements.txt
+    - requirements: documents/requirements.txt
 
 sphinx:
-  configuration: docs/conf.py
+  configuration: documents/conf.py

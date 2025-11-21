@@ -16,9 +16,7 @@
 .venv-3*
 
 # Sphinx stuff
-docs/_build
-#docs/make.bat
-docs/html/.buildinfo
+documentation/_build
 
 # Bazel generated stuff
 bazel-bin

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.si_units &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.si_units</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.si_units</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Utility functions for handling SI units&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span><span class="p">,</span> <span class="n">_SIUnitsErrorTag</span>
+
+<span class="c1"># SI prefixes from tera (T) to pico (p)</span>
+<span class="c1"># We don&#39;t go beyond pico (p) because it&#39;s not commonly used in benchmarking</span>
+<span class="c1"># and increases the chances of confusion with autodetected units.</span>
+<span class="c1"># The micro (μ) prefix is represented using the Greek letter mu (U+03BC)</span>
+<span class="c1"># as per the SI standard, but the legacy Unicode compatibility character</span>
+<span class="c1"># (U+00B5) is also supported.</span>
+<span class="n">_SI_PREFIXES</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">1e12</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="mf">1e-12</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1e9</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1e6</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1e3</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="s1">&#39;μ&#39;</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">),</span>  <span class="c1"># &#39;U+03BC&#39; Greek Small Letter Mu (SI standard)</span>
+    <span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="s1">&#39;µ&#39;</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">),</span>  <span class="c1"># &#39;U+00B5&#39; MICRO SIGN (legacy Unicode compatibility)</span>
+    <span class="p">(</span><span class="mf">1e-9</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="mf">1e9</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1e-12</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mf">1e12</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;List of SI prefixes with their scale thresholds and inverse scale factors.</span>
+<span class="sd">Each tuple contains (scale threshold, prefix, inverse scale factor).&quot;&quot;&quot;</span>
+
+<span class="n">_SI_PREFIXES_SCALE</span> <span class="o">=</span> <span class="p">{</span><span class="n">scale</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">scale</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">_SI_PREFIXES</span><span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Mapping of SI prefixes to their scale factors.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="si_scale_for_smallest">
+<a class="viewcode-back" href="../../source/simplebench.si_units.html#simplebench.si_units.si_scale_for_smallest">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">si_scale_for_smallest</span><span class="p">(</span><span class="n">numbers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">],</span> <span class="n">base_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the scale factor and SI unit for the smallest in a sequence of numbers.</span>
+
+<span class="sd">    The scale factor is the factor that should be applied to the numbers to convert</span>
+<span class="sd">    them to the desired unit. The SI unit is the unit that corresponds to the scale factor.</span>
+
+<span class="sd">    It gives the SI prefix unit and scale for the smallest non-zero absolute value in the sequence.</span>
+<span class="sd">    If all numbers are zero, it returns the base unit and a scale factor of 1.0.</span>
+
+<span class="sd">    :param numbers: A sequence of numbers to scale.</span>
+<span class="sd">    :type numbers: Sequence[float | int]</span>
+<span class="sd">    :param base_unit: The base unit to use for scaling.</span>
+<span class="sd">    :type base_unit: str</span>
+<span class="sd">    :return: A tuple containing the scaled unit and the scaling factor.</span>
+<span class="sd">    :rtype: tuple[str, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;numbers arg must be a Sequence of int or float&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;all items in numbers arg sequence must be type int or float&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_FOR_SMALLEST_INVALID_NUMBERS_ARG_VALUES_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">numbers</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">base_unit</span><span class="p">,</span> <span class="mf">1.0</span>
+
+    <span class="n">min_n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">_SI_PREFIXES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">min_n</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scale</span>
+
+    <span class="c1"># Default to the smallest scale if no other matches</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">_SI_PREFIXES</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scale</span></div>
+
+
+
+<div class="viewcode-block" id="si_scale">
+<a class="viewcode-back" href="../../source/simplebench.si_units.html#simplebench.si_units.si_scale">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">si_scale</span><span class="p">(</span><span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the SI scale factor for a unit given the base unit.</span>
+
+<span class="sd">    This method will return the scale factor for the given unit</span>
+<span class="sd">    relative to the base unit for SI prefixes ranging from tera (T)</span>
+<span class="sd">    to pico (p).</span>
+
+<span class="sd">    Example: ``si_scale(&#39;ns&#39;, &#39;s&#39;)`` returns ``1e-9``</span>
+
+<span class="sd">    :param unit: The unit to get the scale factor for.</span>
+<span class="sd">    :type unit: str</span>
+<span class="sd">    :param base_unit: The base unit</span>
+<span class="sd">    :type base_unit: str</span>
+<span class="sd">    :return: The scale factor for the given unit.</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    :raises SimpleBenchValueError: If the SI unit is not recognized, if ``base_unit`` is an empty string,</span>
+<span class="sd">        or if the ``unit`` does not end with the ``base_unit``.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the ``unit`` or ``base_unit`` args are not type str.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;unit arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_INVALID_UNIT_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;base_unit arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_INVALID_BASE_UNIT_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">base_unit</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;base_unit arg must not be an empty string&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_EMPTY_BASE_UNIT_ARG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unit</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">base_unit</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Unit &quot;</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&quot; does not end with base unit &quot;</span><span class="si">{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_UNIT_DOES_NOT_END_WITH_BASE_UNIT</span><span class="p">)</span>
+    <span class="n">si_prefix</span> <span class="o">=</span> <span class="n">unit</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">base_unit</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">si_prefix</span> <span class="ow">in</span> <span class="n">_SI_PREFIXES_SCALE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_SI_PREFIXES_SCALE</span><span class="p">[</span><span class="n">si_prefix</span><span class="p">]</span>
+    <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;Unknown SI unit: </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_UNKNOWN_SI_UNIT_PREFIX</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="si_unit_base">
+<a class="viewcode-back" href="../../source/simplebench.si_units.html#simplebench.si_units.si_unit_base">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">si_unit_base</span><span class="p">(</span><span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Guess the base unit from an SI unit.</span>
+
+<span class="sd">    This assumes that the SI unit is a valid SI unit with an optional SI prefix.</span>
+<span class="sd">    If the unit is a single character, it is returned as-is on the assumption</span>
+<span class="sd">    that it is already the base unit.</span>
+
+<span class="sd">    We only check for a single-character SI prefix at the start of the unit from</span>
+<span class="sd">    the range of supported SI prefixes (from tera (T) to pico (p)).</span>
+
+<span class="sd">    This CAN result in false positives if the base unit starts with a character</span>
+<span class="sd">    that is also a valid SI prefix. (potential false positives: &#39;m&#39; (meter),</span>
+<span class="sd">    &#39;M&#39; (mole), &#39;P&#39; (peta), &#39;T&#39; (tesla), &#39;G&#39; (gauss), &#39;k&#39; (katal),</span>
+<span class="sd">    &#39;n&#39; (newton), &#39;p&#39; (pascal)).  However, these units are uncommon in benchmarking</span>
+<span class="sd">    and the benefit of simplicity outweighs the risk of false positives.</span>
+
+<span class="sd">    We could do a more complex check by looking for known SI base units, but this would</span>
+<span class="sd">    require maintaining a list of known base units and would still not be exhaustive.</span>
+
+<span class="sd">    If no valid SI prefix is found, the unit is assumed to already be the base unit.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        ``si_unit_base(&#39;ns&#39;)`` returns ``&#39;s&#39;``</span>
+
+<span class="sd">    :param unit: The SI unit to get the base unit from.</span>
+<span class="sd">    :type unit: str</span>
+<span class="sd">    :return: The base unit.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    :raises SimpleBenchValueError: If the unit is an empty string.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the unit arg is not of type str.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;unit arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_UNIT_BASE_INVALID_UNIT_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;unit arg must not be an empty string&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_UNIT_BASE_EMPTY_UNIT_ARG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">unit</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">unit</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">_SI_PREFIXES_SCALE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">unit</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">unit</span></div>
+
+
+
+<div class="viewcode-block" id="si_scale_to_unit">
+<a class="viewcode-back" href="../../source/simplebench.si_units.html#simplebench.si_units.si_scale_to_unit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">si_scale_to_unit</span><span class="p">(</span><span class="n">base_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">current_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the scale factor to convert a current SI unit to a target SI unit based on their SI prefixes.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        scale_by: float = si_scale_to_unit(base_unit=&#39;s&#39;, current_unit=&#39;s&#39;, target_unit=&#39;ns&#39;)</span>
+
+<span class="sd">    :param base_unit: The base unit to use for scaling.</span>
+<span class="sd">    :type base_unit: str</span>
+<span class="sd">    :param current_unit: The current unit of the number.</span>
+<span class="sd">    :type current_unit: str</span>
+<span class="sd">    :param target_unit: The target unit to scale the number to.</span>
+<span class="sd">    :type target_unit: str</span>
+<span class="sd">    :return: The scaling factor to convert the current unit to the target unit.</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    :raises SimpleBenchValueError: If the SI prefix units are not recognized; if ``base_unit``,</span>
+<span class="sd">        ``current_unit``, or ``target_unit`` is an empty string; or if the units are not compatible</span>
+<span class="sd">        (i.e., do not share the same base unit (i.e. &#39;seconds&#39; vs &#39;meters&#39;)).</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the ``unit``, ``base_unit``, ``current_unit``,</span>
+<span class="sd">        or ``target_unit`` args are not type str.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;base_unit arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_TO_UNIT_INVALID_BASE_UNIT_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">base_unit</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;base_unit arg must not be an empty string&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_TO_UNIT_EMPTY_BASE_UNIT_ARG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;current_unit arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_TO_UNIT_INVALID_CURRENT_UNIT_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">current_unit</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;current_unit arg must not be an empty string&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_TO_UNIT_EMPTY_CURRENT_UNIT_ARG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="s2">&quot;target_unit arg must be a str&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_TO_UNIT_INVALID_TARGET_UNIT_ARG_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">target_unit</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;target_unit arg must not be an empty string&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_TO_UNIT_EMPTY_TARGET_UNIT_ARG</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">si_unit_base</span><span class="p">(</span><span class="n">base_unit</span><span class="p">)</span> <span class="o">==</span> <span class="n">si_unit_base</span><span class="p">(</span><span class="n">current_unit</span><span class="p">)</span> <span class="o">==</span> <span class="n">si_unit_base</span><span class="p">(</span><span class="n">target_unit</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Units are not compatible: base_unit=&quot;</span><span class="si">{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">&quot;, current_unit=&quot;</span><span class="si">{</span><span class="n">current_unit</span><span class="si">}</span><span class="s1">&quot;, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;target_unit=&quot;</span><span class="si">{</span><span class="n">target_unit</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">),</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SIUnitsErrorTag</span><span class="o">.</span><span class="n">SI_SCALE_TO_UNIT_INCOMPATIBLE_UNITS</span><span class="p">)</span>
+    <span class="n">current_scale</span> <span class="o">=</span> <span class="n">si_scale</span><span class="p">(</span><span class="n">current_unit</span><span class="p">,</span> <span class="n">base_unit</span><span class="p">)</span>
+    <span class="n">target_scale</span> <span class="o">=</span> <span class="n">si_scale</span><span class="p">(</span><span class="n">target_unit</span><span class="p">,</span> <span class="n">base_unit</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target_scale</span> <span class="o">/</span> <span class="n">current_scale</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.si_units</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

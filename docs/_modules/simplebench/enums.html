@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.enums &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.enums</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.enums</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Various enums for SimpleBench.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+<span class="n">E</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Enum</span><span class="p">)</span>
+
+
+<span class="c1"># Decorator to attach docstrings to enum members</span>
+<span class="c1"># See: https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums</span>
+<div class="viewcode-block" id="enum_docstrings">
+<a class="viewcode-back" href="../../source/simplebench.enums.html#simplebench.enum_docstrings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">enum_docstrings</span><span class="p">(</span><span class="n">enum</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">E</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">E</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attach docstrings to enum members.</span>
+
+<span class="sd">    Docstrings are string literals that appear directly below the enum member</span>
+<span class="sd">    assignment expression within triple-quotes.</span>
+
+<span class="sd">    This decorator parses the source code of the enum class to find</span>
+<span class="sd">    docstrings for each member and attaches them to the respective enum members.</span>
+
+<span class="sd">    This allows for more detailed documentation of enum members and in tools</span>
+<span class="sd">    that can extract and display these docstrings.</span>
+
+<span class="sd">    This code is adapted from:</span>
+<span class="sd">    https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. code-block:: python3</span>
+
+<span class="sd">            @enum_docstrings</span>
+<span class="sd">            class SomeEnum(Enum):</span>
+<span class="sd">                &#39;&#39;&#39;Docstring for the SomeEnum enum&#39;&#39;&#39;</span>
+
+<span class="sd">                foo_member = &quot;foo_value&quot;</span>
+<span class="sd">                &#39;&#39;&#39;Docstring for the foo_member enum member&#39;&#39;&#39;</span>
+
+<span class="sd">            SomeEnum.foo_member.__doc__  # &#39;Docstring for the foo_member enum member&#39;</span>
+
+<span class="sd">    :param enum: The enum class to process.</span>
+<span class="sd">    :type enum: type[Enum]</span>
+<span class="sd">    :return: The same enum class with member docstrings attached.</span>
+<span class="sd">    :rtype: type[E]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">enum</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="c1"># no source code available</span>
+        <span class="k">return</span> <span class="n">enum</span>
+
+    <span class="k">if</span> <span class="n">mod</span><span class="o">.</span><span class="n">body</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">class_def</span> <span class="o">:=</span> <span class="n">mod</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">):</span>
+        <span class="c1"># An enum member docstring is unassigned if it is the exact same object</span>
+        <span class="c1"># as enum.__doc__.</span>
+        <span class="n">unassigned</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">is_</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">__members__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">member</span><span class="p">:</span> <span class="n">E</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">class_def</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+            <span class="k">match</span> <span class="n">node</span><span class="p">:</span>
+                <span class="k">case</span> <span class="n">ast</span><span class="o">.</span><span class="n">Assign</span><span class="p">(</span><span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">name</span><span class="p">)])</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                    <span class="c1"># Enum member assignment, look for a docstring next</span>
+                    <span class="n">member</span> <span class="o">=</span> <span class="n">enum</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="k">continue</span>
+
+                <span class="k">case</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expr</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">docstring</span><span class="p">))</span>
+                <span class="p">)</span> <span class="k">if</span> <span class="n">member</span> <span class="ow">and</span> <span class="n">unassigned</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">):</span>
+                    <span class="c1"># docstring immediately following a member assignment</span>
+                    <span class="n">member</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">docstring</span>
+
+                <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="n">member</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">enum</span></div>
+
+
+
+<div class="viewcode-block" id="Section">
+<a class="viewcode-back" href="../../source/simplebench.enums.html#simplebench.Section">[docs]</a>
+<span class="nd">@enum_docstrings</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Section</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Categories for case results sections in reporters.</span>
+
+<span class="sd">    This is used by reporters to specify which sections of benchmark results to include</span>
+<span class="sd">    in their output.</span>
+
+<span class="sd">    Defined Sections are:</span>
+<span class="sd">      - OPS: Operations per second section.</span>
+<span class="sd">      - TIMING: Time per round section.</span>
+<span class="sd">      - MEMORY: Memory usage section.</span>
+<span class="sd">      - PEAK_MEMORY: Peak memory usage section.</span>
+<span class="sd">      - NULL: No section. This is used when a reporter does not specify a section.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">OPS</span> <span class="o">=</span> <span class="s1">&#39;operations per second&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Operations per second section.&quot;&quot;&quot;</span>
+    <span class="n">TIMING</span> <span class="o">=</span> <span class="s1">&#39;per round timings&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Time per round section.&quot;&quot;&quot;</span>
+    <span class="n">MEMORY</span> <span class="o">=</span> <span class="s1">&#39;memory usage&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Memory usage section.&quot;&quot;&quot;</span>
+    <span class="n">PEAK_MEMORY</span> <span class="o">=</span> <span class="s1">&#39;peak memory usage&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Peak memory usage section.&quot;&quot;&quot;</span>
+    <span class="n">NULL</span> <span class="o">=</span> <span class="s1">&#39;null section&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;No section. This is used when a reporter does not specify a section.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Despite the source code for Enum saying this is undocumented, it is</span>
+    <span class="c1"># part of the public API and used in various places.</span>
+    <span class="c1"># See: https://docs.python.org/3/library/enum.html#enum.Enum._value2member_map_</span>
+    <span class="c1"># This allows checking if a value matches a valid enum member without raising an exception.</span>
+    <span class="c1"># and prevents the superclass __contains__ from raising a TypeError for non-enum values</span>
+    <span class="c1"># before python 3.12</span>
+    <span class="c1">#</span>
+    <span class="c1"># It may be a better idea to use a custom method for this in the future as this</span>
+    <span class="c1"># blurs the line between using in operator for membership testing and enum value checking.</span>
+    <span class="c1"># It may be unnecessary as the codebase has evolved</span>
+    <span class="c1"># MyPy is not very happy about this, so we need to ignore the type check here.</span>
+    <span class="c1">#</span>
+    <span class="c1"># TODO: Investigate if this is still needed.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the item is a valid Section.</span>
+
+<span class="sd">        It returns True if the item is either a Section enum member or a valid</span>
+<span class="sd">        value of the Section enum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Section</span><span class="p">)</span> <span class="ow">or</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value2member_map_</span>  <span class="c1"># type: ignore</span></div>
+
+
+
+<div class="viewcode-block" id="Verbosity">
+<a class="viewcode-back" href="../../source/simplebench.enums.html#simplebench.Verbosity">[docs]</a>
+<span class="nd">@enum_docstrings</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Verbosity</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verbosity level enums for console output.</span>
+
+<span class="sd">    Defined levels are:</span>
+<span class="sd">      - QUIET: Only requested output, errors, warnings and critical messages are shown.</span>
+<span class="sd">      - NORMAL: Normal messages are shown, including status displays during runs.</span>
+<span class="sd">      - VERBOSE: All messages are shown and status displays during runs.</span>
+<span class="sd">      - DEBUG: All messages are shown, including debug messages and status displays during runs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">QUIET</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Only requested output, errors, warnings and critical messages are shown.</span>
+<span class="sd">    Status displays are not shown during runs.</span>
+
+<span class="sd">    This is incompatible with all other output levels.&quot;&quot;&quot;</span>
+
+    <span class="n">NORMAL</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normal messages are shown, including status displays during runs.</span>
+
+<span class="sd">    This is the default verbosity level and is incompatible with quiet.&quot;&quot;&quot;</span>
+
+    <span class="n">VERBOSE</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;All messages are shown and status displays during runs.</span>
+
+<span class="sd">    This is incompatible with quiet.&quot;&quot;&quot;</span>
+
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;All messages are shown, including debug messages and status displays during runs.</span>
+
+<span class="sd">    This is incompatible with quiet.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Target">
+<a class="viewcode-back" href="../../source/simplebench.enums.html#simplebench.Target">[docs]</a>
+<span class="nd">@enum_docstrings</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Target</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Categories for different output targets.</span>
+
+<span class="sd">    The enums are used in generating calling parameters</span>
+<span class="sd">    for the report() methods in the Reporter subclasses.</span>
+
+<span class="sd">    Defined Targets are:</span>
+<span class="sd">      - CONSOLE: Output to console.</span>
+<span class="sd">      - FILESYSTEM: Output to filesystem.</span>
+<span class="sd">      - CALLBACK: Pass generated output to a callback function.</span>
+<span class="sd">      - CUSTOM: Output to a custom target.</span>
+<span class="sd">      - NULL: No output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CONSOLE</span> <span class="o">=</span> <span class="s1">&#39;console&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Output to console.&quot;&quot;&quot;</span>
+    <span class="n">FILESYSTEM</span> <span class="o">=</span> <span class="s1">&#39;filesystem&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Output to filesystem.&quot;&quot;&quot;</span>
+    <span class="n">CALLBACK</span> <span class="o">=</span> <span class="s1">&#39;callback&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pass generated output to a callback function.&quot;&quot;&quot;</span>
+    <span class="n">CUSTOM</span> <span class="o">=</span> <span class="s1">&#39;custom&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Output to a custom target.&quot;&quot;&quot;</span>
+    <span class="n">NULL</span> <span class="o">=</span> <span class="s1">&#39;null&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;No output.&quot;&quot;&quot;</span>
+    <span class="n">INVALID</span> <span class="o">=</span> <span class="s1">&#39;invalid&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Invalid target. This is a testing placeholder and should not be used.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Format">
+<a class="viewcode-back" href="../../source/simplebench.enums.html#simplebench.Format">[docs]</a>
+<span class="nd">@enum_docstrings</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Format</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Categories for different output formats.</span>
+
+<span class="sd">    Defined Formats are:</span>
+<span class="sd">      - PLAIN_TEXT: Plain text format.</span>
+<span class="sd">      - MARKDOWN: Markdown format.</span>
+<span class="sd">      - RICH_TEXT: Rich text format.</span>
+<span class="sd">      - CSV: CSV format.</span>
+<span class="sd">      - JSON: JSON format.</span>
+<span class="sd">      - GRAPH: Graphical format.</span>
+<span class="sd">      - CUSTOM: Custom format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PLAIN_TEXT</span> <span class="o">=</span> <span class="s1">&#39;plain text&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plain text format&quot;&quot;&quot;</span>
+    <span class="n">MARKDOWN</span> <span class="o">=</span> <span class="s1">&#39;markdown&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Markdown format&quot;&quot;&quot;</span>
+    <span class="n">RICH_TEXT</span> <span class="o">=</span> <span class="s1">&#39;rich text&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rich text format&quot;&quot;&quot;</span>
+    <span class="n">CSV</span> <span class="o">=</span> <span class="s1">&#39;csv&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CSV format&quot;&quot;&quot;</span>
+    <span class="n">JSON</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;JSON format&quot;&quot;&quot;</span>
+    <span class="n">GRAPH</span> <span class="o">=</span> <span class="s1">&#39;graph&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Graphical format&quot;&quot;&quot;</span>
+    <span class="n">CUSTOM</span> <span class="o">=</span> <span class="s1">&#39;custom&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom format&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Color">
+<a class="viewcode-back" href="../../source/simplebench.enums.html#simplebench.Color">[docs]</a>
+<span class="nd">@enum_docstrings</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Colors for console output.</span>
+
+<span class="sd">    Defined Colors are:</span>
+<span class="sd">      - BLACK: Black color.</span>
+<span class="sd">      - RED: Red color.</span>
+<span class="sd">      - GREEN: Green color.</span>
+<span class="sd">      - YELLOW: Yellow color.</span>
+<span class="sd">      - BLUE: Blue color.</span>
+<span class="sd">      - MAGENTA: Magenta color.</span>
+<span class="sd">      - CYAN: Cyan color.</span>
+<span class="sd">      - WHITE: White color.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BLACK</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Black color.&quot;&quot;&quot;</span>
+    <span class="n">RED</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Red color.&quot;&quot;&quot;</span>
+    <span class="n">GREEN</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Green color.&quot;&quot;&quot;</span>
+    <span class="n">YELLOW</span> <span class="o">=</span> <span class="s1">&#39;yellow&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yellow color.&quot;&quot;&quot;</span>
+    <span class="n">BLUE</span> <span class="o">=</span> <span class="s1">&#39;blue&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Blue color.&quot;&quot;&quot;</span>
+    <span class="n">MAGENTA</span> <span class="o">=</span> <span class="s1">&#39;magenta&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Magenta color.&quot;&quot;&quot;</span>
+    <span class="n">CYAN</span> <span class="o">=</span> <span class="s1">&#39;cyan&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cyan color.&quot;&quot;&quot;</span>
+    <span class="n">WHITE</span> <span class="o">=</span> <span class="s1">&#39;white&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;White color.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FlagType">
+<a class="viewcode-back" href="../../source/simplebench.enums.html#simplebench.FlagType">[docs]</a>
+<span class="nd">@enum_docstrings</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FlagType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Types of command-line flags for reporters.</span>
+
+<span class="sd">    Available FlagTypes are:</span>
+<span class="sd">      - BOOLEAN: Boolean flag type.</span>
+<span class="sd">      - TARGET_LIST: List of output targets</span>
+<span class="sd">      - INVALID: Invalid flag type. This is a testing placeholder and should not be used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BOOLEAN</span> <span class="o">=</span> <span class="s1">&#39;boolean&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Boolean flag type.</span>
+
+<span class="sd">    This flag type represents a simple on/off or true/false option.</span>
+
+<span class="sd">    Example: --verbose / --no-verbose</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TARGET_LIST</span> <span class="o">=</span> <span class="s1">&#39;target_list&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List of output targets</span>
+
+<span class="sd">    This flag type represents a list of output targets for the reporter.</span>
+
+<span class="sd">    This allows specifying multiple targets for the reporter to output to.</span>
+
+<span class="sd">    The targets are specified as a list of strings and validated against</span>
+<span class="sd">    the allowed Target enum values. It support passing NO targets as well,</span>
+<span class="sd">    in which case the reporter will use the default targets.</span>
+
+<span class="sd">    Example: --json console filesystem callback</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">INVALID</span> <span class="o">=</span> <span class="s1">&#39;invalid&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Invalid flag type.</span>
+
+<span class="sd">    This is a testing placeholder and should not be used. It is included</span>
+<span class="sd">    to test error handling for unsupported flag types.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.enums</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

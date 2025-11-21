@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.case &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=d5a199ad" />
+    
+    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.case</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.case</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Benchmark case declaration and execution.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span> <span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span> <span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span> <span class="n">DEFAULT_ROUNDS</span><span class="p">,</span> <span class="n">DEFAULT_WARMUP_ITERATIONS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span><span class="p">,</span> <span class="n">Section</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchRuntimeError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span><span class="p">,</span> <span class="n">_CaseErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActionRunner</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.reporters.validators.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_reporter_callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleRunner</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressTracker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_non_blank_string</span><span class="p">,</span>
+    <span class="n">validate_non_negative_int</span><span class="p">,</span>
+    <span class="n">validate_positive_float</span><span class="p">,</span>
+    <span class="n">validate_positive_int</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+
+<div class="viewcode-block" id="Case">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Case</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Declaration of a benchmark case.</span>
+
+<span class="sd">    A benchmark case defines the specific benchmark to be run, including the</span>
+<span class="sd">    action to be performed, the parameters for the benchmark, and any variations</span>
+<span class="sd">    of those parameters as well as the reporting group and title for the benchmark.</span>
+
+<span class="sd">    It also defines the number of iterations, warmup iterations, rounds, minimum and maximum</span>
+<span class="sd">    time for the benchmark, the benchmark runner to use, and any callbacks to be invoked</span>
+<span class="sd">    to process the results of the benchmark for reporting purposes.</span>
+
+<span class="sd">    The min_time, max_time, iterations, and warmup_iterations parameters control how</span>
+<span class="sd">    the benchmark is executed and measured and interact with each other as follows when</span>
+<span class="sd">    using the default SimpleRunner:</span>
+<span class="sd">    - The benchmark will perform `warmup_iterations` iterations before starting the timing</span>
+<span class="sd">        and measurement phase. This is done to allow for any setup or caching effects to stabilize.</span>
+<span class="sd">        This is separate from the main benchmark iterations and does not count towards the</span>
+<span class="sd">        `iterations` count or the `min_time`/`max_time` limits.</span>
+<span class="sd">    - The benchmark will run for at least `min_time` wall clock seconds, but will stop on</span>
+<span class="sd">        completing the first iteration that ends after `max_time` seconds during the timing phase.</span>
+<span class="sd">    - If the benchmark completes `iterations` iterations after `min_time` but before</span>
+<span class="sd">        reaching `max_time`, it will stop.</span>
+
+<span class="sd">    This means that the benchmark will run for at least `min_time` seconds and</span>
+<span class="sd">    for at least one iteration during the timing phase. If `min_time` is reached</span>
+<span class="sd">    before `iterations` is completed, the benchmark will continue running until</span>
+<span class="sd">    either `iterations` or `max_time` is completed (whichever happens first).</span>
+
+<span class="sd">    `rounds` specifies the number of times the action will be executed per iteration to get a better average.</span>
+<span class="sd">    Each iteration will run the specified number of rounds after setup and before teardown. The timing</span>
+<span class="sd">    for the iteration will be the average time taken for the rounds in that iteration.</span>
+
+<span class="sd">    This helps to reduce the impact of variability in execution time for a single run of the action</span>
+<span class="sd">    for very fast actions. This suppresses the overhead of the loop and timer quantization in Python</span>
+<span class="sd">    during the actual timing benchmark/measurement phase. Internally, the action is called `rounds` times</span>
+<span class="sd">    in an unrolled loop for each iteration, and the average time per call is used for the iteration timing.</span>
+
+<span class="sd">    This removes the overhead of the loop and timer quantization in Python during the actual timing</span>
+<span class="sd">    benchmark/measurement phase by aggregating multiple calls to the action within a single iteration</span>
+<span class="sd">    without the overhead of looping constructs. This allows for more accurate timing of very fast actions</span>
+<span class="sd">    by reducing the relative impact of loop overhead and timer resolution limitations.</span>
+
+<span class="sd">    The trade-off is that total number of action calls is now `iterations * rounds`, and</span>
+<span class="sd">    the reported time per action call is an average over the rounds in each iteration. This can</span>
+<span class="sd">    dramatically improve the accuracy of timing measurements for very fast actions, at the cost</span>
+<span class="sd">    of increased total execution time for the benchmark due to the additional calls to the action.</span>
+
+<span class="sd">    The unrolled loop means that setup and teardown functions (if any) are called only once per iteration,</span>
+<span class="sd">    not once per round. All rounds in the same iteration share the same setup/teardown context.</span>
+
+<span class="sd">    If your action is not extremely fast (~ 10 nanoseconds or faster), it is recommended to leave</span>
+<span class="sd">    `rounds` at its default value of 1. If you do use it, you may want to run dual benchmarks</span>
+<span class="sd">    with `rounds=1` and `rounds&gt;1` to see how much the reported variability and other metrics change.</span>
+
+<span class="sd">    The Case class is designed to be immutable after creation. Once a Case instance</span>
+<span class="sd">    is created, its properties cannot be directly changed. This immutability ensures that</span>
+<span class="sd">    benchmark cases remain consistent throughout their lifecycle.</span>
+
+<span class="sd">    The results of the benchmark runs are stored in the `results` property, which is a list</span>
+<span class="sd">    of Results objects. Each Results object corresponds to a specific combination of</span>
+<span class="sd">    keyword argument variations.</span>
+
+<span class="sd">    .. code-block:: python3</span>
+<span class="sd">      :caption: Minimal Example</span>
+
+<span class="sd">        from simplebench import (</span>
+<span class="sd">            Case, SimpleRunner, Results, main)</span>
+
+
+<span class="sd">        def my_benchmark_action(bench: SimpleRunner,</span>
+<span class="sd">                                **kwargs) -&gt; Results:</span>
+<span class="sd">            # Perform benchmark action here</span>
+<span class="sd">            def benchmark_operation():</span>
+<span class="sd">                sum(range(1000))  # Example operation to benchmark</span>
+
+<span class="sd">            return bench.run(benchmark_operation)</span>
+
+
+<span class="sd">        if __name__ == &#39;__main__&#39;:</span>
+<span class="sd">            cases_list: list[Case] = [</span>
+<span class="sd">                Case(action=my_benchmark_action)</span>
+<span class="sd">            ]</span>
+<span class="sd">            main(cases_list)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_group&#39;</span><span class="p">,</span> <span class="s1">&#39;_title&#39;</span><span class="p">,</span> <span class="s1">&#39;_description&#39;</span><span class="p">,</span> <span class="s1">&#39;_action&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_warmup_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_min_time&#39;</span><span class="p">,</span> <span class="s1">&#39;_max_time&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_variation_cols&#39;</span><span class="p">,</span> <span class="s1">&#39;_kwargs_variations&#39;</span><span class="p">,</span> <span class="s1">&#39;_runner&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_callback&#39;</span><span class="p">,</span> <span class="s1">&#39;_results&#39;</span><span class="p">,</span> <span class="s1">&#39;_options&#39;</span><span class="p">,</span> <span class="s1">&#39;_rounds&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">action</span><span class="p">:</span> <span class="n">ActionRunner</span><span class="p">,</span>
+                 <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+                 <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
+                 <span class="n">warmup_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
+                 <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ROUNDS</span><span class="p">,</span>
+                 <span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span>
+                 <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span>
+                 <span class="n">variation_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">kwargs_variations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">runner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for Case. This defines a benchmark case.</span>
+
+<span class="sd">        The only REQUIRED parameter is `action`.</span>
+
+<span class="sd">        :param action: The function to perform the benchmark. This function must</span>
+<span class="sd">            accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments (&#39;**kwargs&#39;).</span>
+<span class="sd">            See the `ActionRunner` protocol for the exact signature required.</span>
+<span class="sd">            It must return a `Results` object.</span>
+<span class="sd">        :type action: ActionRunner</span>
+<span class="sd">        :param group: The benchmark reporting group to which the benchmark case belongs.</span>
+<span class="sd">        :type group: str</span>
+<span class="sd">        :param title: The title of the benchmark case. If None, the name of the action</span>
+<span class="sd">            function will be used. Cannot be blank.</span>
+<span class="sd">        :type title: Optional[str]</span>
+<span class="sd">        :param description: A brief description of the benchmark case. If None,</span>
+<span class="sd">            the docstring of the action function will be used, or &#39;(no description)&#39; if no docstring</span>
+<span class="sd">            is available. Cannot be blank.</span>
+<span class="sd">        :type description: Optional[str]</span>
+<span class="sd">        :param iterations: The minimum number of iterations to run for</span>
+<span class="sd">            the benchmark.</span>
+<span class="sd">        :type iterations: int</span>
+<span class="sd">        :param warmup_iterations: The number of warmup iterations</span>
+<span class="sd">            to run before the benchmark.</span>
+<span class="sd">        :type warmup_iterations: int</span>
+<span class="sd">        :param rounds: The number of rounds to run for the benchmark.</span>
+<span class="sd">            Rounds are multiple runs of calls to the action within an iteration to mitigate timer</span>
+<span class="sd">            quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown</span>
+<span class="sd">            functions are called only once per iteration (all rounds in the same iteration share the same</span>
+<span class="sd">            setup/teardown context).</span>
+<span class="sd">        :type rounds: int</span>
+<span class="sd">        :param min_time: The minimum time for the benchmark in seconds.</span>
+<span class="sd">        :type min_time: float | int</span>
+<span class="sd">        :param max_time: The maximum time for the benchmark in seconds.</span>
+<span class="sd">        :type max_time: float | int</span>
+<span class="sd">        :param variation_cols: kwargs to be used for cols to denote kwarg</span>
+<span class="sd">            variations. Each key is a keyword argument name, and the value is the column label to use for that</span>
+<span class="sd">            argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
+<span class="sd">            added to the output of reporters that support them as columns of data with the specified labels.</span>
+<span class="sd">            If None, an empty dict is used.</span>
+<span class="sd">        :type variation_cols: Optional[dict[str, str]]</span>
+<span class="sd">        :param kwargs_variations: A mapping of keyword argument key names to</span>
+<span class="sd">            a list of possible values for that argument. Default is {}. When tests are run, the benchmark</span>
+<span class="sd">            will be executed for each combination of the specified keyword argument variations. The action</span>
+<span class="sd">            function will be called with a `bench` parameter that is an instance of the runner and the</span>
+<span class="sd">            keyword arguments for the current variation.</span>
+<span class="sd">            If None, an empty dict is used.</span>
+<span class="sd">        :type kwargs_variations: Optional[dict[str, list[Any]]]</span>
+<span class="sd">        :param runner: A custom runner class for the benchmark.</span>
+<span class="sd">            Any custom runner classes must be a subclass of SimpleRunner and must have a method</span>
+<span class="sd">            named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.</span>
+<span class="sd">            The action function will be called with a `bench` parameter that is an instance of the</span>
+<span class="sd">            custom runner.</span>
+<span class="sd">            It may also accept additional parameters to the run method as needed. If additional</span>
+<span class="sd">            parameters are needed for the custom runner, they will need to be passed to the run</span>
+<span class="sd">            method as keyword arguments.</span>
+<span class="sd">            No support is provided for passing additional parameters to a custom runner from the @benchmark</span>
+<span class="sd">            decorator.</span>
+<span class="sd">        :type runner: type[SimpleRunner]</span>
+<span class="sd">        :param callback:</span>
+<span class="sd">            A callback function for additional processing of the report. The function should accept</span>
+<span class="sd">            four arguments: the Case instance, the Section, the Format, and the generated report data.</span>
+<span class="sd">            The callback function will be called with the following arguments:</span>
+<span class="sd">                - case (Case): The `Case` instance processed for the report.</span>
+<span class="sd">                - section (Section): The `Section` of the report.</span>
+<span class="sd">                - output_format (Format): The `Format` of the report.</span>
+<span class="sd">                - output (Any): The generated report data. Note that the actual type of this data will</span>
+<span class="sd">                  depend on the Format specified for the report and the type generated by the</span>
+<span class="sd">                  reporter for that Format</span>
+<span class="sd">            Omit if no callback is needed by a reporter.</span>
+<span class="sd">        :type callback: Optional[ReporterCallback]</span>
+<span class="sd">        :param options: A list of additional options for the benchmark case.</span>
+<span class="sd">            Each option is an instance of ReporterOption or a subclass of ReporterOption.</span>
+<span class="sd">            Reporter options can be used to customize the output of the benchmark reports for</span>
+<span class="sd">            specific reporters. Reporters are responsible for extracting applicable ReporterOptions</span>
+<span class="sd">            from the list of options themselves.</span>
+<span class="sd">            If None, an empty list is used.</span>
+<span class="sd">        :type options: Optional[list[ReporterOption]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+                        <span class="n">group</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_GROUP_TYPE</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_GROUP_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span>  <span class="c1"># type: ignore[attr-defined]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+                        <span class="n">title</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_TITLE_TYPE</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_TITLE_VALUE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="vm">__doc__</span> <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="vm">__doc__</span> <span class="k">else</span> <span class="s1">&#39;(no description)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+                        <span class="n">description</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_DESCRIPTION_TYPE</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_DESCRIPTION_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span> <span class="o">=</span> <span class="n">validate_positive_int</span><span class="p">(</span>
+                        <span class="n">iterations</span><span class="p">,</span> <span class="s2">&quot;iterations&quot;</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ITERATIONS_TYPE</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ITERATIONS_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_warmup_iterations</span> <span class="o">=</span> <span class="n">validate_non_negative_int</span><span class="p">(</span>
+                        <span class="n">warmup_iterations</span><span class="p">,</span> <span class="s2">&quot;warmup_iterations&quot;</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_WARMUP_ITERATIONS_TYPE</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_WARMUP_ITERATIONS_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span> <span class="o">=</span> <span class="n">validate_positive_int</span><span class="p">(</span>
+                        <span class="n">rounds</span><span class="p">,</span> <span class="s2">&quot;rounds&quot;</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ROUNDS_TYPE</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ROUNDS_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_time</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
+                        <span class="n">min_time</span><span class="p">,</span> <span class="s2">&quot;min_time&quot;</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MIN_TIME_TYPE</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MIN_TIME_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_time</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
+                        <span class="n">max_time</span><span class="p">,</span> <span class="s2">&quot;max_time&quot;</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MAX_TIME_TYPE</span><span class="p">,</span>
+                        <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MAX_TIME_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_runner</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_runner</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">validate_reporter_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_options</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># No validation needed here</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_time_range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_time</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Case.validate_time_range">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_time_range">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_time_range</span><span class="p">(</span><span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that min_time &lt; max_time for the case.</span>
+
+<span class="sd">        :param min_time: The minimum time.</span>
+<span class="sd">        :type min_time: float</span>
+<span class="sd">        :param max_time: The maximum time.</span>
+<span class="sd">        :type max_time: float</span>
+<span class="sd">        :raises SimpleBenchValueError: The min_time is greater than max_time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">min_time</span> <span class="o">&gt;</span> <span class="n">max_time</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid time range: min_time </span><span class="si">{</span><span class="n">min_time</span><span class="si">}</span><span class="s1"> &gt; max_time </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_TIME_RANGE</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Case.validate_action_signature">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_action_signature">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="p">:</span> <span class="n">ActionRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionRunner</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that action has correct signature.</span>
+
+<span class="sd">        An action function must accept the following two parameters:</span>
+<span class="sd">            - bench: SimpleRunner</span>
+<span class="sd">            - **kwargs: Arbitrary keyword arguments</span>
+
+<span class="sd">        This is equivalent to the `ActionRunner` protocol.</span>
+
+<span class="sd">        :param action: The action function to validate.</span>
+<span class="sd">        :type action: ActionRunner</span>
+<span class="sd">        :return: The validated action function.</span>
+<span class="sd">        :rtype: ActionRunner</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must be a callable.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_NOT_CALLABLE</span>
+                <span class="p">)</span>
+        <span class="n">action_signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;bench&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept a &quot;bench&quot; parameter.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_MISSING_BENCH_PARAMETER</span>
+                <span class="p">)</span>
+        <span class="n">kwargs_param</span> <span class="o">=</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;kwargs&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs_param</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">kwargs_param</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept &quot;**kwargs&quot; parameter.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_MISSING_KWARGS_PARAMETER</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept exactly 2 parameters: bench and **kwargs.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_PARAMETER_COUNT</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">action</span></div>
+
+
+<div class="viewcode-block" id="Case.validate_kwargs_variations">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_kwargs_variations">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_kwargs_variations</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the kwargs_variations dictionary.</span>
+
+<span class="sd">        Validates that the kwargs_variations is a dictionary where each key is a string</span>
+<span class="sd">        that is a valid Python identifier, and each value is a non-empty list.</span>
+
+<span class="sd">        A shallow copy of the validated dictionary and the lists is performed before returning to prevent</span>
+<span class="sd">        external modification.</span>
+
+<span class="sd">        :param value: The kwargs_variations dictionary to validate.</span>
+<span class="sd">            Defaults to {} if None.</span>
+<span class="sd">        :type value: dict[str, list[Any]] | None</span>
+<span class="sd">        :return: A shallow copy of the validated kwargs_variations dictionary or {} if not provided.</span>
+<span class="sd">            The keys are strings that are valid Python identifiers, and the values are non-empty lists.</span>
+<span class="sd">            The lists may contain any type of values.</span>
+<span class="sd">        :rtype: dict[str, list[Any]]</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the kwargs_variations is not a dictionary or if any key is not a string</span>
+<span class="sd">            that is a valid Python identifier.</span>
+<span class="sd">        :raises SimpleBenchValueError: If any value is not a list or is an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid kwargs_variations: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">. Must be a dictionary.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_KWARGS_VARIATIONS_NOT_DICT</span>
+                <span class="p">)</span>
+        <span class="n">validated_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">kw_value</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid kwargs_variations entry key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">. Keys must be of type str.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid kwargs_variations entry key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">. Keys must be valid Python identifiers.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kw_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid kwargs_variations entry value for entry &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot;: </span><span class="si">{</span><span class="n">kw_value</span><span class="si">}</span><span class="s1">. Values must be in a list.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">kw_value</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid kwargs_variations entry value for entry &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot;: </span><span class="si">{</span><span class="n">kw_value</span><span class="si">}</span><span class="s1">. &#39;</span>
+                     <span class="s1">&#39;Values cannot be empty lists.&#39;</span><span class="p">),</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST</span>
+                    <span class="p">)</span>
+            <span class="n">validated_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">kw_value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">validated_dict</span></div>
+
+
+<div class="viewcode-block" id="Case.validate_variation_cols">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_variation_cols">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">kwargs_variations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the variation_cols dictionary.</span>
+
+<span class="sd">        :param variation_cols: The variation_cols dictionary to validate or None.</span>
+<span class="sd">        :type variation_cols: dict[str, str] | None</span>
+<span class="sd">        :param kwargs_variations: The kwargs_variations dictionary to validate against.</span>
+<span class="sd">        :type kwargs_variations: dict[str, list[Any]]</span>
+<span class="sd">        :return: A shallow copy of the validated variation_cols dictionary or {} if not provided.</span>
+<span class="sd">            Each key is a keyword argument name from `kwargs_variations`, and each value is a</span>
+<span class="sd">            non-blank string to be used as the column label for that argument in reports.</span>
+<span class="sd">        :rtype: dict[str, str]</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the variation_cols is not a dictionary or if any key or</span>
+<span class="sd">            value is not a string.</span>
+<span class="sd">        :raises SimpleBenchValueError: If any key is not found in `kwargs_variations` or if any</span>
+<span class="sd">            value is a blank string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">variation_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid variation_cols: </span><span class="si">{</span><span class="n">variation_cols</span><span class="si">}</span><span class="s1">. Must be a dictionary.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_VARIATION_COLS_NOT_DICT</span>
+                <span class="p">)</span>
+        <span class="n">validated_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">vc_value</span> <span class="ow">in</span> <span class="n">variation_cols</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs_variations</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid variation_cols entry key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">. Key not found in kwargs_variations.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vc_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid variation_cols entry value for entry &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot;: &quot;</span><span class="si">{</span><span class="n">vc_value</span><span class="si">}</span><span class="s1">&quot;. Values must be of type str.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING</span>
+                    <span class="p">)</span>
+            <span class="n">stripped_value</span> <span class="o">=</span> <span class="n">vc_value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">stripped_value</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid variation_cols entry value: &quot;</span><span class="si">{</span><span class="n">vc_value</span><span class="si">}</span><span class="s1">&quot;. Values cannot be blank strings.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK</span>
+                    <span class="p">)</span>
+            <span class="n">validated_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">stripped_value</span>
+        <span class="k">return</span> <span class="n">validated_dict</span></div>
+
+
+<div class="viewcode-block" id="Case.validate_runner">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_runner">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_runner</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the runner class.</span>
+
+<span class="sd">        :param value: The runner class to validate.</span>
+<span class="sd">        :type value: Optional[type[SimpleRunner]]</span>
+<span class="sd">        :return: The validated runner class or None.</span>
+<span class="sd">        :rtype: Optional[type[SimpleRunner]]</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the runner is not a subclass of SimpleRunner or None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">SimpleRunner</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid runner: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">. Must be a subclass of SimpleRunner or None.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="Case.validate_options">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_options">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_options</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the options list.</span>
+
+<span class="sd">        :param value: The options iterable to validate or None.</span>
+<span class="sd">        :type value: Iterable[ReporterOption] | None</span>
+<span class="sd">        :return: A shallow copy of the validated options as a list or an empty list if not provided.</span>
+<span class="sd">        :rtype: list[ReporterOptions]</span>
+<span class="sd">        :raises SimpleBenchTypeError: If options is not a list or if any entry is not a ReporterOption.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid options: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">. Must be an iterable.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_OPTIONS_NOT_ITERABLE</span><span class="p">)</span>
+        <span class="n">options_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">options_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">option</span><span class="p">,</span> <span class="n">ReporterOptions</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid option: </span><span class="si">{</span><span class="n">option</span><span class="si">}</span><span class="s1">. Must be of type ReporterOption or a sub-class.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">options_list</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The benchmark reporting group to which the benchmark case belongs for selection</span>
+<span class="sd">        and reporting purposes.</span>
+
+<span class="sd">        Cannot be blank. It is used to categorize and filter benchmark cases.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the benchmark case.</span>
+
+<span class="sd">        If not specified, defaults to the name of the action function.</span>
+<span class="sd">        Cannot be blank.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; A brief description of the benchmark case.</span>
+
+<span class="sd">        If not specified, defaults to the docstring of the action function or</span>
+<span class="sd">        &#39;(no description)&#39; if no docstring is available.</span>
+
+<span class="sd">        Cannot be blank.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionRunner</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The function to perform the benchmark.</span>
+
+<span class="sd">        The function must accept a `bench` parameter of type SimpleRunner and</span>
+<span class="sd">        arbitrary keyword arguments (&#39;**kwargs&#39;) and return a Results object.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        .. code-block:: python3</span>
+
+<span class="sd">            def my_benchmark_action(*, bench: SimpleRunner, **kwargs) -&gt; Results:</span>
+<span class="sd">                def setup_function(size: int) -&gt; None:</span>
+<span class="sd">                    # Setup code goes here</span>
+<span class="sd">                    pass</span>
+
+<span class="sd">                def teardown_function(size: int) -&gt; None:</span>
+<span class="sd">                    # Teardown code goes here</span>
+<span class="sd">                    pass</span>
+
+<span class="sd">                def action_function(size: int) -&gt; None:</span>
+<span class="sd">                    # The code to benchmark goes here</span>
+<span class="sd">                    lst = list(range(size))</span>
+
+<span class="sd">                # Perform the benchmark using the provided SimpleRunner instance</span>
+<span class="sd">                results: Results = bench.run(</span>
+<span class="sd">                    n=kwargs.get(&#39;size&#39;, 1),</span>
+<span class="sd">                    setup=setup_function, teardown=teardown_function,</span>
+<span class="sd">                    action=action_function, **kwargs)</span>
+<span class="sd">                return results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of iterations to run for the benchmark.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">warmup_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of warmup iterations to run before the benchmark.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_warmup_iterations</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of rounds to run for the benchmark for each iteration.</span>
+
+<span class="sd">        Rounds are multiple runs of the entire benchmark to get a better average for an iteration.</span>
+<span class="sd">        Each iteration will run the specified number of rounds after setup and before teardown. (default: 1)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The minimum time for the benchmark in seconds.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_time</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The maximum time for the benchmark in seconds.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_time</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Keyword arguments to be used for columns to denote kwarg variations.</span>
+
+<span class="sd">        Each key is a keyword argument name, and the value is the column label to use for that argument.</span>
+<span class="sd">        Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
+<span class="sd">        added to the output of reporters that support them as columns of data with the specified labels.</span>
+
+<span class="sd">        Note that all keys in variation_cols must be present in kwargs_variations and</span>
+<span class="sd">        updating it may require changes to both variation_cols and kwargs_variations_cols.</span>
+
+<span class="sd">        Updating variation_cols does not automatically update kwargs_variations, and vice versa.</span>
+
+<span class="sd">        :return: A dictionary mapping keyword argument names to column labels.</span>
+<span class="sd">        :rtype: dict[str, str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># shallow copy to prevent external modification of internal dict</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kwargs_variations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Variations of keyword arguments for the benchmark.</span>
+
+<span class="sd">        Each key is a keyword argument name, and the value is the column label to use for that argument.</span>
+<span class="sd">        Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
+<span class="sd">        added to the output of reporters that support them as columns of data with the specified labels.</span>
+
+<span class="sd">        When tests are run, the benchmark will be executed for each combination of the specified</span>
+<span class="sd">        keyword argument variations. For example, if `kwargs_variations` is</span>
+
+<span class="sd">        .. code-block:: python3</span>
+<span class="sd">          :caption: `kwargs_variations` argument example</span>
+
+<span class="sd">            ...</span>
+<span class="sd">            kwargs_variations = {</span>
+<span class="sd">                    &#39;size&#39;: [10, 100],</span>
+<span class="sd">                    &#39;mode&#39;: [&#39;fast&#39;, &#39;accurate&#39;]</span>
+<span class="sd">                },</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        The benchmark will be run 4 times with the following combinations of keyword arguments:</span>
+
+<span class="sd">        .. code-block:: python3</span>
+<span class="sd">          :linenos:</span>
+<span class="sd">          :caption: Keyword (`**kwargs`) Argument Combinations</span>
+
+<span class="sd">            {size=10, mode=&#39;fast&#39;}</span>
+<span class="sd">            {size=10, mode=&#39;accurate&#39;}</span>
+<span class="sd">            {size=100, mode=&#39;fast&#39;}</span>
+<span class="sd">            {size=100, mode=&#39;accurate&#39;}</span>
+
+<span class="sd">        The action function will be called with these keyword arguments accordingly and must</span>
+<span class="sd">        accept them.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="c1"># shallow copy to prevent external modification of internal dict</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A custom runner class for the benchmark.</span>
+
+<span class="sd">        If None, the default SimpleRunner is used.  (default: None)</span>
+
+<span class="sd">        A custom runner class must be a subclass of SimpleRunner and must have a method</span>
+<span class="sd">        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.</span>
+<span class="sd">        The action function will be called with a `bench` parameter that is an instance of the</span>
+<span class="sd">        custom runner.</span>
+
+<span class="sd">        It may also accept additional parameters to the run method as needed. If additional</span>
+<span class="sd">        parameters are required, they must be specified in the `action` function signature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runner</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A callback function for additional processing of a report.</span>
+
+<span class="sd">        A callback function to be called with the benchmark results in a reporter.</span>
+<span class="sd">        This function should accept four arguments: the Case instance, the Section,</span>
+<span class="sd">        the ReporterOption, and the output object. Leave as None if no callback is needed.</span>
+<span class="sd">        (default: None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The benchmark list of Results for the case.</span>
+
+<span class="sd">        This is a read-only attribute. To add results, use the `run` method.</span>
+
+<span class="sd">        :return: A list of Results objects for each variation run of the benchmark case.</span>
+<span class="sd">        :rtype: list[Results]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># shallow copy to prevent external modification of internal list</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">options</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list of additional options for the benchmark case.&quot;&quot;&quot;</span>
+        <span class="c1"># shallow copy to prevent external modification of internal list</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">expanded_kwargs_variations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All combinations of keyword arguments from the specified kwargs_variations.</span>
+
+<span class="sd">        A mapping of keyword argument names to their variations.</span>
+
+<span class="sd">        Each key is a keyword argument name, and the value is a list of possible values.</span>
+
+<span class="sd">        When tests are run, the benchmark will be executed for each combination of the specified</span>
+<span class="sd">        keyword argument variations. For example, if `kwargs_variations` is</span>
+
+<span class="sd">        .. code-block:: python3</span>
+<span class="sd">          :caption: `kwargs_variations` argument example</span>
+
+<span class="sd">            ...</span>
+<span class="sd">            kwargs_variations = {</span>
+<span class="sd">                    &#39;size&#39;: [10, 100],</span>
+<span class="sd">                    &#39;mode&#39;: [&#39;fast&#39;, &#39;accurate&#39;]</span>
+<span class="sd">                },</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        The benchmark will be run 4 times with the following combinations of keyword arguments:</span>
+
+<span class="sd">        .. code-block:: python3</span>
+<span class="sd">          :linenos:</span>
+<span class="sd">          :caption: Keyword (`**kwargs`) Argument Combinations</span>
+
+<span class="sd">            {size=10, mode=&#39;fast&#39;}</span>
+<span class="sd">            {size=10, mode=&#39;accurate&#39;}</span>
+<span class="sd">            {size=100, mode=&#39;fast&#39;}</span>
+<span class="sd">            {size=100, mode=&#39;accurate&#39;}</span>
+
+<span class="sd">        The action function will be called with these keyword arguments accordingly and must</span>
+<span class="sd">        accept them.</span>
+
+<span class="sd">        :return: A list of dictionaries, each representing a unique combination of keyword arguments.</span>
+<span class="sd">        :rtype: list[dict[str, Any]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs_variations</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs_variations</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">)]</span>
+
+<div class="viewcode-block" id="Case.run">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the benchmark tests.</span>
+
+<span class="sd">        This method will execute the benchmark for each combination of</span>
+<span class="sd">        keyword arguments and collect the results. After running the</span>
+<span class="sd">        benchmarks, the results will be stored in the `self.results` attribute.</span>
+
+<span class="sd">        If passed, the session&#39;s tasks will be used to display progress,</span>
+<span class="sd">        control verbosity, and pass CLI arguments to the benchmark runner.</span>
+
+<span class="sd">        :param session: The session to use for the benchmark case.</span>
+<span class="sd">        :type session: Optional[Session]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_variations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expanded_kwargs_variations</span>
+        <span class="n">progress_tracker</span> <span class="o">=</span> <span class="n">ProgressTracker</span><span class="p">(</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;Case:run&#39;</span><span class="p">,</span>
+            <span class="n">progress_max</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">all_variations</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Running case </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">CYAN</span><span class="p">)</span>
+        <span class="n">progress_tracker</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">variations_counter</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_variations</span><span class="p">):</span>
+            <span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">,</span> <span class="n">SimpleRunner</span><span class="p">):</span>
+                <span class="n">runner</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span>
+                <span class="n">bench</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">session</span> <span class="ow">and</span> <span class="n">session</span><span class="o">.</span><span class="n">default_runner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">bench</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">default_runner</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bench</span> <span class="o">=</span> <span class="n">SimpleRunner</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">:</span> <span class="n">Results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="n">bench</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchRuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Error running benchmark action </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">)</span><span class="si">}</span><span class="s1"> for case &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1">&quot; with kwargs </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_ACTION_RAISED_EXCEPTION</span>
+                    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="n">progress_tracker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Running case </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">variations_counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_variations</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">),</span>
+                <span class="n">completed</span><span class="o">=</span><span class="n">variations_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Case.as_dict">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.as_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the benchmark case and results as a JSON serializable dict.</span>
+
+<span class="sd">        Only the results statistics are included by default. To include full results data,</span>
+<span class="sd">        set `full_data` to True.</span>
+
+<span class="sd">        :param full_data: Whether to include full results data. Defaults to False.</span>
+<span class="sd">        :type full_data: bool</span>
+<span class="sd">        :return: A JSON serializable dict representation of the benchmark case and results.</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="n">full_data</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s1">&#39;group&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="s1">&#39;variation_cols&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">variation_cols</span><span class="p">,</span>
+            <span class="s1">&#39;results&#39;</span><span class="p">:</span> <span class="n">results</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Case.section_mean">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.section_mean">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">section_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the mean value for a specific section across all results.</span>
+
+<span class="sd">        This method computes the mean value for the specified section</span>
+<span class="sd">        (either OPS or TIMING) across all benchmark results associated with this case.</span>
+
+<span class="sd">        This is a very &#39;hand-wavy&#39; mean calculation that simply averages</span>
+<span class="sd">        the means of each result. It does not take into account the number</span>
+<span class="sd">        of iterations or other statistical factors. It is intended to provide</span>
+<span class="sd">        a rough estimate of the overall performance for the specified section for</span>
+<span class="sd">        use in comparisons between successive benchmark runs in tests looking for</span>
+<span class="sd">        large performance regressions. As such, it should not be used for any rigorous</span>
+<span class="sd">        statistical analysis.</span>
+
+<span class="sd">        :param section: The section for which to calculate the mean.</span>
+<span class="sd">        :type section: Section</span>
+<span class="sd">        :return: The mean value for the specified section.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid section type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">section</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be of type Section.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">section</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Section</span><span class="o">.</span><span class="n">OPS</span><span class="p">,</span> <span class="n">Section</span><span class="o">.</span><span class="n">TIMING</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid section: </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s1">. Must be Section.OPS or Section.TIMING.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">SECTION_MEAN_INVALID_SECTION_ARGUMENT</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="n">Section</span><span class="o">.</span><span class="n">OPS</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">ops_per_second</span><span class="o">.</span><span class="n">mean</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="n">Section</span><span class="o">.</span><span class="n">TIMING</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">per_round_timings</span><span class="o">.</span><span class="n">mean</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">total</span> <span class="o">/</span> <span class="n">count</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span></div>
+</div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.case</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>
