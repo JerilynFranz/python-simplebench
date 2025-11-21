@@ -81,7 +81,7 @@ dev = []
 
 [project.urls]
 Homepage = "https://github.com/JerilynFranz/python-simplebench"
-Documentation = "https://python-simplebench.readthedocs.io/en/latest/"
+Documentation = "https://jerilynfranz.github.io/python-simplebench/"
 Repository = "https://github.com/JerilynFranz/python-simplebench.git"
 Issues = "https://github.com/JerilynFranz/python-simplebench/issues"
 Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGELOG.md"
