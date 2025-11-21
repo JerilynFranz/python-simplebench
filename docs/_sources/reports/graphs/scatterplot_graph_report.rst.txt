@@ -73,41 +73,11 @@ The output graph will look something like this:
       :alt: Scatterplot Graph of Addition Benchmark Operations Per Second
       :align: center
 
-.. note::
-   To avoid "false precision", statistical results are shown to three significant digits.
-   Due to the inherent variability of performance measurement, any further digits are
-   typically meaningless statistical noise.
-
-   This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
-   measurement in the real world.
-
-.. note::
-   **Interpreting Outliers in Benchmark Results**
-
-   In the sample output above, you may notice that the ``min kOps/s`` value is
-   an extreme outlier, far from the ``mean`` and ``median``. This is a realistic
-   reflection of real-world benchmarking. System events like garbage collection,
-   process scheduling, or I/O interrupts can cause individual iterations to be
-   significantly slower than the typical case.
-
-   This is precisely why SimpleBench provides a full suite of statistics. Instead
-   of relying solely on the ``mean``, you should also consider:
-
-   - The **median**, which is resistant to outliers and often gives a better
-     sense of "typical" performance.
-   - The **5th and 95th percentiles**, which show the range of performance
-     for the vast majority of iterations, excluding the most extreme outliers.
-   - The **standard deviation (std dev)** and **RSD%**, which quantify the
-     level of inconsistency in the results. A high value indicates significant
-     variability.
-
-   By providing these metrics, SimpleBench allows you to get a complete and
-   honest picture of your code's performance, including its variability.
-
 Report Variations and Destinations
 ----------------------------------
 
-The example above shows an operations-per-second report printed to the console.
+The example above shows an operations-per-second 'ops' report saved to the filesystem.
+
 SimpleBench provides several variations:
 
 - `--scatterplot-graph`: Generates tables for all result types (ops, timing, and memory).

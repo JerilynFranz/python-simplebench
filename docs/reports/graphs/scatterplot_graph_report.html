@@ -99,41 +99,11 @@ a Scatterplot Graph displaying the operations-per-second results that is saved t
 <img alt="Scatterplot Graph of Addition Benchmark Operations Per Second" class="align-center" src="../../_images/001_addition_benchmark-operations_per_second.svg" />
 </div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>To avoid “false precision”, statistical results are shown to three significant digits.
-Due to the inherent variability of performance measurement, any further digits are
-typically meaningless statistical noise.</p>
-<p>This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
-measurement in the real world.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><strong>Interpreting Outliers in Benchmark Results</strong></p>
-<p>In the sample output above, you may notice that the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">kOps/s</span></code> value is
-an extreme outlier, far from the <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">median</span></code>. This is a realistic
-reflection of real-world benchmarking. System events like garbage collection,
-process scheduling, or I/O interrupts can cause individual iterations to be
-significantly slower than the typical case.</p>
-<p>This is precisely why SimpleBench provides a full suite of statistics. Instead
-of relying solely on the <code class="docutils literal notranslate"><span class="pre">mean</span></code>, you should also consider:</p>
-<ul class="simple">
-<li><p>The <strong>median</strong>, which is resistant to outliers and often gives a better
-sense of “typical” performance.</p></li>
-<li><p>The <strong>5th and 95th percentiles</strong>, which show the range of performance
-for the vast majority of iterations, excluding the most extreme outliers.</p></li>
-<li><p>The <strong>standard deviation (std dev)</strong> and <strong>RSD%</strong>, which quantify the
-level of inconsistency in the results. A high value indicates significant
-variability.</p></li>
-</ul>
-<p>By providing these metrics, SimpleBench allows you to get a complete and
-honest picture of your code’s performance, including its variability.</p>
-</div>
 </section>
 <section id="report-variations-and-destinations">
 <h2>Report Variations and Destinations<a class="headerlink" href="#report-variations-and-destinations" title="Link to this heading">🔗</a></h2>
-<p>The example above shows an operations-per-second report printed to the console.
-SimpleBench provides several variations:</p>
+<p>The example above shows an operations-per-second ‘ops’ report saved to the filesystem.</p>
+<p>SimpleBench provides several variations:</p>
 <ul class="simple">
 <li><p><cite>–scatterplot-graph</cite>: Generates tables for all result types (ops, timing, and memory).</p></li>
 <li><p><cite>–scatterplot-graph.ops</cite>: Generates tables only for operations-per-second results.</p></li>
