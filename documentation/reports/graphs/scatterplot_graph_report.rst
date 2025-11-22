@@ -1,5 +1,5 @@
 Scatterplot Graph Report
-=================
+========================
 
 .. _scatterplot-graph-report:
 
@@ -57,7 +57,8 @@ and generate a Scatterplot Graph report of operations per second using the follo
     python my_benchmark_script.py --scatterplot-graph.ops --progress
 
 This command executes the benchmarks in `my_benchmark_script.py` and generates
-a Scatterplot Graph displaying the operations-per-second results that is saved to a file.
+a Scatterplot Graph displaying the operations-per-second results that is saved
+to a file.
 
 The output graph will look something like this:
 
@@ -80,14 +81,15 @@ The example above shows an operations-per-second 'ops' report saved to the files
 
 SimpleBench provides several variations:
 
-- `--scatterplot-graph`: Generates tables for all result types (ops, timing, and memory).
-- `--scatterplot-graph.ops`: Generates tables only for operations-per-second results.
-- `--scatterplot-graph.timing`: Generates tables only for timing results.
-- `--scatterplot-graph.memory`: Generates tables only for memory usage results.
+- `--scatterplot-graph`: Generates graphs for all result types (ops, timing, and memory).
+- `--scatterplot-graph.ops`: Generates graphs only for operations-per-second results.
+- `--scatterplot-graph.timing`: Generates graphs only for timing results.
+- `--scatterplot-graph.memory`: Generates graphs only for memory usage results.
 
-By default, reports are displayed in the console. You can send a report to other
-destinations, such as the filesystem, by appending the destination name. For example,
-to save the report to a file instead of printing it to the terminal:
+Graph reports are saved to the filesystem in the --output_path directory
+(by default `.benchmarks` below the current working directory).
+You can explicitly specify the destination by appending the destination name
+(`filesystem`, `callback`) to the CLI report selection flag as space-separated values. For example:
 
 .. code-block:: shell
   :caption: Saving a Scatterplot Graph report to the filesystem
@@ -99,43 +101,34 @@ to save the report to a file instead of printing it to the terminal:
 Advanced Features
 -----------------
 
-Beyond the basic fields shown above, the reports also support advanced features such as:
-
-Parameterized Benchmarks
-  Including esults for benchmarks that take parameters,
-  allowing for analysis of performance across different input sizes or configurations.
-
-Custom Complexity Weightings:
-  Including Big-O complexity weight/size annotations to help analyze how performance
-  scales with input size.
-
-These features make these reports a powerful tool for understanding
-the performance characteristics of your code in a clear and structured manner.
+Beyond basic usage, Scatterplot Graph reports support advanced features
+that enhance their utility for performance analysis.
 
 Parameterized Benchmarks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When benchmarks are parameterized, SimpleBench generates additional columns in the
-report for each parameter value requested for generation.
+When benchmarks are parameterized, SimpleBench plots these variations in the
+graph, often mapping parameters to the X-axis or using visual distinctions (like color or style)
+to differentiate between parameter values.
 
 This allows you to easily compare performance across different configurations.
 For example, if you have a benchmark that takes an input size
-parameter, the report can include how performance varies with different input sizes.
+parameter, the report can visualize how performance varies with different input sizes.
 
-See the :doc:`defining_benchmarks` section for more details on defining and using
+See the :doc:`../../defining_benchmarks` section for more details on defining and using
 parameterized benchmarks.
 
 Custom Complexity Weightings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Related to parameterized benchmarks, SimpleBench allows you to specify
-custom complexity weightings (number/size weighting)for your benchmarks.
+custom complexity weightings (number/size weighting) for your benchmarks.
 
-These weightings are included in the report as the N column value, helping you analyze
-how performance scales with input size and parameterization.
+These weightings are used as the N value (presented as the independent variable
+on the X-axis), helping you analyze how performance scales with input size and parameterization.
 
 For example, you might specify that a benchmark set covers input sizes 1, 20, 100, 1000,
-which will be indicated in the N column of the report with a row for each size.
+which will be plotted on the graph for each size.
 
 When defining a parameterized benchmark, you can provide complexity weightings that
 reflect the expected performance characteristics of the code being benchmarked and

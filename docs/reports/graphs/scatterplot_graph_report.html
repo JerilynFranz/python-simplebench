@@ -89,7 +89,8 @@ and generate a Scatterplot Graph report of operations per second using the follo
 </div>
 </div>
 <p>This command executes the benchmarks in <cite>my_benchmark_script.py</cite> and generates
-a Scatterplot Graph displaying the operations-per-second results that is saved to a file.</p>
+a Scatterplot Graph displaying the operations-per-second results that is saved
+to a file.</p>
 <p>The output graph will look something like this:</p>
 <div class="image-block docutils container">
 <div class="image-block-caption docutils container">
@@ -105,14 +106,15 @@ a Scatterplot Graph displaying the operations-per-second results that is saved t
 <p>The example above shows an operations-per-second ‘ops’ report saved to the filesystem.</p>
 <p>SimpleBench provides several variations:</p>
 <ul class="simple">
-<li><p><cite>–scatterplot-graph</cite>: Generates tables for all result types (ops, timing, and memory).</p></li>
-<li><p><cite>–scatterplot-graph.ops</cite>: Generates tables only for operations-per-second results.</p></li>
-<li><p><cite>–scatterplot-graph.timing</cite>: Generates tables only for timing results.</p></li>
-<li><p><cite>–scatterplot-graph.memory</cite>: Generates tables only for memory usage results.</p></li>
+<li><p><cite>–scatterplot-graph</cite>: Generates graphs for all result types (ops, timing, and memory).</p></li>
+<li><p><cite>–scatterplot-graph.ops</cite>: Generates graphs only for operations-per-second results.</p></li>
+<li><p><cite>–scatterplot-graph.timing</cite>: Generates graphs only for timing results.</p></li>
+<li><p><cite>–scatterplot-graph.memory</cite>: Generates graphs only for memory usage results.</p></li>
 </ul>
-<p>By default, reports are displayed in the console. You can send a report to other
-destinations, such as the filesystem, by appending the destination name. For example,
-to save the report to a file instead of printing it to the terminal:</p>
+<p>Graph reports are saved to the filesystem in the –output_path directory
+(by default <cite>.benchmarks</cite> below the current working directory).
+You can explicitly specify the destination by appending the destination name
+(<cite>filesystem</cite>, <cite>callback</cite>) to the CLI report selection flag as space-separated values. For example:</p>
 <div class="literal-block-wrapper docutils container" id="scatterplot-graph-ops-filesystem">
 <div class="code-block-caption"><span class="caption-text">Saving a Scatterplot Graph report to the filesystem</span><a class="headerlink" href="#scatterplot-graph-ops-filesystem" title="Link to this code">🔗</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>python<span class="w"> </span>my_benchmark_script.py<span class="w"> </span>--scatterplot-graph.ops<span class="w"> </span>filesystem
@@ -122,35 +124,27 @@ to save the report to a file instead of printing it to the terminal:</p>
 </section>
 <section id="advanced-features">
 <h2>Advanced Features<a class="headerlink" href="#advanced-features" title="Link to this heading">🔗</a></h2>
-<p>Beyond the basic fields shown above, the reports also support advanced features such as:</p>
-<dl class="simple">
-<dt>Parameterized Benchmarks</dt><dd><p>Including esults for benchmarks that take parameters,
-allowing for analysis of performance across different input sizes or configurations.</p>
-</dd>
-<dt>Custom Complexity Weightings:</dt><dd><p>Including Big-O complexity weight/size annotations to help analyze how performance
-scales with input size.</p>
-</dd>
-</dl>
-<p>These features make these reports a powerful tool for understanding
-the performance characteristics of your code in a clear and structured manner.</p>
+<p>Beyond basic usage, Scatterplot Graph reports support advanced features
+that enhance their utility for performance analysis.</p>
 <section id="parameterized-benchmarks">
 <h3>Parameterized Benchmarks<a class="headerlink" href="#parameterized-benchmarks" title="Link to this heading">🔗</a></h3>
-<p>When benchmarks are parameterized, SimpleBench generates additional columns in the
-report for each parameter value requested for generation.</p>
+<p>When benchmarks are parameterized, SimpleBench plots these variations in the
+graph, often mapping parameters to the X-axis or using visual distinctions (like color or style)
+to differentiate between parameter values.</p>
 <p>This allows you to easily compare performance across different configurations.
 For example, if you have a benchmark that takes an input size
-parameter, the report can include how performance varies with different input sizes.</p>
-<p>See the <span class="xref std std-doc">defining_benchmarks</span> section for more details on defining and using
+parameter, the report can visualize how performance varies with different input sizes.</p>
+<p>See the <span class="xref std std-doc">../../defining_benchmarks</span> section for more details on defining and using
 parameterized benchmarks.</p>
 </section>
 <section id="custom-complexity-weightings">
 <h3>Custom Complexity Weightings<a class="headerlink" href="#custom-complexity-weightings" title="Link to this heading">🔗</a></h3>
 <p>Related to parameterized benchmarks, SimpleBench allows you to specify
-custom complexity weightings (number/size weighting)for your benchmarks.</p>
-<p>These weightings are included in the report as the N column value, helping you analyze
-how performance scales with input size and parameterization.</p>
+custom complexity weightings (number/size weighting) for your benchmarks.</p>
+<p>These weightings are used as the N value (presented as the independent variable
+on the X-axis), helping you analyze how performance scales with input size and parameterization.</p>
 <p>For example, you might specify that a benchmark set covers input sizes 1, 20, 100, 1000,
-which will be indicated in the N column of the report with a row for each size.</p>
+which will be plotted on the graph for each size.</p>
 <p>When defining a parameterized benchmark, you can provide complexity weightings that
 reflect the expected performance characteristics of the code being benchmarked and
 are matched with the parameters being used. This helps in understanding how the performance
