@@ -114,6 +114,44 @@ def platform_id() -> str:
           arch=platform.architecture()[0]).lower().replace(' ', '')
 
 
+def platform_system() -> str:
+    """Return the current operating system name.
+
+    :return: The operating system name.
+    :rtype: str
+    """
+    return platform.system()
+
+
+def platform_implementation() -> str:
+    """Return the current Python implementation name.
+
+    See :func:`platform.python_implementation` for details.
+
+    :return: The Python implementation name.
+    :rtype: str
+    """
+    return platform.python_implementation()
+
+
+def platform_version() -> str:
+    """Return the current Python version.
+
+    :return: The Python version.
+    :rtype: str
+    """
+    return '.'.join(platform.python_version_tuple()[:2])
+
+
+def platform_architecture() -> str:
+    """Return the current architecture.
+
+    :return: The architecture.
+    :rtype: str
+    """
+    return platform.architecture()[0]
+
+
 # Finds all characters that are not a-z, A-Z, 0-9, _ (underline), or - (dash)
 _SANITIZE_FILENAME_RE = re.compile(r'[^-a-zA-Z0-9_]+')
 # Finds one or more sequential _ (underline) characters

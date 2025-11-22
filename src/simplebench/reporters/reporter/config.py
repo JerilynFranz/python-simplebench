@@ -162,7 +162,7 @@ class ReporterConfig:
         )
         validate_type(
             self.file_append, bool, 'file_append',
-            error_tag=_ReporterConfigErrorTag.INVALID_FILE_UNIQUE_TYPE
+            error_tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_TYPE
         )
         subdir = validate_dirpath(self.subdir, allow_empty=True)
 

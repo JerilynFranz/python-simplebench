@@ -32,11 +32,13 @@ from ...factories import (
     default_description,
     default_reporter_callback,
     default_reporter_name,
+    default_timestamp,
     namespace_factory,
     path_factory,
     report_parameters_factory,
     reporter_config_factory,
     reporter_factory,
+    reports_log_path_factory,
     session_factory,
 )
 from ...testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
@@ -100,9 +102,11 @@ class GoodReporter(Reporter):
     def run_report(self,  # pylint: disable=useless-parent-delegation
                    *,
                    args: Namespace,
+                   timestamp: float,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
+                   reports_log_path: Optional[Path] = None,
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
         return
@@ -132,6 +136,7 @@ def test_good_reporter_subclassing() -> None:
     # Call run_report with minimal valid parameters
     reporter.run_report(
         args=namespace_factory(),
+        timestamp=default_timestamp(),
         case=case_factory(),
         choice=choice_factory()
     )  # Should not raise any exceptions
@@ -147,8 +152,11 @@ def test_factory_reporter_subclassing() -> None:
     # Call run_report with minimal valid parameters
     reporter.run_report(
         args=namespace_factory(),
+        timestamp=default_timestamp(),
         case=case_factory(),
-        choice=choice_factory()
+        choice=choice_factory(),
+        path=path_factory(),
+        reports_log_path=reports_log_path_factory()
     )  # Should not raise any exceptions
 
 
@@ -199,6 +207,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CASE_ARG"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': "not_a_case_instance",
                 'choice': choice_conf_factory()},
         exception=SimpleBenchTypeError,
@@ -208,6 +217,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': "not_a_choice_conf_instance"},
         exception=SimpleBenchTypeError,
@@ -217,6 +227,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': Choices()},  # passing Choices instead of Choice
         exception=SimpleBenchTypeError,
@@ -226,6 +237,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_SECTION"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': Choice(
                     reporter=reporter_factory(),
@@ -238,6 +250,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_TARGET"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': Choice(
                     reporter=reporter_factory(),
@@ -250,6 +263,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_FORMAT"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': Choice(
                     reporter=reporter_factory(),
@@ -261,6 +275,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name="report() with valid Case and Choice runs successfully",
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': choice_factory(),
                 'path': path_factory()},
@@ -269,6 +284,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name="report() with valid callback runs successfully",
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': Choice(
                     reporter=reporter_factory(),
@@ -281,6 +297,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CALLBACK_ARG"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': Choice(
                     reporter=reporter_factory(),
@@ -293,6 +310,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name="report() with valid path runs successfully",
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': choice_factory(),
                 'path': path_factory()},
@@ -302,6 +320,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_PATH_ARG"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': choice_factory(),
                 'path': "not_a_path"},
@@ -311,6 +330,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name=("report() with valid session runs successfully"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': choice_factory(),
                 'path': path_factory(),
@@ -321,6 +341,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_SESSION_ARG"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': choice_factory(),
                 'path': path_factory(),
@@ -331,6 +352,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name="report() invalid args type raises SimpleBenchTypeError/REPORT_INVALID_ARGS_ARG_TYPE",
         action=reporter_factory().report,
         kwargs={'args': "not_a_namespace",
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': choice_factory(),
                 'path': path_factory(),
@@ -340,7 +362,8 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_015', TestAction(
         name="report() with missing args raises TypeError",
         action=reporter_factory().report,
-        kwargs={'case': case_factory(),
+        kwargs={'timestamp': default_timestamp(),
+                'case': case_factory(),
                 'choice': choice_factory(),
                 'path': path_factory(),
                 'session': session_factory()},
@@ -349,6 +372,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name="report() with missing case raises TypeError",
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'choice': choice_factory(),
                 'path': path_factory(),
                 'session': session_factory()},
@@ -357,6 +381,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         name="report() with missing choice raises TypeError",
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'path': path_factory(),
                 'session': session_factory()},
@@ -692,9 +717,11 @@ def run_report_testspecs() -> list[TestSpec]:
             action=reporter_factory().run_report,
             kwargs={
                 'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': choice_factory(),
                 'path': path_factory(),
+                'reports_log_path': reports_log_path_factory(),
                 'session': session_factory(),
                 'callback': default_reporter_callback,
             },
@@ -704,8 +731,11 @@ def run_report_testspecs() -> list[TestSpec]:
             action=reporter_factory().run_report,
             kwargs={
                 'args': namespace_factory(),
+                'timestamp': default_timestamp(),
                 'case': case_factory(),
                 'choice': choice_factory(),
+                'path': path_factory(),
+                'reports_log_path': reports_log_path_factory(),
             })),
     ]
     return testspecs

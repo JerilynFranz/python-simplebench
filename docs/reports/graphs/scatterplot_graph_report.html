@@ -61,22 +61,22 @@ generate and customize these reports from the command line.</p>
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">🔗</a></h2>
 <div class="literal-block-wrapper docutils container" id="scatterplot-graph-example-code">
 <div class="code-block-caption"><span class="caption-text">Defining a benchmark for a Scatterplot Graph report</span><a class="headerlink" href="#scatterplot-graph-example-code" title="Link to this code">🔗</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="ch">#!python3</span>
-<span class="linenos"> 2</span><span class="sd">&quot;&quot;&quot;Example Scatterplot Benchmark Script&quot;&quot;&quot;</span>
-<span class="linenos"> 3</span><span class="kn">import</span><span class="w"> </span><span class="nn">simplebench</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>  <span class="c1">#!python3</span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="sd">&quot;&quot;&quot;Example Scatterplot Benchmark Script&quot;&quot;&quot;</span>
+<span class="linenos"> 3</span>  <span class="kn">import</span><span class="w"> </span><span class="nn">simplebench</span>
 <span class="linenos"> 4</span>
 <span class="linenos"> 5</span>
-<span class="linenos"> 6</span><span class="nd">@simplebench</span><span class="o">.</span><span class="n">benchmark</span><span class="p">(</span>
-<span class="linenos"> 7</span>    <span class="n">kwargs_variations</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]},</span>
-<span class="linenos"> 8</span>    <span class="n">variation_cols</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;Size&#39;</span><span class="p">},</span>
-<span class="linenos"> 9</span>    <span class="n">use_field_for_n</span><span class="o">=</span><span class="s1">&#39;size&#39;</span><span class="p">)</span>
-<span class="linenos">10</span><span class="k">def</span><span class="w"> </span><span class="nf">addition_benchmark</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="linenos">11</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple benchmark that sums a range of numbers.&quot;&quot;&quot;</span>
-<span class="linenos">12</span>    <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]))</span>
+<span class="linenos"> 6</span>  <span class="nd">@simplebench</span><span class="o">.</span><span class="n">benchmark</span><span class="p">(</span>
+<span class="linenos"> 7</span>      <span class="n">kwargs_variations</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]},</span>
+<span class="linenos"> 8</span>      <span class="n">variation_cols</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;Size&#39;</span><span class="p">},</span>
+<span class="linenos"> 9</span>      <span class="n">use_field_for_n</span><span class="o">=</span><span class="s1">&#39;size&#39;</span><span class="p">)</span>
+<span class="linenos">10</span>  <span class="k">def</span><span class="w"> </span><span class="nf">addition_benchmark</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="linenos">11</span><span class="w">      </span><span class="sd">&quot;&quot;&quot;A simple benchmark that sums a range of numbers.&quot;&quot;&quot;</span>
+<span class="linenos">12</span>      <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]))</span>
 <span class="linenos">13</span>
 <span class="linenos">14</span>
-<span class="linenos">15</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<span class="linenos">16</span>    <span class="n">simplebench</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+<span class="linenos">15</span>  <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">16</span>      <span class="n">simplebench</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

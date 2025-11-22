@@ -67,3 +67,19 @@ def path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:  # pylint: disab
     :rtype: Path
     """
     return temp_dir()
+
+
+@cached_factory
+def reports_log_path_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Path:
+    """Return a default reports log Path instance for testing purposes.
+
+    This function is cached by default to return the same Path instance
+    for identical calls, unless a different cache_id is provided.
+
+    :param cache_id: An optional identifier to distinguish different cached instances.
+                     If None, caching is disabled for this call.
+    :type cache_id: CacheId, optional
+    :return: A Path instance pointing to a temporary reports log file.
+    :rtype: Path
+    """
+    return path_factory(cache_id=cache_id) / "_reports_log"

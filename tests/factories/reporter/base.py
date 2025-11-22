@@ -27,6 +27,7 @@ from .._primitives import (
     default_sections,
     default_subdir,
     default_targets,
+    default_timestamp,
 )
 from .._utils import default_extra
 from ..argparse import namespace_factory
@@ -57,6 +58,7 @@ def report_parameters_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
     """
     return {
         'args': namespace_factory(),
+        'timestamp': default_timestamp(),
         'case': case_factory(cache_id=cache_id),
         'choice': choice_factory(cache_id=cache_id),
         'path': path_factory(cache_id=cache_id),

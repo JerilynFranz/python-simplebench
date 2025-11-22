@@ -797,3 +797,24 @@ def variation_marks_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, s
     :rtype: dict[str, str]
     """
     return {}
+
+
+@cached_factory
+def timestamp_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
+    """Return a default timestamp for testing purposes.
+
+    :return: `1700000000.0`
+    :rtype: float
+    """
+    return 1700000000.0
+
+
+def default_timestamp() -> float:
+    """Return a default timestamp for testing purposes.
+
+    It always returns the same timestamp created by timestamp_factory().
+
+    :return: `1700000000.0`
+    :rtype: float
+    """
+    return timestamp_factory(cache_id=f'{__name__}.default_timestamp:singleton')

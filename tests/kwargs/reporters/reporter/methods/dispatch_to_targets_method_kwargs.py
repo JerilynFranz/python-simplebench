@@ -30,12 +30,16 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
 
     :param args: The parsed command-line arguments.
     :type args: Namespace
+    :param timestamp: The timestamp when the report is generated.
+    :type timestamp: float
     :param case: The Case instance representing the benchmarked code.
     :type case: Case
     :param choice: The Choice instance specifying the report configuration.
     :type choice: Choice
     :param path: The path to the directory where the CSV file(s) will be saved.
     :type path: Path | None
+    :param reports_log_path: The reports log path.
+    :type reports_log_path: Path | None
     :param session: The Session instance containing benchmark results.
     :type session: Session | None
     :param callback: A callback function for additional processing of the report.
@@ -49,10 +53,12 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
             output: str | bytes | Text | Table | NoDefaultValue = NoDefaultValue(),
             filename_base: str | NoDefaultValue = NoDefaultValue(),
             args: Namespace | NoDefaultValue = NoDefaultValue(),
+            timestamp: float | NoDefaultValue = NoDefaultValue(),
             choice: Choice | NoDefaultValue = NoDefaultValue(),
             case: Case | NoDefaultValue = NoDefaultValue(),
             section: Section | NoDefaultValue = NoDefaultValue(),
             path: Path | NoDefaultValue = NoDefaultValue(),
+            reports_log_path: Path | NoDefaultValue = NoDefaultValue(),
             session: Session | NoDefaultValue = NoDefaultValue(),
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),
     ) -> None:

@@ -143,13 +143,13 @@ from ...testspec import Assert, TestAction, TestSpec, idspec
     idspec('INIT_020', TestAction(
         name="Init of ReporterConfig with file_unique as a non-boolean raises SimpleBenchTypeError",
         action=ReporterConfig,
-        kwargs=reporter_config_kwargs_factory().replace(file_unique='not_a_bool'),
+        kwargs=reporter_config_kwargs_factory().replace(file_unique='not_a_bool', file_append=False),
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterConfigErrorTag.INVALID_FILE_UNIQUE_TYPE)),
     idspec('INIT_021', TestAction(
         name="Init of ReporterConfig with file_append as a non-boolean raises SimpleBenchTypeError",
         action=ReporterConfig,
-        kwargs=reporter_config_kwargs_factory().replace(file_append='not_a_bool'),
+        kwargs=reporter_config_kwargs_factory().replace(file_append='not_a_bool', file_unique=False),
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_TYPE)),
     idspec('INIT_022', TestAction(

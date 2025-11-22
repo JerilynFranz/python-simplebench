@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>simplebench.reporters.json.reporter.reporter &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=15db7601" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=e424009b" />
     
     <script src="../../../../../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
@@ -152,9 +153,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="o">*</span><span class="p">,</span>
                    <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+                   <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                    <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                    <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
                    <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
                    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -173,11 +176,13 @@
 <span class="sd">        :class:`~simplebench.reporters.protocols.reporter_renderer.ReportRenderer` protocol.</span>
 
 <span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :param timestamp: The timestamp for the report.</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
 <span class="sd">            benchmarked code.</span>
 <span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.Choice` instance specifying</span>
 <span class="sd">            the report configuration.</span>
 <span class="sd">        :param path: The path to the directory where the JSON file(s) will be saved.</span>
+<span class="sd">        :param reports_log_path: The path to the reports log file.</span>
 <span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing</span>
 <span class="sd">            benchmark results.</span>
 <span class="sd">        :param callback: A callback function for additional processing of the report.</span>
@@ -186,7 +191,15 @@
 <span class="sd">            needed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">render_by_case</span><span class="p">(</span>
-            <span class="n">renderer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
+            <span class="n">renderer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+            <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+            <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">reports_log_path</span><span class="o">=</span><span class="n">reports_log_path</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="JSONReporter.render">

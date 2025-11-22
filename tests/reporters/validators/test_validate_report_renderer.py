@@ -42,9 +42,11 @@ class MockReporter(Reporter):
     def run_report(self,
                    *,
                    args: Namespace,
+                   timestamp: float,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,
+                   reports_log_path: Path | None = None,
                    session: Session | None = None,
                    callback: ReporterCallback | None = None) -> None:
         """A mock run_report method.
@@ -57,13 +59,23 @@ class MockReporter(Reporter):
         :type choice: Choice
         :param path: The output path.
         :type path: Path | None
+        :param reports_log_path: The reports log path.
+        :type reports_log_path: Path | None
         :param session: The benchmark session.
         :type session: Session | None
         :param callback: The reporter callback.
         :type callback: ReporterCallback | None
         """
         self.render_by_section(  # pragma: no cover
-            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
+            renderer=self.render,
+            timestamp=timestamp,
+            args=args,
+            case=case,
+            choice=choice,
+            path=path,
+            reports_log_path=reports_log_path,
+            session=session,
+            callback=callback)
 
     def render(
             self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501

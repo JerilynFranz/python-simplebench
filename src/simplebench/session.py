@@ -18,7 +18,7 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.runners import SimpleRunner
 from simplebench.tasks import ProgressTracker, RichProgressTasks
-from simplebench.utils import platform_id, sanitize_filename
+from simplebench.utils import sanitize_filename
 
 if TYPE_CHECKING:
     from simplebench.reporters.reporter import Reporter
@@ -233,8 +233,10 @@ class Session():
         # that we only consider valid args that are associated with a Choice.
         if self.verbosity > Verbosity.NORMAL:
             self._console.print(f"Generating reports for {len(self.cases)} case(s)...")
-        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        platform_name = sanitize_filename(platform_id())
+        now = datetime.now()
+        epoch_timestamp = now.timestamp()
+        timestamp = now.strftime('%Y%m%d%H%M%S')
+
         processed_choices: set[str] = set()
         report_keys: list[str] = self.report_keys()
         n_reports = len(report_keys)
@@ -289,7 +291,8 @@ class Session():
 
                 callback: Optional[ReporterCallback] = case.callback
                 reporter: Reporter = choice.reporter
-                output_path: Optional[Path] = self._output_path
+                output_path: Path | None = self._output_path
+                report_log_path: Path | None = output_path / "_reports_log" if output_path is not None else None
                 if Target.FILESYSTEM in choice.targets:
                     if output_path is None:
                         flag: str = '--' + key.replace('_', '-')
@@ -298,14 +301,16 @@ class Session():
                             tag=_SessionErrorTag.REPORT_OUTPUT_PATH_NOT_SET
                         )
                     group_path = sanitize_filename(case.group)
-                    output_path = output_path / platform_name / group_path / timestamp
+                    output_path = output_path / timestamp / group_path
                     if self.verbosity >= Verbosity.DEBUG:
                         self._console.print(f"[DEBUG] Output path for report: {output_path}")
                 if self.args:  # mypy guard
                     reporter.report(
+                        timestamp=epoch_timestamp,
                         args=self.args,
                         case=case,
                         choice=choice,
+                        reports_log_path=report_log_path,
                         path=output_path,
                         session=self,
                         callback=callback)

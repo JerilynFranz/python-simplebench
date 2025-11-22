@@ -25,6 +25,7 @@ Using SimpleBench
 .. code-block:: python
   :caption: A simple benchmark example
   :name: simple-benchmark-example
+  :linenos:
 
     import simplebench
 
@@ -38,7 +39,6 @@ Using SimpleBench
 
     if __name__ == "__main__":
         simplebench.main()
-
 
 .. container:: textblock
 
@@ -91,5 +91,7 @@ Using SimpleBench
   The sections below provide more examples of some of these advanced features.
 
 Examples
-========
+--------
+
+
 

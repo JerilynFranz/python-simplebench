@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>simplebench.session &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=15db7601" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
     <script src="../../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
@@ -56,7 +57,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleRunner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressTracker</span><span class="p">,</span> <span class="n">RichProgressTasks</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">platform_id</span><span class="p">,</span> <span class="n">sanitize_filename</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">sanitize_filename</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reporter</span>
@@ -287,8 +288,10 @@
         <span class="c1"># that we only consider valid args that are associated with a Choice.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating reports for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">)</span><span class="si">}</span><span class="s2"> case(s)...&quot;</span><span class="p">)</span>
-        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">)</span>
-        <span class="n">platform_name</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">platform_id</span><span class="p">())</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">epoch_timestamp</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">)</span>
+
         <span class="n">processed_choices</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">report_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_keys</span><span class="p">()</span>
         <span class="n">n_reports</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">report_keys</span><span class="p">)</span>
@@ -343,7 +346,8 @@
 
                 <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">callback</span>
                 <span class="n">reporter</span><span class="p">:</span> <span class="n">Reporter</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">reporter</span>
-                <span class="n">output_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span>
+                <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span>
+                <span class="n">report_log_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="s2">&quot;_reports_log&quot;</span> <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span> <span class="ow">in</span> <span class="n">choice</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">flag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
@@ -352,14 +356,16 @@
                             <span class="n">tag</span><span class="o">=</span><span class="n">_SessionErrorTag</span><span class="o">.</span><span class="n">REPORT_OUTPUT_PATH_NOT_SET</span>
                         <span class="p">)</span>
                     <span class="n">group_path</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
-                    <span class="n">output_path</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="n">platform_name</span> <span class="o">/</span> <span class="n">group_path</span> <span class="o">/</span> <span class="n">timestamp</span>
+                    <span class="n">output_path</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="n">timestamp</span> <span class="o">/</span> <span class="n">group_path</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[DEBUG] Output path for report: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>  <span class="c1"># mypy guard</span>
                     <span class="n">reporter</span><span class="o">.</span><span class="n">report</span><span class="p">(</span>
+                        <span class="n">timestamp</span><span class="o">=</span><span class="n">epoch_timestamp</span><span class="p">,</span>
                         <span class="n">args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
                         <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
                         <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+                        <span class="n">reports_log_path</span><span class="o">=</span><span class="n">report_log_path</span><span class="p">,</span>
                         <span class="n">path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
                         <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span>

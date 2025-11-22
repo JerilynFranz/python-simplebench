@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>simplebench.reporters.reporter.protocols &#8212; simplebench 0.1.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=15db7601" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=e424009b" />
     
     <script src="../../../../_static/documentation_options.js?v=9a12e387"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
@@ -427,6 +428,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
         <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -439,6 +441,8 @@
 
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
+<span class="sd">        :type timestamp: float</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.</span>
 <span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
 <span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
@@ -487,6 +491,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
         <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -510,6 +515,8 @@
 
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
+<span class="sd">        :type timestamp: float</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.</span>
 <span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
 <span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
@@ -530,6 +537,7 @@
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render_by_section">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_by_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                           <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
+                          <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                           <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
                           <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                           <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
@@ -543,6 +551,8 @@
 
 <span class="sd">        :param renderer: A callable that takes a case, section, and options, and returns the rendered output.</span>
 <span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
+<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
+<span class="sd">        :type timestamp: float</span>
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
@@ -563,6 +573,7 @@
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render_by_case">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_by_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                        <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
+                       <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                        <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
                        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                        <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
@@ -577,6 +588,8 @@
 <span class="sd">        :param renderer: A callable that takes a case, section (which will be ``None``), and options,</span>
 <span class="sd">                         and returns the rendered output.</span>
 <span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
+<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
+<span class="sd">        :type timestamp: float</span>
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
@@ -598,7 +611,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">target_filesystem</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+        <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
         <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
@@ -610,8 +627,16 @@
 <span class="sd">        This method handles the logic for writing report output to a file, including</span>
 <span class="sd">        creating directories, handling unique filenames, and appending to existing files.</span>
 
+<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
+<span class="sd">        :type timestamp: float</span>
 <span class="sd">        :param path: The base output path.</span>
 <span class="sd">        :type path: :class:`~pathlib.Path` | None</span>
+<span class="sd">        :param reports_log_path: The path to the reports log file.</span>
+<span class="sd">        :type reports_log_path: :class:`~pathlib.Path` | None</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance for the report.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice</span>
 <span class="sd">        :param subdir: The subdirectory within the base path to write to.</span>
 <span class="sd">        :type subdir: str</span>
 <span class="sd">        :param filename: The name of the file to write.</span>
@@ -723,10 +748,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_render_by_args</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
         <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
         <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
         <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -734,6 +761,8 @@
 
 <span class="sd">        :param renderer: The renderer callable to validate.</span>
 <span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
+<span class="sd">        :param timestamp: The timestamp for the report.</span>
+<span class="sd">        :type timestamp: float</span>
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance.</span>
@@ -742,6 +771,8 @@
 <span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
 <span class="sd">        :param path: The output path. Defaults to ``None``.</span>
 <span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param reports_log_path: The reports log path. Defaults to ``None``.</span>
+<span class="sd">        :type reports_log_path: :class:`~pathlib.Path` | None, optional</span>
 <span class="sd">        :param session: The :class:`~simplebench.session.Session` instance. Defaults to ``None``.</span>
 <span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
 <span class="sd">        :param callback: The callback function. Defaults to ``None``.</span>
@@ -754,12 +785,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">dispatch_to_targets</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
             <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
             <span class="n">filename_base</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
             <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
             <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
             <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span>
             <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Deliver the rendered output to the specified targets.</span>
@@ -769,6 +802,8 @@
 
 <span class="sd">        :param output: The rendered report content.</span>
 <span class="sd">        :type output: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
+<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
+<span class="sd">        :type timestamp: float</span>
 <span class="sd">        :param filename_base: The base name for the output file.</span>
 <span class="sd">        :type filename_base: str</span>
 <span class="sd">        :param args: The parsed command-line arguments.</span>
@@ -781,12 +816,44 @@
 <span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
 <span class="sd">        :param path: The output path for filesystem targets. Defaults to ``None``.</span>
 <span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param reports_log_path: The reports log path. Defaults to ``None``.</span>
+<span class="sd">        :type reports_log_path: :class:`~pathlib.Path` | None, optional</span>
 <span class="sd">        :param session: The :class:`~simplebench.session.Session` instance for the report. Defaults to ``None``.</span>
 <span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
 <span class="sd">        :param callback: A callback function for callback targets. Defaults to ``None``.</span>
 <span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="ReporterProtocol.log_report">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.log_report">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                   <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                   <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+                   <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+                   <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+                   <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log the report generation to the reports log file.</span>
+
+<span class="sd">        The log entry includes metadata about the report generation,</span>
+<span class="sd">        such as the case ID, file path, reporter name, output format,</span>
+<span class="sd">        and platform information.</span>
+
+<span class="sd">        It can be used for auditing, tracking, looking up generated reports, and more.</span>
+
+<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
+<span class="sd">        :type timestamp: float</span>
+<span class="sd">        :param filepath: The path to the generated report file.</span>
+<span class="sd">        :type filepath: :class:`~pathlib.Path`</span>
+<span class="sd">        :param reports_log_path: The path to the reports log file.</span>
+<span class="sd">        :type reports_log_path: :class:`~pathlib.Path`</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
+<span class="sd">                       the report configuration.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
 </div>
 
 </pre></div>

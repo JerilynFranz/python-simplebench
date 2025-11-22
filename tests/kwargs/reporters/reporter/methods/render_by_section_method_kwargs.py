@@ -24,9 +24,11 @@ class RenderBySectionMethodKWArgs(KWArgs):
             *,
             renderer: ReportRenderer | NoDefaultValue = NoDefaultValue(),
             args: Namespace | NoDefaultValue = NoDefaultValue(),
+            timestamp: float | NoDefaultValue = NoDefaultValue(),
             case: Case | NoDefaultValue = NoDefaultValue(),
             choice: Choice | NoDefaultValue = NoDefaultValue(),
             path: Path | NoDefaultValue = NoDefaultValue(),
+            reports_log_path: Path | NoDefaultValue = NoDefaultValue(),
             session: Session | NoDefaultValue = NoDefaultValue(),
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue()) -> None:
         """Constructs a RenderBySectionMethodKWArgs instance.

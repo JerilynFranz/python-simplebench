@@ -10,7 +10,40 @@ class _ReporterErrorTag(ErrorTag):
     CONFIG_INVALID_ARG_TYPE = "CONFIG_INVALID_ARG_TYPE"
     """Invalid type for ``config`` argument in __init__()"""
 
+    # log_report()
+    LOG_REPORT_INVALID_TIMESTAMP_ARG_TYPE = "LOG_REPORT_INVALID_TIMESTAMP_ARG_TYPE"
+    """Invalid type for ``timestamp`` argument in
+    :meth:`~simplebench.reporters.reporter.reporter.Reporter.log_report`"""
+    LOG_REPORT_INVALID_FILEPATH_ARG_TYPE = "LOG_REPORT_INVALID_FILEPATH_ARG_TYPE"
+    """Invalid type for ``filepath`` argument in
+    :meth:`~simplebench.reporters.reporter.reporter.Reporter.log_report`"""
+    LOG_REPORT_INVALID_REPORTS_LOG_PATH_ARG_TYPE = "LOG_REPORT_INVALID_REPORTS_LOG_PATH_ARG_TYPE"
+    """Invalid type for ``reports_log_path`` argument in
+    :meth:`~simplebench.reporters.reporter.reporter.Reporter.log_report`"""
+    LOG_REPORT_INVALID_CASE_ARG_TYPE = "LOG_REPORT_INVALID_CASE_ARG_TYPE"
+    """Invalid type for ``case`` argument in
+    :meth:`~simplebench.reporters.reporter.reporter.Reporter.log_report`"""
+    LOG_REPORT_INVALID_CHOICE_ARG_TYPE = "LOG_REPORT_INVALID_CHOICE_ARG_TYPE"
+    """Invalid type for ``choice`` argument in
+    :meth:`~simplebench.reporters.reporter.reporter.Reporter.log_report`"""
+    # report()
+    REPORT_INVALID_TIMESTAMP_ARG = "REPORT_INVALID_TIMESTAMP_ARG"
+    """Invalid type for ``timestamp`` argument in
+    :meth:`~simplebench.reporters.reporter.reporter.Reporter.report`"""
+
     # dispatch_to_targets()
+    DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_PATH_TYPE = (
+        "DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_PATH_TYPE")
+    """Invalid type for ``path`` argument in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
+    DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_REPORTS_LOG_PATH_TYPE = (
+        "DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_REPORTS_LOG_PATH_TYPE")
+    """Invalid type for ``reports_log_path`` argument in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
+    DISPATCH_TO_TARGETS_INVALID_REPORTS_LOG_PATH_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_REPORTS_LOG_PATH_ARG_TYPE")
+    """Invalid type for ``reports_log_path`` argument in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
     DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE = (
         "DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE")
     """Invalid type for ``args`` argument in
@@ -91,6 +124,21 @@ class _ReporterErrorTag(ErrorTag):
     :meth:`~simplebench.reporters.reporter.mixins._prioritization.PrioritizationMixin.get_prioritized_default_targets`"""  # pylint: disable=line-too-long  # noqa: E501
 
     # _validate_render_by_args()
+    VALIDATE_RENDER_BY_ARGS_INVALID_TIMESTAMP_ARG_TYPE = "VALIDATE_RENDER_BY_ARGS_INVALID_TIMESTAMP_ARG_TYPE"
+    """Invalid type for ``timestamp`` argument in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin._validate_render_by_args`"""
+    VALIDATE_RENDER_BY_ARGS_MISSING_PATH_FOR_FILESYSTEM_TARGET = (
+        "VALIDATE_RENDER_BY_ARGS_MISSING_PATH_FOR_FILESYSTEM_TARGET")
+    """Missing ``path`` argument for FILESYSTEM target in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin._validate_render_by_args`"""
+    VALIDATE_RENDER_BY_ARGS_MISSING_REPORTS_LOG_PATH_FOR_FILESYSTEM_TARGET = (
+        "VALIDATE_RENDER_BY_ARGS_MISSING_REPORTS_LOG_PATH_FOR_FILESYSTEM_TARGET")
+    """Missing ``reports_log_path`` argument for FILESYSTEM target in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin._validate_render_by_args`"""
+    VALIDATE_RENDER_BY_ARGS_INVALID_REPORTS_LOG_PATH_ARG_TYPE = (
+        "VALIDATE_RENDER_BY_ARGS_INVALID_REPORTS_LOG_PATH_ARG_TYPE")
+    """Invalid type for ``reports_log_path`` argument in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin._validate_render_by_args`"""
     VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE = (
         "VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE")
     """Invalid type for ``renderer`` argument in
@@ -313,6 +361,9 @@ class _ReporterErrorTag(ErrorTag):
     REPORT_UNSUPPORTED_FORMAT = "REPORT_UNSUPPORTED_FORMAT"
     """An unsupported Format was passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.report` method in the Choice.formats"""
+    REPORT_INVALID_REPORTS_LOG_PATH_ARG = "REPORT_INVALID_REPORTS_LOG_PATH_ARG"
+    """Something other than a Path instance was passed to the
+    :meth:`~simplebench.reporters.reporter.reporter.Reporter.report` method as the ``reports_log_path`` argument"""
     CHOICES_INVALID_ARG_TYPE = "INVALID_CHOICES_ARG_TYPE"
     """Something other than a ChoicesConf instance was passed as the ``choices`` argument to the Reporter constructor"""
     CHOICES_INVALID_ARG_VALUE = "INVALID_CHOICES_ARG_VALUE"
@@ -332,6 +383,16 @@ class _ReporterErrorTag(ErrorTag):
     ADD_FLAGS_INVALID_PARSER_ARG_TYPE = "ADD_FLAGS_INVALID_PARSER_ARG_TYPE"
     """Something other than an ArgumentParser instance was passed to the
     :meth:`~simplebench.reporters.reporter.mixins._argparse.ArgparseMixin.add_flags_to_argparse` method"""
+
+    # target_filesystem()
+    TARGET_FILESYSTEM_INVALID_TIMESTAMP_ARG_TYPE = "TARGET_FILESYSTEM_INVALID_TIMESTAMP_ARG_TYPE"
+    """Something other than a float or int was passed to the
+    :meth:`~simplebench.reporters.reporter.mixins._targets.TargetsMixin.target_filesystem`
+    method as the ``timestamp`` argument"""
+    TARGET_FILESYSTEM_INVALID_REPORTS_LOG_PATH_ARG_TYPE = "TARGET_FILESYSTEM_INVALID_REPORTS_LOG_PATH_ARG_TYPE"
+    """Something other than a Path instance was passed to the
+    :meth:`~simplebench.reporters.reporter.mixins._targets.TargetsMixin.target_filesystem` method
+    as the ``reports_log_path`` argument"""
     TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE = "TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE"
     """Something other than a Path instance was passed to the
     :meth:`~simplebench.reporters.reporter.mixins._targets.TargetsMixin.target_filesystem` method"""
@@ -403,3 +464,5 @@ class _ReporterErrorTag(ErrorTag):
     """Something other than a rich.Text or rich.Table instance was passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.rich_text_to_plain_text` method as the ``rich_text``
     argument"""
+
+    

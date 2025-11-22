@@ -20,9 +20,11 @@ from ....factories import (
     case_factory,
     choice_conf_kwargs_factory,
     default_reporter_callback,
+    default_timestamp,
     list_of_strings_flag_factory,
     path_factory,
     reporter_config_factory,
+    reports_log_path_factory,
     session_factory,
 )
 from ....factories.reporter.reporter_methods import (
@@ -152,10 +154,12 @@ def _setup_good_path(
     ).parse_args([flag_name, *target_values])
     kwargs = kwargs_class(
         renderer=reporter.render,
+        timestamp=default_timestamp(),
         args=args,
         case=case_factory(),
         choice=choice,
         path=path_factory(),
+        reports_log_path=reports_log_path_factory(),
         session=session_factory(),
         callback=default_reporter_callback
     )
@@ -192,10 +196,12 @@ def _setup_bad_target_path(
     ).parse_args([flag_name, Target.INVALID.value])
     kwargs = kwargs_class(
         renderer=reporter.render,
+        timestamp=default_timestamp(),
         args=args,
         case=case_factory(),
         choice=choice,
         path=path_factory(),
+        reports_log_path=reports_log_path_factory(),
         session=session_factory(),
         callback=default_reporter_callback
     )

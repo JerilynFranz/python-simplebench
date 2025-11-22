@@ -110,9 +110,11 @@ class JSONReporter(Reporter):
     def run_report(self,
                    *,
                    args: Namespace,
+                   timestamp: float,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,
+                   reports_log_path: Path | None = None,
                    session: Session | None = None,
                    callback: ReporterCallback | None = None
                    ) -> None:
@@ -131,11 +133,13 @@ class JSONReporter(Reporter):
         :class:`~simplebench.reporters.protocols.reporter_renderer.ReportRenderer` protocol.
 
         :param args: The parsed command-line arguments.
+        :param timestamp: The timestamp for the report.
         :param case: The :class:`~simplebench.case.Case` instance representing the
             benchmarked code.
         :param choice: The :class:`~simplebench.reporters.choice.Choice` instance specifying
             the report configuration.
         :param path: The path to the directory where the JSON file(s) will be saved.
+        :param reports_log_path: The path to the reports log file.
         :param session: The :class:`~simplebench.session.Session` instance containing
             benchmark results.
         :param callback: A callback function for additional processing of the report.
@@ -144,7 +148,15 @@ class JSONReporter(Reporter):
             needed.
         """
         self.render_by_case(
-            renderer=self.render, args=args, case=case, choice=choice, path=path, session=session, callback=callback)
+            renderer=self.render,
+            timestamp=timestamp,
+            args=args,
+            case=case,
+            choice=choice,
+            path=path,
+            reports_log_path=reports_log_path,
+            session=session,
+            callback=callback)
 
     def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Convert the Case data for all sections to a JSON string.

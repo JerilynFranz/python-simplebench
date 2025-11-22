@@ -122,14 +122,17 @@ class ScatterPlotReporter(MatPlotLibReporter):
                 plot_data = []
                 x_axis_legend = 'N'
                 for result in results:
-                    n = result.n
+                    x = result.n
                     target_stats = result.results_section(section)
-                    plot_data.append((n, target_stats.mean * common_scale))
+                    value = target_stats.mean * common_scale
+                    plot_data.append((x, value))
                 df = pd.DataFrame(plot_data, columns=[x_axis_legend, target_name])
 
                 # See https://matplotlib.org/stable/users/explain/customizing.html#the-matplotlibrc-file
                 benchmarking_theme = options.theme
                 mpl.rcParams.update(benchmarking_theme)
+                figure_height = options.height / options.dpi  # inches
+                figure_width = options.width / options.dpi  # inches
 
                 # Create the plot
                 with plt.style.context(options.style):
@@ -137,12 +140,9 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     g.figure.suptitle(case.title, fontsize='large', weight='bold')
                     g.figure.subplots_adjust(top=.9)
                     g.figure.set_dpi(options.dpi)  # dots per inch
-                    g.figure.set_figheight(options.height / options.dpi)  # inches
-                    g.figure.set_figwidth(options.width / options.dpi)  # inches
+                    g.figure.set_figheight(figure_height)  # type: ignore[reportAttributeAccessIssue,union-attr]
+                    g.figure.set_figwidth(figure_width)  # type: ignore[reportAttributeAccessIssue,union-attr]
                     g.tick_params("x", rotation=options.x_labels_rotation)
-                    # format the labels with f-strings
-                    #for ax in g.axes.flat:
-                    #    ax.yaxis.set_major_formatter('{x}' + f' {common_unit}')
                     if options.y_starts_at_zero:
                         _, top = plt.ylim()
                         plt.ylim(bottom=0, top=top * 1.10)  # Add 10% headroom

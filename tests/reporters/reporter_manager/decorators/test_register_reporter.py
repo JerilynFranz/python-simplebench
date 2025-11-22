@@ -40,21 +40,27 @@ class MockReporter(Reporter):
     def run_report(self,
                    *,
                    args: Namespace,
+                   timestamp: float,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,
+                   reports_log_path: Path | None = None,
                    session: Session | None = None,
                    callback: ReporterCallback | None = None) -> None:
         """A mock run_report method.
 
         :param args: The command-line arguments.
         :type args: Namespace
+        :param timestamp: The timestamp of the report generation.
+        :type timestamp: float
         :param case: The benchmark case.
         :type case: Case
         :param choice: The reporter choice.
         :type choice: Choice
         :param path: The output path.
         :type path: Path | None
+        :param reports_log_path: The reports log path.
+        :type reports_log_path: Path | None
         :param session: The benchmark session.
         :type session: Session | None
         :param callback: The reporter callback.
@@ -62,10 +68,12 @@ class MockReporter(Reporter):
         """
         self.render_by_section(  # pragma: no cover
             renderer=self.render,
+            timestamp=timestamp,
             args=args,
             case=case,
             choice=choice,
             path=path,
+            reports_log_path=reports_log_path,
             session=session,
             callback=callback)
 
@@ -102,15 +110,19 @@ def test_register_reporter() -> None:
         def run_report(self,
                        *,
                        args: Namespace,
+                       timestamp: float,
                        case: Case,
                        choice: Choice,
                        path: Path | None = None,
+                       reports_log_path: Path | None = None,
                        session: Session | None = None,
                        callback: ReporterCallback | None = None) -> None:
             """A mock run_report method.
 
             :param args: The command-line arguments.
             :type args: Namespace
+            :param timestamp: The timestamp of the report generation.
+            :type timestamp: float
             :param case: The benchmark case.
             :type case: Case
             :param choice: The reporter choice.
@@ -124,6 +136,7 @@ def test_register_reporter() -> None:
             """
             self.render_by_section(  # pragma: no cover
                 renderer=self.render,
+                timestamp=timestamp,
                 args=args,
                 case=case,
                 choice=choice,

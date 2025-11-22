@@ -44,6 +44,7 @@ from ._primitives import (
     default_subdir,
     default_targets,
     default_targets_factory,
+    default_timestamp,
     default_title,
     default_warmup_iterations,
     description_factory,
@@ -72,6 +73,7 @@ from ._primitives import (
     sections_factory,
     subdir_factory,
     targets_factory,
+    timestamp_factory,
     title_factory,
     total_elapsed_factory,
     variation_cols_factory,
@@ -96,7 +98,7 @@ from .case import (
     runner_factory,
 )
 from .console import console_factory
-from .path import path_factory
+from .path import path_factory, reports_log_path_factory
 from .reporter import (
     FactoryReporter,
     choice_conf_factory,
@@ -205,6 +207,8 @@ __all__ = [
     'memory_scale_factory',
     'variation_marks_factory',
     'output_path_factory',
+    'timestamp_factory',
+    'default_timestamp',
 
     # Utils factories
     'DefaultExtra',
@@ -220,6 +224,7 @@ __all__ = [
 
     # Path factories
     'path_factory',
+    'reports_log_path_factory',
 
     # Console factories
     'console_factory',
