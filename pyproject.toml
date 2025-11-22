@@ -29,6 +29,7 @@ classifiers = [
 
 requires-python = ">=3.10"
 dependencies = [
+    "dulwich>=0.24.10",
     "matplotlib>=3.10.6",
     "pandas>=2.3.2",
     "py-cpuinfo>=9.0.0",
