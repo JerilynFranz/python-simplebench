@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, ParamSpec, TypeVar
 
-from .case import Case
+from .case import Case, generate_benchmark_id
 from .defaults import DEFAULT_ITERATIONS, DEFAULT_MAX_TIME, DEFAULT_MIN_TIME, DEFAULT_ROUNDS, DEFAULT_WARMUP_ITERATIONS
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, _DecoratorsErrorTag
 # simplebench.reporters.reporter
@@ -83,7 +83,7 @@ def benchmark(
 
 
         if __name__ == '__main__':
-            extra_args = None if len(sys.argv) > 1 else ['--progress', '--rich-table.console']
+            extra_args = None if len(sys.argv) > 1 : ['--progress', '--rich-table.console']
         main(extra_args=extra_args)
 
     You should read the documentation for :class:`Case` for full details on the parameters and their
@@ -172,12 +172,6 @@ def benchmark(
             _DecoratorsErrorTag.BENCHMARK_DESCRIPTION_TYPE,
             _DecoratorsErrorTag.BENCHMARK_DESCRIPTION_VALUE)
 
-    if benchmark_id is not None:
-        benchmark_id = validate_non_blank_string(
-            benchmark_id, 'benchmark_id',
-            _DecoratorsErrorTag.BENCHMARK_ID_TYPE,
-            _DecoratorsErrorTag.BENCHMARK_ID_VALUE)
-
     iterations = validate_positive_int(
         iterations, 'iterations',
         _DecoratorsErrorTag.BENCHMARK_ITERATIONS_TYPE,
@@ -248,6 +242,15 @@ def benchmark(
             n_for_run = n if use_field_for_n is None else kwargs.get(use_field_for_n)
             return bench.run(action=func, n=n_for_run, kwargs=kwargs)
 
+        final_benchmark_id = benchmark_id
+        if final_benchmark_id is None:
+            final_benchmark_id = generate_benchmark_id(obj=func, action=func, group=group)
+
+        final_benchmark_id = validate_non_blank_string(
+            final_benchmark_id, 'benchmark_id',
+            _DecoratorsErrorTag.BENCHMARK_ID_TYPE,
+            _DecoratorsErrorTag.BENCHMARK_ID_VALUE)
+
         # Create the Case instance, using sensible defaults from the function.
         if title is None:
             inferred_title = func.__name__
@@ -262,7 +265,7 @@ def benchmark(
             group=group,
             git_info=git_info,
             title=inferred_title,
-            benchmark_id=benchmark_id,
+            benchmark_id=final_benchmark_id,
             action=case_action_wrapper,
             description=inferred_description,
             iterations=iterations,

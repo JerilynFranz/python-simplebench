@@ -4,7 +4,8 @@ from __future__ import annotations
 import inspect
 import itertools
 from copy import copy
-from typing import TYPE_CHECKING, Any, Iterable, Optional
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional
 
 from .defaults import DEFAULT_ITERATIONS, DEFAULT_MAX_TIME, DEFAULT_MIN_TIME, DEFAULT_ROUNDS, DEFAULT_WARMUP_ITERATIONS
 from .enums import Color, Section
@@ -34,6 +35,55 @@ from .vcs import GitInfo, get_git_info
 
 if TYPE_CHECKING:
     from .session import Session
+
+
+def generate_benchmark_id(obj: object | None, action: Callable[..., Any], group: str) -> str:
+    """Generate a stable benchmark ID based on action, group, and signature.
+
+    This function attempts to create a stable benchmark ID based on the action
+    function's name, its signature (parameter names and types), and the group.
+    If this is not possible (e.g., if the action is a lambda or has no name),
+    a transient ID based on the instance's id() will be used.
+
+    :param obj: An object instance related to the benchmark case, used for transient ID generation if needed.
+    :param action: The action function of the benchmark case.
+    :type action: ActionRunner
+    :param group: The group of the benchmark case.
+    :type group: str
+    :return: A stable benchmark ID string or a transient ID if stability is not possible.
+    :rtype: str
+    """
+    try:
+        # Use __qualname__ to include class context.
+        action_qualname = getattr(action, '__qualname__', '<unknown>')
+        if action_qualname == '<lambda>':
+            raise SimpleBenchAttributeError(
+                'Lambda functions do not have stable names.',
+                tag=_CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
+                obj=obj,
+                name='__qualname__')
+
+        # Get the filename where the action is defined.
+        module_file = Path(inspect.getfile(action)).name
+
+        action_signature = inspect.signature(action)
+        signature_parts = []
+        for param in action_signature.parameters.values():
+            param_type = 'Any'
+            if param.annotation is not inspect.Parameter.empty:
+                if isinstance(param.annotation, type):
+                    param_type = param.annotation.__name__
+                else:
+                    param_type = str(param.annotation)
+            signature_parts.append(f'{param.name}:{param_type}')
+        signature_str = ','.join(signature_parts)
+
+        # Combine filename, qualname, and signature for a more unique ID.
+        benchmark_id = f'{module_file}::{action_qualname}({signature_str})'
+        return benchmark_id
+    except (AttributeError, TypeError):  # More specific exception handling
+        # Fallback to transient ID for built-ins, interactively defined functions, etc.
+        return f'transient-{id(obj)}'
 
 
 class Case:
@@ -125,49 +175,6 @@ class Case:
                  '_variation_cols', '_kwargs_variations', '_runner',
                  '_callback', '_results', '_options', '_rounds',
                  '_benchmark_id', '_git_info')
-
-    @staticmethod
-    def generate_benchmark_id(case: Case, action: ActionRunner, group: str) -> str:
-        """Generate a stable benchmark ID based on action, group, and signature.
-
-        This function attempts to create a stable benchmark ID based on the action
-        function's name, its signature (parameter names and types), and the group.
-        If this is not possible (e.g., if the action is a lambda or has no name),
-        a transient ID based on the instance's id() will be used.
-
-        :param case: The Case instance for which to generate the benchmark ID.
-        :type case: Case
-        :param action: The action function of the benchmark case.
-        :type action: ActionRunner
-        :param group: The group of the benchmark case.
-        :type group: str
-        :return: A stable benchmark ID string or a transient ID if stability is not possible.
-        :rtype: str
-        """
-        try:
-            action_name = action.__name__  # type: ignore[attr-defined]
-            if action_name == '<lambda>':
-                raise SimpleBenchAttributeError(
-                    'Lambda functions do not have stable names.',
-                    tag=_CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
-                    obj=case,
-                    name='__name__')
-            action_signature = inspect.signature(action)
-            signature_parts = []
-            for param in action_signature.parameters.values():
-                param_type = 'Any'
-                if param.annotation is not inspect.Parameter.empty:
-                    if isinstance(param.annotation, type):
-                        param_type = param.annotation.__name__
-                    else:
-                        param_type = str(param.annotation)
-                signature_parts.append(f'{param.name}:{param_type}')
-            signature_str = ','.join(signature_parts)
-            benchmark_id = f'{group}::{action_name}({signature_str})'
-            return benchmark_id
-        except Exception:  # pylint: disable=broad-exception-caught
-            # Fallback to transient ID
-            return f'transient-{id(case)}'
 
     def __init__(self, *,
                  benchmark_id: Optional[str] = None,
@@ -316,7 +323,7 @@ class Case:
                         _CaseErrorTag.INVALID_MAX_TIME_VALUE)
         self._benchmark_id: str
         if benchmark_id is None:
-            self._benchmark_id = Case.generate_benchmark_id(self, action, group)
+            self._benchmark_id = generate_benchmark_id(self, action, group)
         else:
             self._benchmark_id = validate_string(
                 benchmark_id, "benchmark_id",
