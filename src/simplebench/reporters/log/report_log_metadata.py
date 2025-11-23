@@ -180,7 +180,7 @@ class ReportLogMetadata:
 
         return {
             "timestamp": self.timestamp,
-            "case_id": self.case.benchmark_id,
+            "benchmark_id": self.case.benchmark_id,
             "case_group": self.case.group,
             "reporter_type": self.choice.reporter.__class__.__name__,
             "reporter_name": self.choice.reporter.name,
