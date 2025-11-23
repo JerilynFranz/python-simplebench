@@ -11,6 +11,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.enums import Format, Section, Target
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.config import ReporterConfig
 
@@ -331,7 +332,7 @@ class ReporterProtocol(Protocol):
         self,
         *,
         args: Namespace,
-        timestamp: float,
+        log_metadata: ReportLogMetadata,
         case: Case,
         choice: Choice,
         path: Path | None = None,
@@ -344,8 +345,8 @@ class ReporterProtocol(Protocol):
 
         :param args: The parsed command-line arguments.
         :type args: :class:`~argparse.Namespace`
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: ReportLogMetadata
         :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.
         :type case: :class:`~simplebench.case.Case`
         :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying
@@ -388,7 +389,7 @@ class ReporterProtocol(Protocol):
         self,
         *,
         args: Namespace,
-        timestamp: float,
+        log_metadata: ReportLogMetadata,
         case: Case,
         choice: Choice,
         path: Path | None = None,
@@ -412,8 +413,8 @@ class ReporterProtocol(Protocol):
 
         :param args: The parsed command-line arguments.
         :type args: :class:`~argparse.Namespace`
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: ReportLogMetadata
         :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.
         :type case: :class:`~simplebench.case.Case`
         :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying
@@ -431,7 +432,7 @@ class ReporterProtocol(Protocol):
 
     def render_by_section(self, *,
                           renderer: ReportRenderer,
-                          timestamp: float,
+                          log_metadata: ReportLogMetadata,
                           args: Namespace,
                           case: Case,
                           choice: Choice,
@@ -445,8 +446,8 @@ class ReporterProtocol(Protocol):
 
         :param renderer: A callable that takes a case, section, and options, and returns the rendered output.
         :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: ReportLogMetadata
         :param args: The parsed command-line arguments.
         :type args: :class:`~argparse.Namespace`
         :param case: The :class:`~simplebench.case.Case` instance for the report.
@@ -464,7 +465,7 @@ class ReporterProtocol(Protocol):
 
     def render_by_case(self, *,
                        renderer: ReportRenderer,
-                       timestamp: float,
+                       log_metadata: ReportLogMetadata,
                        args: Namespace,
                        case: Case,
                        choice: Choice,
@@ -479,8 +480,8 @@ class ReporterProtocol(Protocol):
         :param renderer: A callable that takes a case, section (which will be ``None``), and options,
                          and returns the rendered output.
         :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: ReportLogMetadata
         :param args: The parsed command-line arguments.
         :type args: :class:`~argparse.Namespace`
         :param case: The :class:`~simplebench.case.Case` instance for the report.
@@ -499,11 +500,8 @@ class ReporterProtocol(Protocol):
     def target_filesystem(
         self,
         *,
-        timestamp: float,
+        log_metadata: ReportLogMetadata,
         path: Path | None,
-        reports_log_path: Path | None,
-        case: Case,
-        choice: Choice,
         subdir: str,
         filename: str,
         output: str | bytes | Text | Table,
@@ -515,16 +513,10 @@ class ReporterProtocol(Protocol):
         This method handles the logic for writing report output to a file, including
         creating directories, handling unique filenames, and appending to existing files.
 
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: ReportLogMetadata
         :param path: The base output path.
         :type path: :class:`~pathlib.Path` | None
-        :param reports_log_path: The path to the reports log file.
-        :type reports_log_path: :class:`~pathlib.Path` | None
-        :param case: The :class:`~simplebench.case.Case` instance for the report.
-        :type case: :class:`~simplebench.case.Case`
-        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance for the report.
-        :type choice: :class:`~simplebench.reporters.choice.choice
         :param subdir: The subdirectory within the base path to write to.
         :type subdir: str
         :param filename: The name of the file to write.
@@ -620,12 +612,11 @@ class ReporterProtocol(Protocol):
     def _validate_render_by_args(
         self, *,
         renderer: ReportRenderer,
-        timestamp: float,
+        log_metadata: ReportLogMetadata,
         args: Namespace,
         case: Case,
         choice: Choice,
         path: Path | None = None,
-        reports_log_path: Path | None = None,
         session: Session | None = None,
         callback: ReporterCallback | None = None
     ) -> None:
@@ -633,8 +624,8 @@ class ReporterProtocol(Protocol):
 
         :param renderer: The renderer callable to validate.
         :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`
-        :param timestamp: The timestamp for the report.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: ReportLogMetadata
         :param args: The parsed command-line arguments.
         :type args: :class:`~argparse.Namespace`
         :param case: The :class:`~simplebench.case.Case` instance.
@@ -643,8 +634,6 @@ class ReporterProtocol(Protocol):
         :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
         :param path: The output path. Defaults to ``None``.
         :type path: :class:`~pathlib.Path` | None, optional
-        :param reports_log_path: The reports log path. Defaults to ``None``.
-        :type reports_log_path: :class:`~pathlib.Path` | None, optional
         :param session: The :class:`~simplebench.session.Session` instance. Defaults to ``None``.
         :type session: :class:`~simplebench.session.Session` | None, optional
         :param callback: The callback function. Defaults to ``None``.
@@ -655,14 +644,13 @@ class ReporterProtocol(Protocol):
     def dispatch_to_targets(
             self, *,
             output: str | bytes | Text | Table,
-            timestamp: float,
+            log_metadata: ReportLogMetadata,
             filename_base: str,
             args: Namespace,
             choice: Choice,
             case: Case,
             section: Section,
             path: Path | None = None,
-            reports_log_path: Path | None = None,
             session: Session | None = None,
             callback: ReporterCallback | None = None) -> None:
         """Deliver the rendered output to the specified targets.
@@ -672,8 +660,8 @@ class ReporterProtocol(Protocol):
 
         :param output: The rendered report content.
         :type output: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: ReportLogMetadata
         :param filename_base: The base name for the output file.
         :type filename_base: str
         :param args: The parsed command-line arguments.
@@ -686,38 +674,9 @@ class ReporterProtocol(Protocol):
         :type section: :class:`~simplebench.enums.Section`
         :param path: The output path for filesystem targets. Defaults to ``None``.
         :type path: :class:`~pathlib.Path` | None, optional
-        :param reports_log_path: The reports log path. Defaults to ``None``.
-        :type reports_log_path: :class:`~pathlib.Path` | None, optional
         :param session: The :class:`~simplebench.session.Session` instance for the report. Defaults to ``None``.
         :type session: :class:`~simplebench.session.Session` | None, optional
         :param callback: A callback function for callback targets. Defaults to ``None``.
         :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
         ...
-
-    def log_report(self, *,
-                   timestamp: float,
-                   filepath: Path,
-                   reports_log_path: Path,
-                   case: Case,
-                   choice: Choice) -> None:
-        """Log the report generation to the reports log file.
-
-        The log entry includes metadata about the report generation,
-        such as the case ID, file path, reporter name, output format,
-        and platform information.
-
-        It can be used for auditing, tracking, looking up generated reports, and more.
-
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
-        :param filepath: The path to the generated report file.
-        :type filepath: :class:`~pathlib.Path`
-        :param reports_log_path: The path to the reports log file.
-        :type reports_log_path: :class:`~pathlib.Path`
-        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.
-        :type case: :class:`~simplebench.case.Case`
-        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying
-                       the report configuration.
-        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
-        """

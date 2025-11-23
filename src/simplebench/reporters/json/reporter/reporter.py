@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.type_proxies import is_case
@@ -110,11 +111,10 @@ class JSONReporter(Reporter):
     def run_report(self,
                    *,
                    args: Namespace,
-                   timestamp: float,
+                   log_metadata: ReportLogMetadata,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,
-                   reports_log_path: Path | None = None,
                    session: Session | None = None,
                    callback: ReporterCallback | None = None
                    ) -> None:
@@ -133,7 +133,8 @@ class JSONReporter(Reporter):
         :class:`~simplebench.reporters.protocols.reporter_renderer.ReportRenderer` protocol.
 
         :param args: The parsed command-line arguments.
-        :param timestamp: The timestamp for the report.
+        :param log_metadata: The :class:`~.ReportLogMetadata` instance containing metadata
+            about the report being generated.
         :param case: The :class:`~simplebench.case.Case` instance representing the
             benchmarked code.
         :param choice: The :class:`~simplebench.reporters.choice.Choice` instance specifying
@@ -149,12 +150,11 @@ class JSONReporter(Reporter):
         """
         self.render_by_case(
             renderer=self.render,
-            timestamp=timestamp,
+            log_metadata=log_metadata,
             args=args,
             case=case,
             choice=choice,
             path=path,
-            reports_log_path=reports_log_path,
             session=session,
             callback=callback)
 

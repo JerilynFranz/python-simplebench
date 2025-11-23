@@ -8,6 +8,7 @@ import pytest
 from simplebench.case import Case
 from simplebench.enums import Section
 from simplebench.reporters.choice import Choice
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -40,11 +41,10 @@ class MockReporter(Reporter):
     def run_report(self,
                    *,
                    args: Namespace,
-                   timestamp: float,
+                   log_metadata: ReportLogMetadata,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,
-                   reports_log_path: Path | None = None,
                    session: Session | None = None,
                    callback: ReporterCallback | None = None) -> None:
         """A mock run_report method.
@@ -52,7 +52,7 @@ class MockReporter(Reporter):
         :param args: The command-line arguments.
         :type args: Namespace
         :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :type log_metadata: ReportLogMetadata
         :param case: The benchmark case.
         :type case: Case
         :param choice: The reporter choice.
@@ -68,12 +68,11 @@ class MockReporter(Reporter):
         """
         self.render_by_section(  # pragma: no cover
             renderer=self.render,
-            timestamp=timestamp,
+            log_metadata=log_metadata,
             args=args,
             case=case,
             choice=choice,
             path=path,
-            reports_log_path=reports_log_path,
             session=session,
             callback=callback)
 
@@ -110,19 +109,18 @@ def test_register_reporter() -> None:
         def run_report(self,
                        *,
                        args: Namespace,
-                       timestamp: float,
+                       log_metadata: ReportLogMetadata,
                        case: Case,
                        choice: Choice,
                        path: Path | None = None,
-                       reports_log_path: Path | None = None,
                        session: Session | None = None,
                        callback: ReporterCallback | None = None) -> None:
             """A mock run_report method.
 
             :param args: The command-line arguments.
             :type args: Namespace
-            :param timestamp: The timestamp of the report generation.
-            :type timestamp: float
+            :param log_metadata: The report log metadata.
+            :type log_metadata: ReportLogMetadata
             :param case: The benchmark case.
             :type case: Case
             :param choice: The reporter choice.
@@ -136,7 +134,7 @@ def test_register_reporter() -> None:
             """
             self.render_by_section(  # pragma: no cover
                 renderer=self.render,
-                timestamp=timestamp,
+                log_metadata=log_metadata,
                 args=args,
                 case=case,
                 choice=choice,

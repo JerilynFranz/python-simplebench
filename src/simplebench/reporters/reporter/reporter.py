@@ -17,7 +17,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from argparse import Namespace
-from json import JSONEncoder
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeAlias, TypeVar
 
@@ -29,6 +28,7 @@ from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols import ReporterCallback
 # simplebench.reporters.reporter
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -43,8 +43,7 @@ from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.results import Results
 from simplebench.type_proxies import is_case, is_choice, is_session
-from simplebench.utils import platform_architecture, platform_implementation, platform_system, platform_version
-from simplebench.validators import validate_float, validate_iterable_of_type, validate_type
+from simplebench.validators import validate_iterable_of_type, validate_type
 
 Options: TypeAlias = ReporterOptions
 
@@ -290,11 +289,10 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
 
     def report(self,
                *,
-               timestamp: float,
+               log_metadata: ReportLogMetadata,
                args: Namespace,
                case: Case,
                choice: Choice,
-               reports_log_path: Optional[Path] = None,
                path: Optional[Path] = None,
                session: Optional[Session] = None,
                callback: Optional[ReporterCallback] = None) -> None:
@@ -302,8 +300,8 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
 
         This method performs validation and then calls the subclass's :meth:`~.run_report` method.
 
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: int
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.ReportLogMetadata`
         :param args: The parsed command-line arguments.
         :type args: :class:`~argparse.Namespace`
         :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.
@@ -311,8 +309,6 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying
                        the report configuration.
         :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
-        :param reports_log_path: The path to the reports log file if needed. Defaults to ``None``.
-        :type reports_log_path: :class:`~pathlib.Path` | None, optional
         :param path: The path to the directory where the report can be saved if needed.
                      Leave as ``None`` if not saving to the filesystem. Defaults to ``None``.
         :type path: :class:`~pathlib.Path` | None, optional
@@ -322,8 +318,9 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :param callback: A callback function for additional processing of the report. Defaults to ``None``.
         :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
-        log_timestamp = validate_float(
-            timestamp, 'timestamp', _ReporterErrorTag.REPORT_INVALID_TIMESTAMP_ARG)
+        validate_type(
+            log_metadata, ReportLogMetadata, 'log_metadata',
+            _ReporterErrorTag.REPORT_INVALID_LOG_METADATA_ARG)
         if not isinstance(args, Namespace):
             raise SimpleBenchTypeError(
                 "args argument must be an argparse.Namespace instance",
@@ -370,9 +367,9 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
             raise SimpleBenchTypeError(
                 "Path must be a pathlib.Path instance when using FILESYSTEM target",
                 tag=_ReporterErrorTag.REPORT_INVALID_PATH_ARG)
-        if reports_log_path is not None and not isinstance(reports_log_path, Path):
+        if log_metadata.reports_log_path is not None and not isinstance(log_metadata.reports_log_path, Path):
             raise SimpleBenchTypeError(
-                "reports_log_path must be a pathlib.Path instance if provided",
+                "log_metadata.reports_log_path must be a pathlib.Path instance if provided",
                 tag=_ReporterErrorTag.REPORT_INVALID_REPORTS_LOG_PATH_ARG)
 
         # Only proceed if there are results to report
@@ -385,83 +382,12 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         # will pass through to the hook method, either the default implementation
         # or an overridden implementation in the subclass
         self.run_report(args=args,
-                        timestamp=log_timestamp,
+                        log_metadata=log_metadata,
                         case=case,
                         choice=choice,
                         path=path,
-                        reports_log_path=reports_log_path,
                         session=session,
                         callback=callback)
-
-    def log_report(self, *,
-                   filepath: Path,
-                   timestamp: float,
-                   reports_log_path: Path,
-                   case: Case,
-                   choice: Choice) -> None:
-        """Log the report generation to the reports log file.
-
-        The log entry includes metadata about the report generation,
-        such as the case ID, file path, reporter name, output format,
-        and platform information.
-
-        It can be used for auditing, tracking, looking up generated reports, and more.
-
-        :param filepath: The path to the generated report file.
-        :type filepath: :class:`~pathlib.Path`
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
-        :param reports_log_path: The path to the reports log file.
-        :type reports_log_path: :class:`~pathlib.Path`
-        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.
-        :type case: :class:`~simplebench.case.Case`
-        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying
-                       the report configuration.
-        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
-        """
-        log_time = validate_float(
-            timestamp, 'timestamp',
-            _ReporterErrorTag.LOG_REPORT_INVALID_TIMESTAMP_ARG_TYPE)
-        if not is_case(case):
-            raise SimpleBenchTypeError(
-                "Expected a Case instance",
-                tag=_ReporterErrorTag.LOG_REPORT_INVALID_CASE_ARG_TYPE)
-        if not is_choice(choice):
-            raise SimpleBenchTypeError(
-                "Expected a Choice instance",
-                tag=_ReporterErrorTag.LOG_REPORT_INVALID_CHOICE_ARG_TYPE)
-        reports_log_path = validate_type(
-            reports_log_path, Path, 'reports_log_path',
-            _ReporterErrorTag.LOG_REPORT_INVALID_REPORTS_LOG_PATH_ARG_TYPE)
-        filepath = validate_type(
-            filepath, Path, 'filepath',
-            _ReporterErrorTag.LOG_REPORT_INVALID_FILEPATH_ARG_TYPE)
-        log_entry = {
-            "timestamp": log_time,
-            "case_id": id(case),
-            "case_group": case.group,
-            "reporter_type": self.__class__.__name__,
-            "reporter_name": choice.reporter.name,
-            "output_format": choice.output_format.name,
-            "platform_system": platform_system(),
-            "platform_version": platform_version(),
-            "platform_architecture": platform_architecture(),
-            "platform_implementation": platform_implementation(),
-            "case_title": case.title,
-            "filepath": filepath.as_posix(),
-        }
-        json_log_entry = self._one_line_string(JSONEncoder(indent=None).encode(log_entry))
-        with reports_log_path.open(mode='a', encoding='utf-8') as log_file:
-            log_file.write(json_log_entry + '\n')
-
-    def _one_line_string(self, string: str) -> str:
-        """Convert a multi-line string into a single line by replacing newlines with spaces.
-
-        :param string: The input string.
-        :type string: str
-        :return: The single-line string.
-        """
-        return ' '.join(string.splitlines())
 
     @abstractmethod
     def render(self, *, case: "Case", section: "Section", options: "ReporterOptions") -> str | bytes | Text | Table:
@@ -491,11 +417,10 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
     def run_report(self,
                    *,
                    args: Namespace,
-                   timestamp: float,
+                   log_metadata: ReportLogMetadata,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,
-                   reports_log_path: Optional[Path] = None,
                    session: Optional[Session] = None,
                    callback: Optional[ReporterCallback] = None) -> None:
         """Orchestration hook for report generation.
@@ -515,8 +440,8 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
 
         :param args: The parsed command-line arguments.
         :type args: :class:`~argparse.Namespace`
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.Report
         :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.
         :type case: :class:`~simplebench.case.Case`
         :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying
@@ -524,8 +449,6 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
         :param path: The path to the directory where report files will be saved. Defaults to ``None``.
         :type path: :class:`~pathlib.Path` | None, optional
-        :param reports_log_path: The path to the reports log file if needed. Defaults to ``None``.
-        :type reports_log_path: :class:`~pathlib.Path` | None, optional
         :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.
                         Defaults to ``None``.
         :type session: :class:`~simplebench.session.Session` | None, optional
@@ -533,11 +456,10 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
         self.render_by_section(
-            timestamp=timestamp,
+            log_metadata=log_metadata,
             case=case,
             choice=choice,
             path=path,
-            reports_log_path=reports_log_path,
             session=session,
             callback=callback,
             args=args

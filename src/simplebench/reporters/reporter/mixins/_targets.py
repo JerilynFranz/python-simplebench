@@ -11,14 +11,14 @@ from rich.text import Text
 
 from simplebench.enums import Format, Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
-from simplebench.validators import validate_filename, validate_float, validate_string, validate_type
+from simplebench.validators import validate_filename, validate_string, validate_type
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
 
 
@@ -26,11 +26,8 @@ class _ReporterTargetMixin:
     """Mixin for target-related functionality for the Reporter class."""
 
     def target_filesystem(self: ReporterProtocol, *,
-                          timestamp: float,
+                          log_metadata: ReportLogMetadata,
                           path: Path | None,
-                          reports_log_path: Path | None,
-                          case: Case,
-                          choice: Choice,
                           subdir: str,
                           filename: str,
                           output: str | bytes | Text | Table,
@@ -58,12 +55,12 @@ class _ReporterTargetMixin:
         about the generated report file will be appended to the log file
         if provided.
 
-        :param timestamp: The timestamp of the report generation.
-        :type timestamp: float
+        :param log_metadata: The ReportLogMetadata instance for logging report metadata.
+        :type log_metadata: ReportLogMetadata
         :param path: The path to the directory where output should be saved.
         :type path: Path
-        :param reports_log_path: The path to the reports log file.
-        :type reports_log_path: Path
+        :param log_metadata: The ReportLogMetadata instance for logging report metadata.
+        :type log_metadata: ReportLogMetadata
         :param subdir: The subdirectory within the path to save the file to.
         :type subdir: str
         :param filename: The filename to save the output as.
@@ -79,12 +76,9 @@ class _ReporterTargetMixin:
         :raises SimpleBenchValueError: If both append and unique are True. Or if the output file
             already exists and neither append nor unique options were specified.
         """
-        log_timestamp = validate_float(
-            timestamp, 'timestamp',
-            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_TIMESTAMP_ARG_TYPE)
-        reports_log_path = validate_type(
-            reports_log_path, Path, 'reports_log_path',
-            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_REPORTS_LOG_PATH_ARG_TYPE)
+        validate_type(
+            log_metadata, ReportLogMetadata, 'log_metadata',
+            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_LOG_METADATA_ARG_TYPE)
         path = validate_type(
             path, Path, 'path',
             _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
@@ -123,13 +117,8 @@ class _ReporterTargetMixin:
             mode = 'ab' if isinstance(output, bytes) else 'a'
         with output_path.open(mode=mode) as f:
             f.write(output)
-        if reports_log_path is not None:
-            self.log_report(
-                timestamp=timestamp,
-                filepath=output_path,
-                reports_log_path=reports_log_path,
-                case=case,
-                choice=choice)
+        log_metadata.filepath = output_path
+        log_metadata.save_to_log()
 
     def target_callback(self: ReporterProtocol,
                         callback: ReporterCallback | None,

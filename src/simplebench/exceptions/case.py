@@ -8,6 +8,12 @@ from .base import ErrorTag
 class _CaseErrorTag(ErrorTag):
     """ErrorTags for case-related exceptions.
     """
+    INVALID_GIT_INFO_ARG_TYPE = "INVALID_GIT_INFO_ARG_TYPE"
+    """Invalid git_info argument type passed to the Case() constructor"""
+    INVALID_BENCHMARK_ID_TYPE = "INVALID_BENCHMARK_ID_TYPE"
+    """Invalid benchmark_id argument type passed to the Case() constructor"""
+    INVALID_BENCHMARK_ID_VALUE = "INVALID_BENCHMARK_ID_VALUE"
+    """Invalid benchmark_id argument value passed to the Case() constructor"""
     INVALID_GROUP_TYPE = "INVALID_GROUP_TYPE"
     """Invalid group argument type passed to the Case() constructor"""
     INVALID_GROUP_VALUE = "INVALID_GROUP_VALUE"

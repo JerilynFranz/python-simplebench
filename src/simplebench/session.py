@@ -14,6 +14,7 @@ from simplebench.enums import Color, Target, Verbosity
 from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.runners import SimpleRunner
@@ -304,13 +305,17 @@ class Session():
                     output_path = output_path / timestamp / group_path
                     if self.verbosity >= Verbosity.DEBUG:
                         self._console.print(f"[DEBUG] Output path for report: {output_path}")
+                log_metadata = ReportLogMetadata(
+                    timestamp=epoch_timestamp,
+                    case=case,
+                    choice=choice,
+                    reports_log_path=report_log_path)
                 if self.args:  # mypy guard
                     reporter.report(
-                        timestamp=epoch_timestamp,
+                        log_metadata=log_metadata,
                         args=self.args,
                         case=case,
                         choice=choice,
-                        reports_log_path=report_log_path,
                         path=output_path,
                         session=self,
                         callback=callback)

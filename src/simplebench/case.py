@@ -8,7 +8,13 @@ from typing import TYPE_CHECKING, Any, Iterable, Optional
 
 from .defaults import DEFAULT_ITERATIONS, DEFAULT_MAX_TIME, DEFAULT_MIN_TIME, DEFAULT_ROUNDS, DEFAULT_WARMUP_ITERATIONS
 from .enums import Color, Section
-from .exceptions import SimpleBenchRuntimeError, SimpleBenchTypeError, SimpleBenchValueError, _CaseErrorTag
+from .exceptions import (
+    SimpleBenchAttributeError,
+    SimpleBenchRuntimeError,
+    SimpleBenchTypeError,
+    SimpleBenchValueError,
+    _CaseErrorTag,
+)
 from .protocols import ActionRunner
 from .reporters.protocols import ReporterCallback
 from .reporters.reporter.options import ReporterOptions
@@ -21,7 +27,10 @@ from .validators import (
     validate_non_negative_int,
     validate_positive_float,
     validate_positive_int,
+    validate_string,
+    validate_type,
 )
+from .vcs import GitInfo, get_git_info
 
 if TYPE_CHECKING:
     from .session import Session
@@ -114,9 +123,55 @@ class Case:
     __slots__ = ('_group', '_title', '_description', '_action',
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
                  '_variation_cols', '_kwargs_variations', '_runner',
-                 '_callback', '_results', '_options', '_rounds')
+                 '_callback', '_results', '_options', '_rounds',
+                 '_benchmark_id', '_git_info')
+
+    @staticmethod
+    def generate_benchmark_id(case: Case, action: ActionRunner, group: str) -> str:
+        """Generate a stable benchmark ID based on action, group, and signature.
+
+        This function attempts to create a stable benchmark ID based on the action
+        function's name, its signature (parameter names and types), and the group.
+        If this is not possible (e.g., if the action is a lambda or has no name),
+        a transient ID based on the instance's id() will be used.
+
+        :param case: The Case instance for which to generate the benchmark ID.
+        :type case: Case
+        :param action: The action function of the benchmark case.
+        :type action: ActionRunner
+        :param group: The group of the benchmark case.
+        :type group: str
+        :return: A stable benchmark ID string or a transient ID if stability is not possible.
+        :rtype: str
+        """
+        try:
+            action_name = action.__name__  # type: ignore[attr-defined]
+            if action_name == '<lambda>':
+                raise SimpleBenchAttributeError(
+                    'Lambda functions do not have stable names.',
+                    tag=_CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
+                    obj=case,
+                    name='__name__')
+            action_signature = inspect.signature(action)
+            signature_parts = []
+            for param in action_signature.parameters.values():
+                param_type = 'Any'
+                if param.annotation is not inspect.Parameter.empty:
+                    if isinstance(param.annotation, type):
+                        param_type = param.annotation.__name__
+                    else:
+                        param_type = str(param.annotation)
+                signature_parts.append(f'{param.name}:{param_type}')
+            signature_str = ','.join(signature_parts)
+            benchmark_id = f'{group}::{action_name}({signature_str})'
+            return benchmark_id
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Fallback to transient ID
+            return f'transient-{id(case)}'
 
     def __init__(self, *,
+                 benchmark_id: Optional[str] = None,
+                 git_info: Optional[GitInfo] = None,
                  action: ActionRunner,
                  group: str = 'default',
                  title: Optional[str] = None,
@@ -135,6 +190,20 @@ class Case:
 
         The only REQUIRED parameter is `action`.
 
+        :param benchmark_id: An optional unique identifier for the benchmark case. If None,
+            a transient ID is assigned. This is meant to provide a stable identifier for the
+            benchmark case across multiple runs for tracking purposes. If not provided,
+            an attempt will be made to generate a stable ID based on the the action function
+            name, signature, and group. If that is not possible, a transient ID based
+            on the instance's id() will be used. If a transient ID is used, it will differ
+            between runs and cannot be used to correlate results across multiple runs.
+
+            Benchmark ids must be unique within a benchmarking session.
+        :type benchmark_id: Optional[str]
+        :param git_info: An optional GitInfo instance representing the state of the Git repository.
+            If not provided, the GitInfo will be automatically retrieved from the current
+            context of the caller if the code is part of a Git repository.
+        :type git_info: Optional[GitInfo]
         :param action: The function to perform the benchmark. This function must
             accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
             See the `ActionRunner` protocol for the exact signature required.
@@ -245,6 +314,15 @@ class Case:
                         max_time, "max_time",
                         _CaseErrorTag.INVALID_MAX_TIME_TYPE,
                         _CaseErrorTag.INVALID_MAX_TIME_VALUE)
+        self._benchmark_id: str
+        if benchmark_id is None:
+            self._benchmark_id = Case.generate_benchmark_id(self, action, group)
+        else:
+            self._benchmark_id = validate_string(
+                benchmark_id, "benchmark_id",
+                _CaseErrorTag.INVALID_BENCHMARK_ID_TYPE,
+                _CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
+                strip=True, allow_blank=False, allow_empty=False)
         self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
         self._variation_cols = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
         self._runner = Case.validate_runner(runner)
@@ -252,6 +330,9 @@ class Case:
         self._options = Case.validate_options(options)
         self._results: list[Results] = []  # No validation needed here
         self.validate_time_range(self._min_time, self._max_time)
+        self._git_info: GitInfo | None = get_git_info() if git_info is None else validate_type(
+            git_info, GitInfo, 'git_info', _CaseErrorTag.INVALID_GIT_INFO_ARG_TYPE
+        )
 
     @staticmethod
     def validate_time_range(min_time: float, max_time: float) -> None:
@@ -509,6 +590,41 @@ class Case:
                 return results
         """
         return self._action
+
+    @property
+    def benchmark_id(self) -> str:
+        """A unique identifier for the benchmark case.
+
+        It is meant to provide a stable identifier for the benchmark case across
+        multiple runs for tracking purposes.
+
+        If not provided, an attempt will be made to generate a stable ID based on
+        the the action function name, signature, and group. If that is not possible,
+        a transient ID based on the instance's id() will be used.
+
+        If a transient ID is used, it will differ between runs and cannot be used
+        to correlate results across multiple runs.
+
+        Benchmark ids must be unique within a benchmarking session.
+
+        Passed ids are stripped of leading and trailing whitespace and validated
+        to be non-blank.
+        """
+        return self._benchmark_id
+
+    @property
+    def git_info(self) -> GitInfo | None:
+        """Git information for the benchmark case.
+
+        This is a read-only attribute that provides git information
+        such as the current commit hash, branch name, and repository URL.
+        If the benchmark is not in a file managed by a git repository,
+        a None value is returned.
+
+        :return: A GitInfo object containing git information, or None if not in a git repository.
+        :rtype: GitInfo | None
+        """
+        return self._git_info
 
     @property
     def iterations(self) -> int:

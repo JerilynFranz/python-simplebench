@@ -16,13 +16,14 @@ from rich.text import Text
 from simplebench.enums import Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice import Choice
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.prioritized import Prioritized
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.type_proxies import is_case, is_choice, is_session
 from simplebench.utils import sanitize_filename
-from simplebench.validators import validate_float, validate_string, validate_type
+from simplebench.validators import validate_string, validate_type
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -48,12 +49,11 @@ class _ReporterOrchestrationMixin:
     def _validate_render_by_args(
         self: ReporterProtocol, *,
         renderer: ReportRenderer | None,
-        timestamp: float,
+        log_metadata: ReportLogMetadata,
         args: Namespace,
         case: Case,
         choice: Choice,
         path: Path | None = None,
-        reports_log_path: Path | None = None,
         session: Session | None = None,
         callback: ReporterCallback | None = None
     ) -> None:
@@ -64,8 +64,8 @@ class _ReporterOrchestrationMixin:
 
         :param renderer: The method to be used for actually rendering the report.
         :type renderer: ReportRenderer | None
-        :param timestamp: The timestamp for the report.
-        :type timestamp: float
+        :param log_metadata: The metadata for the report log.
+        :type log_metadata: ReportLogMetadata
         :param args: The parsed command-line arguments.
         :type args: Namespace
         :param case: The Case instance representing the benchmarked code.
@@ -74,8 +74,6 @@ class _ReporterOrchestrationMixin:
         :type choice: Choice
         :param path: The path to the directory where the CSV file(s) will be saved.
         :type path: Path | None
-        :param reports_log_path: The path to the reports log file.
-        :type reports_log_path: Path | None
         :param session: The Session instance containing benchmark results.
         :type session: Session | None
         :param callback: A callback function for additional processing of the report.
@@ -86,9 +84,10 @@ class _ReporterOrchestrationMixin:
             raise SimpleBenchTypeError(
                 "renderer must be a callable ReportRenderer or None",
                 tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)
-        validate_float(
-            timestamp, 'timestamp',
-            _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_TIMESTAMP_ARG_TYPE)
+
+        validate_type(
+            log_metadata, ReportLogMetadata, 'log_metadata',
+            _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_LOG_METADATA_ARG_TYPE)
 
         args = validate_type(
             args, Namespace, 'args',
@@ -98,11 +97,6 @@ class _ReporterOrchestrationMixin:
             path = validate_type(
                 path, Path, 'path',
                 _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)
-
-        if reports_log_path is not None:
-            reports_log_path = validate_type(
-                reports_log_path, Path, 'reports_log_path',
-                _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_REPORTS_LOG_PATH_ARG_TYPE)
 
         # is_* checks handle deferred import runtime type checking for Case, Choice, and Session
         if not is_case(case):
@@ -120,9 +114,9 @@ class _ReporterOrchestrationMixin:
                 raise SimpleBenchTypeError(
                     f'Path must be provided for FILESYSTEM target in {type(self)} when rendering by section/case',
                     tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_MISSING_PATH_FOR_FILESYSTEM_TARGET)
-            if not isinstance(reports_log_path, Path):
+            if not isinstance(log_metadata.reports_log_path, Path):
                 raise SimpleBenchTypeError(
-                    f'reports_log_path must be provided for FILESYSTEM target in {type(self)}'
+                    f'log_metadata.reports_log_path must be provided for FILESYSTEM target in {type(self)}'
                     'when rendering by section/case',
                     tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_MISSING_REPORTS_LOG_PATH_FOR_FILESYSTEM_TARGET)
 
@@ -138,12 +132,11 @@ class _ReporterOrchestrationMixin:
 
     def render_by_case(self: ReporterProtocol, *,
                        renderer: ReportRenderer | None = None,
-                       timestamp: float,
+                       log_metadata: ReportLogMetadata,
                        args: Namespace,
                        case: Case,
                        choice: Choice,
                        path: Path | None = None,
-                       reports_log_path: Path | None = None,
                        session: Session | None = None,
                        callback: ReporterCallback | None = None) -> None:
         """Render the report for an entire case at once across all applicable sections.
@@ -175,7 +168,7 @@ class _ReporterOrchestrationMixin:
 
                 def run_report(self, case: Case, choice: Choice, session: Session | None = None) -> None:
                     self.render_by_case(renderer=self.render,
-                                        timestamp=timestamp,
+                                        log_metadata=log_metadata,
                                         args=self._args,
                                         case=case,
                                         choice=choice,
@@ -191,7 +184,7 @@ class _ReporterOrchestrationMixin:
             defaults to `self.render`.
         :type renderer: ReportRenderer | None
         :param timestamp: The timestamp for the report.
-        :type timestamp: float
+        :type log_metadata: ReportLogMetadata
         :param args: The parsed command-line arguments.
         :type args: Namespace
         :param case: The Case instance representing the benchmarked code.
@@ -200,8 +193,6 @@ class _ReporterOrchestrationMixin:
         :type choice: Choice
         :param path: The path to the directory where the CSV file(s) will be saved.
         :type path: Path | None
-        :param reports_log_path: The path to the reports log file.
-        :type reports_log_path: Path | None
         :param session: The Session instance containing benchmark results.
         :type session: Session | None
         :param callback:
@@ -215,15 +206,16 @@ class _ReporterOrchestrationMixin:
             target is specified.
         :raises SimpleBenchValueError: If an unsupported section or target is specified in the choice.
         """
+        log_metadata.case = case
+        log_metadata.choice = choice
         actual_renderer = renderer if renderer is not None else self.render
         self._validate_render_by_args(
             renderer=actual_renderer,
-            timestamp=timestamp,
+            log_metadata=log_metadata,
             args=args,
             case=case,
             choice=choice,
             path=path,
-            reports_log_path=reports_log_path,
             session=session,
             callback=callback)
 
@@ -231,13 +223,12 @@ class _ReporterOrchestrationMixin:
         self.dispatch_to_targets(
             output=actual_renderer(case=case, section=Section.NULL, options=prioritized.options),
             filename_base=case.title,
-            timestamp=timestamp,
+            log_metadata=log_metadata,
             args=args,
             choice=choice,
             case=case,
             section=Section.NULL,
             path=path,
-            reports_log_path=reports_log_path,
             session=session,
             callback=callback)
 
@@ -245,12 +236,11 @@ class _ReporterOrchestrationMixin:
             self: ReporterProtocol,
             *,
             renderer: ReportRenderer | None = None,
-            timestamp: float,
+            log_metadata: ReportLogMetadata,
             args: Namespace,
             case: Case,
             choice: Choice,
             path: Path | None = None,
-            reports_log_path: Path | None = None,
             session: Session | None = None,
             callback: ReporterCallback | None = None) -> None:
         """Render a report for each section and dispatch to targets.
@@ -296,8 +286,8 @@ class _ReporterOrchestrationMixin:
         :param renderer: The rendering function to use. If not provided,
             defaults to `self.render`.
         :type renderer: ReportRenderer | None
-        :param timestamp: The timestamp for the report.
-        :type timestamp: float
+        :param log_metadata: The metadata for logging the report.
+        :type log_metadata: ReportLogMetadata
         :param args: The parsed command-line arguments.
         :type args: Namespace
         :param case: The Case instance representing the benchmarked code.
@@ -306,8 +296,6 @@ class _ReporterOrchestrationMixin:
         :type choice: Choice
         :param path: The path to the directory where the CSV file(s) will be saved.
         :type path: Path | None
-        :param reports_log_path: The path to the reports log file.
-        :type reports_log_path: Path | None
         :param session: The Session instance containing benchmark results.
         :type session: Session | None
         :param callback:
@@ -324,41 +312,40 @@ class _ReporterOrchestrationMixin:
         actual_renderer = renderer if renderer is not None else self.render
         self._validate_render_by_args(
             renderer=actual_renderer,
-            timestamp=timestamp,
+            log_metadata=log_metadata,
             args=args,
             case=case,
             choice=choice,
             path=path,
-            reports_log_path=reports_log_path,
             session=session,
             callback=callback)
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
+        log_metadata.case = case
+        log_metadata.choice = choice
         for section in choice.sections:
             output = actual_renderer(case=case, section=section, options=prioritized.options)
             self.dispatch_to_targets(
                 output=output,
-                timestamp=timestamp,
+                log_metadata=log_metadata,
                 filename_base=f"{case.title}-{section.value}",
                 args=args,
                 choice=choice,
                 case=case,
                 section=section,
                 path=path,
-                reports_log_path=reports_log_path,
                 session=session,
                 callback=callback)
 
     def dispatch_to_targets(
             self: ReporterProtocol, *,
             output: str | bytes | Text | Table,
-            timestamp: float,
+            log_metadata: ReportLogMetadata,
             filename_base: str,
             args: Namespace,
             choice: Choice,
             case: Case,
             section: Section,
             path: Path | None = None,
-            reports_log_path: Path | None = None,
             session: Session | None = None,
             callback: ReporterCallback | None = None) -> None:
         """Deliver the rendered output to the specified targets.
@@ -372,7 +359,7 @@ class _ReporterOrchestrationMixin:
         - CONSOLE: Outputs the report directly to the console.
 
         :param output: The rendered report output.
-        :param timestamp: The timestamp for the report.
+        :param log_metadata: The metadata for logging the report.
         :param filename_base: The base filename to use for filesystem outputs.
             This is the filename without any suffixes or extensions.
         :param args: The parsed command-line arguments.
@@ -380,7 +367,6 @@ class _ReporterOrchestrationMixin:
         :param case: The Case instance representing the benchmarked code.
         :param section: The Section of the report.
         :param path: The path to the directory where the CSV file(s) will be saved.
-        :param reports_log_path: The path to the reports log file.
         :param session: The Session instance containing benchmark results.
         :param callback: A callback function for additional processing of the report.
         :raises SimpleBenchValueError: If an unsupported target is specified in the choice.
@@ -389,6 +375,9 @@ class _ReporterOrchestrationMixin:
                                (str, bytes, Text, Table),
                                'output',
                                _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)
+        log_metadata = validate_type(
+            log_metadata, ReportLogMetadata, 'log_metadata',
+            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_LOG_METADATA_ARG_TYPE)
         filename_base = validate_string(
                             filename_base, 'filename_base',
                             _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE,
@@ -404,10 +393,12 @@ class _ReporterOrchestrationMixin:
             raise SimpleBenchTypeError(
                 "Expected a Case instance for case argument",
                 tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE)
+        log_metadata.case = case
         if not is_choice(choice):
             raise SimpleBenchTypeError(
                 "Expected a Choice instance for choice argument",
                 tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE)
+        log_metadata.choice = choice
         if not is_session(session) and session is not None:
             raise SimpleBenchTypeError(
                 "session must be a Session instance if provided",
@@ -423,10 +414,6 @@ class _ReporterOrchestrationMixin:
             path = validate_type(
                 path, Path, 'path',
                 _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)
-        if reports_log_path is not None:
-            reports_log_path = validate_type(
-                reports_log_path, Path, 'reports_log_path',
-                _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_REPORTS_LOG_PATH_ARG_TYPE)
 
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         targets: set[Target] = self.select_targets_from_args(
@@ -437,11 +424,11 @@ class _ReporterOrchestrationMixin:
                 raise SimpleBenchTypeError(
                     f'Path must be a Path instance for FILESYSTEM target in {type(self)}, got {type(path)}',
                     tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_PATH_TYPE)
-            if not isinstance(reports_log_path, Path):
+            if not isinstance(log_metadata.reports_log_path, Path):
                 raise SimpleBenchTypeError(
-                    f'reports_log_path must be a Path instance for FILESYSTEM target in {type(self)}, '
-                    f'got {type(reports_log_path)}',
-                    tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_REPORTS_LOG_PATH_TYPE)
+                    f'log_metadata.reports_log_path must be a Path instance for FILESYSTEM target in {type(self)}, '
+                    f'got {type(log_metadata.reports_log_path)}',
+                    tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_LOG_METADATA_REPORTS_LOG_PATH_TYPE)
 
         output_as_text = output
         if isinstance(output, (Text, Table)):
@@ -454,11 +441,8 @@ class _ReporterOrchestrationMixin:
             match output_target:
                 case Target.FILESYSTEM:
                     self.target_filesystem(
-                        timestamp=timestamp,
+                        log_metadata=log_metadata,
                         path=path,
-                        reports_log_path=reports_log_path,
-                        case=case,
-                        choice=choice,
                         subdir=prioritized.subdir,
                         filename=filename,
                         output=output_as_text,

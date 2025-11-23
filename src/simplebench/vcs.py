@@ -19,12 +19,10 @@ class GitInfo:
 
     Attributes:
         commit (str): The current commit hash.
-        author (str): The author of the current commit.
         date (str): The date of the current commit in ISO format.
         dirty (bool): Whether there are uncommitted changes in the working directory.
     """
     commit: str
-    author: str
     date: str
     dirty: bool
 
@@ -64,9 +62,6 @@ def get_git_info(search_path: Path | None = None) -> GitInfo | None:
         if not isinstance(commit, Commit):
             return None
 
-        # Parse Author (format: "Name <email>")
-        author = commit.author.decode('utf-8', errors='replace')
-
         # Parse Date
         # commit_time is seconds since epoch
         commit_time = commit.commit_time
@@ -80,7 +75,6 @@ def get_git_info(search_path: Path | None = None) -> GitInfo | None:
 
         return GitInfo(
             commit=head_sha.decode('utf-8'),
-            author=author,
             date=date_str,
             dirty=is_dirty,
         )

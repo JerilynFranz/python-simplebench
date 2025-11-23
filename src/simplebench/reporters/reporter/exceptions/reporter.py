@@ -27,11 +27,19 @@ class _ReporterErrorTag(ErrorTag):
     """Invalid type for ``choice`` argument in
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.log_report`"""
     # report()
-    REPORT_INVALID_TIMESTAMP_ARG = "REPORT_INVALID_TIMESTAMP_ARG"
-    """Invalid type for ``timestamp`` argument in
+    REPORT_INVALID_LOG_METADATA_ARG = "REPORT_INVALID_LOG_METADATA_ARG"
+    """Invalid type for ``log_metadata`` argument in
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.report`"""
 
     # dispatch_to_targets()
+    DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_LOG_METADATA_REPORTS_LOG_PATH_TYPE = (
+        "DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_LOG_METADATA_REPORTS_LOG_PATH_TYPE")
+    """Invalid type for ``log_metadata.reports_log_path`` argument in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
+    DISPATCH_TO_TARGETS_INVALID_LOG_METADATA_ARG_TYPE = (
+        "DISPATCH_TO_TARGETS_INVALID_LOG_METADATA_ARG_TYPE")
+    """Invalid type for ``log_metadata`` argument in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
     DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_PATH_TYPE = (
         "DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_PATH_TYPE")
     """Invalid type for ``path`` argument in
@@ -124,6 +132,10 @@ class _ReporterErrorTag(ErrorTag):
     :meth:`~simplebench.reporters.reporter.mixins._prioritization.PrioritizationMixin.get_prioritized_default_targets`"""  # pylint: disable=line-too-long  # noqa: E501
 
     # _validate_render_by_args()
+    VALIDATE_RENDER_BY_ARGS_INVALID_LOG_METADATA_ARG_TYPE = "VALIDATE_RENDER_BY_ARGS_INVALID_LOG_METADATA_ARG_TYPE"
+    """Invalid type for ``log_metadata`` argument in
+    :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin._validate_render_by_args`
+    """
     VALIDATE_RENDER_BY_ARGS_INVALID_TIMESTAMP_ARG_TYPE = "VALIDATE_RENDER_BY_ARGS_INVALID_TIMESTAMP_ARG_TYPE"
     """Invalid type for ``timestamp`` argument in
     :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin._validate_render_by_args`"""
@@ -385,6 +397,9 @@ class _ReporterErrorTag(ErrorTag):
     :meth:`~simplebench.reporters.reporter.mixins._argparse.ArgparseMixin.add_flags_to_argparse` method"""
 
     # target_filesystem()
+    TARGET_FILESYSTEM_INVALID_LOG_METADATA_ARG_TYPE = "TARGET_FILESYSTEM_INVALID_LOG_METADATA_ARG_TYPE"
+    """Something other than a LogMetadata instance was passed to the
+    :meth:`~simplebench.reporters.reporter.mixins._targets.TargetsMixin.target_filesystem` method"""
     TARGET_FILESYSTEM_INVALID_TIMESTAMP_ARG_TYPE = "TARGET_FILESYSTEM_INVALID_TIMESTAMP_ARG_TYPE"
     """Something other than a float or int was passed to the
     :meth:`~simplebench.reporters.reporter.mixins._targets.TargetsMixin.target_filesystem`
@@ -464,5 +479,3 @@ class _ReporterErrorTag(ErrorTag):
     """Something other than a rich.Text or rich.Table instance was passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.rich_text_to_plain_text` method as the ``rich_text``
     argument"""
-
-    

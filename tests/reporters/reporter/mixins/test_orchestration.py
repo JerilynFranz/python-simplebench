@@ -20,11 +20,10 @@ from ....factories import (
     case_factory,
     choice_conf_kwargs_factory,
     default_reporter_callback,
-    default_timestamp,
     list_of_strings_flag_factory,
     path_factory,
+    report_log_metadata_factory,
     reporter_config_factory,
-    reports_log_path_factory,
     session_factory,
 )
 from ....factories.reporter.reporter_methods import (
@@ -154,12 +153,11 @@ def _setup_good_path(
     ).parse_args([flag_name, *target_values])
     kwargs = kwargs_class(
         renderer=reporter.render,
-        timestamp=default_timestamp(),
+        log_metadata=report_log_metadata_factory(),
         args=args,
         case=case_factory(),
         choice=choice,
         path=path_factory(),
-        reports_log_path=reports_log_path_factory(),
         session=session_factory(),
         callback=default_reporter_callback
     )
@@ -196,12 +194,11 @@ def _setup_bad_target_path(
     ).parse_args([flag_name, Target.INVALID.value])
     kwargs = kwargs_class(
         renderer=reporter.render,
-        timestamp=default_timestamp(),
+        log_metadata=report_log_metadata_factory(),
         args=args,
         case=case_factory(),
         choice=choice,
         path=path_factory(),
-        reports_log_path=reports_log_path_factory(),
         session=session_factory(),
         callback=default_reporter_callback
     )
@@ -320,18 +317,6 @@ def render_by_case_testspecs() -> list[TestSpec]:
             kwargs=render_by_case_kwargs.replace(args="invalid_args"),
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)),
-        idspec("BY_CASE_008", TestAction(
-            name="Verify that invalid 'case' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_case,
-            kwargs=render_by_case_kwargs.replace(case="invalid_case"),
-            exception=SimpleBenchTypeError,
-            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)),
-        idspec("BY_CASE_009", TestAction(
-            name="Verify that invalid 'choice' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_case,
-            kwargs=render_by_case_kwargs.replace(choice="invalid_choice"),
-            exception=SimpleBenchTypeError,
-            exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)),
         idspec("BY_CASE_010", TestAction(
             name="Verify that invalid 'path' argument raises SimpleBenchTypeError",
             action=good_reporter.render_by_case,

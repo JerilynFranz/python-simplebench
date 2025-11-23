@@ -20,8 +20,6 @@ T = TypeVar('T')
 class MachineInfo(TypedDict):
     """TypedDict for machine info returned by :func:`get_machine_info`.
 
-    :ivar node: Computer's network name.
-    :vartype node: str
     :ivar processor: Processor name.
     :vartype processor: str
     :ivar machine: Machine type.
@@ -43,7 +41,6 @@ class MachineInfo(TypedDict):
     :ivar cpu: CPU information.
     :vartype cpu: dict[str, str]
     """
-    node: str
     processor: str
     machine: str
     python_compiler: str
@@ -56,6 +53,7 @@ class MachineInfo(TypedDict):
     cpu: dict[str, str]
 
 
+@cache
 def python_implementation_version() -> str:
     """Return the Python implementation version.
 
@@ -83,7 +81,6 @@ def get_machine_info() -> MachineInfo:
     """Return a dictionary of information about the current machine and Python version."""
     python_implementation = platform.python_implementation()
     machine_info: MachineInfo = {
-        'node': platform.node(),
         'processor': platform.processor(),
         'machine': platform.machine(),
         'python_compiler': platform.python_compiler(),
@@ -98,6 +95,27 @@ def get_machine_info() -> MachineInfo:
     return machine_info
 
 
+@cache
+def platform_processor() -> str:
+    """Return the current processor name.
+
+    :return: The processor name.
+    :rtype: str
+    """
+    return platform.processor()
+
+
+@cache
+def platform_machine() -> str:
+    """Return the current machine type.
+
+    :return: The machine type.
+    :rtype: str
+    """
+    return platform.machine()
+
+
+@cache
 def platform_id() -> str:
     """Return a string that uniquely identifies the current machine and Python version.
 
@@ -114,6 +132,7 @@ def platform_id() -> str:
           arch=platform.architecture()[0]).lower().replace(' ', '')
 
 
+@cache
 def platform_system() -> str:
     """Return the current operating system name.
 
@@ -123,6 +142,7 @@ def platform_system() -> str:
     return platform.system()
 
 
+@cache
 def platform_implementation() -> str:
     """Return the current Python implementation name.
 
@@ -134,6 +154,7 @@ def platform_implementation() -> str:
     return platform.python_implementation()
 
 
+@cache
 def platform_version() -> str:
     """Return the current Python version.
 
@@ -143,6 +164,7 @@ def platform_version() -> str:
     return '.'.join(platform.python_version_tuple()[:2])
 
 
+@cache
 def platform_architecture() -> str:
     """Return the current architecture.
 

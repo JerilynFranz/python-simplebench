@@ -16,6 +16,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.enums import Format, Section
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 
 from ...cache_factory import CacheId, cached_factory
@@ -37,16 +38,15 @@ from .. import (
     default_reporter_callback,
     default_section,
     default_subdir,
-    default_timestamp,
     namespace_factory,
     path_factory,
-    reports_log_path_factory,
+    report_log_metadata_factory,
     session_factory,
 )
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.reporters.choice.choice import Choice
+    # from simplebench.reporters.choice.choice import Choice
     from simplebench.reporters.reporter.options import ReporterOptions
     from simplebench.session import Session
 
@@ -129,11 +129,8 @@ def target_filesystem_kwargs_factory(
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
 
     Defaults:
-        - timestamp (float): `default_timestamp()`
+        - log_metadata (ReportLogMetadata): `report_log_metadata_factory()`
         - path (Path): `path_factory(cache_id=cache_id)`
-        - reports_log_path (Path): `path_factory(cache_id=cache_id)`
-        - case (Case): `case_factory(cache_id=cache_id)`
-        - choice (Choice): `choice_factory(cache_id=cache_id)`
         - subdir (str): `default_subdir()`
         - filename (str): `default_filename_base()`
         - output (Output): `default_output()`
@@ -148,11 +145,8 @@ def target_filesystem_kwargs_factory(
     :rtype: TargetFilesystemMethodKWArgs
     """
     defaults = TargetFilesystemMethodKWArgs(
-        timestamp=default_timestamp(),
+        log_metadata=report_log_metadata_factory(),
         path=path_factory(cache_id=cache_id),
-        reports_log_path=reports_log_path_factory(cache_id=cache_id),
-        case=case_factory(cache_id=cache_id),
-        choice=choice_factory(cache_id=cache_id),
         subdir=default_subdir(),
         filename=default_filename_base(),
         output=default_output(),
@@ -199,8 +193,7 @@ def dispatch_to_targets_kwargs_factory(
         case=case_factory(cache_id=cache_id),
         choice=choice_factory(cache_id=cache_id),
         path=path_factory(cache_id=cache_id),
-        reports_log_path=reports_log_path_factory(cache_id=cache_id),
-        timestamp=default_timestamp(),
+        log_metadata=report_log_metadata_factory(),
         session=session_factory(cache_id=cache_id),
         section=default_section(),
         callback=default_reporter_callback,
@@ -301,12 +294,11 @@ def render_by_case_kwargs_factory(
     """
     defaults = RenderByCaseMethodKWArgs(
         renderer=RenderSpy(),
-        timestamp=default_timestamp(),
+        log_metadata=report_log_metadata_factory(),
         args=namespace_factory(),
         case=case_factory(cache_id=cache_id),
         choice=choice_factory(cache_id=cache_id),
         path=path_factory(cache_id=cache_id),
-        reports_log_path=reports_log_path_factory(cache_id=cache_id),
         session=session_factory(cache_id=cache_id),
         callback=default_reporter_callback,
     )
@@ -328,7 +320,7 @@ def render_by_section_kwargs_factory(
 
     Defaults:
         - renderer (ReportRenderer): `RenderSpy()`
-        - timestamp (Timestamp): `default_timestamp()`
+        - log_metadata (ReportLogMetadata): `report_log_metadata_factory()`
         - args (Namespace): `namespace_factory()`
         - case (Case): `case_factory(cache_id=cache_id)`
         - choice (Choice): `choice_factory(cache_id=cache_id)`
@@ -346,12 +338,11 @@ def render_by_section_kwargs_factory(
     """
     defaults = RenderBySectionMethodKWArgs(
         renderer=RenderSpy(),
-        timestamp=default_timestamp(),
+        log_metadata=report_log_metadata_factory(),
         args=namespace_factory(),
         case=case_factory(cache_id=cache_id),
         choice=choice_factory(cache_id=cache_id),
         path=path_factory(cache_id=cache_id),
-        reports_log_path=reports_log_path_factory(cache_id=cache_id),
         session=session_factory(cache_id=cache_id),
         callback=default_reporter_callback,
     )
@@ -362,8 +353,8 @@ def render_by_section_kwargs_factory(
 class FileSystemCall:
     """Data class to store a filesystem target call.
 
-    :ivar timestamp: The timestamp of the file operation.
-    :vartype timestamp: float
+    :ivar log_metadata: The report log metadata.
+    :vartype log_metadata: ReportLogMetadata
     :ivar path: The path to the directory where the file will be saved.
     :vartype path: Path
     :ivar subdir: The subdirectory within the path.
@@ -376,23 +367,14 @@ class FileSystemCall:
     :vartype unique: bool
     :ivar append: Whether to append to the file if it exists.
     :vartype append: bool
-    :ivar reports_log_path: The path to the reports log file.
-    :vartype reports_log_path: Path
-    :ivar case: The Case instance.
-    :vartype case: Case
-    :ivar choice: The Choice instance.
-    :vartype choice: Choice
     """
-    timestamp: float
+    log_metadata: ReportLogMetadata
     path: Path
     subdir: str
     filename: str
     output: Output
     unique: bool
     append: bool
-    reports_log_path: Path
-    case: Case
-    choice: Choice
 
 
 class FileSystemSpy:
@@ -410,10 +392,7 @@ class FileSystemSpy:
 
     def __call__(self, *,
                  path: Path,
-                 timestamp: float,
-                 reports_log_path: Path,
-                 case: Case,
-                 choice: Choice,
+                 log_metadata: ReportLogMetadata,
                  subdir: str,
                  filename: str,
                  output: Output,
@@ -422,15 +401,12 @@ class FileSystemSpy:
         self.calls.append(
             FileSystemCall(
                 path=path,
-                timestamp=timestamp,
+                log_metadata=log_metadata,
                 subdir=subdir,
                 filename=filename,
                 output=output,
                 unique=unique,
                 append=append,
-                reports_log_path=reports_log_path,
-                case=case,
-                choice=choice,
             ))
 
     @property

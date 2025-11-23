@@ -15,6 +15,7 @@ from .base import (
     report_parameters_factory,
     reporter_factory,
 )
+from .report_log_metadata import report_log_filepath_factory, report_log_metadata_factory
 from .reporter_config import reporter_config_factory, reporter_config_kwargs_factory
 
 # DO NOT import from .reporter_options here. It will create a circular import.
@@ -36,5 +37,7 @@ __all__ = [
     "reporter_config_kwargs_factory",
     "FactoryReporter",
     "default_options_type",
+    "report_log_filepath_factory",
+    "report_log_metadata_factory",
 ]
 """:all: '*' imports for factories related to Reporters."""

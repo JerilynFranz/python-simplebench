@@ -112,6 +112,8 @@ from .reporter import (
     default_choices_conf,
     default_choices_conf_kwargs,
     default_options_type,
+    report_log_filepath_factory,
+    report_log_metadata_factory,
     report_parameters_factory,
     reporter_config_factory,
     reporter_config_kwargs_factory,
@@ -264,6 +266,8 @@ __all__ = [
     'default_options_type',
     'reporter_config_kwargs_factory',
     'reporter_config_factory',
+    'report_log_filepath_factory',
+    'report_log_metadata_factory',
 
     # Results factories
     'results_kwargs_factory',

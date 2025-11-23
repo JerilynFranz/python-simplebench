@@ -15,6 +15,7 @@ from .validators import (
     validate_positive_float,
     validate_positive_int,
 )
+from .vcs import get_git_info
 
 # A global registry to hold benchmark cases created by the decorator.
 _DECORATOR_CASES: list[Case] = []
@@ -28,6 +29,7 @@ def benchmark(
         group: str | Callable[..., Any] = 'default',  # group can be the function when used without params
         /, *,  # keyword-only parameters after this point
         title: str | None = None,
+        benchmark_id: str | None = None,
         description: str | None = None,
         iterations: int = DEFAULT_ITERATIONS,
         warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
@@ -96,6 +98,9 @@ def benchmark(
     :param title: The title of the benchmark case. Uses the function
         name if None. Cannot be blank.
     :type title: Optional[str]
+    :param benchmark_id: An optional identifier for the benchmark case.
+        If None, no identifier is set.
+    :type benchmark_id: Optional[str]
     :param description: A description for the case.
         Uses the function's docstring if None or '(no description)' if there is no docstring.
         Cannot be blank.
@@ -167,6 +172,12 @@ def benchmark(
             _DecoratorsErrorTag.BENCHMARK_DESCRIPTION_TYPE,
             _DecoratorsErrorTag.BENCHMARK_DESCRIPTION_VALUE)
 
+    if benchmark_id is not None:
+        benchmark_id = validate_non_blank_string(
+            benchmark_id, 'benchmark_id',
+            _DecoratorsErrorTag.BENCHMARK_ID_TYPE,
+            _DecoratorsErrorTag.BENCHMARK_ID_VALUE)
+
     iterations = validate_positive_int(
         iterations, 'iterations',
         _DecoratorsErrorTag.BENCHMARK_ITERATIONS_TYPE,
@@ -219,6 +230,8 @@ def benchmark(
                 "must all be positive integers when used with 'use_field_for_n'.",
                 tag=_DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE)
 
+    git_info = get_git_info()
+
     def decorator(func):
         """The actual decorator that wraps the user's function."""
         def case_action_wrapper(bench: SimpleRunner, **kwargs) -> Any:
@@ -247,7 +260,9 @@ def benchmark(
 
         case = Case(
             group=group,
+            git_info=git_info,
             title=inferred_title,
+            benchmark_id=benchmark_id,
             action=case_action_wrapper,
             description=inferred_description,
             iterations=iterations,

@@ -27,7 +27,6 @@ from .._primitives import (
     default_sections,
     default_subdir,
     default_targets,
-    default_timestamp,
 )
 from .._utils import default_extra
 from ..argparse import namespace_factory
@@ -36,6 +35,7 @@ from ..path import path_factory
 from ..reporter_callback import default_reporter_callback
 from ..reporter_options import FactoryReporterOptions, default_reporter_options
 from ..session import session_factory
+from .report_log_metadata import report_log_metadata_factory
 from .reporter_config import reporter_config_factory, reporter_config_kwargs_factory
 
 
@@ -58,7 +58,7 @@ def report_parameters_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
     """
     return {
         'args': namespace_factory(),
-        'timestamp': default_timestamp(),
+        'log_metadata': report_log_metadata_factory(),
         'case': case_factory(cache_id=cache_id),
         'choice': choice_factory(cache_id=cache_id),
         'path': path_factory(cache_id=cache_id),

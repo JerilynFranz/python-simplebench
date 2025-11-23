@@ -10,6 +10,7 @@ from rich.text import Text
 from simplebench.case import Case
 from simplebench.enums import Section
 from simplebench.reporters.choice.choice import Choice
+from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
@@ -27,38 +28,18 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
     It provides a convenient way to construct a dictionary of parameters to be passed
     to the Reporter class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
-
-    :param args: The parsed command-line arguments.
-    :type args: Namespace
-    :param timestamp: The timestamp when the report is generated.
-    :type timestamp: float
-    :param case: The Case instance representing the benchmarked code.
-    :type case: Case
-    :param choice: The Choice instance specifying the report configuration.
-    :type choice: Choice
-    :param path: The path to the directory where the CSV file(s) will be saved.
-    :type path: Path | None
-    :param reports_log_path: The reports log path.
-    :type reports_log_path: Path | None
-    :param session: The Session instance containing benchmark results.
-    :type session: Session | None
-    :param callback: A callback function for additional processing of the report.
-                     The function should accept two arguments: the Case instance and the CSV data as a string.
-                     Leave as None if no callback is needed.
-    :type callback: ReporterCallback | None
     """
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
             output: str | bytes | Text | Table | NoDefaultValue = NoDefaultValue(),
             filename_base: str | NoDefaultValue = NoDefaultValue(),
+            log_metadata: ReportLogMetadata | NoDefaultValue = NoDefaultValue(),
             args: Namespace | NoDefaultValue = NoDefaultValue(),
-            timestamp: float | NoDefaultValue = NoDefaultValue(),
             choice: Choice | NoDefaultValue = NoDefaultValue(),
             case: Case | NoDefaultValue = NoDefaultValue(),
             section: Section | NoDefaultValue = NoDefaultValue(),
             path: Path | NoDefaultValue = NoDefaultValue(),
-            reports_log_path: Path | NoDefaultValue = NoDefaultValue(),
             session: Session | NoDefaultValue = NoDefaultValue(),
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),
     ) -> None:
@@ -74,6 +55,8 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
         :type filename_base: str
         :param args: The parsed command-line arguments.
         :type args: Namespace
+        :param log_metadata: The report log metadata.
+        :type log_metadata: ReportLogMetadata
         :param choice: The Choice instance specifying the report configuration.
         :type choice: Choice
         :param case: The Case instance representing the benchmarked code.

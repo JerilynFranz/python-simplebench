@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Iterable
 
 from simplebench.case import Case
+from simplebench.vcs import GitInfo
 
 from .kwargs import KWArgs, NoDefaultValue
 
@@ -27,6 +28,8 @@ class CaseKWArgs(KWArgs):
     """
     def __init__(  # pylint: disable=unused-argument
             self, *,
+            benchmark_id: str | NoDefaultValue = NoDefaultValue(),
+            git_info: GitInfo | NoDefaultValue = NoDefaultValue(),
             group: str | NoDefaultValue = NoDefaultValue(),
             title: str | NoDefaultValue = NoDefaultValue(),
             description: str | NoDefaultValue = NoDefaultValue(),
@@ -45,6 +48,11 @@ class CaseKWArgs(KWArgs):
         """Constructs a CaseKWArgs instance. This class is used to hold keyword arguments for
         initializing a Case instance in tests.
 
+        :param benchmark_id: The unique identifier for the benchmark case.
+        :type benchmark_id: str
+        :param git_info: The GitInfo instance containing version control information.
+                         If None, no git information is set.
+        :type git_info: GitInfo | None
         :param group: The benchmark reporting group to which the benchmark case belongs.
         :type group: str
         :param title: The name of the benchmark case.
