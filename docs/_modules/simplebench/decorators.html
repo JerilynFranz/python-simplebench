@@ -4,11 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.decorators &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.decorators &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=15db7601" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
-    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -24,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.decorators</a></li> 
       </ul>
@@ -41,7 +42,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">ParamSpec</span><span class="p">,</span> <span class="n">TypeVar</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span><span class="p">,</span> <span class="n">generate_benchmark_id</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span> <span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span> <span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span> <span class="n">DEFAULT_ROUNDS</span><span class="p">,</span> <span class="n">DEFAULT_WARMUP_ITERATIONS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span><span class="p">,</span> <span class="n">_DecoratorsErrorTag</span>
 <span class="c1"># simplebench.reporters.reporter</span>
@@ -53,6 +54,7 @@
     <span class="n">validate_positive_float</span><span class="p">,</span>
     <span class="n">validate_positive_int</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.vcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_git_info</span>
 
 <span class="c1"># A global registry to hold benchmark cases created by the decorator.</span>
 <span class="n">_DECORATOR_CASES</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Case</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -68,6 +70,7 @@
         <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>  <span class="c1"># group can be the function when used without params</span>
         <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>  <span class="c1"># keyword-only parameters after this point</span>
         <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">benchmark_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
         <span class="n">warmup_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
@@ -121,7 +124,7 @@
 
 
 <span class="sd">        if __name__ == &#39;__main__&#39;:</span>
-<span class="sd">            extra_args = None if len(sys.argv) &gt; 1 else [&#39;--progress&#39;, &#39;--rich-table.console&#39;]</span>
+<span class="sd">            extra_args = None if len(sys.argv) &gt; 1 : [&#39;--progress&#39;, &#39;--rich-table.console&#39;]</span>
 <span class="sd">        main(extra_args=extra_args)</span>
 
 <span class="sd">    You should read the documentation for :class:`Case` for full details on the parameters and their</span>
@@ -136,6 +139,9 @@
 <span class="sd">    :param title: The title of the benchmark case. Uses the function</span>
 <span class="sd">        name if None. Cannot be blank.</span>
 <span class="sd">    :type title: Optional[str]</span>
+<span class="sd">    :param benchmark_id: An optional identifier for the benchmark case.</span>
+<span class="sd">        If None, no identifier is set.</span>
+<span class="sd">    :type benchmark_id: Optional[str]</span>
 <span class="sd">    :param description: A description for the case.</span>
 <span class="sd">        Uses the function&#39;s docstring if None or &#39;(no description)&#39; if there is no docstring.</span>
 <span class="sd">        Cannot be blank.</span>
@@ -259,6 +265,8 @@
                 <span class="s2">&quot;must all be positive integers when used with &#39;use_field_for_n&#39;.&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE</span><span class="p">)</span>
 
+    <span class="n">git_info</span> <span class="o">=</span> <span class="n">get_git_info</span><span class="p">()</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The actual decorator that wraps the user&#39;s function.&quot;&quot;&quot;</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">case_action_wrapper</span><span class="p">(</span><span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
@@ -275,6 +283,15 @@
             <span class="n">n_for_run</span> <span class="o">=</span> <span class="n">n</span> <span class="k">if</span> <span class="n">use_field_for_n</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">use_field_for_n</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">bench</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_for_run</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
 
+        <span class="n">final_benchmark_id</span> <span class="o">=</span> <span class="n">benchmark_id</span>
+        <span class="k">if</span> <span class="n">final_benchmark_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">final_benchmark_id</span> <span class="o">=</span> <span class="n">generate_benchmark_id</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+
+        <span class="n">final_benchmark_id</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
+            <span class="n">final_benchmark_id</span><span class="p">,</span> <span class="s1">&#39;benchmark_id&#39;</span><span class="p">,</span>
+            <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_ID_TYPE</span><span class="p">,</span>
+            <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_ID_VALUE</span><span class="p">)</span>
+
         <span class="c1"># Create the Case instance, using sensible defaults from the function.</span>
         <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">inferred_title</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
@@ -287,7 +304,9 @@
 
         <span class="n">case</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span>
             <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+            <span class="n">git_info</span><span class="o">=</span><span class="n">git_info</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="n">inferred_title</span><span class="p">,</span>
+            <span class="n">benchmark_id</span><span class="o">=</span><span class="n">final_benchmark_id</span><span class="p">,</span>
             <span class="n">action</span><span class="o">=</span><span class="n">case_action_wrapper</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="n">inferred_description</span><span class="p">,</span>
             <span class="n">iterations</span><span class="o">=</span><span class="n">iterations</span><span class="p">,</span>
@@ -364,7 +383,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.decorators</a></li> 
       </ul>

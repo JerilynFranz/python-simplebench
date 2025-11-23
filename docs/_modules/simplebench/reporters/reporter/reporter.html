@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.reporters.reporter.reporter &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.reporters.reporter.reporter &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=e424009b" />
     
-    <script src="../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.reporter</a></li> 
       </ul>
@@ -56,7 +56,6 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">json</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONEncoder</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeVar</span>
 
@@ -68,6 +67,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
 <span class="c1"># simplebench.reporters</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
 <span class="c1"># simplebench.reporters.reporter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
@@ -82,8 +82,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterProtocol</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_choice</span><span class="p">,</span> <span class="n">is_session</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">platform_architecture</span><span class="p">,</span> <span class="n">platform_implementation</span><span class="p">,</span> <span class="n">platform_system</span><span class="p">,</span> <span class="n">platform_version</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_float</span><span class="p">,</span> <span class="n">validate_iterable_of_type</span><span class="p">,</span> <span class="n">validate_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_iterable_of_type</span><span class="p">,</span> <span class="n">validate_type</span>
 
 <span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ReporterOptions</span>
 
@@ -348,11 +347,10 @@
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.report">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                <span class="o">*</span><span class="p">,</span>
-               <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+               <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
                <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
                <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
-               <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -360,8 +358,8 @@
 
 <span class="sd">        This method performs validation and then calls the subclass&#39;s :meth:`~.run_report` method.</span>
 
-<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
-<span class="sd">        :type timestamp: int</span>
+<span class="sd">        :param log_metadata: The metadata for the report log.</span>
+<span class="sd">        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.ReportLogMetadata`</span>
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.</span>
@@ -369,8 +367,6 @@
 <span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
 <span class="sd">                       the report configuration.</span>
 <span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
-<span class="sd">        :param reports_log_path: The path to the reports log file if needed. Defaults to ``None``.</span>
-<span class="sd">        :type reports_log_path: :class:`~pathlib.Path` | None, optional</span>
 <span class="sd">        :param path: The path to the directory where the report can be saved if needed.</span>
 <span class="sd">                     Leave as ``None`` if not saving to the filesystem. Defaults to ``None``.</span>
 <span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
@@ -380,8 +376,9 @@
 <span class="sd">        :param callback: A callback function for additional processing of the report. Defaults to ``None``.</span>
 <span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">log_timestamp</span> <span class="o">=</span> <span class="n">validate_float</span><span class="p">(</span>
-            <span class="n">timestamp</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_TIMESTAMP_ARG</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">log_metadata</span><span class="p">,</span> <span class="n">ReportLogMetadata</span><span class="p">,</span> <span class="s1">&#39;log_metadata&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_LOG_METADATA_ARG</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s2">&quot;args argument must be an argparse.Namespace instance&quot;</span><span class="p">,</span>
@@ -428,9 +425,9 @@
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s2">&quot;Path must be a pathlib.Path instance when using FILESYSTEM target&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_PATH_ARG</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">reports_log_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reports_log_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">log_metadata</span><span class="o">.</span><span class="n">reports_log_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_metadata</span><span class="o">.</span><span class="n">reports_log_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;reports_log_path must be a pathlib.Path instance if provided&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;log_metadata.reports_log_path must be a pathlib.Path instance if provided&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_REPORTS_LOG_PATH_ARG</span><span class="p">)</span>
 
         <span class="c1"># Only proceed if there are results to report</span>
@@ -443,87 +440,13 @@
         <span class="c1"># will pass through to the hook method, either the default implementation</span>
         <span class="c1"># or an overridden implementation in the subclass</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_report</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
-                        <span class="n">timestamp</span><span class="o">=</span><span class="n">log_timestamp</span><span class="p">,</span>
+                        <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
                         <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
                         <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
                         <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-                        <span class="n">reports_log_path</span><span class="o">=</span><span class="n">reports_log_path</span><span class="p">,</span>
                         <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
                         <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="Reporter.log_report">
-<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.log_report">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">log_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                   <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-                   <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                   <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-                   <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
-                   <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log the report generation to the reports log file.</span>
-
-<span class="sd">        The log entry includes metadata about the report generation,</span>
-<span class="sd">        such as the case ID, file path, reporter name, output format,</span>
-<span class="sd">        and platform information.</span>
-
-<span class="sd">        It can be used for auditing, tracking, looking up generated reports, and more.</span>
-
-<span class="sd">        :param filepath: The path to the generated report file.</span>
-<span class="sd">        :type filepath: :class:`~pathlib.Path`</span>
-<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
-<span class="sd">        :type timestamp: float</span>
-<span class="sd">        :param reports_log_path: The path to the reports log file.</span>
-<span class="sd">        :type reports_log_path: :class:`~pathlib.Path`</span>
-<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.</span>
-<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
-<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
-<span class="sd">                       the report configuration.</span>
-<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">log_time</span> <span class="o">=</span> <span class="n">validate_float</span><span class="p">(</span>
-            <span class="n">timestamp</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span>
-            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">LOG_REPORT_INVALID_TIMESTAMP_ARG_TYPE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Expected a Case instance&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">LOG_REPORT_INVALID_CASE_ARG_TYPE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_choice</span><span class="p">(</span><span class="n">choice</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Expected a Choice instance&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">LOG_REPORT_INVALID_CHOICE_ARG_TYPE</span><span class="p">)</span>
-        <span class="n">reports_log_path</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
-            <span class="n">reports_log_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="s1">&#39;reports_log_path&#39;</span><span class="p">,</span>
-            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">LOG_REPORT_INVALID_REPORTS_LOG_PATH_ARG_TYPE</span><span class="p">)</span>
-        <span class="n">filepath</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
-            <span class="n">filepath</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="s1">&#39;filepath&#39;</span><span class="p">,</span>
-            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">LOG_REPORT_INVALID_FILEPATH_ARG_TYPE</span><span class="p">)</span>
-        <span class="n">log_entry</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">log_time</span><span class="p">,</span>
-            <span class="s2">&quot;case_id&quot;</span><span class="p">:</span> <span class="nb">id</span><span class="p">(</span><span class="n">case</span><span class="p">),</span>
-            <span class="s2">&quot;case_group&quot;</span><span class="p">:</span> <span class="n">case</span><span class="o">.</span><span class="n">group</span><span class="p">,</span>
-            <span class="s2">&quot;reporter_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="s2">&quot;reporter_name&quot;</span><span class="p">:</span> <span class="n">choice</span><span class="o">.</span><span class="n">reporter</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="s2">&quot;output_format&quot;</span><span class="p">:</span> <span class="n">choice</span><span class="o">.</span><span class="n">output_format</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="s2">&quot;platform_system&quot;</span><span class="p">:</span> <span class="n">platform_system</span><span class="p">(),</span>
-            <span class="s2">&quot;platform_version&quot;</span><span class="p">:</span> <span class="n">platform_version</span><span class="p">(),</span>
-            <span class="s2">&quot;platform_architecture&quot;</span><span class="p">:</span> <span class="n">platform_architecture</span><span class="p">(),</span>
-            <span class="s2">&quot;platform_implementation&quot;</span><span class="p">:</span> <span class="n">platform_implementation</span><span class="p">(),</span>
-            <span class="s2">&quot;case_title&quot;</span><span class="p">:</span> <span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
-            <span class="s2">&quot;filepath&quot;</span><span class="p">:</span> <span class="n">filepath</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
-        <span class="p">}</span>
-        <span class="n">json_log_entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_line_string</span><span class="p">(</span><span class="n">JSONEncoder</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">log_entry</span><span class="p">))</span>
-        <span class="k">with</span> <span class="n">reports_log_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">log_file</span><span class="p">:</span>
-            <span class="n">log_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json_log_entry</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
-
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_one_line_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a multi-line string into a single line by replacing newlines with spaces.</span>
-
-<span class="sd">        :param string: The input string.</span>
-<span class="sd">        :type string: str</span>
-<span class="sd">        :return: The single-line string.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
 
 <div class="viewcode-block" id="Reporter.render">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.render">[docs]</a>
@@ -558,11 +481,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="o">*</span><span class="p">,</span>
                    <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
-                   <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                   <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
                    <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                    <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
                    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                   <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Orchestration hook for report generation.</span>
@@ -582,8 +504,8 @@
 
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
-<span class="sd">        :param timestamp: The timestamp of the report generation.</span>
-<span class="sd">        :type timestamp: float</span>
+<span class="sd">        :param log_metadata: The metadata for the report log.</span>
+<span class="sd">        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.Report</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.</span>
 <span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
 <span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
@@ -591,8 +513,6 @@
 <span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
 <span class="sd">        :param path: The path to the directory where report files will be saved. Defaults to ``None``.</span>
 <span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
-<span class="sd">        :param reports_log_path: The path to the reports log file if needed. Defaults to ``None``.</span>
-<span class="sd">        :type reports_log_path: :class:`~pathlib.Path` | None, optional</span>
 <span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.</span>
 <span class="sd">                        Defaults to ``None``.</span>
 <span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
@@ -600,11 +520,10 @@
 <span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">render_by_section</span><span class="p">(</span>
-            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
             <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
             <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
             <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-            <span class="n">reports_log_path</span><span class="o">=</span><span class="n">reports_log_path</span><span class="p">,</span>
             <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
             <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="n">args</span>
@@ -840,7 +759,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.reporter</a></li> 
       </ul>

@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>simplebench.utils module &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.utils module &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -26,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.utils module</a></li> 
       </ul>
     </div>  
@@ -47,7 +47,6 @@
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>node</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Computer’s network name.</p></li>
 <li><p><strong>processor</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Processor name.</p></li>
 <li><p><strong>machine</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Machine type.</p></li>
 <li><p><strong>python_compiler</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Python compiler used.</p></li>
@@ -69,11 +68,6 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.utils.MachineInfo.machine">
 <span class="sig-name descname"><span class="pre">machine</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.utils.MachineInfo.machine" title="Link to this definition">🔗</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.utils.MachineInfo.node">
-<span class="sig-name descname"><span class="pre">node</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.utils.MachineInfo.node" title="Link to this definition">🔗</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -328,6 +322,34 @@ Python version, and architecture.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="simplebench.utils.platform_machine">
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_machine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_machine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_machine" title="Link to this definition">🔗</a></dt>
+<dd><p>Return the current machine type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The machine type.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.utils.platform_processor">
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_processor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_processor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_processor" title="Link to this definition">🔗</a></dt>
+<dd><p>Return the current processor name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The processor name.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.platform_system">
 <span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_system</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_system" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the current operating system name.</p>
@@ -464,7 +486,6 @@ leading and trailing _ and - characters are removed.</p>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo"><code class="docutils literal notranslate"><span class="pre">MachineInfo</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfo.cpu</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfo.machine</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.utils.MachineInfo.node"><code class="docutils literal notranslate"><span class="pre">MachineInfo.node</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo.processor"><code class="docutils literal notranslate"><span class="pre">MachineInfo.processor</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo.python_build"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_build</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo.python_compiler"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_compiler</span></code></a></li>
@@ -484,6 +505,8 @@ leading and trailing _ and - characters are removed.</p>
 <li><a class="reference internal" href="#simplebench.utils.platform_architecture"><code class="docutils literal notranslate"><span class="pre">platform_architecture()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.platform_id"><code class="docutils literal notranslate"><span class="pre">platform_id()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.platform_implementation"><code class="docutils literal notranslate"><span class="pre">platform_implementation()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.utils.platform_machine"><code class="docutils literal notranslate"><span class="pre">platform_machine()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.utils.platform_processor"><code class="docutils literal notranslate"><span class="pre">platform_processor()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.platform_system"><code class="docutils literal notranslate"><span class="pre">platform_system()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.platform_version"><code class="docutils literal notranslate"><span class="pre">platform_version()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.python_implementation_version"><code class="docutils literal notranslate"><span class="pre">python_implementation_version()</span></code></a></li>
@@ -524,7 +547,7 @@ leading and trailing _ and - characters are removed.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.utils module</a></li> 
       </ul>
     </div>

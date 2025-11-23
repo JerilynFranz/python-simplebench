@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.reporters.json.reporter.reporter &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.reporters.json.reporter.reporter &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=e424009b" />
     
-    <script src="../../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.json.reporter.reporter</a></li> 
       </ul>
@@ -48,6 +48,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols.reporter_callback</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reporter</span><span class="p">,</span> <span class="n">ReporterOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span>
@@ -153,11 +154,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="o">*</span><span class="p">,</span>
                    <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
-                   <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                   <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
                    <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                    <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
                    <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                   <span class="n">reports_log_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
                    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -176,7 +176,8 @@
 <span class="sd">        :class:`~simplebench.reporters.protocols.reporter_renderer.ReportRenderer` protocol.</span>
 
 <span class="sd">        :param args: The parsed command-line arguments.</span>
-<span class="sd">        :param timestamp: The timestamp for the report.</span>
+<span class="sd">        :param log_metadata: The :class:`~.ReportLogMetadata` instance containing metadata</span>
+<span class="sd">            about the report being generated.</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
 <span class="sd">            benchmarked code.</span>
 <span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.Choice` instance specifying</span>
@@ -192,12 +193,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">render_by_case</span><span class="p">(</span>
             <span class="n">renderer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">,</span>
-            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
             <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
             <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
             <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-            <span class="n">reports_log_path</span><span class="o">=</span><span class="n">reports_log_path</span><span class="p">,</span>
             <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
             <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
 
@@ -314,7 +314,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.json.reporter.reporter</a></li> 
       </ul>

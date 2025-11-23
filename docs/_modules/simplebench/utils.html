@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.utils &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.utils &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
-    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.utils</a></li> 
       </ul>
@@ -61,8 +61,6 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">MachineInfo</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;TypedDict for machine info returned by :func:`get_machine_info`.</span>
 
-<span class="sd">    :ivar node: Computer&#39;s network name.</span>
-<span class="sd">    :vartype node: str</span>
 <span class="sd">    :ivar processor: Processor name.</span>
 <span class="sd">    :vartype processor: str</span>
 <span class="sd">    :ivar machine: Machine type.</span>
@@ -84,7 +82,6 @@
 <span class="sd">    :ivar cpu: CPU information.</span>
 <span class="sd">    :vartype cpu: dict[str, str]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">node</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">processor</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">python_compiler</span><span class="p">:</span> <span class="nb">str</span>
@@ -100,6 +97,7 @@
 
 <div class="viewcode-block" id="python_implementation_version">
 <a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.python_implementation_version">[docs]</a>
+<span class="nd">@cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">python_implementation_version</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the Python implementation version.</span>
 
@@ -130,7 +128,6 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a dictionary of information about the current machine and Python version.&quot;&quot;&quot;</span>
     <span class="n">python_implementation</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_implementation</span><span class="p">()</span>
     <span class="n">machine_info</span><span class="p">:</span> <span class="n">MachineInfo</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;node&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">node</span><span class="p">(),</span>
         <span class="s1">&#39;processor&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">processor</span><span class="p">(),</span>
         <span class="s1">&#39;machine&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">(),</span>
         <span class="s1">&#39;python_compiler&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_compiler</span><span class="p">(),</span>
@@ -146,8 +143,35 @@
 
 
 
+<div class="viewcode-block" id="platform_processor">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.platform_processor">[docs]</a>
+<span class="nd">@cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">platform_processor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the current processor name.</span>
+
+<span class="sd">    :return: The processor name.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">platform</span><span class="o">.</span><span class="n">processor</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="platform_machine">
+<a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.platform_machine">[docs]</a>
+<span class="nd">@cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">platform_machine</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the current machine type.</span>
+
+<span class="sd">    :return: The machine type.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span></div>
+
+
+
 <div class="viewcode-block" id="platform_id">
 <a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.platform_id">[docs]</a>
+<span class="nd">@cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">platform_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a string that uniquely identifies the current machine and Python version.</span>
 
@@ -167,6 +191,7 @@
 
 <div class="viewcode-block" id="platform_system">
 <a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.platform_system">[docs]</a>
+<span class="nd">@cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">platform_system</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the current operating system name.</span>
 
@@ -179,6 +204,7 @@
 
 <div class="viewcode-block" id="platform_implementation">
 <a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.platform_implementation">[docs]</a>
+<span class="nd">@cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">platform_implementation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the current Python implementation name.</span>
 
@@ -193,6 +219,7 @@
 
 <div class="viewcode-block" id="platform_version">
 <a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.platform_version">[docs]</a>
+<span class="nd">@cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">platform_version</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the current Python version.</span>
 
@@ -205,6 +232,7 @@
 
 <div class="viewcode-block" id="platform_architecture">
 <a class="viewcode-back" href="../../source/simplebench.utils.html#simplebench.utils.platform_architecture">[docs]</a>
+<span class="nd">@cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">platform_architecture</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the current architecture.</span>
 
@@ -551,7 +579,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.utils</a></li> 
       </ul>

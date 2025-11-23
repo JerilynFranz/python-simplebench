@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.session &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.session &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
-    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.session</a></li> 
       </ul>
@@ -53,6 +53,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchArgumentError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">_SessionErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleRunner</span>
@@ -359,13 +360,17 @@
                     <span class="n">output_path</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="n">timestamp</span> <span class="o">/</span> <span class="n">group_path</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[DEBUG] Output path for report: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">log_metadata</span> <span class="o">=</span> <span class="n">ReportLogMetadata</span><span class="p">(</span>
+                    <span class="n">timestamp</span><span class="o">=</span><span class="n">epoch_timestamp</span><span class="p">,</span>
+                    <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+                    <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+                    <span class="n">reports_log_path</span><span class="o">=</span><span class="n">report_log_path</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>  <span class="c1"># mypy guard</span>
                     <span class="n">reporter</span><span class="o">.</span><span class="n">report</span><span class="p">(</span>
-                        <span class="n">timestamp</span><span class="o">=</span><span class="n">epoch_timestamp</span><span class="p">,</span>
+                        <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
                         <span class="n">args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
                         <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
                         <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
-                        <span class="n">reports_log_path</span><span class="o">=</span><span class="n">report_log_path</span><span class="p">,</span>
                         <span class="n">path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
                         <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span>
@@ -632,7 +637,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.session</a></li> 
       </ul>

@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>simplebench.session module &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.session module &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -26,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.session module</a></li> 
       </ul>
     </div>  
@@ -61,10 +61,10 @@
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<em>Namespace</em>) – The command line arguments for the session.</p></li>
-<li><p><strong>cases</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><em>Case</em></a><em>]</em>) – Sequence of benchmark cases for the session.</p></li>
+<li><p><strong>cases</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><em>Case</em></a><em>]</em>) – Sequence of benchmark cases for the session.</p></li>
 <li><p><strong>output_path</strong> (<em>Path</em><em>, </em><em>optional</em>) – The output path for reports.</p></li>
 <li><p><strong>console</strong> (<em>Console</em>) – A Rich Console instance for displaying output.</p></li>
-<li><p><strong>verbosity</strong> (<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.Verbosity"><em>Verbosity</em></a>) – Verbosity level for console output (default: <code class="xref py py-attr docutils literal notranslate"><span class="pre">Verbosity.NORMAL</span></code>)</p></li>
+<li><p><strong>verbosity</strong> (<a class="reference internal" href="simplebench.html#simplebench.Verbosity" title="simplebench.Verbosity"><em>Verbosity</em></a>) – Verbosity level for console output (default: <code class="xref py py-attr docutils literal notranslate"><span class="pre">Verbosity.NORMAL</span></code>)</p></li>
 <li><p><strong>default_runner</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><em>type</em></a><em>[</em><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><em>SimpleRunner</em></a><em>]</em>) – The default runner class to use for Cases
 that do not specify a runner. Defaults to <a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleRunner</span></code></a>.</p></li>
 <li><p><strong>show_progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to show progress bars during execution. Defaults to False.</p></li>
@@ -80,7 +80,7 @@ that do not specify a runner. Defaults to <a class="reference internal" href="si
 <dd><p>Add a <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> to the Sequence of Cases for this session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>case</strong> (<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><em>Case</em></a>) – <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> to add to the Session</p>
+<dd class="field-odd"><p><strong>case</strong> (<a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><em>Case</em></a>) – <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> to add to the Session</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the value is not a <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
@@ -149,7 +149,7 @@ method has been called.</p>
 <dd><p>Extend the Sequence of Cases for this session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cases</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><em>Case</em></a><em>]</em>) – Sequence of Cases to add to the Session</p>
+<dd class="field-odd"><p><strong>cases</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><em>Case</em></a><em>]</em>) – Sequence of Cases to add to the Session</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the value is not a Sequence of Cases.</p>
@@ -325,7 +325,7 @@ report keys for the reports that should be generated.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.session module</a></li> 
       </ul>
     </div>
