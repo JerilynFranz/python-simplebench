@@ -59,6 +59,17 @@ exclude = [
     ".git/",
     ".gitignore",
     "coverage/",
+    "/.github/",
+    ".python-version",
+    ".readthedocs.yaml",
+    "/.vscode/",
+    "/coverage/",
+    "/coverage_html_report/",
+    "/documentation/",
+    "/examples/",
+    "/docs/",
+    "python-simplebench.code-workspace",
+    "uv.lock",
 ]
 [tool.hatch.version]
 path = "src/simplebench/_meta.py"
