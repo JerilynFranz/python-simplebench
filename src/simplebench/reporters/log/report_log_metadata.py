@@ -181,11 +181,11 @@ class ReportLogMetadata:
         return {
             "timestamp": self.timestamp,
             "benchmark_id": self.case.benchmark_id,
-            "case_group": self.case.group,
+            "benchmark_group": self.case.group,
             "reporter_type": self.choice.reporter.__class__.__name__,
             "reporter_name": self.choice.reporter.name,
             "output_format": self.choice.output_format.name,
-            "case_title": self.case.title,
+            "benchmark_title": self.case.title,
             "filepath": self.filepath.as_posix() if self.filepath else None,
             "git": git_info,
             "machine_info": get_machine_info(),
