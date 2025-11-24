@@ -299,6 +299,7 @@ def benchmark(
             rounds=rounds,
             min_time=min_time,
             max_time=max_time,
+            timeout=timeout,
             variation_cols=variation_cols,
             kwargs_variations=kwargs_variations,
             options=options,
