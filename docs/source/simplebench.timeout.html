@@ -41,14 +41,21 @@
 <p>Timeout package for the simplebench project.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.timeout.Timeout">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.timeout.</span></span><span class="sig-name descname"><span class="pre">Timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.Timeout" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.timeout.</span></span><span class="sig-name descname"><span class="pre">Timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.Timeout" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_T</span></code>]</p>
 <p>Executes a callable in a separate daemon thread and enforces a timeout.</p>
 <p>This implementation avoids the risks of raising asynchronous exceptions by
 running the target function in a worker thread and using <cite>thread.join()</cite>
-with a timeout. If the worker thread is still alive after the timeout,</p>
-<p>it is considered to have timed out. Because the worker is a daemon thread,
+with a timeout. If the worker thread is still alive after the timeout,
+it is considered to have timed out. Because the worker is a daemon thread,
 the main program can exit without needing to forcefully terminate it.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>After a timeout, it is recommended to exit the program cleanly rather than continuing execution.</p>
+<p>The worker thread may still be running in the background and this can lead to
+undefined behavior. This design ensures that the main thread remains responsive
+and avoids the complexities of forcibly terminating threads.</p>
+</div>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Example of using the new Timeout class.</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>  <span class="k">def</span><span class="w"> </span><span class="nf">my_long_running_task</span><span class="p">():</span>
@@ -59,36 +66,27 @@ the main program can exit without needing to forcefully terminate it.</p>
 <span class="linenos"> 6</span>  <span class="k">try</span><span class="p">:</span>
 <span class="linenos"> 7</span>      <span class="n">result</span> <span class="o">=</span> <span class="n">timeout</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">my_long_running_task</span><span class="p">)</span>
 <span class="linenos"> 8</span>      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task finished with result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="linenos"> 9</span>  <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
-<span class="linenos">10</span>      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task timed out. Final state: </span><span class="si">{</span><span class="n">timeout</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="linenos">11</span>      <span class="c1"># It is recommended to exit cleanly after a timeout.</span>
-<span class="linenos">12</span>      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos"> 9</span>  <span class="k">except</span> <span class="n">SimpleBenchTimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="linenos">10</span>      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">func_name</span><span class="si">}</span><span class="s2"> timed out. Final state: </span><span class="si">{</span><span class="n">timeout</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">11</span>      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.timeout.Timeout.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.Timeout.run" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">_calling_func:</span> <span class="pre">~typing.Callable[[~_P],</span> <span class="pre">~simplebench.timeout.timeout._RT],</span> <span class="pre">*args:</span> <span class="pre">~typing.~_P,</span> <span class="pre">**kwargs:</span> <span class="pre">~typing.~_P</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_RT</span></span></span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.Timeout.run" title="Link to this definition">🔗</a></dt>
 <dd><p>Runs the given callable in a worker thread with a timeout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>func</strong> – The callable to execute.</p></li>
+<li><p><strong>_calling_func</strong> – The callable to execute.</p></li>
 <li><p><strong>args</strong> – Positional arguments to pass to the callable.</p></li>
 <li><p><strong>kwargs</strong> – Keyword arguments to pass to the callable.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError" title="(in Python v3.14)"><strong>TimeoutError</strong></a> – If the callable does not complete within the specified timeout.</p></li>
+<li><p><strong>SimpleBenchTimeoutError</strong> – If the callable does not complete within the specified timeout.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#BaseException" title="(in Python v3.14)"><strong>BaseException</strong></a> – Any exception raised by the callable will be re-raised in the main thread.</p></li>
 </ul>
 </dd>
@@ -166,6 +164,12 @@ the main program can exit without needing to forcefully terminate it.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT">
+<span class="sig-name descname"><span class="pre">NON_CALLABLE_FUNCTION_ARGUMENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'NON_CALLABLE_FUNCTION_ARGUMENT'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT" title="Link to this definition">🔗</a></dt>
+<dd><p>The provided function argument is not callable.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.STATE_NOT_SET">
 <span class="sig-name descname"><span class="pre">STATE_NOT_SET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'STATE_NOT_SET'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.STATE_NOT_SET" title="Link to this definition">🔗</a></dt>
 <dd><p>The timeout state has not been set.</p>
@@ -221,27 +225,33 @@ the main program can exit without needing to forcefully terminate it.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutState.EXECUTED">
-<span class="sig-name descname"><span class="pre">EXECUTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'EXECUTED'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutState.EXECUTED" title="Link to this definition">🔗</a></dt>
-<dd><p>The operation completed successfully within the time limit.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutState.EXECUTING">
-<span class="sig-name descname"><span class="pre">EXECUTING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'EXECUTING'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutState.EXECUTING" title="Link to this definition">🔗</a></dt>
-<dd><p>The operation is currently in progress.</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.timeout.TimeoutState.FAILED">
 <span class="sig-name descname"><span class="pre">FAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'FAILED'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutState.FAILED" title="Link to this definition">🔗</a></dt>
 <dd><p>The operation failed due to an exception other than timeout.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.timeout.TimeoutState.FINISHED">
+<span class="sig-name descname"><span class="pre">FINISHED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'FINISHED'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutState.FINISHED" title="Link to this definition">🔗</a></dt>
+<dd><p>The operation completed successfully within the time limit.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.timeout.TimeoutState.INTERRUPTED">
 <span class="sig-name descname"><span class="pre">INTERRUPTED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INTERRUPTED'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutState.INTERRUPTED" title="Link to this definition">🔗</a></dt>
 <dd><p>The operation was interrupted before completion.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.timeout.TimeoutState.PENDING">
+<span class="sig-name descname"><span class="pre">PENDING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PENDING'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutState.PENDING" title="Link to this definition">🔗</a></dt>
+<dd><p>The operation is pending and has not started yet.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.timeout.TimeoutState.RUNNING">
+<span class="sig-name descname"><span class="pre">RUNNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RUNNING'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutState.RUNNING" title="Link to this definition">🔗</a></dt>
+<dd><p>The operation is currently in progress.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -266,6 +276,7 @@ the main program can exit without needing to forcefully terminate it.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_TIMER_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMER_TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.STATE_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.STATE_NOT_SET</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET</span></code></a></li>
@@ -294,10 +305,11 @@ the main program can exit without needing to forcefully terminate it.</p>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.timeout.enums.html">simplebench.timeout.enums module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState"><code class="docutils literal notranslate"><span class="pre">TimeoutState</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.CANCELED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.CANCELED</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.EXECUTED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.EXECUTED</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.EXECUTING"><code class="docutils literal notranslate"><span class="pre">TimeoutState.EXECUTING</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.FAILED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.FAILED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.FINISHED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.FINISHED</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.INTERRUPTED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.INTERRUPTED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.PENDING"><code class="docutils literal notranslate"><span class="pre">TimeoutState.PENDING</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.RUNNING"><code class="docutils literal notranslate"><span class="pre">TimeoutState.RUNNING</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState.TIMED_OUT"><code class="docutils literal notranslate"><span class="pre">TimeoutState.TIMED_OUT</span></code></a></li>
 </ul>
 </li>
@@ -347,6 +359,7 @@ the main program can exit without needing to forcefully terminate it.</p>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMER_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMER_TYPE</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.STATE_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.STATE_NOT_SET</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET</span></code></a></li>
@@ -358,10 +371,11 @@ the main program can exit without needing to forcefully terminate it.</p>
 </li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutState"><code class="docutils literal notranslate"><span class="pre">TimeoutState</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutState.CANCELED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.CANCELED</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutState.EXECUTED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.EXECUTED</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutState.EXECUTING"><code class="docutils literal notranslate"><span class="pre">TimeoutState.EXECUTING</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutState.FAILED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.FAILED</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timeout.TimeoutState.FINISHED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.FINISHED</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutState.INTERRUPTED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.INTERRUPTED</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timeout.TimeoutState.PENDING"><code class="docutils literal notranslate"><span class="pre">TimeoutState.PENDING</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timeout.TimeoutState.RUNNING"><code class="docutils literal notranslate"><span class="pre">TimeoutState.RUNNING</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutState.TIMED_OUT"><code class="docutils literal notranslate"><span class="pre">TimeoutState.TIMED_OUT</span></code></a></li>
 </ul>
 </li>

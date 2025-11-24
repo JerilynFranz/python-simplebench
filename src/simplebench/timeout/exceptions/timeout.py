@@ -6,6 +6,8 @@ from ...exceptions import ErrorTag
 @enum_docstrings
 class TimeoutErrorTag(ErrorTag):
     """ErrorTags for timeout-related errors."""
+    NON_CALLABLE_FUNCTION_ARGUMENT = "NON_CALLABLE_FUNCTION_ARGUMENT"
+    "The provided function argument is not callable."
     INVALID_EXCEPTION_ARG_TYPE = "INVALID_EXCEPTION_ARG_TYPE"
     "The provided exception argument is not a valid exception type."
     INVALID_THREAD_ID_TYPE = "INVALID_THREAD_ID_TYPE"

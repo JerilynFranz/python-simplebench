@@ -41,25 +41,37 @@
 <span class="sd">Run a callable with a timeout, ensuring safe termination.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">ParamSpec</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTimeoutError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutState</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutErrorTag</span>
+
+<span class="c1"># Define a TypeVar for the class instance. This is not used by run.</span>
+<span class="n">_T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T&quot;</span><span class="p">)</span>
+<span class="c1"># Define a ParamSpec for the arguments of the callable passed to run.</span>
+<span class="n">_P</span> <span class="o">=</span> <span class="n">ParamSpec</span><span class="p">(</span><span class="s2">&quot;_P&quot;</span><span class="p">)</span>
+<span class="c1"># Define a TypeVar specifically for the return type of the run method.</span>
+<span class="n">_RT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_RT&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Timeout">
 <a class="viewcode-back" href="../../../source/simplebench.timeout.timeout.html#simplebench.timeout.Timeout">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Timeout</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Timeout</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">_T</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Executes a callable in a separate daemon thread and enforces a timeout.</span>
 
 <span class="sd">    This implementation avoids the risks of raising asynchronous exceptions by</span>
 <span class="sd">    running the target function in a worker thread and using `thread.join()`</span>
 <span class="sd">    with a timeout. If the worker thread is still alive after the timeout,</span>
-
 <span class="sd">    it is considered to have timed out. Because the worker is a daemon thread,</span>
 <span class="sd">    the main program can exit without needing to forcefully terminate it.</span>
+
+<span class="sd">    .. warning:: After a timeout, it is recommended to exit the program cleanly rather than continuing execution.</span>
+
+<span class="sd">        The worker thread may still be running in the background and this can lead to</span>
+<span class="sd">        undefined behavior. This design ensures that the main thread remains responsive</span>
+<span class="sd">        and avoids the complexities of forcibly terminating threads.</span>
 
 <span class="sd">    .. code-block:: python3</span>
 <span class="sd">      :linenos:</span>
@@ -73,22 +85,21 @@
 <span class="sd">        try:</span>
 <span class="sd">            result = timeout.run(my_long_running_task)</span>
 <span class="sd">            print(f&quot;Task finished with result: {result}&quot;)</span>
-<span class="sd">        except TimeoutError:</span>
-<span class="sd">            print(f&quot;Task timed out. Final state: {timeout.state}&quot;)</span>
-<span class="sd">            # It is recommended to exit cleanly after a timeout.</span>
+<span class="sd">        except SimpleBenchTimeoutError as e:</span>
+<span class="sd">            print(f&quot;Task {e.func_name} timed out. Final state: {timeout.state}&quot;)</span>
 <span class="sd">            sys.exit(1)</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout_interval</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Timeout runner.</span>
 
 <span class="sd">        :param timeout_interval: ``float`` or ``int`` duration to wait for the callable to complete.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_timeout_interval</span><span class="p">(</span><span class="n">timeout_interval</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># The internal result is Any because a single instance can run functions with different return types.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span><span class="p">:</span> <span class="ne">BaseException</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTED</span><span class="p">)</span>  <span class="c1"># Initial state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">PENDING</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">timeout_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -120,7 +131,7 @@
                 <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_STATE_TYPE</span><span class="p">)</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_state&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_target_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_target_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Internal wrapper to run in the worker thread.</span>
 <span class="sd">        It captures the result or any exception that occurs.</span>
@@ -132,32 +143,47 @@
 
 <div class="viewcode-block" id="Timeout.run">
 <a class="viewcode-back" href="../../../source/simplebench.timeout.timeout.html#simplebench.timeout.Timeout.run">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_calling_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">_P</span><span class="p">,</span> <span class="n">_RT</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_P</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_RT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the given callable in a worker thread with a timeout.</span>
 
-<span class="sd">        :param func: The callable to execute.</span>
+<span class="sd">        :param _calling_func: The callable to execute.</span>
 <span class="sd">        :param args: Positional arguments to pass to the callable.</span>
 <span class="sd">        :param kwargs: Keyword arguments to pass to the callable.</span>
-<span class="sd">        :raises TimeoutError: If the callable does not complete within the specified timeout.</span>
+<span class="sd">        :raises SimpleBenchTimeoutError: If the callable does not complete within the specified timeout.</span>
 <span class="sd">        :raises BaseException: Any exception raised by the callable will be re-raised in the main thread.</span>
 <span class="sd">        :return: The return value of the callable if it completes successfully.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reset state for this run to ensure instance reusability.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">func_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_calling_func</span><span class="p">,</span> <span class="s2">&quot;__qualname__&quot;</span><span class="p">,</span>
+                            <span class="nb">getattr</span><span class="p">(</span><span class="n">_calling_func</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">_calling_func</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">_calling_func</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The provided _calling_func &#39;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">&#39; is not callable&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">NON_CALLABLE_FUNCTION_ARGUMENT</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
             <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_wrapper</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">func</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">_calling_func</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">,</span>
             <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;TimeoutWorker-</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># Crucial: Allows the main thread to exit even if this thread is blocked.</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTING</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout_interval</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
             <span class="c1"># The thread is still running, so it has timed out.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">TIMED_OUT</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Execution timed out after </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout_interval</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTimeoutError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Execution of &#39;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">&#39; timed out after </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout_interval</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">TIMED_OUT</span><span class="p">,</span>
+                <span class="n">func_name</span><span class="o">=</span><span class="n">func_name</span>
+                <span class="p">)</span>
 
         <span class="c1"># If we get here, the thread has finished.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span><span class="p">:</span>
@@ -166,8 +192,10 @@
             <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span>
 
         <span class="c1"># The thread completed successfully.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTED</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">FINISHED</span><span class="p">)</span>
+        <span class="c1"># We cast here to assure the type checker that if the thread has finished</span>
+        <span class="c1"># and no exception was raised, _result must have been assigned a value of type _RT.</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">_RT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

@@ -48,9 +48,11 @@
 <span class="nd">@enum_docstrings</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TimeoutState</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Enums for the simplebench.timeout module.&quot;&quot;&quot;</span>
-    <span class="n">EXECUTED</span> <span class="o">=</span> <span class="s2">&quot;EXECUTED&quot;</span>
+    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;PENDING&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation is pending and has not started yet.&quot;&quot;&quot;</span>
+    <span class="n">FINISHED</span> <span class="o">=</span> <span class="s2">&quot;FINISHED&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation completed successfully within the time limit.&quot;&quot;&quot;</span>
-    <span class="n">EXECUTING</span> <span class="o">=</span> <span class="s2">&quot;EXECUTING&quot;</span>
+    <span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation is currently in progress.&quot;&quot;&quot;</span>
     <span class="n">TIMED_OUT</span> <span class="o">=</span> <span class="s2">&quot;TIMED_OUT&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation exceeded the allowed time limit.&quot;&quot;&quot;</span>

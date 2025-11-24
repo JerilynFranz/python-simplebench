@@ -38,51 +38,70 @@
             
   <section id="module-simplebench.timeout.timeout">
 <span id="simplebench-timeout-timeout-module"></span><h1>simplebench.timeout.timeout module<a class="headerlink" href="#module-simplebench.timeout.timeout" title="Link to this heading">🔗</a></h1>
-<p>Raise asynchronous exceptions in other thread, control the timeout of blocks
-or callables with a context manager</p>
+<p>Run a callable with a timeout, ensuring safe termination.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.timeout.timeout.Timeout">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.timeout.timeout.</span></span><span class="sig-name descname"><span class="pre">Timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.timeout.Timeout" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AbstractContextManager" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractContextManager</span></code></a></p>
-<p>Context manager for limiting in the time the execution of a block
-using asynchronous threads launching TimeoutError exception.</p>
-<p>The Timeout context manager allows you to specify a time limit for a block of code.
-If the block does not complete within the specified time limit,
-a TimeoutError exception is raised in the thread executing the block.</p>
-<dl>
-<dt>..code-block:: python3</dt><dd><dl class="field-list">
-<dt class="field-odd">linenos<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
-<dt class="field-even">caption<span class="colon">:</span></dt>
-<dd class="field-even"><p>Example of using the Timeout context manager.
-try:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>with Timeout(timeout_interval=5.0) as timeout:</dt><dd><p># Code block that should complete within 5 seconds
-do_something()</p>
-</dd>
-<dt>if timeout.state == TimeoutState.EXECUTED:</dt><dd><p>print(“Block completed successfully.”)</p>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="simple">
-<dt>except TimeoutError:</dt><dd><p>print(“Block timed out.”)</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.timeout.timeout.</span></span><span class="sig-name descname"><span class="pre">Timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.timeout.Timeout" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">_RT</span></code>]</p>
+<p>Executes a callable in a separate daemon thread and enforces a timeout.</p>
+<p>This implementation avoids the risks of raising asynchronous exceptions by
+running the target function in a worker thread and using <cite>thread.join()</cite>
+with a timeout. If the worker thread is still alive after the timeout,
+it is considered to have timed out. Because the worker is a daemon thread,
+the main program can exit without needing to forcefully terminate it.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>After a timeout, it is strongly recommended to exit the program cleanly</p>
+</div>
+<p>rather than continuing execution.</p>
+<p>The worker thread may still be running in the background and this can lead to
+undefined behavior. This design ensures that the main thread remains responsive
+and avoids the complexities of forcibly terminating threads.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Example of using the new Timeout class.</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>  <span class="k">def</span><span class="w"> </span><span class="nf">my_long_running_task</span><span class="p">():</span>
+<span class="linenos"> 2</span>      <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="linenos"> 3</span>      <span class="k">return</span> <span class="s2">&quot;done&quot;</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>  <span class="n">timeout</span> <span class="o">=</span> <span class="n">Timeout</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="linenos"> 6</span>  <span class="k">try</span><span class="p">:</span>
+<span class="linenos"> 7</span>      <span class="n">result</span> <span class="o">=</span> <span class="n">timeout</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">my_long_running_task</span><span class="p">)</span>
+<span class="linenos"> 8</span>      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task finished with result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos"> 9</span>  <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+<span class="linenos">10</span>      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task timed out. Final state: </span><span class="si">{</span><span class="n">timeout</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">11</span>      <span class="c1"># It is recommended to exit cleanly after a timeout.</span>
+<span class="linenos">12</span>      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.timeout.timeout.Timeout.cancel">
-<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.timeout.Timeout.cancel" title="Link to this definition">🔗</a></dt>
-<dd><p>In case inside the block you realize you don’t need the time limit</p>
+<dt class="sig sig-object py" id="simplebench.timeout.timeout.Timeout.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">_calling_func:</span> <span class="pre">~typing.Callable[[~_P],</span> <span class="pre">~simplebench.timeout.timeout._RT],</span> <span class="pre">*args:</span> <span class="pre">~typing.~_P,</span> <span class="pre">**kwargs:</span> <span class="pre">~typing.~_P</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_RT</span></span></span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.timeout.Timeout.run" title="Link to this definition">🔗</a></dt>
+<dd><p>Runs the given callable in a worker thread with a timeout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_calling_func</strong> – The callable to execute.</p></li>
+<li><p><strong>args</strong> – Positional arguments to pass to the callable.</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to pass to the callable.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>SimpleBenchTimeoutError</strong> – If the callable does not complete within the specified timeout.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#BaseException" title="(in Python v3.14)"><strong>BaseException</strong></a> – Any exception raised by the callable will be re-raised in the main thread.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The return value of the callable if it completes successfully.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.timeout.timeout.Timeout.state">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState" title="simplebench.timeout.enums.TimeoutState"><span class="pre">TimeoutState</span></a></em><a class="headerlink" href="#simplebench.timeout.timeout.Timeout.state" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the current state of the timeout context manager.</p>
+<dd><p>Get the final state of the timeout execution.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -107,7 +126,7 @@ do_something()</p>
     <ul>
 <li><a class="reference internal" href="#">simplebench.timeout.timeout module</a><ul>
 <li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout"><code class="docutils literal notranslate"><span class="pre">Timeout</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout.cancel"><code class="docutils literal notranslate"><span class="pre">Timeout.cancel()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout.run"><code class="docutils literal notranslate"><span class="pre">Timeout.run()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout.state"><code class="docutils literal notranslate"><span class="pre">Timeout.state</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout.timeout_interval"><code class="docutils literal notranslate"><span class="pre">Timeout.timeout_interval</span></code></a></li>
 </ul>
