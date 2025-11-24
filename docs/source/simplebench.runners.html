@@ -47,7 +47,7 @@
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">runner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
@@ -59,7 +59,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>case</strong> (<a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><em>Case</em></a>) – The benchmark case to run.</p></li>
 <li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – The keyword arguments for the benchmark case.</p></li>
-<li><p><strong>session</strong> (<a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><em>Session</em></a><em>, </em><em>optional</em>) – The session in which the benchmark is run.</p></li>
+<li><p><strong>session</strong> (<a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><em>Session</em></a><em>, </em><em>optional</em>) – The session in which the benchmark is run.</p></li>
 <li><p><strong>runner</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – The function to use to run the benchmark. If None, uses <a class="reference internal" href="#simplebench.runners.SimpleRunner.default_runner" title="simplebench.runners.SimpleRunner.default_runner"><code class="xref py py-meth docutils literal notranslate"><span class="pre">default_runner()</span></code></a>
 from <a class="reference internal" href="#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleRunner</span></code></a>.</p></li>
 </ul>
@@ -68,7 +68,7 @@ from <a class="reference internal" href="#simplebench.runners.SimpleRunner" titl
 <dd class="field-even"><ul class="simple">
 <li><p><strong>case</strong> (<a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><em>Case</em></a>) – The benchmark case to run.</p></li>
 <li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – The keyword arguments for the benchmark case.</p></li>
-<li><p><strong>session</strong> (<a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><em>Session</em></a><em>, </em><em>optional</em>) – The session in which the benchmark is run.</p></li>
+<li><p><strong>session</strong> (<a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><em>Session</em></a><em>, </em><em>optional</em>) – The session in which the benchmark is run.</p></li>
 <li><p><strong>run</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><em>Any</em><em>]</em>) – The function to use to run the benchmark.</p></li>
 </ul>
 </dd>
@@ -85,7 +85,7 @@ from <a class="reference internal" href="#simplebench.runners.SimpleRunner" titl
 
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">teardown</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -93,23 +93,17 @@ from <a class="reference internal" href="#simplebench.runners.SimpleRunner" titl
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.results.html#simplebench.results.Results" title="simplebench.results.Results"><span class="pre">Results</span></a></span></span><a class="reference internal" href="../_modules/simplebench/runners.html#SimpleRunner.default_runner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.runners.SimpleRunner.default_runner" title="Link to this definition">🔗</a></dt>
-<dd><p>Run a generic benchmark using the specified action and test data for rounds.</p>
-<p>This function will execute the benchmark for the given action and
-collect the results. It is designed for macro-benchmarks (i.e., benchmarks
-that measure the performance of a function over multiple iterations) where
-the overhead of the function call is not significant compared with the work
-done inside the function.</p>
-<p>Micro-benchmarks (i.e., benchmarks that measure the performance of a fast function
-over a small number of iterations) require more complex handling to account
-for the overhead of the function call.</p>
+<dd><p>Run a generic benchmark using the specified action and test</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The O(n) ‘n’ weight of the benchmark. This is used to calculate
-a weight for the purpose of O(n) analysis. For example, if the action being benchmarked
-is a function that sorts a list of length n, then n should be the
-length of the list. If the action being benchmarked is a function
-that performs a constant-time operation, then n should be 1.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – <p>The <strong>O()</strong> ‘n’ weight of the benchmark. This is used to calculate
+a weight for the purpose of <strong>O()</strong> analysis.</p>
+<p>For example, if the action being benchmarked is a function that
+sorts a list of length n, then n should be the length of the list.
+If the action being benchmarked is a function that performs
+a constant-time operation, then n should be 1.</p>
+</p></li>
 <li><p><strong>action</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><em>Any</em><em>]</em>) – The action to benchmark.</p></li>
 <li><p><strong>setup</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – A setup function to run before each iteration.</p></li>
 <li><p><strong>teardown</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – A teardown function to run after each iteration.</p></li>
@@ -131,23 +125,64 @@ that performs a constant-time operation, then n should be 1.</p></li>
 <dd><p>The keyword arguments for the benchmark function.</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt class="sig sig-object py" id="simplebench.runners.SimpleRunner.run">
-<span class="sig-name descname"><span class="pre">run</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.runners.SimpleRunner.run" title="Link to this definition">🔗</a></dt>
-<dd><p>Benchmark runner function. Defaults to <a class="reference internal" href="#simplebench.runners.SimpleRunner.default_runner" title="simplebench.runners.SimpleRunner.default_runner"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SimpleRunner.default_runner()</span></code></a>.</p>
-<dl class="simple">
-<dt>The runner function must accept the following parameters:</dt><dd><p>n (int): The number of test rounds that will be run by the action on each iteration.
-action (Callable[…, Any]): The function to benchmark.
-setup (Optional[Callable[…, Any]]): A setup function to run before each iteration.
-teardown (Optional[Callable[…, Any]]): A teardown function to run after each iteration.
-kwargs (Optional[dict[str, Any]]): Keyword arguments to pass to the function being benchmarked.</p>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">teardown</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.results.html#simplebench.results.Results" title="simplebench.results.Results"><span class="pre">Results</span></a></span></span><a class="reference internal" href="../_modules/simplebench/runners.html#SimpleRunner.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.runners.SimpleRunner.run" title="Link to this definition">🔗</a></dt>
+<dd><p>Enforce a timeout while running the benchmark with the specified runner.</p>
+<p>This method wraps the benchmark execution in a <a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.Timeout" title="simplebench.timeout.Timeout"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeout</span></code></a>
+to enforce the timeout specified in the benchmark case.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Important Timeout Behavior Notice</strong>
+If the benchmark exceeds the specified timeout set in the case,
+a <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleBenchTimeoutError</span></code>
+will be raised, and no results will be returned.</p>
+<p>Because the worker thread may still be running in the background after a timeout,
+it is recommended to exit the program cleanly rather than continuing execution
+because this can (probably <strong>WILL</strong>) lead to undefined behavior.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – <p>The <strong>O()</strong> ‘n’ weight of the benchmark.
+This is used to calculate a weight for the purpose of <strong>O()</strong> analysis.</p>
+<p>For example, if the action being benchmarked is a function that
+sorts a list of length n, then n should be the length of the list.
+If the action being benchmarked is a function that performs
+a constant-time operation, then n should be 1.</p>
+</p></li>
+<li><p><strong>action</strong> – The function to benchmark.</p></li>
+<li><p><strong>setup</strong> – A setup function to run before each iteration.</p></li>
+<li><p><strong>teardown</strong> – A teardown function to run after each iteration.</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to pass to the function being benchmarked.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The results of the benchmark.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.html#simplebench.Results" title="simplebench.Results">Results</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>SimpleBenchTimeoutError</strong> – If the benchmark exceeds the specified timeout for the case.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.runners.SimpleRunner.session">
-<span class="sig-name descname"><span class="pre">session</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.runners.SimpleRunner.session" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">session</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.runners.SimpleRunner.session" title="Link to this definition">🔗</a></dt>
 <dd><p>The session in which the benchmark is run.</p>
 </dd></dl>
 
@@ -188,7 +223,7 @@ from the kwargs values.</p>
 <li><a class="reference internal" href="#simplebench.runners.SimpleRunner.case"><code class="docutils literal notranslate"><span class="pre">SimpleRunner.case</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.runners.SimpleRunner.default_runner"><code class="docutils literal notranslate"><span class="pre">SimpleRunner.default_runner()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.runners.SimpleRunner.kwargs"><code class="docutils literal notranslate"><span class="pre">SimpleRunner.kwargs</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.runners.SimpleRunner.run"><code class="docutils literal notranslate"><span class="pre">SimpleRunner.run</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.runners.SimpleRunner.run"><code class="docutils literal notranslate"><span class="pre">SimpleRunner.run()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.runners.SimpleRunner.session"><code class="docutils literal notranslate"><span class="pre">SimpleRunner.session</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.runners.SimpleRunner.variation_marks"><code class="docutils literal notranslate"><span class="pre">SimpleRunner.variation_marks</span></code></a></li>
 </ul>

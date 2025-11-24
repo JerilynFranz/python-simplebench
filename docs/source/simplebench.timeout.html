@@ -111,109 +111,6 @@ and avoids the complexities of forcibly terminating threads.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.timeout.</span></span><span class="sig-name descname"><span class="pre">TimeoutErrorTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/exceptions/timeout.html#TimeoutErrorTag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></p>
-<p>ErrorTags for timeout-related errors.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.INVALID_EXCEPTION_ARG_TYPE">
-<span class="sig-name descname"><span class="pre">INVALID_EXCEPTION_ARG_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_EXCEPTION_ARG_TYPE'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.INVALID_EXCEPTION_ARG_TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided exception argument is not a valid exception type.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.INVALID_STATE_TYPE">
-<span class="sig-name descname"><span class="pre">INVALID_STATE_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_STATE_TYPE'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.INVALID_STATE_TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided timeout state is not of type <cite>TimeoutState</cite>.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE">
-<span class="sig-name descname"><span class="pre">INVALID_SWALLOW_EXCEPTION_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_SWALLOW_EXCEPTION_TYPE'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided swallow_exception flag is not a boolean.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.INVALID_THREAD_ID_TYPE">
-<span class="sig-name descname"><span class="pre">INVALID_THREAD_ID_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_THREAD_ID_TYPE'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.INVALID_THREAD_ID_TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided thread ID is not of type <cite>ThreadId</cite> (<cite>int</cite>).</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.INVALID_THREAD_ID_VALUE">
-<span class="sig-name descname"><span class="pre">INVALID_THREAD_ID_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_THREAD_ID_VALUE'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.INVALID_THREAD_ID_VALUE" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided thread ID is not a non-negative integer.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE">
-<span class="sig-name descname"><span class="pre">INVALID_TIMEOUT_INTERVAL_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_TIMEOUT_INTERVAL_TYPE'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided timeout interval is not a float or int.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE">
-<span class="sig-name descname"><span class="pre">INVALID_TIMEOUT_INTERVAL_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_TIMEOUT_INTERVAL_VALUE'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided timeout interval is not greater than zero.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.INVALID_TIMER_TYPE">
-<span class="sig-name descname"><span class="pre">INVALID_TIMER_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_TIMER_TYPE'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMER_TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided timer is not of type <cite>threading.Timer</cite>.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT">
-<span class="sig-name descname"><span class="pre">NON_CALLABLE_FUNCTION_ARGUMENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'NON_CALLABLE_FUNCTION_ARGUMENT'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT" title="Link to this definition">🔗</a></dt>
-<dd><p>The provided function argument is not callable.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.STATE_NOT_SET">
-<span class="sig-name descname"><span class="pre">STATE_NOT_SET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'STATE_NOT_SET'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.STATE_NOT_SET" title="Link to this definition">🔗</a></dt>
-<dd><p>The timeout state has not been set.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET">
-<span class="sig-name descname"><span class="pre">SWALLOW_EXCEPTION_NOT_SET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SWALLOW_EXCEPTION_NOT_SET'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET" title="Link to this definition">🔗</a></dt>
-<dd><p>The timeout swallow_exception flag has not been set.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET">
-<span class="sig-name descname"><span class="pre">TARGET_THREAD_ID_NOT_SET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TARGET_THREAD_ID_NOT_SET'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET" title="Link to this definition">🔗</a></dt>
-<dd><p>The target thread ID has not been set.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.TIMED_OUT">
-<span class="sig-name descname"><span class="pre">TIMED_OUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TIMED_OUT'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.TIMED_OUT" title="Link to this definition">🔗</a></dt>
-<dd><p>The operation has timed out.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.TIMEOUT_EXCEEDED">
-<span class="sig-name descname"><span class="pre">TIMEOUT_EXCEEDED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TIMEOUT_EXCEEDED'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.TIMEOUT_EXCEEDED" title="Link to this definition">🔗</a></dt>
-<dd><p>The operation exceeded the allowed time limit.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET">
-<span class="sig-name descname"><span class="pre">TIMEOUT_INTERVAL_NOT_SET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TIMEOUT_INTERVAL_NOT_SET'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET" title="Link to this definition">🔗</a></dt>
-<dd><p>The timeout interval has not been set.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.timeout.TimeoutErrorTag.TIMER_NOT_SET">
-<span class="sig-name descname"><span class="pre">TIMER_NOT_SET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TIMER_NOT_SET'</span></em><a class="headerlink" href="#simplebench.timeout.TimeoutErrorTag.TIMER_NOT_SET" title="Link to this definition">🔗</a></dt>
-<dd><p>The timeout timer has not been set.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="simplebench.timeout.TimeoutState">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.timeout.</span></span><span class="sig-name descname"><span class="pre">TimeoutState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/enums.html#TimeoutState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.TimeoutState" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
@@ -267,30 +164,8 @@ and avoids the complexities of forcibly terminating threads.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.timeout.exceptions.html">simplebench.timeout.exceptions package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_EXCEPTION_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_EXCEPTION_ARG_TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_STATE_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_STATE_TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_THREAD_ID_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_THREAD_ID_TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_THREAD_ID_VALUE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_THREAD_ID_VALUE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.INVALID_TIMER_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMER_TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.STATE_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.STATE_NOT_SET</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.TIMED_OUT"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMED_OUT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.TIMEOUT_EXCEEDED"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMEOUT_EXCEEDED</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag.TIMER_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMER_NOT_SET</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.timeout.exceptions.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.timeout.html">simplebench.timeout.exceptions.timeout module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.timeout.exceptions.timeout.html#simplebench.timeout.exceptions.timeout.TimeoutErrorTag"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.timeout.html">simplebench.timeout.exceptions.timeout module</a></li>
 </ul>
 </li>
 </ul>
@@ -348,25 +223,6 @@ and avoids the complexities of forcibly terminating threads.</p>
 <li><a class="reference internal" href="#simplebench.timeout.Timeout.run"><code class="docutils literal notranslate"><span class="pre">Timeout.run()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.Timeout.state"><code class="docutils literal notranslate"><span class="pre">Timeout.state</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timeout.Timeout.timeout_interval"><code class="docutils literal notranslate"><span class="pre">Timeout.timeout_interval</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_EXCEPTION_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_EXCEPTION_ARG_TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_STATE_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_STATE_TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_THREAD_ID_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_THREAD_ID_TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_THREAD_ID_VALUE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_THREAD_ID_VALUE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.INVALID_TIMER_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMER_TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.STATE_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.STATE_NOT_SET</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.TIMED_OUT"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMED_OUT</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.TIMEOUT_EXCEEDED"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMEOUT_EXCEEDED</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.timeout.TimeoutErrorTag.TIMER_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMER_NOT_SET</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.timeout.TimeoutState"><code class="docutils literal notranslate"><span class="pre">TimeoutState</span></code></a><ul>

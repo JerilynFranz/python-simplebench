@@ -38,7 +38,7 @@ class Iteration:
     any calculations by SimpleBench itself currently.
 
     :ivar n: The complexity n-weight for the iteration. (read only)
-    :vartype n: int
+    :vartype n: int | float
     :ivar rounds: The number of rounds in the iteration. (read only)
     :vartype rounds: int
     :ivar unit: The unit of measurement for the elapsed time.
@@ -64,7 +64,7 @@ class Iteration:
     @format_docstring(DEFAULT_INTERVAL_UNIT=DEFAULT_INTERVAL_UNIT, DEFAULT_INTERVAL_SCALE=DEFAULT_INTERVAL_SCALE)
     def __init__(self,
                  *,
-                 n: int = 1,
+                 n: int | float = 1,
                  rounds: int = 1,
                  unit: str = DEFAULT_INTERVAL_UNIT,
                  scale: float = DEFAULT_INTERVAL_SCALE,
@@ -75,7 +75,7 @@ class Iteration:
         """Initialize an Iteration instance.
 
         :param n: The complexity n-weight for the iteration. Must be a positive integer.
-        :type n: int
+        :type n: int | float
         :param rounds: The number of rounds in the iteration. Must be a positive integer.
         :type rounds: int
         :param unit: The unit of measurement for the elapsed time.
@@ -93,30 +93,30 @@ class Iteration:
         :raises SimpleBenchTypeError: If any of the arguments are of the wrong type.
         :raises SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        self._n = validate_positive_int(
+        self._n: float = validate_positive_float(
             n, 'n',
             _IterationErrorTag.N_ARG_TYPE,
             _IterationErrorTag.N_ARG_VALUE)
-        self._rounds = validate_positive_int(
+        self._rounds: int = validate_positive_int(
             rounds, 'rounds',
             _IterationErrorTag.ROUNDS_ARG_TYPE,
             _IterationErrorTag.ROUNDS_ARG_VALUE)
-        self._unit = validate_non_blank_string(
+        self._unit: str = validate_non_blank_string(
             unit, 'unit',
             _IterationErrorTag.UNIT_ARG_TYPE,
             _IterationErrorTag.UNIT_ARG_VALUE)
-        self._scale = validate_positive_float(
+        self._scale: float = validate_positive_float(
             scale, 'scale',
             _IterationErrorTag.SCALE_ARG_TYPE,
             _IterationErrorTag.SCALE_ARG_VALUE)
-        self._elapsed = validate_non_negative_float(
+        self._elapsed: float = validate_non_negative_float(
             elapsed, 'elapsed',
             _IterationErrorTag.ELAPSED_ARG_TYPE,
             _IterationErrorTag.ELAPSED_ARG_VALUE)
-        self._memory = validate_int(
+        self._memory: int = validate_int(
             memory, 'memory',
             _IterationErrorTag.MEMORY_ARG_TYPE)
-        self._peak_memory = validate_int(
+        self._peak_memory: int = validate_int(
             peak_memory, 'peak_memory',
             _IterationErrorTag.PEAK_MEMORY_ARG_TYPE)
 
@@ -135,8 +135,8 @@ class Iteration:
                 self.peak_memory == other.peak_memory)
 
     @property
-    def n(self) -> int:
-        """The n weight of the iteration"""
+    def n(self) -> float:
+        """The 'n' complexity weight of the iteration for O() analysis."""
         return self._n
 
     @property

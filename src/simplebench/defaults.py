@@ -2,9 +2,11 @@
 """constants for simplebenchmark."""
 import time
 
-
 # Note: The following constants are defined here for easy access and modification.
 # They are used throughout the SimpleBench framework.
+
+DEFAULT_TIMEOUT_GRACE_PERIOD: float = 0.5
+"""Grace period to wait after timeout before forcefully terminating (in seconds)."""
 
 MIN_MEASURED_ITERATIONS: int = 3
 """Minimum number of iterations for statistical analysis."""

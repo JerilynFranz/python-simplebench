@@ -62,6 +62,8 @@ class _DecoratorsErrorTag(ErrorTag):
     """Something other than a str was passed as the use_field_for_n"""
     BENCHMARK_USE_FIELD_FOR_N_VALUE = "BENCHMARK_USE_FIELD_FOR_N_VALUE"
     """The use_field_for_n must be a non-empty string"""
+    BENCHMARK_N_FOR_RUN_INVALID_VALUE = "BENCHMARK_N_FOR_RUN_INVALID_VALUE"
+    """The 'n' value determined for the benchmark run must be a positive integer."""
     BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS = "BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS"
     """The use_field_for_n must be a key in kwargs_variations"""
     BENCHMARK_USE_FIELD_FOR_N_VALUES = "BENCHMARK_USE_FIELD_FOR_N_VALUES"

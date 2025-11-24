@@ -11,10 +11,11 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_TIMER, MIN_MEASURED_ITERATIONS
 from .enums import Color
-from .exceptions import SimpleBenchImportError, _RunnersErrorTag
+from .exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, _RunnersErrorTag
 from .iteration import Iteration
 from .results import Results
 from .tasks import ProgressTracker
+from .timeout import Timeout
 from .validators import validate_positive_int
 
 if TYPE_CHECKING:
@@ -86,11 +87,17 @@ class SimpleRunner:
         """The benchmark :class:`~.case.Case` to run."""
         self.kwargs: dict[str, Any] = kwargs
         """The keyword arguments for the benchmark function."""
-        self.run: Callable[..., Any] = runner if runner is not None else self.default_runner
+        self._runner: Callable[..., Any] = runner if runner is not None else self.default_runner
         """Benchmark runner function. Defaults to :meth:`SimpleRunner.default_runner`.
 
         The runner function must accept the following parameters:
-            n (int): The number of test rounds that will be run by the action on each iteration.
+            n (int | float): The **O()** 'n' weight of the benchmark.
+            This is used to calculate a weight for the purpose of **O()** analysis.
+
+            For example, if the action being benchmarked is a function that
+            sorts a list of length n, then n should be the length of the list.
+            If the action being benchmarked is a function that performs
+            a constant-time operation, then n should be 1.
             action (Callable[..., Any]): The function to benchmark.
             setup (Optional[Callable[..., Any]]): A setup function to run before each iteration.
             teardown (Optional[Callable[..., Any]]): A teardown function to run after each iteration.
@@ -98,6 +105,69 @@ class SimpleRunner:
         """
         self.session: Session | None = session
         """The session in which the benchmark is run."""
+
+    def run(self,
+            *,
+            n: int | float,
+            action: Callable[..., Any],
+            setup: Optional[Callable[..., Any]] = None,
+            teardown: Optional[Callable[..., Any]] = None,
+            kwargs: Optional[dict[str, Any]] = None) -> Results:
+        """Enforce a timeout while running the benchmark with the specified runner.
+
+        This method wraps the benchmark execution in a :class:`~.simplebench.timeout.Timeout`
+        to enforce the timeout specified in the benchmark case.
+
+        .. warning:: **Important Timeout Behavior Notice**
+            If the benchmark exceeds the specified timeout set in the case,
+            a :class:`~.simplebench.exceptions.SimpleBenchTimeoutError`
+            will be raised, and no results will be returned.
+
+            Because the worker thread may still be running in the background after a timeout,
+            it is recommended to exit the program cleanly rather than continuing execution
+            because this can (probably **WILL**) lead to undefined behavior.
+
+        :param n: The **O()** 'n' weight of the benchmark.
+            This is used to calculate a weight for the purpose of **O()** analysis.
+
+            For example, if the action being benchmarked is a function that
+            sorts a list of length n, then n should be the length of the list.
+            If the action being benchmarked is a function that performs
+            a constant-time operation, then n should be 1.
+        :param action: The function to benchmark.
+        :param setup: A setup function to run before each iteration.
+        :param teardown: A teardown function to run after each iteration.
+        :param kwargs: Keyword arguments to pass to the function being benchmarked.
+        :return: The results of the benchmark.
+        :rtype: Results
+        :raises SimpleBenchTimeoutError: If the benchmark exceeds the specified timeout for the case.
+        """
+        # The Timeout class acts similarly to a context manager, but here we use it
+        # to wrap the entire benchmark run to enforce a timeout on the whole operation.
+        # This ensures that if the benchmark takes too long, it will be interrupted
+        # and a timeout exception will be raised.
+        # The run() method of the Timeout class is used to execute the benchmark
+        # with the specified timeout and returns the returned value of the
+        # called function, which in this case is a Results instance.
+        func_name = getattr(action, "__qualname__",
+                            getattr(action, "__name__",
+                                    repr(action)))
+        benchmark_id = self.case.benchmark_id
+        timeout_interval = self.case.timeout
+        try:
+            result = Timeout(timeout_interval).run(
+                self._runner,
+                n=n,
+                action=action,
+                setup=setup,
+                teardown=teardown,
+                kwargs=kwargs)
+        except SimpleBenchTimeoutError as e:
+            raise SimpleBenchTimeoutError(
+                f'Benchmark "{benchmark_id}" timed out after {timeout_interval} seconds without a result',
+                tag=_RunnersErrorTag.SIMPLERUNNER_BENCHMARK_TIMEOUT,
+                func_name=func_name) from e
+        return result
 
     def _timer_function(self, rounds: int) -> Callable[
             [Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]:
@@ -168,28 +238,20 @@ class SimpleRunner:
     def default_runner(
             self,
             *,
-            n: int,
+            n: int | float,
             action: Callable[..., Any],
             setup: Optional[Callable[..., Any]] = None,
             teardown: Optional[Callable[..., Any]] = None,
             kwargs: Optional[dict[str, Any]] = None) -> Results:
-        """Run a generic benchmark using the specified action and test data for rounds.
+        """Run a generic benchmark using the specified action and test 
 
-        This function will execute the benchmark for the given action and
-        collect the results. It is designed for macro-benchmarks (i.e., benchmarks
-        that measure the performance of a function over multiple iterations) where
-        the overhead of the function call is not significant compared with the work
-        done inside the function.
+        :param n: The **O()** 'n' weight of the benchmark. This is used to calculate
+            a weight for the purpose of **O()** analysis.
 
-        Micro-benchmarks (i.e., benchmarks that measure the performance of a fast function
-        over a small number of iterations) require more complex handling to account
-        for the overhead of the function call.
-
-        :param n: The O(n) 'n' weight of the benchmark. This is used to calculate
-            a weight for the purpose of O(n) analysis. For example, if the action being benchmarked
-            is a function that sorts a list of length n, then n should be the
-            length of the list. If the action being benchmarked is a function
-            that performs a constant-time operation, then n should be 1.
+            For example, if the action being benchmarked is a function that
+            sorts a list of length n, then n should be the length of the list.
+            If the action being benchmarked is a function that performs
+            a constant-time operation, then n should be 1.
         :type n: int
         :param action: The action to benchmark.
         :type action: Callable[..., Any]

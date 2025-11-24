@@ -6,7 +6,7 @@ from typing import Any, Callable, Generic, ParamSpec, TypeVar, cast
 
 from ..exceptions import SimpleBenchTimeoutError, SimpleBenchTypeError, SimpleBenchValueError
 from .enums import TimeoutState
-from .exceptions import TimeoutErrorTag
+from .exceptions import _TimeoutErrorTag
 
 # Define a TypeVar for the class instance. This is not used by run.
 _T = TypeVar("_T")
@@ -49,9 +49,33 @@ class Timeout(Generic[_T]):
             sys.exit(1)
     """
     def __init__(self, timeout_interval: float | int):
-        """Initialize the Timeout runner.
+        """Creates a Timeout instance.
+
+        A Timeout instance can be used to run a callable with via the run method
+        in a separate daemon thread with the specified timeout interval.
+
+        If the callable does not complete within the timeout, a SimpleBenchTimeoutError is raised.
+        On Windows, the worker thread will continue running in the background as a daemon thread.
+        On Linux or Unix based platforms, the worker thread may be forcefully terminated after a
+        grace period.
+
+        .. warning:: **You should avoid continuing execution after a timeout.**
+
+            The worker thread may still be running in the background and this can lead to
+            undefined behavior. As may the forceful termination of the worker thread if
+            it is **not** still running.
+
+            This design ensures that the main thread remains responsive and prevents 'hanging'
+            due to unresponsive or long-running operations.
+
+            So you should catch the SimpleBenchTimeoutError exception, perform any necessary cleanup,
+            and then exit the program cleanly.
+
+        A Timeout instance can be reused to run multiple callables with the same timeout interval.
 
         :param timeout_interval: ``float`` or ``int`` duration to wait for the callable to complete.
+        :raises SimpleBenchTypeError: If `timeout_interval` is not a float or int.
+        :raises SimpleBenchValueError: If `timeout_interval` is not greater than zero.
         """
         self._set_timeout_interval(timeout_interval)
         self._worker_thread: threading.Thread | None = None
@@ -70,11 +94,11 @@ class Timeout(Generic[_T]):
         if not isinstance(value, (float, int)):
             raise SimpleBenchTypeError(
                 "timeout_interval must be a float or int",
-                tag=TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE)
+                tag=_TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE)
         if value <= 0:
             raise SimpleBenchValueError(
                 "timeout_interval must be greater than zero",
-                tag=TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE)
+                tag=_TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE)
         setattr(self, "_private_timeout_interval", float(value))
 
     @property
@@ -87,7 +111,7 @@ class Timeout(Generic[_T]):
         if not isinstance(value, TimeoutState):
             raise SimpleBenchTypeError(
                 "state must be a TimeoutState",
-                tag=TimeoutErrorTag.INVALID_STATE_TYPE)
+                tag=_TimeoutErrorTag.INVALID_STATE_TYPE)
         setattr(self, "_private_state", value)
 
     def _target_wrapper(self, func: Callable[..., Any], *args: Any, **kwargs: Any):
@@ -120,7 +144,7 @@ class Timeout(Generic[_T]):
         if not callable(_calling_func):
             raise SimpleBenchTypeError(
                 f"The provided _calling_func '{func_name}' is not callable",
-                tag=TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT)
+                tag=_TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT)
         self._worker_thread = threading.Thread(
             target=self._target_wrapper,
             args=(_calling_func,) + args,
@@ -138,7 +162,7 @@ class Timeout(Generic[_T]):
             self._set_state(TimeoutState.TIMED_OUT)
             raise SimpleBenchTimeoutError(
                 f"Execution of '{func_name}' timed out after {self.timeout_interval} seconds",
-                tag=TimeoutErrorTag.TIMED_OUT,
+                tag=_TimeoutErrorTag.TIMED_OUT,
                 func_name=func_name
                 )
 

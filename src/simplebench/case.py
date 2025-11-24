@@ -7,7 +7,9 @@ from copy import copy
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional
 
-from .defaults import DEFAULT_ITERATIONS, DEFAULT_MAX_TIME, DEFAULT_MIN_TIME, DEFAULT_ROUNDS, DEFAULT_WARMUP_ITERATIONS
+import simplebench.defaults as defaults
+
+from .doc_utils import format_docstring
 from .enums import Color, Section
 from .exceptions import (
     SimpleBenchAttributeError,
@@ -87,7 +89,102 @@ def generate_benchmark_id(obj: object | None, action: Callable[..., Any], group:
 
 
 class Case:
-    '''Declaration of a benchmark case.
+    '''
+    :param benchmark_id: An optional unique identifier for the benchmark case.
+
+        If None, a transient ID is assigned. This is meant to provide a stable identifier for the
+        benchmark case across multiple runs for tracking purposes. If not provided,
+        an attempt will be made to generate a stable ID based on the the action function
+        name, signature, and group.
+
+        If that is not possible, a transient ID based on the instance's id() will be used.
+        If a transient ID is used, it will differ between runs and cannot be used to
+        correlate results across multiple runs.
+
+        Benchmark ids must be unique within a benchmarking session and stable across runs
+        or they cannot be used for tracking benchmark results over time.
+
+    :param git_info: An optional GitInfo instance representing the state of the Git repository.
+
+        If not provided, the GitInfo will be automatically retrieved from the current
+        context of the caller if the code is part of a Git repository.
+
+    :param action: The function to perform the benchmark. This function must
+        accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
+        See the :class:`~simplebench.protocols.ActionRunner` protocol for the exact function
+        signature required.
+
+        It must return a `Results` object.
+
+    :param group: The benchmark reporting group to which the benchmark case belongs.
+
+    :param title: The title of the benchmark case.
+
+        If None, the name of the action function will be used. Cannot be a blank
+        string (a string that is empty or consists only of whitespace).
+
+    :param description: A brief description of the benchmark case.
+
+        If None, the docstring of the action function will be used, or '(no description)' if no docstring
+        is available. Cannot be blank.
+    :param iterations: The minimum number of iterations to run for the benchmark.
+    :param warmup_iterations: The number of warmup iterations to run before the benchmark.
+    :param rounds: The number of rounds to run for the benchmark.
+
+        Rounds are multiple runs of calls to the action within an iteration to mitigate timer
+        quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
+        functions are called only once per iteration (all rounds in the same iteration share the same
+        setup/teardown context).
+    :param min_time: The minimum time for the benchmark in seconds.
+    :param max_time: The maximum time for the benchmark in seconds.
+    :param timeout: How long to wait before timing out a benchmark run (in seconds).
+
+        If None, it waits the full duration of ``max_time`` plus the default timeout
+        grace period in seconds ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a
+        positive float or int that is greater than ``max_time`` if provided.
+        This is a safety mechanism to prevent runaway benchmarks.
+
+        If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``
+        will be raised.
+    :param variation_cols: kwargs to be used for cols to denote kwarg variations.
+
+        Each key is a keyword argument name, and the value is the column label to use for that
+        argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
+        added to the output of reporters that support them as columns of data with the specified labels.
+        If None, an empty dict is used.
+    :param kwargs_variations: A mapping of keyword argument key names to
+        a list of possible values for that argument. Default is {}. When tests are run, the benchmark
+        will be executed for each combination of the specified keyword argument variations. The action
+        function will be called with a `bench` parameter that is an instance of the runner and the
+        keyword arguments for the current variation.
+        If None, an empty dict is used.
+    :param runner: A custom runner class for the benchmark.
+        Any custom runner classes must be a subclass of SimpleRunner and must have a method
+        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
+        The action function will be called with a `bench` parameter that is an instance of the
+        custom runner.
+        It may also accept additional parameters to the run method as needed. If additional
+        parameters are needed for the custom runner, they will need to be passed to the run
+        method as keyword arguments.
+        No support is provided for passing additional parameters to a custom runner from the @benchmark
+        decorator.
+    :param callback:
+        A callback function for additional processing of the report. The function should accept
+        four arguments: the Case instance, the Section, the Format, and the generated report data.
+        The callback function will be called with the following arguments:
+            - case (Case): The `Case` instance processed for the report.
+            - section (Section): The `Section` of the report.
+            - output_format (Format): The `Format` of the report.
+            - output (Any): The generated report data. Note that the actual type of this data will
+                depend on the Format specified for the report and the type generated by the
+                reporter for that Format
+        Omit if no callback is needed by a reporter.
+    :param options: A list of additional options for the benchmark case.
+        Each option is an instance of ReporterOption or a subclass of ReporterOption.
+        Reporter options can be used to customize the output of the benchmark reports for
+        specific reporters. Reporters are responsible for extracting applicable ReporterOptions
+        from the list of options themselves.
+        If None, an empty list is used.
 
     A benchmark case defines the specific benchmark to be run, including the
     action to be performed, the parameters for the benchmark, and any variations
@@ -169,13 +266,16 @@ class Case:
                 Case(action=my_benchmark_action)
             ]
             main(cases_list)
+
+
     '''
     __slots__ = ('_group', '_title', '_description', '_action',
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
                  '_variation_cols', '_kwargs_variations', '_runner',
                  '_callback', '_results', '_options', '_rounds',
-                 '_benchmark_id', '_git_info')
+                 '_benchmark_id', '_git_info', '_timeout')
 
+    @format_docstring(DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD)
     def __init__(self, *,
                  benchmark_id: Optional[str] = None,
                  git_info: Optional[GitInfo] = None,
@@ -183,11 +283,12 @@ class Case:
                  group: str = 'default',
                  title: Optional[str] = None,
                  description: Optional[str] = None,
-                 iterations: int = DEFAULT_ITERATIONS,
-                 warmup_iterations: int = DEFAULT_WARMUP_ITERATIONS,
-                 rounds: int = DEFAULT_ROUNDS,
-                 min_time: float = DEFAULT_MIN_TIME,
-                 max_time: float = DEFAULT_MAX_TIME,
+                 iterations: int = defaults.DEFAULT_ITERATIONS,
+                 warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
+                 rounds: int = defaults.DEFAULT_ROUNDS,
+                 min_time: float = defaults.DEFAULT_MIN_TIME,
+                 max_time: float = defaults.DEFAULT_MAX_TIME,
+                 timeout: float | int | None = None,
                  variation_cols: Optional[dict[str, str]] = None,
                  kwargs_variations: Optional[dict[str, list[Any]]] = None,
                  runner: Optional[type[SimpleRunner]] = None,
@@ -197,64 +298,73 @@ class Case:
 
         The only REQUIRED parameter is `action`.
 
-        :param benchmark_id: An optional unique identifier for the benchmark case. If None,
-            a transient ID is assigned. This is meant to provide a stable identifier for the
+        :param benchmark_id: An optional unique identifier for the benchmark case.
+
+            If None, a transient ID is assigned. This is meant to provide a stable identifier for the
             benchmark case across multiple runs for tracking purposes. If not provided,
             an attempt will be made to generate a stable ID based on the the action function
             name, signature, and group. If that is not possible, a transient ID based
             on the instance's id() will be used. If a transient ID is used, it will differ
             between runs and cannot be used to correlate results across multiple runs.
 
-            Benchmark ids must be unique within a benchmarking session.
-        :type benchmark_id: Optional[str]
+            Benchmark ids must be unique within a benchmarking session and stable across runs
+            or they cannot be used for tracking benchmark results over time.
         :param git_info: An optional GitInfo instance representing the state of the Git repository.
+
             If not provided, the GitInfo will be automatically retrieved from the current
             context of the caller if the code is part of a Git repository.
-        :type git_info: Optional[GitInfo]
-        :param action: The function to perform the benchmark. This function must
-            accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
-            See the `ActionRunner` protocol for the exact signature required.
-            It must return a `Results` object.
-        :type action: ActionRunner
+        :param action: The function to perform the benchmark.
+
+            This function must accept a `bench` instance of type SimpleRunner and
+            arbitrary keyword arguments ('**kwargs'). See the ``ActionRunner``
+            protocol for the exact signature required. It must return a `Results` object.
         :param group: The benchmark reporting group to which the benchmark case belongs.
-        :type group: str
-        :param title: The title of the benchmark case. If None, the name of the action
-            function will be used. Cannot be blank.
-        :type title: Optional[str]
-        :param description: A brief description of the benchmark case. If None,
-            the docstring of the action function will be used, or '(no description)' if no docstring
-            is available. Cannot be blank.
-        :type description: Optional[str]
-        :param iterations: The minimum number of iterations to run for
-            the benchmark.
-        :type iterations: int
-        :param warmup_iterations: The number of warmup iterations
-            to run before the benchmark.
-        :type warmup_iterations: int
+
+        Benchmarks with the same group can be selected for execution without running
+        other benchmarks. If not specified, the default group 'default' is used.
+
+        :param title: The title of the benchmark case.
+
+            If None, the name of the action function will be used. Cannot be blank.
+        :param description: A brief description of the benchmark case.
+
+            If None, the docstring of the action function will be used, or
+            '(no description)' if no docstring is available. Cannot be blank.
+        :param iterations: The minimum number of iterations to run for the benchmark.
+        :param warmup_iterations: The number of warmup iterations to run before the benchmark.
         :param rounds: The number of rounds to run for the benchmark.
+
             Rounds are multiple runs of calls to the action within an iteration to mitigate timer
             quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
             functions are called only once per iteration (all rounds in the same iteration share the same
             setup/teardown context).
-        :type rounds: int
-        :param min_time: The minimum time for the benchmark in seconds.
-        :type min_time: float | int
-        :param max_time: The maximum time for the benchmark in seconds.
-        :type max_time: float | int
-        :param variation_cols: kwargs to be used for cols to denote kwarg
-            variations. Each key is a keyword argument name, and the value is the column label to use for that
-            argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
-            added to the output of reporters that support them as columns of data with the specified labels.
+        :param min_time: The minimum time for the benchmark to run in seconds.
+        :param max_time: The maximum time for the benchmark run in seconds.
+        :param timeout: How long to wait before timing out a benchmark run (in seconds).
+
+            If None, it waits the full duration of ``max_time`` plus the default timeout grace period
+            ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a positive float or int that is greater
+            than ``max_time`` if provided. This is a safety mechanism to prevent runaway benchmarks.
+
+            If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``
+            will be raised, and the benchmark case's state will be set to TIMED_OUT.
+        :param variation_cols: kwargs to be used for cols to denote kwarg variations.
+
+            Each key is a keyword argument name, and the value is the column label to use for that
+            argument. Only keywords that are also in `kwargs_variations` can be used here. These
+            fields will be added to the output of reporters that support them as columns of data
+            with the specified labels.
+
             If None, an empty dict is used.
-        :type variation_cols: Optional[dict[str, str]]
-        :param kwargs_variations: A mapping of keyword argument key names to
-            a list of possible values for that argument. Default is {}. When tests are run, the benchmark
+        :param kwargs_variations: A map of keyword argument names to a list of possible values for that argument.
+
+            Default is {}. When tests are run, the benchmark
             will be executed for each combination of the specified keyword argument variations. The action
             function will be called with a `bench` parameter that is an instance of the runner and the
             keyword arguments for the current variation.
             If None, an empty dict is used.
-        :type kwargs_variations: Optional[dict[str, list[Any]]]
         :param runner: A custom runner class for the benchmark.
+
             Any custom runner classes must be a subclass of SimpleRunner and must have a method
             named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
             The action function will be called with a `bench` parameter that is an instance of the
@@ -264,26 +374,24 @@ class Case:
             method as keyword arguments.
             No support is provided for passing additional parameters to a custom runner from the @benchmark
             decorator.
-        :type runner: type[SimpleRunner]
-        :param callback:
-            A callback function for additional processing of the report. The function should accept
-            four arguments: the Case instance, the Section, the Format, and the generated report data.
-            The callback function will be called with the following arguments:
+        :param callback: A callback function for additional processing of the report.
+
+            The function should must four arguments: the Case instance, the Section,
+            the Format, and the generated report data.
                 - case (Case): The `Case` instance processed for the report.
                 - section (Section): The `Section` of the report.
                 - output_format (Format): The `Format` of the report.
                 - output (Any): The generated report data. Note that the actual type of this data will
-                  depend on the Format specified for the report and the type generated by the
-                  reporter for that Format
+                    depend on the Format specified for the report and the type generated by the
+                    reporter for that Format
             Omit if no callback is needed by a reporter.
-        :type callback: Optional[ReporterCallback]
         :param options: A list of additional options for the benchmark case.
+
             Each option is an instance of ReporterOption or a subclass of ReporterOption.
             Reporter options can be used to customize the output of the benchmark reports for
             specific reporters. Reporters are responsible for extracting applicable ReporterOptions
             from the list of options themselves.
             If None, an empty list is used.
-        :type options: Optional[list[ReporterOption]]
         """
         self._group = validate_non_blank_string(
                         group, "group",
@@ -321,6 +429,19 @@ class Case:
                         max_time, "max_time",
                         _CaseErrorTag.INVALID_MAX_TIME_TYPE,
                         _CaseErrorTag.INVALID_MAX_TIME_VALUE)
+
+        if timeout is None:
+            timeout_value = self._max_time + defaults.DEFAULT_TIMEOUT_GRACE_PERIOD
+        else:
+            timeout_value = validate_positive_float(
+                            timeout, "timeout",
+                            _CaseErrorTag.INVALID_TIMEOUT_TYPE,
+                            _CaseErrorTag.INVALID_TIMEOUT_VALUE)
+            if timeout_value <= self._max_time:
+                raise SimpleBenchValueError(
+                    f'Invalid timeout: {timeout_value}. Must be greater than max_time {self._max_time}.',
+                    tag=_CaseErrorTag.INVALID_TIMEOUT_LESS_EQUAL_MAX_TIME)
+        self._timeout: float = timeout_value
         self._benchmark_id: str
         if benchmark_id is None:
             self._benchmark_id = generate_benchmark_id(self, action, group)
@@ -660,6 +781,11 @@ class Case:
     def max_time(self) -> float:
         """The maximum time for the benchmark in seconds."""
         return self._max_time
+
+    @property
+    def timeout(self) -> float:
+        """The timeout for the benchmark in seconds."""
+        return self._timeout
 
     @property
     def variation_cols(self) -> dict[str, str]:

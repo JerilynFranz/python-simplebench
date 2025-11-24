@@ -56,6 +56,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">min_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">variation_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">kwargs_variations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">runner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -65,7 +66,106 @@
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/case.html#Case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.Case" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Declaration of a benchmark case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>benchmark_id</strong> – <p>An optional unique identifier for the benchmark case.</p>
+<p>If None, a transient ID is assigned. This is meant to provide a stable identifier for the
+benchmark case across multiple runs for tracking purposes. If not provided,
+an attempt will be made to generate a stable ID based on the the action function
+name, signature, and group.</p>
+<p>If that is not possible, a transient ID based on the instance’s id() will be used.
+If a transient ID is used, it will differ between runs and cannot be used to
+correlate results across multiple runs.</p>
+<p>Benchmark ids must be unique within a benchmarking session and stable across runs
+or they cannot be used for tracking benchmark results over time.</p>
+</p></li>
+<li><p><strong>git_info</strong> – <p>An optional GitInfo instance representing the state of the Git repository.</p>
+<p>If not provided, the GitInfo will be automatically retrieved from the current
+context of the caller if the code is part of a Git repository.</p>
+</p></li>
+<li><p><strong>action</strong> – <p>The function to perform the benchmark. This function must
+accept a <cite>bench</cite> instance of type SimpleRunner and arbitrary keyword arguments (’<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs’).
+See the <a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionRunner</span></code></a> protocol for the exact function
+signature required.</p>
+<p>It must return a <cite>Results</cite> object.</p>
+</p></li>
+<li><p><strong>group</strong> – The benchmark reporting group to which the benchmark case belongs.</p></li>
+<li><p><strong>title</strong> – <p>The title of the benchmark case.</p>
+<p>If None, the name of the action function will be used. Cannot be a blank
+string (a string that is empty or consists only of whitespace).</p>
+</p></li>
+<li><p><strong>description</strong> – <p>A brief description of the benchmark case.</p>
+<p>If None, the docstring of the action function will be used, or ‘(no description)’ if no docstring
+is available. Cannot be blank.</p>
+</p></li>
+<li><p><strong>iterations</strong> – The minimum number of iterations to run for the benchmark.</p></li>
+<li><p><strong>warmup_iterations</strong> – The number of warmup iterations to run before the benchmark.</p></li>
+<li><p><strong>rounds</strong> – <p>The number of rounds to run for the benchmark.</p>
+<p>Rounds are multiple runs of calls to the action within an iteration to mitigate timer
+quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
+functions are called only once per iteration (all rounds in the same iteration share the same
+setup/teardown context).</p>
+</p></li>
+<li><p><strong>min_time</strong> – The minimum time for the benchmark in seconds.</p></li>
+<li><p><strong>max_time</strong> – The maximum time for the benchmark in seconds.</p></li>
+<li><p><strong>timeout</strong> – <p>How long to wait before timing out a benchmark run (in seconds).</p>
+<p>If None, it waits the full duration of <code class="docutils literal notranslate"><span class="pre">max_time</span></code> plus the default timeout
+grace period in seconds ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a
+positive float or int that is greater than <code class="docutils literal notranslate"><span class="pre">max_time</span></code> if provided.
+This is a safety mechanism to prevent runaway benchmarks.</p>
+<p>If the timeout is reached during a run, a <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleBenchTimeoutError`</span></code>
+will be raised.</p>
+</p></li>
+<li><p><strong>variation_cols</strong> – <p>kwargs to be used for cols to denote kwarg variations.</p>
+<p>Each key is a keyword argument name, and the value is the column label to use for that
+argument. Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These fields will be
+added to the output of reporters that support them as columns of data with the specified labels.
+If None, an empty dict is used.</p>
+</p></li>
+<li><p><strong>kwargs_variations</strong> – A mapping of keyword argument key names to
+a list of possible values for that argument. Default is {}. When tests are run, the benchmark
+will be executed for each combination of the specified keyword argument variations. The action
+function will be called with a <cite>bench</cite> parameter that is an instance of the runner and the
+keyword arguments for the current variation.
+If None, an empty dict is used.</p></li>
+<li><p><strong>runner</strong> – A custom runner class for the benchmark.
+Any custom runner classes must be a subclass of SimpleRunner and must have a method
+named <cite>run</cite> that accepts the same parameters as SimpleRunner.run and returns a Results object.
+The action function will be called with a <cite>bench</cite> parameter that is an instance of the
+custom runner.
+It may also accept additional parameters to the run method as needed. If additional
+parameters are needed for the custom runner, they will need to be passed to the run
+method as keyword arguments.
+No support is provided for passing additional parameters to a custom runner from the &#64;benchmark
+decorator.</p></li>
+<li><p><strong>callback</strong> – <p>A callback function for additional processing of the report. The function should accept
+four arguments: the Case instance, the Section, the Format, and the generated report data.
+The callback function will be called with the following arguments:</p>
+<blockquote>
+<div><ul>
+<li><p>case (Case): The <cite>Case</cite> instance processed for the report.</p></li>
+<li><p>section (Section): The <cite>Section</cite> of the report.</p></li>
+<li><p>output_format (Format): The <cite>Format</cite> of the report.</p></li>
+<li><dl class="simple">
+<dt>output (Any): The generated report data. Note that the actual type of this data will</dt><dd><p>depend on the Format specified for the report and the type generated by the
+reporter for that Format</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Omit if no callback is needed by a reporter.</p>
+</p></li>
+<li><p><strong>options</strong> – A list of additional options for the benchmark case.
+Each option is an instance of ReporterOption or a subclass of ReporterOption.
+Reporter options can be used to customize the output of the benchmark reports for
+specific reporters. Reporters are responsible for extracting applicable ReporterOptions
+from the list of options themselves.
+If None, an empty list is used.</p></li>
+</ul>
+</dd>
+</dl>
 <p>A benchmark case defines the specific benchmark to be run, including the
 action to be performed, the parameters for the benchmark, and any variations
 of those parameters as well as the reporting group and title for the benchmark.</p>
@@ -123,8 +223,8 @@ benchmark cases remain consistent throughout their lifecycle.</p>
 <p>The results of the benchmark runs are stored in the <cite>results</cite> property, which is a list
 of Results objects. Each Results object corresponds to a specific combination of
 keyword argument variations.</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Minimal Example</span><a class="headerlink" href="#id5" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Minimal Example</span><a class="headerlink" href="#id7" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
       <span class="n">Case</span><span class="p">,</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="n">Results</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span>
 
@@ -151,7 +251,7 @@ keyword argument variations.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">action</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></em><a class="headerlink" href="#simplebench.case.Case.action" title="Link to this definition">🔗</a></dt>
 <dd><p>The function to perform the benchmark.</p>
 <p>The function must accept a <cite>bench</cite> parameter of type SimpleRunner and
-arbitrary keyword arguments (’<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs’) and return a Results object.</p>
+arbitrary keyword arguments (’<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs’) and return a Results object.</p>
 <p>Example:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">my_benchmark_action</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup_function</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -244,8 +344,8 @@ the ReporterOption, and the output object. Leave as None if no callback is neede
 <p>Each key is a keyword argument name, and the value is a list of possible values.</p>
 <p>When tests are run, the benchmark will be executed for each combination of the specified
 keyword argument variations. For example, if <cite>kwargs_variations</cite> is</p>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id6" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id8" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="o">...</span>
   <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="p">{</span>
           <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
@@ -256,8 +356,8 @@ keyword argument variations. For example, if <cite>kwargs_variations</cite> is</
 </div>
 </div>
 <p>The benchmark will be run 4 times with the following combinations of keyword arguments:</p>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id7" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id9" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
 <span class="linenos">2</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
 <span class="linenos">3</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
@@ -318,8 +418,8 @@ Only keywords that are also in <cite>kwargs_variations</cite> can be used here. 
 added to the output of reporters that support them as columns of data with the specified labels.</p>
 <p>When tests are run, the benchmark will be executed for each combination of the specified
 keyword argument variations. For example, if <cite>kwargs_variations</cite> is</p>
-<div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id8" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id10" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="o">...</span>
   <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="p">{</span>
           <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
@@ -330,8 +430,8 @@ keyword argument variations. For example, if <cite>kwargs_variations</cite> is</
 </div>
 </div>
 <p>The benchmark will be run 4 times with the following combinations of keyword arguments:</p>
-<div class="literal-block-wrapper docutils container" id="id9">
-<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id9" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id11" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
 <span class="linenos">2</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
 <span class="linenos">3</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
@@ -389,7 +489,7 @@ Each iteration will run the specified number of rounds after setup and before te
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case.html#Case.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.Case.run" title="Link to this definition">🔗</a></dt>
@@ -401,7 +501,7 @@ benchmarks, the results will be stored in the <cite>self.results</cite> attribut
 control verbosity, and pass CLI arguments to the benchmark runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>session</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><em>Session</em></a><em>]</em>) – The session to use for the benchmark case.</p>
+<dd class="field-odd"><p><strong>session</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><em>Session</em></a><em>]</em>) – The session to use for the benchmark case.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -452,6 +552,12 @@ statistical analysis.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.Case.timeout">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.Case.timeout" title="Link to this definition">🔗</a></dt>
+<dd><p>The timeout for the benchmark in seconds.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.title">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.case.Case.title" title="Link to this definition">🔗</a></dt>
 <dd><p>The name of the benchmark case.</p>
@@ -472,7 +578,7 @@ Cannot be blank.</p>
 <dl class="simple">
 <dt>An action function must accept the following two parameters:</dt><dd><ul class="simple">
 <li><p>bench: SimpleRunner</p></li>
-<li><p><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Arbitrary keyword arguments</p></li>
+<li><p><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Arbitrary keyword arguments</p></li>
 </ul>
 </dd>
 </dl>
@@ -736,6 +842,7 @@ a transient ID based on the instance’s id() will be used.</p>
 <li><a class="reference internal" href="#simplebench.case.Case.run"><code class="docutils literal notranslate"><span class="pre">Case.run()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.runner"><code class="docutils literal notranslate"><span class="pre">Case.runner</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.section_mean"><code class="docutils literal notranslate"><span class="pre">Case.section_mean()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.Case.timeout"><code class="docutils literal notranslate"><span class="pre">Case.timeout</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.title"><code class="docutils literal notranslate"><span class="pre">Case.title</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.validate_action_signature"><code class="docutils literal notranslate"><span class="pre">Case.validate_action_signature()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.validate_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.validate_kwargs_variations()</span></code></a></li>

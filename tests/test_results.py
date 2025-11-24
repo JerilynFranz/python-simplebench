@@ -106,21 +106,6 @@ def base_iterations() -> list[Iteration]:
         ),
         exception=SimpleBenchValueError,
         exception_tag=_ResultsErrorTag.N_INVALID_ARG_VALUE)),
-    idspec("RESULTS_003", TestAction(
-        name="non-integer n",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group',
-            title='default_title',
-            description='default_description',
-            n=1.5,  # type: ignore[arg-type]
-            rounds=1,
-            total_elapsed=1.0,
-            iterations=base_iterations()
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.N_INVALID_ARG_TYPE)),
     idspec("RESULTS_004", TestAction(
         name="non-string group",
         action=Results,

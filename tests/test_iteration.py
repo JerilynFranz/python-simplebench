@@ -35,55 +35,48 @@ from .testspec import TestAction, idspec
         exception=SimpleBenchValueError,
         exception_tag=_IterationErrorTag.N_ARG_VALUE)),
     idspec("ITERATION_004", TestAction(
-        name="Bad n arg value (float)",
-        action=Iteration,
-        args=[],
-        kwargs={'n': 1.0},
-        exception=SimpleBenchTypeError,
-        exception_tag=_IterationErrorTag.N_ARG_TYPE)),
-    idspec("ITERATION_005", TestAction(
         name="Bad elapsed arg type (str)",
         action=Iteration,
         args=[],
         kwargs={'elapsed': 'a'},
         exception=SimpleBenchTypeError,
         exception_tag=_IterationErrorTag.ELAPSED_ARG_TYPE)),
-    idspec("ITERATION_006", TestAction(
+    idspec("ITERATION_005", TestAction(
         name="Bad elapsed arg value (negative)",
         action=Iteration,
         args=[],
         kwargs={'elapsed': -1.0},
         exception=SimpleBenchValueError,
         exception_tag=_IterationErrorTag.ELAPSED_ARG_VALUE)),
-    idspec("ITERATION_007", TestAction(
+    idspec("ITERATION_006", TestAction(
         name="Bad unit arg type (int)",
         action=Iteration,
         args=[],
         kwargs={'unit': 1},
         exception=SimpleBenchTypeError,
         exception_tag=_IterationErrorTag.UNIT_ARG_TYPE)),
-    idspec("ITERATION_008", TestAction(
+    idspec("ITERATION_007", TestAction(
         name="Bad unit arg value (empty string)",
         action=Iteration,
         args=[],
         kwargs={'unit': ''},
         exception=SimpleBenchValueError,
         exception_tag=_IterationErrorTag.UNIT_ARG_VALUE)),
-    idspec("ITERATION_009", TestAction(
+    idspec("ITERATION_008", TestAction(
         name="bad scale arg type (str)",
         action=Iteration,
         args=[],
         kwargs={'scale': '1'},
         exception=SimpleBenchTypeError,
         exception_tag=_IterationErrorTag.SCALE_ARG_TYPE)),
-    idspec("ITERATION_010", TestAction(
+    idspec("ITERATION_009", TestAction(
         name="bad scale arg value (non-positive float)",
         action=Iteration,
         args=[],
         kwargs={'scale': 0.0},
         exception=SimpleBenchValueError,
         exception_tag=_IterationErrorTag.SCALE_ARG_VALUE)),
-    idspec("ITERATION_011", TestAction(
+    idspec("ITERATION_010", TestAction(
         name="Good args",
         action=Iteration,
         args=[],
@@ -96,7 +89,7 @@ from .testspec import TestAction, idspec
                                         result.scale == 1e-3 and
                                         result.per_round_elapsed == 0.01 and
                                         result.ops_per_second == 100.0))),
-    idspec("ITERATION_012", TestAction(
+    idspec("ITERATION_011", TestAction(
         name="Good args with zero elapsed time",
         action=Iteration,
         args=[],
@@ -109,26 +102,26 @@ from .testspec import TestAction, idspec
                                         result.scale == 1e-3 and
                                         result.per_round_elapsed == 0.0 and
                                         result.ops_per_second == 0.0))),
-    idspec("ITERATION_013", TestAction(
+    idspec("ITERATION_012", TestAction(
         name="unknown kw arg",
         action=Iteration,
         args=[],
         kwargs={'unknown_arg': 0},
         exception=TypeError)),
-    idspec("ITERATION_014", TestAction(
+    idspec("ITERATION_013", TestAction(
         name="positional argument for kw_only field",
         action=Iteration,
         args=[1],
         kwargs={},
         exception=TypeError)),
-    idspec("ITERATION_015", TestAction(
+    idspec("ITERATION_014", TestAction(
         name="Bad memory arg type (float)",
         action=Iteration,
         args=[],
         kwargs={'memory': 1.0},
         exception=SimpleBenchTypeError,
         exception_tag=_IterationErrorTag.MEMORY_ARG_TYPE)),
-    idspec("ITERATION_016", TestAction(
+    idspec("ITERATION_015", TestAction(
         name="Bad peak_memory arg type (float)",
         action=Iteration,
         args=[],
@@ -146,33 +139,33 @@ def test_iteration_init(testspec: TestAction) -> None:
 
 
 @pytest.mark.parametrize("testspec", [
-    idspec("ITERATION_001", TestAction(
+    idspec("ITERATION_016", TestAction(
         name="Iteration Section - Section.OPS",
         action=Iteration(elapsed=4.0, scale=1.0).iteration_section,
         args=[Section.OPS],
         validate_result=lambda result: (result == 0.25))),
-    idspec("ITERATION_002", TestAction(
+    idspec("ITERATION_017", TestAction(
         name="Iteration Section - Section.TIMING",
         action=Iteration(elapsed=4.0, scale=1.0).iteration_section,
         args=[Section.TIMING],
         validate_result=lambda result: (result == 4.0))),
-    idspec("ITERATION_003", TestAction(
+    idspec("ITERATION_018", TestAction(
         name="Iteration Section - Section.MEMORY",
         action=Iteration(memory=1024).iteration_section,
         args=[Section.MEMORY],
         validate_result=lambda result: (result == 1024))),
-    idspec("ITERATION_004", TestAction(
+    idspec("ITERATION_019", TestAction(
         name="Iteration Section - Section.PEAK_MEMORY",
         action=Iteration(peak_memory=2048).iteration_section,
         args=[Section.PEAK_MEMORY],
         validate_result=lambda result: (result == 2048))),
-    idspec("ITERATION_005", TestAction(
+    idspec("ITERATION_020", TestAction(
         name="Iteration Section - Section.NULL",
         action=Iteration().iteration_section,
         args=[Section.NULL],
         exception=SimpleBenchValueError,
         exception_tag=_IterationErrorTag.ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE)),
-    idspec("ITERATION_006", TestAction(
+    idspec("ITERATION_021", TestAction(
         name="Iteration Section - Bad section type (str)",
         action=Iteration().iteration_section,
         args=['bad_section'],
@@ -192,7 +185,7 @@ def test_repr() -> None:
     """Test the ``__repr__`` method of the Iteration class."""
     it = Iteration(n=10, elapsed=5.0, unit='ms', scale=1e-3, memory=512, peak_memory=1024)
     repr_str = repr(it)
-    expected_str = ("Iteration(n=10, elapsed=5.0, unit='ms', "
+    expected_str = ("Iteration(n=10.0, elapsed=5.0, unit='ms', "
                     "scale=0.001, rounds=1, memory=512, peak_memory=1024)")
     assert repr_str == expected_str, f"Unexpected repr string: {repr_str}"
 

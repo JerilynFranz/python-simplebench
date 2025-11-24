@@ -12,3 +12,5 @@ class _RunnersErrorTag(ErrorTag):
     """The rounds argument was not an int"""
     SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE = "SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE"
     """The rounds argument was less than 1"""
+    SIMPLERUNNER_BENCHMARK_TIMEOUT = "SIMPLERUNNER_BENCHMARK_TIMEOUT"
+    """The benchmark execution exceeded the allowed time limit."""

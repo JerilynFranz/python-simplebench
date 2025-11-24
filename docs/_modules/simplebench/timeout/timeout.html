@@ -45,7 +45,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTimeoutError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutState</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_TimeoutErrorTag</span>
 
 <span class="c1"># Define a TypeVar for the class instance. This is not used by run.</span>
 <span class="n">_T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T&quot;</span><span class="p">)</span>
@@ -90,9 +90,33 @@
 <span class="sd">            sys.exit(1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Timeout runner.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a Timeout instance.</span>
+
+<span class="sd">        A Timeout instance can be used to run a callable with via the run method</span>
+<span class="sd">        in a separate daemon thread with the specified timeout interval.</span>
+
+<span class="sd">        If the callable does not complete within the timeout, a SimpleBenchTimeoutError is raised.</span>
+<span class="sd">        On Windows, the worker thread will continue running in the background as a daemon thread.</span>
+<span class="sd">        On Linux or Unix based platforms, the worker thread may be forcefully terminated after a</span>
+<span class="sd">        grace period.</span>
+
+<span class="sd">        .. warning:: **You should avoid continuing execution after a timeout.**</span>
+
+<span class="sd">            The worker thread may still be running in the background and this can lead to</span>
+<span class="sd">            undefined behavior. As may the forceful termination of the worker thread if</span>
+<span class="sd">            it is **not** still running.</span>
+
+<span class="sd">            This design ensures that the main thread remains responsive and prevents &#39;hanging&#39;</span>
+<span class="sd">            due to unresponsive or long-running operations.</span>
+
+<span class="sd">            So you should catch the SimpleBenchTimeoutError exception, perform any necessary cleanup,</span>
+<span class="sd">            and then exit the program cleanly.</span>
+
+<span class="sd">        A Timeout instance can be reused to run multiple callables with the same timeout interval.</span>
 
 <span class="sd">        :param timeout_interval: ``float`` or ``int`` duration to wait for the callable to complete.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If `timeout_interval` is not a float or int.</span>
+<span class="sd">        :raises SimpleBenchValueError: If `timeout_interval` is not greater than zero.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_timeout_interval</span><span class="p">(</span><span class="n">timeout_interval</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -111,11 +135,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s2">&quot;timeout_interval must be a float or int&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_INTERVAL_TYPE</span><span class="p">)</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_INTERVAL_TYPE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
                 <span class="s2">&quot;timeout_interval must be greater than zero&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_INTERVAL_VALUE</span><span class="p">)</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_INTERVAL_VALUE</span><span class="p">)</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_timeout_interval&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
     <span class="nd">@property</span>
@@ -128,7 +152,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TimeoutState</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s2">&quot;state must be a TimeoutState&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_STATE_TYPE</span><span class="p">)</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_STATE_TYPE</span><span class="p">)</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_state&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_target_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
@@ -163,7 +187,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">_calling_func</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The provided _calling_func &#39;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">&#39; is not callable&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">NON_CALLABLE_FUNCTION_ARGUMENT</span><span class="p">)</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TimeoutErrorTag</span><span class="o">.</span><span class="n">NON_CALLABLE_FUNCTION_ARGUMENT</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
             <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_wrapper</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">_calling_func</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span><span class="p">,</span>
@@ -181,7 +205,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">TIMED_OUT</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTimeoutError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Execution of &#39;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">&#39; timed out after </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout_interval</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">TIMED_OUT</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TimeoutErrorTag</span><span class="o">.</span><span class="n">TIMED_OUT</span><span class="p">,</span>
                 <span class="n">func_name</span><span class="o">=</span><span class="n">func_name</span>
                 <span class="p">)</span>
 

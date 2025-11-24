@@ -1,6 +1,6 @@
 """Thread ID type definition."""
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from .exceptions import TimeoutErrorTag
+from .exceptions import _TimeoutErrorTag
 
 
 class ThreadId(int):
@@ -25,11 +25,11 @@ class ThreadId(int):
         if not isinstance(value, int):
             raise SimpleBenchTypeError(
                 "ThreadId must be initialized with an integer value",
-                tag=TimeoutErrorTag.INVALID_THREAD_ID_TYPE)
+                tag=_TimeoutErrorTag.INVALID_THREAD_ID_TYPE)
         if value < 1:
             raise SimpleBenchValueError(
                 "ThreadId value must be an integer greater than zero",
-                tag=TimeoutErrorTag.INVALID_THREAD_ID_VALUE)
+                tag=_TimeoutErrorTag.INVALID_THREAD_ID_VALUE)
 
         # Call the parent's __new__ method to create the actual int object
         return super().__new__(cls, value)

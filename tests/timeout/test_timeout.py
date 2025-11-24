@@ -6,7 +6,7 @@ import time
 import pytest
 
 from simplebench.exceptions import SimpleBenchTimeoutError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.timeout import Timeout, TimeoutErrorTag, TimeoutState
+from simplebench.timeout import Timeout, TimeoutState, _TimeoutErrorTag
 
 # A small delay that is long enough for context switches but short enough for tests.
 SHORT_WAIT = 0.05
@@ -90,7 +90,7 @@ class TestTimeout:
         try:
             Timeout(timeout_interval=0)
         except SimpleBenchValueError as e:
-            if e.tag_code != TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE:
+            if e.tag_code != _TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE:
                 pytest.fail(f"Exception tag should be INVALID_TIMEOUT_INTERVAL, got {e.tag_code}")
             successfully_failed = True
         if not successfully_failed:
@@ -100,7 +100,7 @@ class TestTimeout:
         try:
             Timeout(timeout_interval="-1")  # type: ignore[arg-type]
         except SimpleBenchTypeError as e:
-            if e.tag_code != TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE:
+            if e.tag_code != _TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE:
                 pytest.fail(f"Exception tag should be INVALID_TIMEOUT_INTERVAL_TYPE, got {e.tag_code}")
             successfully_failed = True
         if not successfully_failed:
@@ -115,7 +115,7 @@ class TestTimeout:
         try:
             timeout.run("not_a_function")  # type: ignore[arg-type]
         except SimpleBenchTypeError as e:
-            if e.tag_code != TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT:
+            if e.tag_code != _TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT:
                 pytest.fail(f"Exception tag should be NON_CALLABLE_FUNCTION_ARGUMENT, got {e.tag_code}")
             successfully_failed = True
         if not successfully_failed:

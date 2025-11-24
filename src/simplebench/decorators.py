@@ -240,6 +240,10 @@ def benchmark(
             # The designated use_field_for_n field will always be present
             # in kwargs if specified due to prior validation.
             n_for_run = n if use_field_for_n is None else kwargs.get(use_field_for_n)
+            if not isinstance(n_for_run, (int, float)) or n_for_run <= 0:
+                raise SimpleBenchValueError(
+                    "The 'n' value determined for the benchmark run must be a positive integer.",
+                    tag=_DecoratorsErrorTag.BENCHMARK_N_FOR_RUN_INVALID_VALUE)
             return bench.run(action=func, n=n_for_run, kwargs=kwargs)
 
         final_benchmark_id = benchmark_id

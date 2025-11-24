@@ -8,6 +8,12 @@ from .base import ErrorTag
 class _CaseErrorTag(ErrorTag):
     """ErrorTags for case-related exceptions.
     """
+    INVALID_TIMEOUT_TYPE = "INVALID_TIMEOUT_TYPE"
+    """Invalid timeout argument type passed to the Case() constructor"""
+    INVALID_TIMEOUT_VALUE = "INVALID_TIMEOUT_VALUE"
+    """Invalid timeout argument value passed to the Case() constructor"""
+    INVALID_TIMEOUT_LESS_EQUAL_MAX_TIME = "INVALID_TIMEOUT_LESS_EQUAL_MAX_TIME"
+    """Timeout argument value passed to the Case() constructor is less than or equal to max_time"""
     INVALID_GIT_INFO_ARG_TYPE = "INVALID_GIT_INFO_ARG_TYPE"
     """Invalid git_info argument type passed to the Case() constructor"""
     INVALID_BENCHMARK_ID_TYPE = "INVALID_BENCHMARK_ID_TYPE"

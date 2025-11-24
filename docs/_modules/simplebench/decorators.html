@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.decorators &#8212; simplebench 0.2.0alpha0 documentation</title>
+    <title>simplebench.decorators &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
-    <script src="../../_static/documentation_options.js?v=1d9f15aa"></script>
+    <script src="../../_static/documentation_options.js?v=0dda2d64"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.decorators</a></li> 
       </ul>
@@ -281,6 +281,10 @@
             <span class="c1"># The designated use_field_for_n field will always be present</span>
             <span class="c1"># in kwargs if specified due to prior validation.</span>
             <span class="n">n_for_run</span> <span class="o">=</span> <span class="n">n</span> <span class="k">if</span> <span class="n">use_field_for_n</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">use_field_for_n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_for_run</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">or</span> <span class="n">n_for_run</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The &#39;n&#39; value determined for the benchmark run must be a positive integer.&quot;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_N_FOR_RUN_INVALID_VALUE</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">bench</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_for_run</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">final_benchmark_id</span> <span class="o">=</span> <span class="n">benchmark_id</span>
@@ -383,7 +387,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.decorators</a></li> 
       </ul>

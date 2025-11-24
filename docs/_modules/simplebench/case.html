@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.case &#8212; simplebench 0.2.0alpha0 documentation</title>
+    <title>simplebench.case &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
-    <script src="../../_static/documentation_options.js?v=1d9f15aa"></script>
+    <script src="../../_static/documentation_options.js?v=0dda2d64"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.case</a></li> 
       </ul>
@@ -46,7 +46,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span> <span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span> <span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span> <span class="n">DEFAULT_ROUNDS</span><span class="p">,</span> <span class="n">DEFAULT_WARMUP_ITERATIONS</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">defaults</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.doc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_docstring</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span><span class="p">,</span> <span class="n">Section</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">SimpleBenchAttributeError</span><span class="p">,</span>
@@ -131,7 +133,102 @@
 <div class="viewcode-block" id="Case">
 <a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Case</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Declaration of a benchmark case.</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param benchmark_id: An optional unique identifier for the benchmark case.</span>
+
+<span class="sd">        If None, a transient ID is assigned. This is meant to provide a stable identifier for the</span>
+<span class="sd">        benchmark case across multiple runs for tracking purposes. If not provided,</span>
+<span class="sd">        an attempt will be made to generate a stable ID based on the the action function</span>
+<span class="sd">        name, signature, and group.</span>
+
+<span class="sd">        If that is not possible, a transient ID based on the instance&#39;s id() will be used.</span>
+<span class="sd">        If a transient ID is used, it will differ between runs and cannot be used to</span>
+<span class="sd">        correlate results across multiple runs.</span>
+
+<span class="sd">        Benchmark ids must be unique within a benchmarking session and stable across runs</span>
+<span class="sd">        or they cannot be used for tracking benchmark results over time.</span>
+
+<span class="sd">    :param git_info: An optional GitInfo instance representing the state of the Git repository.</span>
+
+<span class="sd">        If not provided, the GitInfo will be automatically retrieved from the current</span>
+<span class="sd">        context of the caller if the code is part of a Git repository.</span>
+
+<span class="sd">    :param action: The function to perform the benchmark. This function must</span>
+<span class="sd">        accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments (&#39;**kwargs&#39;).</span>
+<span class="sd">        See the :class:`~simplebench.protocols.ActionRunner` protocol for the exact function</span>
+<span class="sd">        signature required.</span>
+
+<span class="sd">        It must return a `Results` object.</span>
+
+<span class="sd">    :param group: The benchmark reporting group to which the benchmark case belongs.</span>
+
+<span class="sd">    :param title: The title of the benchmark case.</span>
+
+<span class="sd">        If None, the name of the action function will be used. Cannot be a blank</span>
+<span class="sd">        string (a string that is empty or consists only of whitespace).</span>
+
+<span class="sd">    :param description: A brief description of the benchmark case.</span>
+
+<span class="sd">        If None, the docstring of the action function will be used, or &#39;(no description)&#39; if no docstring</span>
+<span class="sd">        is available. Cannot be blank.</span>
+<span class="sd">    :param iterations: The minimum number of iterations to run for the benchmark.</span>
+<span class="sd">    :param warmup_iterations: The number of warmup iterations to run before the benchmark.</span>
+<span class="sd">    :param rounds: The number of rounds to run for the benchmark.</span>
+
+<span class="sd">        Rounds are multiple runs of calls to the action within an iteration to mitigate timer</span>
+<span class="sd">        quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown</span>
+<span class="sd">        functions are called only once per iteration (all rounds in the same iteration share the same</span>
+<span class="sd">        setup/teardown context).</span>
+<span class="sd">    :param min_time: The minimum time for the benchmark in seconds.</span>
+<span class="sd">    :param max_time: The maximum time for the benchmark in seconds.</span>
+<span class="sd">    :param timeout: How long to wait before timing out a benchmark run (in seconds).</span>
+
+<span class="sd">        If None, it waits the full duration of ``max_time`` plus the default timeout</span>
+<span class="sd">        grace period in seconds ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a</span>
+<span class="sd">        positive float or int that is greater than ``max_time`` if provided.</span>
+<span class="sd">        This is a safety mechanism to prevent runaway benchmarks.</span>
+
+<span class="sd">        If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``</span>
+<span class="sd">        will be raised.</span>
+<span class="sd">    :param variation_cols: kwargs to be used for cols to denote kwarg variations.</span>
+
+<span class="sd">        Each key is a keyword argument name, and the value is the column label to use for that</span>
+<span class="sd">        argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
+<span class="sd">        added to the output of reporters that support them as columns of data with the specified labels.</span>
+<span class="sd">        If None, an empty dict is used.</span>
+<span class="sd">    :param kwargs_variations: A mapping of keyword argument key names to</span>
+<span class="sd">        a list of possible values for that argument. Default is {}. When tests are run, the benchmark</span>
+<span class="sd">        will be executed for each combination of the specified keyword argument variations. The action</span>
+<span class="sd">        function will be called with a `bench` parameter that is an instance of the runner and the</span>
+<span class="sd">        keyword arguments for the current variation.</span>
+<span class="sd">        If None, an empty dict is used.</span>
+<span class="sd">    :param runner: A custom runner class for the benchmark.</span>
+<span class="sd">        Any custom runner classes must be a subclass of SimpleRunner and must have a method</span>
+<span class="sd">        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.</span>
+<span class="sd">        The action function will be called with a `bench` parameter that is an instance of the</span>
+<span class="sd">        custom runner.</span>
+<span class="sd">        It may also accept additional parameters to the run method as needed. If additional</span>
+<span class="sd">        parameters are needed for the custom runner, they will need to be passed to the run</span>
+<span class="sd">        method as keyword arguments.</span>
+<span class="sd">        No support is provided for passing additional parameters to a custom runner from the @benchmark</span>
+<span class="sd">        decorator.</span>
+<span class="sd">    :param callback:</span>
+<span class="sd">        A callback function for additional processing of the report. The function should accept</span>
+<span class="sd">        four arguments: the Case instance, the Section, the Format, and the generated report data.</span>
+<span class="sd">        The callback function will be called with the following arguments:</span>
+<span class="sd">            - case (Case): The `Case` instance processed for the report.</span>
+<span class="sd">            - section (Section): The `Section` of the report.</span>
+<span class="sd">            - output_format (Format): The `Format` of the report.</span>
+<span class="sd">            - output (Any): The generated report data. Note that the actual type of this data will</span>
+<span class="sd">                depend on the Format specified for the report and the type generated by the</span>
+<span class="sd">                reporter for that Format</span>
+<span class="sd">        Omit if no callback is needed by a reporter.</span>
+<span class="sd">    :param options: A list of additional options for the benchmark case.</span>
+<span class="sd">        Each option is an instance of ReporterOption or a subclass of ReporterOption.</span>
+<span class="sd">        Reporter options can be used to customize the output of the benchmark reports for</span>
+<span class="sd">        specific reporters. Reporters are responsible for extracting applicable ReporterOptions</span>
+<span class="sd">        from the list of options themselves.</span>
+<span class="sd">        If None, an empty list is used.</span>
 
 <span class="sd">    A benchmark case defines the specific benchmark to be run, including the</span>
 <span class="sd">    action to be performed, the parameters for the benchmark, and any variations</span>
@@ -213,13 +310,16 @@
 <span class="sd">                Case(action=my_benchmark_action)</span>
 <span class="sd">            ]</span>
 <span class="sd">            main(cases_list)</span>
+
+
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_group&#39;</span><span class="p">,</span> <span class="s1">&#39;_title&#39;</span><span class="p">,</span> <span class="s1">&#39;_description&#39;</span><span class="p">,</span> <span class="s1">&#39;_action&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_warmup_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_min_time&#39;</span><span class="p">,</span> <span class="s1">&#39;_max_time&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_variation_cols&#39;</span><span class="p">,</span> <span class="s1">&#39;_kwargs_variations&#39;</span><span class="p">,</span> <span class="s1">&#39;_runner&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_callback&#39;</span><span class="p">,</span> <span class="s1">&#39;_results&#39;</span><span class="p">,</span> <span class="s1">&#39;_options&#39;</span><span class="p">,</span> <span class="s1">&#39;_rounds&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;_benchmark_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_git_info&#39;</span><span class="p">)</span>
+                 <span class="s1">&#39;_benchmark_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_git_info&#39;</span><span class="p">,</span> <span class="s1">&#39;_timeout&#39;</span><span class="p">)</span>
 
+    <span class="nd">@format_docstring</span><span class="p">(</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="o">=</span><span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">benchmark_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">git_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GitInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -227,11 +327,12 @@
                  <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
                  <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
-                 <span class="n">warmup_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
-                 <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ROUNDS</span><span class="p">,</span>
-                 <span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span>
-                 <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span>
+                 <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
+                 <span class="n">warmup_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
+                 <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_ROUNDS</span><span class="p">,</span>
+                 <span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span>
+                 <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span>
+                 <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">variation_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">kwargs_variations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">runner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -241,64 +342,73 @@
 
 <span class="sd">        The only REQUIRED parameter is `action`.</span>
 
-<span class="sd">        :param benchmark_id: An optional unique identifier for the benchmark case. If None,</span>
-<span class="sd">            a transient ID is assigned. This is meant to provide a stable identifier for the</span>
+<span class="sd">        :param benchmark_id: An optional unique identifier for the benchmark case.</span>
+
+<span class="sd">            If None, a transient ID is assigned. This is meant to provide a stable identifier for the</span>
 <span class="sd">            benchmark case across multiple runs for tracking purposes. If not provided,</span>
 <span class="sd">            an attempt will be made to generate a stable ID based on the the action function</span>
 <span class="sd">            name, signature, and group. If that is not possible, a transient ID based</span>
 <span class="sd">            on the instance&#39;s id() will be used. If a transient ID is used, it will differ</span>
 <span class="sd">            between runs and cannot be used to correlate results across multiple runs.</span>
 
-<span class="sd">            Benchmark ids must be unique within a benchmarking session.</span>
-<span class="sd">        :type benchmark_id: Optional[str]</span>
+<span class="sd">            Benchmark ids must be unique within a benchmarking session and stable across runs</span>
+<span class="sd">            or they cannot be used for tracking benchmark results over time.</span>
 <span class="sd">        :param git_info: An optional GitInfo instance representing the state of the Git repository.</span>
+
 <span class="sd">            If not provided, the GitInfo will be automatically retrieved from the current</span>
 <span class="sd">            context of the caller if the code is part of a Git repository.</span>
-<span class="sd">        :type git_info: Optional[GitInfo]</span>
-<span class="sd">        :param action: The function to perform the benchmark. This function must</span>
-<span class="sd">            accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments (&#39;**kwargs&#39;).</span>
-<span class="sd">            See the `ActionRunner` protocol for the exact signature required.</span>
-<span class="sd">            It must return a `Results` object.</span>
-<span class="sd">        :type action: ActionRunner</span>
+<span class="sd">        :param action: The function to perform the benchmark.</span>
+
+<span class="sd">            This function must accept a `bench` instance of type SimpleRunner and</span>
+<span class="sd">            arbitrary keyword arguments (&#39;**kwargs&#39;). See the ``ActionRunner``</span>
+<span class="sd">            protocol for the exact signature required. It must return a `Results` object.</span>
 <span class="sd">        :param group: The benchmark reporting group to which the benchmark case belongs.</span>
-<span class="sd">        :type group: str</span>
-<span class="sd">        :param title: The title of the benchmark case. If None, the name of the action</span>
-<span class="sd">            function will be used. Cannot be blank.</span>
-<span class="sd">        :type title: Optional[str]</span>
-<span class="sd">        :param description: A brief description of the benchmark case. If None,</span>
-<span class="sd">            the docstring of the action function will be used, or &#39;(no description)&#39; if no docstring</span>
-<span class="sd">            is available. Cannot be blank.</span>
-<span class="sd">        :type description: Optional[str]</span>
-<span class="sd">        :param iterations: The minimum number of iterations to run for</span>
-<span class="sd">            the benchmark.</span>
-<span class="sd">        :type iterations: int</span>
-<span class="sd">        :param warmup_iterations: The number of warmup iterations</span>
-<span class="sd">            to run before the benchmark.</span>
-<span class="sd">        :type warmup_iterations: int</span>
+
+<span class="sd">        Benchmarks with the same group can be selected for execution without running</span>
+<span class="sd">        other benchmarks. If not specified, the default group &#39;default&#39; is used.</span>
+
+<span class="sd">        :param title: The title of the benchmark case.</span>
+
+<span class="sd">            If None, the name of the action function will be used. Cannot be blank.</span>
+<span class="sd">        :param description: A brief description of the benchmark case.</span>
+
+<span class="sd">            If None, the docstring of the action function will be used, or</span>
+<span class="sd">            &#39;(no description)&#39; if no docstring is available. Cannot be blank.</span>
+<span class="sd">        :param iterations: The minimum number of iterations to run for the benchmark.</span>
+<span class="sd">        :param warmup_iterations: The number of warmup iterations to run before the benchmark.</span>
 <span class="sd">        :param rounds: The number of rounds to run for the benchmark.</span>
+
 <span class="sd">            Rounds are multiple runs of calls to the action within an iteration to mitigate timer</span>
 <span class="sd">            quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown</span>
 <span class="sd">            functions are called only once per iteration (all rounds in the same iteration share the same</span>
 <span class="sd">            setup/teardown context).</span>
-<span class="sd">        :type rounds: int</span>
-<span class="sd">        :param min_time: The minimum time for the benchmark in seconds.</span>
-<span class="sd">        :type min_time: float | int</span>
-<span class="sd">        :param max_time: The maximum time for the benchmark in seconds.</span>
-<span class="sd">        :type max_time: float | int</span>
-<span class="sd">        :param variation_cols: kwargs to be used for cols to denote kwarg</span>
-<span class="sd">            variations. Each key is a keyword argument name, and the value is the column label to use for that</span>
-<span class="sd">            argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
-<span class="sd">            added to the output of reporters that support them as columns of data with the specified labels.</span>
+<span class="sd">        :param min_time: The minimum time for the benchmark to run in seconds.</span>
+<span class="sd">        :param max_time: The maximum time for the benchmark run in seconds.</span>
+<span class="sd">        :param timeout: How long to wait before timing out a benchmark run (in seconds).</span>
+
+<span class="sd">            If None, it waits the full duration of ``max_time`` plus the default timeout grace period</span>
+<span class="sd">            ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a positive float or int that is greater</span>
+<span class="sd">            than ``max_time`` if provided. This is a safety mechanism to prevent runaway benchmarks.</span>
+
+<span class="sd">            If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``</span>
+<span class="sd">            will be raised, and the benchmark case&#39;s state will be set to TIMED_OUT.</span>
+<span class="sd">        :param variation_cols: kwargs to be used for cols to denote kwarg variations.</span>
+
+<span class="sd">            Each key is a keyword argument name, and the value is the column label to use for that</span>
+<span class="sd">            argument. Only keywords that are also in `kwargs_variations` can be used here. These</span>
+<span class="sd">            fields will be added to the output of reporters that support them as columns of data</span>
+<span class="sd">            with the specified labels.</span>
+
 <span class="sd">            If None, an empty dict is used.</span>
-<span class="sd">        :type variation_cols: Optional[dict[str, str]]</span>
-<span class="sd">        :param kwargs_variations: A mapping of keyword argument key names to</span>
-<span class="sd">            a list of possible values for that argument. Default is {}. When tests are run, the benchmark</span>
+<span class="sd">        :param kwargs_variations: A map of keyword argument names to a list of possible values for that argument.</span>
+
+<span class="sd">            Default is {}. When tests are run, the benchmark</span>
 <span class="sd">            will be executed for each combination of the specified keyword argument variations. The action</span>
 <span class="sd">            function will be called with a `bench` parameter that is an instance of the runner and the</span>
 <span class="sd">            keyword arguments for the current variation.</span>
 <span class="sd">            If None, an empty dict is used.</span>
-<span class="sd">        :type kwargs_variations: Optional[dict[str, list[Any]]]</span>
 <span class="sd">        :param runner: A custom runner class for the benchmark.</span>
+
 <span class="sd">            Any custom runner classes must be a subclass of SimpleRunner and must have a method</span>
 <span class="sd">            named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.</span>
 <span class="sd">            The action function will be called with a `bench` parameter that is an instance of the</span>
@@ -308,26 +418,24 @@
 <span class="sd">            method as keyword arguments.</span>
 <span class="sd">            No support is provided for passing additional parameters to a custom runner from the @benchmark</span>
 <span class="sd">            decorator.</span>
-<span class="sd">        :type runner: type[SimpleRunner]</span>
-<span class="sd">        :param callback:</span>
-<span class="sd">            A callback function for additional processing of the report. The function should accept</span>
-<span class="sd">            four arguments: the Case instance, the Section, the Format, and the generated report data.</span>
-<span class="sd">            The callback function will be called with the following arguments:</span>
+<span class="sd">        :param callback: A callback function for additional processing of the report.</span>
+
+<span class="sd">            The function should must four arguments: the Case instance, the Section,</span>
+<span class="sd">            the Format, and the generated report data.</span>
 <span class="sd">                - case (Case): The `Case` instance processed for the report.</span>
 <span class="sd">                - section (Section): The `Section` of the report.</span>
 <span class="sd">                - output_format (Format): The `Format` of the report.</span>
 <span class="sd">                - output (Any): The generated report data. Note that the actual type of this data will</span>
-<span class="sd">                  depend on the Format specified for the report and the type generated by the</span>
-<span class="sd">                  reporter for that Format</span>
+<span class="sd">                    depend on the Format specified for the report and the type generated by the</span>
+<span class="sd">                    reporter for that Format</span>
 <span class="sd">            Omit if no callback is needed by a reporter.</span>
-<span class="sd">        :type callback: Optional[ReporterCallback]</span>
 <span class="sd">        :param options: A list of additional options for the benchmark case.</span>
+
 <span class="sd">            Each option is an instance of ReporterOption or a subclass of ReporterOption.</span>
 <span class="sd">            Reporter options can be used to customize the output of the benchmark reports for</span>
 <span class="sd">            specific reporters. Reporters are responsible for extracting applicable ReporterOptions</span>
 <span class="sd">            from the list of options themselves.</span>
 <span class="sd">            If None, an empty list is used.</span>
-<span class="sd">        :type options: Optional[list[ReporterOption]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_group</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
                         <span class="n">group</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
@@ -365,6 +473,19 @@
                         <span class="n">max_time</span><span class="p">,</span> <span class="s2">&quot;max_time&quot;</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MAX_TIME_TYPE</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MAX_TIME_VALUE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">timeout_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_time</span> <span class="o">+</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">timeout_value</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
+                            <span class="n">timeout</span><span class="p">,</span> <span class="s2">&quot;timeout&quot;</span><span class="p">,</span>
+                            <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_TYPE</span><span class="p">,</span>
+                            <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_VALUE</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">timeout_value</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_time</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid timeout: </span><span class="si">{</span><span class="n">timeout_value</span><span class="si">}</span><span class="s1">. Must be greater than max_time </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_time</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_LESS_EQUAL_MAX_TIME</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timeout_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span><span class="p">:</span> <span class="nb">str</span>
         <span class="k">if</span> <span class="n">benchmark_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span> <span class="o">=</span> <span class="n">generate_benchmark_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
@@ -724,6 +845,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_time</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The timeout for the benchmark in seconds.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Keyword arguments to be used for columns to denote kwarg variations.</span>
 
@@ -1024,7 +1150,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.case</a></li> 
       </ul>

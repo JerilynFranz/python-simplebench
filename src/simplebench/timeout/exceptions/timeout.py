@@ -4,7 +4,7 @@ from ...exceptions import ErrorTag
 
 
 @enum_docstrings
-class TimeoutErrorTag(ErrorTag):
+class _TimeoutErrorTag(ErrorTag):
     """ErrorTags for timeout-related errors."""
     NON_CALLABLE_FUNCTION_ARGUMENT = "NON_CALLABLE_FUNCTION_ARGUMENT"
     "The provided function argument is not callable."

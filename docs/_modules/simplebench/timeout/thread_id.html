@@ -39,7 +39,7 @@
   <h1>Source code for simplebench.timeout.thread_id</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Thread ID type definition.&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_TimeoutErrorTag</span>
 
 
 <div class="viewcode-block" id="ThreadId">
@@ -66,11 +66,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s2">&quot;ThreadId must be initialized with an integer value&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_THREAD_ID_TYPE</span><span class="p">)</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_THREAD_ID_TYPE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
                 <span class="s2">&quot;ThreadId value must be an integer greater than zero&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_THREAD_ID_VALUE</span><span class="p">)</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_THREAD_ID_VALUE</span><span class="p">)</span>
 
         <span class="c1"># Call the parent&#39;s __new__ method to create the actual int object</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>

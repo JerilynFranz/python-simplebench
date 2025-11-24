@@ -39,6 +39,7 @@ class CaseKWArgs(KWArgs):
             rounds: int | NoDefaultValue = NoDefaultValue(),
             min_time: float | NoDefaultValue = NoDefaultValue(),
             max_time: float | NoDefaultValue = NoDefaultValue(),
+            timeout: float | NoDefaultValue = NoDefaultValue(),
             variation_cols: dict[str, str] | NoDefaultValue = NoDefaultValue(),
             kwargs_variations: dict[str, list[Any]] | NoDefaultValue = NoDefaultValue(),
             runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),
@@ -73,6 +74,8 @@ class CaseKWArgs(KWArgs):
         :type min_time: float
         :param max_time: The maximum time for the benchmark in seconds. (default: 20.0)
         :type max_time: float
+        :param timeout: The timeout interval in seconds for each benchmark. (default: None)
+        :type timeout: float | None
         :param variation_cols: kwargs to be used for cols to denote kwarg variations.
                                Each key is a keyword argument name, and the value is the column label to use
                                for that argument.

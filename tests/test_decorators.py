@@ -635,7 +635,7 @@ def test_decorator_use_field_for_n_valid() -> None:
     assert test_case.results is not None, "Expected results to be collected."
     assert len(test_case.results) == 3, "Expected three results for the three size variations."
     expected_n_values: set[int] = set(sizes)
-    actual_n_values: set[int] = set(result.n for result in test_case.results)
+    actual_n_values: set[float] = set(result.n for result in test_case.results)
     assert actual_n_values == expected_n_values, "The n values in results do not match the expected sizes."
 
 

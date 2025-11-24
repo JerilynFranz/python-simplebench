@@ -28,7 +28,7 @@ class Results:
     :ivar description: A brief description of the benchmark case. (read only)
     :vartype description: str
     :ivar n: The n weighting the benchmark assigned to the iteration for purposes of Big O analysis. (read only)
-    :vartype n: int
+    :vartype n: int | float
     :ivar rounds: The number of rounds in the benchmark case. (read only)
     :vartype rounds: int
     :ivar variation_marks: A dictionary of variation marks used to identify the
@@ -95,7 +95,7 @@ class Results:
                  group: str,
                  title: str,
                  description: str,
-                 n: int,
+                 n: int | float,
                  rounds: int,
                  total_elapsed: float,
                  iterations: Sequence[Iteration],
@@ -121,7 +121,7 @@ class Results:
         :param description: A brief description of the benchmark case.
         :type description: str
         :param n: The n weighting assigned to the iteration for purposes of Big O analysis.
-        :type n: int
+        :type n: int | float
         :param rounds: The number of rounds in the benchmark case.
         :type rounds: int
         :param total_elapsed: The total elapsed time for the benchmark.
@@ -182,7 +182,7 @@ class Results:
             description, 'description',
             _ResultsErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
             _ResultsErrorTag.DESCRIPTION_INVALID_ARG_VALUE)
-        self._n: int = validate_positive_int(
+        self._n: float = validate_positive_float(
             n, 'n',
             _ResultsErrorTag.N_INVALID_ARG_TYPE,
             _ResultsErrorTag.N_INVALID_ARG_VALUE)
@@ -496,8 +496,8 @@ class Results:
         return self._description
 
     @property
-    def n(self) -> int:
-        """The complexity size/weighting."""
+    def n(self) -> float:
+        """The O() complexity analysis size/weighting."""
         return self._n
 
     @property
