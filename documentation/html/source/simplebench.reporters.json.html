@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>simplebench.reporters.json package &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.reporters.json package &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/documentation_options.js?v=0dda2d64"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.json package</a></li> 
       </ul>
     </div>  
@@ -191,6 +192,7 @@ or <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">log_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ReportLogMetadata</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -214,11 +216,14 @@ this case). The rendering method must conform with the
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> – The parsed command-line arguments.</p></li>
+<li><p><strong>log_metadata</strong> – The <code class="xref py py-class docutils literal notranslate"><span class="pre">ReportLogMetadata</span></code> instance containing metadata
+about the report being generated.</p></li>
 <li><p><strong>case</strong> – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the
 benchmarked code.</p></li>
 <li><p><strong>choice</strong> – The <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance specifying
 the report configuration.</p></li>
 <li><p><strong>path</strong> – The path to the directory where the JSON file(s) will be saved.</p></li>
+<li><p><strong>reports_log_path</strong> – The path to the reports log file.</p></li>
 <li><p><strong>session</strong> – The <a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a> instance containing
 benchmark results.</p></li>
 <li><p><strong>callback</strong> – A callback function for additional processing of the report.
@@ -332,7 +337,7 @@ needed.</p></li>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.json package</a></li> 
       </ul>
     </div>

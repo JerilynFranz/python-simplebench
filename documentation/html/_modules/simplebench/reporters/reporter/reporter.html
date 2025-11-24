@@ -4,11 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.reporters.reporter.reporter &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.reporters.reporter.reporter &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=e424009b" />
     
-    <script src="../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -24,7 +25,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.reporter</a></li> 
       </ul>
@@ -66,6 +67,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
 <span class="c1"># simplebench.reporters</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
 <span class="c1"># simplebench.reporters.reporter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
@@ -345,6 +347,7 @@
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.report">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                <span class="o">*</span><span class="p">,</span>
+               <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
                <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
                <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
@@ -355,6 +358,8 @@
 
 <span class="sd">        This method performs validation and then calls the subclass&#39;s :meth:`~.run_report` method.</span>
 
+<span class="sd">        :param log_metadata: The metadata for the report log.</span>
+<span class="sd">        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.ReportLogMetadata`</span>
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.</span>
@@ -371,6 +376,9 @@
 <span class="sd">        :param callback: A callback function for additional processing of the report. Defaults to ``None``.</span>
 <span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">log_metadata</span><span class="p">,</span> <span class="n">ReportLogMetadata</span><span class="p">,</span> <span class="s1">&#39;log_metadata&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_LOG_METADATA_ARG</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s2">&quot;args argument must be an argparse.Namespace instance&quot;</span><span class="p">,</span>
@@ -413,10 +421,14 @@
                 <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                     <span class="s2">&quot;Callback function must be callable if provided&quot;</span><span class="p">,</span>
                     <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_CALLBACK_ARG</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span> <span class="ow">in</span> <span class="n">choice</span><span class="o">.</span><span class="n">targets</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s2">&quot;Path must be a pathlib.Path instance when using FILESYSTEM target&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_PATH_ARG</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">log_metadata</span><span class="o">.</span><span class="n">reports_log_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_metadata</span><span class="o">.</span><span class="n">reports_log_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;log_metadata.reports_log_path must be a pathlib.Path instance if provided&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_REPORTS_LOG_PATH_ARG</span><span class="p">)</span>
 
         <span class="c1"># Only proceed if there are results to report</span>
         <span class="c1"># TODO: THINK ABOUT THIS MORE. SHOULD WE RAISE AN EXCEPTION INSTEAD?</span>
@@ -427,7 +439,13 @@
         <span class="c1"># If we reach this point, all validation has passed and execution</span>
         <span class="c1"># will pass through to the hook method, either the default implementation</span>
         <span class="c1"># or an overridden implementation in the subclass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run_report</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_report</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+                        <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
+                        <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+                        <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+                        <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                        <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Reporter.render">
@@ -463,6 +481,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="o">*</span><span class="p">,</span>
                    <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+                   <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
                    <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                    <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
                    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -485,6 +504,8 @@
 
 <span class="sd">        :param args: The parsed command-line arguments.</span>
 <span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param log_metadata: The metadata for the report log.</span>
+<span class="sd">        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.Report</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.</span>
 <span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
 <span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
@@ -499,6 +520,7 @@
 <span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">render_by_section</span><span class="p">(</span>
+            <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
             <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
             <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
             <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
@@ -737,7 +759,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.reporter</a></li> 
       </ul>

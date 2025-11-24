@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.reporters.reporter.mixins._targets &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=15db7601" />
+    
+    <script src="../../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.mixins._targets</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.reporters.reporter.mixins._targets</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Mixin for target-related functionality for the Reporter class.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReporterErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_filename</span><span class="p">,</span> <span class="n">validate_string</span><span class="p">,</span> <span class="n">validate_type</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ReporterTargetMixin</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin for target-related functionality for the Reporter class.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_filesystem</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">ReporterProtocol</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                          <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
+                          <span class="n">unique</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                          <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to output report data to the filesystem.</span>
+
+<span class="sd">        path, subdir, and filename are combined to form the full path to the output file.</span>
+
+<span class="sd">        If unique is True, the filename will be made unique by prepending a counter</span>
+<span class="sd">        starting from 001 to the filename and counting up until a unique filename is found.</span>
+<span class="sd">        E.g. 001_filename.txt, 002_filename.txt, etc.</span>
+
+<span class="sd">        If append is True, the output will be appended to the file if it already exists.</span>
+<span class="sd">        Otherwise, an exception will be raised if the file already exists. Note that</span>
+<span class="sd">        append mode is not compatible with unique mode.</span>
+
+<span class="sd">        The type signature for path is Path | None because the overall report() method</span>
+<span class="sd">        accepts path as Optional[Path] because it is not always required. However,</span>
+<span class="sd">        this method should only be called when a valid Path is provided and will</span>
+<span class="sd">        raise an exception if it is not a Path instance.</span>
+
+<span class="sd">        :param path: The path to the directory where output should be saved.</span>
+<span class="sd">        :type path: Path | None</span>
+<span class="sd">        :param subdir: The subdirectory within the path to save the file to.</span>
+<span class="sd">        :type subdir: str</span>
+<span class="sd">        :param filename: The filename to save the output as.</span>
+<span class="sd">        :type filename: str</span>
+<span class="sd">        :param output: The report data to write to the file.</span>
+<span class="sd">        :type output: str | bytes | Text | Table</span>
+<span class="sd">        :param unique: If True, ensure the filename is unique by prepending a counter as needed.</span>
+<span class="sd">        :type unique: bool</span>
+<span class="sd">        :param append: If True, append to the file if it already exists. Otherwise, raise an error.</span>
+<span class="sd">        :type append: bool</span>
+<span class="sd">        :raises SimpleBenchTypeError: If path is not a Path instance,</span>
+<span class="sd">            or if subdir or filename are not strings.</span>
+<span class="sd">        :raises SimpleBenchValueError: If both append and unique are True. Or if the output file</span>
+<span class="sd">            already exists and neither append nor unique options were specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE</span><span class="p">)</span>
+        <span class="n">subdir</span> <span class="o">=</span> <span class="n">validate_string</span><span class="p">(</span>
+            <span class="n">subdir</span><span class="p">,</span> <span class="s1">&#39;subdir&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_VALUE</span><span class="p">,</span>
+            <span class="n">strip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alphanumeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">validate_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">append</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">append</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s1">&#39;append&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE</span><span class="p">)</span>
+        <span class="n">unique</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">unique</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s1">&#39;unique&#39;</span><span class="p">,</span>
+            <span class="n">error_tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Table</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;output must be of type str, bytes, Text, or Table&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">append</span> <span class="o">==</span> <span class="n">unique</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;one, and only one, of append or unique must be True when writing to filesystem&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="n">subdir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">counter</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">counter</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Table</span><span class="p">)):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rich_text_to_plain_text</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="n">subdir</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="n">output_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;wb&#39;</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;w&#39;</span>
+        <span class="k">if</span> <span class="n">append</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;ab&#39;</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;a&#39;</span>
+        <span class="k">with</span> <span class="n">output_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">ReporterProtocol</span><span class="p">,</span>
+                        <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+                        <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span>
+                        <span class="n">output_format</span><span class="p">:</span> <span class="n">Format</span><span class="p">,</span>
+                        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to send report data to a callback function.</span>
+
+<span class="sd">        :param callback: The callback function to send the output to.</span>
+<span class="sd">        :type callback: ReporterCallback | None</span>
+<span class="sd">        :param case: The Case instance representing the benchmarked code.</span>
+<span class="sd">        :type case: Case</span>
+<span class="sd">        :param section: The Section of the report.</span>
+<span class="sd">        :type section: Section</span>
+<span class="sd">        :param output_format: The Format of the report.</span>
+<span class="sd">        :type output_format: Format</span>
+<span class="sd">        :param output: The report data to send to the callback.</span>
+<span class="sd">        :type output: str | bytes | Text | Table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Rich text is not generally suitable for callback output, convert to plain text</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Table</span><span class="p">)):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rich_text_to_plain_text</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="n">output_format</span> <span class="o">=</span> <span class="n">Format</span><span class="o">.</span><span class="n">PLAIN_TEXT</span>
+        <span class="c1"># The logic behind this is that only test cases that have a callback defined</span>
+        <span class="c1"># should invoke the callback, otherwise it would be unexpected behavior.</span>
+        <span class="c1">#</span>
+        <span class="c1"># This allows reporters to call this method without needing to check</span>
+        <span class="c1"># if a callback is defined each time. It allows end users to define</span>
+        <span class="c1"># callbacks only when they want to handle output via callback without</span>
+        <span class="c1"># having to define a no-op callback for all other cases.</span>
+        <span class="c1">#</span>
+        <span class="c1"># It is not perfectly symmetrical with target_console, which always outputs to console,</span>
+        <span class="c1"># or target_filesystem, which always writes to the filesystem,</span>
+        <span class="c1"># but callbacks are more specialized in nature.</span>
+        <span class="c1">#</span>
+        <span class="c1"># It is different, but intentional.</span>
+        <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">callback</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_console</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">ReporterProtocol</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to output report data to the console.</span>
+
+<span class="sd">        It uses the Rich Console instance from the Session if provided, otherwise</span>
+<span class="sd">        it creates a new Console instance.</span>
+
+<span class="sd">        It can accept output as a string, Rich Text, or Rich Table.</span>
+
+<span class="sd">        :param session: The Session instance containing the console.</span>
+<span class="sd">        :type session: Session | None</span>
+<span class="sd">        :param output: The report data to print to the console.</span>
+<span class="sd">        :type output: str | bytes | Text | Table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">console</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">console</span> <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Console</span><span class="p">()</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">rich_text_to_plain_text</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">ReporterProtocol</span><span class="p">,</span> <span class="n">rich_text</span><span class="p">:</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert Rich Text or Table to plain text by stripping formatting.</span>
+
+<span class="sd">        Applies a virtual console width to ensure proper line wrapping. The console</span>
+<span class="sd">        width simulates how the text would appear in a terminal of the specified width.</span>
+
+<span class="sd">        As rich text is normally mainly used for console output, this method</span>
+<span class="sd">        provides a way to convert it to plain text while preserving the intended</span>
+<span class="sd">        layout as much as possible for non-console output targets.</span>
+
+<span class="sd">        :param rich_text: The Rich Text or Table instance to convert.</span>
+<span class="sd">        :type rich_text: Text | Table</span>
+<span class="sd">        :return: The plain text representation of the Rich Text.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rich_text</span><span class="p">,</span> <span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Table</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;rich_text argument is of invalid type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rich_text</span><span class="p">)</span><span class="si">}</span><span class="s1">. &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Must be rich.Text or rich.Table.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">RICH_TEXT_TO_PLAIN_TEXT_INVALID_RICH_TEXT_ARG_TYPE</span><span class="p">)</span>
+
+        <span class="n">output_io</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>  <span class="c1"># just a string buffer to capture console output</span>
+        <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">output_io</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">rich_text</span><span class="p">)</span>
+        <span class="n">text_output</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">export_text</span><span class="p">(</span><span class="n">styles</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">output_io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">text_output</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.mixins._targets</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

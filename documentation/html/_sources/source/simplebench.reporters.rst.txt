@@ -17,6 +17,7 @@ Subpackages
    simplebench.reporters.csv
    simplebench.reporters.graph
    simplebench.reporters.json
+   simplebench.reporters.log
    simplebench.reporters.protocols
    simplebench.reporters.reporter
    simplebench.reporters.reporter_manager

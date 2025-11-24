@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Using SimpleBench &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>Using SimpleBench &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e424009b" />
     
-    <script src="_static/documentation_options.js?v=9a12e387"></script>
+    <script src="_static/documentation_options.js?v=0dda2d64"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -33,7 +34,7 @@
         <li class="right" >
           <a href="installation.html" title="Installation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Using SimpleBench</a></li> 
       </ul>
     </div>  
@@ -59,18 +60,18 @@ run from the command line.</p>
 </div>
 <div class="literal-block-wrapper docutils container" id="simple-benchmark-example">
 <div class="code-block-caption"><span class="caption-text">A simple benchmark example</span><a class="headerlink" href="#simple-benchmark-example" title="Link to this code">🔗</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="kn">import</span><span class="w"> </span><span class="nn">simplebench</span>
-
-  <span class="nd">@simplebench</span><span class="o">.</span><span class="n">benchmark</span>
-  <span class="k">def</span><span class="w"> </span><span class="nf">addition_benchmark</span><span class="p">():</span>
-<span class="w">      </span><span class="sd">&quot;&quot;&quot;A simple addition benchmark of Python&#39;s built-in sum function.&quot;&quot;&quot;</span>
-      <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
-          <span class="n">total</span> <span class="o">+=</span> <span class="n">i</span>
-      <span class="k">return</span> <span class="n">total</span>
-
-  <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-      <span class="n">simplebench</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>  <span class="kn">import</span><span class="w"> </span><span class="nn">simplebench</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span>  <span class="nd">@simplebench</span><span class="o">.</span><span class="n">benchmark</span>
+<span class="linenos"> 4</span>  <span class="k">def</span><span class="w"> </span><span class="nf">addition_benchmark</span><span class="p">():</span>
+<span class="linenos"> 5</span><span class="w">      </span><span class="sd">&quot;&quot;&quot;A simple addition benchmark of Python&#39;s built-in sum function.&quot;&quot;&quot;</span>
+<span class="linenos"> 6</span>      <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos"> 7</span>      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+<span class="linenos"> 8</span>          <span class="n">total</span> <span class="o">+=</span> <span class="n">i</span>
+<span class="linenos"> 9</span>      <span class="k">return</span> <span class="n">total</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span>  <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">12</span>      <span class="n">simplebench</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -184,7 +185,7 @@ so you can focus on writing and using your benchmarks.</p>
         <li class="right" >
           <a href="installation.html" title="Installation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Using SimpleBench</a></li> 
       </ul>
     </div>

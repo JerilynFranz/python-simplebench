@@ -15,6 +15,7 @@ Subpackages
    simplebench.exceptions
    simplebench.reporters
    simplebench.stats
+   simplebench.timeout
    simplebench.type_proxies
    simplebench.validators
 
@@ -38,3 +39,4 @@ Submodules
    simplebench.si_units
    simplebench.tasks
    simplebench.utils
+   simplebench.vcs

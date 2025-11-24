@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>simplebench package &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench package &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/documentation_options.js?v=0dda2d64"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench package</a></li> 
       </ul>
     </div>  
@@ -56,6 +57,8 @@ attribute of a <a class="reference internal" href="simplebench.reporters.choice.
 
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">benchmark_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">git_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.GitInfo" title="simplebench.vcs.GitInfo"><span class="pre">GitInfo</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -211,6 +214,22 @@ set <cite>full_data</cite> to True.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="simplebench.Case.benchmark_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">benchmark_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.Case.benchmark_id" title="Link to this definition">🔗</a></dt>
+<dd><p>A unique identifier for the benchmark case.</p>
+<p>It is meant to provide a stable identifier for the benchmark case across
+multiple runs for tracking purposes.</p>
+<p>If not provided, an attempt will be made to generate a stable ID based on
+the the action function name, signature, and group. If that is not possible,
+a transient ID based on the instance’s id() will be used.</p>
+<p>If a transient ID is used, it will differ between runs and cannot be used
+to correlate results across multiple runs.</p>
+<p>Benchmark ids must be unique within a benchmarking session.</p>
+<p>Passed ids are stripped of leading and trailing whitespace and validated
+to be non-blank.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="simplebench.Case.callback">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">callback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.protocols.reporter_callback.html#simplebench.reporters.protocols.reporter_callback.ReporterCallback" title="simplebench.reporters.protocols.reporter_callback.ReporterCallback"><span class="pre">ReporterCallback</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.Case.callback" title="Link to this definition">🔗</a></dt>
 <dd><p>A callback function for additional processing of a report.</p>
@@ -266,6 +285,24 @@ accept them.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.Case.git_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">git_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.GitInfo" title="simplebench.vcs.GitInfo"><span class="pre">GitInfo</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.Case.git_info" title="Link to this definition">🔗</a></dt>
+<dd><p>Git information for the benchmark case.</p>
+<p>This is a read-only attribute that provides git information
+such as the current commit hash, branch name, and repository URL.
+If the benchmark is not in a file managed by a git repository,
+a None value is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A GitInfo object containing git information, or None if not in a git repository.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.GitInfo" title="simplebench.vcs.GitInfo">GitInfo</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -523,7 +560,7 @@ that is a valid Python identifier.</p></li>
 <dd class="field-even"><p>A shallow copy of the validated options as a list or an empty list if not provided.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions">ReporterOptions</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions">ReporterOptions</a>]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If options is not a list or if any entry is not a ReporterOption.</p>
@@ -827,7 +864,7 @@ read-only property that returns a mapping proxy to prevent external mutation. (r
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.Results.n">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.Results.n" title="Link to this definition">🔗</a></dt>
-<dd><p>The number of rounds the benchmark ran per iteration.</p>
+<dd><p>The complexity size/weighting.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1474,6 +1511,7 @@ Status displays are not shown during runs.</p>
 <dd><em class="sig-param"><span class="o"><span class="pre">/</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">benchmark_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">warmup_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>,</dd>
@@ -1520,7 +1558,7 @@ runners that support it.</p>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">extra_args</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;--progress&#39;</span><span class="p">,</span> <span class="s1">&#39;--rich-table.console&#39;</span><span class="p">]</span>
+    <span class="n">extra_args</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;--progress&#39;</span><span class="p">,</span> <span class="s1">&#39;--rich-table.console&#39;</span><span class="p">]</span>
 <span class="n">main</span><span class="p">(</span><span class="n">extra_args</span><span class="o">=</span><span class="n">extra_args</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1536,6 +1574,8 @@ arguments. When the decorator is used without parameters, the group defaults to 
 This has special handling to allow the decorator to be used easily without any parameters.</p></li>
 <li><p><strong>title</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – The title of the benchmark case. Uses the function
 name if None. Cannot be blank.</p></li>
+<li><p><strong>benchmark_id</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – An optional identifier for the benchmark case.
+If None, no identifier is set.</p></li>
 <li><p><strong>description</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – A description for the case.
 Uses the function’s docstring if None or ‘(no description)’ if there is no docstring.
 Cannot be blank.</p></li>
@@ -1560,7 +1600,7 @@ will be executed for each combination of the specified keyword argument variatio
 function will be called with a <cite>bench</cite> parameter that is an instance of the runner and the
 keyword arguments for the current variation.
 If None, an empty dict is used.</p></li>
-<li><p><strong>options</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><em>ReporterOptions</em></a><em>]</em><em>]</em>) – A list of additional options for the benchmark case.
+<li><p><strong>options</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><em>ReporterOptions</em></a><em>]</em><em>]</em>) – A list of additional options for the benchmark case.
 Each option is an instance of ReporterOptions or a subclass of ReporterOptions.
 Reporter options can be used to customize the output of the benchmark reports for
 specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
@@ -1709,6 +1749,12 @@ list of benchmark cases passed to this function.</p>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.json.html#subpackages">Subpackages</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html">simplebench.reporters.log package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.log.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.log.html#submodules">Submodules</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.protocols.html">simplebench.reporters.protocols package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.ChoiceProtocol"><code class="docutils literal notranslate"><span class="pre">ChoiceProtocol</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.ReportRenderer"><code class="docutils literal notranslate"><span class="pre">ReportRenderer</span></code></a></li>
@@ -1830,6 +1876,65 @@ list of benchmark cases passed to this function.</p>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.timeout.html">simplebench.timeout package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.Timeout"><code class="docutils literal notranslate"><span class="pre">Timeout</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.Timeout.cancel"><code class="docutils literal notranslate"><span class="pre">Timeout.cancel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.Timeout.state"><code class="docutils literal notranslate"><span class="pre">Timeout.state</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.Timeout.timeout_interval"><code class="docutils literal notranslate"><span class="pre">Timeout.timeout_interval</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.INVALID_EXCEPTION_ARG_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_EXCEPTION_ARG_TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.INVALID_STATE_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_STATE_TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.INVALID_THREAD_ID_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_THREAD_ID_TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.INVALID_THREAD_ID_VALUE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_THREAD_ID_VALUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.INVALID_TIMER_TYPE"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.INVALID_TIMER_TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.STATE_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.STATE_NOT_SET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.TIMED_OUT"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMED_OUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.TIMEOUT_EXCEEDED"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMEOUT_EXCEEDED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutErrorTag.TIMER_NOT_SET"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag.TIMER_NOT_SET</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutState"><code class="docutils literal notranslate"><span class="pre">TimeoutState</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutState.CANCELED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.CANCELED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutState.EXECUTED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.EXECUTED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutState.EXECUTING"><code class="docutils literal notranslate"><span class="pre">TimeoutState.EXECUTING</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutState.FAILED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.FAILED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutState.INTERRUPTED"><code class="docutils literal notranslate"><span class="pre">TimeoutState.INTERRUPTED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.html#simplebench.timeout.TimeoutState.TIMED_OUT"><code class="docutils literal notranslate"><span class="pre">TimeoutState.TIMED_OUT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.timeout.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.exceptions.html">simplebench.timeout.exceptions package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.timeout.exceptions.html#simplebench.timeout.exceptions.TimeoutErrorTag"><code class="docutils literal notranslate"><span class="pre">TimeoutErrorTag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.timeout.exceptions.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.timeout.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.enums.html">simplebench.timeout.enums module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState"><code class="docutils literal notranslate"><span class="pre">TimeoutState</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.thread_id.html">simplebench.timeout.thread_id module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.timeout.thread_id.html#simplebench.timeout.thread_id.ThreadId"><code class="docutils literal notranslate"><span class="pre">ThreadId</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.timeout.timeout.html">simplebench.timeout.timeout module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.timeout.timeout.html#simplebench.timeout.timeout.Timeout"><code class="docutils literal notranslate"><span class="pre">Timeout</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.type_proxies.html">simplebench.type_proxies package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.html#simplebench.type_proxies.CaseTypeProxy"><code class="docutils literal notranslate"><span class="pre">CaseTypeProxy</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.type_proxies.html#simplebench.type_proxies.ChoiceTypeProxy"><code class="docutils literal notranslate"><span class="pre">ChoiceTypeProxy</span></code></a></li>
@@ -1939,9 +2044,11 @@ list of benchmark cases passed to this function.</p>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case"><code class="docutils literal notranslate"><span class="pre">Case</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.action"><code class="docutils literal notranslate"><span class="pre">Case.action</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.as_dict"><code class="docutils literal notranslate"><span class="pre">Case.as_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.benchmark_id"><code class="docutils literal notranslate"><span class="pre">Case.benchmark_id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.callback"><code class="docutils literal notranslate"><span class="pre">Case.callback</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.description"><code class="docutils literal notranslate"><span class="pre">Case.description</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.expanded_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.expanded_kwargs_variations</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.git_info"><code class="docutils literal notranslate"><span class="pre">Case.git_info</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.group"><code class="docutils literal notranslate"><span class="pre">Case.group</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.iterations"><code class="docutils literal notranslate"><span class="pre">Case.iterations</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.kwargs_variations</span></code></a></li>
@@ -1964,6 +2071,7 @@ list of benchmark cases passed to this function.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.warmup_iterations"><code class="docutils literal notranslate"><span class="pre">Case.warmup_iterations</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.case.html#simplebench.case.generate_benchmark_id"><code class="docutils literal notranslate"><span class="pre">generate_benchmark_id()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.cli.html">simplebench.cli module</a><ul>
@@ -2141,6 +2249,7 @@ list of benchmark cases passed to this function.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.si_units.html">simplebench.si_units module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.si_units.html#simplebench.si_units.si_scale"><code class="docutils literal notranslate"><span class="pre">si_scale()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.si_units.html#simplebench.si_units.si_scale_for_largest"><code class="docutils literal notranslate"><span class="pre">si_scale_for_largest()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.si_units.html#simplebench.si_units.si_scale_for_smallest"><code class="docutils literal notranslate"><span class="pre">si_scale_for_smallest()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.si_units.html#simplebench.si_units.si_scale_to_unit"><code class="docutils literal notranslate"><span class="pre">si_scale_to_unit()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.si_units.html#simplebench.si_units.si_unit_base"><code class="docutils literal notranslate"><span class="pre">si_unit_base()</span></code></a></li>
@@ -2184,7 +2293,6 @@ list of benchmark cases passed to this function.</p>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo"><code class="docutils literal notranslate"><span class="pre">MachineInfo</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfo.cpu</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfo.machine</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.node"><code class="docutils literal notranslate"><span class="pre">MachineInfo.node</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.processor"><code class="docutils literal notranslate"><span class="pre">MachineInfo.processor</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.python_build"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_build</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.python_compiler"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_compiler</span></code></a></li>
@@ -2201,10 +2309,30 @@ list of benchmark cases passed to this function.</p>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.flag_to_arg"><code class="docutils literal notranslate"><span class="pre">flag_to_arg()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.get_machine_info"><code class="docutils literal notranslate"><span class="pre">get_machine_info()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">kwargs_variations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_architecture"><code class="docutils literal notranslate"><span class="pre">platform_architecture()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_id"><code class="docutils literal notranslate"><span class="pre">platform_id()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_implementation"><code class="docutils literal notranslate"><span class="pre">platform_implementation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_machine"><code class="docutils literal notranslate"><span class="pre">platform_machine()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_processor"><code class="docutils literal notranslate"><span class="pre">platform_processor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_system"><code class="docutils literal notranslate"><span class="pre">platform_system()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_version"><code class="docutils literal notranslate"><span class="pre">platform_version()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.python_implementation_version"><code class="docutils literal notranslate"><span class="pre">python_implementation_version()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.sanitize_filename"><code class="docutils literal notranslate"><span class="pre">sanitize_filename()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.sigfigs"><code class="docutils literal notranslate"><span class="pre">sigfigs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.html">simplebench.vcs module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.GitInfo.commit"><code class="docutils literal notranslate"><span class="pre">GitInfo.commit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.GitInfo.date"><code class="docutils literal notranslate"><span class="pre">GitInfo.date</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.GitInfo.dirty"><code class="docutils literal notranslate"><span class="pre">GitInfo.dirty</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.html#id0"><code class="docutils literal notranslate"><span class="pre">GitInfo.commit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.html#id1"><code class="docutils literal notranslate"><span class="pre">GitInfo.date</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.html#id2"><code class="docutils literal notranslate"><span class="pre">GitInfo.dirty</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.GitInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">GitInfo.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.get_git_info"><code class="docutils literal notranslate"><span class="pre">get_git_info()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -2227,9 +2355,11 @@ list of benchmark cases passed to this function.</p>
 <li><a class="reference internal" href="#simplebench.Case"><code class="docutils literal notranslate"><span class="pre">Case</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.Case.action"><code class="docutils literal notranslate"><span class="pre">Case.action</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.as_dict"><code class="docutils literal notranslate"><span class="pre">Case.as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.Case.benchmark_id"><code class="docutils literal notranslate"><span class="pre">Case.benchmark_id</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.callback"><code class="docutils literal notranslate"><span class="pre">Case.callback</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.description"><code class="docutils literal notranslate"><span class="pre">Case.description</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.expanded_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.expanded_kwargs_variations</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.Case.git_info"><code class="docutils literal notranslate"><span class="pre">Case.git_info</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.group"><code class="docutils literal notranslate"><span class="pre">Case.group</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.iterations"><code class="docutils literal notranslate"><span class="pre">Case.iterations</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.kwargs_variations</span></code></a></li>
@@ -2391,7 +2521,7 @@ list of benchmark cases passed to this function.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench package</a></li> 
       </ul>
     </div>

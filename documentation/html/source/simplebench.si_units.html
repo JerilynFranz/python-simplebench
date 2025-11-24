@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>simplebench.si_units module &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.si_units module &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/documentation_options.js?v=0dda2d64"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.si_units module</a></li> 
       </ul>
     </div>  
@@ -65,6 +66,37 @@ to pico (p).</p>
 or if the <code class="docutils literal notranslate"><span class="pre">unit</span></code> does not end with the <code class="docutils literal notranslate"><span class="pre">base_unit</span></code>.</p></li>
 <li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the <code class="docutils literal notranslate"><span class="pre">unit</span></code> or <code class="docutils literal notranslate"><span class="pre">base_unit</span></code> args are not type str.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.si_units.si_scale_for_largest">
+<span class="sig-prename descclassname"><span class="pre">simplebench.si_units.</span></span><span class="sig-name descname"><span class="pre">si_scale_for_largest</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">numbers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">base_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/si_units.html#si_scale_for_largest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.si_units.si_scale_for_largest" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the scale factor and SI unit for the largest in a sequence of numbers.</p>
+<p>The scale factor is the factor that should be applied to the numbers to convert
+them to the desired unit. The SI unit is the unit that corresponds to the scale factor.</p>
+<p>It gives the SI prefix unit and scale for the largest absolute value in the sequence.
+If all numbers are zero, it returns the base unit and a scale factor of 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numbers</strong> (<em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>]</em>) – A sequence of numbers to scale.</p></li>
+<li><p><strong>base_unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The base unit to use for scaling.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the scaled unit and the scaling factor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -194,6 +226,7 @@ require maintaining a list of known base units and would still not be exhaustive
     <ul>
 <li><a class="reference internal" href="#">simplebench.si_units module</a><ul>
 <li><a class="reference internal" href="#simplebench.si_units.si_scale"><code class="docutils literal notranslate"><span class="pre">si_scale()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.si_units.si_scale_for_largest"><code class="docutils literal notranslate"><span class="pre">si_scale_for_largest()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.si_units.si_scale_for_smallest"><code class="docutils literal notranslate"><span class="pre">si_scale_for_smallest()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.si_units.si_scale_to_unit"><code class="docutils literal notranslate"><span class="pre">si_scale_to_unit()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.si_units.si_unit_base"><code class="docutils literal notranslate"><span class="pre">si_unit_base()</span></code></a></li>
@@ -232,7 +265,7 @@ require maintaining a list of known base units and would still not be exhaustive
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.si_units module</a></li> 
       </ul>
     </div>

@@ -13,5 +13,14 @@ Reports
 
 .. index::
 
-.. include:: reports/rich_table_report.rst
-.. include:: reports/csv_report.rst
+
+
+.. toctree::
+   :name: contents
+   :maxdepth: 2
+   :caption: Table of Contents
+
+   reports/rich_table_report
+   reports/csv_report
+   reports/json_report
+   reports/graphs/scatterplot_graph_report

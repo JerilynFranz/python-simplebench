@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>simplebench.reporters.reporter package &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.reporters.reporter package &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/documentation_options.js?v=0dda2d64"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter package</a></li> 
       </ul>
     </div>  
@@ -288,7 +289,7 @@ or are of incorrect types.</p>
 
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
 </dl>
@@ -326,11 +327,12 @@ based on the provided options.</p>
 
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">log_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata" title="simplebench.reporters.log.ReportLogMetadata"><span class="pre">ReportLogMetadata</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.ReporterCallback" title="simplebench.reporters.protocols.ReporterCallback"><span class="pre">ReporterCallback</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
@@ -340,6 +342,7 @@ based on the provided options.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>log_metadata</strong> (<a class="reference internal" href="simplebench.reporters.log.report_log_metadata.html#simplebench.reporters.log.report_log_metadata.ReportLogMetadata" title="simplebench.reporters.log.report_log_metadata.ReportLogMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReportLogMetadata</span></code></a>) – The metadata for the report log.</p></li>
 <li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The parsed command-line arguments.</p></li>
 <li><p><strong>case</strong> (<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>) – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance containing benchmark results.</p></li>
 <li><p><strong>choice</strong> (<a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a>) – The <a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance specifying
@@ -361,10 +364,11 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">None</s
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">log_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata" title="simplebench.reporters.log.ReportLogMetadata"><span class="pre">ReportLogMetadata</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.ReporterCallback" title="simplebench.reporters.protocols.ReporterCallback"><span class="pre">ReporterCallback</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
@@ -386,6 +390,7 @@ targets like <a class="reference internal" href="simplebench.enums.html#simplebe
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The parsed command-line arguments.</p></li>
+<li><p><strong>log_metadata</strong> (:class:<a href="#id1"><span class="problematic" id="id2">`</span></a>~simplebench.reporters.log.report_log_metadata.Report) – The metadata for the report log.</p></li>
 <li><p><strong>case</strong> (<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>) – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the benchmarked code.</p></li>
 <li><p><strong>choice</strong> (<a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a>) – The <a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance specifying
 the report configuration.</p></li>
@@ -483,24 +488,130 @@ constraining the values that can be used within the <code class="docutils litera
 <p>As a frozen dataclass, instances of this class are immutable; their state
 cannot be changed after creation. Validation and normalization of inputs
 are performed automatically in the <code class="docutils literal notranslate"><span class="pre">__post_init__</span></code> method.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.name" title="Link to this definition">🔗</a></dt>
+<dd><p>The unique name for the reporter (e.g., ‘rich-table’).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Attributes<span class="colon">:</span></dt>
-<dd class="field-odd"><p>name (str): The unique name for the reporter (e.g., ‘rich-table’).
-description (str): A short description of what the reporter does.
-sections (frozenset[Section]): The master set of sections this reporter can handle.
-targets (frozenset[Target]): The master set of targets this reporter can output to.
-default_targets (frozenset[Target]): The default subset of <code class="docutils literal notranslate"><span class="pre">targets</span></code> to use.
-formats (frozenset[Format]): The master set of formats this reporter can produce.
-choices (ChoicesConf): Defines the reporter’s command-line interface flags.
-file_suffix (str): The file extension for filesystem targets, without the leading dot.
-file_unique (bool): If <code class="docutils literal notranslate"><span class="pre">True</span></code>, generate a unique filename for each output.
-file_append (bool): If <code class="docutils literal notranslate"><span class="pre">True</span></code>, append to the output file if it already exists.
-subdir (str): The subdirectory for saved files; <code class="docutils literal notranslate"><span class="pre">''</span></code> means the root results directory.</p>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.description" title="Link to this definition">🔗</a></dt>
+<dd><p>A short description of what the reporter does.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.sections">
+<span class="sig-name descname"><span class="pre">sections</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.sections" title="Link to this definition">🔗</a></dt>
+<dd><p>The master set of sections this reporter can handle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)">frozenset</a>[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section">Section</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.targets">
+<span class="sig-name descname"><span class="pre">targets</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.targets" title="Link to this definition">🔗</a></dt>
+<dd><p>The master set of targets this reporter can output to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)">frozenset</a>[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target">Target</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.default_targets">
+<span class="sig-name descname"><span class="pre">default_targets</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.default_targets" title="Link to this definition">🔗</a></dt>
+<dd><p>The default subset of <code class="docutils literal notranslate"><span class="pre">targets</span></code> to use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)">frozenset</a>[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target">Target</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.formats">
+<span class="sig-name descname"><span class="pre">formats</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.formats" title="Link to this definition">🔗</a></dt>
+<dd><p>The master set of formats this reporter can produce.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)">frozenset</a>[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format">Format</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.choices">
-<span class="sig-name descname"><span class="pre">choices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.choices" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">choices</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.choices" title="Link to this definition">🔗</a></dt>
+<dd><p>Defines the reporter’s command-line interface flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.ChoicesConf" title="simplebench.reporters.choices.ChoicesConf">ChoicesConf</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.file_suffix">
+<span class="sig-name descname"><span class="pre">file_suffix</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.file_suffix" title="Link to this definition">🔗</a></dt>
+<dd><p>The file extension for filesystem targets, without the leading dot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.file_unique">
+<span class="sig-name descname"><span class="pre">file_unique</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.file_unique" title="Link to this definition">🔗</a></dt>
+<dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, generate a unique filename for each output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.file_append">
+<span class="sig-name descname"><span class="pre">file_append</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.file_append" title="Link to this definition">🔗</a></dt>
+<dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, append to the output file if it already exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.subdir">
+<span class="sig-name descname"><span class="pre">subdir</span></span><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.subdir" title="Link to this definition">🔗</a></dt>
+<dd><p>The subdirectory for saved files; <code class="docutils literal notranslate"><span class="pre">''</span></code> means the root results directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">choices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a></em><a class="headerlink" href="#id0" title="Link to this definition">🔗</a></dt>
 <dd><p>A <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.ChoicesConf" title="simplebench.reporters.choices.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> object defining the reporter’s command-line interface
 flags. These flags allow end-users to precisely control report generation by
 specifying which sections to include, what output format to use, and where to
@@ -508,62 +619,62 @@ send the report (targets). They can also control other reporter-specific options
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.default_targets">
-<span class="sig-name descname"><span class="pre">default_targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.default_targets" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">default_targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id3" title="Link to this definition">🔗</a></dt>
 <dd><p>The default subset of <code class="docutils literal notranslate"><span class="pre">targets</span></code> to use if not specified. Must be a subset of the
 main <code class="docutils literal notranslate"><span class="pre">targets</span></code> set.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.description">
-<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.description" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#id4" title="Link to this definition">🔗</a></dt>
 <dd><p>A short description of what the reporter does. Cannot be empty or blank.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.file_append">
-<span class="sig-name descname"><span class="pre">file_append</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.file_append" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">file_append</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#id5" title="Link to this definition">🔗</a></dt>
 <dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, append to the output file if it already exists.
 Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">file_unique</span></code>; exactly one must be <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.file_suffix">
-<span class="sig-name descname"><span class="pre">file_suffix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.file_suffix" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">file_suffix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#id6" title="Link to this definition">🔗</a></dt>
 <dd><p>The file extension to use for filesystem targets (e.g., ‘txt’), without the leading dot.</p>
 <p>The suffix must consist only of alphanumeric characters and be 10 characters or less in length.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.file_unique">
-<span class="sig-name descname"><span class="pre">file_unique</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.file_unique" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">file_unique</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#id7" title="Link to this definition">🔗</a></dt>
 <dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, generate a unique filename for each output.
 Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">file_append</span></code>; exactly one must be <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.formats">
-<span class="sig-name descname"><span class="pre">formats</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><span class="pre">Format</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.formats" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">formats</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><span class="pre">Format</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id8" title="Link to this definition">🔗</a></dt>
 <dd><p>The master set of <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> enums this reporter can produce. This constrains
 the formats that can be used by any <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> in the <code class="docutils literal notranslate"><span class="pre">choices</span></code> list.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.name" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#id9" title="Link to this definition">🔗</a></dt>
 <dd><p>The unique name for the reporter (e.g., ‘rich-table’). Cannot be empty or blank.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.sections">
-<span class="sig-name descname"><span class="pre">sections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.sections" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">sections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id10" title="Link to this definition">🔗</a></dt>
 <dd><p>The master set of <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> enums this reporter can handle. This constrains
 the sections that can be used by any <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> in the <code class="docutils literal notranslate"><span class="pre">choices</span></code> list.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.subdir">
-<span class="sig-name descname"><span class="pre">subdir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.subdir" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">subdir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#id11" title="Link to this definition">🔗</a></dt>
 <dd><p>The subdirectory within the results directory to save files to. An empty string
 (<code class="docutils literal notranslate"><span class="pre">''</span></code>) specifies the root of the results directory (i.e., no subdirectory).</p>
 <p>A subdirectory path should only contain valid directory name elements separated by
@@ -574,8 +685,8 @@ characters, cannot be longer than 64 characters and cannot start or end with a d
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.ReporterConfig.targets">
-<span class="sig-name descname"><span class="pre">targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.reporter.ReporterConfig.targets" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id12" title="Link to this definition">🔗</a></dt>
 <dd><p>The master set of <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a> enums this reporter can output to. This constrains
 the targets that can be used by <code class="docutils literal notranslate"><span class="pre">default_targets</span></code> and any <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
 in the <code class="docutils literal notranslate"><span class="pre">choices</span></code> list.</p>
@@ -619,17 +730,28 @@ in Choice() and Case() objects to customize reporter behavior.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.reporter.config.html">simplebench.reporters.reporter.config module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig"><code class="docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.choices"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.default_targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.name"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.description"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.description</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.file_append"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.sections"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.default_targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.formats"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.choices"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.file_suffix"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_suffix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.file_unique"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_unique</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.formats"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.name"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.sections"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.file_append"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.subdir"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.subdir</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig.targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id0"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id1"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id2"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id3"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id4"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_suffix</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id5"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_unique</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id6"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id7"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id8"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id9"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.subdir</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.config.html#id10"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -774,17 +896,28 @@ in Choice() and Case() objects to customize reporter behavior.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig"><code class="docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.choices"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.default_targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.name"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.description"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.description</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.file_append"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.sections"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.default_targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.formats"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.choices"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.file_suffix"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_suffix</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.file_unique"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_unique</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.formats"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.name"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.sections"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.file_append"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.subdir"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.subdir</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterConfig.targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.description</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_suffix</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_unique</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.subdir</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.ReporterOptions"><code class="docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></li>
@@ -825,7 +958,7 @@ in Choice() and Case() objects to customize reporter behavior.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter package</a></li> 
       </ul>
     </div>

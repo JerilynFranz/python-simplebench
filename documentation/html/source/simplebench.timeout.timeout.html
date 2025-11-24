@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>simplebench.timeout.timeout module &#8212; simplebench 0.2.1alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
+    
+    <script src="../_static/documentation_options.js?v=0dda2d64"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.timeout.timeout module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-simplebench.timeout.timeout">
+<span id="simplebench-timeout-timeout-module"></span><h1>simplebench.timeout.timeout module<a class="headerlink" href="#module-simplebench.timeout.timeout" title="Link to this heading">🔗</a></h1>
+<p>Raise asynchronous exceptions in other thread, control the timeout of blocks
+or callables with a context manager</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.timeout.timeout.Timeout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.timeout.timeout.</span></span><span class="sig-name descname"><span class="pre">Timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.timeout.Timeout" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AbstractContextManager" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractContextManager</span></code></a></p>
+<p>Context manager for limiting in the time the execution of a block
+using asynchronous threads launching TimeoutError exception.</p>
+<p>The Timeout context manager allows you to specify a time limit for a block of code.
+If the block does not complete within the specified time limit,
+a TimeoutError exception is raised in the thread executing the block.</p>
+<dl>
+<dt>..code-block:: python3</dt><dd><dl class="field-list">
+<dt class="field-odd">linenos<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">caption<span class="colon">:</span></dt>
+<dd class="field-even"><p>Example of using the Timeout context manager.
+try:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>with Timeout(timeout_interval=5.0) as timeout:</dt><dd><p># Code block that should complete within 5 seconds
+do_something()</p>
+</dd>
+<dt>if timeout.state == TimeoutState.EXECUTED:</dt><dd><p>print(“Block completed successfully.”)</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>except TimeoutError:</dt><dd><p>print(“Block timed out.”)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.timeout.timeout.Timeout.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.timeout.Timeout.cancel" title="Link to this definition">🔗</a></dt>
+<dd><p>In case inside the block you realize you don’t need the time limit</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.timeout.timeout.Timeout.state">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.timeout.enums.html#simplebench.timeout.enums.TimeoutState" title="simplebench.timeout.enums.TimeoutState"><span class="pre">TimeoutState</span></a></em><a class="headerlink" href="#simplebench.timeout.timeout.Timeout.state" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the current state of the timeout context manager.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.timeout.timeout.Timeout.timeout_interval">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.timeout.timeout.Timeout.timeout_interval" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the timeout interval in seconds.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">simplebench.timeout.timeout module</a><ul>
+<li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout"><code class="docutils literal notranslate"><span class="pre">Timeout</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout.cancel"><code class="docutils literal notranslate"><span class="pre">Timeout.cancel()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout.state"><code class="docutils literal notranslate"><span class="pre">Timeout.state</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timeout.timeout.Timeout.timeout_interval"><code class="docutils literal notranslate"><span class="pre">Timeout.timeout_interval</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/source/simplebench.timeout.timeout.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.timeout.timeout module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

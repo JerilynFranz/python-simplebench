@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>simplebench.reporters package &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.reporters package &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/documentation_options.js?v=0dda2d64"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters package</a></li> 
       </ul>
     </div>  
@@ -215,6 +216,34 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.log.html">simplebench.reporters.log package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata.case"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata.case</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata.choice"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata.choice</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata.filepath"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata.filepath</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata.reports_log_path"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata.reports_log_path</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata.save_to_log"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata.save_to_log()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata.timestamp"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata.timestamp</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata.to_dict"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata.to_json"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata.to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.log.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.exceptions.html">simplebench.reporters.log.exceptions package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.log.exceptions.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.log.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.report_log_metadata.html">simplebench.reporters.log.report_log_metadata module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.log.report_log_metadata.html#simplebench.reporters.log.report_log_metadata.ReportLogMetadata"><code class="docutils literal notranslate"><span class="pre">ReportLogMetadata</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.protocols.html">simplebench.reporters.protocols package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.ChoiceProtocol"><code class="docutils literal notranslate"><span class="pre">ChoiceProtocol</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.protocols.html#simplebench.reporters.protocols.ChoiceProtocol.flags"><code class="docutils literal notranslate"><span class="pre">ChoiceProtocol.flags</span></code></a></li>
@@ -268,17 +297,28 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig"><code class="docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.choices"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.default_targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.name"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.description"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.description</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.file_append"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.sections"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.default_targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.formats"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.choices"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.file_suffix"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_suffix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.file_unique"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_unique</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.formats"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.name"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.sections"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.file_append"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.subdir"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.subdir</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig.targets"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id0"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.choices</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id3"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.default_targets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id4"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id5"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_append</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id6"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_suffix</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id7"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.file_unique</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id8"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.formats</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id9"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id10"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.sections</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id11"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.subdir</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.reporter.html#id12"><code class="docutils literal notranslate"><span class="pre">ReporterConfig.targets</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions"><code class="docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></li>
@@ -441,7 +481,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.reporters package</a></li> 
       </ul>
     </div>

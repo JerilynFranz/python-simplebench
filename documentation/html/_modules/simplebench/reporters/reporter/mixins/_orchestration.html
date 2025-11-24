@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.reporters.reporter.mixins._orchestration &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=15db7601" />
+    
+    <script src="../../../../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.mixins._orchestration</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.reporters.reporter.mixins._orchestration</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Mixin for orchestration-related functionality for the Reporter class.</span>
+
+<span class="sd">It provides methods to orchestrate the rendering of reports by case or by section,</span>
+<span class="sd">handling the dispatching of outputs to various targets such as filesystem, console,</span>
+<span class="sd">or callback functions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span><span class="p">,</span> <span class="n">ReportRenderer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReporterErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.prioritized</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prioritized</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_choice</span><span class="p">,</span> <span class="n">is_session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">sanitize_filename</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_string</span><span class="p">,</span> <span class="n">validate_type</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ReporterOrchestrationMixin</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin for orchestration-related functionality for the Reporter class.</span>
+
+<span class="sd">    It provides methods to orchestrate the rendering of reports by case or by section,</span>
+<span class="sd">    handling the dispatching of outputs to various targets such as filesystem, console,</span>
+<span class="sd">    or callback functions.</span>
+
+<span class="sd">    This makes writing reporters easier by providing common orchestration logic that</span>
+<span class="sd">    can be reused across different reporter implementations.</span>
+
+<span class="sd">    :ivar render_by_case: Render the report for an entire case at once across all applicable sections.</span>
+<span class="sd">    :vartype render_by_case: meth</span>
+<span class="sd">    :ivar render_by_section: Render a report for each section and case individually and dispatch to targets.</span>
+<span class="sd">    :vartype render_by_section: meth</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_render_by_args</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">:</span> <span class="n">ReporterProtocol</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+        <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+        <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate common arguments for render_by_case and render_by_section methods.</span>
+
+<span class="sd">        Checks that the provided arguments are of the expected types. Raises exceptions</span>
+<span class="sd">        if any argument is of an incorrect type.</span>
+
+<span class="sd">        :param renderer: The method to be used for actually rendering the report.</span>
+<span class="sd">        :type renderer: ReportRenderer | None</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: Namespace</span>
+<span class="sd">        :param case: The Case instance representing the benchmarked code.</span>
+<span class="sd">        :type case: Case</span>
+<span class="sd">        :param choice: The Choice instance specifying the report configuration.</span>
+<span class="sd">        :type choice: Choice</span>
+<span class="sd">        :param path: The path to the directory where the CSV file(s) will be saved.</span>
+<span class="sd">        :type path: Path | None</span>
+<span class="sd">        :param session: The Session instance containing benchmark results.</span>
+<span class="sd">        :type session: Session | None</span>
+<span class="sd">        :param callback: A callback function for additional processing of the report.</span>
+<span class="sd">        :type callback: ReporterCallback | None</span>
+<span class="sd">        :raises SimpleBenchTypeError: If any of the provided arguments are not of the expected types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">renderer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">renderer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;renderer must be a callable ReportRenderer or None&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE</span><span class="p">)</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">args</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE</span><span class="p">)</span>
+        <span class="c1"># is_* checks handle deferred import runtime type checking for Case, Choice, and Session</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected a Case instance for case argument&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_choice</span><span class="p">(</span><span class="n">choice</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected a Choice instance for choice argument&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_session</span><span class="p">(</span><span class="n">session</span><span class="p">)</span> <span class="ow">and</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;session must be a Session instance if provided&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">ReporterCallback</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;callback must be a callable ReporterCallback if provided&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span>
+                <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_by_case</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">ReporterProtocol</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                       <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+                       <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+                       <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+                       <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the report for an entire case at once across all applicable sections.</span>
+
+<span class="sd">        This method is called by the subclass&#39;s run_report() method to run one report per case</span>
+<span class="sd">        that is then processed according to the specified targets.</span>
+
+<span class="sd">        It calls the subclass&#39;s render() method to actually generate the report output.</span>
+
+<span class="sd">        Usage of this method is appropriate when the report output encompasses</span>
+<span class="sd">        all sections in a single output, such as a summary table or comprehensive report.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from typing import TYPE_CHECKING</span>
+
+<span class="sd">            from simplebench.reporters.reporter.reporter import Reporter, ReporterOptions</span>
+
+<span class="sd">            if TYPE_CHECKING:</span>
+<span class="sd">                from simplebench.case import Case</span>
+<span class="sd">                from simplebench.reporters.choice.choice import Choice</span>
+<span class="sd">                from simplebench.session import Session</span>
+
+<span class="sd">            class MyReporter(Reporter):</span>
+<span class="sd">                def __init__(self, ...):</span>
+<span class="sd">                    ...</span>
+
+<span class="sd">                def run_report(self, case: Case, choice: Choice, session: Session | None = None) -&gt; None:</span>
+<span class="sd">                    self.render_by_case(renderer=self.render,</span>
+<span class="sd">                                        args=self._args,</span>
+<span class="sd">                                        case=case,</span>
+<span class="sd">                                        choice=choice,</span>
+<span class="sd">                                        path=self._path,</span>
+<span class="sd">                                        session=session,</span>
+<span class="sd">                                        callback=self._callback)</span>
+
+<span class="sd">                def render(self, *, case: Case, section: Section, options: ReporterOptions) -&gt; str:</span>
+<span class="sd">                    &#39;&#39;&#39;Render the report output for the entire case across all sections.&#39;&#39;&#39;</span>
+<span class="sd">                    ...</span>
+
+<span class="sd">        :param renderer: The rendering function to use. If not provided,</span>
+<span class="sd">            defaults to `self.render`.</span>
+<span class="sd">        :type renderer: ReportRenderer | None</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: Namespace</span>
+<span class="sd">        :param case: The Case instance representing the benchmarked code.</span>
+<span class="sd">        :type case: Case</span>
+<span class="sd">        :param choice: The Choice instance specifying the report configuration.</span>
+<span class="sd">        :type choice: Choice</span>
+<span class="sd">        :param path: The path to the directory where the CSV file(s) will be saved.</span>
+<span class="sd">        :type path: Path | None</span>
+<span class="sd">        :param session: The Session instance containing benchmark results.</span>
+<span class="sd">        :type session: Session | None</span>
+<span class="sd">        :param callback:</span>
+<span class="sd">            A callback function for additional processing of the report.</span>
+<span class="sd">            The function should accept two arguments: the Case instance and the CSV data as a string.</span>
+<span class="sd">            Leave as None if no callback is needed.</span>
+<span class="sd">        :type callback: ReporterCallback | None</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the provided arguments are not of the expected types or if</span>
+<span class="sd">            required arguments are missing. Also raised if the callback is not callable when</span>
+<span class="sd">            provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM</span>
+<span class="sd">            target is specified.</span>
+<span class="sd">        :raises SimpleBenchValueError: If an unsupported section or target is specified in the choice.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">actual_renderer</span> <span class="o">=</span> <span class="n">renderer</span> <span class="k">if</span> <span class="n">renderer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_render_by_args</span><span class="p">(</span>
+            <span class="n">renderer</span><span class="o">=</span><span class="n">actual_renderer</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+            <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+            <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span>
+        <span class="n">prioritized</span> <span class="o">=</span> <span class="n">Prioritized</span><span class="p">(</span><span class="n">reporter</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_to_targets</span><span class="p">(</span>
+            <span class="n">output</span><span class="o">=</span><span class="n">actual_renderer</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">Section</span><span class="o">.</span><span class="n">NULL</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">prioritized</span><span class="o">.</span><span class="n">options</span><span class="p">),</span>
+            <span class="n">filename_base</span><span class="o">=</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+            <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+            <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+            <span class="n">section</span><span class="o">=</span><span class="n">Section</span><span class="o">.</span><span class="n">NULL</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_by_section</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">:</span> <span class="n">ReporterProtocol</span><span class="p">,</span>
+            <span class="o">*</span><span class="p">,</span>
+            <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+            <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+            <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render a report for each section and dispatch to targets.</span>
+
+<span class="sd">        This method is called by the subclass&#39;s run_report() method to run one report per section</span>
+<span class="sd">        that is then processed according to the specified targets.</span>
+
+<span class="sd">        It calls the subclass&#39;s render() method to actually generate the report output.</span>
+
+<span class="sd">        Usage of this method is appropriate when the report output divides each case by</span>
+<span class="sd">        section, such as separate files or outputs for each section of the report.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from simplebench.reporters.reporter.reporter import Reporter, ReporterOptions</span>
+
+<span class="sd">            if TYPE_CHECKING:</span>
+<span class="sd">                from simplebench.case import Case</span>
+<span class="sd">                from simplebench.reporters.choice.choice import Choice</span>
+<span class="sd">                from simplebench.session import Session</span>
+
+
+<span class="sd">            class MyReporter(Reporter):</span>
+<span class="sd">                def __init__(self, ...):</span>
+<span class="sd">                    ...</span>
+
+<span class="sd">                def run_report(self, case: Case, choice: Choice, session: Session | None = None) -&gt; None:</span>
+<span class="sd">                    self.render_by_section(</span>
+<span class="sd">                                        renderer=self.render,</span>
+<span class="sd">                                        args=self._args,</span>
+<span class="sd">                                        case=case,</span>
+<span class="sd">                                        choice=choice,</span>
+<span class="sd">                                        path=self._path,</span>
+<span class="sd">                                        session=session,</span>
+<span class="sd">                                        callback=self._callback)</span>
+
+<span class="sd">                def render(self, *, case: Case, section: Section, options: ReporterOptions) -&gt; str:</span>
+<span class="sd">                    &#39;&#39;&#39;Render the report output for the entire case across all sections.&#39;&#39;&#39;</span>
+<span class="sd">                    ...</span>
+
+<span class="sd">        :param renderer: The rendering function to use. If not provided,</span>
+<span class="sd">            defaults to `self.render`.</span>
+<span class="sd">        :type renderer: ReportRenderer | None</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: Namespace</span>
+<span class="sd">        :param case: The Case instance representing the benchmarked code.</span>
+<span class="sd">        :type case: Case</span>
+<span class="sd">        :param choice: The Choice instance specifying the report configuration.</span>
+<span class="sd">        :type choice: Choice</span>
+<span class="sd">        :param path: The path to the directory where the CSV file(s) will be saved.</span>
+<span class="sd">        :type path: Path | None</span>
+<span class="sd">        :param session: The Session instance containing benchmark results.</span>
+<span class="sd">        :type session: Session | None</span>
+<span class="sd">        :param callback:</span>
+<span class="sd">            A callback function for additional processing of the report.</span>
+<span class="sd">            The function should accept two arguments: the Case instance and the CSV data as a string.</span>
+<span class="sd">            Leave as None if no callback is needed.</span>
+<span class="sd">        :type callback: ReporterCallback | None</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the provided arguments are not of the expected types or if</span>
+<span class="sd">            required arguments are missing. Also raised if the callback is not callable when</span>
+<span class="sd">            provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM</span>
+<span class="sd">            target is specified.</span>
+<span class="sd">        :raises SimpleBenchValueError: If an unsupported section or target is specified in the choice.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">actual_renderer</span> <span class="o">=</span> <span class="n">renderer</span> <span class="k">if</span> <span class="n">renderer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">render</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_render_by_args</span><span class="p">(</span>
+            <span class="n">renderer</span><span class="o">=</span><span class="n">actual_renderer</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+            <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+            <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span>
+        <span class="n">prioritized</span> <span class="o">=</span> <span class="n">Prioritized</span><span class="p">(</span><span class="n">reporter</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">choice</span><span class="o">.</span><span class="n">sections</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">actual_renderer</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">prioritized</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_to_targets</span><span class="p">(</span>
+                <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span>
+                <span class="n">filename_base</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">section</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+                <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+                <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+                <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">,</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+                <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch_to_targets</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">:</span> <span class="n">ReporterProtocol</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
+            <span class="n">filename_base</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+            <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+            <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+            <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span>
+            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deliver the rendered output to the specified targets.</span>
+
+<span class="sd">        This helper method takes the rendered output and dispatches it to the</span>
+<span class="sd">        appropriate targets based on the prioritized options.</span>
+
+<span class="sd">        This method handles the logic for delivering the report output to the possible targets:</span>
+<span class="sd">        - FILESYSTEM: Writes the output to a file in the specified path and subdirectory.</span>
+<span class="sd">        - CALLBACK: Sends the output to a provided callback function for further processing.</span>
+<span class="sd">        - CONSOLE: Outputs the report directly to the console.</span>
+
+<span class="sd">        :param output: The rendered report output.</span>
+<span class="sd">        :type output: str | bytes | Text | Table</span>
+<span class="sd">        :param filename_base: The base filename to use for filesystem outputs.</span>
+<span class="sd">            This is the filename without any suffixes or extensions.</span>
+<span class="sd">        :type filename_base: str</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: Namespace</span>
+<span class="sd">        :param choice: The Choice instance specifying the report configuration.</span>
+<span class="sd">        :type choice: Choice</span>
+<span class="sd">        :param case: The Case instance representing the benchmarked code.</span>
+<span class="sd">        :type case: Case</span>
+<span class="sd">        :param section: The Section of the report.</span>
+<span class="sd">        :type section: Section</span>
+<span class="sd">        :param path: The path to the directory where the CSV file(s) will be saved.</span>
+<span class="sd">        :type path: Path | None</span>
+<span class="sd">        :param session: The Session instance containing benchmark results.</span>
+<span class="sd">        :type session: Session | None</span>
+<span class="sd">        :param callback: A callback function for additional processing of the report.</span>
+<span class="sd">        :type callback: ReporterCallback | None</span>
+<span class="sd">        :raises SimpleBenchValueError: If an unsupported target is specified in the choice.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">output</span><span class="p">,</span>
+                               <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Table</span><span class="p">),</span>
+                               <span class="s1">&#39;output&#39;</span><span class="p">,</span>
+                               <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE</span><span class="p">)</span>
+        <span class="n">filename_base</span> <span class="o">=</span> <span class="n">validate_string</span><span class="p">(</span>
+                            <span class="n">filename_base</span><span class="p">,</span> <span class="s1">&#39;filename_base&#39;</span><span class="p">,</span>
+                            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE</span><span class="p">,</span>
+                            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_VALUE</span><span class="p">,</span>
+                            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">strip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">alphanumeric_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">args</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected a Case instance for case argument&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_choice</span><span class="p">(</span><span class="n">choice</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected a Choice instance for choice argument&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_session</span><span class="p">(</span><span class="n">session</span><span class="p">)</span> <span class="ow">and</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;session must be a Session instance if provided&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">ReporterCallback</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;callback must be a callable ReporterCallback if provided&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span>
+                <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE</span><span class="p">)</span>
+
+        <span class="n">prioritized</span> <span class="o">=</span> <span class="n">Prioritized</span><span class="p">(</span><span class="n">reporter</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">)</span>
+        <span class="n">targets</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_targets_from_args</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span> <span class="n">default_targets</span><span class="o">=</span><span class="n">prioritized</span><span class="o">.</span><span class="n">default_targets</span><span class="p">)</span>
+        <span class="n">output_as_text</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">Table</span><span class="p">)):</span>
+            <span class="n">output_as_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rich_text_to_plain_text</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">sanitize_filename</span><span class="p">(</span><span class="n">filename_base</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prioritized</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">prioritized</span><span class="o">.</span><span class="n">file_suffix</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">for</span> <span class="n">output_target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="k">match</span> <span class="n">output_target</span><span class="p">:</span>
+                <span class="k">case</span> <span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">target_filesystem</span><span class="p">(</span>
+                        <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                        <span class="n">subdir</span><span class="o">=</span><span class="n">prioritized</span><span class="o">.</span><span class="n">subdir</span><span class="p">,</span>
+                        <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                        <span class="n">output</span><span class="o">=</span><span class="n">output_as_text</span><span class="p">,</span>
+                        <span class="n">unique</span><span class="o">=</span><span class="n">prioritized</span><span class="o">.</span><span class="n">file_unique</span><span class="p">,</span>
+                        <span class="n">append</span><span class="o">=</span><span class="n">prioritized</span><span class="o">.</span><span class="n">file_append</span><span class="p">)</span>
+
+                <span class="k">case</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">target_callback</span><span class="p">(</span>
+                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
+                        <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+                        <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">,</span>
+                        <span class="n">output_format</span><span class="o">=</span><span class="n">choice</span><span class="o">.</span><span class="n">output_format</span><span class="p">,</span>
+                        <span class="n">output</span><span class="o">=</span><span class="n">output_as_text</span><span class="p">)</span>
+
+                <span class="k">case</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">target_console</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+
+                <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;Unsupported target for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">output_target</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET</span><span class="p">)</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.reporters.reporter.mixins._orchestration</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>simplebench.timeout.timeout &#8212; simplebench 0.2.1alpha0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=e424009b" />
+    
+    <script src="../../../_static/documentation_options.js?v=0dda2d64"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.timeout.timeout</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for simplebench.timeout.timeout</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Raise asynchronous exceptions in other thread, control the timeout of blocks</span>
+<span class="sd">or callables with a context manager</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ctypes</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractContextManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TracebackType</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchRuntimeError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutState</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.thread_id</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadId</span>
+
+<span class="c1"># Create a thread-local storage for the timeout token.</span>
+<span class="n">_thread_local</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_NotSet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sentinel class for unset attributes.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Timeout">
+<a class="viewcode-back" href="../../../source/simplebench.timeout.timeout.html#simplebench.timeout.Timeout">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Timeout</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for limiting in the time the execution of a block</span>
+<span class="sd">    using asynchronous threads launching TimeoutError exception.</span>
+
+
+<span class="sd">    The Timeout context manager allows you to specify a time limit for a block of code.</span>
+<span class="sd">    If the block does not complete within the specified time limit,</span>
+<span class="sd">    a TimeoutError exception is raised in the thread executing the block.</span>
+
+<span class="sd">    ..code-block:: python3</span>
+<span class="sd">      :linenos:</span>
+<span class="sd">      :caption: Example of using the Timeout context manager.</span>
+<span class="sd">        try:</span>
+<span class="sd">            with Timeout(timeout_interval=5.0) as timeout:</span>
+<span class="sd">                # Code block that should complete within 5 seconds</span>
+<span class="sd">                do_something()</span>
+<span class="sd">            if timeout.state == TimeoutState.EXECUTED:</span>
+<span class="sd">                print(&quot;Block completed successfully.&quot;)</span>
+<span class="sd">        except TimeoutError:</span>
+<span class="sd">            print(&quot;Block timed out.&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timeout_interval</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Timeout context manager.</span>
+
+<span class="sd">        :param timeout_interval: ``float`` or ``int`` duration enabled to run the context manager block</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_thread_id</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">ident</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_timeout_interval</span><span class="p">(</span><span class="n">timeout_interval</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_target_thread_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ThreadId</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The target thread identifier.</span>
+
+<span class="sd">        :raises SimpleBenchRuntimeError: If an attempt to read the value is made</span>
+<span class="sd">        before it has been set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">thread_id</span><span class="p">:</span> <span class="n">ThreadId</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">_NotSet</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_target_thread_id&quot;</span><span class="p">,</span> <span class="n">_NotSet</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">thread_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thread_id</span><span class="p">,</span> <span class="n">ThreadId</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">thread_id</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchRuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;target_thread_id has not been set&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">TARGET_THREAD_ID_NOT_SET</span><span class="p">)</span>
+
+    <span class="nd">@_target_thread_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_target_thread_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">ThreadId</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the target thread identifier.</span>
+
+<span class="sd">        :param value: Target thread identifier.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the value is not a ThreadId, int, or None.</span>
+<span class="sd">        :raises SimpleBenchValueError: If the value is an int less than 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">ThreadId</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">ThreadId</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;target_thread_id must be a ThreadId or None&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_THREAD_ID_TYPE</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_target_thread_id&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the timer thread.&quot;&quot;&quot;</span>
+        <span class="n">timer</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span> <span class="o">|</span> <span class="n">_NotSet</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_timer&quot;</span><span class="p">,</span> <span class="n">_NotSet</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">timer</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchRuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;timer has not been set&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">TIMER_NOT_SET</span><span class="p">)</span>
+
+    <span class="nd">@_timer</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the timer thread.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;timer must be a threading.Timer instance&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMER_TYPE</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_timer&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timeout_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the timeout interval in seconds.&quot;&quot;&quot;</span>
+        <span class="n">interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">_NotSet</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_timeout_interval&quot;</span><span class="p">,</span> <span class="n">_NotSet</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">interval</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchRuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;timeout_interval has not been set&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">TIMEOUT_INTERVAL_NOT_SET</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_timeout_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the timeout interval in seconds.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;timeout_interval must be a float or int&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_INTERVAL_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;timeout_interval must be greater than zero&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMEOUT_INTERVAL_VALUE</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_timeout_interval&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TimeoutState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the current state of the timeout context manager.&quot;&quot;&quot;</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">TimeoutState</span> <span class="o">|</span> <span class="n">_NotSet</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_state&quot;</span><span class="p">,</span> <span class="n">_NotSet</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">TimeoutState</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">state</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchRuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;state has not been set&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">STATE_NOT_SET</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">TimeoutState</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the current state of the timeout context manager.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TimeoutState</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;state must be a TimeoutState&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_STATE_TYPE</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_private_state&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Called by timer thread at timeout.&quot;&quot;&quot;</span>
+        <span class="n">should_raise</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="c1"># Atomically check and set the state.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTING</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">TIMED_OUT</span><span class="p">)</span>
+                <span class="n">should_raise</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">should_raise</span><span class="p">:</span>
+            <span class="n">thread_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_thread_id</span>
+            <span class="k">if</span> <span class="n">thread_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_raise_timeout_error</span><span class="p">(</span><span class="n">thread_id</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_interrupt_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setting up the resource that interrupts the block&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout_interval</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_suppress_interrupt_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removing the resource that interrupts the block&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Boolean evaluation of the context manager state&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTED</span><span class="p">,</span>
+            <span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTING</span><span class="p">,</span>
+            <span class="n">TimeoutState</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Set the initial state for this run.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTING</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_interrupt_timer</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">:</span> <span class="ne">BaseException</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">:</span> <span class="n">TracebackType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># Immediately request timer cancellation.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_suppress_interrupt_timer</span><span class="p">()</span>
+
+        <span class="c1"># Check the thread-local storage to see if our _stop method was the source.</span>
+        <span class="n">is_our_timeout</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_thread_local</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_thread_local</span><span class="o">.</span><span class="n">source</span> <span class="ow">is</span> <span class="bp">self</span>
+
+        <span class="c1"># Clear the thread-local token after reading it.</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_thread_local</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">_thread_local</span><span class="o">.</span><span class="n">source</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_our_timeout</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">TIMED_OUT</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">TimeoutState</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">EXECUTED</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="ne">TimeoutError</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">INTERRUPTED</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)</span>
+
+        <span class="c1"># Never swallow the exception. Always return False.</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Timeout.cancel">
+<a class="viewcode-back" href="../../../source/simplebench.timeout.timeout.html#simplebench.timeout.Timeout.cancel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;In case inside the block you realize you don&#39;t need the time limit&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="c1"># Set the state to CANCELED within the lock.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">TimeoutState</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_suppress_interrupt_timer</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_raise_timeout_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">ThreadId</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise a Timeout exception in a different thread.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thread_id</span><span class="p">,</span> <span class="n">ThreadId</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;thread_id must be a ThreadId, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">thread_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                       <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_THREAD_ID_TYPE</span><span class="p">)</span>
+
+        <span class="c1"># Set the thread-local token to our instance identity BEFORE raising.</span>
+        <span class="n">_thread_local</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="n">c_thread_id</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_ulong</span><span class="p">(</span><span class="n">thread_id</span><span class="p">)</span>
+        <span class="c1"># Pass the exception TYPE, not an instance.</span>
+        <span class="n">states_modified</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyThreadState_SetAsyncExc</span><span class="p">(</span>
+            <span class="n">c_thread_id</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">py_object</span><span class="p">(</span><span class="ne">TimeoutError</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">states_modified</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid thread ID </span><span class="si">{</span><span class="n">thread_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="n">error_message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">TimeoutErrorTag</span><span class="o">.</span><span class="n">INVALID_THREAD_ID_VALUE</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">states_modified</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># This part is tricky. If we modified more than one state, we should</span>
+            <span class="c1"># probably try to clear the exception from the thread.</span>
+            <span class="n">ctypes</span><span class="o">.</span><span class="n">pythonapi</span><span class="o">.</span><span class="n">PyThreadState_SetAsyncExc</span><span class="p">(</span><span class="n">c_thread_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">SystemError</span><span class="p">(</span><span class="s2">&quot;PyThreadState_SetAsyncExc failed&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">simplebench.timeout.timeout</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, Jerilyn Franz.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

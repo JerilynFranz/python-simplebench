@@ -1,4 +1,4 @@
-"""Tests for the Timeout context manager."""
+"""Tests for the Timeout runner."""
 
 import threading
 import time
@@ -16,33 +16,31 @@ LONG_WAIT = 0.5
 
 
 class TestTimeout:
-    """Test suite for the Timeout context manager."""
+    """Test suite for the Timeout runner."""
 
-    def test_block_completes_successfully(self):
-        """Test that a block shorter than the timeout completes successfully."""
-        with Timeout(timeout_interval=LONG_WAIT) as timeout:
-            time.sleep(SHORT_WAIT)
+    def test_callable_completes_successfully(self):
+        """Test that a callable shorter than the timeout completes successfully."""
+        timeout = Timeout(timeout_interval=LONG_WAIT)
+        result = timeout.run(time.sleep, SHORT_WAIT)
         assert timeout.state == TimeoutState.EXECUTED
+        assert result is None  # time.sleep returns None
 
-    def test_block_times_out_and_raises_exception(self):
+    def test_callable_times_out_and_raises_exception(self):
         """Test that a timeout raises TimeoutError."""
+        timeout = Timeout(timeout_interval=SHORT_WAIT)
         with pytest.raises(TimeoutError):
-            with Timeout(timeout_interval=SHORT_WAIT):
-                time.sleep(LONG_WAIT)
+            timeout.run(time.sleep, LONG_WAIT)
+        assert timeout.state == TimeoutState.TIMED_OUT
 
     def test_other_exception_is_propagated(self):
-        """Test that an unrelated exception inside the block is always propagated."""
-        with pytest.raises(ValueError, match="test error"):
-            with Timeout(timeout_interval=LONG_WAIT) as timeout:
-                raise ValueError("test error")
-        assert timeout.state == TimeoutState.FAILED  # type: ignore[reportPossiblyUnboundVariable]
+        """Test that an unrelated exception inside the callable is always propagated."""
+        def func_that_raises():
+            raise ValueError("test error")
 
-    def test_cancel_method_prevents_timeout(self):
-        """Test that calling cancel() prevents the timeout from firing."""
-        with Timeout(timeout_interval=SHORT_WAIT) as timeout:
-            timeout.cancel()
-            time.sleep(LONG_WAIT)  # Sleep past the original timeout
-        assert timeout.state == TimeoutState.CANCELED, f"Expected CANCELED but got {timeout.state}"
+        timeout = Timeout(timeout_interval=LONG_WAIT)
+        with pytest.raises(ValueError, match="test error"):
+            timeout.run(func_that_raises)
+        assert timeout.state == TimeoutState.FAILED
 
     def test_invalid_timeout_interval_raises_error(self):
         """Test that a negative timeout interval raises a ValueError."""
@@ -50,27 +48,35 @@ class TestTimeout:
             Timeout(timeout_interval=-1)
 
     def test_nested_timeouts_inner_fires(self):
-        """Test that an inner timeout firing is handled correctly and not swallowed by the outer."""
+        """Test that an inner timeout's exception propagates correctly."""
+        def inner_task():
+            # This inner timeout is short and will fire
+            inner_timeout = Timeout(timeout_interval=SHORT_WAIT)
+            inner_timeout.run(time.sleep, LONG_WAIT)
+
+        # The outer timeout is long and will not fire
+        outer_timeout = Timeout(timeout_interval=LONG_WAIT)
         with pytest.raises(TimeoutError):
-            # Outer timeout is long
-            with Timeout(timeout_interval=LONG_WAIT):
-                # Inner timeout is short and will fire, but is not swallowed
-                with Timeout(timeout_interval=SHORT_WAIT):
-                    time.sleep(LONG_WAIT)
+            outer_timeout.run(inner_task)
+        # The outer timeout itself failed because its task raised an exception
+        assert outer_timeout.state == TimeoutState.FAILED
 
     def test_nested_timeouts_outer_fires(self):
         """Test that an outer timeout correctly interrupts a block with an inner timeout."""
+        def inner_task_long():
+            # Inner timeout is long and will be interrupted by the outer timeout
+            inner_timeout = Timeout(timeout_interval=LONG_WAIT)
+            inner_timeout.run(time.sleep, LONG_WAIT)
+
+        # Outer timeout is short and will fire
+        outer_timeout = Timeout(timeout_interval=SHORT_WAIT)
         with pytest.raises(TimeoutError):
-            # Outer timeout is short and will fire
-            with Timeout(timeout_interval=SHORT_WAIT):
-                # Inner timeout is long and will be interrupted
-                with Timeout(timeout_interval=LONG_WAIT):
-                    time.sleep(LONG_WAIT)
+            outer_timeout.run(inner_task_long)
+        assert outer_timeout.state == TimeoutState.TIMED_OUT
 
     def test_concurrent_threads_do_not_interfere(self):
         """
-        Test that two concurrent Timeout instances in different threads do not interfere,
-        validating the use of instance-specific thread IPC mechanisms.
+        Test that two concurrent Timeout instances in different threads do not interfere.
         """
         results = {}
         barrier = threading.Barrier(2)
@@ -78,9 +84,12 @@ class TestTimeout:
         def thread_a_target():
             """This thread should time out."""
             try:
-                with Timeout(timeout_interval=SHORT_WAIT):
+                timeout_a = Timeout(timeout_interval=SHORT_WAIT)
+
+                def task_a():
                     barrier.wait()  # Sync with thread B
                     time.sleep(LONG_WAIT)
+                timeout_a.run(task_a)
                 results['a'] = 'completed'  # Should not be reached
             except TimeoutError:
                 results['a'] = 'timed_out'
@@ -90,9 +99,12 @@ class TestTimeout:
         def thread_b_target():
             """This thread should complete successfully."""
             try:
-                with Timeout(timeout_interval=LONG_WAIT):
+                timeout_b = Timeout(timeout_interval=LONG_WAIT)
+
+                def task_b():
                     barrier.wait()  # Sync with thread A
                     time.sleep(SHORT_WAIT)
+                timeout_b.run(task_b)
                 results['b'] = 'completed'
             except Exception as e:  # pylint: disable=broad-exception-caught
                 results['b'] = e

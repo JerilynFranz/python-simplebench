@@ -17,7 +17,7 @@ Contents
 
 .. toctree::
    :name: contents
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Table of Contents
 
    installation

@@ -5,16 +5,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>CSV Report &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>CSV Report &#8212; simplebench 0.2.1alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../_static/documentation_options.js?v=0dda2d64"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="JSON Report" href="json_report.html" />
+    <link rel="prev" title="Rich Table Report" href="rich_table_report.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
@@ -25,7 +28,14 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="right" >
+          <a href="json_report.html" title="JSON Report"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rich_table_report.html" title="Rich Table Report"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reports.html" accesskey="U">Reports</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">CSV Report</a></li> 
       </ul>
     </div>  
@@ -59,8 +69,8 @@ will look something like this:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>  # title: addition_benchmark
   # description: A simple addition benchmark of Python&#39;s built-in sum function.
   # unit: Ops/s
-  N,Iterations,Rounds,Elapsed Seconds,mean (Ops/s),median (Ops/s),min (Ops/s),max (Ops/s),5th (Ops/s),95th (Ops/s),std dev (Ops/s),rsd (%)
-  1,42761,1,0.29235192800000004,148000.0,150000.0,962.0,154000.0,144000.0,151000.0,8220.0,5.55
+  N,Iterations,Rounds,Elapsed Seconds,mean (kOps/s),median (kOps/s),min (kOps/s),max (kOps/s),5th (kOps/s),95th (kOps/s),std dev (kOps/s),rsd (%)
+  1,42801,1,0.291715587,147.0,148.0,22.0,153.0,142.0,151.0,6.77,4.6
 </pre></div>
 </div>
 </div>
@@ -71,29 +81,29 @@ will look something like this:</p>
 <th class="head"><p>Iterations</p></th>
 <th class="head"><p>Rounds</p></th>
 <th class="head"><p>Elapsed Seconds</p></th>
-<th class="head"><p>mean (Ops/s)</p></th>
-<th class="head"><p>median (Ops/s)</p></th>
-<th class="head"><p>min (Ops/s)</p></th>
-<th class="head"><p>max (Ops/s)</p></th>
-<th class="head"><p>5th (Ops/s)</p></th>
-<th class="head"><p>95th (Ops/s)</p></th>
-<th class="head"><p>std dev (Ops/s)</p></th>
+<th class="head"><p>mean (kOps/s)</p></th>
+<th class="head"><p>median (kOps/s)</p></th>
+<th class="head"><p>min (kOps/s)</p></th>
+<th class="head"><p>max (kOps/s)</p></th>
+<th class="head"><p>5th (kOps/s)</p></th>
+<th class="head"><p>95th (kOps/s)</p></th>
+<th class="head"><p>std dev (kOps/s)</p></th>
 <th class="head"><p>rsd (%)</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>1</p></td>
-<td><p>42761</p></td>
+<td><p>42801</p></td>
 <td><p>1</p></td>
-<td><p>0.29235192800000004</p></td>
-<td><p>148000.0</p></td>
-<td><p>150000.0</p></td>
-<td><p>962.0</p></td>
-<td><p>154000.0</p></td>
-<td><p>144000.0</p></td>
-<td><p>151000.0</p></td>
-<td><p>8220.0</p></td>
-<td><p>5.55</p></td>
+<td><p>0.291715587</p></td>
+<td><p>147.0</p></td>
+<td><p>148.0</p></td>
+<td><p>22.0</p></td>
+<td><p>153.0</p></td>
+<td><p>142.0</p></td>
+<td><p>151.0</p></td>
+<td><p>6.77</p></td>
+<td><p>4.6</p></td>
 </tr>
 </tbody>
 </table>
@@ -113,8 +123,6 @@ picture of your code’s performance.</p>
 <p>To avoid “false precision”, statistical results are output with three significant digits.
 Due to the inherent variability of performance measurement, any further digits are
 typically meaningless statistical noise.</p>
-<p>This does not apply to the raw timing measurements (e.g., Elapsed Seconds), which are
-reported in full precision for accuracy.</p>
 <p>This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
 measurement in the real world.</p>
 </div>
@@ -193,6 +201,16 @@ documentation.</p>
 </ul>
 
   </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="rich_table_report.html"
+                          title="previous chapter">Rich Table Report</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="json_report.html"
+                          title="next chapter">JSON Report</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -223,7 +241,14 @@ documentation.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="right" >
+          <a href="json_report.html" title="JSON Report"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rich_table_report.html" title="Rich Table Report"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reports.html" >Reports</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">CSV Report</a></li> 
       </ul>
     </div>

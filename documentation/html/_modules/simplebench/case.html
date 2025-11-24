@@ -4,11 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.case &#8212; simplebench 0.1.0alpha0 documentation</title>
+    <title>simplebench.case &#8212; simplebench 0.2.0alpha0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=d5a199ad" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
-    <script src="../../_static/documentation_options.js?v=9a12e387"></script>
+    <script src="../../_static/documentation_options.js?v=1d9f15aa"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -24,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.case</a></li> 
       </ul>
@@ -42,11 +43,18 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span> <span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span> <span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span> <span class="n">DEFAULT_ROUNDS</span><span class="p">,</span> <span class="n">DEFAULT_WARMUP_ITERATIONS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span><span class="p">,</span> <span class="n">Section</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchRuntimeError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span><span class="p">,</span> <span class="n">_CaseErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleBenchAttributeError</span><span class="p">,</span>
+    <span class="n">SimpleBenchRuntimeError</span><span class="p">,</span>
+    <span class="n">SimpleBenchTypeError</span><span class="p">,</span>
+    <span class="n">SimpleBenchValueError</span><span class="p">,</span>
+    <span class="n">_CaseErrorTag</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActionRunner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
@@ -59,10 +67,65 @@
     <span class="n">validate_non_negative_int</span><span class="p">,</span>
     <span class="n">validate_positive_float</span><span class="p">,</span>
     <span class="n">validate_positive_int</span><span class="p">,</span>
+    <span class="n">validate_string</span><span class="p">,</span>
+    <span class="n">validate_type</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.vcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">GitInfo</span><span class="p">,</span> <span class="n">get_git_info</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+
+<div class="viewcode-block" id="generate_benchmark_id">
+<a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.generate_benchmark_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_benchmark_id</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a stable benchmark ID based on action, group, and signature.</span>
+
+<span class="sd">    This function attempts to create a stable benchmark ID based on the action</span>
+<span class="sd">    function&#39;s name, its signature (parameter names and types), and the group.</span>
+<span class="sd">    If this is not possible (e.g., if the action is a lambda or has no name),</span>
+<span class="sd">    a transient ID based on the instance&#39;s id() will be used.</span>
+
+<span class="sd">    :param obj: An object instance related to the benchmark case, used for transient ID generation if needed.</span>
+<span class="sd">    :param action: The action function of the benchmark case.</span>
+<span class="sd">    :type action: ActionRunner</span>
+<span class="sd">    :param group: The group of the benchmark case.</span>
+<span class="sd">    :type group: str</span>
+<span class="sd">    :return: A stable benchmark ID string or a transient ID if stability is not possible.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Use __qualname__ to include class context.</span>
+        <span class="n">action_qualname</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="s1">&#39;__qualname__&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;unknown&gt;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">action_qualname</span> <span class="o">==</span> <span class="s1">&#39;&lt;lambda&gt;&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchAttributeError</span><span class="p">(</span>
+                <span class="s1">&#39;Lambda functions do not have stable names.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_BENCHMARK_ID_VALUE</span><span class="p">,</span>
+                <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;__qualname__&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Get the filename where the action is defined.</span>
+        <span class="n">module_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="n">action</span><span class="p">))</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">action_signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">signature_parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">param_type</span> <span class="o">=</span> <span class="s1">&#39;Any&#39;</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                    <span class="n">param_type</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">param_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
+            <span class="n">signature_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">param_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">signature_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">signature_parts</span><span class="p">)</span>
+
+        <span class="c1"># Combine filename, qualname, and signature for a more unique ID.</span>
+        <span class="n">benchmark_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">module_file</span><span class="si">}</span><span class="s1">::</span><span class="si">{</span><span class="n">action_qualname</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">signature_str</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="k">return</span> <span class="n">benchmark_id</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>  <span class="c1"># More specific exception handling</span>
+        <span class="c1"># Fallback to transient ID for built-ins, interactively defined functions, etc.</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;transient-</span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
 
 
 <div class="viewcode-block" id="Case">
@@ -154,9 +217,12 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_group&#39;</span><span class="p">,</span> <span class="s1">&#39;_title&#39;</span><span class="p">,</span> <span class="s1">&#39;_description&#39;</span><span class="p">,</span> <span class="s1">&#39;_action&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_warmup_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_min_time&#39;</span><span class="p">,</span> <span class="s1">&#39;_max_time&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_variation_cols&#39;</span><span class="p">,</span> <span class="s1">&#39;_kwargs_variations&#39;</span><span class="p">,</span> <span class="s1">&#39;_runner&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;_callback&#39;</span><span class="p">,</span> <span class="s1">&#39;_results&#39;</span><span class="p">,</span> <span class="s1">&#39;_options&#39;</span><span class="p">,</span> <span class="s1">&#39;_rounds&#39;</span><span class="p">)</span>
+                 <span class="s1">&#39;_callback&#39;</span><span class="p">,</span> <span class="s1">&#39;_results&#39;</span><span class="p">,</span> <span class="s1">&#39;_options&#39;</span><span class="p">,</span> <span class="s1">&#39;_rounds&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_benchmark_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_git_info&#39;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">benchmark_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">git_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GitInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">action</span><span class="p">:</span> <span class="n">ActionRunner</span><span class="p">,</span>
                  <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
                  <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -175,6 +241,20 @@
 
 <span class="sd">        The only REQUIRED parameter is `action`.</span>
 
+<span class="sd">        :param benchmark_id: An optional unique identifier for the benchmark case. If None,</span>
+<span class="sd">            a transient ID is assigned. This is meant to provide a stable identifier for the</span>
+<span class="sd">            benchmark case across multiple runs for tracking purposes. If not provided,</span>
+<span class="sd">            an attempt will be made to generate a stable ID based on the the action function</span>
+<span class="sd">            name, signature, and group. If that is not possible, a transient ID based</span>
+<span class="sd">            on the instance&#39;s id() will be used. If a transient ID is used, it will differ</span>
+<span class="sd">            between runs and cannot be used to correlate results across multiple runs.</span>
+
+<span class="sd">            Benchmark ids must be unique within a benchmarking session.</span>
+<span class="sd">        :type benchmark_id: Optional[str]</span>
+<span class="sd">        :param git_info: An optional GitInfo instance representing the state of the Git repository.</span>
+<span class="sd">            If not provided, the GitInfo will be automatically retrieved from the current</span>
+<span class="sd">            context of the caller if the code is part of a Git repository.</span>
+<span class="sd">        :type git_info: Optional[GitInfo]</span>
 <span class="sd">        :param action: The function to perform the benchmark. This function must</span>
 <span class="sd">            accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments (&#39;**kwargs&#39;).</span>
 <span class="sd">            See the `ActionRunner` protocol for the exact signature required.</span>
@@ -285,6 +365,15 @@
                         <span class="n">max_time</span><span class="p">,</span> <span class="s2">&quot;max_time&quot;</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MAX_TIME_TYPE</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MAX_TIME_VALUE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="k">if</span> <span class="n">benchmark_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span> <span class="o">=</span> <span class="n">generate_benchmark_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span> <span class="o">=</span> <span class="n">validate_string</span><span class="p">(</span>
+                <span class="n">benchmark_id</span><span class="p">,</span> <span class="s2">&quot;benchmark_id&quot;</span><span class="p">,</span>
+                <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_BENCHMARK_ID_TYPE</span><span class="p">,</span>
+                <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_BENCHMARK_ID_VALUE</span><span class="p">,</span>
+                <span class="n">strip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_runner</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_runner</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
@@ -292,6 +381,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_options</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># No validation needed here</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validate_time_range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_git_info</span><span class="p">:</span> <span class="n">GitInfo</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">get_git_info</span><span class="p">()</span> <span class="k">if</span> <span class="n">git_info</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">git_info</span><span class="p">,</span> <span class="n">GitInfo</span><span class="p">,</span> <span class="s1">&#39;git_info&#39;</span><span class="p">,</span> <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_GIT_INFO_ARG_TYPE</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="Case.validate_time_range">
 <a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_time_range">[docs]</a>
@@ -567,6 +659,41 @@
 <span class="sd">                return results</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">benchmark_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A unique identifier for the benchmark case.</span>
+
+<span class="sd">        It is meant to provide a stable identifier for the benchmark case across</span>
+<span class="sd">        multiple runs for tracking purposes.</span>
+
+<span class="sd">        If not provided, an attempt will be made to generate a stable ID based on</span>
+<span class="sd">        the the action function name, signature, and group. If that is not possible,</span>
+<span class="sd">        a transient ID based on the instance&#39;s id() will be used.</span>
+
+<span class="sd">        If a transient ID is used, it will differ between runs and cannot be used</span>
+<span class="sd">        to correlate results across multiple runs.</span>
+
+<span class="sd">        Benchmark ids must be unique within a benchmarking session.</span>
+
+<span class="sd">        Passed ids are stripped of leading and trailing whitespace and validated</span>
+<span class="sd">        to be non-blank.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_benchmark_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">git_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GitInfo</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Git information for the benchmark case.</span>
+
+<span class="sd">        This is a read-only attribute that provides git information</span>
+<span class="sd">        such as the current commit hash, branch name, and repository URL.</span>
+<span class="sd">        If the benchmark is not in a file managed by a git repository,</span>
+<span class="sd">        a None value is returned.</span>
+
+<span class="sd">        :return: A GitInfo object containing git information, or None if not in a git repository.</span>
+<span class="sd">        :rtype: GitInfo | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_git_info</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -897,7 +1024,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.1.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.case</a></li> 
       </ul>

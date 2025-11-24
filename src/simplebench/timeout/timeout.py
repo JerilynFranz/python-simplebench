@@ -1,100 +1,58 @@
 """
-Raise asynchronous exceptions in other thread, control the timeout of blocks
-or callables with a context manager
-
-:param timeout_interval: ``float`` or ``int`` duration enabled to run the context manager block
+Run a callable with a timeout, ensuring safe termination.
 """
-import ctypes
 import threading
-from contextlib import AbstractContextManager
-from types import TracebackType
+from typing import Any, Callable
 
-from ..exceptions import SimpleBenchRuntimeError, SimpleBenchTypeError, SimpleBenchValueError
+from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from .enums import TimeoutState
 from .exceptions import TimeoutErrorTag
-from .thread_id import ThreadId
-
-# Create a thread-local storage for the timeout token.
-_thread_local = threading.local()
 
 
-class _NotSet:
-    """Sentinel class for unset attributes."""
-
-
-class Timeout(AbstractContextManager):
-    """Context manager for limiting in the time the execution of a block
-    using asynchronous threads launching exception.
+class Timeout:
     """
+    Executes a callable in a separate daemon thread and enforces a timeout.
 
-    def __init__(self, *, timeout_interval: float):
-        """Initialize the Timeout context manager.
+    This implementation avoids the risks of raising asynchronous exceptions by
+    running the target function in a worker thread and using `thread.join()`
+    with a timeout. If the worker thread is still alive after the timeout,
 
-        :param timeout_interval: ``float`` or ``int`` duration enabled to run the context manager block
+    it is considered to have timed out. Because the worker is a daemon thread,
+    the main program can exit without needing to forcefully terminate it.
+
+    .. code-block:: python3
+      :linenos:
+      :caption: Example of using the new Timeout class.
+
+        def my_long_running_task():
+            time.sleep(10)
+            return "done"
+
+        timeout = Timeout(5.0)
+        try:
+            result = timeout.run(my_long_running_task)
+            print(f"Task finished with result: {result}")
+        except TimeoutError:
+            print(f"Task timed out. Final state: {timeout.state}")
+            # It is recommended to exit cleanly after a timeout.
+            sys.exit(1)
+
+    """
+    def __init__(self, timeout_interval: float):
+        """Initialize the Timeout runner.
+
+        :param timeout_interval: ``float`` or ``int`` duration to wait for the callable to complete.
         """
-        self._target_thread_id = threading.current_thread().ident
         self._set_timeout_interval(timeout_interval)
-        self._set_state(TimeoutState.EXECUTED)
-        self._lock = threading.Lock()
-
-    @property
-    def _target_thread_id(self) -> ThreadId | None:
-        """The target thread identifier.
-
-        :raises SimpleBenchRuntimeError: If an attempt to read the value is made
-        before it has been set.
-        """
-        thread_id: ThreadId | None | _NotSet = getattr(self, "_private_target_thread_id", _NotSet())
-        if thread_id is None or isinstance(thread_id, ThreadId):
-            return thread_id
-        raise SimpleBenchRuntimeError(
-            "target_thread_id has not been set",
-            tag=TimeoutErrorTag.TARGET_THREAD_ID_NOT_SET)
-
-    @_target_thread_id.setter
-    def _target_thread_id(self, value: ThreadId | int | None):
-        """Set the target thread identifier.
-
-        :param value: Target thread identifier.
-        :raises SimpleBenchTypeError: If the value is not a ThreadId, int, or None.
-        :raises SimpleBenchValueError: If the value is an int less than 1.
-        """
-        if isinstance(value, int):
-            value = ThreadId(value)
-        if not isinstance(value, (ThreadId, type(None))):
-            raise SimpleBenchTypeError(
-                "target_thread_id must be a ThreadId or None",
-                tag=TimeoutErrorTag.INVALID_THREAD_ID_TYPE)
-        setattr(self, "_private_target_thread_id", value)
-
-    @property
-    def _timer(self) -> threading.Timer:
-        """Get the timer thread."""
-        timer: threading.Timer | _NotSet = getattr(self, "_private_timer", _NotSet())
-        if isinstance(timer, threading.Timer):
-            return timer
-        raise SimpleBenchRuntimeError(
-            "timer has not been set",
-            tag=TimeoutErrorTag.TIMER_NOT_SET)
-
-    @_timer.setter
-    def _timer(self, value: threading.Timer):
-        """Set the timer thread."""
-        if not isinstance(value, threading.Timer):
-            raise SimpleBenchTypeError(
-                "timer must be a threading.Timer instance",
-                tag=TimeoutErrorTag.INVALID_TIMER_TYPE)
-        setattr(self, "_private_timer", value)
+        self._worker_thread: threading.Thread | None = None
+        self._result: Any = None
+        self._exception: BaseException | None = None
+        self._set_state(TimeoutState.EXECUTED)  # Initial state
 
     @property
     def timeout_interval(self) -> float:
         """Get the timeout interval in seconds."""
-        interval: float | _NotSet = getattr(self, "_private_timeout_interval", _NotSet())
-        if isinstance(interval, float):
-            return interval
-        raise SimpleBenchRuntimeError(
-            "timeout_interval has not been set",
-            tag=TimeoutErrorTag.TIMEOUT_INTERVAL_NOT_SET)
+        return getattr(self, "_private_timeout_interval")
 
     def _set_timeout_interval(self, value: float | int):
         """Set the timeout interval in seconds."""
@@ -110,13 +68,8 @@ class Timeout(AbstractContextManager):
 
     @property
     def state(self) -> TimeoutState:
-        """Get the current state of the timeout context manager."""
-        state: TimeoutState | _NotSet = getattr(self, "_private_state", _NotSet())
-        if isinstance(state, TimeoutState):
-            return state
-        raise SimpleBenchRuntimeError(
-            "state has not been set",
-            tag=TimeoutErrorTag.STATE_NOT_SET)
+        """Get the final state of the timeout execution."""
+        return getattr(self, "_private_state")
 
     def _set_state(self, value: TimeoutState):
         """Set the current state of the timeout context manager."""
@@ -126,95 +79,49 @@ class Timeout(AbstractContextManager):
                 tag=TimeoutErrorTag.INVALID_STATE_TYPE)
         setattr(self, "_private_state", value)
 
-    def _stop(self):
-        """Called by timer thread at timeout."""
-        should_raise = False
-        with self._lock:
-            # Atomically check and set the state.
-            if self.state == TimeoutState.EXECUTING:
-                self._set_state(TimeoutState.TIMED_OUT)
-                should_raise = True
+    def _target_wrapper(self, func: Callable, *args: Any, **kwargs: Any):
+        """
+        Internal wrapper to run in the worker thread.
+        It captures the result or any exception that occurs.
+        """
+        try:
+            self._result = func(*args, **kwargs)
+        except BaseException as e:  # pylint: disable=broad-exception-caught
+            self._exception = e
 
-        if should_raise:
-            thread_id = self._target_thread_id
-            if thread_id is not None:
-                self._raise_timeout_error(thread_id)
+    def run(self, func: Callable, *args: Any, **kwargs: Any) -> Any:
+        """
+        Runs the given callable in a worker thread with a timeout.
 
-    def _setup_interrupt_timer(self):
-        """Setting up the resource that interrupts the block"""
-        self._timer = threading.Timer(self.timeout_interval, self._stop)
-        self._timer.start()
-
-    def _suppress_interrupt_timer(self):
-        """Removing the resource that interrupts the block"""
-        self._timer.cancel()
-
-    def __bool__(self) -> bool:
-        """Boolean evaluation of the context manager state"""
-        return self.state in (
-            TimeoutState.EXECUTED,
-            TimeoutState.EXECUTING,
-            TimeoutState.CANCELED,
+        :param func: The callable to execute.
+        :param args: Positional arguments to pass to the callable.
+        :param kwargs: Keyword arguments to pass to the callable.
+        :raises TimeoutError: If the callable does not complete within the specified timeout.
+        :raises BaseException: Any exception raised by the callable will be re-raised in the main thread.
+        :return: The return value of the callable if it completes successfully.
+        """
+        self._worker_thread = threading.Thread(
+            target=self._target_wrapper,
+            args=(func,) + args,
+            kwargs=kwargs,
+            daemon=True  # Crucial: Allows the main thread to exit even if this thread is blocked.
         )
 
-    def __enter__(self):
-        # Set the initial state for this run.
         self._set_state(TimeoutState.EXECUTING)
-        self._setup_interrupt_timer()
-        return self
+        self._worker_thread.start()
+        self._worker_thread.join(timeout=self.timeout_interval)
 
-    def __exit__(self, exc_type: type | None, exc_val: BaseException | None, exc_tb: TracebackType | None) -> bool:
-        # Immediately request timer cancellation.
-        self._suppress_interrupt_timer()
+        if self._worker_thread.is_alive():
+            # The thread is still running, so it has timed out.
+            self._set_state(TimeoutState.TIMED_OUT)
+            raise TimeoutError(f"Execution timed out after {self.timeout_interval} seconds")
 
-        # Check the thread-local storage to see if our _stop method was the source.
-        is_our_timeout = hasattr(_thread_local, 'source') and _thread_local.source is self
+        # If we get here, the thread has finished.
+        if self._exception:
+            # An exception occurred inside the thread.
+            self._set_state(TimeoutState.FAILED)
+            raise self._exception
 
-        # Clear the thread-local token after reading it.
-        if hasattr(_thread_local, 'source'):
-            del _thread_local.source
-
-        with self._lock:
-            if is_our_timeout:
-                self._set_state(TimeoutState.TIMED_OUT)
-            elif exc_type is None:
-                if self.state != TimeoutState.CANCELED:
-                    self._set_state(TimeoutState.EXECUTED)
-            elif issubclass(exc_type, TimeoutError):
-                self._set_state(TimeoutState.INTERRUPTED)
-            else:
-                self._set_state(TimeoutState.FAILED)
-
-        # Never swallow the exception. Always return False.
-        return False
-
-    def cancel(self):
-        """In case inside the block you realize you don't need the time limit"""
-        with self._lock:
-            # Set the state to CANCELED within the lock.
-            self._set_state(TimeoutState.CANCELED)
-        self._suppress_interrupt_timer()
-
-    def _raise_timeout_error(self, thread_id: ThreadId):
-        """Raise a Timeout exception in a different thread."""
-        if not isinstance(thread_id, ThreadId):
-            raise SimpleBenchTypeError(f"thread_id must be a ThreadId, not {type(thread_id)}",
-                                       tag=TimeoutErrorTag.INVALID_THREAD_ID_TYPE)
-
-        # Set the thread-local token to our instance identity BEFORE raising.
-        _thread_local.source = self
-
-        c_thread_id = ctypes.c_ulong(thread_id)
-        # Pass the exception TYPE, not an instance.
-        states_modified: int = ctypes.pythonapi.PyThreadState_SetAsyncExc(
-            c_thread_id, ctypes.py_object(TimeoutError)
-        )
-        if states_modified == 0:
-            error_message = f"Invalid thread ID {thread_id}"
-            raise SimpleBenchValueError(
-                error_message, tag=TimeoutErrorTag.INVALID_THREAD_ID_VALUE)
-        elif states_modified > 1:
-            # This part is tricky. If we modified more than one state, we should
-            # probably try to clear the exception from the thread.
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(c_thread_id, None)
-            raise SystemError("PyThreadState_SetAsyncExc failed")
+        # The thread completed successfully.
+        self._set_state(TimeoutState.EXECUTED)
+        return self._result
