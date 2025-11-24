@@ -4,7 +4,14 @@ from __future__ import annotations
 from typing import Any, Callable, ParamSpec, TypeVar
 
 from .case import Case, generate_benchmark_id
-from .defaults import DEFAULT_ITERATIONS, DEFAULT_MAX_TIME, DEFAULT_MIN_TIME, DEFAULT_ROUNDS, DEFAULT_WARMUP_ITERATIONS
+from .defaults import (
+    DEFAULT_ITERATIONS,
+    DEFAULT_MAX_TIME,
+    DEFAULT_MIN_TIME,
+    DEFAULT_ROUNDS,
+    DEFAULT_TIMEOUT_GRACE_PERIOD,
+    DEFAULT_WARMUP_ITERATIONS,
+)
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, _DecoratorsErrorTag
 # simplebench.reporters.reporter
 from .reporters.reporter.options import ReporterOptions
@@ -36,10 +43,11 @@ def benchmark(
         rounds: int = DEFAULT_ROUNDS,
         min_time: float = DEFAULT_MIN_TIME,
         max_time: float = DEFAULT_MAX_TIME,
+        timeout: float | None = None,
         variation_cols: dict[str, str] | None = None,
         kwargs_variations: dict[str, list[Any]] | None = None,
         options: list[ReporterOptions] | None = None,
-        n: int = 1,
+        n: int | float = 1,
         use_field_for_n: str | None = None) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """A decorator to register a function as a benchmark case.
 
@@ -119,6 +127,10 @@ def benchmark(
     :type min_time: int | float
     :param max_time: The maximum time in seconds to run the benchmark.
         Must be a positive number greater than min_time.
+    : param timeout: The maximum time in seconds to allow the benchmark
+        to run before timing out. If None, a default timeout of
+        `max_time` + {DEFAULT_TIMEOUT_GRACE_PERIOD} is used.
+    : type timeout: Optional[int | float]
     :type max_time: int | float
     :param variation_cols: kwargs to be used for cols to denote kwarg
         variations. Each key is a keyword argument name, and the value is the column label to use for that
@@ -139,8 +151,8 @@ def benchmark(
         specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
         from the list of options themselves.
     :type options: Optional[list[ReporterOptions]]
-    :param n: The 'n' weighting of the benchmark case. Must be a positive integer.
-    :type n: int
+    :param n: The 'n' weighting of the benchmark case. Must be a positive integer or float.
+    :type n: int | float
     :param use_field_for_n: If provided, use the value of this field from kwargs_variations
         to set 'n' dynamically for each variation.
     :type use_field_for_n: Optional[str]
@@ -197,7 +209,17 @@ def benchmark(
         _DecoratorsErrorTag.BENCHMARK_MAX_TIME_TYPE,
         _DecoratorsErrorTag.BENCHMARK_MAX_TIME_VALUE)
 
-    n = validate_positive_int(
+    timeout_value = max_time + DEFAULT_TIMEOUT_GRACE_PERIOD if timeout is None else timeout
+    timeout = validate_positive_float(
+        timeout_value, 'timeout',
+        _DecoratorsErrorTag.BENCHMARK_TIMEOUT_TYPE,
+        _DecoratorsErrorTag.BENCHMARK_TIMEOUT_VALUE)
+    if timeout <= 0:
+        raise SimpleBenchValueError(
+            "The 'timeout' parameter to the @benchmark decorator must be a positive float or None.",
+            tag=_DecoratorsErrorTag.BENCHMARK_TIMEOUT_CANNOT_BE_ZERO_OR_NEGATIVE)
+
+    n = validate_positive_float(
         n, 'n',
         _DecoratorsErrorTag.BENCHMARK_N_TYPE,
         _DecoratorsErrorTag.BENCHMARK_N_VALUE)

@@ -3,6 +3,9 @@ SimpleBench
 
 A framework for building and running benchmarks.
 
+* 0.3.0-alpha.0 2025-11-24 - Fourth alpha release
+  * Added enforced timeouts for benchmark runs
+  * Updated 'n' complexity handling to allow floats as well as int
 * 0.2.1alpha0 2025-11-23 - Third alpha release
   * Changed _report_log format to use 'benchmark_id', 'benchmark_title', and 'benchmark_group'
   * Fixed oversharing issue with building tarball in dist

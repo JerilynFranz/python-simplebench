@@ -5,12 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>simplebench.case module &#8212; simplebench 0.2.1alpha0 documentation</title>
+    <title>simplebench.case module &#8212; simplebench 0.3.0-alpha.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e424009b" />
     
-    <script src="../_static/documentation_options.js?v=0dda2d64"></script>
+    <script src="../_static/documentation_options.js?v=6c195044"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -26,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.3.0-alpha.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.case module</a></li> 
       </ul>
     </div>  
@@ -489,7 +489,7 @@ Each iteration will run the specified number of rounds after setup and before te
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><span class="pre">Session</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case.html#Case.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.Case.run" title="Link to this definition">🔗</a></dt>
@@ -501,7 +501,7 @@ benchmarks, the results will be stored in the <cite>self.results</cite> attribut
 control verbosity, and pass CLI arguments to the benchmark runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>session</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.session.html#simplebench.session.Session" title="simplebench.session.Session"><em>Session</em></a><em>]</em>) – The session to use for the benchmark case.</p>
+<dd class="field-odd"><p><strong>session</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><em>Session</em></a><em>]</em>) – The session to use for the benchmark case.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -654,7 +654,7 @@ that is a valid Python identifier.</p></li>
 <dd class="field-even"><p>A shallow copy of the validated options as a list or an empty list if not provided.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions">ReporterOptions</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions">ReporterOptions</a>]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If options is not a list or if any entry is not a ReporterOption.</p>
@@ -890,7 +890,7 @@ a transient ID based on the instance’s id() will be used.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.2.1alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">simplebench 0.3.0-alpha.0 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.case module</a></li> 
       </ul>
     </div>
