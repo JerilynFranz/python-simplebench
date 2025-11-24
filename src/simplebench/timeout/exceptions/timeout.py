@@ -1,0 +1,36 @@
+"""timeout exceptions for the simplebench package."""
+from ...enums import enum_docstrings
+from ...exceptions import ErrorTag
+
+
+@enum_docstrings
+class TimeoutErrorTag(ErrorTag):
+    """ErrorTags for timeout-related errors."""
+    INVALID_EXCEPTION_ARG_TYPE = "INVALID_EXCEPTION_ARG_TYPE"
+    "The provided exception argument is not a valid exception type."
+    INVALID_THREAD_ID_TYPE = "INVALID_THREAD_ID_TYPE"
+    "The provided thread ID is not of type `ThreadId` (`int`)."
+    INVALID_THREAD_ID_VALUE = "INVALID_THREAD_ID_VALUE"
+    "The provided thread ID is not a non-negative integer."
+    INVALID_TIMER_TYPE = "INVALID_TIMER_TYPE"
+    "The provided timer is not of type `threading.Timer`."
+    INVALID_TIMEOUT_INTERVAL_TYPE = "INVALID_TIMEOUT_INTERVAL_TYPE"
+    "The provided timeout interval is not a float or int."
+    INVALID_TIMEOUT_INTERVAL_VALUE = "INVALID_TIMEOUT_INTERVAL_VALUE"
+    "The provided timeout interval is not greater than zero."
+    INVALID_SWALLOW_EXCEPTION_TYPE = "INVALID_SWALLOW_EXCEPTION_TYPE"
+    "The provided swallow_exception flag is not a boolean."
+    INVALID_STATE_TYPE = "INVALID_STATE_TYPE"
+    "The provided timeout state is not of type `TimeoutState`."
+    TIMEOUT_EXCEEDED = "TIMEOUT_EXCEEDED"
+    "The operation exceeded the allowed time limit."
+    TARGET_THREAD_ID_NOT_SET = "TARGET_THREAD_ID_NOT_SET"
+    "The target thread ID has not been set."
+    TIMER_NOT_SET = "TIMER_NOT_SET"
+    "The timeout timer has not been set."
+    TIMEOUT_INTERVAL_NOT_SET = "TIMEOUT_INTERVAL_NOT_SET"
+    "The timeout interval has not been set."
+    SWALLOW_EXCEPTION_NOT_SET = "SWALLOW_EXCEPTION_NOT_SET"
+    "The timeout swallow_exception flag has not been set."
+    STATE_NOT_SET = "STATE_NOT_SET"
+    "The timeout state has not been set."

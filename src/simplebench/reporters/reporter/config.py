@@ -27,7 +27,7 @@ class ReporterConfig:
     cannot be changed after creation. Validation and normalization of inputs
     are performed automatically in the ``__post_init__`` method.
 
-    :Attributes:
+    Attributes:
         name (str): The unique name for the reporter (e.g., 'rich-table').
         description (str): A short description of what the reporter does.
         sections (frozenset[Section]): The master set of sections this reporter can handle.
