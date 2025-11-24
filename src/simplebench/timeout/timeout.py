@@ -3,26 +3,19 @@ Raise asynchronous exceptions in other thread, control the timeout of blocks
 or callables with a context manager
 
 :param timeout_interval: ``float`` or ``int`` duration enabled to run the context manager block
-:param swallow_exception: Whether to swallow the SimpleBenchTimeoutError exception or not.
-    - ``False`` if you want to manage the ``SimpleBenchTimeoutError`` (or any other) in an
-      outer ``try ... except`` structure.
-    - ``True`` (default) if you just want to check the execution of
-      the block with the ``state`` attribute of the context manager.
-
 """
 import ctypes
 import threading
 from contextlib import AbstractContextManager
 from types import TracebackType
 
-from ..exceptions import SimpleBenchRuntimeError, SimpleBenchTimeoutError, SimpleBenchTypeError, SimpleBenchValueError
+from ..exceptions import SimpleBenchRuntimeError, SimpleBenchTypeError, SimpleBenchValueError
 from .enums import TimeoutState
 from .exceptions import TimeoutErrorTag
 from .thread_id import ThreadId
 
-# Create a thread-local storage object at the module level.
+# Create a thread-local storage for the timeout token.
 _thread_local = threading.local()
-"""Thread-local storage for timeout context managers."""
 
 
 class _NotSet:
@@ -34,21 +27,14 @@ class Timeout(AbstractContextManager):
     using asynchronous threads launching exception.
     """
 
-    def __init__(self, *, timeout_interval: float, swallow_exception: bool = True):
+    def __init__(self, *, timeout_interval: float):
         """Initialize the Timeout context manager.
 
         :param timeout_interval: ``float`` or ``int`` duration enabled to run the context manager block
-        :param swallow_exception: Whether to swallow the ``SimpleBenchTimeoutError`` exception or not.
-        - ``False`` if you want to manage any exceptions in an outer ``try ... except`` structure.
-        - ``True`` (default) if you just want to check the execution of
-            the block with the ``state`` attribute of the context manager.
         """
         self._target_thread_id = threading.current_thread().ident
         self._set_timeout_interval(timeout_interval)
-        self._set_swallow_exception(swallow_exception)
         self._set_state(TimeoutState.EXECUTED)
-        self._is_timeout_source = False
-        # 1. Add a lock to protect shared state.
         self._lock = threading.Lock()
 
     @property
@@ -113,7 +99,7 @@ class Timeout(AbstractContextManager):
     def _set_timeout_interval(self, value: float | int):
         """Set the timeout interval in seconds."""
         if not isinstance(value, (float, int)):
-            raise SimpleBenchTimeoutError(
+            raise SimpleBenchTypeError(
                 "timeout_interval must be a float or int",
                 tag=TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE)
         if value <= 0:
@@ -121,24 +107,6 @@ class Timeout(AbstractContextManager):
                 "timeout_interval must be greater than zero",
                 tag=TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE)
         setattr(self, "_private_timeout_interval", float(value))
-
-    @property
-    def swallow_exception(self) -> bool:
-        """Get whether to swallow the Timeout exception."""
-        swallow: bool | _NotSet = getattr(self, "_private_swallow_exception", _NotSet())
-        if isinstance(swallow, bool):
-            return swallow
-        raise SimpleBenchRuntimeError(
-            "swallow_exception has not been set",
-            tag=TimeoutErrorTag.SWALLOW_EXCEPTION_NOT_SET)
-
-    def _set_swallow_exception(self, value: bool):
-        """Set whether to swallow the Timeout exception."""
-        if not isinstance(value, bool):
-            raise SimpleBenchTypeError(
-                "swallow_exception must be a boolean",
-                tag=TimeoutErrorTag.INVALID_SWALLOW_EXCEPTION_TYPE)
-        setattr(self, "_private_swallow_exception", value)
 
     @property
     def state(self) -> TimeoutState:
@@ -160,16 +128,17 @@ class Timeout(AbstractContextManager):
 
     def _stop(self):
         """Called by timer thread at timeout."""
+        should_raise = False
         with self._lock:
-            # If __exit__ or cancel() has already run, the state will not be EXECUTING.
-            if self.state != TimeoutState.EXECUTING:
-                return
-            self._is_timeout_source = True
+            # Atomically check and set the state.
+            if self.state == TimeoutState.EXECUTING:
+                self._set_state(TimeoutState.TIMED_OUT)
+                should_raise = True
 
-        # Now, raise the exception in the main thread. This call will block.
-        thread_id = self._target_thread_id
-        if thread_id is not None:
-            self._raise_timeout_error(thread_id)
+        if should_raise:
+            thread_id = self._target_thread_id
+            if thread_id is not None:
+                self._raise_timeout_error(thread_id)
 
     def _setup_interrupt_timer(self):
         """Setting up the resource that interrupts the block"""
@@ -189,61 +158,63 @@ class Timeout(AbstractContextManager):
         )
 
     def __enter__(self):
-        # Reset the flag for this instance.
-        self._is_timeout_source = False
+        # Set the initial state for this run.
         self._set_state(TimeoutState.EXECUTING)
         self._setup_interrupt_timer()
         return self
 
     def __exit__(self, exc_type: type | None, exc_val: BaseException | None, exc_tb: TracebackType | None) -> bool:
+        # Immediately request timer cancellation.
+        self._suppress_interrupt_timer()
+
+        # Check the thread-local storage to see if our _stop method was the source.
+        is_our_timeout = hasattr(_thread_local, 'source') and _thread_local.source is self
+
+        # Clear the thread-local token after reading it.
+        if hasattr(_thread_local, 'source'):
+            del _thread_local.source
+
         with self._lock:
-            # By acquiring the lock, we prevent the _stop method from changing
-            # _is_timeout_source while we are in this critical section.
-            self._suppress_interrupt_timer()
-
-            is_our_timeout = self._is_timeout_source
-
             if is_our_timeout:
                 self._set_state(TimeoutState.TIMED_OUT)
-                return exc_type is TimeoutError and self.swallow_exception
-
-            # If we are here, our timer did not fire.
-            if exc_type is None:
+            elif exc_type is None:
                 if self.state != TimeoutState.CANCELED:
                     self._set_state(TimeoutState.EXECUTED)
-            elif exc_type is TimeoutError:
+            elif issubclass(exc_type, TimeoutError):
                 self._set_state(TimeoutState.INTERRUPTED)
             else:
                 self._set_state(TimeoutState.FAILED)
 
-            return False
+        # Never swallow the exception. Always return False.
+        return False
 
     def cancel(self):
         """In case inside the block you realize you don't need the time limit"""
-        self._set_state(TimeoutState.CANCELED)
+        with self._lock:
+            # Set the state to CANCELED within the lock.
+            self._set_state(TimeoutState.CANCELED)
         self._suppress_interrupt_timer()
 
     def _raise_timeout_error(self, thread_id: ThreadId):
-        """Raise a Timeout exception in a different thread.
-        Read https://docs.python.org/c-api/init.html#PyThreadState_SetAsyncExc
-        for further enlightenments.
-
-        :param thread_id: target thread identifier
-        """
+        """Raise a Timeout exception in a different thread."""
         if not isinstance(thread_id, ThreadId):
             raise SimpleBenchTypeError(f"thread_id must be a ThreadId, not {type(thread_id)}",
                                        tag=TimeoutErrorTag.INVALID_THREAD_ID_TYPE)
 
+        # Set the thread-local token to our instance identity BEFORE raising.
+        _thread_local.source = self
+
         c_thread_id = ctypes.c_ulong(thread_id)
-        # gil_state = ctypes.pythonapi.PyGILState_Ensure()
+        # Pass the exception TYPE, not an instance.
         states_modified: int = ctypes.pythonapi.PyThreadState_SetAsyncExc(
             c_thread_id, ctypes.py_object(TimeoutError)
         )
-        # ctypes.pythonapi.PyGILState_Release(gil_state)
         if states_modified == 0:
             error_message = f"Invalid thread ID {thread_id}"
             raise SimpleBenchValueError(
                 error_message, tag=TimeoutErrorTag.INVALID_THREAD_ID_VALUE)
         elif states_modified > 1:
+            # This part is tricky. If we modified more than one state, we should
+            # probably try to clear the exception from the thread.
             ctypes.pythonapi.PyThreadState_SetAsyncExc(c_thread_id, None)
             raise SystemError("PyThreadState_SetAsyncExc failed")

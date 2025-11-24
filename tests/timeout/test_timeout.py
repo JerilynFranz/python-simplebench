@@ -24,21 +24,10 @@ class TestTimeout:
             time.sleep(SHORT_WAIT)
         assert timeout.state == TimeoutState.EXECUTED
 
-    def test_block_times_out_with_swallowed_exception(self):
-        """Test that a timeout with exception swallowing works as expected."""
-        try:
-            with Timeout(timeout_interval=SHORT_WAIT, swallow_exception=True) as timeout:
-                time.sleep(LONG_WAIT)
-        except TimeoutError as e:
-            pytest.fail(f"TimeoutError was not swallowed: {e}")
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            pytest.fail(f"Unexpected exception raised: {e}")
-        assert timeout.state == TimeoutState.TIMED_OUT, f"Expected TIMED_OUT but got {timeout.state}"
-
     def test_block_times_out_and_raises_exception(self):
-        """Test that a timeout raises TimeoutError when not swallowed."""
+        """Test that a timeout raises TimeoutError."""
         with pytest.raises(TimeoutError):
-            with Timeout(timeout_interval=SHORT_WAIT, swallow_exception=False):
+            with Timeout(timeout_interval=SHORT_WAIT):
                 time.sleep(LONG_WAIT)
 
     def test_other_exception_is_propagated(self):
@@ -64,18 +53,18 @@ class TestTimeout:
         """Test that an inner timeout firing is handled correctly and not swallowed by the outer."""
         with pytest.raises(TimeoutError):
             # Outer timeout is long
-            with Timeout(timeout_interval=LONG_WAIT, swallow_exception=True):
+            with Timeout(timeout_interval=LONG_WAIT):
                 # Inner timeout is short and will fire, but is not swallowed
-                with Timeout(timeout_interval=SHORT_WAIT, swallow_exception=False):
+                with Timeout(timeout_interval=SHORT_WAIT):
                     time.sleep(LONG_WAIT)
 
     def test_nested_timeouts_outer_fires(self):
         """Test that an outer timeout correctly interrupts a block with an inner timeout."""
         with pytest.raises(TimeoutError):
             # Outer timeout is short and will fire
-            with Timeout(timeout_interval=SHORT_WAIT, swallow_exception=False):
+            with Timeout(timeout_interval=SHORT_WAIT):
                 # Inner timeout is long and will be interrupted
-                with Timeout(timeout_interval=LONG_WAIT, swallow_exception=True):
+                with Timeout(timeout_interval=LONG_WAIT):
                     time.sleep(LONG_WAIT)
 
     def test_concurrent_threads_do_not_interfere(self):
@@ -89,7 +78,7 @@ class TestTimeout:
         def thread_a_target():
             """This thread should time out."""
             try:
-                with Timeout(timeout_interval=SHORT_WAIT, swallow_exception=False):
+                with Timeout(timeout_interval=SHORT_WAIT):
                     barrier.wait()  # Sync with thread B
                     time.sleep(LONG_WAIT)
                 results['a'] = 'completed'  # Should not be reached
@@ -101,7 +90,7 @@ class TestTimeout:
         def thread_b_target():
             """This thread should complete successfully."""
             try:
-                with Timeout(timeout_interval=LONG_WAIT, swallow_exception=False):
+                with Timeout(timeout_interval=LONG_WAIT):
                     barrier.wait()  # Sync with thread A
                     time.sleep(SHORT_WAIT)
                 results['b'] = 'completed'

@@ -366,23 +366,3 @@ class SimpleBenchImportError(TaggedException[ImportError]):
         """
         message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
-
-
-class SimpleBenchTimeoutError(TaggedException[Exception]):
-    """Exceptions raised for timeout implementations.
-
-    Usage:
-        raise SimpleBenchTimeoutError("An error occurred", tag=MyErrorTags.SOME_ERROR)
-    Args:
-        msg (str): The error message.
-        tag (ErrorTag): The tag code.
-    """
-    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchTimeoutError with the given message and tag.
-
-        Args:
-            msg (str): The error message.
-            tag (ErrorTag): The tag code.
-        """
-        message = generate_message(msg, tag)
-        super().__init__(message, tag=tag)

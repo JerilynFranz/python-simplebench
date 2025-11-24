@@ -34,3 +34,5 @@ class TimeoutErrorTag(ErrorTag):
     "The timeout swallow_exception flag has not been set."
     STATE_NOT_SET = "STATE_NOT_SET"
     "The timeout state has not been set."
+    TIMED_OUT = "TIMED_OUT"
+    "The operation has timed out."
