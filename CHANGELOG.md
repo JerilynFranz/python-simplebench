@@ -3,6 +3,9 @@ SimpleBench
 
 A framework for building and running benchmarks.
 
+* 0.3.1-alpha.0 2025-11-25 - Fifth alpha release
+  * Fixed bug in rich tables report caused by switch to floats for 'n' complexity weights
+  * Switched to a furo derived theme for Sphinx documentation
 * 0.3.0-alpha.0 2025-11-24 - Fourth alpha release
   * Added enforced timeouts for benchmark runs
   * Updated 'n' complexity handling to allow floats as well as int
