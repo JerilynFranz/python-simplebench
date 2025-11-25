@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>simplebench.session &#8212; simplebench 0.2.0alpha0 documentation</title>
+    <title>simplebench.session &#8212; simplebench 0.3.0-alpha.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=26844679" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e424009b" />
     
-    <script src="../../_static/documentation_options.js?v=1d9f15aa"></script>
+    <script src="../../_static/documentation_options.js?v=6c195044"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.3.0-alpha.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.session</a></li> 
       </ul>
@@ -97,7 +97,7 @@
                  <span class="n">verbosity</span><span class="p">:</span> <span class="n">Verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">,</span>
                  <span class="n">default_runner</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">args_parser</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArgumentParser</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">show_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">output_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Console</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Session.</span>
@@ -116,9 +116,9 @@
 <span class="sd">            session. If None, a new :class:`~argparse.ArgumentParser` will be automatically created.</span>
 <span class="sd">            Defaults to None.</span>
 <span class="sd">        :type args_parser: ArgumentParser, optional</span>
-<span class="sd">        :param progress: Whether to show progress bars during execution.</span>
+<span class="sd">        :param show_progress: Whether to show progress bars during execution.</span>
 <span class="sd">            Defaults to False.</span>
-<span class="sd">        :type progress: bool, optional</span>
+<span class="sd">        :type show_progress: bool, optional</span>
 <span class="sd">        :param output_path: The output path for reports. Defaults to None.</span>
 <span class="sd">        :type output_path: Path, optional</span>
 <span class="sd">        :param console: A Rich Console instance for displaying output. If None,</span>
@@ -131,7 +131,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">args_parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span> <span class="k">if</span> <span class="n">args_parser</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">args_parser</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cases</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">cases</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">show_progress</span> <span class="o">=</span> <span class="n">progress</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_progress</span> <span class="o">=</span> <span class="n">show_progress</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="n">output_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span> <span class="k">if</span> <span class="n">console</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">console</span>
 
@@ -501,17 +501,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbosity</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">cases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Case</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sequence of Cases for this session.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cases</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Case</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tuple of Cases for this session.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cases</span>  <span class="c1"># type: ignore[return-value]</span>
 
     <span class="nd">@cases</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Case</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the Sequence of Cases for this session.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the tuple of :class:`~simplebench.Cases` for this session.</span>
+
+<span class="sd">        This replaces all existing Cases in the session.</span>
 
 <span class="sd">        :param value: Sequence of Cases for the Session</span>
 <span class="sd">        :type value: Sequence[Case]</span>
-<span class="sd">        :raises SimpleBenchTypeError: If the value is not a Sequence of Cases.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the value is not a :class:`Sequence` of :class:`~simplebench.Case` instances.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
@@ -525,7 +527,7 @@
                     <span class="n">error_text</span><span class="p">,</span>
                     <span class="n">tag</span><span class="o">=</span><span class="n">_SessionErrorTag</span><span class="o">.</span><span class="n">PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE</span>
                 <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cases</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cases</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Session.add">
 <a class="viewcode-back" href="../../source/simplebench.session.html#simplebench.Session.add">[docs]</a>
@@ -637,7 +639,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.2.0alpha0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">simplebench 0.3.0-alpha.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">simplebench.session</a></li> 
       </ul>
