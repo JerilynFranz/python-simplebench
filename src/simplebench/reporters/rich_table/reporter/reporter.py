@@ -156,7 +156,7 @@ class RichTableReporter(Reporter):
         for result in results:
             stats_target = result.results_section(section)
             row: list[str] = [
-                f'{result.n:>6d}',
+                f'{str(result.n):>6}',
                 f'{len(result.iterations):>6d}',
                 f'{result.rounds:>6d}',
                 f'{result.total_elapsed * DEFAULT_INTERVAL_SCALE:>4.2f}',

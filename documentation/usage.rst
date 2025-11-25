@@ -27,18 +27,15 @@ Using SimpleBench
   :name: simple-benchmark-example
   :linenos:
 
-    import simplebench
+  import simplebench
 
-    @simplebench.benchmark
-    def addition_benchmark():
-        """A simple addition benchmark of Python's built-in sum function."""
-        total = 0
-        for i in range(1000):
-            total += i
-        return total
+  @simplebench.benchmark
+  def addition_benchmark():
+      """A simple addition benchmark of Python's built-in sum function."""
+     sum(range(1000))
 
-    if __name__ == "__main__":
-        simplebench.main()
+  if __name__ == "__main__":
+      simplebench.main()
 
 .. container:: 
 
