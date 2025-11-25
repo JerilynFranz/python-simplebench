@@ -473,8 +473,8 @@ class Session():
                 )
         self._cases = tuple(value)
 
-    def add(self, case: Case) -> None:
-        """Add a :class:`~.case.Case` to the Sequence of Cases for this session.
+    def add_case(self, case: Case) -> None:
+        """Add a :class:`~.case.Case` to the Cases for this session.
 
         :param case: :class:`~.case.Case` to add to the Session
         :type case: Case
@@ -485,10 +485,10 @@ class Session():
                 f'case must be a Case instance - cannot be a {type(case)}',
                 tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG
             )
-        self._cases = list(self._cases) + [case]
+        self._cases = tuple(list(self._cases) + [case])
 
-    def extend(self, cases: Sequence[Case]) -> None:
-        """Extend the Sequence of Cases for this session.
+    def extend_cases(self, cases: Sequence[Case]) -> None:
+        """Extend the Cases for this session.
 
         :param cases: Sequence of Cases to add to the Session
         :type cases: Sequence[Case]
@@ -506,7 +506,7 @@ class Session():
                     error_text,
                     tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
                 )
-        self._cases = list(self._cases) + list(cases)
+        self._cases = tuple(list(self._cases) + list(cases))
 
     @property
     def output_path(self) -> Path | None:
