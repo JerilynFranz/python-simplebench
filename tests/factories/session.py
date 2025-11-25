@@ -48,7 +48,7 @@ def session_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Session:
 def session_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Session:
     """Return a default Session instance for testing purposes.
 
-    The Session is initialized with default attributes.
+    The Session is initialized with default attributes and cached by default.
 
     :param cache_id: An optional identifier to distinguish different cached instances.
                      If None, caching is disabled for this call.
@@ -107,7 +107,7 @@ def session_kwargs_factory(cache_id: CacheId = None) -> SessionKWArgs:
         - default_runner: A runner created by `runner_factory()`.
         - args_parser: An ArgumentParser instance with program name 'simplebench'.
         - verbosity: Verbosity.QUIET
-        - progress: False
+        - progress: A rich Progress instance created by `progress_factory()`.
         - output_path: A Path instance created by `output_path_factory()`.
         - console: A Console instance created by `console_factory()`.
 
@@ -117,10 +117,10 @@ def session_kwargs_factory(cache_id: CacheId = None) -> SessionKWArgs:
     :return: A dictionary with default Session keyword arguments.
     :rtype: SessionKWArgs
     """
-    return SessionKWArgs(cases=[case_factory(cache_id=cache_id)],
+    return SessionKWArgs(cases=tuple([case_factory(cache_id=cache_id)]),
                          default_runner=runner_factory(cache_id=cache_id),
                          args_parser=ArgumentParser(prog='simplebench'),
                          verbosity=Verbosity.QUIET,
-                         progress=False,
+                         show_progress=False,  # NOT the 'Progress' instance
                          output_path=output_path_factory(cache_id=cache_id),
                          console=console_factory(cache_id=cache_id))

@@ -56,7 +56,7 @@ class Session():
                  verbosity: Verbosity = Verbosity.NORMAL,
                  default_runner: type[SimpleRunner] | None = None,
                  args_parser: Optional[ArgumentParser] = None,
-                 progress: bool = False,
+                 show_progress: bool = False,
                  output_path: Optional[Path] = None,
                  console: Optional[Console] = None) -> None:
         """Create a new Session.
@@ -75,9 +75,9 @@ class Session():
             session. If None, a new :class:`~argparse.ArgumentParser` will be automatically created.
             Defaults to None.
         :type args_parser: ArgumentParser, optional
-        :param progress: Whether to show progress bars during execution.
+        :param show_progress: Whether to show progress bars during execution.
             Defaults to False.
-        :type progress: bool, optional
+        :type show_progress: bool, optional
         :param output_path: The output path for reports. Defaults to None.
         :type output_path: Path, optional
         :param console: A Rich Console instance for displaying output. If None,
@@ -90,7 +90,7 @@ class Session():
         self.args_parser = ArgumentParser() if args_parser is None else args_parser
         self.cases = [] if cases is None else cases
         self.verbosity = verbosity
-        self.show_progress = progress
+        self.show_progress = show_progress
         self.output_path = output_path
         self.console = Console() if console is None else console
 
@@ -445,17 +445,19 @@ class Session():
         self._verbosity = value
 
     @property
-    def cases(self) -> Sequence[Case]:
-        """Sequence of Cases for this session."""
-        return self._cases
+    def cases(self) -> tuple[Case]:
+        """Tuple of Cases for this session."""
+        return self._cases  # type: ignore[return-value]
 
     @cases.setter
     def cases(self, value: Sequence[Case]) -> None:
-        """Set the Sequence of Cases for this session.
+        """Set the tuple of :class:`~simplebench.Cases` for this session.
+
+        This replaces all existing Cases in the session.
 
         :param value: Sequence of Cases for the Session
         :type value: Sequence[Case]
-        :raises SimpleBenchTypeError: If the value is not a Sequence of Cases.
+        :raises SimpleBenchTypeError: If the value is not a :class:`Sequence` of :class:`~simplebench.Case` instances.
         """
         if not isinstance(value, Sequence):
             raise SimpleBenchTypeError(
@@ -469,7 +471,7 @@ class Session():
                     error_text,
                     tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
                 )
-        self._cases = value
+        self._cases = tuple(value)
 
     def add(self, case: Case) -> None:
         """Add a :class:`~.case.Case` to the Sequence of Cases for this session.

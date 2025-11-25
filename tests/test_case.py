@@ -229,7 +229,7 @@ def postrun_benchmark_case() -> Case:
     )
 
     argparse = ArgumentParser()
-    session = Session(args_parser=argparse, cases=[case], verbosity=Verbosity.QUIET, progress=False)
+    session = Session(args_parser=argparse, cases=[case], verbosity=Verbosity.QUIET, show_progress=False)
     session.run()
 
     return case
@@ -1085,7 +1085,7 @@ def test_getting_attributes(testspec: TestSpec) -> None:
         name=("Benchmark case run with a displayless Session and progress=True "
               "successfully runs without exceptions or output"),
         action=no_assigned_action,
-        kwargs={'session': Session(console=displayless_console(), progress=True)},
+        kwargs={'session': Session(console=displayless_console(), show_progress=True)},
         extra={
             'output_expected': False,
             'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
@@ -1095,7 +1095,7 @@ def test_getting_attributes(testspec: TestSpec) -> None:
         name=("Benchmark case run with a normal Session at DEBUG verbosity "
               "successfully runs without exceptions and with output"),
         action=no_assigned_action,
-        kwargs={'session': Session(verbosity=Verbosity.DEBUG, progress=True)},
+        kwargs={'session': Session(verbosity=Verbosity.DEBUG, show_progress=True)},
         extra={
             'output_expected': True,
             'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',

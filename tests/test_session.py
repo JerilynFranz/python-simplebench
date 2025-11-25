@@ -9,15 +9,19 @@ from typing import Any
 
 import pytest
 from rich.console import Console
+from rich.progress import Progress
 
 from simplebench import Case, Results, Session, Verbosity
 from simplebench.exceptions import SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.reporter import ReporterOptions
+from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.runners import SimpleRunner
+from simplebench.tasks import RichProgressTasks
 from simplebench.utils import collect_arg_list
 
+from .factories import session_kwargs_factory
 from .kwargs import SessionKWArgs
-from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestSpec, idspec
+from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSpec, idspec
 
 _SAVED_ARGV = sys.argv.copy()
 """Saved copy of sys.argv for restoring after tests."""
@@ -69,7 +73,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
             verbosity=Verbosity.VERBOSE,
             default_runner=SimpleRunner,
             args_parser=ArgumentParser(prog="testprog"),
-            progress=True,
+            show_progress=True,
             output_path=Path("/tmp/output"),
             console=Console(),
         ),
@@ -131,7 +135,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
         name="Invalid type for 'progress' parameter (string instead of bool)",
         action=Session,
         kwargs=SessionKWArgs(
-            progress="not a bool"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            show_progress="not a bool"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_PROGRESS_ARG
     )),
@@ -327,3 +331,89 @@ def test_parse_args(testspec: TestAction) -> None:
     pre_action(testspec.extra)
     testspec.run()
     post_action(testspec.extra)
+
+
+def reading_properties_testspec() -> list[TestAction]:
+    """Generate testspecs for reading Session properties."""
+    session_kwargs = session_kwargs_factory()
+    session = Session(**session_kwargs)
+    testspecs: list[TestAction] = [
+        idspec("READ_PROP_001", TestGet(
+            name="Read 'cases' property",
+            obj=session,
+            attribute="cases",
+            assertion=Assert.EQUAL,
+            expected=tuple(session_kwargs['cases']),
+        )),
+        idspec("READ_PROP_002", TestGet(
+            name="Read 'default_runner' property",
+            obj=session,
+            attribute="default_runner",
+            assertion=Assert.IS,
+            expected=session_kwargs['default_runner'],
+        )),
+        idspec("READ_PROP_003", TestGet(
+            name="Read 'args_parser' property",
+            obj=session,
+            attribute="args_parser",
+            assertion=Assert.IS,
+            expected=session_kwargs['args_parser'],
+        )),
+        idspec("READ_PROP_004", TestGet(
+            name="Read 'verbosity' property",
+            obj=session,
+            attribute="verbosity",
+            assertion=Assert.EQUAL,
+            expected=session_kwargs['verbosity'],
+        )),
+        idspec("READ_PROP_005", TestGet(
+            name="Read 'progress' property",
+            obj=session,
+            attribute="progress",
+            assertion=Assert.ISINSTANCE,
+            expected=Progress,
+        )),
+        idspec("READ_PROP_006", TestGet(
+            name="Read 'output_path' property",
+            obj=session,
+            attribute="output_path",
+            assertion=Assert.IS,
+            expected=session_kwargs['output_path'],
+        )),
+        idspec("READ_PROP_007", TestGet(
+            name="Read 'console' property",
+            obj=session,
+            attribute="console",
+            assertion=Assert.IS,
+            expected=session_kwargs['console'],
+        )),
+        idspec("READ_PROP_008", TestGet(
+            name="Read 'show_progress' property",
+            obj=session,
+            attribute="show_progress",
+            assertion=Assert.EQUAL,
+            expected=session_kwargs['show_progress'],
+        )),
+        idspec("READ_PROP_009", TestGet(
+            name="Read 'reporter_manager' property",
+            obj=session,
+            attribute="reporter_manager",
+            assertion=Assert.ISINSTANCE,
+            expected=ReporterManager,
+        )),
+        idspec("READ_PROP_010", TestGet(
+            name="Read 'tasks' property",
+            obj=session,
+            attribute="tasks",
+            assertion=Assert.ISINSTANCE,
+            expected=RichProgressTasks,
+        )),
+    ]
+
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec", reading_properties_testspec())
+def test_reading_properties(testspec: TestSpec) -> None:
+    """Tests reading properties of the Session class."""
+    testspec.run()

@@ -31,7 +31,7 @@ class SessionKWArgs(KWArgs):
             verbosity: Verbosity | NoDefaultValue = NoDefaultValue(),
             default_runner: type[SimpleRunner] | NoDefaultValue = NoDefaultValue(),
             args_parser: ArgumentParser | NoDefaultValue = NoDefaultValue(),
-            progress: bool | NoDefaultValue = NoDefaultValue(),
+            show_progress: bool | NoDefaultValue = NoDefaultValue(),
             output_path: Path | NoDefaultValue = NoDefaultValue(),
             console: Console | NoDefaultValue = NoDefaultValue()) -> None:
         """Constructs a SessionKWArgs instance. This class is used to hold keyword arguments for
@@ -45,8 +45,8 @@ class SessionKWArgs(KWArgs):
         :type default_runner: type[SimpleRunner]
         :param args_parser: The argument parser instance for the session.
         :type args_parser: ArgumentParser
-        :param progress: Whether to show progress information during the session.
-        :type progress: bool
+        :param show_progress: Whether to show progress information during the session.
+        :type show_progress: bool
         :param output_path: The output path for the session results.
         :type output_path: Path
         :param console: The console instance to use for the session.
