@@ -28,9 +28,11 @@ if TYPE_CHECKING:
 class Session():
     """Container for session related information while running benchmarks.
 
-    :ivar args: The command line arguments for the session.
+    :attribute: args
+        The command line arguments for the session.
     :vartype args: Namespace
-    :ivar cases: Sequence of benchmark cases for the session.
+    :attribute: cases
+        Sequence of benchmark cases for the session.
     :vartype cases: Sequence[Case]
     :ivar output_path: The output path for reports.
     :vartype output_path: Path, optional
@@ -59,7 +61,7 @@ class Session():
                  show_progress: bool = False,
                  output_path: Optional[Path] = None,
                  console: Optional[Console] = None) -> None:
-        """Create a new Session.
+        """Container and orchestrator for session related information while running benchmarks.
 
         :param cases: A Sequence of benchmark cases for the session.
             If None, an empty list will be created. Defaults to None.

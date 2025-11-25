@@ -40,7 +40,7 @@ Using SimpleBench
     if __name__ == "__main__":
         simplebench.main()
 
-.. container:: textblock
+.. container:: 
 
   Save this code to a file, for example `my_benchmark_script.py`, and run it from your terminal:
 

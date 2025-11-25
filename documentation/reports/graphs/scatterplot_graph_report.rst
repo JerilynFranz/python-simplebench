@@ -29,22 +29,22 @@ Example Usage
   :name: scatterplot-graph-example-code
   :linenos:
 
-    #!python3
-    """Example Scatterplot Benchmark Script"""
-    import simplebench
+  #!python3
+  """Example Scatterplot Benchmark Script"""
+  import simplebench
 
 
-    @simplebench.benchmark(
-        kwargs_variations={'size': [1, 10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]},
-        variation_cols={'size': 'Size'},
-        use_field_for_n='size')
-    def addition_benchmark(**kwargs):
-        """A simple benchmark that sums a range of numbers."""
-        sum(range(kwargs['size']))
+  @simplebench.benchmark(
+      kwargs_variations={'size': [1, 10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]},
+      variation_cols={'size': 'Size'},
+      use_field_for_n='size')
+  def addition_benchmark(**kwargs):
+      """A simple benchmark that sums a range of numbers."""
+      sum(range(kwargs['size']))
 
 
-    if __name__ == "__main__":
-        simplebench.main()
+  if __name__ == "__main__":
+      simplebench.main()
 
 
 Saving the above code to a file named `my_benchmark_script.py`, you can run the benchmark
@@ -56,23 +56,19 @@ and generate a Scatterplot Graph report of operations per second using the follo
 
     python my_benchmark_script.py --scatterplot-graph.ops --progress
 
-This command executes the benchmarks in `my_benchmark_script.py` and generates
+This command executes the benchmarks in ``my_benchmark_script.py`` and generates
 a Scatterplot Graph displaying the operations-per-second results that is saved
 to a file.
 
 The output graph will look something like this:
 
-.. container:: image-block:
+.. rst-class:: caption-first
 
-  .. container:: image-block-caption
+.. figure:: /_static/examples/001_addition_benchmark-operations_per_second.svg
+   :alt: Scatterplot Graph of Addition Benchmark Operations Per Second
+   :align: center
 
-    Scatterplot Graph of Addition Benchmark Operations Per Second
-
-  .. container:: image-block-content
-
-    .. image:: /_static/examples/001_addition_benchmark-operations_per_second.svg
-      :alt: Scatterplot Graph of Addition Benchmark Operations Per Second
-      :align: center
+   Scatterplot Graph of Addition Benchmark Operations Per Second
 
 Report Variations and Destinations
 ----------------------------------

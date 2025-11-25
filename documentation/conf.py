@@ -50,6 +50,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.githubpages',
     'sphinx.ext.viewcode',
+    'sphinx_copybutton',
 ]
 
 
@@ -109,7 +110,8 @@ maximum_signature_line_length: int = 50
 # a list of builtin themes.
 #
 # html_theme = 'sphinxawesome_theme'
-html_theme: str = 'classic'
+html_theme: str = 'furo'
+
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -220,3 +222,7 @@ epub_show_urls = 'footnote'
 
 # By default, highlight as Python 3.
 highlight_language = 'python3'
+
+# This pattern will automatically exclude prompts from shell blocks
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True

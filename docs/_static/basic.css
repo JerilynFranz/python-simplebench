@@ -48,7 +48,7 @@ div.sphinxsidebarwrapper {
 
 div.sphinxsidebar {
     float: left;
-    width: 30em;
+    width: 230px;
     margin-left: -100%;
     font-size: 90%;
     word-wrap: break-word;
@@ -86,14 +86,14 @@ div.sphinxsidebar #searchbox form.search {
 
 div.sphinxsidebar #searchbox input[type="text"] {
     float: left;
-    width: 70%;
+    width: 80%;
     padding: 0.25em;
     box-sizing: border-box;
 }
 
 div.sphinxsidebar #searchbox input[type="submit"] {
     float: left;
-    width: 25%;
+    width: 20%;
     border-left: none;
     padding: 0.25em;
     box-sizing: border-box;
@@ -212,7 +212,7 @@ table.modindextable td {
 
 div.body {
     min-width: 360px;
-    max-width: 90em;
+    max-width: 800px;
 }
 
 div.body p, div.body dd, div.body li, div.body blockquote {
@@ -679,11 +679,11 @@ dl > dd:last-child > :last-child {
 }
 
 dt:target, span.highlighted {
-    background-color: #fff6b8;
+    background-color: #fbe54e;
 }
 
 rect.highlighted {
-    fill: #fff6b8;
+    fill: #fbe54e;
 }
 
 dl.glossary dt {
