@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.graph.scatterplot.reporter - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,238 +240,238 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.reporters.graph.scatterplot.reporter</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="c1"># -*- coding: utf-8 -*-</span>
-</span><span data-line="2"><span class="sd">&quot;&quot;&quot;Reporter for benchmark results using graphs.&quot;&quot;&quot;</span>
-</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-</span><span data-line="4">
-</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span>
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">TypeAlias</span>
-</span><span data-line="7">
-</span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
-</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-</span><span data-line="10"><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-</span><span data-line="11"><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
-</span><span data-line="12">
-</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span>
-</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
-</span><span data-line="15"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
-</span><span data-line="16"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
-</span><span data-line="17"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.si_units</span><span class="w"> </span><span class="kn">import</span> <span class="n">si_scale_for_largest</span>
-</span><span data-line="18"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span>
-</span><span data-line="19"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_type</span>
-</span><span data-line="20">
-</span><span data-line="21"><span class="kn">from</span><span class="w"> </span><span class="nn">..matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatPlotLibReporter</span>
-</span><span data-line="22"><span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScatterPlotConfig</span>
-</span><span data-line="23"><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ScatterPlotReporterErrorTag</span>
-</span><span data-line="24"><span class="kn">from</span><span class="w"> </span><span class="nn">.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScatterPlotOptions</span>
-</span><span data-line="25">
-</span><span data-line="26"><span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ScatterPlotOptions</span>
-</span><span data-line="27">
-</span><span data-line="28"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span data-line="29">    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
-</span><span data-line="30">
-</span><span data-line="31">
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Reporter for benchmark results using graphs.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">TypeAlias</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.si_units</span><span class="w"> </span><span class="kn">import</span> <span class="n">si_scale_for_largest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_type</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatPlotLibReporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScatterPlotConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ScatterPlotReporterErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScatterPlotOptions</span>
+
+<span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ScatterPlotOptions</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+
+
 <div class="viewcode-block" id="ScatterPlotReporter">
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.ScatterPlotReporter">[docs]</a>
-</span><span data-line="32"><span class="k">class</span><span class="w"> </span><span class="nc">ScatterPlotReporter</span><span class="p">(</span><span class="n">MatPlotLibReporter</span><span class="p">):</span>
-</span><span data-line="33"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for outputting benchmark results as scatter plot graphs.</span>
-</span><span data-line="34">
-</span><span data-line="35"><span class="sd">    This reporter generates scatter plot visualizations for various result sections,</span>
-</span><span data-line="36"><span class="sd">    saving them to the filesystem or passing them to a callback function. It provides</span>
-</span><span data-line="37"><span class="sd">    a visual way to compare the performance of different benchmark variations.</span>
-</span><span data-line="38">
-</span><span data-line="39"><span class="sd">    **Defined command-line flags:**</span>
-</span><span data-line="40">
-</span><span data-line="41"><span class="sd">    * ``--scatter-plot: {filesystem, callback}`` (default=filesystem)</span>
-</span><span data-line="42"><span class="sd">    * ``--scatter-plot.ops: ...``</span>
-</span><span data-line="43"><span class="sd">    * ``--scatter-plot.timings: ...``</span>
-</span><span data-line="44"><span class="sd">    * ``--scatter-plot.memory: ...``</span>
-</span><span data-line="45">
-</span><span data-line="46"><span class="sd">    **Example usage:**</span>
-</span><span data-line="47">
-</span><span data-line="48"><span class="sd">    .. code-block:: none</span>
-</span><span data-line="49">
-</span><span data-line="50"><span class="sd">        program.py --scatter-plot               # Outputs graphs to the filesystem.</span>
-</span><span data-line="51"><span class="sd">        program.py --scatter-plot.ops filesystem  # Outputs only ops graphs to the filesystem.</span>
-</span><span data-line="52">
-</span><span data-line="53"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="54">
-</span><span data-line="55">    <span class="n">_OPTIONS_TYPE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">ScatterPlotOptions</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ScatterPlotOptions</span>  <span class="c1"># pylint: disable=line-too-long  # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501</span>
-</span><span data-line="56"><span class="w">    </span><span class="sd">&quot;&quot;&quot;:ivar: The specific :class:`~.ReporterOptions` subclass associated with this reporter.</span>
-</span><span data-line="57"><span class="sd">    :vartype: ~typing.ClassVar[type[~.ScatterPlotOptions]]</span>
-</span><span data-line="58"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="59">    <span class="n">_OPTIONS_KWARGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ScatterPlotOptions</span><span class="o">.</span><span class="n">DEFAULT_KWARGS</span>
-</span><span data-line="60"><span class="w">    </span><span class="sd">&quot;&quot;&quot;:ivar: The default keyword arguments for the :class:`~.ScatterPlotOptions` subclass.</span>
-</span><span data-line="61"><span class="sd">    :vartype: ~typing.ClassVar[dict[str, ~typing.Any]]</span>
-</span><span data-line="62"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="63">
-</span><span data-line="64">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ScatterPlotConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="65"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the ScatterPlotReporter.</span>
-</span><span data-line="66">
-</span><span data-line="67"><span class="sd">        .. note::</span>
-</span><span data-line="68">
-</span><span data-line="69"><span class="sd">            The exception documentation below refers to validation of subclass configuration</span>
-</span><span data-line="70"><span class="sd">            class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly</span>
-</span><span data-line="71"><span class="sd">            defined in any subclass of :class:`ScatterPlotReporter` to ensure proper</span>
-</span><span data-line="72"><span class="sd">            functionality.</span>
-</span><span data-line="73">
-</span><span data-line="74"><span class="sd">        :param config: An optional configuration object to override default reporter settings.</span>
-</span><span data-line="75"><span class="sd">                       If not provided, default settings will be used.</span>
-</span><span data-line="76"><span class="sd">        :type config: ScatterPlotConfig | None</span>
-</span><span data-line="77">
-</span><span data-line="78"><span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration</span>
-</span><span data-line="79"><span class="sd">            types are invalid.</span>
-</span><span data-line="80"><span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration</span>
-</span><span data-line="81"><span class="sd">            values are invalid.</span>
-</span><span data-line="82"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="83">        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="84">            <span class="n">config</span> <span class="o">=</span> <span class="n">ScatterPlotConfig</span><span class="p">()</span>
-</span><span data-line="85">
-</span><span data-line="86">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-</span><span data-line="87">
+<span class="k">class</span><span class="w"> </span><span class="nc">ScatterPlotReporter</span><span class="p">(</span><span class="n">MatPlotLibReporter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for outputting benchmark results as scatter plot graphs.</span>
+
+<span class="sd">    This reporter generates scatter plot visualizations for various result sections,</span>
+<span class="sd">    saving them to the filesystem or passing them to a callback function. It provides</span>
+<span class="sd">    a visual way to compare the performance of different benchmark variations.</span>
+
+<span class="sd">    **Defined command-line flags:**</span>
+
+<span class="sd">    * ``--scatter-plot: {filesystem, callback}`` (default=filesystem)</span>
+<span class="sd">    * ``--scatter-plot.ops: ...``</span>
+<span class="sd">    * ``--scatter-plot.timings: ...``</span>
+<span class="sd">    * ``--scatter-plot.memory: ...``</span>
+
+<span class="sd">    **Example usage:**</span>
+
+<span class="sd">    .. code-block:: none</span>
+
+<span class="sd">        program.py --scatter-plot               # Outputs graphs to the filesystem.</span>
+<span class="sd">        program.py --scatter-plot.ops filesystem  # Outputs only ops graphs to the filesystem.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_OPTIONS_TYPE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">ScatterPlotOptions</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ScatterPlotOptions</span>  <span class="c1"># pylint: disable=line-too-long  # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:ivar: The specific :class:`~.ReporterOptions` subclass associated with this reporter.</span>
+<span class="sd">    :vartype: ~typing.ClassVar[type[~.ScatterPlotOptions]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_OPTIONS_KWARGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ScatterPlotOptions</span><span class="o">.</span><span class="n">DEFAULT_KWARGS</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:ivar: The default keyword arguments for the :class:`~.ScatterPlotOptions` subclass.</span>
+<span class="sd">    :vartype: ~typing.ClassVar[dict[str, ~typing.Any]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ScatterPlotConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the ScatterPlotReporter.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            The exception documentation below refers to validation of subclass configuration</span>
+<span class="sd">            class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly</span>
+<span class="sd">            defined in any subclass of :class:`ScatterPlotReporter` to ensure proper</span>
+<span class="sd">            functionality.</span>
+
+<span class="sd">        :param config: An optional configuration object to override default reporter settings.</span>
+<span class="sd">                       If not provided, default settings will be used.</span>
+<span class="sd">        :type config: ScatterPlotConfig | None</span>
+
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration</span>
+<span class="sd">            types are invalid.</span>
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration</span>
+<span class="sd">            values are invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">ScatterPlotConfig</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
 <div class="viewcode-block" id="ScatterPlotReporter.render">
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.render">[docs]</a>
-</span><span data-line="88">    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-</span><span data-line="89"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the scatter plot graph and return it as bytes.</span>
-</span><span data-line="90">
-</span><span data-line="91"><span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
-</span><span data-line="92"><span class="sd">            benchmarked code.</span>
-</span><span data-line="93"><span class="sd">        :param section: The section of the results to plot.</span>
-</span><span data-line="94"><span class="sd">        :param options: The options for rendering the scatter plot.</span>
-</span><span data-line="95"><span class="sd">        :return: The rendered graph as bytes. The format is determined by the options.</span>
-</span><span data-line="96"><span class="sd">            The defaults are defined in :class:`~.ScatterPlotOptions`.</span>
-</span><span data-line="97"><span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the provided arguments are not</span>
-</span><span data-line="98"><span class="sd">            of the expected types or values.</span>
-</span><span data-line="99"><span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the provided values are not</span>
-</span><span data-line="100"><span class="sd">            valid.</span>
-</span><span data-line="101"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="102">        <span class="c1"># is_* checks provide deferred import validation to avoid circular imports</span>
-</span><span data-line="103">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
-</span><span data-line="104">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="105">                <span class="sa">f</span><span class="s2">&quot;&#39;case&#39; argument must be a Case instance, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">case</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span data-line="106">                <span class="n">tag</span><span class="o">=</span><span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_CASE</span><span class="p">)</span>
-</span><span data-line="107">        <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
-</span><span data-line="108">                                <span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_SECTION</span><span class="p">)</span>
-</span><span data-line="109">        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
-</span><span data-line="110">                <span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
-</span><span data-line="111">                <span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_OPTIONS</span><span class="p">)</span>
-</span><span data-line="112">
-</span><span data-line="113">        <span class="n">base_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_unit_for_section</span><span class="p">(</span><span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="114">        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span>
-</span><span data-line="115">
-</span><span data-line="116">        <span class="n">all_numbers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_stats_values</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="117">        <span class="n">common_unit</span><span class="p">,</span> <span class="n">common_scale</span> <span class="o">=</span> <span class="n">si_scale_for_largest</span><span class="p">(</span><span class="n">numbers</span><span class="o">=</span><span class="n">all_numbers</span><span class="p">,</span> <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
-</span><span data-line="118">        <span class="n">target_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">section</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span>
-</span><span data-line="119">
-</span><span data-line="120">        <span class="k">with</span> <span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">graphfile</span><span class="p">:</span>
-</span><span data-line="121">            <span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">():</span>
-</span><span data-line="122">                <span class="n">plot_data</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="123">                <span class="n">x_axis_legend</span> <span class="o">=</span> <span class="s1">&#39;N&#39;</span>
-</span><span data-line="124">                <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-</span><span data-line="125">                    <span class="n">x</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">n</span>
-</span><span data-line="126">                    <span class="n">target_stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="127">                    <span class="n">value</span> <span class="o">=</span> <span class="n">target_stats</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="n">common_scale</span>
-</span><span data-line="128">                    <span class="n">plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
-</span><span data-line="129">                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">x_axis_legend</span><span class="p">,</span> <span class="n">target_name</span><span class="p">])</span>
-</span><span data-line="130">
-</span><span data-line="131">                <span class="c1"># See https://matplotlib.org/stable/users/explain/customizing.html#the-matplotlibrc-file</span>
-</span><span data-line="132">                <span class="n">benchmarking_theme</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">theme</span>
-</span><span data-line="133">                <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">benchmarking_theme</span><span class="p">)</span>
-</span><span data-line="134">                <span class="n">figure_height</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="n">options</span><span class="o">.</span><span class="n">dpi</span>  <span class="c1"># inches</span>
-</span><span data-line="135">                <span class="n">figure_width</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="n">options</span><span class="o">.</span><span class="n">dpi</span>  <span class="c1"># inches</span>
-</span><span data-line="136">
-</span><span data-line="137">                <span class="c1"># Create the plot</span>
-</span><span data-line="138">                <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">style</span><span class="p">):</span>
-</span><span data-line="139">                    <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_axis_legend</span><span class="p">)</span>
-</span><span data-line="140">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
-</span><span data-line="141">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mf">.9</span><span class="p">)</span>
-</span><span data-line="142">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_dpi</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>  <span class="c1"># dots per inch</span>
-</span><span data-line="143">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="n">figure_height</span><span class="p">)</span>  <span class="c1"># type: ignore[reportAttributeAccessIssue,union-attr]</span>
-</span><span data-line="144">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="n">figure_width</span><span class="p">)</span>  <span class="c1"># type: ignore[reportAttributeAccessIssue,union-attr]</span>
-</span><span data-line="145">                    <span class="n">g</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">x_labels_rotation</span><span class="p">)</span>
-</span><span data-line="146">                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">y_starts_at_zero</span><span class="p">:</span>
-</span><span data-line="147">                        <span class="n">_</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
-</span><span data-line="148">                        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="n">top</span> <span class="o">*</span> <span class="mf">1.10</span><span class="p">)</span>  <span class="c1"># Add 10% headroom</span>
-</span><span data-line="149">                    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">graphfile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">image_type</span><span class="p">)</span>
-</span><span data-line="150">                    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># Close the figure to free memory</span>
-</span><span data-line="151">                    <span class="n">graphfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-</span><span data-line="152">            <span class="k">return</span> <span class="n">graphfile</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the scatter plot graph and return it as bytes.</span>
 
-</span><span data-line="153">
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
+<span class="sd">            benchmarked code.</span>
+<span class="sd">        :param section: The section of the results to plot.</span>
+<span class="sd">        :param options: The options for rendering the scatter plot.</span>
+<span class="sd">        :return: The rendered graph as bytes. The format is determined by the options.</span>
+<span class="sd">            The defaults are defined in :class:`~.ScatterPlotOptions`.</span>
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the provided arguments are not</span>
+<span class="sd">            of the expected types or values.</span>
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the provided values are not</span>
+<span class="sd">            valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># is_* checks provide deferred import validation to avoid circular imports</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;case&#39; argument must be a Case instance, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">case</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_CASE</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+                                <span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_SECTION</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+                <span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
+                <span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_OPTIONS</span><span class="p">)</span>
+
+        <span class="n">base_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_unit_for_section</span><span class="p">(</span><span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span>
+
+        <span class="n">all_numbers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_stats_values</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+        <span class="n">common_unit</span><span class="p">,</span> <span class="n">common_scale</span> <span class="o">=</span> <span class="n">si_scale_for_largest</span><span class="p">(</span><span class="n">numbers</span><span class="o">=</span><span class="n">all_numbers</span><span class="p">,</span> <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+        <span class="n">target_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">section</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+        <span class="k">with</span> <span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">graphfile</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">():</span>
+                <span class="n">plot_data</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">x_axis_legend</span> <span class="o">=</span> <span class="s1">&#39;N&#39;</span>
+                <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">n</span>
+                    <span class="n">target_stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">target_stats</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="n">common_scale</span>
+                    <span class="n">plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">plot_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">x_axis_legend</span><span class="p">,</span> <span class="n">target_name</span><span class="p">])</span>
+
+                <span class="c1"># See https://matplotlib.org/stable/users/explain/customizing.html#the-matplotlibrc-file</span>
+                <span class="n">benchmarking_theme</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">theme</span>
+                <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">benchmarking_theme</span><span class="p">)</span>
+                <span class="n">figure_height</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="n">options</span><span class="o">.</span><span class="n">dpi</span>  <span class="c1"># inches</span>
+                <span class="n">figure_width</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="n">options</span><span class="o">.</span><span class="n">dpi</span>  <span class="c1"># inches</span>
+
+                <span class="c1"># Create the plot</span>
+                <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">style</span><span class="p">):</span>
+                    <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_axis_legend</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mf">.9</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_dpi</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>  <span class="c1"># dots per inch</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="n">figure_height</span><span class="p">)</span>  <span class="c1"># type: ignore[reportAttributeAccessIssue,union-attr]</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="n">figure_width</span><span class="p">)</span>  <span class="c1"># type: ignore[reportAttributeAccessIssue,union-attr]</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">x_labels_rotation</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">y_starts_at_zero</span><span class="p">:</span>
+                        <span class="n">_</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="n">top</span> <span class="o">*</span> <span class="mf">1.10</span><span class="p">)</span>  <span class="c1"># Add 10% headroom</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">graphfile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">image_type</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># Close the figure to free memory</span>
+                    <span class="n">graphfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">graphfile</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+
 <div class="viewcode-block" id="ScatterPlotReporter.old_render">
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.old_render">[docs]</a>
-</span><span data-line="154">    <span class="k">def</span><span class="w"> </span><span class="nf">old_render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-</span><span data-line="155"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the scatter plot graph and return it as bytes.</span>
-</span><span data-line="156">
-</span><span data-line="157"><span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
-</span><span data-line="158"><span class="sd">            benchmarked code.</span>
-</span><span data-line="159"><span class="sd">        :param section: The section of the results to plot.</span>
-</span><span data-line="160"><span class="sd">        :param options: The options for rendering the scatter plot.</span>
-</span><span data-line="161"><span class="sd">        :return: The rendered graph as bytes. The format is determined by the options.</span>
-</span><span data-line="162"><span class="sd">            The defaults are defined in :class:`~.ScatterPlotOptions`.</span>
-</span><span data-line="163"><span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the provided arguments are not</span>
-</span><span data-line="164"><span class="sd">            of the expected types or values.</span>
-</span><span data-line="165"><span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the provided values are not</span>
-</span><span data-line="166"><span class="sd">            valid.</span>
-</span><span data-line="167"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="168">        <span class="c1"># is_* checks provide deferred import validation to avoid circular imports</span>
-</span><span data-line="169">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
-</span><span data-line="170">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="171">                <span class="sa">f</span><span class="s2">&quot;&#39;case&#39; argument must be a Case instance, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">case</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span data-line="172">                <span class="n">tag</span><span class="o">=</span><span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_CASE</span><span class="p">)</span>
-</span><span data-line="173">        <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
-</span><span data-line="174">                                <span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_SECTION</span><span class="p">)</span>
-</span><span data-line="175">        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
-</span><span data-line="176">                <span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
-</span><span data-line="177">                <span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_OPTIONS</span><span class="p">)</span>
-</span><span data-line="178">
-</span><span data-line="179">        <span class="n">base_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_unit_for_section</span><span class="p">(</span><span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="180">        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span>
-</span><span data-line="181">
-</span><span data-line="182">        <span class="n">all_numbers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_stats_values</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="183">        <span class="n">common_unit</span><span class="p">,</span> <span class="n">common_scale</span> <span class="o">=</span> <span class="n">si_scale_for_largest</span><span class="p">(</span><span class="n">numbers</span><span class="o">=</span><span class="n">all_numbers</span><span class="p">,</span> <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
-</span><span data-line="184">        <span class="n">target_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">section</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">)&#39;</span>
-</span><span data-line="185">
-</span><span data-line="186">        <span class="k">with</span> <span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">graphfile</span><span class="p">:</span>
-</span><span data-line="187">            <span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">():</span>
-</span><span data-line="188">                <span class="n">plot_data</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="189">                <span class="n">x_axis_legend</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
-</span><span data-line="190">                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
-</span><span data-line="191">                <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-</span><span data-line="192">                    <span class="n">target_stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="193">                    <span class="n">variation_label</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">variation_marks</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
-</span><span data-line="194">                    <span class="n">plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-</span><span data-line="195">                        <span class="n">x_axis_legend</span><span class="p">:</span> <span class="n">variation_label</span><span class="p">,</span>
-</span><span data-line="196">                        <span class="n">target_name</span><span class="p">:</span> <span class="n">target_stats</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">,</span>
-</span><span data-line="197">                    <span class="p">})</span>
-</span><span data-line="198">
-</span><span data-line="199">                <span class="c1"># See https://matplotlib.org/stable/users/explain/customizing.html#the-matplotlibrc-file</span>
-</span><span data-line="200">                <span class="n">benchmarking_theme</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">theme</span>
-</span><span data-line="201">                <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">benchmarking_theme</span><span class="p">)</span>
-</span><span data-line="202">                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">plot_data</span><span class="p">)</span>
-</span><span data-line="203">
-</span><span data-line="204">                <span class="c1"># Create the plot</span>
-</span><span data-line="205">                <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">style</span><span class="p">):</span>
-</span><span data-line="206">                    <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">relplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_axis_legend</span><span class="p">)</span>
-</span><span data-line="207">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
-</span><span data-line="208">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mf">.9</span><span class="p">)</span>
-</span><span data-line="209">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_dpi</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>  <span class="c1"># dots per inch</span>
-</span><span data-line="210">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="n">options</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>  <span class="c1"># inches</span>
-</span><span data-line="211">                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="n">options</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>  <span class="c1"># inches</span>
-</span><span data-line="212">                    <span class="n">g</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">x_labels_rotation</span><span class="p">)</span>
-</span><span data-line="213">                    <span class="c1"># format the labels with f-strings</span>
-</span><span data-line="214">                    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
-</span><span data-line="215">                        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{x}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</span><span data-line="216">                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">y_starts_at_zero</span><span class="p">:</span>
-</span><span data-line="217">                        <span class="n">_</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
-</span><span data-line="218">                        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="n">top</span> <span class="o">*</span> <span class="mf">1.10</span><span class="p">)</span>  <span class="c1"># Add 10% headroom</span>
-</span><span data-line="219">                    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">graphfile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">image_type</span><span class="p">)</span>
-</span><span data-line="220">                    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># Close the figure to free memory</span>
-</span><span data-line="221">                    <span class="n">graphfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-</span><span data-line="222">            <span class="k">return</span> <span class="n">graphfile</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">old_render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the scatter plot graph and return it as bytes.</span>
+
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
+<span class="sd">            benchmarked code.</span>
+<span class="sd">        :param section: The section of the results to plot.</span>
+<span class="sd">        :param options: The options for rendering the scatter plot.</span>
+<span class="sd">        :return: The rendered graph as bytes. The format is determined by the options.</span>
+<span class="sd">            The defaults are defined in :class:`~.ScatterPlotOptions`.</span>
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the provided arguments are not</span>
+<span class="sd">            of the expected types or values.</span>
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the provided values are not</span>
+<span class="sd">            valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># is_* checks provide deferred import validation to avoid circular imports</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;case&#39; argument must be a Case instance, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">case</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_CASE</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+                                <span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_SECTION</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+                <span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
+                <span class="n">_ScatterPlotReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_OPTIONS</span><span class="p">)</span>
+
+        <span class="n">base_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_unit_for_section</span><span class="p">(</span><span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span>
+
+        <span class="n">all_numbers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_stats_values</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
+        <span class="n">common_unit</span><span class="p">,</span> <span class="n">common_scale</span> <span class="o">=</span> <span class="n">si_scale_for_largest</span><span class="p">(</span><span class="n">numbers</span><span class="o">=</span><span class="n">all_numbers</span><span class="p">,</span> <span class="n">base_unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span>
+        <span class="n">target_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">section</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">base_unit</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+        <span class="k">with</span> <span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">graphfile</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">():</span>
+                <span class="n">plot_data</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">x_axis_legend</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+                <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                    <span class="n">target_stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+                    <span class="n">variation_label</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">variation_marks</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+                    <span class="n">plot_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="n">x_axis_legend</span><span class="p">:</span> <span class="n">variation_label</span><span class="p">,</span>
+                        <span class="n">target_name</span><span class="p">:</span> <span class="n">target_stats</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">,</span>
+                    <span class="p">})</span>
+
+                <span class="c1"># See https://matplotlib.org/stable/users/explain/customizing.html#the-matplotlibrc-file</span>
+                <span class="n">benchmarking_theme</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">theme</span>
+                <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">benchmarking_theme</span><span class="p">)</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">plot_data</span><span class="p">)</span>
+
+                <span class="c1"># Create the plot</span>
+                <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">style</span><span class="p">):</span>
+                    <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">relplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_axis_legend</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mf">.9</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_dpi</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>  <span class="c1"># dots per inch</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="n">options</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>  <span class="c1"># inches</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="n">options</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>  <span class="c1"># inches</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">x_labels_rotation</span><span class="p">)</span>
+                    <span class="c1"># format the labels with f-strings</span>
+                    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{x}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">y_starts_at_zero</span><span class="p">:</span>
+                        <span class="n">_</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="n">top</span> <span class="o">*</span> <span class="mf">1.10</span><span class="p">)</span>  <span class="c1"># Add 10% headroom</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">graphfile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">image_type</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># Close the figure to free memory</span>
+                    <span class="n">graphfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">graphfile</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
 </div>
 
-</span></pre></div>
+</pre></div>
         </article>
       </div>
       <footer>
@@ -505,6 +507,7 @@
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../../../_static/shibuya.js"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

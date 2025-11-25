@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.json.reporter.reporter - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,253 +240,253 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.reporters.json.reporter.reporter</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Reporter for benchmark results using JSON files.&quot;&quot;&quot;</span>
-</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-</span><span data-line="3">
-</span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
-</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">TypeAlias</span>
-</span><span data-line="9">
-</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span>
-</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
-</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
-</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols.reporter_callback</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
-</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reporter</span><span class="p">,</span> <span class="n">ReporterOptions</span>
-</span><span data-line="15"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span>
-</span><span data-line="16"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_machine_info</span><span class="p">,</span> <span class="n">sigfigs</span>
-</span><span data-line="17"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_type</span>
-</span><span data-line="18">
-</span><span data-line="19"><span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONConfig</span>
-</span><span data-line="20"><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_JSONReporterErrorTag</span>
-</span><span data-line="21"><span class="kn">from</span><span class="w"> </span><span class="nn">.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONOptions</span>
-</span><span data-line="22">
-</span><span data-line="23"><span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">JSONOptions</span>
-</span><span data-line="24">
-</span><span data-line="25">
-</span><span data-line="26"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span data-line="27">    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
-</span><span data-line="28">    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>
-</span><span data-line="29">    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-</span><span data-line="30">
-</span><span data-line="31">
+<span></span><span class="sd">&quot;&quot;&quot;Reporter for benchmark results using JSON files.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">TypeAlias</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols.reporter_callback</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reporter</span><span class="p">,</span> <span class="n">ReporterOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_machine_info</span><span class="p">,</span> <span class="n">sigfigs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_type</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_JSONReporterErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONOptions</span>
+
+<span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">JSONOptions</span>
+
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+
 <div class="viewcode-block" id="JSONReporter">
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.json.reporter.reporter.html#simplebench.reporters.json.JSONReporter">[docs]</a>
-</span><span data-line="32"><span class="k">class</span><span class="w"> </span><span class="nc">JSONReporter</span><span class="p">(</span><span class="n">Reporter</span><span class="p">):</span>
-</span><span data-line="33"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for outputting benchmark results to JSON files.</span>
-</span><span data-line="34">
-</span><span data-line="35"><span class="sd">    It supports reporting statistics for various sections,</span>
-</span><span data-line="36"><span class="sd">    either separately or together, to the filesystem, via a callback function,</span>
-</span><span data-line="37"><span class="sd">    or to the console in JSON format.</span>
-</span><span data-line="38">
-</span><span data-line="39"><span class="sd">    The JSON files are tagged with metadata comments including the case title,</span>
-</span><span data-line="40"><span class="sd">    description, and units for clarity.</span>
-</span><span data-line="41">
-</span><span data-line="42"><span class="sd">    **Defined command-line flags:**</span>
-</span><span data-line="43">
-</span><span data-line="44"><span class="sd">    * ``--json: {filesystem, console, callback}`` (default=filesystem) Outputs statistical</span>
-</span><span data-line="45"><span class="sd">      results to JSON.</span>
-</span><span data-line="46"><span class="sd">    * ``--json-data: {filesystem, console, callback}`` (default=filesystem) Outputs results</span>
-</span><span data-line="47"><span class="sd">      to JSON with full data.</span>
-</span><span data-line="48">
-</span><span data-line="49"><span class="sd">    **Example usage:**</span>
-</span><span data-line="50">
-</span><span data-line="51"><span class="sd">    .. code-block:: none</span>
-</span><span data-line="52">
-</span><span data-line="53"><span class="sd">        program.py --json               # Outputs results to JSON files in the filesystem (default).</span>
-</span><span data-line="54"><span class="sd">        program.py --json filesystem    # Outputs results to JSON files in the filesystem.</span>
-</span><span data-line="55"><span class="sd">        program.py --json console       # Outputs results to the console in JSON format.</span>
-</span><span data-line="56"><span class="sd">        program.py --json callback      # Outputs results via a callback function in JSON format.</span>
-</span><span data-line="57"><span class="sd">        program.py --json filesystem console  # Outputs results to both JSON files and the console.</span>
-</span><span data-line="58">
-</span><span data-line="59"><span class="sd">    :ivar name: The unique identifying name of the reporter.</span>
-</span><span data-line="60"><span class="sd">    :vartype name: str</span>
-</span><span data-line="61"><span class="sd">    :ivar description: A brief description of the reporter.</span>
-</span><span data-line="62"><span class="sd">    :vartype description: str</span>
-</span><span data-line="63"><span class="sd">    :ivar choices: A collection of :class:`~simplebench.reporters.choices.Choices` instances</span>
-</span><span data-line="64"><span class="sd">        defining the reporter instance, CLI flags, :class:`~simplebench.reporters.choice.Choice`</span>
-</span><span data-line="65"><span class="sd">        name, supported :class:`~simplebench.enums.Section` objects, supported output</span>
-</span><span data-line="66"><span class="sd">        :class:`~simplebench.enums.Target` objects, and supported output</span>
-</span><span data-line="67"><span class="sd">        :class:`~simplebench.enums.Format` objects for the reporter.</span>
-</span><span data-line="68"><span class="sd">    :vartype choices: ~simplebench.reporters.choices.Choices</span>
-</span><span data-line="69"><span class="sd">    :ivar targets: The supported output targets for the reporter.</span>
-</span><span data-line="70"><span class="sd">    :vartype targets: set[~simplebench.enums.Target]</span>
-</span><span data-line="71"><span class="sd">    :ivar formats: The supported output formats for the reporter.</span>
-</span><span data-line="72"><span class="sd">    :vartype formats: set[~simplebench.enums.Format]</span>
-</span><span data-line="73"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="74">    <span class="n">_OPTIONS_TYPE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">JSONOptions</span><span class="p">]]</span> <span class="o">=</span> <span class="n">JSONOptions</span>  <span class="c1"># type: ignore[reportIncompatibleVariableOveride]</span>
-</span><span data-line="75"><span class="w">    </span><span class="sd">&quot;&quot;&quot;:ivar: The type of :class:`~.ReporterOptions` used by the :class:`~.JSONReporter`.</span>
-</span><span data-line="76"><span class="sd">    :vartype: ~typing.ClassVar[type[~.JSONOptions]]</span>
-</span><span data-line="77"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="78">    <span class="n">_OPTIONS_KWARGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;full_data&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
-</span><span data-line="79"><span class="w">    </span><span class="sd">&quot;&quot;&quot;:ivar: The default keyword arguments for the :class:`~.JSONReporter` options.</span>
-</span><span data-line="80">
-</span><span data-line="81"><span class="sd">    .. code-block:: python</span>
-</span><span data-line="82">
-</span><span data-line="83"><span class="sd">        {&quot;full_data&quot;: False}</span>
-</span><span data-line="84">
-</span><span data-line="85"><span class="sd">    :vartype: ~typing.ClassVar[dict[str, ~typing.Any]]</span>
-</span><span data-line="86"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="87">
-</span><span data-line="88">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">JSONConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="89"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the JSONReporter.</span>
-</span><span data-line="90">
-</span><span data-line="91"><span class="sd">        .. note::</span>
-</span><span data-line="92">
-</span><span data-line="93"><span class="sd">            The exception documentation below refers to validation of subclass configuration</span>
-</span><span data-line="94"><span class="sd">            class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly</span>
-</span><span data-line="95"><span class="sd">            defined in any subclass of :class:`~.JSONReporter` to ensure proper functionality.</span>
-</span><span data-line="96">
-</span><span data-line="97"><span class="sd">        :param config: An optional configuration object to override default reporter settings.</span>
-</span><span data-line="98"><span class="sd">                       If not provided, default settings will be used.</span>
-</span><span data-line="99"><span class="sd">        :type config: JSONConfig | None</span>
-</span><span data-line="100">
-</span><span data-line="101"><span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration</span>
-</span><span data-line="102"><span class="sd">            types are invalid.</span>
-</span><span data-line="103"><span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration</span>
-</span><span data-line="104"><span class="sd">            values are invalid.</span>
-</span><span data-line="105"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="106">        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="107">            <span class="n">config</span> <span class="o">=</span> <span class="n">JSONConfig</span><span class="p">()</span>
-</span><span data-line="108">
-</span><span data-line="109">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-</span><span data-line="110">
+<span class="k">class</span><span class="w"> </span><span class="nc">JSONReporter</span><span class="p">(</span><span class="n">Reporter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for outputting benchmark results to JSON files.</span>
+
+<span class="sd">    It supports reporting statistics for various sections,</span>
+<span class="sd">    either separately or together, to the filesystem, via a callback function,</span>
+<span class="sd">    or to the console in JSON format.</span>
+
+<span class="sd">    The JSON files are tagged with metadata comments including the case title,</span>
+<span class="sd">    description, and units for clarity.</span>
+
+<span class="sd">    **Defined command-line flags:**</span>
+
+<span class="sd">    * ``--json: {filesystem, console, callback}`` (default=filesystem) Outputs statistical</span>
+<span class="sd">      results to JSON.</span>
+<span class="sd">    * ``--json-data: {filesystem, console, callback}`` (default=filesystem) Outputs results</span>
+<span class="sd">      to JSON with full data.</span>
+
+<span class="sd">    **Example usage:**</span>
+
+<span class="sd">    .. code-block:: none</span>
+
+<span class="sd">        program.py --json               # Outputs results to JSON files in the filesystem (default).</span>
+<span class="sd">        program.py --json filesystem    # Outputs results to JSON files in the filesystem.</span>
+<span class="sd">        program.py --json console       # Outputs results to the console in JSON format.</span>
+<span class="sd">        program.py --json callback      # Outputs results via a callback function in JSON format.</span>
+<span class="sd">        program.py --json filesystem console  # Outputs results to both JSON files and the console.</span>
+
+<span class="sd">    :ivar name: The unique identifying name of the reporter.</span>
+<span class="sd">    :vartype name: str</span>
+<span class="sd">    :ivar description: A brief description of the reporter.</span>
+<span class="sd">    :vartype description: str</span>
+<span class="sd">    :ivar choices: A collection of :class:`~simplebench.reporters.choices.Choices` instances</span>
+<span class="sd">        defining the reporter instance, CLI flags, :class:`~simplebench.reporters.choice.Choice`</span>
+<span class="sd">        name, supported :class:`~simplebench.enums.Section` objects, supported output</span>
+<span class="sd">        :class:`~simplebench.enums.Target` objects, and supported output</span>
+<span class="sd">        :class:`~simplebench.enums.Format` objects for the reporter.</span>
+<span class="sd">    :vartype choices: ~simplebench.reporters.choices.Choices</span>
+<span class="sd">    :ivar targets: The supported output targets for the reporter.</span>
+<span class="sd">    :vartype targets: set[~simplebench.enums.Target]</span>
+<span class="sd">    :ivar formats: The supported output formats for the reporter.</span>
+<span class="sd">    :vartype formats: set[~simplebench.enums.Format]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_OPTIONS_TYPE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">JSONOptions</span><span class="p">]]</span> <span class="o">=</span> <span class="n">JSONOptions</span>  <span class="c1"># type: ignore[reportIncompatibleVariableOveride]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:ivar: The type of :class:`~.ReporterOptions` used by the :class:`~.JSONReporter`.</span>
+<span class="sd">    :vartype: ~typing.ClassVar[type[~.JSONOptions]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_OPTIONS_KWARGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;full_data&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:ivar: The default keyword arguments for the :class:`~.JSONReporter` options.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        {&quot;full_data&quot;: False}</span>
+
+<span class="sd">    :vartype: ~typing.ClassVar[dict[str, ~typing.Any]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">JSONConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the JSONReporter.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            The exception documentation below refers to validation of subclass configuration</span>
+<span class="sd">            class variables ``_OPTIONS_TYPE`` and ``_OPTIONS_KWARGS``. These must be correctly</span>
+<span class="sd">            defined in any subclass of :class:`~.JSONReporter` to ensure proper functionality.</span>
+
+<span class="sd">        :param config: An optional configuration object to override default reporter settings.</span>
+<span class="sd">                       If not provided, default settings will be used.</span>
+<span class="sd">        :type config: JSONConfig | None</span>
+
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If the subclass configuration</span>
+<span class="sd">            types are invalid.</span>
+<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If the subclass configuration</span>
+<span class="sd">            values are invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">JSONConfig</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
 <div class="viewcode-block" id="JSONReporter.run_report">
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.json.reporter.reporter.html#simplebench.reporters.json.JSONReporter.run_report">[docs]</a>
-</span><span data-line="111">    <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span data-line="112">                   <span class="o">*</span><span class="p">,</span>
-</span><span data-line="113">                   <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
-</span><span data-line="114">                   <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
-</span><span data-line="115">                   <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
-</span><span data-line="116">                   <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
-</span><span data-line="117">                   <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="118">                   <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="119">                   <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="120">                   <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="121"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the benchmark results to a file as tagged JSON if available.</span>
-</span><span data-line="122">
-</span><span data-line="123"><span class="sd">        This method is called by the base class&#39;s :meth:`~.Reporter.report` method after</span>
-</span><span data-line="124"><span class="sd">        validation. The base class handles validation of the arguments, so subclasses can</span>
-</span><span data-line="125"><span class="sd">        assume the arguments are valid without a large amount of boilerplate code. The base</span>
-</span><span data-line="126"><span class="sd">        class also handles lazy loading of the reporter classes, so subclasses can assume</span>
-</span><span data-line="127"><span class="sd">        any required imports are available.</span>
-</span><span data-line="128">
-</span><span data-line="129"><span class="sd">        The :meth:`~.run_report` method&#39;s main responsibilities are to select the appropriate</span>
-</span><span data-line="130"><span class="sd">        output method (``render_by_case()`` in this case) based on the provided arguments</span>
-</span><span data-line="131"><span class="sd">        and to pass the actual rendering method to be used (the :meth:`~.render` method in</span>
-</span><span data-line="132"><span class="sd">        this case). The rendering method must conform with the</span>
-</span><span data-line="133"><span class="sd">        :class:`~simplebench.reporters.protocols.reporter_renderer.ReportRenderer` protocol.</span>
-</span><span data-line="134">
-</span><span data-line="135"><span class="sd">        :param args: The parsed command-line arguments.</span>
-</span><span data-line="136"><span class="sd">        :param log_metadata: The :class:`~.ReportLogMetadata` instance containing metadata</span>
-</span><span data-line="137"><span class="sd">            about the report being generated.</span>
-</span><span data-line="138"><span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
-</span><span data-line="139"><span class="sd">            benchmarked code.</span>
-</span><span data-line="140"><span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.Choice` instance specifying</span>
-</span><span data-line="141"><span class="sd">            the report configuration.</span>
-</span><span data-line="142"><span class="sd">        :param path: The path to the directory where the JSON file(s) will be saved.</span>
-</span><span data-line="143"><span class="sd">        :param reports_log_path: The path to the reports log file.</span>
-</span><span data-line="144"><span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing</span>
-</span><span data-line="145"><span class="sd">            benchmark results.</span>
-</span><span data-line="146"><span class="sd">        :param callback: A callback function for additional processing of the report.</span>
-</span><span data-line="147"><span class="sd">            The function should accept two arguments: the :class:`~simplebench.case.Case`</span>
-</span><span data-line="148"><span class="sd">            instance and the JSON data as a string. Leave as ``None`` if no callback is</span>
-</span><span data-line="149"><span class="sd">            needed.</span>
-</span><span data-line="150"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="151">        <span class="bp">self</span><span class="o">.</span><span class="n">render_by_case</span><span class="p">(</span>
-</span><span data-line="152">            <span class="n">renderer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">,</span>
-</span><span data-line="153">            <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
-</span><span data-line="154">            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
-</span><span data-line="155">            <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
-</span><span data-line="156">            <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
-</span><span data-line="157">            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-</span><span data-line="158">            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
-</span><span data-line="159">            <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="o">*</span><span class="p">,</span>
+                   <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+                   <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+                   <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+                   <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+                   <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+                   <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the benchmark results to a file as tagged JSON if available.</span>
 
-</span><span data-line="160">
+<span class="sd">        This method is called by the base class&#39;s :meth:`~.Reporter.report` method after</span>
+<span class="sd">        validation. The base class handles validation of the arguments, so subclasses can</span>
+<span class="sd">        assume the arguments are valid without a large amount of boilerplate code. The base</span>
+<span class="sd">        class also handles lazy loading of the reporter classes, so subclasses can assume</span>
+<span class="sd">        any required imports are available.</span>
+
+<span class="sd">        The :meth:`~.run_report` method&#39;s main responsibilities are to select the appropriate</span>
+<span class="sd">        output method (``render_by_case()`` in this case) based on the provided arguments</span>
+<span class="sd">        and to pass the actual rendering method to be used (the :meth:`~.render` method in</span>
+<span class="sd">        this case). The rendering method must conform with the</span>
+<span class="sd">        :class:`~simplebench.reporters.protocols.reporter_renderer.ReportRenderer` protocol.</span>
+
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :param log_metadata: The :class:`~.ReportLogMetadata` instance containing metadata</span>
+<span class="sd">            about the report being generated.</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
+<span class="sd">            benchmarked code.</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.Choice` instance specifying</span>
+<span class="sd">            the report configuration.</span>
+<span class="sd">        :param path: The path to the directory where the JSON file(s) will be saved.</span>
+<span class="sd">        :param reports_log_path: The path to the reports log file.</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing</span>
+<span class="sd">            benchmark results.</span>
+<span class="sd">        :param callback: A callback function for additional processing of the report.</span>
+<span class="sd">            The function should accept two arguments: the :class:`~simplebench.case.Case`</span>
+<span class="sd">            instance and the JSON data as a string. Leave as ``None`` if no callback is</span>
+<span class="sd">            needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render_by_case</span><span class="p">(</span>
+            <span class="n">renderer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">,</span>
+            <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+            <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+            <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="JSONReporter.render">
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.json.reporter.reporter.html#simplebench.reporters.json.JSONReporter.render">[docs]</a>
-</span><span data-line="161">    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="162"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the Case data for all sections to a JSON string.</span>
-</span><span data-line="163">
-</span><span data-line="164"><span class="sd">        Machine info is included in the JSON output under the &#39;metadata&#39; key.</span>
-</span><span data-line="165">
-</span><span data-line="166"><span class="sd">        :param case: The :class:`~simplebench.case.Case` instance holding the benchmarked</span>
-</span><span data-line="167"><span class="sd">            code statistics.</span>
-</span><span data-line="168"><span class="sd">        :param section: The :class:`~simplebench.enums.Section` to render (ignored, all</span>
-</span><span data-line="169"><span class="sd">            sections are included).</span>
-</span><span data-line="170"><span class="sd">        :param options: The :class:`~.JSONOptions` instance specifying rendering options</span>
-</span><span data-line="171"><span class="sd">            or ``None`` if not provided. (:class:`~.JSONOptions` is a subclass of</span>
-</span><span data-line="172"><span class="sd">            :class:`~.ReporterOptions`.)</span>
-</span><span data-line="173"><span class="sd">        :return: The JSON string representation of the :class:`~simplebench.case.Case` data.</span>
-</span><span data-line="174"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="175">        <span class="c1"># is_* checks provide deferred import validation to avoid circular imports</span>
-</span><span data-line="176">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
-</span><span data-line="177">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="178">                <span class="sa">f</span><span class="s2">&quot;&#39;case&#39; argument must be a Case instance, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">case</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span data-line="179">                <span class="n">tag</span><span class="o">=</span><span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_CASE</span><span class="p">)</span>
-</span><span data-line="180">        <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
-</span><span data-line="181">                                <span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_SECTION</span><span class="p">)</span>
-</span><span data-line="182">        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
-</span><span data-line="183">                                <span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_OPTIONS</span><span class="p">)</span>
-</span><span data-line="184">
-</span><span data-line="185">        <span class="n">full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">full_data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
-</span><span data-line="186">        <span class="k">with</span> <span class="n">StringIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">jsonfile</span><span class="p">:</span>
-</span><span data-line="187">            <span class="n">case_dict</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="n">full_data</span><span class="p">)</span>
-</span><span data-line="188">            <span class="k">try</span><span class="p">:</span>
-</span><span data-line="189">                <span class="n">case_dict</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_machine_info</span><span class="p">()</span>
-</span><span data-line="190">                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">case_dict</span><span class="p">,</span> <span class="n">jsonfile</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-</span><span data-line="191">                <span class="n">jsonfile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span data-line="192">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-</span><span data-line="193">                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="194">                    <span class="sa">f</span><span class="s1">&#39;Error generating JSON output for case </span><span class="si">{</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-</span><span data-line="195">                    <span class="n">tag</span><span class="o">=</span><span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">JSON_OUTPUT_ERROR</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
-</span><span data-line="196">            <span class="k">return</span> <span class="n">jsonfile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the Case data for all sections to a JSON string.</span>
 
-</span><span data-line="197">
+<span class="sd">        Machine info is included in the JSON output under the &#39;metadata&#39; key.</span>
+
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance holding the benchmarked</span>
+<span class="sd">            code statistics.</span>
+<span class="sd">        :param section: The :class:`~simplebench.enums.Section` to render (ignored, all</span>
+<span class="sd">            sections are included).</span>
+<span class="sd">        :param options: The :class:`~.JSONOptions` instance specifying rendering options</span>
+<span class="sd">            or ``None`` if not provided. (:class:`~.JSONOptions` is a subclass of</span>
+<span class="sd">            :class:`~.ReporterOptions`.)</span>
+<span class="sd">        :return: The JSON string representation of the :class:`~simplebench.case.Case` data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># is_* checks provide deferred import validation to avoid circular imports</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;case&#39; argument must be a Case instance, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">case</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_CASE</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
+                                <span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_SECTION</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
+                                <span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_OPTIONS</span><span class="p">)</span>
+
+        <span class="n">full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">full_data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">with</span> <span class="n">StringIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">jsonfile</span><span class="p">:</span>
+            <span class="n">case_dict</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="n">full_data</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">case_dict</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_machine_info</span><span class="p">()</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">case_dict</span><span class="p">,</span> <span class="n">jsonfile</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                <span class="n">jsonfile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Error generating JSON output for case </span><span class="si">{</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">JSON_OUTPUT_ERROR</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+            <span class="k">return</span> <span class="n">jsonfile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+
+
 <div class="viewcode-block" id="JSONReporter.mean_change">
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.json.reporter.reporter.html#simplebench.reporters.json.JSONReporter.mean_change">[docs]</a>
-</span><span data-line="198">    <span class="k">def</span><span class="w"> </span><span class="nf">mean_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">second</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="199"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare two Case instances for a given section and return the change as a float ratio.</span>
-</span><span data-line="200">
-</span><span data-line="201"><span class="sd">        The float ratio is calculated as ``(value2 - value1) / value1``, where ``value1`` and</span>
-</span><span data-line="202"><span class="sd">        ``value2`` are the mean values for the specified section in the first and second</span>
-</span><span data-line="203"><span class="sd">        cases, respectively.</span>
-</span><span data-line="204">
-</span><span data-line="205"><span class="sd">        A value of ``0.0`` indicates no change, a positive value indicates an increase,</span>
-</span><span data-line="206"><span class="sd">        and a negative value indicates a decrease. If either case does not have data for the</span>
-</span><span data-line="207"><span class="sd">        specified section, ``None`` is returned. The ratio is limited to 3 significant digits</span>
-</span><span data-line="208"><span class="sd">        for clarity and to prevent a false sense of precision to the result.</span>
-</span><span data-line="209">
-</span><span data-line="210"><span class="sd">        If first mean value is ``0.0`` and second mean value is also ``0.0``, the change is</span>
-</span><span data-line="211"><span class="sd">        defined as ``0.0``. If first mean value is ``0.0`` and second mean value is non-zero,</span>
-</span><span data-line="212"><span class="sd">        the change is defined as ``None`` to indicate incomparability.</span>
-</span><span data-line="213">
-</span><span data-line="214"><span class="sd">        :param first: The first :class:`~simplebench.case.Case` instance to compare.</span>
-</span><span data-line="215"><span class="sd">        :param second: The second :class:`~simplebench.case.Case` instance to compare.</span>
-</span><span data-line="216"><span class="sd">        :param section: The :class:`~simplebench.enums.Section` to compare.</span>
-</span><span data-line="217"><span class="sd">        :return: The change between the mean for two cases for the specified section,</span>
-</span><span data-line="218"><span class="sd">            or ``None`` if the section is not present in either case or the numbers are</span>
-</span><span data-line="219"><span class="sd">            incomparable.</span>
-</span><span data-line="220"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="221">        <span class="n">value1</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">section_mean</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="222">        <span class="n">value2</span> <span class="o">=</span> <span class="n">second</span><span class="o">.</span><span class="n">section_mean</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="223">
-</span><span data-line="224">        <span class="k">if</span> <span class="n">value1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="225">            <span class="k">return</span> <span class="kc">None</span>
-</span><span data-line="226">
-</span><span data-line="227">        <span class="k">if</span> <span class="n">value1</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-</span><span data-line="228">            <span class="k">if</span> <span class="n">value2</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-</span><span data-line="229">                <span class="k">return</span> <span class="mf">0.0</span>
-</span><span data-line="230">            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Infinite increase from zero to non-zero is not comparable</span>
-</span><span data-line="231">        <span class="k">if</span> <span class="n">value1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">value2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="232">            <span class="k">return</span> <span class="mf">0.0</span>
-</span><span data-line="233">
-</span><span data-line="234">        <span class="k">return</span> <span class="n">sigfigs</span><span class="p">((</span><span class="n">value2</span> <span class="o">-</span> <span class="n">value1</span><span class="p">)</span> <span class="o">/</span> <span class="n">value1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">second</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare two Case instances for a given section and return the change as a float ratio.</span>
+
+<span class="sd">        The float ratio is calculated as ``(value2 - value1) / value1``, where ``value1`` and</span>
+<span class="sd">        ``value2`` are the mean values for the specified section in the first and second</span>
+<span class="sd">        cases, respectively.</span>
+
+<span class="sd">        A value of ``0.0`` indicates no change, a positive value indicates an increase,</span>
+<span class="sd">        and a negative value indicates a decrease. If either case does not have data for the</span>
+<span class="sd">        specified section, ``None`` is returned. The ratio is limited to 3 significant digits</span>
+<span class="sd">        for clarity and to prevent a false sense of precision to the result.</span>
+
+<span class="sd">        If first mean value is ``0.0`` and second mean value is also ``0.0``, the change is</span>
+<span class="sd">        defined as ``0.0``. If first mean value is ``0.0`` and second mean value is non-zero,</span>
+<span class="sd">        the change is defined as ``None`` to indicate incomparability.</span>
+
+<span class="sd">        :param first: The first :class:`~simplebench.case.Case` instance to compare.</span>
+<span class="sd">        :param second: The second :class:`~simplebench.case.Case` instance to compare.</span>
+<span class="sd">        :param section: The :class:`~simplebench.enums.Section` to compare.</span>
+<span class="sd">        :return: The change between the mean for two cases for the specified section,</span>
+<span class="sd">            or ``None`` if the section is not present in either case or the numbers are</span>
+<span class="sd">            incomparable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value1</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">section_mean</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="n">value2</span> <span class="o">=</span> <span class="n">second</span><span class="o">.</span><span class="n">section_mean</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">value1</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value2</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">0.0</span>
+            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Infinite increase from zero to non-zero is not comparable</span>
+        <span class="k">if</span> <span class="n">value1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">value2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="n">sigfigs</span><span class="p">((</span><span class="n">value2</span> <span class="o">-</span> <span class="n">value1</span><span class="p">)</span> <span class="o">/</span> <span class="n">value1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></div>
 </div>
 
-</span></pre></div>
+</pre></div>
         </article>
       </div>
       <footer>
@@ -520,6 +522,7 @@
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../../../_static/shibuya.js"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

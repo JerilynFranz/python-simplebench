@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.validators.validate_sequence_of_type - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,168 +240,168 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.validators.validate_sequence_of_type</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Validator for sequence of specified type(s).&quot;&quot;&quot;</span>
-</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
-</span><span data-line="3">
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErrorTag</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
-</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators.exceptions.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ValidatorsErrorTag</span>
-</span><span data-line="6">
-</span><span data-line="7"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
-</span><span data-line="8">
-</span><span data-line="9">
-</span><span data-line="10"><span class="nd">@overload</span>
-</span><span data-line="11"><span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
-</span><span data-line="12">        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-</span><span data-line="13">        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
-</span><span data-line="14">        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span data-line="15">        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
-</span><span data-line="16">        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
-</span><span data-line="17">        <span class="o">*</span><span class="p">,</span>
-</span><span data-line="18">        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="19">        <span class="n">exact_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
-</span><span data-line="20">
-</span><span data-line="21">
-</span><span data-line="22"><span class="nd">@overload</span>
-</span><span data-line="23"><span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
-</span><span data-line="24">        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-</span><span data-line="25">        <span class="n">types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
-</span><span data-line="26">        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span data-line="27">        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
-</span><span data-line="28">        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
-</span><span data-line="29">        <span class="o">*</span><span class="p">,</span>
-</span><span data-line="30">        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="31">        <span class="n">exact_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span> <span class="o">...</span>
-</span><span data-line="32">
-</span><span data-line="33">
+<span></span><span class="sd">&quot;&quot;&quot;Validator for sequence of specified type(s).&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErrorTag</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators.exceptions.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ValidatorsErrorTag</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">exact_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">exact_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span> <span class="o">...</span>
+
+
 <div class="viewcode-block" id="validate_sequence_of_type">
 <a class="viewcode-back" href="../../../source/simplebench.validators.validate_sequence_of_type.html#simplebench.validators.validate_sequence_of_type">[docs]</a>
-</span><span data-line="34"><span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
-</span><span data-line="35">        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-</span><span data-line="36">        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
-</span><span data-line="37">        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span data-line="38">        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
-</span><span data-line="39">        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
-</span><span data-line="40">        <span class="o">*</span><span class="p">,</span>
-</span><span data-line="41">        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="42">        <span class="n">exact_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-</span><span data-line="43"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a sequence of specified type(s).</span>
-</span><span data-line="44">
-</span><span data-line="45"><span class="sd">    When a single type is provided, the return type is automatically inferred as list[T].</span>
-</span><span data-line="46"><span class="sd">    When multiple types are provided, the return type is list[Any], which allows the</span>
-</span><span data-line="47"><span class="sd">    caller to narrow the type with an explicit annotation.</span>
-</span><span data-line="48">
-</span><span data-line="49"><span class="sd">    :param Sequence[Any] value: The sequence of values to validate.</span>
-</span><span data-line="50"><span class="sd">    :param types: A single type or tuple of allowed types.</span>
-</span><span data-line="51"><span class="sd">    :type types: type[T] | tuple[type, ...]</span>
-</span><span data-line="52"><span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
-</span><span data-line="53"><span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
-</span><span data-line="54"><span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
-</span><span data-line="55"><span class="sd">    :param bool allow_empty: If set to True, allow an empty sequence. Otherwise raise an error.</span>
-</span><span data-line="56"><span class="sd">    :param bool exact_type: If set to True, require that the types be exactly the</span>
-</span><span data-line="57"><span class="sd">        types specified, not subclasses. Otherwise allow subclass matches.</span>
-</span><span data-line="58"><span class="sd">    :return: For single type, returns list[T]. For multiple types,</span>
-</span><span data-line="59"><span class="sd">        returns list[Any] which can be narrowed with explicit type annotation.</span>
-</span><span data-line="60"><span class="sd">    :rtype: list[T] | list[Any]</span>
-</span><span data-line="61"><span class="sd">    :raises SimpleBenchTypeError: If the value is not a sequence or contains invalid types.</span>
-</span><span data-line="62"><span class="sd">    :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False.</span>
-</span><span data-line="63">
-</span><span data-line="64"><span class="sd">    Examples:</span>
-</span><span data-line="65"><span class="sd">        Single type (automatic inference):</span>
-</span><span data-line="66">
-</span><span data-line="67"><span class="sd">        .. code-block:: python</span>
-</span><span data-line="68">
-</span><span data-line="69"><span class="sd">            names = validate_sequence_of_type([&#39;Alice&#39;], str, &#39;names&#39;, ...)</span>
-</span><span data-line="70"><span class="sd">            # Type: list[str]</span>
-</span><span data-line="71">
-</span><span data-line="72"><span class="sd">        Multiple types (manual narrowing):</span>
-</span><span data-line="73">
-</span><span data-line="74"><span class="sd">        .. code-block:: python</span>
-</span><span data-line="75">
-</span><span data-line="76"><span class="sd">            mixed: list[str | int] = validate_sequence_of_type(</span>
-</span><span data-line="77"><span class="sd">                [&#39;a&#39;, 1], (str, int), &#39;items&#39;, ...</span>
-</span><span data-line="78"><span class="sd">            )</span>
-</span><span data-line="79"><span class="sd">            # Type: list[str | int]</span>
-</span><span data-line="80"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="81">
-</span><span data-line="82">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span data-line="83">        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="84">            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
-</span><span data-line="85">            <span class="sa">f</span><span class="s1">&#39;Must be an iterable (list, tuple, etc.).&#39;</span><span class="p">,</span>
-</span><span data-line="86">            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
-</span><span data-line="87">        <span class="p">)</span>
-</span><span data-line="88">    <span class="n">value</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># Convert to list for length check and indexing</span>
-</span><span data-line="89">
-</span><span data-line="90">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-</span><span data-line="91">        <span class="k">pass</span>
-</span><span data-line="92">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="93">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">):</span>
-</span><span data-line="94">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="95">                <span class="sa">f</span><span class="s1">&#39;Invalid types argument: </span><span class="si">{</span><span class="n">types</span><span class="si">}</span><span class="s1">. Must be a type or tuple of types.&#39;</span><span class="p">,</span>
-</span><span data-line="96">                <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_TYPES_ARG</span>
-</span><span data-line="97">            <span class="p">)</span>
-</span><span data-line="98">
-</span><span data-line="99">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span data-line="100">        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="101">            <span class="sa">f</span><span class="s1">&#39;Invalid field_name argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a str.&#39;</span><span class="p">,</span>
-</span><span data-line="102">            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_FIELD_NAME_ARG_TYPE</span>
-</span><span data-line="103">        <span class="p">)</span>
-</span><span data-line="104">
-</span><span data-line="105">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_tag</span><span class="p">,</span> <span class="n">ErrorTag</span><span class="p">):</span>
-</span><span data-line="106">        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="107">            <span class="sa">f</span><span class="s1">&#39;Invalid type_tag argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">type_tag</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an ErrorTag.&#39;</span><span class="p">,</span>
-</span><span data-line="108">            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_TYPE_TAG_TYPE</span>
-</span><span data-line="109">        <span class="p">)</span>
-</span><span data-line="110">
-</span><span data-line="111">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_tag</span><span class="p">,</span> <span class="n">ErrorTag</span><span class="p">):</span>
-</span><span data-line="112">        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="113">            <span class="sa">f</span><span class="s1">&#39;Invalid value_tag argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value_tag</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an ErrorTag.&#39;</span><span class="p">,</span>
-</span><span data-line="114">            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_VALUE_TAG_TYPE</span>
-</span><span data-line="115">        <span class="p">)</span>
-</span><span data-line="116">
-</span><span data-line="117">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allow_empty</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span data-line="118">        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="119">            <span class="sa">f</span><span class="s1">&#39;Invalid allow_empty argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">allow_empty</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
-</span><span data-line="120">            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_ALLOW_EMPTY_ARG_TYPE</span>
-</span><span data-line="121">        <span class="p">)</span>
-</span><span data-line="122">
-</span><span data-line="123">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exact_type</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span data-line="124">        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="125">            <span class="sa">f</span><span class="s1">&#39;Invalid exact_type argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">exact_type</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
-</span><span data-line="126">            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE</span>
-</span><span data-line="127">        <span class="p">)</span>
-</span><span data-line="128">
-</span><span data-line="129">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_empty</span><span class="p">:</span>
-</span><span data-line="130">        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="131">            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: sequence cannot be empty.&#39;</span><span class="p">,</span>
-</span><span data-line="132">            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
-</span><span data-line="133">        <span class="p">)</span>
-</span><span data-line="134">
-</span><span data-line="135">    <span class="c1"># Format type names for error messages</span>
-</span><span data-line="136">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="137">        <span class="n">type_names</span> <span class="o">=</span> <span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">)</span>
-</span><span data-line="138">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="139">        <span class="n">type_names</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="vm">__name__</span>
-</span><span data-line="140">
-</span><span data-line="141">    <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="142">    <span class="n">types_set</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span><span class="n">types</span><span class="p">}</span>
-</span><span data-line="143">    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span data-line="144">        <span class="k">if</span> <span class="n">exact_type</span><span class="p">:</span>  <span class="c1"># exact type matches only</span>
-</span><span data-line="145">            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types_set</span><span class="p">:</span>
-</span><span data-line="146">                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="147">                    <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
-</span><span data-line="148">                    <span class="sa">f</span><span class="s1">&#39;Must be </span><span class="si">{</span><span class="n">type_names</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
-</span><span data-line="149">                    <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span><span class="p">)</span>
-</span><span data-line="150">        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>  <span class="c1"># types and their subclasses match</span>
-</span><span data-line="151">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="152">                <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
-</span><span data-line="153">                <span class="sa">f</span><span class="s1">&#39;Must be </span><span class="si">{</span><span class="n">type_names</span><span class="si">}</span><span class="s1"> or subclasses of them.&#39;</span><span class="p">,</span>
-</span><span data-line="154">                <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
-</span><span data-line="155">            <span class="p">)</span>
-</span><span data-line="156">        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-</span><span data-line="157">
-</span><span data-line="158">    <span class="k">return</span> <span class="n">result</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">exact_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a sequence of specified type(s).</span>
 
-</span></pre></div>
+<span class="sd">    When a single type is provided, the return type is automatically inferred as list[T].</span>
+<span class="sd">    When multiple types are provided, the return type is list[Any], which allows the</span>
+<span class="sd">    caller to narrow the type with an explicit annotation.</span>
+
+<span class="sd">    :param Sequence[Any] value: The sequence of values to validate.</span>
+<span class="sd">    :param types: A single type or tuple of allowed types.</span>
+<span class="sd">    :type types: type[T] | tuple[type, ...]</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param bool allow_empty: If set to True, allow an empty sequence. Otherwise raise an error.</span>
+<span class="sd">    :param bool exact_type: If set to True, require that the types be exactly the</span>
+<span class="sd">        types specified, not subclasses. Otherwise allow subclass matches.</span>
+<span class="sd">    :return: For single type, returns list[T]. For multiple types,</span>
+<span class="sd">        returns list[Any] which can be narrowed with explicit type annotation.</span>
+<span class="sd">    :rtype: list[T] | list[Any]</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a sequence or contains invalid types.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Single type (automatic inference):</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            names = validate_sequence_of_type([&#39;Alice&#39;], str, &#39;names&#39;, ...)</span>
+<span class="sd">            # Type: list[str]</span>
+
+<span class="sd">        Multiple types (manual narrowing):</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            mixed: list[str | int] = validate_sequence_of_type(</span>
+<span class="sd">                [&#39;a&#39;, 1], (str, int), &#39;items&#39;, ...</span>
+<span class="sd">            )</span>
+<span class="sd">            # Type: list[str | int]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Must be an iterable (list, tuple, etc.).&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># Convert to list for length check and indexing</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid types argument: </span><span class="si">{</span><span class="n">types</span><span class="si">}</span><span class="s1">. Must be a type or tuple of types.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_TYPES_ARG</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid field_name argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a str.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_FIELD_NAME_ARG_TYPE</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_tag</span><span class="p">,</span> <span class="n">ErrorTag</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid type_tag argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">type_tag</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an ErrorTag.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_TYPE_TAG_TYPE</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value_tag</span><span class="p">,</span> <span class="n">ErrorTag</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid value_tag argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value_tag</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an ErrorTag.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_VALUE_TAG_TYPE</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allow_empty</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid allow_empty argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">allow_empty</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_ALLOW_EMPTY_ARG_TYPE</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exact_type</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid exact_type argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">exact_type</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SEQUENCE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: sequence cannot be empty.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Format type names for error messages</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">type_names</span> <span class="o">=</span> <span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">type_names</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">types_set</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">types</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span><span class="n">types</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">exact_type</span><span class="p">:</span>  <span class="c1"># exact type matches only</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types_set</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;Must be </span><span class="si">{</span><span class="n">type_names</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>  <span class="c1"># types and their subclasses match</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Must be </span><span class="si">{</span><span class="n">type_names</span><span class="si">}</span><span class="s1"> or subclasses of them.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+            <span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+</pre></div>
         </article>
       </div>
       <footer>
@@ -435,6 +437,7 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../_static/shibuya.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

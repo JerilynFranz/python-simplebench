@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.json.reporter.options.options - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,44 +240,44 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.reporters.json.reporter.options.options</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="c1"># -*- coding: utf-8 -*-</span>
-</span><span data-line="2"><span class="sd">&quot;&quot;&quot;Reporter for benchmark results using JSON files.&quot;&quot;&quot;</span>
-</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
-</span><span data-line="4">
-</span><span data-line="5">
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Reporter for benchmark results using JSON files.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
+
+
 <div class="viewcode-block" id="JSONOptions">
 <a class="viewcode-back" href="../../../../../../source/simplebench.reporters.json.reporter.options.options.html#simplebench.JSONOptions">[docs]</a>
-</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">JSONOptions</span><span class="p">(</span><span class="n">ReporterOptions</span><span class="p">):</span>
-</span><span data-line="7"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for holding JSON reporter specific options in a Choice or Case.</span>
-</span><span data-line="8">
-</span><span data-line="9"><span class="sd">    This class provides additional configuration options specific to the JSON reporter.</span>
-</span><span data-line="10"><span class="sd">    It is accessed via the ``options`` attribute of a</span>
-</span><span data-line="11"><span class="sd">    :class:`~simplebench.reporters.choice.Choice` or :class:`~simplebench.case.Case`</span>
-</span><span data-line="12"><span class="sd">    instance.</span>
-</span><span data-line="13">
-</span><span data-line="14"><span class="sd">    :ivar full_data: Whether to include full data in the JSON output.</span>
-</span><span data-line="15"><span class="sd">    :vartype full_data: bool</span>
-</span><span data-line="16"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="17">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-</span><span data-line="18">                 <span class="n">full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="19"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize JSONChoiceOptions with default targets and subdirectory.</span>
-</span><span data-line="20">
-</span><span data-line="21"><span class="sd">        :param full_data: Whether to include full data in the JSON output.</span>
-</span><span data-line="22"><span class="sd">            Defaults to ``False``.</span>
-</span><span data-line="23"><span class="sd">        :type full_data: bool</span>
-</span><span data-line="24"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="25">        <span class="bp">self</span><span class="o">.</span><span class="n">_full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">full_data</span>
-</span><span data-line="26">
-</span><span data-line="27">    <span class="nd">@property</span>
-</span><span data-line="28">    <span class="k">def</span><span class="w"> </span><span class="nf">full_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="29"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether to include full data in the JSON output.</span>
-</span><span data-line="30">
-</span><span data-line="31"><span class="sd">        :return: Whether to include full data in the JSON output.</span>
-</span><span data-line="32"><span class="sd">        :rtype: bool</span>
-</span><span data-line="33"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="34">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_data</span></div>
+<span class="k">class</span><span class="w"> </span><span class="nc">JSONOptions</span><span class="p">(</span><span class="n">ReporterOptions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for holding JSON reporter specific options in a Choice or Case.</span>
 
-</span></pre></div>
+<span class="sd">    This class provides additional configuration options specific to the JSON reporter.</span>
+<span class="sd">    It is accessed via the ``options`` attribute of a</span>
+<span class="sd">    :class:`~simplebench.reporters.choice.Choice` or :class:`~simplebench.case.Case`</span>
+<span class="sd">    instance.</span>
+
+<span class="sd">    :ivar full_data: Whether to include full data in the JSON output.</span>
+<span class="sd">    :vartype full_data: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize JSONChoiceOptions with default targets and subdirectory.</span>
+
+<span class="sd">        :param full_data: Whether to include full data in the JSON output.</span>
+<span class="sd">            Defaults to ``False``.</span>
+<span class="sd">        :type full_data: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">full_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">full_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether to include full data in the JSON output.</span>
+
+<span class="sd">        :return: Whether to include full data in the JSON output.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_data</span></div>
+
+</pre></div>
         </article>
       </div>
       <footer>
@@ -311,6 +313,7 @@
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../../../../_static/shibuya.js"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

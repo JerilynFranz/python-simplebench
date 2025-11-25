@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.json.reporter.config - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,87 +240,87 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.reporters.json.reporter.config</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Configuration for a JSONReporter.&quot;&quot;&quot;</span>
-</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-</span><span data-line="3">
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
-</span><span data-line="5">
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlagType</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
-</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoiceConf</span>
-</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoicesConf</span>
-</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.json.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONOptions</span>
-</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
-</span><span data-line="11">
-</span><span data-line="12">
+<span></span><span class="sd">&quot;&quot;&quot;Configuration for a JSONReporter.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlagType</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoiceConf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoicesConf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.json.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
+
+
 <div class="viewcode-block" id="JSONConfig">
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.json.reporter.config.html#simplebench.reporters.json.reporter.JSONConfig">[docs]</a>
-</span><span data-line="13"><span class="k">class</span><span class="w"> </span><span class="nc">JSONConfig</span><span class="p">(</span><span class="n">ReporterConfig</span><span class="p">):</span>
-</span><span data-line="14"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for a JSONReporter.</span>
-</span><span data-line="15">
-</span><span data-line="16"><span class="sd">    This class inherits from :class:`~.ReporterConfig` and provides a</span>
-</span><span data-line="17"><span class="sd">    type-safe, discoverable interface for overriding the default settings</span>
-</span><span data-line="18"><span class="sd">    of a :class:`~.JSONReporter`.</span>
-</span><span data-line="19"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="20">
-</span><span data-line="21">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span data-line="22">        <span class="bp">self</span><span class="p">,</span>
-</span><span data-line="23">        <span class="o">*</span><span class="p">,</span>
-</span><span data-line="24">        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="25">        <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="26">        <span class="n">sections</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Section</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="27">        <span class="n">targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="28">        <span class="n">default_targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="29">        <span class="n">formats</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Format</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="30">        <span class="n">choices</span><span class="p">:</span> <span class="n">ChoicesConf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="31">        <span class="n">file_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="32">        <span class="n">file_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="33">        <span class="n">file_append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="34">        <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="35">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="36"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the JSONReporter configuration.</span>
-</span><span data-line="37">
-</span><span data-line="38"><span class="sd">        Accepts keyword arguments to override any of the default configurations.</span>
-</span><span data-line="39"><span class="sd">        All arguments are optional. If not provided, the default value for</span>
-</span><span data-line="40"><span class="sd">        JSONReporter will be used.</span>
-</span><span data-line="41"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="42">        <span class="n">init_sections</span> <span class="o">=</span> <span class="p">{</span><span class="n">Section</span><span class="o">.</span><span class="n">NULL</span><span class="p">}</span>  <span class="c1"># JSON reporter only supports NULL section</span>
-</span><span data-line="43">        <span class="n">init_targets</span> <span class="o">=</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">}</span>
-</span><span data-line="44">        <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="45">            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
-</span><span data-line="46">            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Outputs benchmark results to JSON files.&#39;</span><span class="p">,</span>
-</span><span data-line="47">            <span class="s1">&#39;sections&#39;</span><span class="p">:</span> <span class="n">init_sections</span><span class="p">,</span>
-</span><span data-line="48">            <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="n">init_targets</span><span class="p">,</span>
-</span><span data-line="49">            <span class="s1">&#39;default_targets&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">},</span>
-</span><span data-line="50">            <span class="s1">&#39;formats&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">},</span>
-</span><span data-line="51">            <span class="s1">&#39;file_suffix&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
-</span><span data-line="52">            <span class="s1">&#39;file_unique&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="53">            <span class="s1">&#39;file_append&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="54">            <span class="s1">&#39;subdir&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-</span><span data-line="55">            <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="n">ChoicesConf</span><span class="p">([</span>
-</span><span data-line="56">                <span class="n">ChoiceConf</span><span class="p">(</span>
-</span><span data-line="57">                    <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--json&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span>
-</span><span data-line="58">                    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;statistical results to JSON (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">,</span>
-</span><span data-line="59">                    <span class="n">sections</span><span class="o">=</span><span class="n">init_sections</span><span class="p">,</span>
-</span><span data-line="60">                    <span class="n">targets</span><span class="o">=</span><span class="n">init_targets</span><span class="p">,</span>
-</span><span data-line="61">                    <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
-</span><span data-line="62">                    <span class="n">options</span><span class="o">=</span><span class="n">JSONOptions</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
-</span><span data-line="63">                <span class="n">ChoiceConf</span><span class="p">(</span>
-</span><span data-line="64">                    <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--json-data&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;json-data&#39;</span><span class="p">,</span>
-</span><span data-line="65">                    <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-</span><span data-line="66">                        <span class="s1">&#39;statistical results + full data to JSON (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">),</span>
-</span><span data-line="67">                    <span class="n">sections</span><span class="o">=</span><span class="n">init_sections</span><span class="p">,</span>
-</span><span data-line="68">                    <span class="n">targets</span><span class="o">=</span><span class="n">init_targets</span><span class="p">,</span>
-</span><span data-line="69">                    <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
-</span><span data-line="70">                    <span class="n">options</span><span class="o">=</span><span class="n">JSONOptions</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
-</span><span data-line="71">            <span class="p">])</span>
-</span><span data-line="72">        <span class="p">}</span>
-</span><span data-line="73">        <span class="c1"># Collect all provided overrides from the method signature, filtering out `None`s.</span>
-</span><span data-line="74">        <span class="n">overrides</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">defaults</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
-</span><span data-line="75">
-</span><span data-line="76">        <span class="n">final_config</span> <span class="o">=</span> <span class="n">defaults</span> <span class="o">|</span> <span class="n">overrides</span>
-</span><span data-line="77">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">final_config</span><span class="p">)</span></div>
+<span class="k">class</span><span class="w"> </span><span class="nc">JSONConfig</span><span class="p">(</span><span class="n">ReporterConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for a JSONReporter.</span>
 
-</span></pre></div>
+<span class="sd">    This class inherits from :class:`~.ReporterConfig` and provides a</span>
+<span class="sd">    type-safe, discoverable interface for overriding the default settings</span>
+<span class="sd">    of a :class:`~.JSONReporter`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sections</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Section</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">default_targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">formats</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Format</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">choices</span><span class="p">:</span> <span class="n">ChoicesConf</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">file_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">file_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">file_append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the JSONReporter configuration.</span>
+
+<span class="sd">        Accepts keyword arguments to override any of the default configurations.</span>
+<span class="sd">        All arguments are optional. If not provided, the default value for</span>
+<span class="sd">        JSONReporter will be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">init_sections</span> <span class="o">=</span> <span class="p">{</span><span class="n">Section</span><span class="o">.</span><span class="n">NULL</span><span class="p">}</span>  <span class="c1"># JSON reporter only supports NULL section</span>
+        <span class="n">init_targets</span> <span class="o">=</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">}</span>
+        <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Outputs benchmark results to JSON files.&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;sections&#39;</span><span class="p">:</span> <span class="n">init_sections</span><span class="p">,</span>
+            <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="n">init_targets</span><span class="p">,</span>
+            <span class="s1">&#39;default_targets&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">},</span>
+            <span class="s1">&#39;formats&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">},</span>
+            <span class="s1">&#39;file_suffix&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;file_unique&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;file_append&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;subdir&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="n">ChoicesConf</span><span class="p">([</span>
+                <span class="n">ChoiceConf</span><span class="p">(</span>
+                    <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--json&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;statistical results to JSON (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">,</span>
+                    <span class="n">sections</span><span class="o">=</span><span class="n">init_sections</span><span class="p">,</span>
+                    <span class="n">targets</span><span class="o">=</span><span class="n">init_targets</span><span class="p">,</span>
+                    <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="n">JSONOptions</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+                <span class="n">ChoiceConf</span><span class="p">(</span>
+                    <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--json-data&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;json-data&#39;</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+                        <span class="s1">&#39;statistical results + full data to JSON (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">),</span>
+                    <span class="n">sections</span><span class="o">=</span><span class="n">init_sections</span><span class="p">,</span>
+                    <span class="n">targets</span><span class="o">=</span><span class="n">init_targets</span><span class="p">,</span>
+                    <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="n">JSONOptions</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
+            <span class="p">])</span>
+        <span class="p">}</span>
+        <span class="c1"># Collect all provided overrides from the method signature, filtering out `None`s.</span>
+        <span class="n">overrides</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">defaults</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="n">final_config</span> <span class="o">=</span> <span class="n">defaults</span> <span class="o">|</span> <span class="n">overrides</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">final_config</span><span class="p">)</span></div>
+
+</pre></div>
         </article>
       </div>
       <footer>
@@ -354,6 +356,7 @@
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../../../_static/shibuya.js"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

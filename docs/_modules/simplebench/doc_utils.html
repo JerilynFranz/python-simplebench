@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.doc_utils - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,118 +240,118 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.doc_utils</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Documentation utilities.&quot;&quot;&quot;</span>
-</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
-</span><span data-line="4">
-</span><span data-line="5"><span class="c1"># A single TypeVar that can be bound to any callable, which includes</span>
-</span><span data-line="6"><span class="c1"># both functions and class objects.</span>
-</span><span data-line="7"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
-</span><span data-line="8">
-</span><span data-line="9"><span class="n">_PLACEHOLDER_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\{(\w+)\}&#39;</span><span class="p">)</span>
-</span><span data-line="10"><span class="sd">&quot;&quot;&quot;A regex pattern to find {key} placeholders in docstrings.&quot;&quot;&quot;</span>
-</span><span data-line="11">
-</span><span data-line="12">
-</span><span data-line="13"><span class="c1"># Overload 1: Called as @format_docstring(key=&#39;value&#39;)</span>
-</span><span data-line="14"><span class="c1"># It receives no positional object and returns a decorator.</span>
-</span><span data-line="15"><span class="nd">@overload</span>
-</span><span data-line="16"><span class="k">def</span><span class="w"> </span><span class="nf">format_docstring</span><span class="p">(</span>
-</span><span data-line="17">    <span class="n">cls_or_func</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-</span><span data-line="18"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
-</span><span data-line="19">
-</span><span data-line="20">
-</span><span data-line="21"><span class="c1"># Overload 2: Called as @format_docstring</span>
-</span><span data-line="22"><span class="c1"># It receives the class or function directly and returns it.</span>
-</span><span data-line="23"><span class="nd">@overload</span>
-</span><span data-line="24"><span class="k">def</span><span class="w"> </span><span class="nf">format_docstring</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span> <span class="o">...</span>
-</span><span data-line="25">
-</span><span data-line="26">
+<span></span><span class="sd">&quot;&quot;&quot;Documentation utilities.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">overload</span>
+
+<span class="c1"># A single TypeVar that can be bound to any callable, which includes</span>
+<span class="c1"># both functions and class objects.</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
+
+<span class="n">_PLACEHOLDER_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\{(\w+)\}&#39;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;A regex pattern to find {key} placeholders in docstrings.&quot;&quot;&quot;</span>
+
+
+<span class="c1"># Overload 1: Called as @format_docstring(key=&#39;value&#39;)</span>
+<span class="c1"># It receives no positional object and returns a decorator.</span>
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_docstring</span><span class="p">(</span>
+    <span class="n">cls_or_func</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
+
+
+<span class="c1"># Overload 2: Called as @format_docstring</span>
+<span class="c1"># It receives the class or function directly and returns it.</span>
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_docstring</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span> <span class="o">...</span>
+
+
 <div class="viewcode-block" id="format_docstring">
 <a class="viewcode-back" href="../../source/simplebench.doc_utils.html#simplebench.doc_utils.format_docstring">[docs]</a>
-</span><span data-line="27"><span class="k">def</span><span class="w"> </span><span class="nf">format_docstring</span><span class="p">(</span>
-</span><span data-line="28">    <span class="n">cls_or_func</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-</span><span data-line="29"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">T</span><span class="p">]:</span>
-</span><span data-line="30"><span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator to format the docstring of a class or function.</span>
-</span><span data-line="31">
-</span><span data-line="32"><span class="sd">    Can be used with or without arguments on both classes and functions.</span>
-</span><span data-line="33"><span class="sd">    It closely scopes the formatting to only the decorated object and to only</span>
-</span><span data-line="34"><span class="sd">    the passed key-value pairs. It looks for {{key}} placeholders in the docstring</span>
-</span><span data-line="35"><span class="sd">    and replaces them with the corresponding values from kwargs.</span>
-</span><span data-line="36">
-</span><span data-line="37"><span class="sd">    .. note::</span>
-</span><span data-line="38">
-</span><span data-line="39"><span class="sd">        - If used without arguments, the decorator will not modify the docstring.</span>
-</span><span data-line="40"><span class="sd">        - {} Placeholders in the docstring that do not have corresponding keys</span>
-</span><span data-line="41"><span class="sd">          in kwargs will remain unchanged. This means that if the docstring contains</span>
-</span><span data-line="42"><span class="sd">          code examples or other text with braces, those will not be affected.</span>
-</span><span data-line="43"><span class="sd">        - Changes will probably NOT be reflected in IDE tooltips. They are intended</span>
-</span><span data-line="44"><span class="sd">          for runtime documentation access (e.g., via `help()` or `.__doc__` access)</span>
-</span><span data-line="45"><span class="sd">          or for generating external documentation. Tools that read docstrings</span>
-</span><span data-line="46"><span class="sd">          statically from source code will not see the changes.</span>
-</span><span data-line="47">
-</span><span data-line="48"><span class="sd">          Therefore, this decorator is best suited for adding dynamic information</span>
-</span><span data-line="49"><span class="sd">          such as version numbers, author names, or configuration-dependent details</span>
-</span><span data-line="50"><span class="sd">          to docstrings, rather than for altering the fundamental description of</span>
-</span><span data-line="51"><span class="sd">          the class or function. It should be used carefully with awareness that</span>
-</span><span data-line="52"><span class="sd">          it may appear either with or without the changes so to avoid confusion</span>
-</span><span data-line="53"><span class="sd">          either way.</span>
-</span><span data-line="54">
-</span><span data-line="55"><span class="sd">    Examples:</span>
-</span><span data-line="56">
-</span><span data-line="57"><span class="sd">    .. code-block:: python</span>
-</span><span data-line="58">
-</span><span data-line="59"><span class="sd">        @format_docstring(version=&quot;1.2.3&quot;)</span>
-</span><span data-line="60"><span class="sd">        class MyClass:</span>
-</span><span data-line="61"><span class="sd">            &#39;&#39;&#39;My class, version {version}&#39;&#39;&#39;</span>
-</span><span data-line="62"><span class="sd">            pass</span>
-</span><span data-line="63">
-</span><span data-line="64"><span class="sd">        @format_docstring(author=&quot;Me&quot;)</span>
-</span><span data-line="65"><span class="sd">        def my_function():</span>
-</span><span data-line="66"><span class="sd">            &#39;&#39;&#39;A function by {author}&#39;&#39;&#39;</span>
-</span><span data-line="67"><span class="sd">            pass</span>
-</span><span data-line="68">
-</span><span data-line="69"><span class="sd">    :param cls_or_func: The class or function to decorate. If None, the decorator is being called with arguments.</span>
-</span><span data-line="70"><span class="sd">    :type cls_or_func: Optional[Callable[..., Any]]</span>
-</span><span data-line="71"><span class="sd">    :param kwargs: Key-value pairs to format the docstring.</span>
-</span><span data-line="72"><span class="sd">    :return: The decorated class or function. If called with keyword arguments,</span>
-</span><span data-line="73"><span class="sd">        returns a decorator function that is then applied to the target object.</span>
-</span><span data-line="74"><span class="sd">    :rtype: T | Callable[[T], T]</span>
-</span><span data-line="75"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="76">    <span class="c1"># This is the actual decorator that will be applied to the class or function.</span>
-</span><span data-line="77">    <span class="c1"># It uses the &#39;kwargs&#39; from the outer scope.</span>
-</span><span data-line="78">    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">inner_obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-</span><span data-line="79">        <span class="k">if</span> <span class="n">inner_obj</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">:</span>
-</span><span data-line="80">            <span class="n">inner_obj</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">_replace_docstring_placeholders</span><span class="p">(</span>
-</span><span data-line="81">                                    <span class="n">docstring</span><span class="o">=</span><span class="n">inner_obj</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">,</span>
-</span><span data-line="82">                                    <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="83">        <span class="k">return</span> <span class="n">inner_obj</span>
-</span><span data-line="84">
-</span><span data-line="85">    <span class="c1"># Case 1: Called with arguments, e.g., @format_docstring(foo=&#39;bar&#39;)</span>
-</span><span data-line="86">    <span class="k">if</span> <span class="n">cls_or_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="87">        <span class="k">return</span> <span class="n">decorator</span>
-</span><span data-line="88">
-</span><span data-line="89">    <span class="c1"># Case 2: Called without arguments, e.g., @format_docstring</span>
-</span><span data-line="90">    <span class="k">return</span> <span class="n">decorator</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">)</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_docstring</span><span class="p">(</span>
+    <span class="n">cls_or_func</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator to format the docstring of a class or function.</span>
 
-</span><span data-line="91">
-</span><span data-line="92">
-</span><span data-line="93"><span class="k">def</span><span class="w"> </span><span class="nf">_replace_docstring_placeholders</span><span class="p">(</span><span class="n">docstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="94"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Replace placeholders in the docstring with values from kwargs.</span>
-</span><span data-line="95">
-</span><span data-line="96"><span class="sd">    :param docstring: The original docstring.</span>
-</span><span data-line="97"><span class="sd">    :type docstring: str</span>
-</span><span data-line="98"><span class="sd">    :param kwargs: A dictionary of placeholder keys and their replacement values.</span>
-</span><span data-line="99"><span class="sd">    :type kwargs: dict</span>
-</span><span data-line="100"><span class="sd">    :return: The modified docstring with placeholders replaced.</span>
-</span><span data-line="101"><span class="sd">    :rtype: str</span>
-</span><span data-line="102"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="103">
-</span><span data-line="104">    <span class="k">def</span><span class="w"> </span><span class="nf">replacer</span><span class="p">(</span><span class="n">match</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Match</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="105">        <span class="n">key</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span data-line="106">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
-</span><span data-line="107">
-</span><span data-line="108">    <span class="k">return</span> <span class="n">_PLACEHOLDER_PATTERN</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">replacer</span><span class="p">,</span> <span class="n">docstring</span><span class="p">)</span>
-</span></pre></div>
+<span class="sd">    Can be used with or without arguments on both classes and functions.</span>
+<span class="sd">    It closely scopes the formatting to only the decorated object and to only</span>
+<span class="sd">    the passed key-value pairs. It looks for {{key}} placeholders in the docstring</span>
+<span class="sd">    and replaces them with the corresponding values from kwargs.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        - If used without arguments, the decorator will not modify the docstring.</span>
+<span class="sd">        - {} Placeholders in the docstring that do not have corresponding keys</span>
+<span class="sd">          in kwargs will remain unchanged. This means that if the docstring contains</span>
+<span class="sd">          code examples or other text with braces, those will not be affected.</span>
+<span class="sd">        - Changes will probably NOT be reflected in IDE tooltips. They are intended</span>
+<span class="sd">          for runtime documentation access (e.g., via `help()` or `.__doc__` access)</span>
+<span class="sd">          or for generating external documentation. Tools that read docstrings</span>
+<span class="sd">          statically from source code will not see the changes.</span>
+
+<span class="sd">          Therefore, this decorator is best suited for adding dynamic information</span>
+<span class="sd">          such as version numbers, author names, or configuration-dependent details</span>
+<span class="sd">          to docstrings, rather than for altering the fundamental description of</span>
+<span class="sd">          the class or function. It should be used carefully with awareness that</span>
+<span class="sd">          it may appear either with or without the changes so to avoid confusion</span>
+<span class="sd">          either way.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        @format_docstring(version=&quot;1.2.3&quot;)</span>
+<span class="sd">        class MyClass:</span>
+<span class="sd">            &#39;&#39;&#39;My class, version {version}&#39;&#39;&#39;</span>
+<span class="sd">            pass</span>
+
+<span class="sd">        @format_docstring(author=&quot;Me&quot;)</span>
+<span class="sd">        def my_function():</span>
+<span class="sd">            &#39;&#39;&#39;A function by {author}&#39;&#39;&#39;</span>
+<span class="sd">            pass</span>
+
+<span class="sd">    :param cls_or_func: The class or function to decorate. If None, the decorator is being called with arguments.</span>
+<span class="sd">    :type cls_or_func: Optional[Callable[..., Any]]</span>
+<span class="sd">    :param kwargs: Key-value pairs to format the docstring.</span>
+<span class="sd">    :return: The decorated class or function. If called with keyword arguments,</span>
+<span class="sd">        returns a decorator function that is then applied to the target object.</span>
+<span class="sd">    :rtype: T | Callable[[T], T]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># This is the actual decorator that will be applied to the class or function.</span>
+    <span class="c1"># It uses the &#39;kwargs&#39; from the outer scope.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">inner_obj</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inner_obj</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">inner_obj</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">_replace_docstring_placeholders</span><span class="p">(</span>
+                                    <span class="n">docstring</span><span class="o">=</span><span class="n">inner_obj</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">,</span>
+                                    <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inner_obj</span>
+
+    <span class="c1"># Case 1: Called with arguments, e.g., @format_docstring(foo=&#39;bar&#39;)</span>
+    <span class="k">if</span> <span class="n">cls_or_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">decorator</span>
+
+    <span class="c1"># Case 2: Called without arguments, e.g., @format_docstring</span>
+    <span class="k">return</span> <span class="n">decorator</span><span class="p">(</span><span class="n">cls_or_func</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_replace_docstring_placeholders</span><span class="p">(</span><span class="n">docstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Replace placeholders in the docstring with values from kwargs.</span>
+
+<span class="sd">    :param docstring: The original docstring.</span>
+<span class="sd">    :type docstring: str</span>
+<span class="sd">    :param kwargs: A dictionary of placeholder keys and their replacement values.</span>
+<span class="sd">    :type kwargs: dict</span>
+<span class="sd">    :return: The modified docstring with placeholders replaced.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">replacer</span><span class="p">(</span><span class="n">match</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Match</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">_PLACEHOLDER_PATTERN</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">replacer</span><span class="p">,</span> <span class="n">docstring</span><span class="p">)</span>
+</pre></div>
         </article>
       </div>
       <footer>
@@ -385,6 +387,7 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../_static/shibuya.js"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

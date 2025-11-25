@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.reporter.reporter - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,698 +240,698 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.reporters.reporter.reporter</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Reporter base class.</span>
-</span><span data-line="2">
-</span><span data-line="3"><span class="sd">This module defines the Reporter abstract base class, which serves as the foundation</span>
-</span><span data-line="4"><span class="sd">for all reporter implementations in the SimpleBench benchmarking framework.</span>
-</span><span data-line="5">
-</span><span data-line="6"><span class="sd">It handles common functionality such as validating input arguments, configuring argparse CLI arguments,</span>
-</span><span data-line="7"><span class="sd">managing default options, sending reports to various targets, and orchestrating report generation.</span>
-</span><span data-line="8">
-</span><span data-line="9"><span class="sd">To create a new reporter, a developer must subclass `Reporter` and implement the abstract</span>
-</span><span data-line="10"><span class="sd">`render()` method. For most reporters, the default `run_report()` implementation, which</span>
-</span><span data-line="11"><span class="sd">renders a report for each section, is sufficient.</span>
-</span><span data-line="12">
-</span><span data-line="13"><span class="sd">A `Reporter` is responsible for generating reports based on benchmark results from a `Session` and `Case`.</span>
-</span><span data-line="14"><span class="sd">Reporters can produce reports in various formats and output them to different targets.</span>
-</span><span data-line="15"><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="16"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-</span><span data-line="17">
-</span><span data-line="18"><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-</span><span data-line="19"><span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
-</span><span data-line="20"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-</span><span data-line="21"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeVar</span>
-</span><span data-line="22">
-</span><span data-line="23"><span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
-</span><span data-line="24"><span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
-</span><span data-line="25">
-</span><span data-line="26"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASE_INTERVAL_UNIT</span><span class="p">,</span> <span class="n">BASE_MEMORY_UNIT</span><span class="p">,</span> <span class="n">BASE_OPS_PER_INTERVAL_UNIT</span>
-</span><span data-line="27"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
-</span><span data-line="28"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
-</span><span data-line="29"><span class="c1"># simplebench.reporters</span>
-</span><span data-line="30"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choices</span>
-</span><span data-line="31"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
-</span><span data-line="32"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
-</span><span data-line="33"><span class="c1"># simplebench.reporters.reporter</span>
-</span><span data-line="34"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
-</span><span data-line="35"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReporterErrorTag</span>
-</span><span data-line="36"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-</span><span data-line="37">    <span class="n">_ReporterArgparseMixin</span><span class="p">,</span>
-</span><span data-line="38">    <span class="n">_ReporterOrchestrationMixin</span><span class="p">,</span>
-</span><span data-line="39">    <span class="n">_ReporterPrioritizationMixin</span><span class="p">,</span>
-</span><span data-line="40">    <span class="n">_ReporterTargetMixin</span><span class="p">,</span>
-</span><span data-line="41"><span class="p">)</span>
-</span><span data-line="42"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
-</span><span data-line="43"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterProtocol</span>
-</span><span data-line="44"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
-</span><span data-line="45"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_choice</span><span class="p">,</span> <span class="n">is_session</span>
-</span><span data-line="46"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_iterable_of_type</span><span class="p">,</span> <span class="n">validate_type</span>
-</span><span data-line="47">
-</span><span data-line="48"><span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ReporterOptions</span>
-</span><span data-line="49">
-</span><span data-line="50"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
-</span><span data-line="51">
-</span><span data-line="52"><span class="n">_CORE_IMPORTS_DONE</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="53">
-</span><span data-line="54"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span data-line="55">    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
-</span><span data-line="56">    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>
-</span><span data-line="57">    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-</span><span data-line="58">    <span class="n">_CORE_IMPORTS_DONE</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="59"><span class="k">else</span><span class="p">:</span>
-</span><span data-line="60">    <span class="n">Choice</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># pylint: disable=invalid-name</span>
-</span><span data-line="61">
-</span><span data-line="62">
+<span></span><span class="sd">&quot;&quot;&quot;Reporter base class.</span>
+
+<span class="sd">This module defines the Reporter abstract base class, which serves as the foundation</span>
+<span class="sd">for all reporter implementations in the SimpleBench benchmarking framework.</span>
+
+<span class="sd">It handles common functionality such as validating input arguments, configuring argparse CLI arguments,</span>
+<span class="sd">managing default options, sending reports to various targets, and orchestrating report generation.</span>
+
+<span class="sd">To create a new reporter, a developer must subclass `Reporter` and implement the abstract</span>
+<span class="sd">`render()` method. For most reporters, the default `run_report()` implementation, which</span>
+<span class="sd">renders a report for each section, is sufficient.</span>
+
+<span class="sd">A `Reporter` is responsible for generating reports based on benchmark results from a `Session` and `Case`.</span>
+<span class="sd">Reporters can produce reports in various formats and output them to different targets.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASE_INTERVAL_UNIT</span><span class="p">,</span> <span class="n">BASE_MEMORY_UNIT</span><span class="p">,</span> <span class="n">BASE_OPS_PER_INTERVAL_UNIT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
+<span class="c1"># simplebench.reporters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
+<span class="c1"># simplebench.reporters.reporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReporterErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_ReporterArgparseMixin</span><span class="p">,</span>
+    <span class="n">_ReporterOrchestrationMixin</span><span class="p">,</span>
+    <span class="n">_ReporterPrioritizationMixin</span><span class="p">,</span>
+    <span class="n">_ReporterTargetMixin</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_choice</span><span class="p">,</span> <span class="n">is_session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_iterable_of_type</span><span class="p">,</span> <span class="n">validate_type</span>
+
+<span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ReporterOptions</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+<span class="n">_CORE_IMPORTS_DONE</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+    <span class="n">_CORE_IMPORTS_DONE</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">Choice</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># pylint: disable=invalid-name</span>
+
+
 <div class="viewcode-block" id="deferred_core_imports">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.deferred_core_imports">[docs]</a>
-</span><span data-line="63"><span class="k">def</span><span class="w"> </span><span class="nf">deferred_core_imports</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="64"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Deferred import of core types to avoid circular imports during initialization.</span>
-</span><span data-line="65">
-</span><span data-line="66"><span class="sd">    This imports :class:`~simplebench.reporters.choice.choice.Choice` when needed at runtime,</span>
-</span><span data-line="67"><span class="sd">    preventing circular import issues during module load time while still allowing its use</span>
-</span><span data-line="68"><span class="sd">    in creating :class:`~simplebench.reporters.choice.choice.Choice` instances from</span>
-</span><span data-line="69"><span class="sd">    :class:`~simplebench.reporters.choice.choice_conf.ChoiceConf` instances.</span>
-</span><span data-line="70"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="71">    <span class="k">global</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">_CORE_IMPORTS_DONE</span>  <span class="c1"># pylint: disable=global-statement</span>
-</span><span data-line="72">    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
-</span><span data-line="73">    <span class="n">_CORE_IMPORTS_DONE</span> <span class="o">=</span> <span class="kc">True</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">deferred_core_imports</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deferred import of core types to avoid circular imports during initialization.</span>
 
-</span><span data-line="74">
-</span><span data-line="75">
+<span class="sd">    This imports :class:`~simplebench.reporters.choice.choice.Choice` when needed at runtime,</span>
+<span class="sd">    preventing circular import issues during module load time while still allowing its use</span>
+<span class="sd">    in creating :class:`~simplebench.reporters.choice.choice.Choice` instances from</span>
+<span class="sd">    :class:`~simplebench.reporters.choice.choice_conf.ChoiceConf` instances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">_CORE_IMPORTS_DONE</span>  <span class="c1"># pylint: disable=global-statement</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice</span><span class="w"> </span><span class="kn">import</span> <span class="n">Choice</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+    <span class="n">_CORE_IMPORTS_DONE</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
 <div class="viewcode-block" id="Reporter">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter">[docs]</a>
-</span><span data-line="76"><span class="k">class</span><span class="w"> </span><span class="nc">Reporter</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">_ReporterArgparseMixin</span><span class="p">,</span> <span class="n">_ReporterOrchestrationMixin</span><span class="p">,</span>
-</span><span data-line="77">               <span class="n">_ReporterPrioritizationMixin</span><span class="p">,</span> <span class="n">_ReporterTargetMixin</span><span class="p">,</span> <span class="n">ReporterProtocol</span><span class="p">):</span>
-</span><span data-line="78"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for Reporter classes.</span>
-</span><span data-line="79">
-</span><span data-line="80"><span class="sd">    A :class:`~.Reporter` is responsible for generating reports based on benchmark results</span>
-</span><span data-line="81"><span class="sd">    from a :class:`~simplebench.session.Session` and :class:`~simplebench.case.Case`.</span>
-</span><span data-line="82"><span class="sd">    Reporters can produce reports in various formats and output them to different targets.</span>
-</span><span data-line="83">
-</span><span data-line="84"><span class="sd">    All :class:`~.Reporter` subclasses must implement the methods defined in this interface.</span>
-</span><span data-line="85"><span class="sd">    Reporters should handle their own output, whether to console, file system,</span>
-</span><span data-line="86"><span class="sd">    HTTP endpoint, display device, via a callback or other output.</span>
-</span><span data-line="87">
-</span><span data-line="88"><span class="sd">    The :class:`~.Reporter` interface ensures that all reporters provide a consistent</span>
-</span><span data-line="89"><span class="sd">    set of functionalities, making it easier to manage and utilize different</span>
-</span><span data-line="90">
-</span><span data-line="91"><span class="sd">    reporting options within the SimpleBench framework.</span>
-</span><span data-line="92"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="93">    <span class="nd">@classmethod</span>
-</span><span data-line="94">    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_subclass_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="95"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that the subclass has correctly defined its options configuration.</span>
-</span><span data-line="96">
-</span><span data-line="97"><span class="sd">        This method checks that the subclass has implemented the required class variables</span>
-</span><span data-line="98"><span class="sd">        that allow the :class:`~.Reporter` base class to automatically instantiate the default</span>
-</span><span data-line="99"><span class="sd">        options object.</span>
-</span><span data-line="100">
-</span><span data-line="101"><span class="sd">        Subclasses must implement the following class variables:</span>
-</span><span data-line="102">
-</span><span data-line="103"><span class="sd">            _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions</span>
-</span><span data-line="104"><span class="sd">            _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}</span>
-</span><span data-line="105">
-</span><span data-line="106"><span class="sd">        ``_OPTIONS_TYPE`` must be a subclass of :class:`~.ReporterOptions`</span>
-</span><span data-line="107"><span class="sd">        and ``_OPTIONS_KWARGS`` must be a ``dict[str, Any]`` that can be used</span>
-</span><span data-line="108"><span class="sd">        to instantiate the ``_OPTIONS_TYPE`` subclass.</span>
-</span><span data-line="109">
-</span><span data-line="110"><span class="sd">        :raises SimpleBenchNotImplementedError: If required class variables are not implemented</span>
-</span><span data-line="111"><span class="sd">            or are of incorrect types.</span>
-</span><span data-line="112"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="113">        <span class="c1"># Verify that we are being called from a subclass of Reporter, not Reporter itself</span>
-</span><span data-line="114">        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="n">Reporter</span><span class="p">:</span>
-</span><span data-line="115">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="116">                <span class="p">(</span><span class="s2">&quot;get_hardcoded_default_options() cannot be called directly on the Reporter class&quot;</span><span class="p">),</span>
-</span><span data-line="117">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_CANNOT_BE_REPORTER</span><span class="p">)</span>
-</span><span data-line="118">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Reporter</span><span class="p">):</span>
-</span><span data-line="119">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="120">                <span class="p">(</span><span class="s2">&quot;Only sub-classes of Reporter can call get_hardcoded_default_options()&quot;</span><span class="p">),</span>
-</span><span data-line="121">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_MUST_BE_SUBCLASS_OF_REPORTER</span><span class="p">)</span>
-</span><span data-line="122">
-</span><span data-line="123">        <span class="c1"># Verify that the subclass has implemented the _OPTIONS_TYPE class variable correctly</span>
-</span><span data-line="124">        <span class="c1"># It must be implemented in the subclass, and it must be a subclass of ReporterOptions,</span>
-</span><span data-line="125">        <span class="c1"># but not ReporterOptions itself</span>
-</span><span data-line="126">        <span class="k">if</span> <span class="s2">&quot;_OPTIONS_TYPE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-</span><span data-line="127">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="128">                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_TYPE&#39; &quot;</span>
-</span><span data-line="129">                 <span class="s2">&quot;and set it to the specific ReporterOptions subclass they use&quot;</span><span class="p">),</span>
-</span><span data-line="130">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_NOT_IMPLEMENTED</span><span class="p">)</span>
-</span><span data-line="131">        <span class="n">options</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_OPTIONS_TYPE</span>  <span class="c1"># pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]</span>
-</span><span data-line="132">        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="n">ReporterOptions</span><span class="p">:</span>
-</span><span data-line="133">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="134">                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must set &#39;_OPTIONS_TYPE&#39; to a ReporterOptions subclass, &quot;</span>
-</span><span data-line="135">                 <span class="s2">&quot;not the base ReporterOptions class&quot;</span><span class="p">),</span>
-</span><span data-line="136">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_INVALID_TYPE</span><span class="p">)</span>
-</span><span data-line="137">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">ReporterOptions</span><span class="p">):</span>
-</span><span data-line="138">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="139">                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_TYPE&#39; &quot;</span>
-</span><span data-line="140">                 <span class="s2">&quot;and set it to a ReporterOptions subclass.&quot;</span><span class="p">),</span>
-</span><span data-line="141">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_MUST_BE_SUBCLASS</span><span class="p">)</span>
-</span><span data-line="142">
-</span><span data-line="143">        <span class="c1"># Verify the subclass has implemented the _OPTIONS_KWARGS class variable correctly</span>
-</span><span data-line="144">        <span class="c1"># It must be implemented in the subclass, and it must be a dict[str, Any]</span>
-</span><span data-line="145">        <span class="k">if</span> <span class="s2">&quot;_OPTIONS_KWARGS&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-</span><span data-line="146">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="147">                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_KWARGS&#39; &quot;</span>
-</span><span data-line="148">                 <span class="s2">&quot;and set it to a dict of keyword arguments for the ReporterOptions subclass.&quot;</span><span class="p">),</span>
-</span><span data-line="149">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_IMPLEMENTED</span><span class="p">)</span>
-</span><span data-line="150">        <span class="n">options_kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_OPTIONS_KWARGS</span>  <span class="c1"># pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]</span>
-</span><span data-line="151">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span data-line="152">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="153">                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_KWARGS&#39; &quot;</span>
-</span><span data-line="154">                 <span class="s2">&quot;and set it to a dict of keyword arguments for the ReporterOptions subclass.&quot;</span><span class="p">),</span>
-</span><span data-line="155">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_A_DICT</span><span class="p">)</span>
-</span><span data-line="156">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">options_kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-</span><span data-line="157">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="158">                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_KWARGS&#39; &quot;</span>
-</span><span data-line="159">                 <span class="s2">&quot;as a dict with string keys.&quot;</span><span class="p">),</span>
-</span><span data-line="160">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_KEYS_MUST_BE_STR</span><span class="p">)</span>
-</span><span data-line="161">
+<span class="k">class</span><span class="w"> </span><span class="nc">Reporter</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">_ReporterArgparseMixin</span><span class="p">,</span> <span class="n">_ReporterOrchestrationMixin</span><span class="p">,</span>
+               <span class="n">_ReporterPrioritizationMixin</span><span class="p">,</span> <span class="n">_ReporterTargetMixin</span><span class="p">,</span> <span class="n">ReporterProtocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for Reporter classes.</span>
+
+<span class="sd">    A :class:`~.Reporter` is responsible for generating reports based on benchmark results</span>
+<span class="sd">    from a :class:`~simplebench.session.Session` and :class:`~simplebench.case.Case`.</span>
+<span class="sd">    Reporters can produce reports in various formats and output them to different targets.</span>
+
+<span class="sd">    All :class:`~.Reporter` subclasses must implement the methods defined in this interface.</span>
+<span class="sd">    Reporters should handle their own output, whether to console, file system,</span>
+<span class="sd">    HTTP endpoint, display device, via a callback or other output.</span>
+
+<span class="sd">    The :class:`~.Reporter` interface ensures that all reporters provide a consistent</span>
+<span class="sd">    set of functionalities, making it easier to manage and utilize different</span>
+
+<span class="sd">    reporting options within the SimpleBench framework.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_subclass_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that the subclass has correctly defined its options configuration.</span>
+
+<span class="sd">        This method checks that the subclass has implemented the required class variables</span>
+<span class="sd">        that allow the :class:`~.Reporter` base class to automatically instantiate the default</span>
+<span class="sd">        options object.</span>
+
+<span class="sd">        Subclasses must implement the following class variables:</span>
+
+<span class="sd">            _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions</span>
+<span class="sd">            _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}</span>
+
+<span class="sd">        ``_OPTIONS_TYPE`` must be a subclass of :class:`~.ReporterOptions`</span>
+<span class="sd">        and ``_OPTIONS_KWARGS`` must be a ``dict[str, Any]`` that can be used</span>
+<span class="sd">        to instantiate the ``_OPTIONS_TYPE`` subclass.</span>
+
+<span class="sd">        :raises SimpleBenchNotImplementedError: If required class variables are not implemented</span>
+<span class="sd">            or are of incorrect types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Verify that we are being called from a subclass of Reporter, not Reporter itself</span>
+        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="n">Reporter</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;get_hardcoded_default_options() cannot be called directly on the Reporter class&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_CANNOT_BE_REPORTER</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Reporter</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;Only sub-classes of Reporter can call get_hardcoded_default_options()&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_MUST_BE_SUBCLASS_OF_REPORTER</span><span class="p">)</span>
+
+        <span class="c1"># Verify that the subclass has implemented the _OPTIONS_TYPE class variable correctly</span>
+        <span class="c1"># It must be implemented in the subclass, and it must be a subclass of ReporterOptions,</span>
+        <span class="c1"># but not ReporterOptions itself</span>
+        <span class="k">if</span> <span class="s2">&quot;_OPTIONS_TYPE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_TYPE&#39; &quot;</span>
+                 <span class="s2">&quot;and set it to the specific ReporterOptions subclass they use&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_NOT_IMPLEMENTED</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_OPTIONS_TYPE</span>  <span class="c1"># pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]</span>
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="n">ReporterOptions</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must set &#39;_OPTIONS_TYPE&#39; to a ReporterOptions subclass, &quot;</span>
+                 <span class="s2">&quot;not the base ReporterOptions class&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_INVALID_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">ReporterOptions</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_TYPE&#39; &quot;</span>
+                 <span class="s2">&quot;and set it to a ReporterOptions subclass.&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_MUST_BE_SUBCLASS</span><span class="p">)</span>
+
+        <span class="c1"># Verify the subclass has implemented the _OPTIONS_KWARGS class variable correctly</span>
+        <span class="c1"># It must be implemented in the subclass, and it must be a dict[str, Any]</span>
+        <span class="k">if</span> <span class="s2">&quot;_OPTIONS_KWARGS&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_KWARGS&#39; &quot;</span>
+                 <span class="s2">&quot;and set it to a dict of keyword arguments for the ReporterOptions subclass.&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_IMPLEMENTED</span><span class="p">)</span>
+        <span class="n">options_kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_OPTIONS_KWARGS</span>  <span class="c1"># pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_KWARGS&#39; &quot;</span>
+                 <span class="s2">&quot;and set it to a dict of keyword arguments for the ReporterOptions subclass.&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_A_DICT</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">options_kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;Reporter subclasses must implement the class variable &#39;_OPTIONS_KWARGS&#39; &quot;</span>
+                 <span class="s2">&quot;as a dict with string keys.&quot;</span><span class="p">),</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_KEYS_MUST_BE_STR</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Reporter.get_hardcoded_default_options">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.get_hardcoded_default_options">[docs]</a>
-</span><span data-line="162">    <span class="nd">@classmethod</span>
-</span><span data-line="163">    <span class="k">def</span><span class="w"> </span><span class="nf">get_hardcoded_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span data-line="164"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the built-in hardcoded default options for the reporter.</span>
-</span><span data-line="165">
-</span><span data-line="166"><span class="sd">        This abstract method must be implemented by all :class:`~.Reporter` subclasses.</span>
-</span><span data-line="167"><span class="sd">        It defines the base class default options for a reporter and must</span>
-</span><span data-line="168"><span class="sd">        be available in all :class:`~.Reporter` subclasses.</span>
-</span><span data-line="169">
-</span><span data-line="170"><span class="sd">        It returns the hardcoded default :class:`~.ReporterOptions` sub-class instance</span>
-</span><span data-line="171"><span class="sd">        specific to the reporter.</span>
-</span><span data-line="172">
-</span><span data-line="173"><span class="sd">        Sub-classes must implement the following class variables:</span>
-</span><span data-line="174">
-</span><span data-line="175"><span class="sd">            _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions</span>
-</span><span data-line="176"><span class="sd">            _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}</span>
-</span><span data-line="177">
-</span><span data-line="178"><span class="sd">        or the method will raise an exception.</span>
-</span><span data-line="179">
-</span><span data-line="180"><span class="sd">        :return: The built-in hardcoded default :class:`~.ReporterOptions` instance.</span>
-</span><span data-line="181"><span class="sd">        :raises SimpleBenchNotImplementedError: If required class variables are not implemented</span>
-</span><span data-line="182"><span class="sd">            or are of incorrect types.</span>
-</span><span data-line="183"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="184">        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_subclass_config</span><span class="p">()</span>
-</span><span data-line="185">        <span class="k">if</span> <span class="s1">&#39;_HARDCODED_DEFAULT_OPTIONS&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-</span><span data-line="186">            <span class="n">options_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_OPTIONS_TYPE&#39;</span><span class="p">)</span>
-</span><span data-line="187">            <span class="n">options_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_OPTIONS_KWARGS&#39;</span><span class="p">)</span>
-</span><span data-line="188">            <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_HARDCODED_DEFAULT_OPTIONS&#39;</span><span class="p">,</span> <span class="n">options_type</span><span class="p">(</span><span class="o">**</span><span class="n">options_kwargs</span><span class="p">))</span>
-</span><span data-line="189">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_HARDCODED_DEFAULT_OPTIONS&#39;</span><span class="p">)</span></div>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hardcoded_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the built-in hardcoded default options for the reporter.</span>
 
-</span><span data-line="190">
+<span class="sd">        This abstract method must be implemented by all :class:`~.Reporter` subclasses.</span>
+<span class="sd">        It defines the base class default options for a reporter and must</span>
+<span class="sd">        be available in all :class:`~.Reporter` subclasses.</span>
+
+<span class="sd">        It returns the hardcoded default :class:`~.ReporterOptions` sub-class instance</span>
+<span class="sd">        specific to the reporter.</span>
+
+<span class="sd">        Sub-classes must implement the following class variables:</span>
+
+<span class="sd">            _OPTIONS_TYPE: ClassVar[type[MyOptions]] = MyOptions</span>
+<span class="sd">            _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {...}</span>
+
+<span class="sd">        or the method will raise an exception.</span>
+
+<span class="sd">        :return: The built-in hardcoded default :class:`~.ReporterOptions` instance.</span>
+<span class="sd">        :raises SimpleBenchNotImplementedError: If required class variables are not implemented</span>
+<span class="sd">            or are of incorrect types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_subclass_config</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;_HARDCODED_DEFAULT_OPTIONS&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="n">options_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_OPTIONS_TYPE&#39;</span><span class="p">)</span>
+            <span class="n">options_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_OPTIONS_KWARGS&#39;</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_HARDCODED_DEFAULT_OPTIONS&#39;</span><span class="p">,</span> <span class="n">options_type</span><span class="p">(</span><span class="o">**</span><span class="n">options_kwargs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_HARDCODED_DEFAULT_OPTIONS&#39;</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Reporter.set_default_options">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.set_default_options">[docs]</a>
-</span><span data-line="191">    <span class="nd">@classmethod</span>
-</span><span data-line="192">    <span class="k">def</span><span class="w"> </span><span class="nf">set_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Options</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="193"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the default options for the reporter.</span>
-</span><span data-line="194">
-</span><span data-line="195"><span class="sd">        :param options: The options to set as the default, defaults to None</span>
-</span><span data-line="196"><span class="sd">        :type options: :class:`~.ReporterOptions` or None, optional</span>
-</span><span data-line="197"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="198">        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_subclass_config</span><span class="p">()</span>
-</span><span data-line="199">        <span class="n">options_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_OPTIONS_TYPE&#39;</span><span class="p">)</span>
-</span><span data-line="200">        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">is</span> <span class="n">ReporterOptions</span><span class="p">:</span>
-</span><span data-line="201">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="202">                <span class="s2">&quot;Invalid type for options argument in set_default_options(). &quot;</span>
-</span><span data-line="203">                <span class="s2">&quot;Expected ReporterOptions subclass instance or None and got ReporterOptions base class instance.&quot;</span><span class="p">,</span>
-</span><span data-line="204">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE_BASE_CLASS_INSTANCE</span><span class="p">)</span>
-</span><span data-line="205">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">options_type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="206">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="207">                <span class="s2">&quot;Invalid type for options argument in set_default_options(). &quot;</span>
-</span><span data-line="208">                <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">options_type</span><span class="si">}</span><span class="s2"> or None and got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">options</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-</span><span data-line="209">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE</span><span class="p">)</span>
-</span><span data-line="210">        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_DEFAULT_OPTIONS&#39;</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span></div>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Options</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the default options for the reporter.</span>
 
-</span><span data-line="211">
+<span class="sd">        :param options: The options to set as the default, defaults to None</span>
+<span class="sd">        :type options: :class:`~.ReporterOptions` or None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_subclass_config</span><span class="p">()</span>
+        <span class="n">options_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_OPTIONS_TYPE&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">is</span> <span class="n">ReporterOptions</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid type for options argument in set_default_options(). &quot;</span>
+                <span class="s2">&quot;Expected ReporterOptions subclass instance or None and got ReporterOptions base class instance.&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE_BASE_CLASS_INSTANCE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">options_type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid type for options argument in set_default_options(). &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">options_type</span><span class="si">}</span><span class="s2"> or None and got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">options</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_DEFAULT_OPTIONS&#39;</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Reporter.get_default_options">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.get_default_options">[docs]</a>
-</span><span data-line="212">    <span class="nd">@classmethod</span>
-</span><span data-line="213">    <span class="k">def</span><span class="w"> </span><span class="nf">get_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Options</span><span class="p">:</span>
-</span><span data-line="214"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the default options for the reporter.</span>
-</span><span data-line="215">
-</span><span data-line="216"><span class="sd">        Returns the default options set via :meth:`~.set_default_options` if set,</span>
-</span><span data-line="217"><span class="sd">        otherwise returns the built-in hardcoded default options from</span>
-</span><span data-line="218"><span class="sd">        :meth:`~.get_hardcoded_default_options`.</span>
-</span><span data-line="219">
-</span><span data-line="220"><span class="sd">        :return: The default options.</span>
-</span><span data-line="221"><span class="sd">        :rtype: :class:`~.ReporterOptions`</span>
-</span><span data-line="222"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="223">        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_subclass_config</span><span class="p">()</span>
-</span><span data-line="224">        <span class="k">if</span> <span class="s1">&#39;_DEFAULT_OPTIONS&#39;</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-</span><span data-line="225">            <span class="n">user_default</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_DEFAULT_OPTIONS&#39;</span><span class="p">)</span>
-</span><span data-line="226">            <span class="k">if</span> <span class="n">user_default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="227">                <span class="k">return</span> <span class="n">user_default</span>
-</span><span data-line="228">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_hardcoded_default_options</span><span class="p">()</span></div>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_default_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Options</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the default options for the reporter.</span>
 
-</span><span data-line="229">
-</span><span data-line="230">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ReporterConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="231"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Reporter instance.</span>
-</span><span data-line="232">
-</span><span data-line="233"><span class="sd">        :param config: The configuration object for the reporter.</span>
-</span><span data-line="234"><span class="sd">        :type config: ReporterConfig</span>
-</span><span data-line="235"><span class="sd">        :raises SimpleBenchTypeError: If the provided config is not a ReporterConfig instance.</span>
-</span><span data-line="236"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="237">        <span class="n">deferred_core_imports</span><span class="p">()</span>
-</span><span data-line="238">        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_validate_subclass_config</span><span class="p">()</span>
-</span><span data-line="239">
-</span><span data-line="240">        <span class="n">validate_type</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">ReporterConfig</span><span class="p">,</span> <span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">CONFIG_INVALID_ARG_TYPE</span><span class="p">)</span>
-</span><span data-line="241">        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">ReporterConfig</span> <span class="o">=</span> <span class="n">config</span>
-</span><span data-line="242"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The configuration object for the reporter (private backing field).&quot;&quot;&quot;</span>
-</span><span data-line="243">
-</span><span data-line="244">        <span class="n">choices_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Choice</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="245">        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-</span><span data-line="246">            <span class="n">choices_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Choice</span><span class="p">(</span><span class="n">reporter</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice_conf</span><span class="o">=</span><span class="n">item</span><span class="p">))</span>
-</span><span data-line="247">
-</span><span data-line="248">        <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span> <span class="o">=</span> <span class="n">Choices</span><span class="p">(</span><span class="n">choices_list</span><span class="p">)</span>
-</span><span data-line="249"><span class="w">        </span><span class="sd">&quot;&quot;&quot;An instance of `Choices` containing the `Choice` instances for the `Reporter`.</span>
-</span><span data-line="250">
-</span><span data-line="251"><span class="sd">        This is constructed from an iterable of `Choice` instances (private backing field)&quot;&quot;&quot;</span>
-</span><span data-line="252">
+<span class="sd">        Returns the default options set via :meth:`~.set_default_options` if set,</span>
+<span class="sd">        otherwise returns the built-in hardcoded default options from</span>
+<span class="sd">        :meth:`~.get_hardcoded_default_options`.</span>
+
+<span class="sd">        :return: The default options.</span>
+<span class="sd">        :rtype: :class:`~.ReporterOptions`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_subclass_config</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;_DEFAULT_OPTIONS&#39;</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="n">user_default</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;_DEFAULT_OPTIONS&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">user_default</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_hardcoded_default_options</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ReporterConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Reporter instance.</span>
+
+<span class="sd">        :param config: The configuration object for the reporter.</span>
+<span class="sd">        :type config: ReporterConfig</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the provided config is not a ReporterConfig instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">deferred_core_imports</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_validate_subclass_config</span><span class="p">()</span>
+
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">ReporterConfig</span><span class="p">,</span> <span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">CONFIG_INVALID_ARG_TYPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">ReporterConfig</span> <span class="o">=</span> <span class="n">config</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The configuration object for the reporter (private backing field).&quot;&quot;&quot;</span>
+
+        <span class="n">choices_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Choice</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">choices_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Choice</span><span class="p">(</span><span class="n">reporter</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice_conf</span><span class="o">=</span><span class="n">item</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span> <span class="o">=</span> <span class="n">Choices</span><span class="p">(</span><span class="n">choices_list</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;An instance of `Choices` containing the `Choice` instances for the `Reporter`.</span>
+
+<span class="sd">        This is constructed from an iterable of `Choice` instances (private backing field)&quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="Reporter.find_options_by_type">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.find_options_by_type">[docs]</a>
-</span><span data-line="253">    <span class="nd">@staticmethod</span>
-</span><span data-line="254">    <span class="k">def</span><span class="w"> </span><span class="nf">find_options_by_type</span><span class="p">(</span><span class="n">options</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="255"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve an instance of type ``cls`` (if present) from a collection of :class:`~.ReporterOptions`.</span>
-</span><span data-line="256">
-</span><span data-line="257"><span class="sd">        This is used to extract reporter specific options from an iterable container of generic</span>
-</span><span data-line="258"><span class="sd">        :class:`~.ReporterOptions` such as those associated with a</span>
-</span><span data-line="259"><span class="sd">        :class:`~simplebench.reporters.choice.choice.Choice` or :class:`~simplebench.case.Case`.</span>
-</span><span data-line="260">
-</span><span data-line="261"><span class="sd">        For example, a ``CSVReporter`` may define a ``CSVReporterOptions`` class that extends</span>
-</span><span data-line="262"><span class="sd">        :class:`~.ReporterOptions` and use this method to extract the ``CSVReporterOptions`` instance</span>
-</span><span data-line="263"><span class="sd">        from the options iterable:</span>
-</span><span data-line="264">
-</span><span data-line="265"><span class="sd">            options = Reporter.find_options_by_type(case.options, CSVReporterOptions)</span>
-</span><span data-line="266">
-</span><span data-line="267"><span class="sd">        :param options: An iterable of :class:`~.ReporterOptions` instances.</span>
-</span><span data-line="268"><span class="sd">        :type options: Iterable[:class:`~.ReporterOptions`]</span>
-</span><span data-line="269"><span class="sd">        :param cls: The specific subclass type of :class:`~.ReporterOptions` to find.</span>
-</span><span data-line="270"><span class="sd">        :type cls: type[T]</span>
-</span><span data-line="271"><span class="sd">        :return: The instance of the class ``cls`` if found, otherwise ``None``.</span>
-</span><span data-line="272"><span class="sd">        :rtype: T | None</span>
-</span><span data-line="273"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="274">        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="275">            <span class="k">return</span> <span class="kc">None</span>
-</span><span data-line="276">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-</span><span data-line="277">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="278">                <span class="s2">&quot;cls argument must be a type&quot;</span><span class="p">,</span>
-</span><span data-line="279">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE</span><span class="p">)</span>
-</span><span data-line="280">        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_iterable_of_type</span><span class="p">(</span>
-</span><span data-line="281">            <span class="n">options</span><span class="p">,</span> <span class="n">ReporterOptions</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
-</span><span data-line="282">            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG</span><span class="p">,</span>
-</span><span data-line="283">            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG</span><span class="p">,</span>
-</span><span data-line="284">            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="285">        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
-</span><span data-line="286">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
-</span><span data-line="287">                <span class="k">return</span> <span class="n">item</span>  <span class="c1"># type: ignore</span>
-</span><span data-line="288">        <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_options_by_type</span><span class="p">(</span><span class="n">options</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve an instance of type ``cls`` (if present) from a collection of :class:`~.ReporterOptions`.</span>
 
-</span><span data-line="289">
+<span class="sd">        This is used to extract reporter specific options from an iterable container of generic</span>
+<span class="sd">        :class:`~.ReporterOptions` such as those associated with a</span>
+<span class="sd">        :class:`~simplebench.reporters.choice.choice.Choice` or :class:`~simplebench.case.Case`.</span>
+
+<span class="sd">        For example, a ``CSVReporter`` may define a ``CSVReporterOptions`` class that extends</span>
+<span class="sd">        :class:`~.ReporterOptions` and use this method to extract the ``CSVReporterOptions`` instance</span>
+<span class="sd">        from the options iterable:</span>
+
+<span class="sd">            options = Reporter.find_options_by_type(case.options, CSVReporterOptions)</span>
+
+<span class="sd">        :param options: An iterable of :class:`~.ReporterOptions` instances.</span>
+<span class="sd">        :type options: Iterable[:class:`~.ReporterOptions`]</span>
+<span class="sd">        :param cls: The specific subclass type of :class:`~.ReporterOptions` to find.</span>
+<span class="sd">        :type cls: type[T]</span>
+<span class="sd">        :return: The instance of the class ``cls`` if found, otherwise ``None``.</span>
+<span class="sd">        :rtype: T | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;cls argument must be a type&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_iterable_of_type</span><span class="p">(</span>
+            <span class="n">options</span><span class="p">,</span> <span class="n">ReporterOptions</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">item</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
 <div class="viewcode-block" id="Reporter.report">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.report">[docs]</a>
-</span><span data-line="290">    <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span data-line="291">               <span class="o">*</span><span class="p">,</span>
-</span><span data-line="292">               <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
-</span><span data-line="293">               <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
-</span><span data-line="294">               <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
-</span><span data-line="295">               <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
-</span><span data-line="296">               <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="297">               <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="298">               <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="299"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a report based on the benchmark results.</span>
-</span><span data-line="300">
-</span><span data-line="301"><span class="sd">        This method performs validation and then calls the subclass&#39;s :meth:`~.run_report` method.</span>
-</span><span data-line="302">
-</span><span data-line="303"><span class="sd">        :param log_metadata: The metadata for the report log.</span>
-</span><span data-line="304"><span class="sd">        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.ReportLogMetadata`</span>
-</span><span data-line="305"><span class="sd">        :param args: The parsed command-line arguments.</span>
-</span><span data-line="306"><span class="sd">        :type args: :class:`~argparse.Namespace`</span>
-</span><span data-line="307"><span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.</span>
-</span><span data-line="308"><span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
-</span><span data-line="309"><span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
-</span><span data-line="310"><span class="sd">                       the report configuration.</span>
-</span><span data-line="311"><span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
-</span><span data-line="312"><span class="sd">        :param path: The path to the directory where the report can be saved if needed.</span>
-</span><span data-line="313"><span class="sd">                     Leave as ``None`` if not saving to the filesystem. Defaults to ``None``.</span>
-</span><span data-line="314"><span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
-</span><span data-line="315"><span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.</span>
-</span><span data-line="316"><span class="sd">                        Defaults to ``None``.</span>
-</span><span data-line="317"><span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
-</span><span data-line="318"><span class="sd">        :param callback: A callback function for additional processing of the report. Defaults to ``None``.</span>
-</span><span data-line="319"><span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
-</span><span data-line="320"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="321">        <span class="n">validate_type</span><span class="p">(</span>
-</span><span data-line="322">            <span class="n">log_metadata</span><span class="p">,</span> <span class="n">ReportLogMetadata</span><span class="p">,</span> <span class="s1">&#39;log_metadata&#39;</span><span class="p">,</span>
-</span><span data-line="323">            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_LOG_METADATA_ARG</span><span class="p">)</span>
-</span><span data-line="324">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">):</span>
-</span><span data-line="325">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="326">                <span class="s2">&quot;args argument must be an argparse.Namespace instance&quot;</span><span class="p">,</span>
-</span><span data-line="327">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_ARGS_ARG_TYPE</span><span class="p">)</span>
-</span><span data-line="328">        <span class="c1"># is_* checks handle deferred import runtime type checking for Case, Choice, and Session</span>
-</span><span data-line="329">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
-</span><span data-line="330">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="331">                <span class="s2">&quot;Expected a Case instance&quot;</span><span class="p">,</span>
-</span><span data-line="332">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_CASE_ARG</span><span class="p">)</span>
-</span><span data-line="333">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_choice</span><span class="p">(</span><span class="n">choice</span><span class="p">):</span>
-</span><span data-line="334">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="335">                <span class="s2">&quot;Expected a Choice instance&quot;</span><span class="p">,</span>
-</span><span data-line="336">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_CHOICE_ARG</span><span class="p">)</span>
-</span><span data-line="337">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_session</span><span class="p">(</span><span class="n">session</span><span class="p">)</span> <span class="ow">and</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="338">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="339">                <span class="s2">&quot;session must be a Session instance if provided&quot;</span><span class="p">,</span>
-</span><span data-line="340">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_SESSION_ARG</span><span class="p">)</span>
-</span><span data-line="341">
-</span><span data-line="342">        <span class="n">unsupported_sections</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">sections</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_sections</span><span class="p">()</span>
-</span><span data-line="343">        <span class="k">if</span> <span class="n">unsupported_sections</span><span class="p">:</span>
-</span><span data-line="344">            <span class="n">sections_error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported Section(s) in Choice().sections: </span><span class="si">{</span><span class="n">unsupported_sections</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span data-line="345">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="346">                <span class="n">sections_error</span><span class="p">,</span>
-</span><span data-line="347">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_UNSUPPORTED_SECTION</span><span class="p">)</span>
-</span><span data-line="348">
-</span><span data-line="349">        <span class="n">unsupported_targets</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">targets</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_targets</span><span class="p">()</span>
-</span><span data-line="350">        <span class="k">if</span> <span class="n">unsupported_targets</span><span class="p">:</span>
-</span><span data-line="351">            <span class="n">targets_error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported Target(s) in Choice().targets: </span><span class="si">{</span><span class="n">unsupported_targets</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span data-line="352">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="353">                <span class="n">targets_error</span><span class="p">,</span>
-</span><span data-line="354">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_UNSUPPORTED_TARGET</span><span class="p">)</span>
-</span><span data-line="355">
-</span><span data-line="356">        <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">output_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_formats</span><span class="p">():</span>
-</span><span data-line="357">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="358">                <span class="sa">f</span><span class="s2">&quot;Unsupported Format in Choice().output_format: </span><span class="si">{</span><span class="n">choice</span><span class="o">.</span><span class="n">output_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span data-line="359">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_UNSUPPORTED_FORMAT</span><span class="p">)</span>
-</span><span data-line="360">
-</span><span data-line="361">        <span class="k">if</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span> <span class="ow">in</span> <span class="n">choice</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
-</span><span data-line="362">            <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
-</span><span data-line="363">                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="364">                    <span class="s2">&quot;Callback function must be callable if provided&quot;</span><span class="p">,</span>
-</span><span data-line="365">                    <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_CALLBACK_ARG</span><span class="p">)</span>
-</span><span data-line="366">        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-</span><span data-line="367">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="368">                <span class="s2">&quot;Path must be a pathlib.Path instance when using FILESYSTEM target&quot;</span><span class="p">,</span>
-</span><span data-line="369">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_PATH_ARG</span><span class="p">)</span>
-</span><span data-line="370">        <span class="k">if</span> <span class="n">log_metadata</span><span class="o">.</span><span class="n">reports_log_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_metadata</span><span class="o">.</span><span class="n">reports_log_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-</span><span data-line="371">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="372">                <span class="s2">&quot;log_metadata.reports_log_path must be a pathlib.Path instance if provided&quot;</span><span class="p">,</span>
-</span><span data-line="373">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_REPORTS_LOG_PATH_ARG</span><span class="p">)</span>
-</span><span data-line="374">
-</span><span data-line="375">        <span class="c1"># Only proceed if there are results to report</span>
-</span><span data-line="376">        <span class="c1"># TODO: THINK ABOUT THIS MORE. SHOULD WE RAISE AN EXCEPTION INSTEAD?</span>
-</span><span data-line="377">        <span class="n">results</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span>
-</span><span data-line="378">        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
-</span><span data-line="379">            <span class="k">return</span>
-</span><span data-line="380">
-</span><span data-line="381">        <span class="c1"># If we reach this point, all validation has passed and execution</span>
-</span><span data-line="382">        <span class="c1"># will pass through to the hook method, either the default implementation</span>
-</span><span data-line="383">        <span class="c1"># or an overridden implementation in the subclass</span>
-</span><span data-line="384">        <span class="bp">self</span><span class="o">.</span><span class="n">run_report</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
-</span><span data-line="385">                        <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
-</span><span data-line="386">                        <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
-</span><span data-line="387">                        <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
-</span><span data-line="388">                        <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-</span><span data-line="389">                        <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
-</span><span data-line="390">                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+               <span class="o">*</span><span class="p">,</span>
+               <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+               <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+               <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+               <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+               <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a report based on the benchmark results.</span>
 
-</span><span data-line="391">
+<span class="sd">        This method performs validation and then calls the subclass&#39;s :meth:`~.run_report` method.</span>
+
+<span class="sd">        :param log_metadata: The metadata for the report log.</span>
+<span class="sd">        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.ReportLogMetadata`</span>
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing benchmark results.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
+<span class="sd">                       the report configuration.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param path: The path to the directory where the report can be saved if needed.</span>
+<span class="sd">                     Leave as ``None`` if not saving to the filesystem. Defaults to ``None``.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.</span>
+<span class="sd">                        Defaults to ``None``.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
+<span class="sd">        :param callback: A callback function for additional processing of the report. Defaults to ``None``.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">log_metadata</span><span class="p">,</span> <span class="n">ReportLogMetadata</span><span class="p">,</span> <span class="s1">&#39;log_metadata&#39;</span><span class="p">,</span>
+            <span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_LOG_METADATA_ARG</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;args argument must be an argparse.Namespace instance&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_ARGS_ARG_TYPE</span><span class="p">)</span>
+        <span class="c1"># is_* checks handle deferred import runtime type checking for Case, Choice, and Session</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected a Case instance&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_CASE_ARG</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_choice</span><span class="p">(</span><span class="n">choice</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected a Choice instance&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_CHOICE_ARG</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_session</span><span class="p">(</span><span class="n">session</span><span class="p">)</span> <span class="ow">and</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;session must be a Session instance if provided&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_SESSION_ARG</span><span class="p">)</span>
+
+        <span class="n">unsupported_sections</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">sections</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_sections</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">unsupported_sections</span><span class="p">:</span>
+            <span class="n">sections_error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported Section(s) in Choice().sections: </span><span class="si">{</span><span class="n">unsupported_sections</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="n">sections_error</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_UNSUPPORTED_SECTION</span><span class="p">)</span>
+
+        <span class="n">unsupported_targets</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">targets</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_targets</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">unsupported_targets</span><span class="p">:</span>
+            <span class="n">targets_error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported Target(s) in Choice().targets: </span><span class="si">{</span><span class="n">unsupported_targets</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="n">targets_error</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_UNSUPPORTED_TARGET</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">output_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_formats</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported Format in Choice().output_format: </span><span class="si">{</span><span class="n">choice</span><span class="o">.</span><span class="n">output_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_UNSUPPORTED_FORMAT</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span> <span class="ow">in</span> <span class="n">choice</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Callback function must be callable if provided&quot;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_CALLBACK_ARG</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Path must be a pathlib.Path instance when using FILESYSTEM target&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_PATH_ARG</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">log_metadata</span><span class="o">.</span><span class="n">reports_log_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_metadata</span><span class="o">.</span><span class="n">reports_log_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;log_metadata.reports_log_path must be a pathlib.Path instance if provided&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">REPORT_INVALID_REPORTS_LOG_PATH_ARG</span><span class="p">)</span>
+
+        <span class="c1"># Only proceed if there are results to report</span>
+        <span class="c1"># TODO: THINK ABOUT THIS MORE. SHOULD WE RAISE AN EXCEPTION INSTEAD?</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># If we reach this point, all validation has passed and execution</span>
+        <span class="c1"># will pass through to the hook method, either the default implementation</span>
+        <span class="c1"># or an overridden implementation in the subclass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_report</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+                        <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
+                        <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+                        <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+                        <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                        <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Reporter.render">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.render">[docs]</a>
-</span><span data-line="392">    <span class="nd">@abstractmethod</span>
-</span><span data-line="393">    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="s2">&quot;Section&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;ReporterOptions&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">:</span>
-</span><span data-line="394"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the report for a specific case and section.</span>
-</span><span data-line="395">
-</span><span data-line="396"><span class="sd">        This abstract method must be implemented by all :class:`~.Reporter` subclasses.</span>
-</span><span data-line="397"><span class="sd">        It is responsible for generating the actual report content for a given case and section,</span>
-</span><span data-line="398"><span class="sd">        based on the provided options.</span>
-</span><span data-line="399">
-</span><span data-line="400"><span class="sd">        The output can be a string, bytes, or a Rich object (:class:`~rich.text.Text` or</span>
-</span><span data-line="401"><span class="sd">        :class:`~rich.table.Table`).</span>
-</span><span data-line="402">
-</span><span data-line="403"><span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing the benchmark results.</span>
-</span><span data-line="404"><span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
-</span><span data-line="405"><span class="sd">        :param section: The specific :class:`~simplebench.enums.Section` of the results to render.</span>
-</span><span data-line="406"><span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
-</span><span data-line="407"><span class="sd">        :param options: The reporter-specific :class:`~.ReporterOptions` for rendering.</span>
-</span><span data-line="408"><span class="sd">        :type options: :class:`~.ReporterOptions`</span>
-</span><span data-line="409"><span class="sd">        :return: The rendered report content.</span>
-</span><span data-line="410"><span class="sd">        :rtype: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
-</span><span data-line="411"><span class="sd">        :raises NotImplementedError: If the method is not implemented in a subclass.</span>
-</span><span data-line="412"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="413">        <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
-</span><span data-line="414">            <span class="s2">&quot;Reporter subclasses must implement the render method&quot;</span><span class="p">,</span>
-</span><span data-line="415">            <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_NOT_IMPLEMENTED</span><span class="p">)</span></div>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="s2">&quot;Section&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;ReporterOptions&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the report for a specific case and section.</span>
 
-</span><span data-line="416">
+<span class="sd">        This abstract method must be implemented by all :class:`~.Reporter` subclasses.</span>
+<span class="sd">        It is responsible for generating the actual report content for a given case and section,</span>
+<span class="sd">        based on the provided options.</span>
+
+<span class="sd">        The output can be a string, bytes, or a Rich object (:class:`~rich.text.Text` or</span>
+<span class="sd">        :class:`~rich.table.Table`).</span>
+
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing the benchmark results.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param section: The specific :class:`~simplebench.enums.Section` of the results to render.</span>
+<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :param options: The reporter-specific :class:`~.ReporterOptions` for rendering.</span>
+<span class="sd">        :type options: :class:`~.ReporterOptions`</span>
+<span class="sd">        :return: The rendered report content.</span>
+<span class="sd">        :rtype: str | bytes | :class:`~rich.text.Text` | :class:`~rich.table.Table`</span>
+<span class="sd">        :raises NotImplementedError: If the method is not implemented in a subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Reporter subclasses must implement the render method&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_NOT_IMPLEMENTED</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Reporter.run_report">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.run_report">[docs]</a>
-</span><span data-line="417">    <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span data-line="418">                   <span class="o">*</span><span class="p">,</span>
-</span><span data-line="419">                   <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
-</span><span data-line="420">                   <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
-</span><span data-line="421">                   <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
-</span><span data-line="422">                   <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
-</span><span data-line="423">                   <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="424">                   <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="425">                   <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="426"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Orchestration hook for report generation.</span>
-</span><span data-line="427">
-</span><span data-line="428"><span class="sd">        This method is the primary customization point for controlling how a report is generated.</span>
-</span><span data-line="429"><span class="sd">        It is called by the public :meth:`~.report` method after all inputs have been validated.</span>
-</span><span data-line="430">
-</span><span data-line="431"><span class="sd">        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_section`,</span>
-</span><span data-line="432"><span class="sd">        which is suitable for most reporters. Subclasses can override this method to provide</span>
-</span><span data-line="433"><span class="sd">        alternative orchestration, such as calling</span>
-</span><span data-line="434"><span class="sd">        :meth:`~._ReporterOrchestrationMixin.render_by_case` for reports that are generated</span>
-</span><span data-line="435"><span class="sd">        once per case.</span>
-</span><span data-line="436">
-</span><span data-line="437"><span class="sd">        .. note::</span>
-</span><span data-line="438"><span class="sd">            This is also the correct place to implement custom logic for non-standard</span>
-</span><span data-line="439"><span class="sd">            targets like :attr:`~simplebench.enums.Target.CUSTOM`.</span>
-</span><span data-line="440">
-</span><span data-line="441"><span class="sd">        :param args: The parsed command-line arguments.</span>
-</span><span data-line="442"><span class="sd">        :type args: :class:`~argparse.Namespace`</span>
-</span><span data-line="443"><span class="sd">        :param log_metadata: The metadata for the report log.</span>
-</span><span data-line="444"><span class="sd">        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.Report</span>
-</span><span data-line="445"><span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.</span>
-</span><span data-line="446"><span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
-</span><span data-line="447"><span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
-</span><span data-line="448"><span class="sd">                       the report configuration.</span>
-</span><span data-line="449"><span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
-</span><span data-line="450"><span class="sd">        :param path: The path to the directory where report files will be saved. Defaults to ``None``.</span>
-</span><span data-line="451"><span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
-</span><span data-line="452"><span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.</span>
-</span><span data-line="453"><span class="sd">                        Defaults to ``None``.</span>
-</span><span data-line="454"><span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
-</span><span data-line="455"><span class="sd">        :param callback: A callback function for additional processing. Defaults to ``None``.</span>
-</span><span data-line="456"><span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
-</span><span data-line="457"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="458">        <span class="bp">self</span><span class="o">.</span><span class="n">render_by_section</span><span class="p">(</span>
-</span><span data-line="459">            <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
-</span><span data-line="460">            <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
-</span><span data-line="461">            <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
-</span><span data-line="462">            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-</span><span data-line="463">            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
-</span><span data-line="464">            <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
-</span><span data-line="465">            <span class="n">args</span><span class="o">=</span><span class="n">args</span>
-</span><span data-line="466">        <span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="o">*</span><span class="p">,</span>
+                   <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+                   <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+                   <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+                   <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+                   <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Orchestration hook for report generation.</span>
 
-</span><span data-line="467">
+<span class="sd">        This method is the primary customization point for controlling how a report is generated.</span>
+<span class="sd">        It is called by the public :meth:`~.report` method after all inputs have been validated.</span>
+
+<span class="sd">        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_section`,</span>
+<span class="sd">        which is suitable for most reporters. Subclasses can override this method to provide</span>
+<span class="sd">        alternative orchestration, such as calling</span>
+<span class="sd">        :meth:`~._ReporterOrchestrationMixin.render_by_case` for reports that are generated</span>
+<span class="sd">        once per case.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This is also the correct place to implement custom logic for non-standard</span>
+<span class="sd">            targets like :attr:`~simplebench.enums.Target.CUSTOM`.</span>
+
+<span class="sd">        :param args: The parsed command-line arguments.</span>
+<span class="sd">        :type args: :class:`~argparse.Namespace`</span>
+<span class="sd">        :param log_metadata: The metadata for the report log.</span>
+<span class="sd">        :type log_metadata: :class:`~simplebench.reporters.log.report_log_metadata.Report</span>
+<span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the benchmarked code.</span>
+<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance specifying</span>
+<span class="sd">                       the report configuration.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :param path: The path to the directory where report files will be saved. Defaults to ``None``.</span>
+<span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
+<span class="sd">        :param session: The :class:`~simplebench.session.Session` instance containing benchmark results.</span>
+<span class="sd">                        Defaults to ``None``.</span>
+<span class="sd">        :type session: :class:`~simplebench.session.Session` | None, optional</span>
+<span class="sd">        :param callback: A callback function for additional processing. Defaults to ``None``.</span>
+<span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render_by_section</span><span class="p">(</span>
+            <span class="n">log_metadata</span><span class="o">=</span><span class="n">log_metadata</span><span class="p">,</span>
+            <span class="n">case</span><span class="o">=</span><span class="n">case</span><span class="p">,</span>
+            <span class="n">choice</span><span class="o">=</span><span class="n">choice</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span>
+        <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Reporter.add_choice">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.add_choice">[docs]</a>
-</span><span data-line="468">    <span class="k">def</span><span class="w"> </span><span class="nf">add_choice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="469"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a :class:`~simplebench.reporters.choice.choice.Choice` to the reporter&#39;s choices.</span>
-</span><span data-line="470">
-</span><span data-line="471"><span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance to add.</span>
-</span><span data-line="472"><span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
-</span><span data-line="473"><span class="sd">        :raises SimpleBenchTypeError: If the provided choice is not a</span>
-</span><span data-line="474"><span class="sd">            :class:`~simplebench.reporters.choice.choice.Choice` instance.</span>
-</span><span data-line="475"><span class="sd">        :raises SimpleBenchValueError: If the choice&#39;s sections, targets, or formats</span>
-</span><span data-line="476"><span class="sd">            are not supported by the reporter.</span>
-</span><span data-line="477"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="478">        <span class="c1"># is_choice check handles deferred import runtime type checking for Choice</span>
-</span><span data-line="479">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_choice</span><span class="p">(</span><span class="n">choice</span><span class="p">):</span>
-</span><span data-line="480">            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-</span><span data-line="481">                <span class="s2">&quot;Expected a Choice instance&quot;</span><span class="p">,</span>
-</span><span data-line="482">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">ADD_CHOICE_INVALID_ARG_TYPE</span><span class="p">)</span>
-</span><span data-line="483">
-</span><span data-line="484">        <span class="n">unsupported_sections</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">sections</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_sections</span><span class="p">()</span>
-</span><span data-line="485">        <span class="k">if</span> <span class="n">unsupported_sections</span><span class="p">:</span>
-</span><span data-line="486">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="487">                <span class="sa">f</span><span class="s2">&quot;Unsupported Section(s) in Choice().sections: </span><span class="si">{</span><span class="n">unsupported_sections</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span data-line="488">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">ADD_CHOICE_UNSUPPORTED_SECTION</span><span class="p">)</span>
-</span><span data-line="489">
-</span><span data-line="490">        <span class="n">unsupported_targets</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">targets</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_targets</span><span class="p">()</span>
-</span><span data-line="491">        <span class="k">if</span> <span class="n">unsupported_targets</span><span class="p">:</span>
-</span><span data-line="492">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="493">                <span class="sa">f</span><span class="s2">&quot;Unsupported Target(s) in Choice().targets: </span><span class="si">{</span><span class="n">unsupported_targets</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span data-line="494">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">ADD_CHOICE_UNSUPPORTED_TARGET</span><span class="p">)</span>
-</span><span data-line="495">
-</span><span data-line="496">        <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">output_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_formats</span><span class="p">():</span>
-</span><span data-line="497">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="498">                <span class="sa">f</span><span class="s2">&quot;Unsupported Format in Choice().output_format: </span><span class="si">{</span><span class="n">choice</span><span class="o">.</span><span class="n">output_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span data-line="499">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">ADD_CHOICE_UNSUPPORTED_FORMAT</span><span class="p">)</span>
-</span><span data-line="500">
-</span><span data-line="501">        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_choice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a :class:`~simplebench.reporters.choice.choice.Choice` to the reporter&#39;s choices.</span>
 
-</span><span data-line="502">
-</span><span data-line="503">    <span class="nd">@property</span>
-</span><span data-line="504">    <span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterConfig</span><span class="p">:</span>
-</span><span data-line="505"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The configuration object for the reporter.&quot;&quot;&quot;</span>
-</span><span data-line="506">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
-</span><span data-line="507">
-</span><span data-line="508">    <span class="nd">@property</span>
-</span><span data-line="509">    <span class="k">def</span><span class="w"> </span><span class="nf">choices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Choices</span><span class="p">:</span>
-</span><span data-line="510"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The :class:`~simplebench.reporters.choices.choices.Choices` for the reporter.</span>
-</span><span data-line="511">
-</span><span data-line="512"><span class="sd">        The :class:`~simplebench.reporters.choices.choices.Choices` instance contains one or more</span>
-</span><span data-line="513"><span class="sd">        :class:`~simplebench.reporters.choice.choice.Choice` instances, each representing a</span>
-</span><span data-line="514"><span class="sd">        specific combination of sections, targets, and formats, command line flags,</span>
-</span><span data-line="515"><span class="sd">        and descriptions.</span>
-</span><span data-line="516">
-</span><span data-line="517"><span class="sd">        This property allows access to the reporter&#39;s choices for generating reports</span>
-</span><span data-line="518"><span class="sd">        and customizing report output and available options.</span>
-</span><span data-line="519">
-</span><span data-line="520"><span class="sd">        :return: The :class:`~simplebench.reporters.choices.choices.Choices` instance for the reporter.</span>
-</span><span data-line="521"><span class="sd">        :rtype: :class:`~simplebench.reporters.choices.choices.Choices`</span>
-</span><span data-line="522"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="523">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span>
-</span><span data-line="524">
-</span><span data-line="525">    <span class="nd">@property</span>
-</span><span data-line="526">    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="527"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The unique identifying name of the reporter.&quot;&quot;&quot;</span>
-</span><span data-line="528">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span>
-</span><span data-line="529">
-</span><span data-line="530">    <span class="nd">@property</span>
-</span><span data-line="531">    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="532"><span class="w">        </span><span class="sd">&quot;&quot;&quot;A brief description of the reporter.&quot;&quot;&quot;</span>
-</span><span data-line="533">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">description</span>
-</span><span data-line="534">
-</span><span data-line="535">    <span class="nd">@property</span>
-</span><span data-line="536">    <span class="k">def</span><span class="w"> </span><span class="nf">options_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">Options</span><span class="p">]:</span>
-</span><span data-line="537"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The specific :class:`~.ReporterOptions` subclass associated with this reporter.&quot;&quot;&quot;</span>
-</span><span data-line="538">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">get_default_options</span><span class="p">()</span><span class="o">.</span><span class="vm">__class__</span>
-</span><span data-line="539">
-</span><span data-line="540">    <span class="nd">@property</span>
-</span><span data-line="541">    <span class="k">def</span><span class="w"> </span><span class="nf">subdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="542"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The subdirectory where report files will be saved.&quot;&quot;&quot;</span>
-</span><span data-line="543">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">subdir</span>
-</span><span data-line="544">
-</span><span data-line="545">    <span class="nd">@property</span>
-</span><span data-line="546">    <span class="k">def</span><span class="w"> </span><span class="nf">default_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
-</span><span data-line="547"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The default set of Targets for the reporter.&quot;&quot;&quot;</span>
-</span><span data-line="548">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">default_targets</span>
-</span><span data-line="549">
-</span><span data-line="550">    <span class="nd">@property</span>
-</span><span data-line="551">    <span class="k">def</span><span class="w"> </span><span class="nf">file_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="552"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The file suffix for reporter output files.&quot;&quot;&quot;</span>
-</span><span data-line="553">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">file_suffix</span>
-</span><span data-line="554">
-</span><span data-line="555">    <span class="nd">@property</span>
-</span><span data-line="556">    <span class="k">def</span><span class="w"> </span><span class="nf">file_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="557"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether output files should have unique names.&quot;&quot;&quot;</span>
-</span><span data-line="558">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">file_unique</span>
-</span><span data-line="559">
-</span><span data-line="560">    <span class="nd">@property</span>
-</span><span data-line="561">    <span class="k">def</span><span class="w"> </span><span class="nf">file_append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="562"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether output files should be appended to.&quot;&quot;&quot;</span>
-</span><span data-line="563">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">file_append</span>
-</span><span data-line="564">
+<span class="sd">        :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance to add.</span>
+<span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the provided choice is not a</span>
+<span class="sd">            :class:`~simplebench.reporters.choice.choice.Choice` instance.</span>
+<span class="sd">        :raises SimpleBenchValueError: If the choice&#39;s sections, targets, or formats</span>
+<span class="sd">            are not supported by the reporter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># is_choice check handles deferred import runtime type checking for Choice</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_choice</span><span class="p">(</span><span class="n">choice</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected a Choice instance&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">ADD_CHOICE_INVALID_ARG_TYPE</span><span class="p">)</span>
+
+        <span class="n">unsupported_sections</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">sections</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_sections</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">unsupported_sections</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported Section(s) in Choice().sections: </span><span class="si">{</span><span class="n">unsupported_sections</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">ADD_CHOICE_UNSUPPORTED_SECTION</span><span class="p">)</span>
+
+        <span class="n">unsupported_targets</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">targets</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_targets</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">unsupported_targets</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported Target(s) in Choice().targets: </span><span class="si">{</span><span class="n">unsupported_targets</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">ADD_CHOICE_UNSUPPORTED_TARGET</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">output_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_formats</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported Format in Choice().output_format: </span><span class="si">{</span><span class="n">choice</span><span class="o">.</span><span class="n">output_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">ADD_CHOICE_UNSUPPORTED_FORMAT</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReporterConfig</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The configuration object for the reporter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">choices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Choices</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The :class:`~simplebench.reporters.choices.choices.Choices` for the reporter.</span>
+
+<span class="sd">        The :class:`~simplebench.reporters.choices.choices.Choices` instance contains one or more</span>
+<span class="sd">        :class:`~simplebench.reporters.choice.choice.Choice` instances, each representing a</span>
+<span class="sd">        specific combination of sections, targets, and formats, command line flags,</span>
+<span class="sd">        and descriptions.</span>
+
+<span class="sd">        This property allows access to the reporter&#39;s choices for generating reports</span>
+<span class="sd">        and customizing report output and available options.</span>
+
+<span class="sd">        :return: The :class:`~simplebench.reporters.choices.choices.Choices` instance for the reporter.</span>
+<span class="sd">        :rtype: :class:`~simplebench.reporters.choices.choices.Choices`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unique identifying name of the reporter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A brief description of the reporter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">description</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">options_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">Options</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The specific :class:`~.ReporterOptions` subclass associated with this reporter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">get_default_options</span><span class="p">()</span><span class="o">.</span><span class="vm">__class__</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The subdirectory where report files will be saved.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">subdir</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The default set of Targets for the reporter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">default_targets</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The file suffix for reporter output files.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">file_suffix</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether output files should have unique names.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">file_unique</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether output files should be appended to.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">file_append</span>
+
 <div class="viewcode-block" id="Reporter.supported_sections">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.supported_sections">[docs]</a>
-</span><span data-line="565">    <span class="k">def</span><span class="w"> </span><span class="nf">supported_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Section</span><span class="p">]:</span>
-</span><span data-line="566"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Section` for the reporter.</span>
-</span><span data-line="567">
-</span><span data-line="568"><span class="sd">        This is the set of :class:`~simplebench.enums.Section` that the reporter can include</span>
-</span><span data-line="569"><span class="sd">        in its reports.</span>
-</span><span data-line="570">
-</span><span data-line="571"><span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
-</span><span data-line="572"><span class="sd">        :class:`~simplebench.enums.Section` that are declared in this set.</span>
-</span><span data-line="573"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="574">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">sections</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supported_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Section</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Section` for the reporter.</span>
 
-</span><span data-line="575">
+<span class="sd">        This is the set of :class:`~simplebench.enums.Section` that the reporter can include</span>
+<span class="sd">        in its reports.</span>
+
+<span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
+<span class="sd">        :class:`~simplebench.enums.Section` that are declared in this set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">sections</span></div>
+
+
 <div class="viewcode-block" id="Reporter.supported_targets">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.supported_targets">[docs]</a>
-</span><span data-line="576">    <span class="k">def</span><span class="w"> </span><span class="nf">supported_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
-</span><span data-line="577"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Target` for the reporter.</span>
-</span><span data-line="578">
-</span><span data-line="579"><span class="sd">        This is the set of :class:`~simplebench.enums.Target` that the reporter can output to.</span>
-</span><span data-line="580">
-</span><span data-line="581"><span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
-</span><span data-line="582"><span class="sd">        :class:`~simplebench.enums.Target` that are declared in this set.</span>
-</span><span data-line="583"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="584">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">targets</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supported_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Target` for the reporter.</span>
 
-</span><span data-line="585">
+<span class="sd">        This is the set of :class:`~simplebench.enums.Target` that the reporter can output to.</span>
+
+<span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
+<span class="sd">        :class:`~simplebench.enums.Target` that are declared in this set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">targets</span></div>
+
+
 <div class="viewcode-block" id="Reporter.supported_formats">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.supported_formats">[docs]</a>
-</span><span data-line="586">    <span class="k">def</span><span class="w"> </span><span class="nf">supported_formats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Format</span><span class="p">]:</span>
-</span><span data-line="587"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Format` for the reporter.</span>
-</span><span data-line="588">
-</span><span data-line="589"><span class="sd">        This is the set of :class:`~simplebench.enums.Format` that the reporter can output in.</span>
-</span><span data-line="590">
-</span><span data-line="591"><span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
-</span><span data-line="592"><span class="sd">        :class:`~simplebench.enums.Format` that are declared in this set.</span>
-</span><span data-line="593"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="594">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">formats</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supported_formats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Format</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Format` for the reporter.</span>
 
-</span><span data-line="595">
+<span class="sd">        This is the set of :class:`~simplebench.enums.Format` that the reporter can output in.</span>
+
+<span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
+<span class="sd">        :class:`~simplebench.enums.Format` that are declared in this set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">formats</span></div>
+
+
 <div class="viewcode-block" id="Reporter.get_base_unit_for_section">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.get_base_unit_for_section">[docs]</a>
-</span><span data-line="596">    <span class="k">def</span><span class="w"> </span><span class="nf">get_base_unit_for_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="597"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the base unit for the specified section.</span>
-</span><span data-line="598">
-</span><span data-line="599"><span class="sd">        :param section: The section to get the base unit for.</span>
-</span><span data-line="600"><span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
-</span><span data-line="601"><span class="sd">        :return: The base unit for the section.</span>
-</span><span data-line="602"><span class="sd">        :rtype: str</span>
-</span><span data-line="603"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="604">        <span class="k">match</span> <span class="n">section</span><span class="p">:</span>
-</span><span data-line="605">            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">OPS</span><span class="p">:</span>
-</span><span data-line="606">                <span class="k">return</span> <span class="n">BASE_OPS_PER_INTERVAL_UNIT</span>
-</span><span data-line="607">            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">TIMING</span><span class="p">:</span>
-</span><span data-line="608">                <span class="k">return</span> <span class="n">BASE_INTERVAL_UNIT</span>
-</span><span data-line="609">            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">MEMORY</span><span class="p">:</span>
-</span><span data-line="610">                <span class="k">return</span> <span class="n">BASE_MEMORY_UNIT</span>
-</span><span data-line="611">            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">PEAK_MEMORY</span><span class="p">:</span>
-</span><span data-line="612">                <span class="k">return</span> <span class="n">BASE_MEMORY_UNIT</span>
-</span><span data-line="613">            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span data-line="614">                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="615">                    <span class="sa">f</span><span class="s2">&quot;Unsupported section: </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2"> (this should never happen)&quot;</span><span class="p">,</span>
-</span><span data-line="616">                    <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">RUN_REPORT_UNSUPPORTED_SECTION</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_base_unit_for_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the base unit for the specified section.</span>
 
-</span><span data-line="617">
+<span class="sd">        :param section: The section to get the base unit for.</span>
+<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :return: The base unit for the section.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">match</span> <span class="n">section</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">OPS</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">BASE_OPS_PER_INTERVAL_UNIT</span>
+            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">TIMING</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">BASE_INTERVAL_UNIT</span>
+            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">MEMORY</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">BASE_MEMORY_UNIT</span>
+            <span class="k">case</span> <span class="n">Section</span><span class="o">.</span><span class="n">PEAK_MEMORY</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">BASE_MEMORY_UNIT</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unsupported section: </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2"> (this should never happen)&quot;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterErrorTag</span><span class="o">.</span><span class="n">RUN_REPORT_UNSUPPORTED_SECTION</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Reporter.get_all_stats_values">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.Reporter.get_all_stats_values">[docs]</a>
-</span><span data-line="618">    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_stats_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">],</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-</span><span data-line="619"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Gathers all primary statistical values for a given section across multiple results.</span>
-</span><span data-line="620">
-</span><span data-line="621"><span class="sd">        It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,</span>
-</span><span data-line="622"><span class="sd">        from each :class:`~simplebench.results.Results` instance for the specified section.</span>
-</span><span data-line="623">
-</span><span data-line="624"><span class="sd">        This method is useful in determining appropriate scaling factors or units</span>
-</span><span data-line="625"><span class="sd">        for reporting by analyzing the range of values across all results.</span>
-</span><span data-line="626">
-</span><span data-line="627"><span class="sd">        Adjusted standard deviation is not included in this collection because it can</span>
-</span><span data-line="628"><span class="sd">        be ``NaN`` for results with insufficient data points, or orders of magnitude different</span>
-</span><span data-line="629"><span class="sd">        from the other statistics, which can skew scaling calculations.</span>
-</span><span data-line="630">
-</span><span data-line="631"><span class="sd">        :param results: A list of :class:`~simplebench.results.Results` instances to gather</span>
-</span><span data-line="632"><span class="sd">                        statistics from.</span>
-</span><span data-line="633"><span class="sd">        :type results: list[:class:`~simplebench.results.Results`]</span>
-</span><span data-line="634"><span class="sd">        :param section: The section to gather statistics for.</span>
-</span><span data-line="635"><span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
-</span><span data-line="636"><span class="sd">        :return: A list of all gathered statistical values.</span>
-</span><span data-line="637"><span class="sd">        :rtype: list[float]</span>
-</span><span data-line="638"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="639">        <span class="n">all_numbers</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="640">        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-</span><span data-line="641">            <span class="n">stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
-</span><span data-line="642">            <span class="n">all_numbers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-</span><span data-line="643">                <span class="n">stats</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">median</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">minimum</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">maximum</span><span class="p">,</span>
-</span><span data-line="644">                <span class="n">stats</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">stats</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">95</span><span class="p">]</span>
-</span><span data-line="645">            <span class="p">])</span>
-</span><span data-line="646">        <span class="k">return</span> <span class="n">all_numbers</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_stats_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">],</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gathers all primary statistical values for a given section across multiple results.</span>
+
+<span class="sd">        It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,</span>
+<span class="sd">        from each :class:`~simplebench.results.Results` instance for the specified section.</span>
+
+<span class="sd">        This method is useful in determining appropriate scaling factors or units</span>
+<span class="sd">        for reporting by analyzing the range of values across all results.</span>
+
+<span class="sd">        Adjusted standard deviation is not included in this collection because it can</span>
+<span class="sd">        be ``NaN`` for results with insufficient data points, or orders of magnitude different</span>
+<span class="sd">        from the other statistics, which can skew scaling calculations.</span>
+
+<span class="sd">        :param results: A list of :class:`~simplebench.results.Results` instances to gather</span>
+<span class="sd">                        statistics from.</span>
+<span class="sd">        :type results: list[:class:`~simplebench.results.Results`]</span>
+<span class="sd">        :param section: The section to gather statistics for.</span>
+<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :return: A list of all gathered statistical values.</span>
+<span class="sd">        :rtype: list[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+            <span class="n">all_numbers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">median</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">minimum</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">maximum</span><span class="p">,</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">stats</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">95</span><span class="p">]</span>
+            <span class="p">])</span>
+        <span class="k">return</span> <span class="n">all_numbers</span></div>
 </div>
 
-</span></pre></div>
+</pre></div>
         </article>
       </div>
       <footer>
@@ -965,6 +967,7 @@
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../../_static/shibuya.js"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

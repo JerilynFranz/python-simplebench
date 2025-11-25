@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.reporter.config - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,206 +240,206 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.reporters.reporter.config</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Base reporter configuration class.&quot;&quot;&quot;</span>
-</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-</span><span data-line="3">
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-</span><span data-line="5">
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
-</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchValueError</span>
-</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoicesConf</span>
-</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.exceptions.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReporterConfigErrorTag</span>
-</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_dirpath</span><span class="p">,</span> <span class="n">validate_iterable_of_type</span><span class="p">,</span> <span class="n">validate_string</span><span class="p">,</span> <span class="n">validate_type</span>
-</span><span data-line="11">
-</span><span data-line="12">
+<span></span><span class="sd">&quot;&quot;&quot;Base reporter configuration class.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoicesConf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.exceptions.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReporterConfigErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_dirpath</span><span class="p">,</span> <span class="n">validate_iterable_of_type</span><span class="p">,</span> <span class="n">validate_string</span><span class="p">,</span> <span class="n">validate_type</span>
+
+
 <div class="viewcode-block" id="ReporterConfig">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.ReporterConfig">[docs]</a>
-</span><span data-line="13"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="14"><span class="k">class</span><span class="w"> </span><span class="nc">ReporterConfig</span><span class="p">:</span>
-</span><span data-line="15"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Immutable, attribute-based base configuration for a Reporter.</span>
-</span><span data-line="16">
-</span><span data-line="17"><span class="sd">    This frozen dataclass serves as the foundation for all specific reporter</span>
-</span><span data-line="18"><span class="sd">    configuration classes (e.g., :class:`~simplebench.reporters.rich_table.config.RichTableConfig`).</span>
-</span><span data-line="19"><span class="sd">    It defines the common data structure and centralizes the validation of all parameters required</span>
-</span><span data-line="20"><span class="sd">    by reporters.</span>
-</span><span data-line="21">
-</span><span data-line="22"><span class="sd">    The ``sections``, ``targets``, and ``formats`` parameters act as master lists,</span>
-</span><span data-line="23"><span class="sd">    constraining the values that can be used within the ``choices`` and</span>
-</span><span data-line="24"><span class="sd">    ``default_targets`` parameters.</span>
-</span><span data-line="25">
-</span><span data-line="26"><span class="sd">    As a frozen dataclass, instances of this class are immutable; their state</span>
-</span><span data-line="27"><span class="sd">    cannot be changed after creation. Validation and normalization of inputs</span>
-</span><span data-line="28"><span class="sd">    are performed automatically in the ``__post_init__`` method.</span>
-</span><span data-line="29">
-</span><span data-line="30"><span class="sd">    Attributes:</span>
-</span><span data-line="31"><span class="sd">        name (str): The unique name for the reporter (e.g., &#39;rich-table&#39;).</span>
-</span><span data-line="32"><span class="sd">        description (str): A short description of what the reporter does.</span>
-</span><span data-line="33"><span class="sd">        sections (frozenset[Section]): The master set of sections this reporter can handle.</span>
-</span><span data-line="34"><span class="sd">        targets (frozenset[Target]): The master set of targets this reporter can output to.</span>
-</span><span data-line="35"><span class="sd">        default_targets (frozenset[Target]): The default subset of ``targets`` to use.</span>
-</span><span data-line="36"><span class="sd">        formats (frozenset[Format]): The master set of formats this reporter can produce.</span>
-</span><span data-line="37"><span class="sd">        choices (ChoicesConf): Defines the reporter&#39;s command-line interface flags.</span>
-</span><span data-line="38"><span class="sd">        file_suffix (str): The file extension for filesystem targets, without the leading dot.</span>
-</span><span data-line="39"><span class="sd">        file_unique (bool): If ``True``, generate a unique filename for each output.</span>
-</span><span data-line="40"><span class="sd">        file_append (bool): If ``True``, append to the output file if it already exists.</span>
-</span><span data-line="41"><span class="sd">        subdir (str): The subdirectory for saved files; ``&#39;&#39;`` means the root results directory.</span>
-</span><span data-line="42"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="43">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span data-line="44"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The unique name for the reporter (e.g., &#39;rich-table&#39;). Cannot be empty or blank.&quot;&quot;&quot;</span>
-</span><span data-line="45">
-</span><span data-line="46">    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
-</span><span data-line="47"><span class="w">    </span><span class="sd">&quot;&quot;&quot;A short description of what the reporter does. Cannot be empty or blank.&quot;&quot;&quot;</span>
-</span><span data-line="48">
-</span><span data-line="49">    <span class="n">sections</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Section</span><span class="p">]</span>
-</span><span data-line="50"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The master set of :class:`~.Section` enums this reporter can handle. This constrains</span>
-</span><span data-line="51"><span class="sd">    the sections that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.</span>
-</span><span data-line="52"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="53">
-</span><span data-line="54">    <span class="n">targets</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span>
-</span><span data-line="55"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The master set of :class:`~.Target` enums this reporter can output to. This constrains</span>
-</span><span data-line="56"><span class="sd">    the targets that can be used by ``default_targets`` and any :class:`~.ChoiceConf`</span>
-</span><span data-line="57"><span class="sd">    in the ``choices`` list.</span>
-</span><span data-line="58"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="59">
-</span><span data-line="60">    <span class="n">default_targets</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span>
-</span><span data-line="61"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The default subset of ``targets`` to use if not specified. Must be a subset of the</span>
-</span><span data-line="62"><span class="sd">    main ``targets`` set.</span>
-</span><span data-line="63"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="64">
-</span><span data-line="65">    <span class="n">formats</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Format</span><span class="p">]</span>
-</span><span data-line="66"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The master set of :class:`~.Format` enums this reporter can produce. This constrains</span>
-</span><span data-line="67"><span class="sd">    the formats that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.</span>
-</span><span data-line="68"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="69">
-</span><span data-line="70">    <span class="n">choices</span><span class="p">:</span> <span class="n">ChoicesConf</span>
-</span><span data-line="71"><span class="w">    </span><span class="sd">&quot;&quot;&quot;A :class:`~.ChoicesConf` object defining the reporter&#39;s command-line interface</span>
-</span><span data-line="72"><span class="sd">    flags. These flags allow end-users to precisely control report generation by</span>
-</span><span data-line="73"><span class="sd">    specifying which sections to include, what output format to use, and where to</span>
-</span><span data-line="74"><span class="sd">    send the report (targets). They can also control other reporter-specific options.</span>
-</span><span data-line="75"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="76">
-</span><span data-line="77">    <span class="n">file_suffix</span><span class="p">:</span> <span class="nb">str</span>
-</span><span data-line="78"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The file extension to use for filesystem targets (e.g., &#39;txt&#39;), without the leading dot.</span>
-</span><span data-line="79">
-</span><span data-line="80"><span class="sd">    The suffix must consist only of alphanumeric characters and be 10 characters or less in length.&quot;&quot;&quot;</span>
-</span><span data-line="81">
-</span><span data-line="82">    <span class="n">file_unique</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span data-line="83"><span class="w">    </span><span class="sd">&quot;&quot;&quot;If ``True``, generate a unique filename for each output.</span>
-</span><span data-line="84"><span class="sd">    Mutually exclusive with ``file_append``; exactly one must be ``True``.</span>
-</span><span data-line="85"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="86">
-</span><span data-line="87">    <span class="n">file_append</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span data-line="88"><span class="w">    </span><span class="sd">&quot;&quot;&quot;If ``True``, append to the output file if it already exists.</span>
-</span><span data-line="89"><span class="sd">    Mutually exclusive with ``file_unique``; exactly one must be ``True``.</span>
-</span><span data-line="90"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="91">
-</span><span data-line="92">    <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span>
-</span><span data-line="93"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The subdirectory within the results directory to save files to. An empty string</span>
-</span><span data-line="94"><span class="sd">    (``&#39;&#39;``) specifies the root of the results directory (i.e., no subdirectory).</span>
-</span><span data-line="95">
-</span><span data-line="96"><span class="sd">    A subdirectory path should only contain valid directory name elements separated by</span>
-</span><span data-line="97"><span class="sd">    forward slashes (``&#39;/&#39;``). Each element must consist only of alphanumeric, underscore, or dash</span>
-</span><span data-line="98"><span class="sd">    characters, cannot be longer than 64 characters and cannot start or end with a dash or underscore.</span>
-</span><span data-line="99">
-</span><span data-line="100"><span class="sd">    Empty elements (i.e., consecutive slashes) are not allowed. Paths cannot start or end with a slash.</span>
-</span><span data-line="101">
-</span><span data-line="102"><span class="sd">    The total length of the subdirectory path must not exceed 255 characters.</span>
-</span><span data-line="103"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="104">
-</span><span data-line="105">    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="106"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate and normalize the configuration after initialization.&quot;&quot;&quot;</span>
-</span><span data-line="107">        <span class="c1"># 1. Perform all validations on the raw, incoming attribute values</span>
-</span><span data-line="108">        <span class="n">validate_string</span><span class="p">(</span>
-</span><span data-line="109">            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span>
-</span><span data-line="110">            <span class="n">type_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_NAME_TYPE</span><span class="p">,</span>
-</span><span data-line="111">            <span class="n">value_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_NAME_VALUE</span><span class="p">,</span>
-</span><span data-line="112">            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span>
-</span><span data-line="113">        <span class="p">)</span>
-</span><span data-line="114">        <span class="n">validate_string</span><span class="p">(</span>
-</span><span data-line="115">            <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span>
-</span><span data-line="116">            <span class="n">type_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DESCRIPTION_TYPE</span><span class="p">,</span>
-</span><span data-line="117">            <span class="n">value_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DESCRIPTION_VALUE</span><span class="p">,</span>
-</span><span data-line="118">            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span>
-</span><span data-line="119">        <span class="p">)</span>
-</span><span data-line="120">        <span class="n">validate_iterable_of_type</span><span class="p">(</span>
-</span><span data-line="121">            <span class="bp">self</span><span class="o">.</span><span class="n">sections</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span>
-</span><span data-line="122">            <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_SECTIONS_TYPE</span><span class="p">,</span>
-</span><span data-line="123">            <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_SECTIONS_VALUE</span><span class="p">,</span>
-</span><span data-line="124">            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span>
-</span><span data-line="125">        <span class="p">)</span>
-</span><span data-line="126">        <span class="n">validate_iterable_of_type</span><span class="p">(</span>
-</span><span data-line="127">            <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">,</span> <span class="n">Target</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">,</span>
-</span><span data-line="128">            <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_TARGETS_TYPE</span><span class="p">,</span>
-</span><span data-line="129">            <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_TARGETS_VALUE</span><span class="p">,</span>
-</span><span data-line="130">            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span>
-</span><span data-line="131">        <span class="p">)</span>
-</span><span data-line="132">
-</span><span data-line="133">        <span class="n">validate_iterable_of_type</span><span class="p">(</span>
-</span><span data-line="134">            <span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span><span class="p">,</span> <span class="n">Target</span><span class="p">,</span> <span class="s1">&#39;default_targets&#39;</span><span class="p">,</span>
-</span><span data-line="135">            <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_TARGETS_TYPE</span><span class="p">,</span>
-</span><span data-line="136">            <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_TARGETS_VALUE</span>
-</span><span data-line="137">        <span class="p">)</span>
-</span><span data-line="138">        <span class="n">validate_iterable_of_type</span><span class="p">(</span>
-</span><span data-line="139">            <span class="bp">self</span><span class="o">.</span><span class="n">formats</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="s1">&#39;formats&#39;</span><span class="p">,</span>
-</span><span data-line="140">            <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FORMATS_TYPE</span><span class="p">,</span>
-</span><span data-line="141">            <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FORMATS_VALUE</span><span class="p">,</span>
-</span><span data-line="142">            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span>
-</span><span data-line="143">        <span class="p">)</span>
-</span><span data-line="144">        <span class="n">validate_type</span><span class="p">(</span>
-</span><span data-line="145">            <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span> <span class="n">ChoicesConf</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">,</span>
-</span><span data-line="146">            <span class="n">error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_CHOICES_TYPE</span>
-</span><span data-line="147">        <span class="p">)</span>
-</span><span data-line="148">        <span class="n">validate_string</span><span class="p">(</span>
-</span><span data-line="149">            <span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">,</span> <span class="s1">&#39;file_suffix&#39;</span><span class="p">,</span>
-</span><span data-line="150">            <span class="n">type_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_SUFFIX_TYPE</span><span class="p">,</span>
-</span><span data-line="151">            <span class="n">value_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_SUFFIX_VALUE</span><span class="p">,</span>
-</span><span data-line="152">            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alphanumeric_only</span><span class="o">=</span><span class="kc">True</span>
-</span><span data-line="153">        <span class="p">)</span>
-</span><span data-line="154">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
-</span><span data-line="155">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="156">                <span class="s2">&quot;file_suffix must be 10 characters or less in length.&quot;</span><span class="p">,</span>
-</span><span data-line="157">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_SUFFIX_VALUE_TOO_LONG</span>
-</span><span data-line="158">            <span class="p">)</span>
-</span><span data-line="159">        <span class="n">validate_type</span><span class="p">(</span>
-</span><span data-line="160">            <span class="bp">self</span><span class="o">.</span><span class="n">file_unique</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s1">&#39;file_unique&#39;</span><span class="p">,</span>
-</span><span data-line="161">            <span class="n">error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_UNIQUE_TYPE</span>
-</span><span data-line="162">        <span class="p">)</span>
-</span><span data-line="163">        <span class="n">validate_type</span><span class="p">(</span>
-</span><span data-line="164">            <span class="bp">self</span><span class="o">.</span><span class="n">file_append</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s1">&#39;file_append&#39;</span><span class="p">,</span>
-</span><span data-line="165">            <span class="n">error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_APPEND_TYPE</span>
-</span><span data-line="166">        <span class="p">)</span>
-</span><span data-line="167">        <span class="n">subdir</span> <span class="o">=</span> <span class="n">validate_dirpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subdir</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="168">
-</span><span data-line="169">        <span class="c1"># Check for (False, False) case first for clarity</span>
-</span><span data-line="170">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_append</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_unique</span><span class="p">:</span>
-</span><span data-line="171">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="172">                <span class="s2">&quot;One of file_append or file_unique must be True.&quot;</span><span class="p">,</span>
-</span><span data-line="173">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_APPEND_FILE_UNIQUE_ONE_MUST_BE_TRUE</span>
-</span><span data-line="174">            <span class="p">)</span>
-</span><span data-line="175">        <span class="c1"># If the first check passes, this check now correctly isolates the (True, True) case</span>
-</span><span data-line="176">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_append</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_unique</span><span class="p">:</span>
-</span><span data-line="177">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="178">                <span class="s2">&quot;file_append and file_unique cannot both be True.&quot;</span><span class="p">,</span>
-</span><span data-line="179">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_APPEND_FILE_UNIQUE_COMBINATION</span>
-</span><span data-line="180">            <span class="p">)</span>
-</span><span data-line="181">
-</span><span data-line="182">        <span class="c1"># After validation, convert iterables to frozenset for immutability</span>
-</span><span data-line="183">        <span class="c1"># and replace subdir with the validated version</span>
-</span><span data-line="184">        <span class="c1"># This uses object.__setattr__ to bypass the frozen=True restriction.</span>
-</span><span data-line="185">        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;subdir&#39;</span><span class="p">,</span> <span class="n">subdir</span><span class="p">)</span>
-</span><span data-line="186">        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sections</span><span class="p">))</span>
-</span><span data-line="187">        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">))</span>
-</span><span data-line="188">        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;default_targets&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span><span class="p">))</span>
-</span><span data-line="189">        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;formats&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formats</span><span class="p">))</span>
-</span><span data-line="190">
-</span><span data-line="191">        <span class="c1"># 3. Perform final cross-field validations on the normalized values</span>
-</span><span data-line="192">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">):</span>
-</span><span data-line="193">            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-</span><span data-line="194">                <span class="s2">&quot;default_targets must be a subset of targets&quot;</span><span class="p">,</span>
-</span><span data-line="195">                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_TARGETS_VALUE</span>
-</span><span data-line="196">            <span class="p">)</span></div>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReporterConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Immutable, attribute-based base configuration for a Reporter.</span>
 
-</span></pre></div>
+<span class="sd">    This frozen dataclass serves as the foundation for all specific reporter</span>
+<span class="sd">    configuration classes (e.g., :class:`~simplebench.reporters.rich_table.config.RichTableConfig`).</span>
+<span class="sd">    It defines the common data structure and centralizes the validation of all parameters required</span>
+<span class="sd">    by reporters.</span>
+
+<span class="sd">    The ``sections``, ``targets``, and ``formats`` parameters act as master lists,</span>
+<span class="sd">    constraining the values that can be used within the ``choices`` and</span>
+<span class="sd">    ``default_targets`` parameters.</span>
+
+<span class="sd">    As a frozen dataclass, instances of this class are immutable; their state</span>
+<span class="sd">    cannot be changed after creation. Validation and normalization of inputs</span>
+<span class="sd">    are performed automatically in the ``__post_init__`` method.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str): The unique name for the reporter (e.g., &#39;rich-table&#39;).</span>
+<span class="sd">        description (str): A short description of what the reporter does.</span>
+<span class="sd">        sections (frozenset[Section]): The master set of sections this reporter can handle.</span>
+<span class="sd">        targets (frozenset[Target]): The master set of targets this reporter can output to.</span>
+<span class="sd">        default_targets (frozenset[Target]): The default subset of ``targets`` to use.</span>
+<span class="sd">        formats (frozenset[Format]): The master set of formats this reporter can produce.</span>
+<span class="sd">        choices (ChoicesConf): Defines the reporter&#39;s command-line interface flags.</span>
+<span class="sd">        file_suffix (str): The file extension for filesystem targets, without the leading dot.</span>
+<span class="sd">        file_unique (bool): If ``True``, generate a unique filename for each output.</span>
+<span class="sd">        file_append (bool): If ``True``, append to the output file if it already exists.</span>
+<span class="sd">        subdir (str): The subdirectory for saved files; ``&#39;&#39;`` means the root results directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The unique name for the reporter (e.g., &#39;rich-table&#39;). Cannot be empty or blank.&quot;&quot;&quot;</span>
+
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A short description of what the reporter does. Cannot be empty or blank.&quot;&quot;&quot;</span>
+
+    <span class="n">sections</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Section</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The master set of :class:`~.Section` enums this reporter can handle. This constrains</span>
+<span class="sd">    the sections that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">targets</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The master set of :class:`~.Target` enums this reporter can output to. This constrains</span>
+<span class="sd">    the targets that can be used by ``default_targets`` and any :class:`~.ChoiceConf`</span>
+<span class="sd">    in the ``choices`` list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">default_targets</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The default subset of ``targets`` to use if not specified. Must be a subset of the</span>
+<span class="sd">    main ``targets`` set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">formats</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Format</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The master set of :class:`~.Format` enums this reporter can produce. This constrains</span>
+<span class="sd">    the formats that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">choices</span><span class="p">:</span> <span class="n">ChoicesConf</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A :class:`~.ChoicesConf` object defining the reporter&#39;s command-line interface</span>
+<span class="sd">    flags. These flags allow end-users to precisely control report generation by</span>
+<span class="sd">    specifying which sections to include, what output format to use, and where to</span>
+<span class="sd">    send the report (targets). They can also control other reporter-specific options.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">file_suffix</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The file extension to use for filesystem targets (e.g., &#39;txt&#39;), without the leading dot.</span>
+
+<span class="sd">    The suffix must consist only of alphanumeric characters and be 10 characters or less in length.&quot;&quot;&quot;</span>
+
+    <span class="n">file_unique</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If ``True``, generate a unique filename for each output.</span>
+<span class="sd">    Mutually exclusive with ``file_append``; exactly one must be ``True``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">file_append</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If ``True``, append to the output file if it already exists.</span>
+<span class="sd">    Mutually exclusive with ``file_unique``; exactly one must be ``True``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The subdirectory within the results directory to save files to. An empty string</span>
+<span class="sd">    (``&#39;&#39;``) specifies the root of the results directory (i.e., no subdirectory).</span>
+
+<span class="sd">    A subdirectory path should only contain valid directory name elements separated by</span>
+<span class="sd">    forward slashes (``&#39;/&#39;``). Each element must consist only of alphanumeric, underscore, or dash</span>
+<span class="sd">    characters, cannot be longer than 64 characters and cannot start or end with a dash or underscore.</span>
+
+<span class="sd">    Empty elements (i.e., consecutive slashes) are not allowed. Paths cannot start or end with a slash.</span>
+
+<span class="sd">    The total length of the subdirectory path must not exceed 255 characters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate and normalize the configuration after initialization.&quot;&quot;&quot;</span>
+        <span class="c1"># 1. Perform all validations on the raw, incoming attribute values</span>
+        <span class="n">validate_string</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span>
+            <span class="n">type_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_NAME_TYPE</span><span class="p">,</span>
+            <span class="n">value_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_NAME_VALUE</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">validate_string</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span>
+            <span class="n">type_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DESCRIPTION_TYPE</span><span class="p">,</span>
+            <span class="n">value_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DESCRIPTION_VALUE</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">validate_iterable_of_type</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sections</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span>
+            <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_SECTIONS_TYPE</span><span class="p">,</span>
+            <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_SECTIONS_VALUE</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">validate_iterable_of_type</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">,</span> <span class="n">Target</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">,</span>
+            <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_TARGETS_TYPE</span><span class="p">,</span>
+            <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_TARGETS_VALUE</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+        <span class="n">validate_iterable_of_type</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span><span class="p">,</span> <span class="n">Target</span><span class="p">,</span> <span class="s1">&#39;default_targets&#39;</span><span class="p">,</span>
+            <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_TARGETS_TYPE</span><span class="p">,</span>
+            <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_TARGETS_VALUE</span>
+        <span class="p">)</span>
+        <span class="n">validate_iterable_of_type</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">formats</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="s1">&#39;formats&#39;</span><span class="p">,</span>
+            <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FORMATS_TYPE</span><span class="p">,</span>
+            <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FORMATS_VALUE</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span> <span class="n">ChoicesConf</span><span class="p">,</span> <span class="s1">&#39;choices&#39;</span><span class="p">,</span>
+            <span class="n">error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_CHOICES_TYPE</span>
+        <span class="p">)</span>
+        <span class="n">validate_string</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">,</span> <span class="s1">&#39;file_suffix&#39;</span><span class="p">,</span>
+            <span class="n">type_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_SUFFIX_TYPE</span><span class="p">,</span>
+            <span class="n">value_error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_SUFFIX_VALUE</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alphanumeric_only</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_suffix</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;file_suffix must be 10 characters or less in length.&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_SUFFIX_VALUE_TOO_LONG</span>
+            <span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_unique</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s1">&#39;file_unique&#39;</span><span class="p">,</span>
+            <span class="n">error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_UNIQUE_TYPE</span>
+        <span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_append</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="s1">&#39;file_append&#39;</span><span class="p">,</span>
+            <span class="n">error_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_APPEND_TYPE</span>
+        <span class="p">)</span>
+        <span class="n">subdir</span> <span class="o">=</span> <span class="n">validate_dirpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subdir</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Check for (False, False) case first for clarity</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_append</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_unique</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;One of file_append or file_unique must be True.&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_APPEND_FILE_UNIQUE_ONE_MUST_BE_TRUE</span>
+            <span class="p">)</span>
+        <span class="c1"># If the first check passes, this check now correctly isolates the (True, True) case</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_append</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_unique</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;file_append and file_unique cannot both be True.&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_FILE_APPEND_FILE_UNIQUE_COMBINATION</span>
+            <span class="p">)</span>
+
+        <span class="c1"># After validation, convert iterables to frozenset for immutability</span>
+        <span class="c1"># and replace subdir with the validated version</span>
+        <span class="c1"># This uses object.__setattr__ to bypass the frozen=True restriction.</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;subdir&#39;</span><span class="p">,</span> <span class="n">subdir</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sections</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;default_targets&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;formats&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formats</span><span class="p">))</span>
+
+        <span class="c1"># 3. Perform final cross-field validations on the normalized values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;default_targets must be a subset of targets&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_TARGETS_VALUE</span>
+            <span class="p">)</span></div>
+
+</pre></div>
         </article>
       </div>
       <footer>
@@ -473,6 +475,7 @@
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../../_static/shibuya.js"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

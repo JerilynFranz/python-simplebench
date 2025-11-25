@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.timeout.enums - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,33 +240,33 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.timeout.enums</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Enums for the simplebench.timeout module.&quot;&quot;&quot;</span>
-</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-</span><span data-line="3">
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">..enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">enum_docstrings</span>
-</span><span data-line="5">
-</span><span data-line="6">
+<span></span><span class="sd">&quot;&quot;&quot;Enums for the simplebench.timeout module.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">enum_docstrings</span>
+
+
 <div class="viewcode-block" id="TimeoutState">
 <a class="viewcode-back" href="../../../source/simplebench.timeout.enums.html#simplebench.timeout.TimeoutState">[docs]</a>
-</span><span data-line="7"><span class="nd">@enum_docstrings</span>
-</span><span data-line="8"><span class="k">class</span><span class="w"> </span><span class="nc">TimeoutState</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-</span><span data-line="9"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Enums for the simplebench.timeout module.&quot;&quot;&quot;</span>
-</span><span data-line="10">    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;PENDING&quot;</span>
-</span><span data-line="11"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation is pending and has not started yet.&quot;&quot;&quot;</span>
-</span><span data-line="12">    <span class="n">FINISHED</span> <span class="o">=</span> <span class="s2">&quot;FINISHED&quot;</span>
-</span><span data-line="13"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation completed successfully within the time limit.&quot;&quot;&quot;</span>
-</span><span data-line="14">    <span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
-</span><span data-line="15"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation is currently in progress.&quot;&quot;&quot;</span>
-</span><span data-line="16">    <span class="n">TIMED_OUT</span> <span class="o">=</span> <span class="s2">&quot;TIMED_OUT&quot;</span>
-</span><span data-line="17"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation exceeded the allowed time limit.&quot;&quot;&quot;</span>
-</span><span data-line="18">    <span class="n">INTERRUPTED</span> <span class="o">=</span> <span class="s2">&quot;INTERRUPTED&quot;</span>
-</span><span data-line="19"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation was interrupted before completion.&quot;&quot;&quot;</span>
-</span><span data-line="20">    <span class="n">CANCELED</span> <span class="o">=</span> <span class="s2">&quot;CANCELED&quot;</span>
-</span><span data-line="21"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation was canceled before completion.&quot;&quot;&quot;</span>
-</span><span data-line="22">    <span class="n">FAILED</span> <span class="o">=</span> <span class="s2">&quot;FAILED&quot;</span>
-</span><span data-line="23"><span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation failed due to an exception other than timeout.&quot;&quot;&quot;</span></div>
+<span class="nd">@enum_docstrings</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimeoutState</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enums for the simplebench.timeout module.&quot;&quot;&quot;</span>
+    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;PENDING&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation is pending and has not started yet.&quot;&quot;&quot;</span>
+    <span class="n">FINISHED</span> <span class="o">=</span> <span class="s2">&quot;FINISHED&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation completed successfully within the time limit.&quot;&quot;&quot;</span>
+    <span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation is currently in progress.&quot;&quot;&quot;</span>
+    <span class="n">TIMED_OUT</span> <span class="o">=</span> <span class="s2">&quot;TIMED_OUT&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation exceeded the allowed time limit.&quot;&quot;&quot;</span>
+    <span class="n">INTERRUPTED</span> <span class="o">=</span> <span class="s2">&quot;INTERRUPTED&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation was interrupted before completion.&quot;&quot;&quot;</span>
+    <span class="n">CANCELED</span> <span class="o">=</span> <span class="s2">&quot;CANCELED&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation was canceled before completion.&quot;&quot;&quot;</span>
+    <span class="n">FAILED</span> <span class="o">=</span> <span class="s2">&quot;FAILED&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The operation failed due to an exception other than timeout.&quot;&quot;&quot;</span></div>
 
-</span></pre></div>
+</pre></div>
         </article>
       </div>
       <footer>
@@ -300,6 +302,7 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../_static/shibuya.js"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>

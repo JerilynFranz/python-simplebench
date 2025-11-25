@@ -6,11 +6,11 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.graph.matplotlib.theme.base - simplebench 0.3.0-alpha.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=ec2a2148" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=d998a142" />
-    <link media="print" rel="stylesheet" type="text/css" href="../../../../../../_static/print.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=dd4fa1d2" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=36100fe8" />
     
     
 
@@ -205,6 +205,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div>
@@ -238,106 +240,106 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.reporters.graph.matplotlib.theme.base</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;MatPlotLib Theme implementation.</span>
-</span><span data-line="2">
-</span><span data-line="3"><span class="sd">Provides a base class for MatPlotLib themes used in SimpleBench graphs.</span>
-</span><span data-line="4"><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-</span><span data-line="6">
-</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
-</span><span data-line="8">
-</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">RcParams</span>
-</span><span data-line="10">
-</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchNotImplementedError</span>
-</span><span data-line="12">
-</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ThemeErrorTag</span>
-</span><span data-line="14">
-</span><span data-line="15">
+<span></span><span class="sd">&quot;&quot;&quot;MatPlotLib Theme implementation.</span>
+
+<span class="sd">Provides a base class for MatPlotLib themes used in SimpleBench graphs.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">RcParams</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchNotImplementedError</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ThemeErrorTag</span>
+
+
 <div class="viewcode-block" id="Theme">
 <a class="viewcode-back" href="../../../../../../source/simplebench.reporters.graph.matplotlib.theme.base.html#simplebench.Theme">[docs]</a>
-</span><span data-line="16"><span class="k">class</span><span class="w"> </span><span class="nc">Theme</span><span class="p">(</span><span class="n">RcParams</span><span class="p">):</span>
-</span><span data-line="17"><span class="w">    </span><span class="sd">&quot;&quot;&quot;An immutable MatPlotLib base theme class for the graphs.</span>
-</span><span data-line="18">
-</span><span data-line="19"><span class="sd">    This is a subclass of :class:`matplotlib.RcParams` that represents a theme for Matplotlib graphs.</span>
-</span><span data-line="20"><span class="sd">    It can be used to define custom styles for Matplotlib graphs generated by SimpleBench.</span>
-</span><span data-line="21">
-</span><span data-line="22"><span class="sd">    See `Customizing Matplotlib with style sheets and rcParams</span>
-</span><span data-line="23"><span class="sd">    &lt;https://matplotlib.org/stable/tutorials/introductory/customizing.html&gt;`_</span>
-</span><span data-line="24"><span class="sd">    for more information on customizing Matplotlib themes.</span>
-</span><span data-line="25"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="26">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rcparams</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="27"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a :class:`~.Theme` instance.</span>
-</span><span data-line="28">
-</span><span data-line="29"><span class="sd">        :param rcparams: The rcParams to use for the theme.</span>
-</span><span data-line="30"><span class="sd">                         If ``None``, the default Matplotlib rcParams will be used.</span>
-</span><span data-line="31"><span class="sd">        :type rcparams: dict[str, Any] | None</span>
-</span><span data-line="32"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="33">        <span class="bp">self</span><span class="o">.</span><span class="n">_immutable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="34">        <span class="k">if</span> <span class="n">rcparams</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="35">            <span class="n">rcparams</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span data-line="36">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rcparams</span><span class="p">)</span>
-</span><span data-line="37">        <span class="bp">self</span><span class="o">.</span><span class="n">_immutable</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="38">
-</span><span data-line="39">    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="40"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Set an item in the :class:`~.Theme`.</span>
-</span><span data-line="41">
-</span><span data-line="42"><span class="sd">        This thin wrapper prevents modification of the :class:`~.Theme` after initialization.</span>
-</span><span data-line="43">
-</span><span data-line="44"><span class="sd">        It is required to maintain the immutability of the :class:`~.Theme` instance because the</span>
-</span><span data-line="45"><span class="sd">        underlying :class:`~matplotlib.RcParams` class allows item modification</span>
-</span><span data-line="46"><span class="sd">        (and requires it for initialization).</span>
-</span><span data-line="47">
-</span><span data-line="48"><span class="sd">        :param key: The key to set.</span>
-</span><span data-line="49"><span class="sd">        :type key: str</span>
-</span><span data-line="50"><span class="sd">        :param value: The value to set.</span>
-</span><span data-line="51"><span class="sd">        :type value: Any</span>
-</span><span data-line="52"><span class="sd">        :raises SimpleBenchNotImplementedError: If attempting to modify the :class:`~.Theme`</span>
-</span><span data-line="53"><span class="sd">                                                 after initialization.</span>
-</span><span data-line="54"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="55">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_immutable</span><span class="p">:</span>
-</span><span data-line="56">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot modify items in a Theme.&quot;</span><span class="p">,</span>
-</span><span data-line="57">                                                 <span class="n">tag</span><span class="o">=</span><span class="n">_ThemeErrorTag</span><span class="o">.</span><span class="n">THEME_IMMUTABLE</span><span class="p">)</span>
-</span><span data-line="58">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span data-line="59">
-</span><span data-line="60">    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="61"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete an item from the :class:`~.Theme`.</span>
-</span><span data-line="62">
-</span><span data-line="63"><span class="sd">        This thin wrapper prevents deletion of items from the :class:`~.Theme` after initialization.</span>
-</span><span data-line="64">
-</span><span data-line="65"><span class="sd">        It is required to maintain the immutability of the :class:`~.Theme` instance because the</span>
-</span><span data-line="66"><span class="sd">        underlying :class:`~matplotlib.RcParams` class allows item deletion.</span>
-</span><span data-line="67">
-</span><span data-line="68"><span class="sd">        :param key: The key to delete.</span>
-</span><span data-line="69"><span class="sd">        :type key: str</span>
-</span><span data-line="70"><span class="sd">        :raises SimpleBenchNotImplementedError: If attempting to delete an item from the</span>
-</span><span data-line="71"><span class="sd">                                                 :class:`~.Theme` after initialization.</span>
-</span><span data-line="72"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="73">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_immutable</span><span class="p">:</span>
-</span><span data-line="74">            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot delete items from a Theme.&quot;</span><span class="p">,</span>
-</span><span data-line="75">                                                 <span class="n">tag</span><span class="o">=</span><span class="n">_ThemeErrorTag</span><span class="o">.</span><span class="n">THEME_IMMUTABLE</span><span class="p">)</span>
-</span><span data-line="76">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-</span><span data-line="77">
+<span class="k">class</span><span class="w"> </span><span class="nc">Theme</span><span class="p">(</span><span class="n">RcParams</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An immutable MatPlotLib base theme class for the graphs.</span>
+
+<span class="sd">    This is a subclass of :class:`matplotlib.RcParams` that represents a theme for Matplotlib graphs.</span>
+<span class="sd">    It can be used to define custom styles for Matplotlib graphs generated by SimpleBench.</span>
+
+<span class="sd">    See `Customizing Matplotlib with style sheets and rcParams</span>
+<span class="sd">    &lt;https://matplotlib.org/stable/tutorials/introductory/customizing.html&gt;`_</span>
+<span class="sd">    for more information on customizing Matplotlib themes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rcparams</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a :class:`~.Theme` instance.</span>
+
+<span class="sd">        :param rcparams: The rcParams to use for the theme.</span>
+<span class="sd">                         If ``None``, the default Matplotlib rcParams will be used.</span>
+<span class="sd">        :type rcparams: dict[str, Any] | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_immutable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">rcparams</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rcparams</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rcparams</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_immutable</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set an item in the :class:`~.Theme`.</span>
+
+<span class="sd">        This thin wrapper prevents modification of the :class:`~.Theme` after initialization.</span>
+
+<span class="sd">        It is required to maintain the immutability of the :class:`~.Theme` instance because the</span>
+<span class="sd">        underlying :class:`~matplotlib.RcParams` class allows item modification</span>
+<span class="sd">        (and requires it for initialization).</span>
+
+<span class="sd">        :param key: The key to set.</span>
+<span class="sd">        :type key: str</span>
+<span class="sd">        :param value: The value to set.</span>
+<span class="sd">        :type value: Any</span>
+<span class="sd">        :raises SimpleBenchNotImplementedError: If attempting to modify the :class:`~.Theme`</span>
+<span class="sd">                                                 after initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_immutable</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot modify items in a Theme.&quot;</span><span class="p">,</span>
+                                                 <span class="n">tag</span><span class="o">=</span><span class="n">_ThemeErrorTag</span><span class="o">.</span><span class="n">THEME_IMMUTABLE</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete an item from the :class:`~.Theme`.</span>
+
+<span class="sd">        This thin wrapper prevents deletion of items from the :class:`~.Theme` after initialization.</span>
+
+<span class="sd">        It is required to maintain the immutability of the :class:`~.Theme` instance because the</span>
+<span class="sd">        underlying :class:`~matplotlib.RcParams` class allows item deletion.</span>
+
+<span class="sd">        :param key: The key to delete.</span>
+<span class="sd">        :type key: str</span>
+<span class="sd">        :raises SimpleBenchNotImplementedError: If attempting to delete an item from the</span>
+<span class="sd">                                                 :class:`~.Theme` after initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_immutable</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot delete items from a Theme.&quot;</span><span class="p">,</span>
+                                                 <span class="n">tag</span><span class="o">=</span><span class="n">_ThemeErrorTag</span><span class="o">.</span><span class="n">THEME_IMMUTABLE</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Theme.replace">
 <a class="viewcode-back" href="../../../../../../source/simplebench.reporters.graph.matplotlib.theme.base.html#simplebench.Theme.replace">[docs]</a>
-</span><span data-line="78">    <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rcparams</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Theme</span><span class="p">:</span>
-</span><span data-line="79"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace some parameters in the theme and return a new :class:`~.Theme` instance</span>
-</span><span data-line="80"><span class="sd">        without modifying the current instance.</span>
-</span><span data-line="81">
-</span><span data-line="82"><span class="sd">        .. code-block:: python</span>
-</span><span data-line="83">
-</span><span data-line="84"><span class="sd">            new_theme = old_theme.replace({&#39;axes.grid&#39;: False, &#39;figure.dpi&#39;: 200})</span>
-</span><span data-line="85">
-</span><span data-line="86"><span class="sd">        :param rcparams: The new rcParams to use for the theme.</span>
-</span><span data-line="87"><span class="sd">        :type rcparams: dict[str, Any]</span>
-</span><span data-line="88"><span class="sd">        :return: A new :class:`~.Theme` instance with the updated rcParams.</span>
-</span><span data-line="89"><span class="sd">        :rtype: :class:`~.Theme`</span>
-</span><span data-line="90"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="91">        <span class="n">new_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</span><span data-line="92">        <span class="n">new_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rcparams</span><span class="p">)</span>
-</span><span data-line="93">        <span class="k">return</span> <span class="n">Theme</span><span class="p">(</span><span class="n">new_params</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rcparams</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Theme</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace some parameters in the theme and return a new :class:`~.Theme` instance</span>
+<span class="sd">        without modifying the current instance.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            new_theme = old_theme.replace({&#39;axes.grid&#39;: False, &#39;figure.dpi&#39;: 200})</span>
+
+<span class="sd">        :param rcparams: The new rcParams to use for the theme.</span>
+<span class="sd">        :type rcparams: dict[str, Any]</span>
+<span class="sd">        :return: A new :class:`~.Theme` instance with the updated rcParams.</span>
+<span class="sd">        :rtype: :class:`~.Theme`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rcparams</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Theme</span><span class="p">(</span><span class="n">new_params</span><span class="p">)</span></div>
 </div>
 
-</span></pre></div>
+</pre></div>
         </article>
       </div>
       <footer>
@@ -373,6 +375,7 @@
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
-    <script src="../../../../../../_static/shibuya.js"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=30646c52"></script>
     </body>
 </html>
