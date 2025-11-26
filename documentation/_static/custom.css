@@ -114,3 +114,17 @@ div.content div.article-container article section dl.py.class dd dl.field-list.s
     font-weight: bold;
     margin-top: .25rem
 }
+
+/* 'property' fields in class documentation */
+dl.py.class dd dl.py.property dt.py.sig.sig-object em.property:first-child span.pre {
+    font-weight: bold;
+    color: #a0a000;
+}
+
+/* parameters for non-class functions */
+div.content div.article-container article section dl.py.function dd dl.simple.field-list dt.field-odd {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}

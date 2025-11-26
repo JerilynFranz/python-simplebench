@@ -243,7 +243,7 @@ class SimpleRunner:
             setup: Optional[Callable[..., Any]] = None,
             teardown: Optional[Callable[..., Any]] = None,
             kwargs: Optional[dict[str, Any]] = None) -> Results:
-        """Run a generic benchmark using the specified action and test 
+        """Run a generic benchmark using the specified action and test case.
 
         :param n: The **O()** 'n' weight of the benchmark. This is used to calculate
             a weight for the purpose of **O()** analysis.

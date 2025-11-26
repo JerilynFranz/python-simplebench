@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e5c6771f" />
     
     
 
@@ -856,7 +856,7 @@ parameters are required, they must be specified in the <cite>action</cite> funct
 <span class="sig-name descname"><span class="pre">section_mean</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.section.Section"><span class="pre">Section</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case.html#Case.section_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Case.section_mean" title="Link to this definition">🔗</a></dt>
@@ -1381,7 +1381,7 @@ Defaults to {}.</p></li>
 <span class="sig-name descname"><span class="pre">results_section</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.section.Section"><span class="pre">Section</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.stats.stats.html#simplebench.stats.stats.Stats" title="simplebench.stats.stats.Stats"><span class="pre">Stats</span></a></span></span><a class="reference internal" href="../_modules/simplebench/results.html#Results.results_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.results_section" title="Link to this definition">🔗</a></dt>
@@ -1559,7 +1559,7 @@ be between 50 and 400.</p></li>
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#simplebench.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">default_runner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><span class="pre">ArgumentParser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
@@ -1737,6 +1737,19 @@ the arguments will be taken from <a class="reference external" href="https://doc
 <p>This filters the report choices based on the command line arguments
 that were set and parsed when the session was created and returns a list of
 report keys for the reports that should be generated.</p>
+<p>The report keys correspond to the command line flags/args defined
+in the Choices of the registered reporters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method requires that the session’s <a class="reference internal" href="#simplebench.Session.args" title="simplebench.Session.args"><code class="xref py py-attr docutils literal notranslate"><span class="pre">args</span></code></a> property
+has been set by calling <a class="reference internal" href="#simplebench.Session.parse_args" title="simplebench.Session.parse_args"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse_args()</span></code></a> prior to invoking this method.</p>
+<p>Otherwise it will return an empty list.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of report keys for all reports to be generated in this session.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1773,7 +1786,7 @@ report keys for the reports that should be generated.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.Session.verbosity">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.Verbosity"><span class="pre">Verbosity</span></a></em><a class="headerlink" href="#simplebench.Session.verbosity" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></em><a class="headerlink" href="#simplebench.Session.verbosity" title="Link to this definition">🔗</a></dt>
 <dd><p>The Verbosity level for this session.</p>
 </dd></dl>
 
@@ -2009,7 +2022,7 @@ without modifying the current instance.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.Verbosity">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.</span></span><span class="sig-name descname"><span class="pre">Verbosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums.html#Verbosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Verbosity" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.</span></span><span class="sig-name descname"><span class="pre">Verbosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/verbosity.html#Verbosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Verbosity" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Verbosity level enums for console output.</p>
 <dl class="simple">
@@ -2200,31 +2213,47 @@ to set ‘n’ dynamically for each variation.</p></li>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">extra_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">no_exit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/simplebench/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.main" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.ExitCode" title="simplebench.enums.ExitCode"><span class="pre">ExitCode</span></a></span></span><a class="reference internal" href="../_modules/simplebench/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.main" title="Link to this definition">🔗</a></dt>
 <dd><p>Main entry point for running benchmarks via a command-line interface.</p>
 <p>This function is responsible for setting up the command-line interface,
 parsing arguments, and executing the benchmark cases.</p>
-<p>&#64;benchmark() decorated cases are automatically included and added to the
-list of benchmark cases passed to this function.</p>
-<dl class="simple">
-<dt>Usage:</dt><dd><p>This function serves as the main entry point for running benchmarks.</p>
-</dd>
-</dl>
+<p><a class="reference internal" href="simplebench.decorators.html#simplebench.decorators.benchmark" title="simplebench.decorators.benchmark"><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code></a> decorated benchmark cases
+are automatically included and added to the list of benchmark cases passed to this function.</p>
+<p>Call this function from a script or the command line to execute benchmarks.</p>
+<p>If passed a list of <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instances via the
+<code class="docutils literal notranslate"><span class="pre">benchmark_cases</span></code> argument, those cases will be benchmarked in addition to any
+cases registered via the <a class="reference internal" href="simplebench.decorators.html#simplebench.decorators.benchmark" title="simplebench.decorators.benchmark"><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code></a> decorator.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">argv</span></code> is provided, it will be used as the list of command-line arguments
+instead of <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">extra_args</span></code> is provided, those arguments will be appended to the command-line
+arguments before parsing.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">no_exit</span></code> argument is set to True, the function will return the exit code
+instead of calling sys.exit(). This is useful for testing or embedding the CLI functionality
+in other applications.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>benchmark_cases</strong> (<em>Optional</em><em>[</em><em>Sequence</em><em>[</em><a class="reference internal" href="#simplebench.Case" title="simplebench.Case"><em>Case</em></a><em>]</em><em>]</em>) – A Sequence of SimpleBench.Case instances to be benchmarked.</p></li>
-<li><p><strong>argv</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em><em>]</em>) – A list of command-line arguments to parse. If None, defaults to sys.argv.</p></li>
-<li><p><strong>extra_args</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em><em>]</em>) – Additional command-line arguments to include.</p></li>
+<li><p><strong>benchmark_cases</strong> – A Sequence of SimpleBench.Case instances to be benchmarked.</p></li>
+<li><p><strong>argv</strong> – A list of command-line arguments to parse. If None, defaults to sys.argv.</p></li>
+<li><p><strong>extra_args</strong> – Additional command-line arguments to include.</p></li>
+<li><p><strong>no_exit</strong> – If True, the function will not call sys.exit() and will return the exit code instead.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>An integer exit code.</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ExitCode.SUCCESS</span></code> (0) on success</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExitCode.RUNTIME_ERROR</span></code> (1) runtime errors during execution.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExitCode.CLI_ARGUMENTS_ERROR</span></code> (2) for errors during CLI argument processing</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ExitCode.KEYBOARD_INTERRUPT</span></code> (3) if interrupted by keyboard interrupt</p></li>
+</ul>
+</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the <code class="docutils literal notranslate"><span class="pre">extra_args</span></code> argument is not <code class="docutils literal notranslate"><span class="pre">None</span></code> or a list of strings or
+if <code class="docutils literal notranslate"><span class="pre">argv</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code> or a list of strings.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2666,6 +2695,7 @@ list of benchmark cases passed to this function.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.enums.html">simplebench.enums module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.html#provides">Provides</a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Color"><code class="docutils literal notranslate"><span class="pre">Color</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Color.BLACK"><code class="docutils literal notranslate"><span class="pre">Color.BLACK</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Color.BLUE"><code class="docutils literal notranslate"><span class="pre">Color.BLUE</span></code></a></li>
@@ -2675,6 +2705,13 @@ list of benchmark cases passed to this function.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Color.RED"><code class="docutils literal notranslate"><span class="pre">Color.RED</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Color.WHITE"><code class="docutils literal notranslate"><span class="pre">Color.WHITE</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Color.YELLOW"><code class="docutils literal notranslate"><span class="pre">Color.YELLOW</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.ExitCode"><code class="docutils literal notranslate"><span class="pre">ExitCode</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.ExitCode.CLI_ARGUMENTS_ERROR"><code class="docutils literal notranslate"><span class="pre">ExitCode.CLI_ARGUMENTS_ERROR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.ExitCode.KEYBOARD_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">ExitCode.KEYBOARD_INTERRUPT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.ExitCode.RUNTIME_ERROR"><code class="docutils literal notranslate"><span class="pre">ExitCode.RUNTIME_ERROR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.ExitCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">ExitCode.SUCCESS</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.FlagType"><code class="docutils literal notranslate"><span class="pre">FlagType</span></code></a><ul>
@@ -2688,7 +2725,6 @@ list of benchmark cases passed to this function.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format.CUSTOM"><code class="docutils literal notranslate"><span class="pre">Format.CUSTOM</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format.GRAPH"><code class="docutils literal notranslate"><span class="pre">Format.GRAPH</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format.JSON"><code class="docutils literal notranslate"><span class="pre">Format.JSON</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format.MARKDOWN"><code class="docutils literal notranslate"><span class="pre">Format.MARKDOWN</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format.PLAIN_TEXT"><code class="docutils literal notranslate"><span class="pre">Format.PLAIN_TEXT</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format.RICH_TEXT"><code class="docutils literal notranslate"><span class="pre">Format.RICH_TEXT</span></code></a></li>
 </ul>

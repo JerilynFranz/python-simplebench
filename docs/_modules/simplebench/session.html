@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=1a31184c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e5c6771f" />
     
     
 
@@ -444,6 +444,18 @@
 <span class="sd">        This filters the report choices based on the command line arguments</span>
 <span class="sd">        that were set and parsed when the session was created and returns a list of</span>
 <span class="sd">        report keys for the reports that should be generated.</span>
+
+<span class="sd">        The report keys correspond to the command line flags/args defined</span>
+<span class="sd">        in the Choices of the registered reporters.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            This method requires that the session&#39;s :attr:`args` property</span>
+<span class="sd">            has been set by calling :meth:`parse_args` prior to invoking this method.</span>
+
+<span class="sd">            Otherwise it will return an empty list.</span>
+
+<span class="sd">        :return: A list of report keys for all reports to be generated in this session.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">report_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choices</span><span class="o">.</span><span class="n">all_choice_args</span><span class="p">():</span>

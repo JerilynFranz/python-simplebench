@@ -94,6 +94,9 @@ class _ReporterArgparseMixin:
         flags that accept multiple values (lists). This method allows adding
         flags of the specified type to the ArgumentParser.
 
+        This gives flexibility for subclasses to implement custom behavior
+        for adding flags based on the flag type defined in each Choice.
+
         :param parser: The ArgumentParser to add the flags to.
         :type parser: ArgumentParser
         """

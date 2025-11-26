@@ -189,6 +189,18 @@ class Session():
         This filters the report choices based on the command line arguments
         that were set and parsed when the session was created and returns a list of
         report keys for the reports that should be generated.
+
+        The report keys correspond to the command line flags/args defined
+        in the Choices of the registered reporters.
+
+        .. note::
+
+            This method requires that the session's :attr:`args` property
+            has been set by calling :meth:`parse_args` prior to invoking this method.
+
+            Otherwise it will return an empty list.
+
+        :return: A list of report keys for all reports to be generated in this session.
         """
         report_keys: list[str] = []
         for key in self._choices.all_choice_args():

@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e5c6771f" />
     
     
 
@@ -256,7 +256,7 @@
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">default_runner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><span class="pre">ArgumentParser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
@@ -434,6 +434,19 @@ the arguments will be taken from <a class="reference external" href="https://doc
 <p>This filters the report choices based on the command line arguments
 that were set and parsed when the session was created and returns a list of
 report keys for the reports that should be generated.</p>
+<p>The report keys correspond to the command line flags/args defined
+in the Choices of the registered reporters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method requires that the session’s <a class="reference internal" href="#simplebench.session.Session.args" title="simplebench.session.Session.args"><code class="xref py py-attr docutils literal notranslate"><span class="pre">args</span></code></a> property
+has been set by calling <a class="reference internal" href="#simplebench.session.Session.parse_args" title="simplebench.session.Session.parse_args"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse_args()</span></code></a> prior to invoking this method.</p>
+<p>Otherwise it will return an empty list.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of report keys for all reports to be generated in this session.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -470,7 +483,7 @@ report keys for the reports that should be generated.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.session.Session.verbosity">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.Verbosity"><span class="pre">Verbosity</span></a></em><a class="headerlink" href="#simplebench.session.Session.verbosity" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></em><a class="headerlink" href="#simplebench.session.Session.verbosity" title="Link to this definition">🔗</a></dt>
 <dd><p>The Verbosity level for this session.</p>
 </dd></dl>
 

@@ -12,15 +12,12 @@ from rich.console import Console
 from rich.progress import Progress
 
 from simplebench import Case, Results, Session, Verbosity
-from simplebench.exceptions import SimpleBenchTypeError, _SessionErrorTag
+from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.csv import CSVConfig
-from simplebench.reporters.graph.scatterplot import ScatterPlotConfig
-from simplebench.reporters.json import JSONConfig
 from simplebench.reporters.reporter_manager import ReporterManager
-from simplebench.reporters.rich_table import RichTableConfig
 from simplebench.runners import SimpleRunner
 from simplebench.tasks import RichProgressTasks
-from simplebench.utils import collect_arg_list
+from simplebench.utils import collect_arg_list, flag_to_arg
 
 from .factories import session_kwargs_factory
 from .kwargs import SessionKWArgs
@@ -412,36 +409,67 @@ def test_reading_properties(testspec: TestSpec) -> None:
     testspec.run()
 
 
-
 def session_add_reporter_flags_testspecs() -> list[TestAction]:
     """Generate testspecs for the add_reporter_flags method of the Session class."""
     session = Session()
     reporter_manager = session.reporter_manager
     reporters = reporter_manager.all_reporters()
+    session.add_reporter_flags()
+    updated_args = vars(session.args_parser.parse_args([]))
+    test_counter = 1
+    testspecs: list[TestAction] = []
+    for reporter in reporters.values():
+        for choice in reporter.choices.values():
+            for flag in choice.flags:
+                testspecs.append(idspec(
+                    f"ADD_FLAG_{test_counter:03}",
+                    TestAction(
+                        name=f"Flag '{flag}' from choice '{choice.name}' was added to argparser",
+                        action=updated_args.__contains__,
+                        args=[flag_to_arg(flag)],
+                        assertion=Assert.EQUAL,
+                        expected=True,
+                    )
+                ))
+                test_counter += 1
+    testspecs.append(idspec(
+        f"ADD_FLAG_{test_counter:03}",
+        TestAction(
+            name="Sanity check that at least one flag value was set",
+            action=len,
+            args=[testspecs],
+            assertion=Assert.GREATER_THAN_OR_EQUAL,
+            expected=1)
+    ))
+    test_counter += 1
 
-    csv_reporter_name = CSVConfig.name
-    json_reporter_name = JSONConfig.name
-    rich_table_reporter_name = RichTableConfig.name
-    scatterplot_reporter_name = ScatterPlotConfig.name
+    # Try to add a reporter flag that duplicates an existing flag we know exists
+    # We get a flag from CSVConfig so we can pre-add it to the argparser to cause a duplicate
+    # when we try to add it again via add_reporter_flags
+    # This should raise a SimpleBenchArgumentError and tests that the error handling works
+    csv_config = CSVConfig()
+    choices = csv_config.choices
+    choice_conf = next(iter(choices.values()))  # first choice
+    flags = choice_conf.flags
+    arg_parser = ArgumentParser()
+    for flag in flags:
+        arg_parser.add_argument(flag, action='store_true')  # pre-add to create duplicate
+    session = Session(args_parser=arg_parser)
+    testspecs.append(idspec(
+        f"ADD_FLAG_{test_counter:03}",
+        TestAction(
+            name="Adding duplicate flag to argparser raises SimpleBenchArgumentError",
+            action=session.add_reporter_flags,
+            exception=SimpleBenchArgumentError,
+            exception_tag=_SessionErrorTag.ARGUMENT_ERROR_ADDING_FLAGS
+        )
+    ))
+    test_counter += 1
 
-
-    testspecs: list[TestAction] = [
-        
-    ]
     return testspecs
 
 
-def test_session_add_reporter_flags() -> None:
+@pytest.mark.parametrize("testspec", session_add_reporter_flags_testspecs())
+def test_session_add_reporter_flags(testspec: TestAction) -> None:
     """Tests the add_reporter_flags method of the Session class."""
-    session = Session()
-    # Initially, args_parser should have no reporter flags
-    initial_args = vars(session.args_parser.parse_args([]))
-    assert all(not key.startswith('json') and not key.startswith('csv')
-               for key in initial_args.keys())
-
-    # Add reporter flags
-    session.add_reporter_flags()
-    updated_args = vars(session.args_parser.parse_args([]))
-    assert 'json' in updated_args
-    assert 'csv' in updated_args
-
+    testspec.run()

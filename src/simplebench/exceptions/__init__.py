@@ -391,3 +391,25 @@ class SimpleBenchTimeoutError(TaggedException[TimeoutError]):
         message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
         self.func_name: str | None = func_name
+
+
+class SimpleBenchUsageError(TaggedException[RuntimeError]):
+    """Exceptions raised for CLI usage errors.
+
+    Usage:
+        raise SimpleBenchUsageError("An error occurred",
+                                    tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchTimeoutError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            func_name (str | None): The name of the function that timed out.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
