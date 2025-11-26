@@ -21,7 +21,13 @@ from rich.console import Console
 from .decorators import get_registered_cases
 from .doc_utils import format_docstring
 from .enums import ExitCode, Verbosity
-from .exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, SimpleBenchUsageError, _CLIErrorTag
+from .exceptions import (
+    SimpleBenchArgumentError,
+    SimpleBenchTimeoutError,
+    SimpleBenchTypeError,
+    SimpleBenchUsageError,
+    _CLIErrorTag,
+)
 from .session import Session
 
 if TYPE_CHECKING:
@@ -102,7 +108,8 @@ def _configure_session_from_args(
 @format_docstring(KEYBOARD_INTERRUPT=ExitCode.KEYBOARD_INTERRUPT.value,
                   RUNTIME_ERROR=ExitCode.RUNTIME_ERROR.value,
                   CLI_ARGUMENTS_ERROR=ExitCode.CLI_ARGUMENTS_ERROR.value,
-                  SUCCESS=ExitCode.SUCCESS.value)
+                  SUCCESS=ExitCode.SUCCESS.value,
+                  BENCHMARK_TIMED_OUT=ExitCode.BENCHMARK_TIMED_OUT.value)
 def main(benchmark_cases: Optional[Sequence[Case]] = None,
          *,
          argv: Optional[list[str]] = None,
@@ -141,7 +148,7 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None,
         - ``ExitCode.RUNTIME_ERROR`` ({RUNTIME_ERROR}) runtime errors during execution.
         - ``ExitCode.CLI_ARGUMENTS_ERROR`` ({CLI_ARGUMENTS_ERROR}) for errors during CLI argument processing
         - ``ExitCode.KEYBOARD_INTERRUPT`` ({KEYBOARD_INTERRUPT}) if interrupted by keyboard interrupt
-
+        - ``ExitCode.BENCHMARK_TIMED_OUT`` ({BENCHMARK_TIMED_OUT}) if a timeout occurs during benchmarking.
     :raises SimpleBenchTypeError: If the ``extra_args`` argument is not ``None`` or a list of strings or
         if ``argv`` is not ``None`` or a list of strings.
     """
@@ -208,6 +215,11 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None,
     except SimpleBenchArgumentError as e:
         print(f'CLI argument processing error: {e}')
         exit_code = ExitCode.CLI_ARGUMENTS_ERROR
+    except SimpleBenchTimeoutError as e:
+        if session and session.tasks:
+            session.tasks.stop()
+        print(f'Timeout occurred during a benchmark: {e}')
+        exit_code = ExitCode.BENCHMARK_TIMED_OUT
     except Exception as e:  # pylint: disable=broad-exception-caught
         if session and session.tasks:
             session.tasks.stop()

@@ -263,7 +263,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_registered_cases</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.doc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_docstring</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExitCode</span><span class="p">,</span> <span class="n">Verbosity</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchArgumentError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchUsageError</span><span class="p">,</span> <span class="n">_CLIErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleBenchArgumentError</span><span class="p">,</span>
+    <span class="n">SimpleBenchTimeoutError</span><span class="p">,</span>
+    <span class="n">SimpleBenchTypeError</span><span class="p">,</span>
+    <span class="n">SimpleBenchUsageError</span><span class="p">,</span>
+    <span class="n">_CLIErrorTag</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -346,7 +352,8 @@
 <span class="nd">@format_docstring</span><span class="p">(</span><span class="n">KEYBOARD_INTERRUPT</span><span class="o">=</span><span class="n">ExitCode</span><span class="o">.</span><span class="n">KEYBOARD_INTERRUPT</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                   <span class="n">RUNTIME_ERROR</span><span class="o">=</span><span class="n">ExitCode</span><span class="o">.</span><span class="n">RUNTIME_ERROR</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                   <span class="n">CLI_ARGUMENTS_ERROR</span><span class="o">=</span><span class="n">ExitCode</span><span class="o">.</span><span class="n">CLI_ARGUMENTS_ERROR</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                  <span class="n">SUCCESS</span><span class="o">=</span><span class="n">ExitCode</span><span class="o">.</span><span class="n">SUCCESS</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                  <span class="n">SUCCESS</span><span class="o">=</span><span class="n">ExitCode</span><span class="o">.</span><span class="n">SUCCESS</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                  <span class="n">BENCHMARK_TIMED_OUT</span><span class="o">=</span><span class="n">ExitCode</span><span class="o">.</span><span class="n">BENCHMARK_TIMED_OUT</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">benchmark_cases</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Case</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
          <span class="o">*</span><span class="p">,</span>
          <span class="n">argv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -385,7 +392,7 @@
 <span class="sd">        - ``ExitCode.RUNTIME_ERROR`` ({RUNTIME_ERROR}) runtime errors during execution.</span>
 <span class="sd">        - ``ExitCode.CLI_ARGUMENTS_ERROR`` ({CLI_ARGUMENTS_ERROR}) for errors during CLI argument processing</span>
 <span class="sd">        - ``ExitCode.KEYBOARD_INTERRUPT`` ({KEYBOARD_INTERRUPT}) if interrupted by keyboard interrupt</span>
-
+<span class="sd">        - ``ExitCode.BENCHMARK_TIMED_OUT`` ({BENCHMARK_TIMED_OUT}) if a timeout occurs during benchmarking.</span>
 <span class="sd">    :raises SimpleBenchTypeError: If the ``extra_args`` argument is not ``None`` or a list of strings or</span>
 <span class="sd">        if ``argv`` is not ``None`` or a list of strings.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -452,6 +459,11 @@
     <span class="k">except</span> <span class="n">SimpleBenchArgumentError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CLI argument processing error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">exit_code</span> <span class="o">=</span> <span class="n">ExitCode</span><span class="o">.</span><span class="n">CLI_ARGUMENTS_ERROR</span>
+    <span class="k">except</span> <span class="n">SimpleBenchTimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">session</span> <span class="ow">and</span> <span class="n">session</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Timeout occurred during a benchmark: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">exit_code</span> <span class="o">=</span> <span class="n">ExitCode</span><span class="o">.</span><span class="n">BENCHMARK_TIMED_OUT</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-exception-caught</span>
         <span class="k">if</span> <span class="n">session</span> <span class="ow">and</span> <span class="n">session</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
             <span class="n">session</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>

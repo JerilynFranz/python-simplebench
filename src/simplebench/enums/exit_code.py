@@ -13,6 +13,7 @@ class ExitCode(int, Enum):
       - RUNTIME_ERROR: General runtime error during execution.
       - CLI_ARGUMENTS_ERROR: Error while processing command line arguments.
       - KEYBOARD_INTERRUPT: Keyboard interrupt occurred.
+      - BENCHMARK_TIMED_OUT: Benchmark execution timed out.
 
     """
     SUCCESS = 0
@@ -23,3 +24,5 @@ class ExitCode(int, Enum):
     """Error while processing command line arguments."""
     KEYBOARD_INTERRUPT = 3
     """Keyboard interrupt occurred."""
+    BENCHMARK_TIMED_OUT = 4
+    """Benchmark execution timed out."""
