@@ -91,9 +91,24 @@ dl.py.class dd dl.py.method dd dl.simple.field-list dt.field-odd {
     margin-top: .25rem
 }
 
-
 /* Make field list terms for method 'raises' bold and not all uppercase */
 dl.py.class dd dl.py.method dd dl.simple.field-list dt.field-even {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+/* Make field list terms for class paramaters bold and not all uppercase */
+div.content div.article-container article section dl.py.class dd dl.field-list.simple dt.field-odd {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+/* Make field list terms for class 'raises' bold and not all uppercase */
+div.content div.article-container article section dl.py.class dd dl.field-list.simple dt.field-even {
     text-transform: none;
     color: #00a040;
     font-weight: bold;
