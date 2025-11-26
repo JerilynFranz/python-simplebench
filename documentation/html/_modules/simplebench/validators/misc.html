@@ -1,0 +1,1438 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+        <title>simplebench.validators.misc - simplebench 0.3.0-alpha.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=c309799c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=d998a142" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=06aecd32" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=36100fe8" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #0d1117;
+  --color-code-foreground: #e6edf3;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">simplebench 0.3.0-alpha.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <span class="sidebar-brand-text">simplebench 0.3.0-alpha.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../command_line_options.html">Command-Line Options</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports/rich_table_report.html">Rich Table Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports/csv_report.html">CSV Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports/json_report.html">JSON Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reports/graphs/scatterplot_graph_report.html">Scatterplot Graph Report</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for simplebench.validators.misc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for validating arguments to attribute setters and constructors.</span>
+
+<span class="sd">These functions raise appropriate exceptions with error tags from exceptions.py</span>
+<span class="sd">and return the validated and/or normalized value.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">overload</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErrorTag</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies.lazy_type_proxy</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyTypeProxy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ValidatorsErrorTag</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_bool</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that the passed value is either a boolean (bool) value.</span>
+
+<span class="sd">    If the value passes, type checkers will annotate the returned value</span>
+<span class="sd">    as `bool`.</span>
+
+<span class="sd">    :param value: The value being validated</span>
+<span class="sd">    :param str name: The field name for the value</span>
+<span class="sd">    :param ErrorTag error_tag: The ErrorTag to be used if it fails the validation</span>
+<span class="sd">    :return: The validated boolean value.</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a boolean.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_bool</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_none</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that the passed value is either a bool or None.</span>
+
+<span class="sd">    If the value passes, type checkers will annotate the returned value</span>
+<span class="sd">    as `bool | None`.</span>
+
+<span class="sd">    :param value: The value being validated</span>
+<span class="sd">    :param str name: The field name for the value</span>
+<span class="sd">    :param ErrorTag error_tag: The ErrorTag to be used if it fails the validation</span>
+<span class="sd">    :param bool allow_none: If None should be allowed.</span>
+<span class="sd">    :return: The validated boolean value or None.</span>
+<span class="sd">    :rtype: bool | None</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a boolean or None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="validate_bool">
+<a class="viewcode-back" href="../../../source/simplebench.validators.html#simplebench.validators.validate_bool">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_bool</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a boolean.</span>
+
+<span class="sd">    If allow_none is True, None is also accepted.</span>
+
+<span class="sd">    If the allow_none parameter is not provided, it defaults to False and</span>
+<span class="sd">    only boolean values are accepted. In that case, the return type is guaranteed</span>
+<span class="sd">    to be bool and type checkers will accept it as bool for type narrowing.</span>
+
+<span class="sd">    :param Any value: The value to validate.</span>
+<span class="sd">    :param str name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag error_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param bool allow_none: Whether to allow None as a valid value.</span>
+<span class="sd">    :return: The validated boolean or None if allowed and provided.</span>
+<span class="sd">    :rtype: bool | None</span>
+<span class="sd">    :raises SimpleBenchTypeError:</span>
+<span class="sd">        - If the value is not a boolean and allow_none==False</span>
+<span class="sd">        - If the value is not a boolean or None and allow_none==True</span>
+<span class="sd">        - If name is not a str</span>
+<span class="sd">        - If error_tag is not an ErrorTag</span>
+<span class="sd">        - If allow_none is not a bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid name argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a str.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_BOOL_INVALID_NAME_ARG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error_tag</span><span class="p">,</span> <span class="n">ErrorTag</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid error_tag argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">error_tag</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an ErrorTag.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_BOOL_INVALID_ERROR_TAG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allow_none</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid allow_none argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">allow_none</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_BOOL_INVALID_ALLOW_NONE_ARG_TYPE</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">allow_none</span><span class="p">:</span>  <span class="c1"># bool | None branch for not a bool</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool or None.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">error_tag</span><span class="p">)</span>
+        <span class="c1"># bool-only branch for not a bool</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">error_tag</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span> <span class="o">|</span> <span class="n">LazyTypeProxy</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="n">LazyTypeProxy</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<div class="viewcode-block" id="validate_type">
+<a class="viewcode-back" href="../../../source/simplebench.validators.html#simplebench.validators.validate_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span> <span class="o">|</span> <span class="n">LazyTypeProxy</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">LazyTypeProxy</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is of the expected type.</span>
+
+<span class="sd">    The returned value is guaranteed to be of type expected and acts to type-narrow</span>
+<span class="sd">    the returned value for static type checking if a single type is provided.</span>
+
+<span class="sd">    If multiple types are provided in a tuple for the expected type, the caller can</span>
+<span class="sd">    type-narrow the type of the returned type by declaring the untupled types by</span>
+<span class="sd">    assigning the return value to a variable with an explicit type annotation.</span>
+
+<span class="sd">    The value itself is always returned unchanged if it passes the validation.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            mixed: str | int = validate_type(</span>
+<span class="sd">                value=some_value,</span>
+<span class="sd">                expected=(str, int),</span>
+<span class="sd">                name=&#39;mixed&#39;,</span>
+<span class="sd">                error_tag=ErrorTag.INVALID_EXPECTED_ARG_TYPE)</span>
+
+<span class="sd">    :param Any value: The value to validate.</span>
+<span class="sd">    :param types: The expected type of the value.</span>
+<span class="sd">    :type types: type[T] | tuple[type, ...] | LazyType[T]</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag error_tag: The error tag to use for type errors.</span>
+<span class="sd">    :return: The validated (unmodifed) value.</span>
+<span class="sd">    :rtype: T | Any</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not of the expected type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">LazyTypeProxy</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid expected argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">types</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a type, tuple of types, or LazyType.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">LazyTypeProxy</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid expected argument item type in tuple: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a type or LazyType.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE</span>
+                <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid name argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a str.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_TYPE_INVALID_NAME_ARG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error_tag</span><span class="p">,</span> <span class="n">ErrorTag</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid error_tag argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">error_tag</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an ErrorTag.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE</span><span class="p">)</span>
+
+    <span class="c1"># We use `cast` here to inform the static type checker that we know</span>
+    <span class="c1"># LazyTypeProxy is a valid type for `isinstance` due to its metaclass.</span>
+    <span class="c1"># This suppresses the Pylance warning without affecting runtime behavior.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">types</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid &quot;</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">&quot; type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">types</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">error_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>  <span class="c1"># type: ignore[return-value]</span></div>
+
+
+
+<div class="viewcode-block" id="validate_string">
+<a class="viewcode-back" href="../../../source/simplebench.validators.html#simplebench.validators.validate_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_string</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+        <span class="n">strip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">allow_blank</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">alphanumeric_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate and normalize a string field.</span>
+
+<span class="sd">    Validates that the value is a string. Optionally strips leading/trailing whitespace,</span>
+<span class="sd">    checks for emptiness, blankness (whitespace-only strings), and alphanumeric content.</span>
+
+<span class="sd">    The returned value is guaranteed to be of type str and acts to type-narrow</span>
+<span class="sd">    the returned value.</span>
+
+<span class="sd">    Following the principle of &#39;least astonishment&#39;, the validator does not modify</span>
+<span class="sd">    the input string unless strip=True is set. If strip=True is set, the string is</span>
+<span class="sd">    stripped of leading and trailing whitespace before other checks are applied.</span>
+
+<span class="sd">    Explanation of options:</span>
+<span class="sd">        strip=True means leading/trailing whitespace is removed before other checks.</span>
+<span class="sd">        allow_empty=True means the string cannot be empty (&quot;&quot;).</span>
+<span class="sd">        allow_blank=True means the string can contain only whitespace characters.</span>
+<span class="sd">        alphanumeric_only=True means the string only contain alphanumeric characters (a-z, A-Z, 0-9).</span>
+
+<span class="sd">    Interaction of options:</span>
+
+<span class="sd">    If `strip=True, allow_empty=True, allow_blank=False` is provided, `allow_empty=False`</span>
+<span class="sd">    takes precedence over `allow_blank=True` as the more specific check. Therefore &#39;   &#39; would be</span>
+<span class="sd">    stripped to &#39;&#39; and then accepted as empty.</span>
+
+<span class="sd">    If `strip=True, allow_blank=True, allow_empty=False` is provided, `allow_empty=False`</span>
+<span class="sd">    takes precedence over `allow_blank=True` because after stripping a blank string becomes</span>
+<span class="sd">    an empty string and `allow_empty=False` is the more specific check.</span>
+<span class="sd">    Therefore &#39; &#39; would be stripped to &#39;&#39; and then rejected as empty.</span>
+
+<span class="sd">    If `strip=False, allow_blank=True, alphanumeric_only=True` is provided, `alphanumeric_only=True`</span>
+<span class="sd">    takes precedence over `allow_blank=True` because a blank string with whitespace is not alphanumeric</span>
+<span class="sd">    by definition.</span>
+
+<span class="sd">    `alphanumeric_only=True` behaves differently than `str().isalnum()` in that it allows empty strings if</span>
+<span class="sd">    `allow_empty=True` is also provided.</span>
+
+<span class="sd">    :param Any value: The value to validate as being a string.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_error_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_error_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param bool strip: Whether to strip leading/trailing whitespace.</span>
+<span class="sd">    :param bool allow_empty: Whether to allow empty strings.</span>
+<span class="sd">    :param bool allow_blank: Whether to allow blank strings (strings that consist</span>
+<span class="sd">        only of whitespace).</span>
+<span class="sd">    :param bool alphanumeric_only: Whether to allow only alphanumeric characters.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a str.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the string fails any of the specified checks or if options contradict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strip</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid strip type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">strip</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_STRIP_ARG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allow_empty</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid allow_empty type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">allow_empty</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_ALLOW_EMPTY_ARG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allow_blank</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid allow_blank type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">allow_blank</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_ALLOW_BLANK_ARG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alphanumeric_only</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid alphanumeric_only type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">alphanumeric_only</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_ALPHANUMERIC_ONLY_ARG_TYPE</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a str.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_error_tag</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">strip</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>  <span class="c1"># Empty string</span>
+        <span class="k">if</span> <span class="n">allow_empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: cannot be empty string.&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">value_error_tag</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>  <span class="c1"># Blank string (only whitespace)</span>
+        <span class="k">if</span> <span class="n">allow_blank</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">alphanumeric_only</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: cannot be blank string (consist only of whitespace).&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">value_error_tag</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">alphanumeric_only</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">isalnum</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: must consist only of alphanumeric characters [A-Za-z0-9]: &quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_error_tag</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="validate_non_blank_string">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_non_blank_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_non_blank_string</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate and normalize a non-blank string field.</span>
+
+<span class="sd">    Any leading or trailing whitespace is stripped from the string before returning it.</span>
+
+<span class="sd">    The validation checks that the value is a string and that it is not blank or only whitespace.</span>
+<span class="sd">    The returned value is guaranteed to be non-blank and non-blank and to be of type str.</span>
+
+<span class="sd">    :param str value: The string value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_error_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_error_tag: The error tag to use for value errors.</span>
+<span class="sd">    :return: The stripped string value.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a string.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the string is blank or only whitespace.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a string.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_error_tag</span>
+        <span class="p">)</span>
+    <span class="n">stripped_value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stripped_value</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: cannot be blank or whitespace.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_error_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">stripped_value</span></div>
+
+
+
+<div class="viewcode-block" id="validate_non_blank_string_or_is_none">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_non_blank_string_or_is_none">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_non_blank_string_or_is_none</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_error_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">allow_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate and normalize a non-blank string field.</span>
+
+<span class="sd">    Any leading or trailing whitespace is stripped from the string before returning it.</span>
+<span class="sd">    The validation checks that the value is a string and that it is not blank or only whitespace.</span>
+<span class="sd">    If the value is None and allow_none is True, None is returned.</span>
+
+<span class="sd">    The validated value is guaranteed to either be non-blank and non-blank and of type str, or</span>
+<span class="sd">    None if allow_none is True and None is provided as the value.</span>
+
+<span class="sd">    :param str value: The string value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_error_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_error_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param bool allow_none: Whether to allow None as a valid value. Defaults to True.</span>
+<span class="sd">    :return: The stripped string value or None if allowed and provided.</span>
+<span class="sd">    :rtype: str | None</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a str, or None (if allow_none is False).</span>
+<span class="sd">    :raises SimpleBenchValueError: If the string is blank or only whitespace.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">allow_none</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: cannot be None.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_error_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">validate_non_blank_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">type_error_tag</span><span class="p">,</span> <span class="n">value_error_tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_int">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_int</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is an integer.</span>
+
+<span class="sd">    :param int value: The value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :return: The validated integer.</span>
+<span class="sd">    :rtype: int</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not an integer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="validate_float">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_float</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a float or integer.</span>
+
+<span class="sd">    Validates that the value is either a float or an int.</span>
+<span class="sd">    The return type is always a float.</span>
+
+<span class="sd">    :param float | int value: The value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :return: The validated float.</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a float.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>  <span class="c1"># Allow ints as valid floats</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a float or int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_positive_int">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_positive_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_positive_int</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span> <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a positive integer.</span>
+
+<span class="sd">    :param int value: The value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :return: The validated positive integer.</span>
+<span class="sd">    :rtype: int</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not an integer.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the value is not positive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: must be a positive integer.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="validate_non_negative_int">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_non_negative_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_non_negative_int</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span> <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a non-negative integer.</span>
+
+<span class="sd">    :param int value: The value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :return: The validated non-negative integer.</span>
+<span class="sd">    :rtype: int</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not an integer.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the value is negative.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: must be a non-negative integer.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="validate_positive_float">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_positive_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_positive_float</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span> <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a positive float or integer.</span>
+
+<span class="sd">    Validates that the value is either a float or an int and that it is positive.</span>
+<span class="sd">    The return type is always a float.</span>
+
+<span class="sd">    :param float | int value: The value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :return: The validated positive float.</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a float.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the value is not positive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>  <span class="c1"># Allow ints as valid floats</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a float or int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: must be a positive float or int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_non_negative_float">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_non_negative_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_non_negative_float</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span> <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a non-negative float or integer.</span>
+
+<span class="sd">    Validates that the value is either a float or an int and that it is non-negative.</span>
+<span class="sd">    The return type is always a float.</span>
+
+<span class="sd">    :param float | int value: The value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :return: The validated non-negative float.</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a float.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the value is negative.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>  <span class="c1"># Allow ints as valid floats</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a float or int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: must be a non-negative float or int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span> <span class="o">...</span>
+
+
+<div class="viewcode-block" id="validate_sequence_of_type">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_sequence_of_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a sequence of specified type(s).</span>
+
+<span class="sd">    When a single type is provided, the return type is automatically inferred as list[T].</span>
+<span class="sd">    When multiple types are provided, the return type is list[Any], which allows the</span>
+<span class="sd">    caller to narrow the type with an explicit annotation.</span>
+
+<span class="sd">    :param Sequence[Any] value: The sequence of values to validate.</span>
+<span class="sd">    :param types: A single type or tuple of allowed types.</span>
+<span class="sd">    :type types: type[T] | tuple[type, ...] | LazyType[T, Any]</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param bool allow_empty: Whether to allow an empty sequence. Defaults to True.</span>
+<span class="sd">    :return: For single type, returns list[T]. For multiple types,</span>
+<span class="sd">        returns list[Any] which can be narrowed with explicit type annotation.</span>
+<span class="sd">    :rtype: list[T] | list[Any]</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a sequence or contains invalid types.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Single type (automatic inference):</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            names = validate_sequence_of_type([&#39;Alice&#39;], str, &#39;names&#39;, ...)</span>
+<span class="sd">            # Type: list[str]</span>
+
+<span class="sd">        Multiple types (manual narrowing):</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            mixed: list[str | int] = validate_sequence_of_type(</span>
+<span class="sd">                [&#39;a&#39;, 1], (str, int), &#39;items&#39;, ...</span>
+<span class="sd">            )</span>
+<span class="sd">            # Type: list[str | int]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Must be a sequence (list, tuple, etc.).&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: sequence cannot be empty.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Format type names for error messages</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">type_names</span> <span class="o">=</span> <span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">type_names</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Must be </span><span class="si">{</span><span class="n">type_names</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+            <span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_frozenset_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_frozenset_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span> <span class="o">...</span>
+
+
+<div class="viewcode-block" id="validate_frozenset_of_type">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_frozenset_of_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_frozenset_of_type</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">types</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a frozenset of specified type(s).</span>
+
+<span class="sd">    When a single type is provided, the return type is automatically inferred as frozenset[T].</span>
+<span class="sd">    When multiple types are provided, the return type is frozenset[Any], which allows the</span>
+<span class="sd">    caller to narrow the type with an explicit annotation.</span>
+
+<span class="sd">    Single type (automatic type inference) example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        friends_names: frozenset[str] = frozenset([&#39;Alice&#39;, &#39;Bob&#39;])</span>
+<span class="sd">        names = validate_frozenset_of_type(</span>
+<span class="sd">            friends_names, str, &#39;names&#39;,</span>
+<span class="sd">            ErrorTag.SOME_TYPE_TAG,</span>
+<span class="sd">            ErrorTag.SOME_VALUE_TAG,</span>
+<span class="sd">            allow_empty=False</span>
+<span class="sd">        )</span>
+<span class="sd">        # Type: frozenset[str]</span>
+
+<span class="sd">    Multiple types (manual narrowing) example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        mixed_values: frozenset[str | int] = frozenset([&#39;a&#39;, 1, &#39;b&#39;, 2])</span>
+<span class="sd">        mixed: frozenset[str | int] = validate_frozenset_of_type(</span>
+<span class="sd">            mixed_values, (str, int), &#39;items&#39;,</span>
+<span class="sd">            ErrorTag.SOME_TYPE_TAG,</span>
+<span class="sd">            ErrorTag.SOME_VALUE_TAG,</span>
+<span class="sd">            allow_empty=True)</span>
+<span class="sd">        # Type: frozenset[str | int]</span>
+
+<span class="sd">    :param Any value: The frozenset of values to validate.</span>
+<span class="sd">    :param types: A single type or tuple of allowed types.</span>
+<span class="sd">    :type types: type[T] | tuple[type, ...]</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param bool allow_empty: Whether to allow an empty iterable. Defaults to True.</span>
+<span class="sd">    :return: For single type, returns `frozenset[T]`. For multiple types, returns `frozenset[Any]`</span>
+<span class="sd">        which can be narrowed with explicit type annotation.</span>
+<span class="sd">    :rtype: frozenset</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a frozenset or contains invalid types.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the frozenset is empty and allow_empty is False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Must be a frozenset.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: sequence cannot be empty.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Format type names for error messages</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">type_names</span> <span class="o">=</span> <span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">types</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">type_names</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">. &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Must be </span><span class="si">{</span><span class="n">type_names</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+            <span class="p">)</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="c1"># Return the now validated frozenset</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="validate_sequence_of_numbers">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_sequence_of_numbers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_numbers</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a sequence of numbers (ints or floats).</span>
+
+<span class="sd">    Because this function checks for Sequence[int | float], it will accept lists, tuples, sets, and other</span>
+<span class="sd">    sequence types, but not str or bytes.</span>
+
+<span class="sd">    The type declaration for the value argument and return type is Sequence[int | float]</span>
+<span class="sd">    to indicate that the sequence should contain a mix of ints and/or floats.</span>
+
+<span class="sd">    Because this is a validation function, the actual type of the value argument can be</span>
+<span class="sd">    and static type checkers may warn if the caller does not pass a value that is already</span>
+<span class="sd">    declared as Sequence[int | float]. This is acceptable because the purpose of this</span>
+<span class="sd">    function is to validate the type and contents of the value argument - the warnings</span>
+<span class="sd">    from the type checkers are synergetic with the purpose of this function.</span>
+
+<span class="sd">    Because the returned value is declared to be a Sequence of int or float, this</span>
+<span class="sd">    has the effect of narrowing the type for callers that use type checkers.</span>
+
+<span class="sd">    If you wish to suppress static type checker warnings for a specific call to this function,</span>
+<span class="sd">    you can use a type: ignore[arg-type] comment on that line.</span>
+
+<span class="sd">    :param Sequence[int | float] value: The sequence of values to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param bool allow_empty: Whether to allow a empty sequence. Defaults to True.</span>
+<span class="sd">    :return: The validated Sequence of numbers.</span>
+<span class="sd">    :rtype: Sequence[int | float]</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a sequence or contains non-numeric types.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a sequence (list, tuple, etc.) of numbers.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_empty</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: sequence cannot be empty.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an int or float.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="validate_sequence_of_str">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_sequence_of_str">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_sequence_of_str</span><span class="p">(</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">allow_blank</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">allow_whitespace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a sequence of strings.</span>
+
+<span class="sd">    This function checks that the input is a sequence (list, tuple, etc.) of strings,</span>
+<span class="sd">    and that each string meets the specified criteria.</span>
+
+<span class="sd">    It can enforce that the sequence is not empty, and that individual strings are not blank</span>
+<span class="sd">    or do not contain any whitespace, based on the provided flags.</span>
+
+<span class="sd">    :param Sequence[Any] value: The sequence of values to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param bool allow_empty: Whether to allow an empty sequence. Defaults to True.</span>
+<span class="sd">    :param bool allow_blank: Whether to allow blank strings in the sequence. Defaults to True.</span>
+<span class="sd">    :param bool allow_whitespace: Whether to allow strings that contain whitespace. Defaults to True.</span>
+<span class="sd">    :return: The validated list of strings.</span>
+<span class="sd">    :rtype: list[str]</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the value is not a sequence or contains non-string types.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False or an element is</span>
+<span class="sd">            blank and allow_blank is False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_of_str</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate_sequence_of_type</span><span class="p">(</span>
+                                <span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span>
+                                <span class="n">type_tag</span><span class="p">,</span> <span class="n">value_tag</span><span class="p">,</span>
+                                <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_blank</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_of_str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: cannot be blank or whitespace.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+                <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_whitespace</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_of_str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">item</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> element at index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">: cannot contain whitespace characters.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">list_of_str</span></div>
+
+
+
+<div class="viewcode-block" id="validate_int_range">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_int_range">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_int_range</span><span class="p">(</span><span class="n">number</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                       <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                       <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+                       <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+                       <span class="n">min_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                       <span class="n">max_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is an integer within a specified range.</span>
+
+<span class="sd">    :param Any number: The value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param int min_value: The minimum value of the range.</span>
+<span class="sd">    :param int max_value: The maximum value of the range.</span>
+<span class="sd">    :raises SimpleBenchValueError: If min_value is greater than max_value.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If field_name is not a str.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If type_tag or value_tag is not an ErrorTag.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If number, min_value, or max_value is not an int.</span>
+<span class="sd">    :raises SimpleBenchValueError: If number is not within the specified range.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call to validate_int_range: field_name type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a str.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_FIELD_NAME_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call to validate_int_range: min_value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">min_value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_MIN_VALUE_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call to validate_int_range: max_value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">max_value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_MAX_VALUE_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">min_value</span> <span class="o">&gt;</span> <span class="n">max_value</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call to validate_int_range: min_value (</span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s1">) &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;cannot be greater than max_value (</span><span class="si">{</span><span class="n">max_value</span><span class="si">}</span><span class="s1">).&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_RANGE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be an int.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">min_value</span> <span class="o">&lt;=</span> <span class="n">number</span> <span class="o">&lt;=</span> <span class="n">max_value</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s1">. Must be an int between </span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">max_value</span><span class="si">}</span><span class="s1">, inclusive.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">number</span></div>
+
+
+
+<div class="viewcode-block" id="validate_float_range">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_float_range">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_float_range</span><span class="p">(</span>
+        <span class="n">number</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">value_tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">,</span>
+        <span class="n">min_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">max_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that a value is a float within a specified range.</span>
+
+<span class="sd">    :param float number: The value to validate.</span>
+<span class="sd">    :param str field_name: The name of the field being validated (for error messages).</span>
+<span class="sd">    :param ErrorTag type_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param ErrorTag value_tag: The error tag to use for value errors.</span>
+<span class="sd">    :param float min_value: The minimum value of the range.</span>
+<span class="sd">    :param float max_value: The maximum value of the range.</span>
+<span class="sd">    :raises SimpleBenchValueError: If min_value is greater than max_value.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If field_name is not a str.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If type_tag or value_tag is not an ErrorTag.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If number, min_value, or max_value is not a float..</span>
+<span class="sd">    :raises SimpleBenchValueError: If number is not within the specified range.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call to validate_float_range: field_name type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a str.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_FIELD_NAME_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call to validate_float_range: min_value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">min_value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a float.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_MIN_VALUE_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call to validate_float_range: max_value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">max_value</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a float.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_MAX_VALUE_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">min_value</span> <span class="o">&gt;</span> <span class="n">max_value</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid call to validate_float_range: min_value (</span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s1">) &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;cannot be greater than max_value (</span><span class="si">{</span><span class="n">max_value</span><span class="si">}</span><span class="s1">).&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">INVALID_RANGE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1"> type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a float.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">type_tag</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">min_value</span> <span class="o">&lt;=</span> <span class="n">number</span> <span class="o">&lt;=</span> <span class="n">max_value</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s1">. Must be a float between </span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">max_value</span><span class="si">}</span><span class="s1">, inclusive.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">value_tag</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">number</span></div>
+
+
+
+<span class="c1"># Validate filename stem regex: alphanumeric characters, dashes, and underscores only,</span>
+<span class="c1"># at least one character long, cannot start or end with an underscore or dash.</span>
+<span class="c1"># Length is checked separately.</span>
+<span class="n">_FILENAME_STEM_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[A-Za-z0-9](?:[-_A-Za-z0-9]*[A-Za-z0-9])?$&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="validate_filename">
+<a class="viewcode-back" href="../../../source/simplebench.validators.misc.html#simplebench.validators.validate_filename">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a filename for use in the filesystem.</span>
+
+<span class="sd">    It validates that:</span>
+<span class="sd">        - The filename is a string.</span>
+<span class="sd">        - The filename suffix (if present) is alphanumeric and no longer than 10 characters.</span>
+<span class="sd">        - The filename stem (name without suffix) is made of alphanumeric characters,</span>
+<span class="sd">          underscores, or dashes, and is at least one character long.</span>
+<span class="sd">        - The filename stem does not start or end with an underscore or dash.</span>
+<span class="sd">        - The total filename length does not exceed 255 characters.</span>
+
+<span class="sd">    :param str filename: The filename to validate.</span>
+<span class="sd">    :return: The validated filename.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the filename is not a string.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the filename is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span>
+        <span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE</span><span class="p">)</span>
+
+    <span class="n">file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">file_suffix</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_suffix</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_suffix</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Filename suffix cannot be longer than 10 characters (passed suffix was &#39;</span><span class="si">{</span><span class="n">file_suffix</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_FILENAME_SUFFIX_TOO_LONG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_suffix</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">file_suffix</span><span class="o">.</span><span class="n">isalnum</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Filename suffix must be alphanumeric (contain only A-Z, a-z, 0-9)&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_FILENAME_SUFFIX_NOT_ALPHANUMERIC</span><span class="p">)</span>
+    <span class="n">file_stem</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">stem</span>
+    <span class="k">if</span> <span class="n">file_stem</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Filename must have a valid stem (name without suffix). It cannot be empty or blank.&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_FILENAME_INVALID_STEM</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">_FILENAME_STEM_RE</span><span class="p">,</span> <span class="n">file_stem</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Filename stem (name without suffix) must consist of &quot;</span>
+            <span class="s2">&quot;only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, &quot;</span>
+            <span class="s2">&quot;cannot start or end with an underscore or dash, and must be &quot;</span>
+            <span class="s2">&quot;at least one character long &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(passed stem was &#39;</span><span class="si">{</span><span class="n">file_stem</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Filename cannot be longer than 255 characters (passed filename was &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_FILENAME_TOO_LONG</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filename</span></div>
+
+
+
+<span class="c1"># Validate directory path element regex: alphanumeric characters, dashes, and underscores only,</span>
+<span class="c1"># at least one character long, cannot start or end with an underscore or dash.</span>
+<span class="c1">#</span>
+<span class="n">_DIRPATH_ELEMENT_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[A-Za-z0-9](?:[-_A-Za-z0-9]*[A-Za-z0-9])?$&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="validate_dirpath">
+<a class="viewcode-back" href="../../../source/simplebench.validators.html#simplebench.validators.validate_dirpath">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_dirpath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a directory path for use in the filesystem.</span>
+
+<span class="sd">    It validates that:</span>
+<span class="sd">        - The directory path is a string.</span>
+<span class="sd">        - The complete directory path is no longer than 255 characters.</span>
+<span class="sd">        - The directory path does not contain characters other than alphanumeric characters (A-Za-z0-9),</span>
+<span class="sd">          underscores (-), dashes (-), slashes ( / ), or backslashes ( \\ ).</span>
+<span class="sd">        - That individual directory path element names do not start or end with a dash (-) or underscore (_).</span>
+<span class="sd">        - That individual directory path element names are at least one character long but no longer than 64 characters.</span>
+<span class="sd">          (this does not apply to the full path, only to each element between slashes or backslashes and is checked</span>
+<span class="sd">          separately).</span>
+<span class="sd">        - If allow_empty is False, that the directory path is not an empty string. If allow_empty is True,</span>
+<span class="sd">          an empty string is considered to be a valid dirpath (default is False).</span>
+
+<span class="sd">    Backslashes ( \\ ) are converted to slashes ( / ) for validation purposes.</span>
+
+<span class="sd">    :param str dirpath: The directory path to validate.</span>
+<span class="sd">    :param bool allow_empty: Whether to allow an empty directory path. Defaults to False.</span>
+<span class="sd">    :return: The validated directory path.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the directory path is not a string.</span>
+<span class="sd">    :raises SimpleBenchValueError: If the directory path is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allow_empty</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid allow_empty type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">allow_empty</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a bool.&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE</span><span class="p">)</span>
+
+    <span class="n">dir_string</span> <span class="o">=</span> <span class="n">validate_string</span><span class="p">(</span>
+        <span class="n">dirpath</span><span class="p">,</span> <span class="s1">&#39;dirpath&#39;</span><span class="p">,</span>
+        <span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE</span><span class="p">,</span>
+        <span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE</span><span class="p">,</span>
+        <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dir_string</span> <span class="ow">and</span> <span class="n">allow_empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dir_string</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Directory path cannot be longer than 255 characters (passed directory path was &#39;</span><span class="si">{</span><span class="n">dir_string</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_TOO_LONG</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[A-Za-z0-9_</span><span class="se">\\</span><span class="s1">/-]+$&#39;</span><span class="p">,</span> <span class="n">dir_string</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Directory path must consist of only alphanumeric characters (A-Za-z0-9), underscores (_), dashes (-), &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;slashes (/) or backslashes (</span><span class="se">\\</span><span class="s2">) (passed directory path was &#39;</span><span class="si">{</span><span class="n">dir_string</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_INVALID_CHARACTERS</span><span class="p">)</span>
+
+    <span class="c1"># Use the validated &#39;dir_string&#39; variable consistently and simplify the check.</span>
+    <span class="k">if</span> <span class="n">dir_string</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="n">dir_string</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Directory path cannot start or end with a slash (/) or backslash (</span><span class="se">\\</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_INVALID_START_END</span><span class="p">)</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dir_string</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">element</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Directory path cannot contain empty elements, which can be caused by &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;consecutive slashes (e.g., &#39;//&#39;) (passed directory path was &#39;</span><span class="si">{</span><span class="n">dir_string</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_ELEMENT_EMPTY</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">_DIRPATH_ELEMENT_RE</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Directory path elements (names between slashes or backslashes) must consist of &quot;</span>
+                <span class="s2">&quot;only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, &quot;</span>
+                <span class="s2">&quot;cannot start or end with an underscore or dash, and must be &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;at least one character long (invalid element was &#39;</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_ELEMENT_HAS_INVALID_CHARACTERS</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">element</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">64</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Directory path elements (names between slashes or backslashes) cannot be longer than 64 characters &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(invalid element was &#39;</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ValidatorsErrorTag</span><span class="o">.</span><span class="n">VALIDATE_DIRPATH_ELEMENT_TOO_LONG</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;validate_non_blank_string&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_non_blank_string_or_is_none&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_int&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_float&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_positive_int&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_non_negative_int&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_positive_float&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_non_negative_float&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_sequence_of_type&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_frozenset_of_type&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_sequence_of_numbers&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_sequence_of_str&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_int_range&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_float_range&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;validate_filename&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Jerilyn Franz
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=6c195044"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=30646c52"></script>
+    </body>
+</html>

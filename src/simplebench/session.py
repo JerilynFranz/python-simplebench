@@ -28,29 +28,10 @@ if TYPE_CHECKING:
 class Session():
     """Container for session related information while running benchmarks.
 
-    :attribute: args
-        The command line arguments for the session.
-    :vartype args: Namespace
-    :attribute: cases
-        Sequence of benchmark cases for the session.
-    :vartype cases: Sequence[Case]
-    :ivar output_path: The output path for reports.
-    :vartype output_path: Path, optional
-    :ivar console: A Rich Console instance for displaying output.
-    :vartype console: Console
-    :ivar verbosity: Verbosity level for console output (default: :attr:`Verbosity.NORMAL`)
-    :vartype verbosity: Verbosity
-    :ivar default_runner: The default runner class to use for Cases
-        that do not specify a runner. Defaults to :class:`~.runners.SimpleRunner`.
-    :vartype default_runner: type[SimpleRunner]
-    :ivar show_progress: Whether to show progress bars during execution. Defaults to False.
-    :vartype show_progress: bool
-    :ivar progress: Rich Progress instance for displaying progress bars. (read only)
-    :vartype progress: Progress
-    :ivar tasks: The ProgressTasks instance for managing progress tasks. (read only)
-    :vartype tasks: RichProgressTasks
-    :ivar reporter_manager: The ReporterManager instance for managing reporters. (read only)
-    :vartype reporter_manager: ReporterManager
+    The session is responsible for managing benchmark cases, command line
+    arguments, progress display, and report generation.
+
+    This makes it the primary orchestrator for running benchmarks and generating reports.
     """
     def __init__(self,
                  *,
@@ -214,9 +195,6 @@ class Session():
         This filters the report choices based on the command line arguments
         that were set and parsed when the session was created and returns a list of
         report keys for the reports that should be generated.
-
-        :return: A list of report keys for all reports to be generated in this session.
-        :rtype: list[str]
         """
         report_keys: list[str] = []
         for key in self._choices.all_choice_args():
@@ -478,8 +456,7 @@ class Session():
     def add_case(self, case: Case) -> None:
         """Add a :class:`~.case.Case` to the Cases for this session.
 
-        :param case: :class:`~.case.Case` to add to the Session
-        :type case: Case
+        :param case: benchmark case to add to the Session
         :raises SimpleBenchTypeError: If the value is not a :class:`~.case.Case` instance.
         """
         if not isinstance(case, Case):

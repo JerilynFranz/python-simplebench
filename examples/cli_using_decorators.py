@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """A simple benchmark case function."""
-from __future__ import annotations
-
-from simplebench import main, benchmark
-from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
+import simplebench
 from simplebench.reporters.graph import ImageType
 from simplebench.reporters.graph.matplotlib import Style
+from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
 
 
-@benchmark(
+@simplebench.benchmark(
     'example',
     n=100,
     options=[ScatterPlotOptions(image_type=ImageType.PNG)]
@@ -18,7 +16,7 @@ def benchcase_one():
     sum(range(100))  # Example operation to benchmark
 
 
-@benchmark(
+@simplebench.benchmark(
     'example2',
     title='benchcase_two',
     description='A simple benchmark case function (fake second) via decorators.',
@@ -32,4 +30,4 @@ def benchcase_two_action():
 
 if __name__ == '__main__':
     # The main function can now automatically collect cases from the decorator's registry.
-    main()
+    simplebench.main()

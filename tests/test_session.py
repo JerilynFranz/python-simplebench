@@ -13,8 +13,11 @@ from rich.progress import Progress
 
 from simplebench import Case, Results, Session, Verbosity
 from simplebench.exceptions import SimpleBenchTypeError, _SessionErrorTag
-from simplebench.reporters.reporter import ReporterOptions
+from simplebench.reporters.csv import CSVConfig
+from simplebench.reporters.graph.scatterplot import ScatterPlotConfig
+from simplebench.reporters.json import JSONConfig
 from simplebench.reporters.reporter_manager import ReporterManager
+from simplebench.reporters.rich_table import RichTableConfig
 from simplebench.runners import SimpleRunner
 from simplebench.tasks import RichProgressTasks
 from simplebench.utils import collect_arg_list
@@ -25,16 +28,6 @@ from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSpec, 
 
 _SAVED_ARGV = sys.argv.copy()
 """Saved copy of sys.argv for restoring after tests."""
-
-
-class MockReporterOption(ReporterOptions):
-    """A mock ReporterOption for testing purposes."""
-    def __init__(self, name: str) -> None:
-        """
-        :param name: The name of the mock option.
-        :type name: str
-        """
-        self.name = name
 
 
 def benchcase(bench: SimpleRunner, **kwargs) -> Results:
@@ -417,3 +410,37 @@ def reading_properties_testspec() -> list[TestAction]:
 def test_reading_properties(testspec: TestSpec) -> None:
     """Tests reading properties of the Session class."""
     testspec.run()
+
+
+
+def session_add_reporter_flags_testspecs() -> list[TestAction]:
+    """Generate testspecs for the add_reporter_flags method of the Session class."""
+    session = Session()
+    reporter_manager = session.reporter_manager
+    reporters = reporter_manager.all_reporters()
+
+    csv_reporter_name = CSVConfig.reporter_name
+    json_reporter_name = "json"
+    rich_table_reporter_name = "rich_table"
+    scatterplot_reporter_name = "scatterplot"
+
+
+    testspecs: list[TestAction] = [
+        
+    ]
+    return testspecs
+
+def test_session_add_reporter_flags() -> None:
+    """Tests the add_reporter_flags method of the Session class."""
+    session = Session()
+    # Initially, args_parser should have no reporter flags
+    initial_args = vars(session.args_parser.parse_args([]))
+    assert all(not key.startswith('json') and not key.startswith('csv')
+               for key in initial_args.keys())
+
+    # Add reporter flags
+    session.add_reporter_flags()
+    updated_args = vars(session.args_parser.parse_args([]))
+    assert 'json' in updated_args
+    assert 'csv' in updated_args
+

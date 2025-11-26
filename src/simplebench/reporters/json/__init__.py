@@ -1,13 +1,19 @@
-"""JSON Reporter package for simplebench."""
-from simplebench.reporters.json.reporter.exceptions import _JSONReporterErrorTag
-from simplebench.reporters.json.reporter.options import JSONOptions
-from simplebench.reporters.json.reporter.options.exceptions import _JSONOptionsErrorTag
-from simplebench.reporters.json.reporter.reporter import JSONReporter
+"""JSON Reporter public API.
+
+Purpose is to provide a JSON reporter for the simplebench.reporters package.
+This package provides functionality for generating JSON reports
+from benchmark results.
+
+Public API
+----------
+- :class:`~.JSONConfig`: Configuration class for the JSON reporter.
+- :class:`~.JSONOptions`: Options class for the JSON reporter.
+- :class:`~.JSONReporter`: The JSON reporter class.
+"""
+from .reporter import JSONConfig, JSONOptions, JSONReporter
 
 __all__ = [
     'JSONReporter',
-    '_JSONReporterErrorTag',
+    'JSONConfig',
     'JSONOptions',
-    '_JSONOptionsErrorTag',
 ]
-"""JSON Reporter package for simplebench."""

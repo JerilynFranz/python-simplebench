@@ -15,6 +15,29 @@ class CSVConfig(ReporterConfig):
     This class inherits from :class:`~.ReporterConfig` and provides a
     type-safe, discoverable interface for overriding the default settings
     of a :class:`~.CSVReporter`.
+
+    By default, the CSVReporter is configured to output benchmark results
+    to CSV files in the filesystem, with options to also output to console
+    and via callback. The default sections included are OPS, TIMING, MEMORY,
+    and PEAK_MEMORY.
+
+    Attributes
+    ----------
+    :ivar name: The name of the reporter. Default is 'csv'.
+    :ivar description: A brief description of the reporter. Default is
+        'Outputs benchmark results to CSV files.'.
+    :ivar sections: The sections to include in the report. Default includes
+        OPS, TIMING, MEMORY, and PEAK_MEMORY.
+    :ivar targets: The output targets for the report. Default includes
+        FILESYSTEM, CONSOLE, and CALLBACK.
+    :ivar default_targets: The default output target if none is specified. Default is FILESYSTEM.
+    :ivar formats: The output formats supported by the reporter. Default is CSV.
+    :ivar file_suffix: The file suffix to use for output files. Default is 'csv'.
+    :ivar file_unique: Whether to generate unique filenames for each report. Default is True.
+    :ivar file_append: Whether to append to existing files. Default is False.
+    :ivar subdir: The subdirectory to place output files in. Default is '' (current directory).
+    :ivar choices: The choice configurations available for this reporter. Default includes
+        several pre-defined choices for different sections of the report.
     """
 
     def __init__(

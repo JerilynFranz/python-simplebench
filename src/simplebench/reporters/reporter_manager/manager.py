@@ -15,11 +15,11 @@ from argparse import ArgumentParser
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
-from simplebench.reporters.csv.reporter import CSVReporter
-from simplebench.reporters.graph.scatterplot.reporter import ScatterPlotReporter
+from simplebench.reporters.csv import CSVReporter
+from simplebench.reporters.graph.scatterplot import ScatterPlotReporter
 from simplebench.reporters.json import JSONReporter
 from simplebench.reporters.reporter import Reporter
-from simplebench.reporters.rich_table.reporter import RichTableReporter
+from simplebench.reporters.rich_table import RichTableReporter
 
 from .decorators.register_reporter import get_registered_reporters
 from .exceptions import _ReporterManagerErrorTag
@@ -27,10 +27,12 @@ from .exceptions import _ReporterManagerErrorTag
 _PREDEFINED_REPORTERS: list[type[Reporter]] = [
     CSVReporter, ScatterPlotReporter, RichTableReporter, JSONReporter]
 """Container for all predefined Reporter classes.
-- CSVReporter
-- ScatterPlotReporter
-- RichTableReporter
-- JSONReporter
+
+These reporters are registered by default in the ReporterManager.
+- :class:`~simplebench.reporters.csv.reporter.CSVReporter`
+- :class:`~simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter`
+- :class:`~simplebench.reporters.rich_table.reporter.RichTableReporter`
+- :class:`~simplebench.reporters.json.reporter.JSONReporter`
 """
 
 
@@ -55,10 +57,13 @@ class ReporterManager():
     conflicts and the manager will raise exceptions if duplicates are detected during registration.
 
     .. code-block:: python
+      :caption: Registering a custom reporter example
+      :linenos:
 
-        reporter_manager = ReporterManager()
-        my_custom_reporter = CustomReporter()
-        reporter_manager.register(my_custom_reporter)
+      reporter_manager = ReporterManager()
+      my_custom_reporter = CustomReporter()
+      reporter_manager.register(my_custom_reporter)
+
     """
 
     def __init__(self, load_defaults: bool = True) -> None:

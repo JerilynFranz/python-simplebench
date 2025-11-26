@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.graph.scatterplot package - simplebench 0.3.0-alpha.0 documentation</title>
+        <title>simplebench.reporters.graph.scatterplot package - simplebench 0.3.1-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -163,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.3.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +184,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -248,7 +248,18 @@
         <article role="main" id="furo-main-content">
           <section id="module-simplebench.reporters.graph.scatterplot">
 <span id="simplebench-reporters-graph-scatterplot-package"></span><h1>simplebench.reporters.graph.scatterplot package<a class="headerlink" href="#module-simplebench.reporters.graph.scatterplot" title="Link to this heading">🔗</a></h1>
-<p>ScatterPlot graph.scatterplot sub-package in the reporters package.</p>
+<p>ScatterPlot graph.scatterplot module in the reporters package.</p>
+<p>Purpose is to provide a scatter plot reporter for the simplebench.reporters package.</p>
+<p>This package provides functionality for generating scatter plot graphs
+using Matplotlib as the underlying graphing library.</p>
+<section id="public-api">
+<h2>Public API<a class="headerlink" href="#public-api" title="Link to this heading">🔗</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotConfig" title="simplebench.reporters.graph.scatterplot.ScatterPlotConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatterPlotConfig</span></code></a>: Configuration class for the ScatterPlot reporter.</p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotOptions" title="simplebench.reporters.graph.scatterplot.ScatterPlotOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a>: Options class for the ScatterPlot reporter.</p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter" title="simplebench.reporters.graph.scatterplot.ScatterPlotReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a>: The ScatterPlot reporter class.</p></li>
+</ul>
+</section>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.graph.scatterplot.ScatterPlotConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.graph.scatterplot.</span></span><span class="sig-name descname"><span class="pre">ScatterPlotConfig</span></span><span class="sig-paren">(</span>
@@ -268,7 +279,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">subdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/config.html#ScatterPlotConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotConfig" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter/config.html#ScatterPlotConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotConfig" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig" title="simplebench.reporters.reporter.config.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a></p>
 <p>Configuration for a ScatterPlotReporter.</p>
 <p>This class inherits from <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig" title="simplebench.reporters.reporter.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a> and provides a
@@ -291,8 +302,8 @@ of a <a class="reference internal" href="#simplebench.reporters.graph.scatterplo
 <dd><em class="sig-param"><span class="n"><span class="pre">image_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.graph.enums.image_type.html#simplebench.reporters.graph.enums.image_type.ImageType" title="simplebench.reporters.graph.enums.image_type.ImageType"><span class="pre">ImageType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/options/options.html#ScatterPlotOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotOptions" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.graph.matplotlib.options.options.html#simplebench.reporters.graph.matplotlib.options.options.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.options.options.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a></p>
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter/options/options.html#ScatterPlotOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotOptions" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.graph.matplotlib.reporter.options.options.html#simplebench.reporters.graph.matplotlib.reporter.options.options.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.reporter.options.options.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a></p>
 <p>Scatter Plot options.</p>
 <p>Defaults are inherited from <a class="reference internal" href="simplebench.reporters.graph.matplotlib.html#simplebench.reporters.graph.matplotlib.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a>:</p>
 <ul class="simple">
@@ -312,11 +323,11 @@ of a <a class="reference internal" href="#simplebench.reporters.graph.scatterplo
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.graph.scatterplot.</span></span><span class="sig-name descname"><span class="pre">ScatterPlotReporter</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.config.html#simplebench.reporters.graph.scatterplot.config.ScatterPlotConfig" title="simplebench.reporters.graph.scatterplot.config.ScatterPlotConfig"><span class="pre">ScatterPlotConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.config.html#simplebench.reporters.graph.scatterplot.reporter.config.ScatterPlotConfig" title="simplebench.reporters.graph.scatterplot.reporter.config.ScatterPlotConfig"><span class="pre">ScatterPlotConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter.html#ScatterPlotReporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.graph.matplotlib.reporter.html#simplebench.reporters.graph.matplotlib.reporter.MatPlotLibReporter" title="simplebench.reporters.graph.matplotlib.reporter.MatPlotLibReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibReporter</span></code></a></p>
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter/reporter.html#ScatterPlotReporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.graph.matplotlib.reporter.reporter.html#simplebench.reporters.graph.matplotlib.reporter.reporter.MatPlotLibReporter" title="simplebench.reporters.graph.matplotlib.reporter.reporter.MatPlotLibReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibReporter</span></code></a></p>
 <p>Class for outputting benchmark results as scatter plot graphs.</p>
 <p>This reporter generates scatter plot visualizations for various result sections,
 saving them to the filesystem or passing them to a callback function. It provides
@@ -344,7 +355,7 @@ program.py --scatter-plot.ops filesystem  # Outputs only ops graphs to the files
 <dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter.html#ScatterPlotReporter.old_render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.old_render" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter/reporter.html#ScatterPlotReporter.old_render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.old_render" title="Link to this definition">🔗</a></dt>
 <dd><p>Render the scatter plot graph and return it as bytes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -381,7 +392,7 @@ valid.</p></li>
 <dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter.html#ScatterPlotReporter.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.render" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter/reporter.html#ScatterPlotReporter.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.render" title="Link to this definition">🔗</a></dt>
 <dd><p>Render the scatter plot graph and return it as bytes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -413,34 +424,33 @@ valid.</p></li>
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">🔗</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.options.html">simplebench.reporters.graph.scatterplot.options package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.options.html#simplebench.reporters.graph.scatterplot.options.ScatterPlotOptions"><code class="docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.options.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.options.exceptions.html">simplebench.reporters.graph.scatterplot.options.exceptions module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.options.options.html">simplebench.reporters.graph.scatterplot.options.options module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.options.options.html#simplebench.reporters.graph.scatterplot.options.options.ScatterPlotOptions"><code class="docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.config.html">simplebench.reporters.graph.scatterplot.config module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.config.html#simplebench.reporters.graph.scatterplot.config.ScatterPlotConfig"><code class="docutils literal notranslate"><span class="pre">ScatterPlotConfig</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.exceptions.html">simplebench.reporters.graph.scatterplot.exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html">simplebench.reporters.graph.scatterplot.reporter module</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html">simplebench.reporters.graph.scatterplot.reporter package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#public-api">Public API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotConfig"><code class="docutils literal notranslate"><span class="pre">ScatterPlotConfig</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotOptions"><code class="docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter.old_render"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter.old_render()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter.render"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter.render()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.options.html">simplebench.reporters.graph.scatterplot.reporter.options package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.options.html#simplebench.reporters.graph.scatterplot.reporter.options.ScatterPlotOptions"><code class="docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.options.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.config.html">simplebench.reporters.graph.scatterplot.reporter.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.config.html#simplebench.reporters.graph.scatterplot.reporter.config.ScatterPlotConfig"><code class="docutils literal notranslate"><span class="pre">ScatterPlotConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.exceptions.html">simplebench.reporters.graph.scatterplot.reporter.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.reporter.html">simplebench.reporters.graph.scatterplot.reporter.reporter module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.reporter.html#simplebench.reporters.graph.scatterplot.reporter.reporter.ScatterPlotReporter"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -488,6 +498,7 @@ valid.</p></li>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.reporters.graph.scatterplot package</a><ul>
+<li><a class="reference internal" href="#public-api">Public API</a></li>
 <li><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotConfig"><code class="docutils literal notranslate"><span class="pre">ScatterPlotConfig</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotOptions"><code class="docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a><ul>
@@ -496,7 +507,6 @@ valid.</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
@@ -508,7 +518,7 @@ valid.</p></li>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6c195044"></script>
+</div><script src="../_static/documentation_options.js?v=1162025f"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

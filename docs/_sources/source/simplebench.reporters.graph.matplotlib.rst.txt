@@ -13,7 +13,7 @@ Subpackages
    :maxdepth: 4
 
    simplebench.reporters.graph.matplotlib.enums
-   simplebench.reporters.graph.matplotlib.options
+   simplebench.reporters.graph.matplotlib.reporter
    simplebench.reporters.graph.matplotlib.theme
 
 Submodules
@@ -23,5 +23,3 @@ Submodules
    :maxdepth: 4
 
    simplebench.reporters.graph.matplotlib.constants
-   simplebench.reporters.graph.matplotlib.exceptions
-   simplebench.reporters.graph.matplotlib.reporter

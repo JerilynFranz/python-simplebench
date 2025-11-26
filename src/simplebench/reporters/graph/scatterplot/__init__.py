@@ -1,13 +1,20 @@
-"""ScatterPlot graph.scatterplot sub-package in the reporters package."""
-from .config import ScatterPlotConfig
-from .exceptions import _ScatterPlotReporterErrorTag
-from .options import ScatterPlotOptions
-from .reporter import ScatterPlotReporter
+"""ScatterPlot graph.scatterplot module in the reporters package.
+
+Purpose is to provide a scatter plot reporter for the simplebench.reporters package.
+
+This package provides functionality for generating scatter plot graphs
+using Matplotlib as the underlying graphing library.
+
+Public API
+----------
+- :class:`~.ScatterPlotConfig`: Configuration class for the ScatterPlot reporter.
+- :class:`~.ScatterPlotOptions`: Options class for the ScatterPlot reporter.
+- :class:`~.ScatterPlotReporter`: The ScatterPlot reporter class.
+"""
+from .reporter import ScatterPlotConfig, ScatterPlotOptions, ScatterPlotReporter
 
 __all__ = [
-    "ScatterPlotConfig",
-    "ScatterPlotOptions",
     "ScatterPlotReporter",
-    "_ScatterPlotReporterErrorTag",
+    "ScatterPlotOptions",
+    "ScatterPlotConfig",
 ]
-"""ScatterPlot graph reporter package in the reporters package."""

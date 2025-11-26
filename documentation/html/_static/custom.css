@@ -1,0 +1,84 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 3em;
+    width: 80%;
+}
+
+
+.sidebar-drawer {
+    background: var(--color-sidebar-background);
+    border-right: 1px solid var(--color-sidebar-background-border);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end;
+    min-width: 15em;
+    width: calc(30% - 26em)
+}
+
+.scrollable-block {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    margin-bottom: 24px;
+}
+
+/* Optional: Ensure the code block inside doesn't have weird margins */
+.scrollable-block .highlight {
+    margin: 0;
+}
+
+figure.caption-first {
+  display: flex;
+  flex-direction: column-reverse; /* This is the magic part */
+  align-items: center; /* Re-applies the centering */
+  font-size: var(--font-size--small);
+  text-align: center;
+  background-color: var(--color-code-background);
+  border-bottom: 1px solid;
+  border-radius: .25rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-color: var(--color-background-border);
+  color: var(--color-code-foreground);
+  font-weight: 300;
+}
+
+/* Add a new rule to apply padding to the image inside the figure */
+figure.caption-first img {
+  padding: 0rem 1rem 1rem 1rem; /* Add padding to all sides */
+  box-sizing: border-box; /* Ensures padding is included in the element's total width/height */
+}
+
+/* The default figure has a line-height that can add weird spacing in flexbox */
+figure.caption-first figcaption {
+  width: 100%; /* Make the caption span the full width of the figure */
+  line-height: normal;
+  margin-bottom: 1em; /* This creates space between the rule and the image */
+  padding-bottom: 1em; /* This creates space between the caption text and the rule */
+  border-bottom: 1px solid var(--color-background-border); /* The gray horizontal rule */
+}
+
+
+
+
+.image-block-caption {
+    font-size: var(--font-size--small);
+    text-align: center;
+    background-color: var(--color-code-background);
+    border-bottom: 1px solid;
+    border-radius: .25rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: var(--color-background-border);
+    color: var(--color-code-foreground);
+    display: flex;
+    font-weight: 300;
+}
+
+.image-block-wrapper:target .image-block-caption, .this-will-duplicate-information-and-it-is-still-useful-here li :target, figure:target, table:target>caption {
+    background-color: var(--color-highlight-on-target)
+}

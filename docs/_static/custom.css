@@ -82,3 +82,20 @@ figure.caption-first figcaption {
 .image-block-wrapper:target .image-block-caption, .this-will-duplicate-information-and-it-is-still-useful-here li :target, figure:target, table:target>caption {
     background-color: var(--color-highlight-on-target)
 }
+
+/* Make field list terms for method parameters bold and not all uppercase */
+dl.py.class dd dl.py.method dd dl.simple.field-list dt.field-odd {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+
+/* Make field list terms for method 'raises' bold and not all uppercase */
+dl.py.class dd dl.py.method dd dl.simple.field-list dt.field-even {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}

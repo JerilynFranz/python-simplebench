@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 """A simple benchmark case function."""
-from __future__ import annotations
 from typing import Any
 
-from simplebench.cli import main
-from simplebench.decorators import benchmark
+import simplebench
 from simplebench.case import Case
-from simplebench.runners import SimpleRunner
-from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
 from simplebench.reporters.graph.enums import ImageType
+from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
 from simplebench.results import Results
+from simplebench.runners import SimpleRunner
 
 
-@benchmark(
+@simplebench.benchmark(
     'example',
     title='benchcase one',
     description='A simple benchmark case function via decorators.',
@@ -48,4 +46,4 @@ def benchmark_cases_list_factory() -> list[Case]:
 
 
 if __name__ == '__main__':
-    main(benchmark_cases_list_factory())
+    simplebench.main(benchmark_cases_list_factory())

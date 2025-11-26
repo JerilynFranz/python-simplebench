@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """A simple benchmark case function."""
-from __future__ import annotations
 from typing import Any
 
-from simplebench import Case, main
-from simplebench.decorators import benchmark
+import simplebench
+from simplebench import Case
+from simplebench.reporters.graph import ImageType
 from simplebench.reporters.graph.matplotlib import Style
 from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
-from simplebench.reporters.graph.enums import ImageType
 from simplebench.results import Results
 from simplebench.runners import SimpleRunner
 
@@ -28,7 +27,7 @@ def benchcase_four(bench: SimpleRunner, **kwargs: Any) -> Results:
     return bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
 
 
-@benchmark(
+@simplebench.benchmark(
     'example3',
     title='sum_numbers',
     description='A benchmark case function that sums numbers up to n.',
@@ -71,4 +70,4 @@ def benchmark_cases_list_factory() -> list[Case]:
 
 if __name__ == '__main__':
     cases = benchmark_cases_list_factory()
-    main(cases)
+    simplebench.main(cases)

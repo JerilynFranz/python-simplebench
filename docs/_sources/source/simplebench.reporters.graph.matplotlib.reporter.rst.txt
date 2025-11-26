@@ -1,7 +1,24 @@
-simplebench.reporters.graph.matplotlib.reporter module
-======================================================
+simplebench.reporters.graph.matplotlib.reporter package
+=======================================================
 
 .. automodule:: simplebench.reporters.graph.matplotlib.reporter
    :members:
    :undoc-members:
    :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   simplebench.reporters.graph.matplotlib.reporter.options
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   simplebench.reporters.graph.matplotlib.reporter.exceptions
+   simplebench.reporters.graph.matplotlib.reporter.reporter
