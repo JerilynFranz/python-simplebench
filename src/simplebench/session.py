@@ -31,7 +31,8 @@ class Session():
     The session is responsible for managing benchmark cases, command line
     arguments, progress display, and report generation.
 
-    This makes it the primary orchestrator for running benchmarks and generating reports.
+    This makes it the primary orchestrator for running benchmarks and generating
+    reports.
     """
     def __init__(self,
                  *,
@@ -46,28 +47,21 @@ class Session():
 
         :param cases: A Sequence of benchmark cases for the session.
             If None, an empty list will be created. Defaults to None.
-        :type cases: Sequence[Case], optional
         :param verbosity: The verbosity level for console output.
             Defaults to :attr:`Verbosity.NORMAL`.
-        :type verbosity: Verbosity, optional
         :param default_runner: The default runner class to use
             for Cases that do not specify a runner. If None, the default :class:`~.runners.SimpleRunner` is used.
             Defaults to None.
-        :type default_runner: type[SimpleRunner], optional
         :param args_parser: The :class:`~argparse.ArgumentParser` instance for the
             session. If None, a new :class:`~argparse.ArgumentParser` will be automatically created.
             Defaults to None.
-        :type args_parser: ArgumentParser, optional
         :param show_progress: Whether to show progress bars during execution.
             Defaults to False.
-        :type show_progress: bool, optional
         :param output_path: The output path for reports. Defaults to None.
-        :type output_path: Path, optional
         :param console: A Rich Console instance for displaying output. If None,
             a new Console will be automatically created. Defaults to None.
-        :type console: Console, optional
         :raises SimpleBenchTypeError: If the arguments are of the wrong type.
-        """
+        """  # params here are for IDEs
         # public read/write properties with private backing fields
         self.default_runner = default_runner
         self.args_parser = ArgumentParser() if args_parser is None else args_parser

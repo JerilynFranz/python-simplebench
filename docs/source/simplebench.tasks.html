@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -265,6 +265,21 @@
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/tasks.html#ProgressTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.tasks.ProgressTracker" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Helper to manage benchmark progress updates.</p>
+<p>Initialize the ProgressTracker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> (<a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><em>Session</em></a><em> or </em><em>None</em>) – The Session instance.</p></li>
+<li><p><strong>task_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the progress task.</p></li>
+<li><p><strong>progress_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – The maximum value for progress completion.
+Defaults to 100.</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – The description for the progress task.
+Defaults to ‘Benchmarking’.</p></li>
+<li><p><strong>color</strong> (<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Color" title="simplebench.enums.Color"><em>Color</em></a><em>, </em><em>optional</em>) – The color for the progress task.
+Defaults to <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Color.GREEN" title="simplebench.enums.Color.GREEN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">GREEN</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.tasks.ProgressTracker.is_running">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_running</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.tasks.ProgressTracker.is_running" title="Link to this definition">🔗</a></dt>
@@ -345,6 +360,23 @@ Defaults to True.</p>
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/tasks.html#RichProgressTasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.tasks.RichProgressTasks" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Task Rich Progress management for benchmarking.</p>
+<p>Initialize a new RichProgressTasks instance.</p>
+<p>This instance manages multiple <a class="reference internal" href="#simplebench.tasks.RichTask" title="simplebench.tasks.RichTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTask</span></code></a> instances and provides
+a Rich Progress display for console output.</p>
+<p>The display will not start until the <a class="reference internal" href="#simplebench.tasks.RichProgressTasks.start" title="simplebench.tasks.RichProgressTasks.start"><code class="xref py py-meth docutils literal notranslate"><span class="pre">start()</span></code></a> method is called on
+this instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>verbosity</strong> (<a class="reference internal" href="simplebench.html#simplebench.Verbosity" title="simplebench.Verbosity"><em>Verbosity</em></a>) – The verbosity level for console output.</p></li>
+<li><p><strong>console</strong> (<em>Console</em><em>, </em><em>optional</em>) – The Rich Console instance for displaying output.
+If None, a new Console will be created as needed. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> is not a <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.Verbosity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verbosity</span></code></a> enum.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.tasks.RichProgressTasks.add_task">
 <span class="sig-name descname"><span class="pre">add_task</span></span><span class="sig-paren">(</span>
@@ -489,6 +521,25 @@ instance returned.</p>
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/tasks.html#RichTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.tasks.RichTask" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents and controls a Rich Progress task.</p>
+<p>Construct a new RichTask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the task.</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The description of the task.</p></li>
+<li><p><strong>completed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Completion step. Defaults to 0.</p></li>
+<li><p><strong>total</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Total number of steps. Defaults to 100.</p></li>
+<li><p><strong>progress</strong> (<em>Progress</em>) – The Progress instance to use.</p></li>
+<li><p><strong>verbosity</strong> (<a class="reference internal" href="simplebench.html#simplebench.Verbosity" title="simplebench.Verbosity"><em>Verbosity</em></a>) – The verbosity level for console output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any argument is of an incorrect type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any argument has an invalid value.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.tasks.RichTask.get_task">
 <span class="sig-name descname"><span class="pre">get_task</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://rich.readthedocs.io/en/latest/reference/progress.html#rich.progress.Task" title="(in Rich)"><span class="pre">Task</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/tasks.html#RichTask.get_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.tasks.RichTask.get_task" title="Link to this definition">🔗</a></dt>

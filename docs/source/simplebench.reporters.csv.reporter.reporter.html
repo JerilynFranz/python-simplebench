@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -290,6 +290,26 @@ the reporter instance, CLI flags, <a class="reference internal" href="simplebenc
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> for the reporter.</p></li>
 <li><p><strong>targets</strong> (set[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a>]) – The supported output targets for the reporter.</p></li>
 <li><p><strong>formats</strong> (set[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a>]) – The supported output formats for the reporter.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize the <a class="reference internal" href="#simplebench.reporters.csv.reporter.reporter.CSVReporter" title="simplebench.reporters.csv.reporter.reporter.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The exception documentation below refers to validation of subclass configuration
+class variables <code class="xref py py-attr docutils literal notranslate"><span class="pre">_OPTIONS_TYPE</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">_OPTIONS_KWARGS</span></code>. These must be
+correctly defined in any subclass of <a class="reference internal" href="#simplebench.reporters.csv.reporter.reporter.CSVReporter" title="simplebench.reporters.csv.reporter.reporter.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a> to ensure proper
+functionality.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVConfig" title="simplebench.reporters.csv.CSVConfig"><em>CSVConfig</em></a><em> | </em><em>None</em>) – An optional configuration object to override default reporter settings.
+If not provided, default settings will be used.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the subclass configuration types are invalid.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the subclass configuration values are invalid.</p></li>
 </ul>
 </dd>
 </dl>

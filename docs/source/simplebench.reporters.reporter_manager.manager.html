@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -281,6 +281,18 @@ conflicts and the manager will raise exceptions if duplicates are detected durin
 </pre></div>
 </div>
 </div>
+<p>Initialize the ReporterManager.</p>
+<p>By default, this loads a set of predefined <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
+instances and then any reporters registered via the <a class="reference internal" href="simplebench.html#simplebench.register_reporter" title="simplebench.register_reporter"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_reporter()</span></code></a> decorator.</p>
+<p>If desired, this can be skipped by setting <code class="docutils literal notranslate"><span class="pre">load_defaults</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code>. In
+which case, the manager starts with an empty registry and
+<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> instances can be added via the
+<a class="reference internal" href="#simplebench.reporters.reporter_manager.manager.ReporterManager.register" title="simplebench.reporters.reporter_manager.manager.ReporterManager.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>load_defaults</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to load the predefined reporters. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.reporter_manager.manager.ReporterManager.add_reporters_to_argparse">
 <span class="sig-name descname"><span class="pre">add_reporters_to_argparse</span></span><span class="sig-paren">(</span>

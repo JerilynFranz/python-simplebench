@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -292,6 +292,27 @@ name, supported <a class="reference internal" href="simplebench.enums.html#simpl
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> objects for the reporter.</p></li>
 <li><p><strong>targets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><em>set</em></a><em>[</em><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><em>Target</em></a><em>]</em>) – The supported output targets for the reporter.</p></li>
 <li><p><strong>formats</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><em>set</em></a><em>[</em><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><em>Format</em></a><em>]</em>) – The supported output formats for the reporter.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize the JSONReporter.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The exception documentation below refers to validation of subclass configuration
+class variables <code class="docutils literal notranslate"><span class="pre">_OPTIONS_TYPE</span></code> and <code class="docutils literal notranslate"><span class="pre">_OPTIONS_KWARGS</span></code>. These must be correctly
+defined in any subclass of <a class="reference internal" href="#simplebench.reporters.json.reporter.reporter.JSONReporter" title="simplebench.reporters.json.reporter.reporter.JSONReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONReporter</span></code></a> to ensure proper functionality.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="simplebench.reporters.json.html#simplebench.reporters.json.JSONConfig" title="simplebench.reporters.json.JSONConfig"><em>JSONConfig</em></a><em> | </em><em>None</em>) – An optional configuration object to override default reporter settings.
+If not provided, default settings will be used.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the subclass configuration
+types are invalid.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the subclass configuration
+values are invalid.</p></li>
 </ul>
 </dd>
 </dl>

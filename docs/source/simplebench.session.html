@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -269,7 +269,33 @@
 <p>Container for session related information while running benchmarks.</p>
 <p>The session is responsible for managing benchmark cases, command line
 arguments, progress display, and report generation.</p>
-<p>This makes it the primary orchestrator for running benchmarks and generating reports.</p>
+<p>This makes it the primary orchestrator for running benchmarks and generating
+reports.</p>
+<p>Container and orchestrator for session related information while running benchmarks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cases</strong> – A Sequence of benchmark cases for the session.
+If None, an empty list will be created. Defaults to None.</p></li>
+<li><p><strong>verbosity</strong> – The verbosity level for console output.
+Defaults to <code class="xref py py-attr docutils literal notranslate"><span class="pre">Verbosity.NORMAL</span></code>.</p></li>
+<li><p><strong>default_runner</strong> – The default runner class to use
+for Cases that do not specify a runner. If None, the default <a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleRunner</span></code></a> is used.
+Defaults to None.</p></li>
+<li><p><strong>args_parser</strong> – The <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> instance for the
+session. If None, a new <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> will be automatically created.
+Defaults to None.</p></li>
+<li><p><strong>show_progress</strong> – Whether to show progress bars during execution.
+Defaults to False.</p></li>
+<li><p><strong>output_path</strong> – The output path for reports. Defaults to None.</p></li>
+<li><p><strong>console</strong> – A Rich Console instance for displaying output. If None,
+a new Console will be automatically created. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the arguments are of the wrong type.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.session.Session.add_case">
 <span class="sig-name descname"><span class="pre">add_case</span></span><span class="sig-paren">(</span>
@@ -351,7 +377,7 @@ method has been called.</p>
 <dd><p>Extend the Cases for this session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cases</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><em>Case</em></a><em>]</em>) – Sequence of Cases to add to the Session</p>
+<dd class="field-odd"><p><strong>cases</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><em>Case</em></a><em>]</em>) – Sequence of Cases to add to the Session</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the value is not a Sequence of Cases.</p>

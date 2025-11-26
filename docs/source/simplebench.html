@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -445,8 +445,8 @@ benchmark cases remain consistent throughout their lifecycle.</p>
 <p>The results of the benchmark runs are stored in the <cite>results</cite> property, which is a list
 of Results objects. Each Results object corresponds to a specific combination of
 keyword argument variations.</p>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">Minimal Example</span><a class="headerlink" href="#id7" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Minimal Example</span><a class="headerlink" href="#id9" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
       <span class="n">Case</span><span class="p">,</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="n">Results</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span>
 
@@ -468,12 +468,122 @@ keyword argument variations.</p>
 </pre></div>
 </div>
 </div>
+<p>Constructor for Case. This defines a benchmark case.</p>
+<p>The only REQUIRED parameter is <cite>action</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>benchmark_id</strong> – <p>An optional unique identifier for the benchmark case.</p>
+<p>If None, a transient ID is assigned. This is meant to provide a stable identifier for the
+benchmark case across multiple runs for tracking purposes. If not provided,
+an attempt will be made to generate a stable ID based on the the action function
+name, signature, and group. If that is not possible, a transient ID based
+on the instance’s id() will be used. If a transient ID is used, it will differ
+between runs and cannot be used to correlate results across multiple runs.</p>
+<p>Benchmark ids must be unique within a benchmarking session and stable across runs
+or they cannot be used for tracking benchmark results over time.</p>
+</p></li>
+<li><p><strong>git_info</strong> – <p>An optional GitInfo instance representing the state of the Git repository.</p>
+<p>If not provided, the GitInfo will be automatically retrieved from the current
+context of the caller if the code is part of a Git repository.</p>
+</p></li>
+<li><p><strong>action</strong> – <p>The function to perform the benchmark.</p>
+<p>This function must accept a <cite>bench</cite> instance of type SimpleRunner and
+arbitrary keyword arguments (’<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs’). See the <code class="docutils literal notranslate"><span class="pre">ActionRunner</span></code>
+protocol for the exact signature required. It must return a <cite>Results</cite> object.</p>
+</p></li>
+<li><p><strong>group</strong> – The benchmark reporting group to which the benchmark case belongs.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Benchmarks with the same group can be selected for execution without running
+other benchmarks. If not specified, the default group ‘default’ is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> – <p>The title of the benchmark case.</p>
+<p>If None, the name of the action function will be used. Cannot be blank.</p>
+</p></li>
+<li><p><strong>description</strong> – <p>A brief description of the benchmark case.</p>
+<p>If None, the docstring of the action function will be used, or
+‘(no description)’ if no docstring is available. Cannot be blank.</p>
+</p></li>
+<li><p><strong>iterations</strong> – The minimum number of iterations to run for the benchmark.</p></li>
+<li><p><strong>warmup_iterations</strong> – The number of warmup iterations to run before the benchmark.</p></li>
+<li><p><strong>rounds</strong> – <p>The number of rounds to run for the benchmark.</p>
+<p>Rounds are multiple runs of calls to the action within an iteration to mitigate timer
+quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
+functions are called only once per iteration (all rounds in the same iteration share the same
+setup/teardown context).</p>
+</p></li>
+<li><p><strong>min_time</strong> – The minimum time for the benchmark to run in seconds.</p></li>
+<li><p><strong>max_time</strong> – The maximum time for the benchmark run in seconds.</p></li>
+<li><p><strong>timeout</strong> – <p>How long to wait before timing out a benchmark run (in seconds).</p>
+<p>If None, it waits the full duration of <code class="docutils literal notranslate"><span class="pre">max_time</span></code> plus the default timeout grace period
+(0.5 seconds). It must be a positive float or int that is greater
+than <code class="docutils literal notranslate"><span class="pre">max_time</span></code> if provided. This is a safety mechanism to prevent runaway benchmarks.</p>
+<p>If the timeout is reached during a run, a <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleBenchTimeoutError`</span></code>
+will be raised, and the benchmark case’s state will be set to TIMED_OUT.</p>
+</p></li>
+<li><p><strong>variation_cols</strong> – <p>kwargs to be used for cols to denote kwarg variations.</p>
+<p>Each key is a keyword argument name, and the value is the column label to use for that
+argument. Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These
+fields will be added to the output of reporters that support them as columns of data
+with the specified labels.</p>
+<p>If None, an empty dict is used.</p>
+</p></li>
+<li><p><strong>kwargs_variations</strong> – <p>A map of keyword argument names to a list of possible values for that argument.</p>
+<p>Default is {}. When tests are run, the benchmark
+will be executed for each combination of the specified keyword argument variations. The action
+function will be called with a <cite>bench</cite> parameter that is an instance of the runner and the
+keyword arguments for the current variation.
+If None, an empty dict is used.</p>
+</p></li>
+<li><p><strong>runner</strong> – <p>A custom runner class for the benchmark.</p>
+<p>Any custom runner classes must be a subclass of SimpleRunner and must have a method
+named <cite>run</cite> that accepts the same parameters as SimpleRunner.run and returns a Results object.
+The action function will be called with a <cite>bench</cite> parameter that is an instance of the
+custom runner.
+It may also accept additional parameters to the run method as needed. If additional
+parameters are needed for the custom runner, they will need to be passed to the run
+method as keyword arguments.
+No support is provided for passing additional parameters to a custom runner from the &#64;benchmark
+decorator.</p>
+</p></li>
+<li><p><strong>callback</strong> – <p>A callback function for additional processing of the report.</p>
+<p>The function should must four arguments: the Case instance, the Section,
+the Format, and the generated report data.</p>
+<blockquote>
+<div><ul>
+<li><p>case (Case): The <cite>Case</cite> instance processed for the report.</p></li>
+<li><p>section (Section): The <cite>Section</cite> of the report.</p></li>
+<li><p>output_format (Format): The <cite>Format</cite> of the report.</p></li>
+<li><dl class="simple">
+<dt>output (Any): The generated report data. Note that the actual type of this data will</dt><dd><p>depend on the Format specified for the report and the type generated by the
+reporter for that Format</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Omit if no callback is needed by a reporter.</p>
+</p></li>
+<li><p><strong>options</strong> – <p>A list of additional options for the benchmark case.</p>
+<p>Each option is an instance of ReporterOption or a subclass of ReporterOption.
+Reporter options can be used to customize the output of the benchmark reports for
+specific reporters. Reporters are responsible for extracting applicable ReporterOptions
+from the list of options themselves.
+If None, an empty list is used.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.Case.action">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">action</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></em><a class="headerlink" href="#simplebench.Case.action" title="Link to this definition">🔗</a></dt>
 <dd><p>The function to perform the benchmark.</p>
 <p>The function must accept a <cite>bench</cite> parameter of type SimpleRunner and
-arbitrary keyword arguments (’<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs’) and return a Results object.</p>
+arbitrary keyword arguments (’<a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs’) and return a Results object.</p>
 <p>Example:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">my_benchmark_action</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup_function</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -566,8 +676,8 @@ the ReporterOption, and the output object. Leave as None if no callback is neede
 <p>Each key is a keyword argument name, and the value is a list of possible values.</p>
 <p>When tests are run, the benchmark will be executed for each combination of the specified
 keyword argument variations. For example, if <cite>kwargs_variations</cite> is</p>
-<div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id8" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id10" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="o">...</span>
   <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="p">{</span>
           <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
@@ -578,8 +688,8 @@ keyword argument variations. For example, if <cite>kwargs_variations</cite> is</
 </div>
 </div>
 <p>The benchmark will be run 4 times with the following combinations of keyword arguments:</p>
-<div class="literal-block-wrapper docutils container" id="id9">
-<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id9" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id11" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
 <span class="linenos">2</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
 <span class="linenos">3</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
@@ -640,8 +750,8 @@ Only keywords that are also in <cite>kwargs_variations</cite> can be used here. 
 added to the output of reporters that support them as columns of data with the specified labels.</p>
 <p>When tests are run, the benchmark will be executed for each combination of the specified
 keyword argument variations. For example, if <cite>kwargs_variations</cite> is</p>
-<div class="literal-block-wrapper docutils container" id="id10">
-<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id10" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text"><cite>kwargs_variations</cite> argument example</span><a class="headerlink" href="#id12" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span>  <span class="o">...</span>
   <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="p">{</span>
           <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
@@ -652,8 +762,8 @@ keyword argument variations. For example, if <cite>kwargs_variations</cite> is</
 </div>
 </div>
 <p>The benchmark will be run 4 times with the following combinations of keyword arguments:</p>
-<div class="literal-block-wrapper docutils container" id="id11">
-<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id11" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">Keyword (<cite>**kwargs</cite>) Argument Combinations</span><a class="headerlink" href="#id13" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
 <span class="linenos">2</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;accurate&#39;</span><span class="p">}</span>
 <span class="linenos">3</span>  <span class="p">{</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">}</span>
@@ -800,7 +910,7 @@ Cannot be blank.</p>
 <dl class="simple">
 <dt>An action function must accept the following two parameters:</dt><dd><ul class="simple">
 <li><p>bench: SimpleRunner</p></li>
-<li><p><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Arbitrary keyword arguments</p></li>
+<li><p><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs: Arbitrary keyword arguments</p></li>
 </ul>
 </dd>
 </dl>
@@ -1032,6 +1142,13 @@ instance.</p>
 <dd class="field-odd"><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to include full data in the JSON output.</p>
 </dd>
 </dl>
+<p>Initialize JSONChoiceOptions with default targets and subdirectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to include full data in the JSON output.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.JSONOptions.full_data">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">full_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.JSONOptions.full_data" title="Link to this definition">🔗</a></dt>
@@ -1108,6 +1225,52 @@ the benchmark. (read only)</p></li>
 <li><p><strong>total_elapsed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The total elapsed time for the benchmark. (read only)</p></li>
 <li><p><strong>extra_info</strong> (<em>MappingProxyType</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – Additional information about the benchmark run. This is a
 read-only property that returns a mapping proxy to prevent external mutation. (read only)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize a Results object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The reporting group to which the benchmark case belongs.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the benchmark case.</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A brief description of the benchmark case.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The n weighting assigned to the iteration for purposes of Big O analysis.</p></li>
+<li><p><strong>rounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of rounds in the benchmark case.</p></li>
+<li><p><strong>total_elapsed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The total elapsed time for the benchmark.</p></li>
+<li><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="simplebench.iteration.html#simplebench.iteration.Iteration" title="simplebench.iteration.Iteration"><em>Iteration</em></a><em>]</em>) – The list of Iteration objects representing each iteration of the benchmark.</p></li>
+<li><p><strong>variation_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – The columns to use for labelling kwarg variations
+in the benchmark. Defaults to None, which results in an empty dictionary.</p></li>
+<li><p><strong>variation_marks</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – A dictionary of variation marks used to identify
+the benchmark variation. Defaults to None, which results in an empty dictionary.</p></li>
+<li><p><strong>interval_unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – The unit of measurement for the interval (e.g. “ns”).
+Defaults to “ns”.</p></li>
+<li><p><strong>interval_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – The scale factor for the interval (e.g. 1e-9 for nanoseconds).
+Defaults to 1e-9.</p></li>
+<li><p><strong>ops_per_interval_unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – The unit of measurement for operations per interval (e.g. “ops/s”).
+Defaults to “ops/s”.</p></li>
+<li><p><strong>ops_per_interval_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – The scale factor for operations per interval (e.g. 1.0 for ops/s).
+Defaults to 1.0.</p></li>
+<li><p><strong>memory_unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – The unit of measurement for memory usage (e.g. “bytes”).
+Defaults to “bytes”.</p></li>
+<li><p><strong>memory_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – The scale factor for memory usage (e.g. 1.0 for bytes).
+Defaults to 1.0.</p></li>
+<li><p><strong>ops_per_second</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.stats.html#simplebench.stats.OperationsPerInterval" title="simplebench.stats.OperationsPerInterval"><em>OperationsPerInterval</em></a><em>]</em><em>, </em><em>optional</em>) – The operations per second for the benchmark.
+Defaults to a new OperationsPerInterval object initialized from the benchmark’s iterations.</p></li>
+<li><p><strong>per_round_timings</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.stats.html#simplebench.stats.OperationTimings" title="simplebench.stats.OperationTimings"><em>OperationTimings</em></a><em>]</em><em>, </em><em>optional</em>) – The per-round timings for the benchmark.
+Defaults to a new OperationTimings object initialized from the benchmark’s iterations.</p></li>
+<li><p><strong>memory</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.stats.html#simplebench.stats.MemoryUsage" title="simplebench.stats.MemoryUsage"><em>MemoryUsage</em></a><em>]</em><em>, </em><em>optional</em>) – The memory usage for the benchmark.
+Defaults to a new MemoryUsage object initialized from the benchmark’s iterations.</p></li>
+<li><p><strong>peak_memory</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.stats.html#simplebench.stats.PeakMemoryUsage" title="simplebench.stats.PeakMemoryUsage"><em>PeakMemoryUsage</em></a><em>]</em><em>, </em><em>optional</em>) – The peak memory usage for the benchmark.
+Defaults to a new PeakMemoryUsage object initialized from the benchmark’s iterations.</p></li>
+<li><p><strong>extra_info</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Any extra information to include in the benchmark results.
+Defaults to {}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any of the arguments are of incorrect type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any of the arguments have invalid values.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1287,6 +1450,22 @@ better control over the appearance of the table in different contexts.</p>
 </p>
 </dd>
 </dl>
+<p>Create a RichTableOptions instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>virtual_width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The width of the Rich table output when rendered to the
+filesystem or via callback. Must be between 80 and 1000 characters or
+<code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no width constraint is applied. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">virtual_width</span></code> is not
+an integer or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">virtual_width</span></code> is not
+between 80 and 10000 characters when specified.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.RichTableOptions.virtual_width">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">virtual_width</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.RichTableOptions.virtual_width" title="Link to this definition">🔗</a></dt>
@@ -1333,6 +1512,44 @@ better control over the appearance of the table in different contexts.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">theme:</span> <span class="pre">Theme</span> <span class="pre">=</span> <span class="pre">Theme.Default</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">image_type:</span> <span class="pre">ImageType</span> <span class="pre">=</span> <span class="pre">ImageType.SVG</span></code></p></li>
 </ul>
+<p>Create a <a class="reference internal" href="simplebench.reporters.graph.matplotlib.html#simplebench.reporters.graph.matplotlib.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a> instance.</p>
+<p>To ensure accuracy in graph rendering, the default width, height, and DPI should be set with
+the width and height being exact multiples of the DPI. This is because the underlying
+rendering engine uses DPI to determine the pixel dimensions of the output graph from the
+specified width and height in inches.</p>
+<p>If the width and height are not exact multiples of the DPI, it may lead to
+unexpected scaling or distortion of the graph when rendered, as the rendering engine
+may round the pixel dimensions to the nearest whole number.</p>
+<p>The default values provided here are chosen to balance quality and performance for
+most common use cases. However, users can customize these values based on their specific
+requirements for graph resolution and size.</p>
+<p>The use of <code class="docutils literal notranslate"><span class="pre">None</span></code> for (or, equivalently the omission of) any argument indicates that the default
+value defined in the next lower precedence level should be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The width in pixels of a MatPlotLib output when rendered.
+It should be an exact multiple of the dpi and can only be between 500 and 4000 pixels.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the default <a class="reference internal" href="simplebench.reporters.graph.matplotlib.html#simplebench.reporters.graph.matplotlib.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a> default width will be used.</p></li>
+<li><p><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The height in pixels of a MatPlotLib output when rendered.
+It should be an exact multiple of the dpi and can only be between 500 and 4000 pixels.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the default <a class="reference internal" href="simplebench.reporters.graph.matplotlib.html#simplebench.reporters.graph.matplotlib.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a> default height will be used.</p></li>
+<li><p><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The default DPI (dots per inch) for a MatPlotLib output. It must
+be between 50 and 400.</p></li>
+<li><p><strong>y_starts_at_zero</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> | </em><em>None</em>) – Whether the Y-axis should start at zero.</p></li>
+<li><p><strong>x_labels_rotation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> | </em><em>None</em>) – The rotation angle in degrees for X-axis labels.</p></li>
+<li><p><strong>style</strong> (<a class="reference internal" href="simplebench.reporters.graph.matplotlib.enums.style.html#simplebench.reporters.graph.matplotlib.enums.style.Style" title="simplebench.reporters.graph.matplotlib.enums.style.Style"><code class="xref py py-class docutils literal notranslate"><span class="pre">Style</span></code></a> | None) – The default style for the MatPlotLib graphs.</p></li>
+<li><p><strong>theme</strong> (<a class="reference internal" href="simplebench.reporters.graph.matplotlib.theme.html#simplebench.reporters.graph.matplotlib.theme.Theme" title="simplebench.reporters.graph.matplotlib.theme.Theme"><code class="xref py py-class docutils literal notranslate"><span class="pre">Theme</span></code></a> | None) – The theme to use for the MatPlotLib graphs.</p></li>
+<li><p><strong>image_type</strong> (<a class="reference internal" href="simplebench.reporters.graph.enums.image_type.html#simplebench.reporters.graph.enums.image_type.ImageType" title="simplebench.reporters.graph.enums.image_type.ImageType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageType</span></code></a> | None) – The output format for the graph files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any of the arguments are of incorrect type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any of the arguments have invalid values.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -1355,7 +1572,33 @@ better control over the appearance of the table in different contexts.</p>
 <p>Container for session related information while running benchmarks.</p>
 <p>The session is responsible for managing benchmark cases, command line
 arguments, progress display, and report generation.</p>
-<p>This makes it the primary orchestrator for running benchmarks and generating reports.</p>
+<p>This makes it the primary orchestrator for running benchmarks and generating
+reports.</p>
+<p>Container and orchestrator for session related information while running benchmarks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cases</strong> – A Sequence of benchmark cases for the session.
+If None, an empty list will be created. Defaults to None.</p></li>
+<li><p><strong>verbosity</strong> – The verbosity level for console output.
+Defaults to <a class="reference internal" href="#simplebench.Verbosity.NORMAL" title="simplebench.Verbosity.NORMAL"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Verbosity.NORMAL</span></code></a>.</p></li>
+<li><p><strong>default_runner</strong> – The default runner class to use
+for Cases that do not specify a runner. If None, the default <a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleRunner</span></code></a> is used.
+Defaults to None.</p></li>
+<li><p><strong>args_parser</strong> – The <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> instance for the
+session. If None, a new <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> will be automatically created.
+Defaults to None.</p></li>
+<li><p><strong>show_progress</strong> – Whether to show progress bars during execution.
+Defaults to False.</p></li>
+<li><p><strong>output_path</strong> – The output path for reports. Defaults to None.</p></li>
+<li><p><strong>console</strong> – A Rich Console instance for displaying output. If None,
+a new Console will be automatically created. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the arguments are of the wrong type.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.Session.add_case">
 <span class="sig-name descname"><span class="pre">add_case</span></span><span class="sig-paren">(</span>
@@ -1728,6 +1971,13 @@ report keys for the reports that should be generated.</p>
 It can be used to define custom styles for Matplotlib graphs generated by SimpleBench.</p>
 <p>See <a class="reference external" href="https://matplotlib.org/stable/tutorials/introductory/customizing.html">Customizing Matplotlib with style sheets and rcParams</a>
 for more information on customizing Matplotlib themes.</p>
+<p>Initialize a <a class="reference internal" href="#simplebench.Theme" title="simplebench.Theme"><code class="xref py py-class docutils literal notranslate"><span class="pre">Theme</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rcparams</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – The rcParams to use for the theme.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the default Matplotlib rcParams will be used.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.Theme.replace">
 <span class="sig-name descname"><span class="pre">replace</span></span><span class="sig-paren">(</span>

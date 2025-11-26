@@ -227,3 +227,15 @@ highlight_language = 'python3'
 # This pattern will automatically exclude prompts from shell blocks
 copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
 copybutton_prompt_is_regexp = True
+
+
+# -- Options for autodoc extension -------------------------------------------
+
+# This value controls how to represent the signature of a class.
+# 'class' shows the class name, 'init' shows the __init__ signature.
+autodoc_class_signature = 'init'
+
+# This value selects what content will be inserted into the main body of an
+# autoclass directive. The possible values are:
+# "class", "init", "both"
+autoclass_content = 'both'

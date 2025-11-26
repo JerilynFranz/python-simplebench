@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=1a31184c" />
     
     
 
@@ -275,7 +275,8 @@
 <span class="sd">    The session is responsible for managing benchmark cases, command line</span>
 <span class="sd">    arguments, progress display, and report generation.</span>
 
-<span class="sd">    This makes it the primary orchestrator for running benchmarks and generating reports.</span>
+<span class="sd">    This makes it the primary orchestrator for running benchmarks and generating</span>
+<span class="sd">    reports.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="o">*</span><span class="p">,</span>
@@ -290,28 +291,21 @@
 
 <span class="sd">        :param cases: A Sequence of benchmark cases for the session.</span>
 <span class="sd">            If None, an empty list will be created. Defaults to None.</span>
-<span class="sd">        :type cases: Sequence[Case], optional</span>
 <span class="sd">        :param verbosity: The verbosity level for console output.</span>
 <span class="sd">            Defaults to :attr:`Verbosity.NORMAL`.</span>
-<span class="sd">        :type verbosity: Verbosity, optional</span>
 <span class="sd">        :param default_runner: The default runner class to use</span>
 <span class="sd">            for Cases that do not specify a runner. If None, the default :class:`~.runners.SimpleRunner` is used.</span>
 <span class="sd">            Defaults to None.</span>
-<span class="sd">        :type default_runner: type[SimpleRunner], optional</span>
 <span class="sd">        :param args_parser: The :class:`~argparse.ArgumentParser` instance for the</span>
 <span class="sd">            session. If None, a new :class:`~argparse.ArgumentParser` will be automatically created.</span>
 <span class="sd">            Defaults to None.</span>
-<span class="sd">        :type args_parser: ArgumentParser, optional</span>
 <span class="sd">        :param show_progress: Whether to show progress bars during execution.</span>
 <span class="sd">            Defaults to False.</span>
-<span class="sd">        :type show_progress: bool, optional</span>
 <span class="sd">        :param output_path: The output path for reports. Defaults to None.</span>
-<span class="sd">        :type output_path: Path, optional</span>
 <span class="sd">        :param console: A Rich Console instance for displaying output. If None,</span>
 <span class="sd">            a new Console will be automatically created. Defaults to None.</span>
-<span class="sd">        :type console: Console, optional</span>
 <span class="sd">        :raises SimpleBenchTypeError: If the arguments are of the wrong type.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># params here are for IDEs</span>
         <span class="c1"># public read/write properties with private backing fields</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_runner</span> <span class="o">=</span> <span class="n">default_runner</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args_parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span> <span class="k">if</span> <span class="n">args_parser</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">args_parser</span>

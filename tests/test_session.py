@@ -419,16 +419,17 @@ def session_add_reporter_flags_testspecs() -> list[TestAction]:
     reporter_manager = session.reporter_manager
     reporters = reporter_manager.all_reporters()
 
-    csv_reporter_name = CSVConfig.reporter_name
-    json_reporter_name = "json"
-    rich_table_reporter_name = "rich_table"
-    scatterplot_reporter_name = "scatterplot"
+    csv_reporter_name = CSVConfig.name
+    json_reporter_name = JSONConfig.name
+    rich_table_reporter_name = RichTableConfig.name
+    scatterplot_reporter_name = ScatterPlotConfig.name
 
 
     testspecs: list[TestAction] = [
         
     ]
     return testspecs
+
 
 def test_session_add_reporter_flags() -> None:
     """Tests the add_reporter_flags method of the Session class."""

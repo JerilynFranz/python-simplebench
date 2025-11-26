@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -274,6 +274,21 @@
 <li><p><strong>case</strong> – The Case instance containing benchmark results.</p></li>
 <li><p><strong>choice</strong> – The Choice instance specifying the report configuration.</p></li>
 </ul>
+</dd>
+</dl>
+<p>Initialize ReportLogMetadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> – The path to the generated report file. If None, no file path is set.</p></li>
+<li><p><strong>timestamp</strong> – The timestamp of the report generation.</p></li>
+<li><p><strong>reports_log_path</strong> – The path to the reports log file.</p></li>
+<li><p><strong>case</strong> – The Case instance containing benchmark results.</p></li>
+<li><p><strong>choice</strong> – The Choice instance specifying the report configuration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any argument is of invalid type.</p>
 </dd>
 </dl>
 <dl class="py property">

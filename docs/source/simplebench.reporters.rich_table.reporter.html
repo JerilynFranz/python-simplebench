@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -278,6 +278,57 @@
 <p>This class inherits from <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig" title="simplebench.reporters.reporter.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a> and provides a
 type-safe, discoverable interface for overriding the default settings
 of a <a class="reference internal" href="#simplebench.reporters.rich_table.reporter.RichTableReporter" title="simplebench.reporters.rich_table.reporter.RichTableReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTableReporter</span></code></a>.</p>
+<p>Initialize the RichTableReporter configuration.</p>
+<p>Accepts keyword arguments to override any of the default configurations.
+All arguments are optional. If not provided, the default value for
+RichTableReporter will be used.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameters of this constructor correspond directly to the
+parameters of the base <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig" title="simplebench.reporters.reporter.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a> class. This design
+allows users to easily discover and override any configuration option
+available for the RichTableReporter while maintaining type safety
+and discoverability through IDEs and documentation tools.</p>
+<p>To prevent future breakage, avoid using the ‘<a href="#id1"><span class="problematic" id="id2">rc_</span></a>’, or ‘<a href="#id3"><span class="problematic" id="id4">rich_table_</span></a>’ prefixes
+for any new parameters in subclasses as these are reserved for use by SimpleBench.</p>
+</div>
+<p><strong>Default Values</strong>:</p>
+<ul class="simple">
+<li><p><strong>name</strong>: <code class="docutils literal notranslate"><span class="pre">'rich-table'</span></code></p></li>
+<li><p><strong>description</strong>: <code class="docutils literal notranslate"><span class="pre">'Displays</span> <span class="pre">benchmark</span> <span class="pre">results</span> <span class="pre">as</span> <span class="pre">a</span> <span class="pre">rich</span> <span class="pre">text</span> <span class="pre">table</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">console.'</span></code></p></li>
+<li><p><strong>sections</strong>: <code class="docutils literal notranslate"><span class="pre">{Section.OPS,</span> <span class="pre">Section.TIMING,</span> <span class="pre">Section.MEMORY,</span> <span class="pre">Section.PEAK_MEMORY}</span></code></p></li>
+<li><p><strong>targets</strong>: <code class="docutils literal notranslate"><span class="pre">{Target.CONSOLE,</span> <span class="pre">Target.FILESYSTEM,</span> <span class="pre">Target.CALLBACK}</span></code></p></li>
+<li><p><strong>default_targets</strong>: <code class="docutils literal notranslate"><span class="pre">{Target.CONSOLE}</span></code></p></li>
+<li><p><strong>formats</strong>: <code class="docutils literal notranslate"><span class="pre">{Format.RICH_TEXT}</span></code></p></li>
+<li><p><strong>choices</strong>: A <code class="docutils literal notranslate"><span class="pre">ChoicesConf</span></code> with predefined <code class="docutils literal notranslate"><span class="pre">ChoiceConf</span></code> objects for rich table reporting.</p></li>
+<li><p><strong>file_suffix</strong>: <code class="docutils literal notranslate"><span class="pre">'txt'</span></code></p></li>
+<li><p><strong>file_unique</strong>: <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><strong>file_append</strong>: <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><strong>subdir</strong>: <code class="docutils literal notranslate"><span class="pre">'rich'</span></code></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the reporter.</p></li>
+<li><p><strong>description</strong> – A brief description of the reporter.</p></li>
+<li><p><strong>sections</strong> – The sections to include in the report.</p></li>
+<li><p><strong>targets</strong> – The output targets for the report.</p></li>
+<li><p><strong>default_targets</strong> – The default output targets if none are specified.</p></li>
+<li><p><strong>formats</strong> – The output formats for the report.</p></li>
+<li><p><strong>choices</strong> – The choice configurations for the reporter.</p></li>
+<li><p><strong>file_suffix</strong> – The file suffix to use for filesystem outputs.</p></li>
+<li><p><strong>file_unique</strong> – Whether to use unique filenames for outputs.</p></li>
+<li><p><strong>file_append</strong> – Whether to append to existing files.</p></li>
+<li><p><strong>subdir</strong> – The subdirectory to use for filesystem outputs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any provided argument has an invalid type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any provided argument has an invalid value or combination of values.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -297,6 +348,22 @@ to the filesystem or via callback. Must be between 80 and 1000 characters or
 rendered to non-console outputs, such as files or callbacks. This allows for
 better control over the appearance of the table in different contexts.</p>
 </p>
+</dd>
+</dl>
+<p>Create a RichTableOptions instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>virtual_width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The width of the Rich table output when rendered to the
+filesystem or via callback. Must be between 80 and 1000 characters or
+<code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no width constraint is applied. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">virtual_width</span></code> is not
+an integer or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">virtual_width</span></code> is not
+between 80 and 10000 characters when specified.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py property">
@@ -350,6 +417,31 @@ defining the reporter instance, CLI flags,
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> objects, supported output
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a> objects, and supported output
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> objects for the reporter.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize the RichTableReporter.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The exception documentation below refers to validation of subclass configuration
+class variables <code class="docutils literal notranslate"><span class="pre">_OPTIONS_TYPE</span></code> and <code class="docutils literal notranslate"><span class="pre">_OPTIONS_KWARGS</span></code>. These must be correctly
+defined in any subclass of <a class="reference internal" href="#simplebench.reporters.rich_table.reporter.RichTableReporter" title="simplebench.reporters.rich_table.reporter.RichTableReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTableReporter</span></code></a> to ensure proper
+functionality.</p>
+<p>In simple use, these exceptions should never be raised, as
+<a class="reference internal" href="#simplebench.reporters.rich_table.reporter.RichTableReporter" title="simplebench.reporters.rich_table.reporter.RichTableReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTableReporter</span></code></a> provides valid implementations. They are documented
+here for completeness.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="#simplebench.reporters.rich_table.reporter.RichTableConfig" title="simplebench.reporters.rich_table.reporter.RichTableConfig"><em>RichTableConfig</em></a><em> | </em><em>None</em>) – An optional configuration object to override default reporter settings.
+If not provided, default settings will be used.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the subclass configuration
+types are invalid.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the subclass configuration
+values are invalid.</p></li>
 </ul>
 </dd>
 </dl>

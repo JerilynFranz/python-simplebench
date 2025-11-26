@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a31184c" />
     
     
 
@@ -282,6 +282,36 @@ and avoids the complexities of forcibly terminating threads.</p>
 </pre></div>
 </div>
 </div>
+<p>Creates a Timeout instance.</p>
+<p>A Timeout instance can be used to run a callable with via the run method
+in a separate daemon thread with the specified timeout interval.</p>
+<p>If the callable does not complete within the timeout, a SimpleBenchTimeoutError is raised.
+On Windows, the worker thread will continue running in the background as a daemon thread.
+On Linux or Unix based platforms, the worker thread may be forcefully terminated after a
+grace period.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>You should avoid continuing execution after a timeout.</strong></p>
+<p>The worker thread may still be running in the background and this can lead to
+undefined behavior. As may the forceful termination of the worker thread if
+it is <strong>not</strong> still running.</p>
+<p>This design ensures that the main thread remains responsive and prevents ‘hanging’
+due to unresponsive or long-running operations.</p>
+<p>So you should catch the SimpleBenchTimeoutError exception, perform any necessary cleanup,
+and then exit the program cleanly.</p>
+</div>
+<p>A Timeout instance can be reused to run multiple callables with the same timeout interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout_interval</strong> – <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">int</span></code> duration to wait for the callable to complete.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If <cite>timeout_interval</cite> is not a float or int.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If <cite>timeout_interval</cite> is not greater than zero.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.timeout.Timeout.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">_calling_func:</span> <span class="pre">~typing.Callable[[~_P],</span> <span class="pre">~simplebench.timeout.timeout._RT],</span> <span class="pre">*args:</span> <span class="pre">~typing.~_P,</span> <span class="pre">**kwargs:</span> <span class="pre">~typing.~_P</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_RT</span></span></span><a class="reference internal" href="../_modules/simplebench/timeout/timeout.html#Timeout.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timeout.Timeout.run" title="Link to this definition">🔗</a></dt>
