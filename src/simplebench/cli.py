@@ -175,6 +175,7 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None,
     exit_code: ExitCode = ExitCode.SUCCESS
     session = None  # type: ignore[assignment]  # just to make sure it's defined in the outer scope
 
+    final_message: str = ''
     try:
         parser = _create_parser()
         session = Session(args_parser=parser)
@@ -202,29 +203,25 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None,
         session.report()
 
     except KeyboardInterrupt:
-        if session and session.tasks:
-            session.tasks.stop()
-        print('')
-        print('Benchmarking interrupted by keyboard interrupt')
+        final_message = '\nBenchmarking interrupted by keyboard interrupt'
         exit_code = ExitCode.KEYBOARD_INTERRUPT
     except SimpleBenchUsageError as e:
-        if session and session.tasks:
-            session.tasks.stop()
-        print(f'Usage error: {e}')
+        final_message = f'Usage error: {e}'
         exit_code = ExitCode.CLI_ARGUMENTS_ERROR
     except SimpleBenchArgumentError as e:
-        print(f'CLI argument processing error: {e}')
+        final_message = f'CLI argument processing error: {e}'
         exit_code = ExitCode.CLI_ARGUMENTS_ERROR
     except SimpleBenchTimeoutError as e:
-        if session and session.tasks:
-            session.tasks.stop()
-        print(f'Timeout occurred during a benchmark: {e}')
+        final_message = f'Timeout occurred during a benchmark: {e}'
         exit_code = ExitCode.BENCHMARK_TIMED_OUT
     except Exception as e:  # pylint: disable=broad-exception-caught
+        final_message = f'An unexpected error occurred: {e}'
+        exit_code = ExitCode.RUNTIME_ERROR
+    finally:
         if session and session.tasks:
             session.tasks.stop()
-        print(f'An unexpected error occurred: {e}')
-        exit_code = ExitCode.RUNTIME_ERROR
+        if final_message:
+            print(final_message)
 
     if no_exit:
         return exit_code
