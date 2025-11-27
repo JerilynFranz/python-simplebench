@@ -73,8 +73,10 @@ class Session():
         self.console = Console() if console is None else console
 
         # private attributes
+        self._args_parsed: bool = False
+        """Whether the command line arguments have been parsed."""
         self._reporter_flags_added: bool = False
-        """Whether reporter flags have been added to the ArgumentParser."""
+        """Whether the reporter flags have been added to the ArgumentParser."""
         self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity, console=self.console)
         """ProgressTasks instance for managing progress tasks - backing field for the 'tasks' attribute."""
         self._progress: Progress = self.tasks.progress
@@ -93,23 +95,27 @@ class Session():
     def parse_args(self, args: Sequence[str] | None = None) -> None:
         """Parse the command line arguments using the session's :class:`~argparse.ArgumentParser`.
 
-        The :meth:`add_reporter_flags` method must be called before this is run to
-        ensure that reporter flags are added to the ArgumentParser.
-
-        It is broken up into these two methods to allow adding custom reporters
-        before parsing arguments.
-
         This method parses the command line arguments and stores them in the session's :attr:`args` property.
         By default, it parses the arguments from :data:`sys.argv`. If ``args`` is provided, it will parse
         the arguments from the provided sequence of strings instead.
 
         This can be used to customize the command line arguments for testing or other purposes.
 
+        It automatically calls :meth:`add_reporter_flags` to ensure that reporter flags
+        are added to the ArgumentParser if it has not already been called.
+
+        If you wish to customize the ArgumentParser before or after adding the reporter flags,
+        you can do so by calling :meth:`add_reporter_flags` before calling this method.
+
         :param args: A list of command line arguments to parse. If None,
             the arguments will be taken from :data:`sys.argv`. Defaults to None.
         :type args: Sequence[str], optional
         :raises SimpleBenchTypeError: If the ``args_parser`` is not set.
         """
+        if self._args_parsed:
+            return
+        self._args_parsed = True
+
         if args is not None:
             if not isinstance(args, Sequence):
                 raise SimpleBenchTypeError(
@@ -172,15 +178,20 @@ class Session():
     def run(self) -> None:
         """Run all benchmark cases in the session.
 
-        It DOES NOT automatically parse command line arguments. That must be done
-        separately by calling :meth:`parse_args` with appropriate arguments.
+        This method iterates over all :class:`~.case.Case` instances in the session's
+        cases and invokes their :meth:`~.Case.run` method to execute the benchmarks.
 
-        That provides flexibility for users who want to customize argument parsing
-        or who want to run the session entirely programmatically without command line args.
+        If the :meth:`parse_args` method has not been called prior to invoking this method,
+        it will be called authomatically with no arguments to parse from :data:`sys.argv`.
+
+        If you wish to customize argument parsing or run the session entirely programmatically
+        without command line args, you should call :meth:`parse_args` before calling this method.
 
         :raises SimpleBenchTimeoutError: If a benchmark case times out during execution.
         :raises SimpleBenchBenchmarkError: If an error occurs during the execution of a benchmark.
         """
+        if not self._args_parsed:
+            self.parse_args()
         if self._verbosity > Verbosity.NORMAL:
             self._console.print(f'Running {len(self.cases)} benchmark case(s)...')
         self.tasks.clear()

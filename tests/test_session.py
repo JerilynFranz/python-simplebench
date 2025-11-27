@@ -21,7 +21,7 @@ from simplebench.runners import SimpleRunner
 from simplebench.tasks import RichProgressTasks
 from simplebench.utils import collect_arg_list, flag_to_arg
 
-from .factories import session_kwargs_factory
+from .factories import session_factory, session_kwargs_factory
 from .kwargs import SessionKWArgs
 from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSpec, idspec
 
@@ -252,7 +252,7 @@ def session_instance() -> Session:
     idspec("PARSE_ARGS_UNINIT_004", TestAction(
         name="Parse sys.argv '--quiet' with uninitialized argparser",
         action=Session().parse_args,
-        exception=SystemExit,
+        exception=SystemExit,   # With no options set, argparse should error on unknown args
         extra=parseargs_helper(["--quiet"]))),
     idspec("PARSE_ARGS_UNINIT_005", TestAction(
         name="Parse args - invalid type (int) with uninitialized argparser",
@@ -293,27 +293,33 @@ def session_with_reporters() -> Session:
 NO_ATTRIBUTE = object()
 
 
-@pytest.mark.parametrize("testspec", [
-    idspec("PARSE_ARGS_001", TestAction(
+def parse_args_testspecs() -> list[TestAction]:
+    """Generate testspecs for the parse_args method of a Session instance with reporters loaded."""
+    testspecs: list[TestAction] = [
+        idspec("PARSE_ARGS_001", TestAction(
             name="Parse '--help' with initialized argparser",
-            action=session_with_reporters().parse_args,
+            action=session_factory(cache_id='PARSE_ARGS_001').parse_args,
             args=[["--help"]],
             exception=SystemExit)),  # argparse throws SystemExit on --help
-    idspec("PARSE_ARGS_002", TestAction(
+        idspec("PARSE_ARGS_002", TestAction(
             name="Parse '--json' with initialized argparser (.json should be [['console']])",
-            action=session_with_reporters().parse_args,
-            obj=session_with_reporters(),
+            action=session_factory(cache_id='PARSE_ARGS_002').parse_args,
+            obj=session_factory(cache_id='PARSE_ARGS_002'),
             args=[["--json", "console"]],
             validate_obj=lambda obj: collect_arg_list(args=obj.args, flag="--json") == ["console"],
             expected=NO_EXPECTED_VALUE)),
-    idspec("PARSE_ARGS_003", TestAction(
+        idspec("PARSE_ARGS_003", TestAction(
             name="Parse no arguments with initialized argparser (.json should be False)",
-            action=session_with_reporters().parse_args,
-            obj=session_with_reporters(),
+            action=session_factory(cache_id='PARSE_ARGS_003').parse_args,
+            obj=session_factory(cache_id='PARSE_ARGS_003'),
             args=[[]],
             validate_obj=lambda obj: not obj.args.json,
             expected=NO_EXPECTED_VALUE)),
-])
+    ]
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec", parse_args_testspecs())
 def test_parse_args(testspec: TestAction) -> None:
     """Tests the parse_args method of a Session instance with reporters loaded.
 

@@ -624,10 +624,10 @@ def test_decorator_use_field_for_n_valid() -> None:
 
     cases = get_registered_cases()
 
-    print(str(cases))
     assert len(cases) == 1, "Expected exactly one registered case."
 
     session = Session(cases=cases, verbosity=Verbosity.QUIET)
+    session.parse_args([])  # No command-line args
     session.run()
     # cases should have been run without errors and results collected
 

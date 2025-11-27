@@ -230,6 +230,7 @@ def postrun_benchmark_case() -> Case:
 
     argparse = ArgumentParser()
     session = Session(args_parser=argparse, cases=[case], verbosity=Verbosity.QUIET, show_progress=False)
+    session.parse_args([])  # Empty args to use defaults
     session.run()
 
     return case
