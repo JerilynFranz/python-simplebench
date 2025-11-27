@@ -13,6 +13,8 @@ from rich.progress import Progress
 
 from simplebench import Case, Results, Session, Verbosity
 from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
+from simplebench.reporters.choice import ChoiceConf
+from simplebench.reporters.choices import ChoicesConf
 from simplebench.reporters.csv import CSVConfig
 from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.runners import SimpleRunner
@@ -472,4 +474,34 @@ def session_add_reporter_flags_testspecs() -> list[TestAction]:
 @pytest.mark.parametrize("testspec", session_add_reporter_flags_testspecs())
 def test_session_add_reporter_flags(testspec: TestAction) -> None:
     """Tests the add_reporter_flags method of the Session class."""
+    testspec.run()
+
+
+def session_report_keys_testspec() -> list[TestSpec]:
+    """Tests the report_keys method of the Session class."""
+    csv_config = CSVConfig()
+    csv_choices: ChoicesConf = csv_config.choices
+    first_choice: ChoiceConf = next(iter(csv_choices.values()))
+    flag = list(first_choice.flags)[0]
+    arg = flag_to_arg(flag)
+    argv = [flag, "filesystem"]
+    session = Session()
+    session.parse_args(args=argv)
+    testspecs = [
+        idspec(
+            "REPORT_KEYS_001",
+            TestAction(
+                name="Session.report_keys returns correct set key",
+                action=session.report_keys,
+                assertion=Assert.EQUAL,
+                expected=[arg],
+            )
+        )
+    ]
+    return testspecs
+
+
+@pytest.mark.parametrize("testspec", session_report_keys_testspec())
+def test_session_report_keys(testspec: TestAction) -> None:
+    """Tests the report_keys method of the Session class."""
     testspec.run()

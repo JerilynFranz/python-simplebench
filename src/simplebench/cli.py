@@ -23,6 +23,7 @@ from .doc_utils import format_docstring
 from .enums import ExitCode, Verbosity
 from .exceptions import (
     SimpleBenchArgumentError,
+    SimpleBenchBenchmarkError,
     SimpleBenchTimeoutError,
     SimpleBenchTypeError,
     SimpleBenchUsageError,
@@ -109,7 +110,8 @@ def _configure_session_from_args(
                   RUNTIME_ERROR=ExitCode.RUNTIME_ERROR.value,
                   CLI_ARGUMENTS_ERROR=ExitCode.CLI_ARGUMENTS_ERROR.value,
                   SUCCESS=ExitCode.SUCCESS.value,
-                  BENCHMARK_TIMED_OUT=ExitCode.BENCHMARK_TIMED_OUT.value)
+                  BENCHMARK_TIMED_OUT=ExitCode.BENCHMARK_TIMED_OUT.value,
+                  BENCHMARK_ERROR=ExitCode.BENCHMARK_ERROR.value)
 def main(benchmark_cases: Optional[Sequence[Case]] = None,
          *,
          argv: Optional[list[str]] = None,
@@ -148,7 +150,8 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None,
         - ``ExitCode.RUNTIME_ERROR`` ({RUNTIME_ERROR}) runtime errors during execution.
         - ``ExitCode.CLI_ARGUMENTS_ERROR`` ({CLI_ARGUMENTS_ERROR}) for errors during CLI argument processing
         - ``ExitCode.KEYBOARD_INTERRUPT`` ({KEYBOARD_INTERRUPT}) if interrupted by keyboard interrupt
-        - ``ExitCode.BENCHMARK_TIMED_OUT`` ({BENCHMARK_TIMED_OUT}) if a timeout occurs during benchmarking.
+        - ``ExitCode.BENCHMARK_TIMED_OUT`` ({BENCHMARK_TIMED_OUT}) if a timeout occurs during execution of a benchmark.
+        - ``ExitCode.BENCHMARK_ERROR`` ({BENCHMARK_ERROR}) if an error occurs during execution of a benchmark.
     :raises SimpleBenchTypeError: If the ``extra_args`` argument is not ``None`` or a list of strings or
         if ``argv`` is not ``None`` or a list of strings.
     """
@@ -214,6 +217,9 @@ def main(benchmark_cases: Optional[Sequence[Case]] = None,
     except SimpleBenchTimeoutError as e:
         final_message = f'Timeout occurred during a benchmark: {e}'
         exit_code = ExitCode.BENCHMARK_TIMED_OUT
+    except SimpleBenchBenchmarkError as e:
+        final_message = f'An error occurred while running a benchmark: {e}'
+        exit_code = ExitCode.BENCHMARK_ERROR
     except Exception as e:  # pylint: disable=broad-exception-caught
         final_message = f'An unexpected error occurred: {e}'
         exit_code = ExitCode.RUNTIME_ERROR

@@ -270,7 +270,7 @@ def benchmark(
 
         final_benchmark_id = benchmark_id
         if final_benchmark_id is None:
-            final_benchmark_id = generate_benchmark_id(obj=func, action=func, group=group)
+            final_benchmark_id = generate_benchmark_id(obj=func, action=func)
 
         final_benchmark_id = validate_non_blank_string(
             final_benchmark_id, 'benchmark_id',

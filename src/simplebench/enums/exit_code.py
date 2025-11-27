@@ -26,3 +26,5 @@ class ExitCode(int, Enum):
     """Keyboard interrupt occurred."""
     BENCHMARK_TIMED_OUT = 4
     """Benchmark execution timed out."""
+    BENCHMARK_ERROR = 5
+    """An error occurred during benchmark execution."""

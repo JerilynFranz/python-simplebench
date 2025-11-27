@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     from .session import Session
 
 
-def generate_benchmark_id(obj: object | None, action: Callable[..., Any], group: str) -> str:
+def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str:
     """Generate a stable benchmark ID based on action, group, and signature.
 
     This function attempts to create a stable benchmark ID based on the action
@@ -50,11 +50,9 @@ def generate_benchmark_id(obj: object | None, action: Callable[..., Any], group:
 
     :param obj: An object instance related to the benchmark case, used for transient ID generation if needed.
     :param action: The action function of the benchmark case.
-    :type action: ActionRunner
-    :param group: The group of the benchmark case.
-    :type group: str
     :return: A stable benchmark ID string or a transient ID if stability is not possible.
     :rtype: str
+    :raises SimpleBenchAttributeError: If the action is a lambda function.
     """
     try:
         # Use __qualname__ to include class context.
@@ -445,7 +443,7 @@ class Case:
         self._timeout: float = timeout_value
         self._benchmark_id: str
         if benchmark_id is None:
-            self._benchmark_id = generate_benchmark_id(self, action, group)
+            self._benchmark_id = generate_benchmark_id(self, action)
         else:
             self._benchmark_id = validate_string(
                 benchmark_id, "benchmark_id",

@@ -13,7 +13,7 @@ from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.type_proxies import is_case
-from simplebench.utils import get_machine_info, sigfigs
+from simplebench.utils import get_machine_info
 from simplebench.validators import validate_type
 
 from .config import JSONConfig
