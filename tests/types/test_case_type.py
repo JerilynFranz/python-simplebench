@@ -1,25 +1,49 @@
 """Test the CaseType class."""
+import pytest
 
 from simplebench.type_proxies import CaseTypeProxy, is_case
 
 from ..factories import case_factory
+from ..testspec import Assert, TestAction, TestSpec, idspec
 
 
-def test_isinstance_with_lazy_case_type():
-    """Test that isinstance works with the lazy CaseType.
+@pytest.mark.parametrize("testspec", [
+    idspec("IS_CASE_001", TestAction(
+        name="Validate is_case with Case instance",
+        action=isinstance,
+        args=[case_factory(), CaseTypeProxy],
+        assertion=Assert.EQUAL,
+        expected=True,
+    )),
+    idspec("IS_CASE_002", TestAction(
+        name="Validate is_case with non-Case instance",
+        action=isinstance,
+        args=[123, CaseTypeProxy],
+        assertion=Assert.EQUAL,
+        expected=False,
+    )),
+])
+def test_isinstance_with_case_type_proxy(testspec: TestSpec) -> None:
+    """Validate that isinstance works correctly with CaseTypeProxy."""
+    testspec.run()
 
-    This test ensures that the CaseType proxy correctly identifies
-    instances of the Case class without causing import issues.
-    """
-    case = case_factory()
-    assert isinstance(case, CaseTypeProxy), "case should be an instance of CaseType"
-    assert not isinstance(123, CaseTypeProxy), "integer should not be an instance of CaseType"
 
-
-def validate_is_case_type(obj: object) -> None:
+@pytest.mark.parametrize("testspec", [
+    idspec("IS_CASE_TYPE_001", TestAction(
+        name="Validate is_case with Case instance",
+        action=is_case,
+        args=[case_factory()],
+        assertion=Assert.EQUAL,
+        expected=True,
+    )),
+    idspec("IS_CASE_TYPE_002", TestAction(
+        name="Validate is_case with non-Case instance",
+        action=is_case,
+        args=[123],
+        assertion=Assert.EQUAL,
+        expected=False,
+    )),
+])
+def test_validate_is_case_type(testspec: TestSpec) -> None:
     """Validate that the is_case type guard works correctly."""
-    if not is_case(obj):
-        raise TypeError("Object is not of type Case")
-
-    assert is_case(obj), "case instance should be recognized as Case"
-    assert not is_case(123), "Integer should not be recognized as Case"
+    testspec.run()
