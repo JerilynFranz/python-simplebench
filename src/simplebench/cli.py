@@ -100,10 +100,10 @@ def _configure_session_from_args(
 
     report_keys: list[str] = session.report_keys()
     if len(report_keys) == 0:
-        error_msg = 'No reporters selected. Please specify at least one reporter via command-line flags.'
+        error_msg = 'Please specify at least one reporter via command-line flags'
         session.args_parser.print_usage()
         raise SimpleBenchUsageError(error_msg,
-                                    tag=_CLIErrorTag.ARGUMENT_CONFLICT)
+                                    tag=_CLIErrorTag.NO_REPORTERS_SPECIFIED)
 
 
 @format_docstring(KEYBOARD_INTERRUPT=ExitCode.KEYBOARD_INTERRUPT.value,

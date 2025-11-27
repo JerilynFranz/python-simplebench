@@ -14,3 +14,5 @@ class _CLIErrorTag(ErrorTag):
     """Conflicting arguments were provided to the CLI."""
     NO_MATCHING_CASES = "NO_MATCHING_CASES"
     """No matching benchmark cases were found for the specified --run options."""
+    NO_REPORTERS_SPECIFIED = "NO_REPORTERS_SPECIFIED"
+    """No reporters were specified for output generation."""
