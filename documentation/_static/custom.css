@@ -1,3 +1,14 @@
+/* Custom CSS for SimpleBench documentation */
+
+/* Adjust font sizes for better readability */
+body {
+    --font-size--small--4: small;
+    --font-size--small--3: medium;
+    --font-size--small--2: large;
+    --font-size--small: x-large;
+    --font-size--normal: xx-large;
+}
+
 .content {
     display: flex;
     flex-direction: column;
@@ -123,6 +134,15 @@ dl.py.class dd dl.py.property dt.py.sig.sig-object em.property:first-child span.
 
 /* parameters for non-class functions */
 div.content div.article-container article section dl.py.function dd dl.simple.field-list dt.field-odd {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+
+/* parameters for non-class functions returns */
+div.content div.article-container article section dl.py.function dd dl.simple.field-list dt.field-even {
     text-transform: none;
     color: #00a040;
     font-weight: bold;
