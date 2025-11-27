@@ -11,7 +11,8 @@ maintainers = [
 description = "A simple suite for benchmarking"
 readme = "README.md"
 keywords = ["benchmark", "performance"]
-license = { file = "LICENSE" }
+license = "Apache-2.0"
+license-files = ["LICENSE*"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
