@@ -7,6 +7,8 @@ body {
     --font-size--small--2: large;
     --font-size--small: x-large;
     --font-size--normal: xx-large;
+    --code-font-size: var(--font-size--small--3);
+
 }
 
 .content {
@@ -14,20 +16,222 @@ body {
     flex-direction: column;
     justify-content: space-between;
     padding: 0 3em;
-    width: 80%;
+    width: 60%
 }
 
-
 .sidebar-drawer {
-    background: var(--color-sidebar-background);
-    border-right: 1px solid var(--color-sidebar-background-border);
     box-sizing: border-box;
     display: flex;
     justify-content: flex-end;
-    min-width: 15em;
-    width: calc(30% - 26em)
+    min-width: 25em;
+    width: calc(35% - 25em)
 }
 
+.toc-drawer {
+    box-sizing: border-box;
+    width: 15em
+}
+
+
+@media(max-width:102em) {
+    
+    .toc-drawer {
+        position: fixed;
+        right: -15em;
+        width: 15em;
+        top: 0
+    }
+
+    .sidebar-drawer {
+        left: -25em;
+        position: fixed;
+        top: 0;
+        width: 25em
+    }
+
+    .theme-toggle-header, .toc-header-icon {
+        display: flex
+    }
+
+    .theme-toggle-content, .toc-content-icon {
+        display: none
+    }
+
+    .mobile-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        position: sticky;
+        top: 0
+    }
+
+    .mobile-header .header-left, .mobile-header .header-right {
+        display: flex;
+        height: var(--header-height);
+        padding: 0 var(--header-padding)
+    }
+
+    .mobile-header .header-left label, .mobile-header .header-right label {
+        height: 100%;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        width: 100%
+    }
+
+    .nav-overlay-icon .icon, .theme-toggle svg {
+        height: 1.5rem;
+        width: 1.5rem
+    }
+
+    :target {
+        scroll-margin-top: calc(var(--header-height) + 2.5rem)
+    }
+
+    .back-to-top {
+        top: calc(var(--header-height) + .5rem)
+    }
+
+    .page {
+        flex-direction: column;
+        justify-content: center
+    }
+
+    .content {
+        overflow-x: auto;
+        width: 100%
+    }
+}
+
+@media(max-width:82em) {
+
+    .nav-overlay-icon {
+        display: flex
+    }
+
+    .toc-drawer {
+        position: fixed;
+        right: -15em;
+        width: 15em;
+        top: 0
+    }
+
+    .sidebar-drawer {
+        height: 100vh;
+        left: -25em;
+        position: fixed;
+        top: 0;
+        width: 25em
+    }
+
+    .theme-toggle-header, .toc-header-icon {
+        display: flex
+    }
+
+    .theme-toggle-content, .toc-content-icon {
+        display: none
+    }
+
+    .mobile-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        position: sticky;
+        top: 0
+    }
+
+    .mobile-header .header-left, .mobile-header .header-right {
+        display: flex;
+        height: var(--header-height);
+        padding: 0 var(--header-padding)
+    }
+
+    .mobile-header .header-left label, .mobile-header .header-right label {
+        height: 100%;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        width: 100%
+    }
+
+    .nav-overlay-icon .icon, .theme-toggle svg {
+        height: 1.5rem;
+        width: 1.5rem
+    }
+
+    :target {
+        scroll-margin-top: calc(var(--header-height) + 2.5rem)
+    }
+
+    .back-to-top {
+        top: calc(var(--header-height) + .5rem)
+    }
+
+    .page {
+        flex-direction: column;
+        justify-content: center
+    }
+
+    .content {
+        overflow-x: auto;
+        width: 100%
+    }
+}
+
+
+@media(max-width:63em) {
+
+    .toc-drawer {
+        position: fixed;
+        right: -15em;
+        width: 15em;
+        top: 0
+    }
+
+    .sidebar-drawer {
+        left: -25em;
+        position: fixed;
+        top: 0;
+        width: 25em
+    }
+    .content {
+        overflow-x: auto;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 1em;
+        width:100%;
+    }
+
+    .content {
+        overflow-x: auto;
+        width: 100%
+    }
+}
+
+
+@media(max-width:48em) {
+
+    .toc-drawer {
+        position: fixed;
+        right: -15em;
+        width: 15em;
+        top: 0
+    }
+
+    .sidebar-drawer {
+        left: -25em;
+        position: fixed;
+        top: 0;
+        width: 25em
+    }
+    .content {
+        overflow-x: auto;
+        width: 100%
+    }
+}
+
+
+/* Make code blocks scrollable if they exceed a certain height */
 .scrollable-block {
     max-height: 500px;
     overflow-y: auto;
