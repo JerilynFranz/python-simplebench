@@ -11,7 +11,7 @@ from rich.console import Console
 
 from simplebench.case import Case
 from simplebench.enums import Format, Section, Verbosity
-from simplebench.exceptions import SimpleBenchRuntimeError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchBenchmarkError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.exceptions.case import _CaseErrorTag
 from simplebench.iteration import Iteration
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -1123,7 +1123,7 @@ def test_getting_attributes(testspec: TestSpec) -> None:
         name="Benchmark case with broken action function raises exception",
         action=broken_benchcase_action_that_raises,
         kwargs={},
-        exception=SimpleBenchRuntimeError,
+        exception=SimpleBenchBenchmarkError,
         exception_tag=_CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION,
         extra={
             'output_expected': False,

@@ -10,10 +10,11 @@ from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional
 import simplebench.defaults as defaults
 
 from .doc_utils import format_docstring
-from .enums import Color, Section
+from .enums import Color
 from .exceptions import (
     SimpleBenchAttributeError,
-    SimpleBenchRuntimeError,
+    SimpleBenchBenchmarkError,
+    SimpleBenchTimeoutError,
     SimpleBenchTypeError,
     SimpleBenchValueError,
     _CaseErrorTag,
@@ -944,7 +945,8 @@ class Case:
         control verbosity, and pass CLI arguments to the benchmark runner.
 
         :param session: The session to use for the benchmark case.
-        :type session: Optional[Session]
+        :raises SimpleBenchTimeoutError: If a timeout occurs during the benchmark action.
+        :raises SimpleBenchBenchmarkError: If an error occurs during the benchmark action.
         """
         all_variations = self.expanded_kwargs_variations
         progress_tracker = ProgressTracker(
@@ -967,9 +969,15 @@ class Case:
                 bench = SimpleRunner(case=self, session=session, kwargs=kwargs)
             try:
                 results: Results = self.action(bench, **kwargs)
+            except SimpleBenchTimeoutError as e:
+                raise SimpleBenchTimeoutError(
+                    f'Timeout occurred running benchmark action {str(self.action)} for case '
+                    f'"{self.title}" with kwargs {kwargs}: {e}',
+                    tag=_CaseErrorTag.BENCHMARK_ACTION_TIMEOUT_OCCURRED
+                    ) from e
             except Exception as e:
-                raise SimpleBenchRuntimeError(
-                    f'Error running benchmark action {str(self.action)} for case '
+                raise SimpleBenchBenchmarkError(
+                    f'Error occurred running benchmark action {str(self.action)} for case '
                     f'"{self.title}" with kwargs {kwargs}: {e}, {type(e)}',
                     tag=_CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION
                     ) from e
@@ -1004,46 +1012,3 @@ class Case:
             'variation_cols': self.variation_cols,
             'results': results
         }
-
-    def section_mean(self, section: Section) -> float:
-        """Calculate the mean value for a specific section across all results.
-
-        This method computes the mean value for the specified section
-        (either OPS or TIMING) across all benchmark results associated with this case.
-
-        This is a very 'hand-wavy' mean calculation that simply averages
-        the means of each result. It does not take into account the number
-        of iterations or other statistical factors. It is intended to provide
-        a rough estimate of the overall performance for the specified section for
-        use in comparisons between successive benchmark runs in tests looking for
-        large performance regressions. As such, it should not be used for any rigorous
-        statistical analysis.
-
-        :param section: The section for which to calculate the mean.
-        :type section: Section
-        :return: The mean value for the specified section.
-        :rtype: float
-        """
-        if not isinstance(section, Section):
-            raise SimpleBenchTypeError(
-                f'Invalid section type: {type(section)}. Must be of type Section.',
-                tag=_CaseErrorTag.SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT
-                )
-        if section not in (Section.OPS, Section.TIMING):
-            raise SimpleBenchValueError(
-                f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
-                tag=_CaseErrorTag.SECTION_MEAN_INVALID_SECTION_ARGUMENT
-                )
-
-        if not self.results:
-            return 0.0
-        total = 0.0
-        count = 0
-        for result in self.results:
-            if section == Section.OPS:
-                total += result.ops_per_second.mean
-                count += 1
-            elif section == Section.TIMING:
-                total += result.per_round_timings.mean
-                count += 1
-        return total / count if count > 0 else 0.0

@@ -20,6 +20,7 @@ from .utils import _UtilsErrorTag
 
 __all__ = [
     "TaggedException",
+    "SimpleBenchBenchmarkError",
     "SimpleBenchTypeError",
     "SimpleBenchValueError",
     "SimpleBenchKeyError",
@@ -409,6 +410,31 @@ class SimpleBenchUsageError(TaggedException[RuntimeError]):
         Args:
             msg (str): The error message.
             func_name (str | None): The name of the function that timed out.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchBenchmarkError(TaggedException[RuntimeError]):
+    """Exceptions raised for benchmark execution errors.
+
+    If an exception occurs during the execution of a benchmark,
+    it can be wrapped in a SimpleBenchBenchmarkError to provide
+    additional context and tagging.
+
+    Usage:
+        raise SimpleBenchBenchmarkError("An error occurred",
+                                        tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchBenchmarkError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
             tag (ErrorTag): The tag code.
         """
         message = generate_message(msg, tag)

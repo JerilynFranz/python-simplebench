@@ -206,3 +206,5 @@ class _CaseErrorTag(ErrorTag):
     """Invalid rounds argument type passed to the Case() constructor"""
     INVALID_ROUNDS_VALUE = "INVALID_ROUNDS_VALUE"
     """Invalid rounds argument value passed to the Case() constructor"""
+    BENCHMARK_ACTION_TIMEOUT_OCCURRED = "BENCHMARK_ACTION_TIMEOUT_OCCURRED"
+    """A timeout occurred while running the benchmark action."""

@@ -65,6 +65,7 @@ class Session():
         # public read/write properties with private backing fields
         self.default_runner = default_runner
         self.args_parser = ArgumentParser() if args_parser is None else args_parser
+
         self.cases = [] if cases is None else cases
         self.verbosity = verbosity
         self.show_progress = show_progress
@@ -72,6 +73,8 @@ class Session():
         self.console = Console() if console is None else console
 
         # private attributes
+        self._reporter_flags_added: bool = False
+        """Whether reporter flags have been added to the ArgumentParser."""
         self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity, console=self.console)
         """ProgressTasks instance for managing progress tasks - backing field for the 'tasks' attribute."""
         self._progress: Progress = self.tasks.progress
@@ -90,9 +93,17 @@ class Session():
     def parse_args(self, args: Sequence[str] | None = None) -> None:
         """Parse the command line arguments using the session's :class:`~argparse.ArgumentParser`.
 
+        The :meth:`add_reporter_flags` method must be called before this is run to
+        ensure that reporter flags are added to the ArgumentParser.
+
+        It is broken up into these two methods to allow adding custom reporters
+        before parsing arguments.
+
         This method parses the command line arguments and stores them in the session's :attr:`args` property.
         By default, it parses the arguments from :data:`sys.argv`. If ``args`` is provided, it will parse
         the arguments from the provided sequence of strings instead.
+
+        This can be used to customize the command line arguments for testing or other purposes.
 
         :param args: A list of command line arguments to parse. If None,
             the arguments will be taken from :data:`sys.argv`. Defaults to None.
@@ -111,11 +122,16 @@ class Session():
                     "'args' argument must either be None or a list of str: A non-str item was found in the passed list",
                     tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)
 
+        self.add_reporter_flags()
         self._args = self._args_parser.parse_args(args=args)
 
     @property
     def reporter_manager(self) -> ReporterManager:
-        """Return the :class:`~.reporters.reporter_manager.ReporterManager` instance for managing reporters.
+        """Returns the :class:`~.reporters.reporter_manager.ReporterManager` instance for managing reporters.
+
+        The reporter manager handles the registration and discovery of all reporters
+        available to the session. This allows you to customize reporting behavior
+        by adding your own reporters or removing default ones.
 
         :return: The :class:`~.reporters.reporter_manager.ReporterManager` instance for managing reporters.
         :rtype: ReporterManager
@@ -128,20 +144,24 @@ class Session():
         Any conflicts in flag names with already declared :class:`~argparse.ArgumentParser` flags will have to be
         handled by the reporters themselves.
 
-        This method should be called before :meth:`parse_args`.
-
-        It is placed in its own method so that a user can customize the :class:`~argparse.ArgumentParser`
+        It has its own method so that a user can customize the :class:`~argparse.ArgumentParser`
         before or after adding the reporter flags as needed.
 
         It also allows the user to unregister reporters before adding the reporter flags if they
         want to omit specific built-in reporters entirely.
 
+        It is called internally by :meth:`parse_args` if it has not already been called and
+        does not re-add the reporter flags if called again.
 
         :raises SimpleBenchArgumentError: If there is a conflict or other error in reporter flag names.
         """
+        if self._reporter_flags_added:
+            return
         try:
             # Add reporter flags to the ArgumentParser based on command line args defined in each registered Choice
             self._reporter_manager.add_reporters_to_argparse(self._args_parser)
+            self._reporter_flags_added = True
+
         except ArgumentError as arg_err:
             raise SimpleBenchArgumentError(
                 argument_name=arg_err.argument_name,
@@ -150,7 +170,17 @@ class Session():
             ) from arg_err
 
     def run(self) -> None:
-        """Run all benchmark cases in the session."""
+        """Run all benchmark cases in the session.
+
+        It DOES NOT automatically parse command line arguments. That must be done
+        separately by calling :meth:`parse_args` with appropriate arguments.
+
+        That provides flexibility for users who want to customize argument parsing
+        or who want to run the session entirely programmatically without command line args.
+
+        :raises SimpleBenchTimeoutError: If a benchmark case times out during execution.
+        :raises SimpleBenchBenchmarkError: If an error occurs during the execution of a benchmark.
+        """
         if self._verbosity > Verbosity.NORMAL:
             self._console.print(f'Running {len(self.cases)} benchmark case(s)...')
         self.tasks.clear()
