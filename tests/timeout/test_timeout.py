@@ -1,5 +1,6 @@
 """Tests for the Timeout runner."""
-
+# There are numerous paths in the tests that should never be reached unless there is a bug,
+# so we use pragma: no cover in many places to avoid coverage complaints on those paths.
 import threading
 import time
 
@@ -36,17 +37,17 @@ class TestTimeout:
         successfully_failed = False
         try:
             timeout.run(time.sleep, LONG_WAIT)
-        except SimpleBenchTimeoutError as e:
+        except SimpleBenchTimeoutError as e:  # pragma: no cover
             successfully_failed = True
             if not e.func_name == "sleep":
                 errors.append(f"Function name in exception should be 'sleep', got '{e.func_name}'")
             if timeout.state != TimeoutState.TIMED_OUT:
                 errors.append(f"State should be TIMED_OUT not {timeout.state}")
-        except BaseException as e:  # pylint: disable=broad-exception-caught
+        except BaseException as e:  # pylint: disable=broad-exception-caught  # pragma: no cover
             errors.append(f"Expected SimpleBenchTimeoutError was not raised, {e} was raised instead.")
-        if not successfully_failed:
+        if not successfully_failed:  # pragma: no cover
             pytest.fail("The timeout did not raise SimpleBenchTimeoutError as expected.")
-        if errors:
+        if errors:  # pragma: no cover
             pytest.fail(" ; ".join(errors))
 
     def test_raises_timeout_exception_with_correct_function_name(self):
@@ -63,15 +64,15 @@ class TestTimeout:
             timeout.run(long_running_function)
         except SimpleBenchTimeoutError as e:
             successfully_failed = True
-            if e.func_name != expected_func_name:
+            if e.func_name != expected_func_name:  # pragma: no cover
                 errors.append(f"Function name in exception should be '{expected_func_name}', got '{e.func_name}'")
-            if timeout.state != TimeoutState.TIMED_OUT:
+            if timeout.state != TimeoutState.TIMED_OUT:  # pragma: no cover
                 errors.append(f"State should be TIMED_OUT not {timeout.state}")
-        except BaseException as e:  # pylint: disable=broad-exception-caught
+        except BaseException as e:  # pylint: disable=broad-exception-caught  # pragma: no cover
             errors.append(f"Expected SimpleBenchTimeoutError was not raised, {e} was raised instead.")
-        if not successfully_failed:
+        if not successfully_failed:  # pragma: no cover
             pytest.fail("The timeout did not raise SimpleBenchTimeoutError as expected.")
-        if errors:
+        if errors:  # pragma: no cover
             pytest.fail(" ; ".join(errors))
 
     def test_other_exception_is_propagated(self):
@@ -90,22 +91,22 @@ class TestTimeout:
         try:
             Timeout(timeout_interval=0)
         except SimpleBenchValueError as e:
-            if e.tag_code != _TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE:
+            if e.tag_code != _TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE:  # pragma: no cover
                 pytest.fail(f"Exception tag should be INVALID_TIMEOUT_INTERVAL, got {e.tag_code}")
             successfully_failed = True
-        if not successfully_failed:
+        if not successfully_failed:  # pragma: no cover
             pytest.fail("Expected SimpleBenchValueError was not raised for zero timeout interval.")
 
         successfully_failed = False
         try:
             Timeout(timeout_interval="-1")  # type: ignore[arg-type]
         except SimpleBenchTypeError as e:
-            if e.tag_code != _TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE:
+            if e.tag_code != _TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE:  # pragma: no cover
                 pytest.fail(f"Exception tag should be INVALID_TIMEOUT_INTERVAL_TYPE, got {e.tag_code}")
             successfully_failed = True
-        if not successfully_failed:
+        if not successfully_failed:  # pragma: no cover
             pytest.fail("Expected SimpleBenchTypeError was not raised for string timeout interval.")
-        if not successfully_failed:
+        if not successfully_failed:  # pragma: no cover
             pytest.fail("Expected SimpleBenchValueError was not raised for negative timeout interval.")
 
     def test_non_callable_raises_type_error(self):
@@ -115,10 +116,10 @@ class TestTimeout:
         try:
             timeout.run("not_a_function")  # type: ignore[arg-type]
         except SimpleBenchTypeError as e:
-            if e.tag_code != _TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT:
+            if e.tag_code != _TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT:  # pragma: no cover
                 pytest.fail(f"Exception tag should be NON_CALLABLE_FUNCTION_ARGUMENT, got {e.tag_code}")
             successfully_failed = True
-        if not successfully_failed:
+        if not successfully_failed:  # pragma: no cover
             pytest.fail("Expected SimpleBenchTypeError was not raised for non-callable argument.")
 
     def test_nested_timeouts_inner_fires(self):
@@ -164,10 +165,10 @@ class TestTimeout:
                     barrier.wait()  # Sync with thread B
                     time.sleep(LONG_WAIT)
                 timeout_a.run(task_a)
-                results['a'] = 'completed'  # Should not be reached
+                results['a'] = 'completed'  # Should not be reached  # pragma: no cover
             except SimpleBenchTimeoutError:
                 results['a'] = 'timed_out'
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught  # pragma: no cover
                 results['a'] = e
 
         def thread_b_target():
@@ -180,7 +181,7 @@ class TestTimeout:
                     time.sleep(SHORT_WAIT)
                 timeout_b.run(task_b)
                 results['b'] = 'completed'
-            except Exception as e:  # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught  # pragma: no cover
                 results['b'] = e
 
         thread_a = threading.Thread(target=thread_a_target)
