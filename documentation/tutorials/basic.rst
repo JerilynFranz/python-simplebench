@@ -4,7 +4,6 @@ Basic Usage Tutorial
 
 This tutorial demonstrates how to create a simple benchmark using SimpleBench, run it, and generate a report.
 
-
 The minimal code required to create and run a benchmark using SimpleBench is creating
 a script that defines a function to be benchmarked with `@simplebench.benchmark`
 and that calls `simplebench.main()` and then running it.
