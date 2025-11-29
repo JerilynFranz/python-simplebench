@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path('..', 'src').resolve()))
+sys.path.insert(0, str(Path('.').resolve()))
 
 import simplebench._meta as metadata  # pylint: disable=wrong-import-position  # noqa: E402
 
@@ -51,6 +52,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.viewcode',
     'sphinx_copybutton',
+    'sphinx_design',
 ]
 
 
@@ -239,3 +241,13 @@ autodoc_class_signature = 'init'
 # autoclass directive. The possible values are:
 # "class", "init", "both"
 autoclass_content = 'both'
+
+
+# -- Options for doctest -------------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/doctest.html#configuration
+
+# This code block will be executed before each doctest.
+# We use it to inject our custom assertion helper into the test's global namespace.
+doctest_global_setup = """
+from _helpers.doctest_utils import run_script_and_get_raw_output, assert_benchmark_output
+"""

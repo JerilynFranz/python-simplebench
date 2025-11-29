@@ -43,7 +43,7 @@ These options control which benchmarks are run and where results are saved.
 
 .. option:: --run <benchmark-group, ...>
 
-   Run specific benchmarks selected by group. Multiple groups can be specified
+   Run specified benchmarks selected by group. Multiple groups can be specified
    by separating them with spaces. You can see a list of available benchmark
    groups by using the :option:`--list` option.
 

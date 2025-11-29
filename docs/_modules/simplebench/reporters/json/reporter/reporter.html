@@ -5,12 +5,12 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.json.reporter.reporter - simplebench 0.3.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.json.reporter.reporter - simplebench 0.4.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=6b1eff16" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=4307924e" />
     
     
 
@@ -162,7 +162,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">simplebench 0.4.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +183,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.4.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,6 +197,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../command_line_options.html">Command-Line Options</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../reports/rich_table_report.html">Rich Table Report</a></li>
@@ -255,7 +256,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols.reporter_callback</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reporter</span><span class="p">,</span> <span class="n">ReporterOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_machine_info</span><span class="p">,</span> <span class="n">sigfigs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_machine_info</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_type</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONConfig</span>
@@ -443,47 +444,6 @@
                     <span class="sa">f</span><span class="s1">&#39;Error generating JSON output for case </span><span class="si">{</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
                     <span class="n">tag</span><span class="o">=</span><span class="n">_JSONReporterErrorTag</span><span class="o">.</span><span class="n">JSON_OUTPUT_ERROR</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
             <span class="k">return</span> <span class="n">jsonfile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="JSONReporter.mean_change">
-<a class="viewcode-back" href="../../../../../source/simplebench.reporters.json.reporter.reporter.html#simplebench.reporters.json.JSONReporter.mean_change">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mean_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">second</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare two Case instances for a given section and return the change as a float ratio.</span>
-
-<span class="sd">        The float ratio is calculated as ``(value2 - value1) / value1``, where ``value1`` and</span>
-<span class="sd">        ``value2`` are the mean values for the specified section in the first and second</span>
-<span class="sd">        cases, respectively.</span>
-
-<span class="sd">        A value of ``0.0`` indicates no change, a positive value indicates an increase,</span>
-<span class="sd">        and a negative value indicates a decrease. If either case does not have data for the</span>
-<span class="sd">        specified section, ``None`` is returned. The ratio is limited to 3 significant digits</span>
-<span class="sd">        for clarity and to prevent a false sense of precision to the result.</span>
-
-<span class="sd">        If first mean value is ``0.0`` and second mean value is also ``0.0``, the change is</span>
-<span class="sd">        defined as ``0.0``. If first mean value is ``0.0`` and second mean value is non-zero,</span>
-<span class="sd">        the change is defined as ``None`` to indicate incomparability.</span>
-
-<span class="sd">        :param first: The first :class:`~simplebench.case.Case` instance to compare.</span>
-<span class="sd">        :param second: The second :class:`~simplebench.case.Case` instance to compare.</span>
-<span class="sd">        :param section: The :class:`~simplebench.enums.Section` to compare.</span>
-<span class="sd">        :return: The change between the mean for two cases for the specified section,</span>
-<span class="sd">            or ``None`` if the section is not present in either case or the numbers are</span>
-<span class="sd">            incomparable.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">value1</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">section_mean</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
-        <span class="n">value2</span> <span class="o">=</span> <span class="n">second</span><span class="o">.</span><span class="n">section_mean</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">value1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">value1</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">value2</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="mf">0.0</span>
-            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Infinite increase from zero to non-zero is not comparable</span>
-        <span class="k">if</span> <span class="n">value1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">value2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">0.0</span>
-
-        <span class="k">return</span> <span class="n">sigfigs</span><span class="p">((</span><span class="n">value2</span> <span class="o">-</span> <span class="n">value1</span><span class="p">)</span> <span class="o">/</span> <span class="n">value1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
@@ -518,7 +478,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=1162025f"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=a9a3c2eb"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
