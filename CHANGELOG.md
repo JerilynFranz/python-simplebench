@@ -3,6 +3,12 @@ SimpleBench
 
 A framework for building and running benchmarks.
 
+* 0.4.1-alpha.0 2025-11-29 - Seventh alpha release
+  * **Documentation Update**
+    * Migration of README to .rst format
+    * Addition of doctest support
+    * Creation of first tutorials
+
 * 0.4.0-alpha.0 2025-11-27 - Sixth alpha release
   * **Major Refactoring of Command-Line Interface (`cli.py`)**:
     * The main CLI logic has been significantly refactored for improved structure, robustness, and readability.

@@ -19,8 +19,9 @@ Alpha release
 Functionally complete but not yet 100% tested or documented.
 There may be breaking changes before reaching version 1.0.
 
-`Documentation <https://python-simplebench.readthedocs.io/en/latest/>`_
-----------------------
+Documentation
+-------------
+
 * `Installation <https://python-simplebench.readthedocs.io/en/latest/installation.html>`_
 * `Using SimpleBench <https://python-simplebench.readthedocs.io/en/latest/usage.html>`_
 * `Tutorials <https://python-simplebench.readthedocs.io/en/latest/tutorials.html>`_
@@ -49,9 +50,7 @@ Defining a Benchmark
 ~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
-  :caption: Defining a simple benchmark
   :name: simple-benchmark-example
-  :linenos:
 
   import simplebench
 
@@ -67,7 +66,6 @@ Defining a Benchmark
 Running a Benchmark
 ~~~~~~~~~~~~~~~~~~~
 .. code-block:: shell
-  :caption: Running the benchmark
   :name: run-simple-benchmark
 
     python my_benchmark_script.py --rich-table.ops --progress
@@ -78,7 +76,6 @@ Benchmark Output
 This will run the `addition_benchmark` function and generate a rich table report of its performance.
 
 .. code-block:: text
-  :caption: Output
   :name: example-output
 
                                                                addition_benchmark
