@@ -9,6 +9,7 @@ As such it has the following goals:
 - Powerful enough to handle sophisticated benchmarking needs out-of-the-box
 - Flexible enough to handle complex custom benchmarking scenarios
 - Extensible to allow users to add their own functionality as needed
+- Full API and command-line interface support
 
 Current Status
 --------------
@@ -32,6 +33,51 @@ There may be breaking changes before reaching version 1.0.
    * `Scatterplot Graph Report <https://python-simplebench.readthedocs.io/en/latest/reports/graphs/scatterplot_graph_report.html>`_
 * `Documentation Index <https://python-simplebench.readthedocs.io/en/latest/genindex.html>`_
 * `Module Index <https://python-simplebench.readthedocs.io/en/latest/py-modindex.html>`_
+
+Basic Example
+-------------
+
+Here is a basic example of creating and running a benchmark using SimpleBench:
+
+.. code-block:: python
+  :caption: Defining a simple benchmark
+  :name: simple-benchmark-example
+  :linenos:
+
+  import simplebench
+
+  @simplebench.benchmark
+  def addition_benchmark():
+      """A simple addition benchmark of Python's built-in sum function."""
+     sum(range(1000))
+
+  if __name__ == "__main__":
+      simplebench.main()
+
+.. code-block:: shell
+  :caption: Running the benchmark
+  :name: run-simple-benchmark
+
+    python my_benchmark_script.py --rich-table.ops --progress
+
+This will run the `addition_benchmark` function and generate a rich table report of its performance.
+
+.. code-block:: text
+  :caption: Output
+  :name: example-output
+
+                                                                 addition_benchmark
+                                                                operations per second
+
+                                            A simple addition benchmark of Python's built-in sum function.
+    ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┓
+    ┃        ┃            ┃        ┃ Elapsed ┃    mean    ┃   median   ┃           ┃            ┃            ┃             ┃  std dev   ┃        ┃
+    ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃   kOps/s   ┃   kOps/s   ┃ min Ops/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃   kOps/s   ┃  rsd%  ┃
+    ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━┩
+    │      1 │    46701   │      1 │  0.32   │    148.00  │    149.00  │   876.00  │    153.00  │    143.00  │    151.00   │      8.99  │  6.08% │
+    └────────┴────────────┴────────┴─────────┴────────────┴────────────┴───────────┴────────────┴────────────┴─────────────┴────────────┴────────┘
+
+For more details on using SimpleBench, please refer to the `documentation <https://python-simplebench.readthedocs.io/en/latest/>`_.
 
 Authors and acknowledgments
 ---------------------------
