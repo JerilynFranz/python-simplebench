@@ -14,10 +14,33 @@ As such it has the following goals:
 Current Status
 --------------
 
-Alpha release
+Alpha release 0.4.1-alpha.0
 
 Functionally complete but not yet 100% tested or documented.
 There may be breaking changes before reaching version 1.0.
+
+Additional report formats and benchmark options are planned.
+
+Installing
+------------
+
+Minimum Python Version: 3.10
+
+**From PyPI**
+
+.. code-block:: shell
+  :name: install-simplebench
+
+    python3 -m pip install simplebench
+
+**From Source**
+
+.. code-block:: shell
+  :name: install-simplebench-from-source
+
+  git clone https://github.com/JerilynFranz/python-simplebench
+  cd python-simplebench
+  python3 -m pip install .
 
 Documentation
 -------------
