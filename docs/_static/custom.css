@@ -2,6 +2,11 @@
 
 /* Adjust font sizes for better readability */
 body {
+    --color-header-1-text: #7b7b11;
+    --color-header-2-text: #408040;
+    --color-header-3-text: #297c6d;
+    --color-cite-text: #3b8397;
+
     --font-size--small--4: small;
     --font-size--small--3: medium;
     --font-size--small--2: large;
@@ -351,4 +356,27 @@ div.content div.article-container article section dl.py.function dd dl.simple.fi
     color: #00a040;
     font-weight: bold;
     margin-top: .25rem
+}
+
+/* Generic definition list field terms */
+
+.definitions dl dt {
+  font-weight: bold;
+  color: #00a040;
+}
+
+h1 {
+    color: var(--color-header-1-text);
+}
+
+h2 {
+    color: var(--color-header-2-text);
+}
+
+h3 {
+    color: var(--color-header-3-text);
+}
+
+cite {
+    color: var(--color-cite-text);
 }

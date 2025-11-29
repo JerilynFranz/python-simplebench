@@ -44,16 +44,16 @@ A basic output will look something like this:
    │      1 │    44872   │      1 │  0.32   │    143.00   │     144.00    │      1.07  │    153.00  │    140.00  │    150.00   │        9.28    │  6.51% │
    └────────┴────────────┴────────┴─────────┴─────────────┴───────────────┴────────────┴────────────┴────────────┴─────────────┴────────────────┴────────┘
 
-.. note::
-   To avoid "false precision", statistical results are shown to three significant digits.
-   Due to the inherent variability of performance measurement, any further digits are
-   typically meaningless statistical noise.
+.. note::  **Significant Digits in Reported Results**
 
-   This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
-   measurement in the real world.
+  To avoid "false precision", statistical results are shown to three significant digits.
+  Due to the inherent variability of performance measurement, any further digits are
+  typically meaningless statistical noise and to avoid over-interpretation, they are not shown.
 
-.. note::
-   **Interpreting Outliers in Benchmark Results**
+  This is not an issue with SimpleBench itself, but rather a fundamental aspect of benchmarking and performance
+  measurement in the real world.
+
+.. note:: **Interpreting Outliers in Benchmark Results**
 
    In the sample output above, you may notice that the ``min kOps/s`` value is
    an extreme outlier, far from the ``mean`` and ``median``. This is a realistic
@@ -74,6 +74,46 @@ A basic output will look something like this:
 
    By providing these metrics, SimpleBench allows you to get a complete and
    honest picture of your code's performance, including its variability.
+
+Report Header Information
+-------------------------
+
+The report header provides context about the benchmark being reported:
+
+.. container:: definitions
+
+  .. dropdown:: Common Header Fields
+
+    Title
+      The title of the benchmark function. It can be set via the `title` parameter of
+      the :func:`@benchmark <simplebench.decorators.benchmark>` decorator or defaults to
+      the name of the benchmark function if not set. In this case, it is the name of the
+      function: `addition_benchmark`.
+
+    Report Section
+      The section of benchmark statistics being reported. In this case, we are reporting
+      the operations-per-second statistics (OPS) as requested via the `--rich-table.ops` command-line
+      option. Other available report sections include timing statistics (how long one execution
+      of the function takes) (`--rich-table.timing`), and memory usage statistics
+      (`--rich-table.memory`) which reports the net and peak memory usage of the benchmarked function
+      as two separate tables.
+
+      If run as `python basic_benchmark.py --rich-table` (without specifying a report section),
+      all available report sections will be included in the output.
+
+      Multiple options can be individually specified to include multiple report sections,
+      for example: `--rich-table.ops --rich-table.timing`.
+
+    Description
+      A description of the benchmark function. This can be set via the `description` parameter
+      to the :func:`@benchmark <simplebench.decorators.benchmark>` decorator, or defaults to
+      the first line of the function's docstring if not set there.
+      
+      If not set in either location, it defaults to '(no description)'.
+
+      In this case, it is the docstring of the `addition_benchmark` function.
+
+.. include:: rich_table_field_definitions.rst
 
 Report Variations and Destinations
 ----------------------------------
@@ -146,4 +186,3 @@ These advanced features make these reports a powerful tool for analyzing
 the performance of parameterized benchmarks and understanding the scalability
 of your code.
 
-.. include:: reports/rich_table_field_definitions.rst

@@ -2,7 +2,7 @@
 Using SimpleBench
 =================
 
-.. _simplebench-installation:
+.. _simplebench-usage:
 
 .. toctree::
    :maxdepth: 4
