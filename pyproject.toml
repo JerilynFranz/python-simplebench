@@ -9,7 +9,7 @@ maintainers = [
     {name = "Jerilyn Franz", email = "opensource@snowhare.com"}
 ]
 description = "A simple suite for benchmarking"
-readme = "README.md"
+readme = "README.rst"
 keywords = ["benchmark", "performance"]
 license = "Apache-2.0"
 license-files = ["LICENSE*"]

@@ -20,22 +20,22 @@ There may be breaking changes before reaching version 1.0.
 
 `Documentation <https://python-simplebench.readthedocs.io/en/latest/>`_
 ----------------------
-`Installation <https://python-simplebench.readthedocs.io/en/latest/installation.html>`_
-`Using SimpleBench <https://python-simplebench.readthedocs.io/en/latest/using_simplebench.html>`_
-    `Examples <https://python-simplebench.readthedocs.io/en/latest/examples.html>`_
-`Tutorials <https://python-simplebench.readthedocs.io/en/latest/tutorials.html>`_
-    `Basic Usage Tutorial <https://python-simplebench.readthedocs.io/en/latest/tutorials/basic_usage.html>`_
-`Command-Line Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options.html>`_
-    `General Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options/general.html>`_
-    `Reporting Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options/reporting.html>`_
-    `Report Types <https://python-simplebench.readthedocs.io/en/latest/command_line_options/report_types.html>`_
-`Reports <https://python-simplebench.readthedocs.io/en/latest/reports.html>`_
-    `Rich Table Report <https://python-simplebench.readthedocs.io/en/latest/reports/rich_table.html>`_
-    `CSV Report <https://python-simplebench.readthedocs.io/en/latest/reports/csv.html>`_
-    `JSON Report <https://python-simplebench.readthedocs.io/en/latest/reports/json.html>`_
-    `Scatterplot Graph Report <https://python-simplebench.readthedocs.io/en/latest/reports/scatterplot.html>`_
-`Module Index <https://python-simplebench.readthedocs.io/en/latest/modules.html>`_
-`Documentation Index <https://python-simplebench.readthedocs.io/en/latest/genindex.html>`_
+* `Installation <https://python-simplebench.readthedocs.io/en/latest/installation.html>`_
+* `Using SimpleBench <https://python-simplebench.readthedocs.io/en/latest/using_simplebench.html>`_
+   * `Examples <https://python-simplebench.readthedocs.io/en/latest/examples.html>`_
+* `Tutorials <https://python-simplebench.readthedocs.io/en/latest/tutorials.html>`_
+   * `Basic Usage Tutorial <https://python-simplebench.readthedocs.io/en/latest/tutorials/basic_usage.html>`_
+* `Command-Line Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options.html>`_
+   * `General Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options/general.html>`_
+   * `Reporting Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options/reporting.html>`_
+   * `Report Types <https://python-simplebench.readthedocs.io/en/latest/command_line_options/report_types.html>`_
+* `Reports <https://python-simplebench.readthedocs.io/en/latest/reports.html>`_
+   * `Rich Table Report <https://python-simplebench.readthedocs.io/en/latest/reports/rich_table.html>`_
+   * `CSV Report <https://python-simplebench.readthedocs.io/en/latest/reports/csv.html>`_
+   * `JSON Report <https://python-simplebench.readthedocs.io/en/latest/reports/json.html>`_
+   * `Scatterplot Graph Report <https://python-simplebench.readthedocs.io/en/latest/reports/scatterplot.html>`_
+* `Module Index <https://python-simplebench.readthedocs.io/en/latest/modules.html>`_
+* `Documentation Index <https://python-simplebench.readthedocs.io/en/latest/genindex.html>`_
 
 Authors and acknowledgments
 ---------------------------
