@@ -37,7 +37,16 @@ There may be breaking changes before reaching version 1.0.
 Basic Example
 -------------
 
-Here is a basic example of creating and running a benchmark using SimpleBench:
+This is a basic example of creating and running a benchmark using SimpleBench.
+It demonstrates how to define a benchmark function, run it, and view an output
+report on the console. There are more detailed examples and tutorials in the
+`documentation <https://python-simplebench.readthedocs.io/en/latest/>`_.
+
+SimpleBench supports numerous benchmark options, report formats, command-line options,
+and customization points - this example focuses on the simplest case.
+
+Defining a Benchmark
+~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
   :caption: Defining a simple benchmark
@@ -54,11 +63,17 @@ Here is a basic example of creating and running a benchmark using SimpleBench:
   if __name__ == "__main__":
       simplebench.main()
 
+
+Running a Benchmark
+~~~~~~~~~~~~~~~~~~~
 .. code-block:: shell
   :caption: Running the benchmark
   :name: run-simple-benchmark
 
     python my_benchmark_script.py --rich-table.ops --progress
+
+Benchmark Output
+~~~~~~~~~~~~~~~~
 
 This will run the `addition_benchmark` function and generate a rich table report of its performance.
 
@@ -66,18 +81,16 @@ This will run the `addition_benchmark` function and generate a rich table report
   :caption: Output
   :name: example-output
 
-                                                                 addition_benchmark
-                                                                operations per second
+                                                               addition_benchmark
+                                                              operations per second
 
-                                            A simple addition benchmark of Python's built-in sum function.
-    ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┓
-    ┃        ┃            ┃        ┃ Elapsed ┃    mean    ┃   median   ┃           ┃            ┃            ┃             ┃  std dev   ┃        ┃
-    ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃   kOps/s   ┃   kOps/s   ┃ min Ops/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃   kOps/s   ┃  rsd%  ┃
-    ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━┩
-    │      1 │    46701   │      1 │  0.32   │    148.00  │    149.00  │   876.00  │    153.00  │    143.00  │    151.00   │      8.99  │  6.08% │
-    └────────┴────────────┴────────┴─────────┴────────────┴────────────┴───────────┴────────────┴────────────┴─────────────┴────────────┴────────┘
-
-For more details on using SimpleBench, please refer to the `documentation <https://python-simplebench.readthedocs.io/en/latest/>`_.
+                                          A simple addition benchmark of Python's built-in sum function.
+  ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┓
+  ┃        ┃            ┃        ┃ Elapsed ┃    mean    ┃   median   ┃           ┃            ┃            ┃             ┃  std dev   ┃        ┃
+  ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃   kOps/s   ┃   kOps/s   ┃ min Ops/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃   kOps/s   ┃  rsd%  ┃
+  ┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━┩
+  │      1 │    46701   │      1 │  0.32   │    148.00  │    149.00  │   876.00  │    153.00  │    143.00  │    151.00   │      8.99  │  6.08% │
+  └────────┴────────────┴────────┴─────────┴────────────┴────────────┴───────────┴────────────┴────────────┴─────────────┴────────────┴────────┘
 
 Authors and acknowledgments
 ---------------------------
