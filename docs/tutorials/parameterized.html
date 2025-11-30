@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Command-Line Options" href="../command_line_options.html"><link rel="prev" title="Basic Benchmark" href="basic.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Parameterized Benchmark - simplebench 0.4.1-alpha.0 documentation</title>
+        <title>Parameterized Benchmark - simplebench 0.5.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.4.1-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.5.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -185,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.4.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.5.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -259,12 +259,12 @@
 <p>The key components of a parameterized benchmark are:</p>
 <ul class="simple">
 <li><p><strong>Benchmark Function</strong>: A function decorated with <cite>&#64;simplebench.benchmark</cite> that contains the code to be benchmarked.
-The function must accept parameters that will be varied during the benchmark runs. The parameters are defined
-as keyword arguments and passed to the function during each execution.</p></li>
-<li><p><strong>Parameters</strong>: Defined as arguments for the decorator, which specifies different values or sets of values to be used as inputs to the benchmark function.</p></li>
+The function’s signature should explicitly define the parameters that will be varied. SimpleBench will automatically
+pass the values from the <cite>kwargs_variations</cite> to these parameters.</p></li>
+<li><p><strong>Parameters</strong>: Defined as arguments for the <cite>&#64;simplebench.benchmark</cite> decorator, which specifies different values to be used as inputs to the benchmark function.</p></li>
 </ul>
 <dl>
-<dt><code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code></dt><dd><p>A dictionary where the keys are parameter names to be passed to the benchmarked
+<dt><code class="docutils literal notranslate"><span class="pre">kwargs_variations</span></code></dt><dd><p>A dictionary where the keys are parameter names that match the arguments of the benchmarked
 function and values are lists of possible values for those parameters.</p>
 <p>The benchmark will be executed for every combination of the provided parameter values.</p>
 <p><strong>Example</strong></p>
@@ -285,7 +285,7 @@ function and values are lists of possible values for those parameters.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">variation_cols</span></code></dt><dd><blockquote>
 <div><p>A dictionary where keys are parameter names and values are display names for reporting. Fields not
 included here will usually not display in a report. Fields specified here must be a subset of the
-keys in <code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code>.</p>
+keys in <code class="docutils literal notranslate"><span class="pre">kwargs_variations</span></code>.</p>
 <p><strong>Example</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">variation_cols</span><span class="o">=</span><span class="p">{</span>
     <span class="s1">&#39;arg1&#39;</span><span class="p">:</span> <span class="s1">&#39;Argument 1&#39;</span><span class="p">,</span>
@@ -299,7 +299,7 @@ corresponding to the values of ‘arg1’ and ‘arg2’ used in each benchmark 
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">use_field_for_n</span></code></dt><dd><p>A string specifying a parameter to use as the ‘N’ field in reports, which is often used
 to indicate input size for complexity analysis. This parameter should be one of the keys in
-<code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code>. It is optional; if not specified, the ‘N’ field will default to the value ‘1.0’.</p>
+<code class="docutils literal notranslate"><span class="pre">kwargs_variations</span></code>. It is optional; if not specified, the ‘N’ field will default to the value ‘1.0’.</p>
 <p>This is useful when you want to analyze how the performance of the benchmarked function
 scales with different input sizes or configurations. It is not required that the field be
 defined in <code class="docutils literal notranslate"><span class="pre">variation_cols</span></code> to be used as the ‘N’ field.</p>
@@ -375,7 +375,7 @@ from the terminal once the benchmark completes.</p>
 <section id="multi-dimensional-parameters">
 <h2>Multi-dimensional Parameters<a class="headerlink" href="#multi-dimensional-parameters" title="Link to this heading">🔗</a></h2>
 <p>You can define multiple parameters for a benchmark function by defining multiple
-parameters for the kwarg_variations.</p>
+parameters for the kwargs_variations.</p>
 <p>For example, to benchmark a function with two parameters, <cite>size</cite> and <cite>mode</cite>, you can define
 the benchmark as follows:</p>
 <div class="literal-block-wrapper docutils container" id="multidimensional-parameterized-benchmark-example">
@@ -516,7 +516,7 @@ six different benchmark runs (3 sizes x 2 modes). The report will include column
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=d4d890f0"></script>
+</div><script src="../_static/documentation_options.js?v=85f044d2"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
