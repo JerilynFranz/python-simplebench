@@ -25,3 +25,5 @@ Tutorials
    
    tutorials/basic
    tutorials/parameterized
+   tutorials/controlling
+   tutorials/reporting
