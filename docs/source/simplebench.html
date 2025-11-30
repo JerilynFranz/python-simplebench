@@ -419,13 +419,13 @@ keyword argument variations.</p>
       <span class="n">Case</span><span class="p">,</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="n">Results</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span>
 
 
-  <span class="k">def</span><span class="w"> </span><span class="nf">my_benchmark_action</span><span class="p">(</span><span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">my_benchmark_action</span><span class="p">(</span><span class="n">_bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span>
                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
       <span class="c1"># Perform benchmark action here</span>
       <span class="k">def</span><span class="w"> </span><span class="nf">benchmark_operation</span><span class="p">():</span>
           <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>  <span class="c1"># Example operation to benchmark</span>
 
-      <span class="k">return</span> <span class="n">bench</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">benchmark_operation</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">_bench</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">benchmark_operation</span><span class="p">)</span>
 
 
   <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
@@ -843,30 +843,39 @@ Cannot be blank.</p>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">kwargs_variations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case.html#Case.validate_action_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Case.validate_action_signature" title="Link to this definition">🔗</a></dt>
 <dd><p>Validate that action has correct signature.</p>
+<p>An action function must accept one of the two following formats for its parameters:</p>
 <dl class="simple">
-<dt>An action function must accept the following two parameters:</dt><dd><ul class="simple">
-<li><p>bench: SimpleRunner</p></li>
+<dt><strong>Two Parameters</strong></dt><dd><ul class="simple">
+<li><p>_bench: SimpleRunner</p></li>
 <li><p><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Arbitrary keyword arguments</p></li>
+</ul>
+</dd>
+<dt><strong>Explicit Parameters</strong></dt><dd><ul class="simple">
+<li><p>_bench: SimpleRunner</p></li>
+<li><p>any number of explicit parameters</p></li>
 </ul>
 </dd>
 </dl>
 <p>This is equivalent to the <cite>ActionRunner</cite> protocol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>action</strong> (<a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><em>ActionRunner</em></a>) – The action function to validate.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> – The action function to validate.</p></li>
+<li><p><strong>kwargs_variations</strong> – The kwargs variations for the case.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The validated action function.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner">ActionRunner</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the action is not callable or has an invalid signature.</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the action is not callable or has an invalid signature or
+if the kwargs_variations is not a dictionary with valid keys or if the action signature
+does not match the kwargs_variations keys.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1542,7 +1551,7 @@ be between 50 and 400.</p></li>
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#simplebench.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">default_runner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><span class="pre">ArgumentParser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
@@ -1792,7 +1801,7 @@ without command line args, you should call <a class="reference internal" href="#
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.Session.verbosity">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></em><a class="headerlink" href="#simplebench.Session.verbosity" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></em><a class="headerlink" href="#simplebench.Session.verbosity" title="Link to this definition">🔗</a></dt>
 <dd><p>The Verbosity level for this session.</p>
 </dd></dl>
 

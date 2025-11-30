@@ -70,8 +70,8 @@ Minimal Example
 ---------------
 
 The minimal code required to create and run a parameterized benchmark using SimpleBench is creating
-a script that defines a function to be benchmarked with `@simplebench.benchmark`, specifying parameters using
-the `@simplebench.parameter` decorator, and that calls `simplebench.main()`
+a script that defines a function to be benchmarked with `@simplebench.benchmark`,
+specifying parameters using the `@simplebench.benchmark` decorator, and that calls `simplebench.main()`
 
 .. literalinclude:: parameterized/minimal_parameterized_benchmark.py
    :language: python

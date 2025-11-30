@@ -155,13 +155,13 @@ class Case:
             Case, SimpleRunner, Results, main)
 
 
-        def my_benchmark_action(bench: SimpleRunner,
+        def my_benchmark_action(_bench: SimpleRunner,
                                 **kwargs) -> Results:
             # Perform benchmark action here
             def benchmark_operation():
                 sum(range(1000))  # Example operation to benchmark
 
-            return bench.run(benchmark_operation)
+            return _bench.run(benchmark_operation)
 
 
         if __name__ == '__main__':
@@ -415,7 +415,7 @@ class Case:
         # Resolve type hints to handle string annotations (from __future__ import annotations)
         try:
             type_hints = get_type_hints(action)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             # Fallback for callables where get_type_hints might fail (e.g. partials without globals)
             type_hints = {}
 
