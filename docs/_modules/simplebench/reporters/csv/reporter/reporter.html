@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=0e890c2c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -199,8 +199,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/basic.html">Basic Usage Tutorial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/parameterized.html">Parameterized Benchmark Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/parameterized.html">Parameterized Benchmark</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../command_line_options.html">Command-Line Options</a></li>
@@ -255,12 +255,11 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_INTERVAL_SCALE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Section</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
-<span class="c1"># simplebench.reporters imports</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reporter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
@@ -271,7 +270,9 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">CSVConfig</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CSVReporterErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">CSVOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">CSVField</span><span class="p">,</span> <span class="n">CSVOptions</span>
+
+<span class="n">Options</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">CSVOptions</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
@@ -349,14 +350,10 @@
 
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
 <span class="sd">                     benchmarked code.</span>
-<span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
 <span class="sd">        :param section: The section to output (eg. :attr:`~simplebench.enums.Section.OPS` or</span>
 <span class="sd">                        :attr:`~simplebench.enums.Section.TIMING`).</span>
-<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
-<span class="sd">        :param options: The options for the CSV report. (Currently unused.)</span>
-<span class="sd">        :type options: :class:`~simplebench.reporters.reporter.options.ReporterOptions`</span>
+<span class="sd">        :param options: The options for the CSV report.</span>
 <span class="sd">        :return: The benchmark results formatted as tagged CSV data.</span>
-<span class="sd">        :rtype: str</span>
 <span class="sd">        :raises SimpleBenchValueError: If the specified section is unsupported.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_case</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>  <span class="c1"># Handle deferred import type checking</span>
@@ -365,8 +362,10 @@
                 <span class="n">tag</span><span class="o">=</span><span class="n">_CSVReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_CASE</span><span class="p">)</span>
         <span class="n">section</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;section&#39;</span><span class="p">,</span>
                                 <span class="n">_CSVReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_SECTION</span><span class="p">)</span>
-        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">options_type</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="s1">&#39;options&#39;</span><span class="p">,</span>
                                 <span class="n">_CSVReporterErrorTag</span><span class="o">.</span><span class="n">RENDER_INVALID_OPTIONS</span><span class="p">)</span>
+
+        <span class="n">included_fields</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">fields</span>
 
         <span class="n">base_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_base_unit_for_section</span><span class="p">(</span><span class="n">section</span><span class="o">=</span><span class="n">section</span><span class="p">)</span>
         <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span>
@@ -382,41 +381,83 @@
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;# title: </span><span class="si">{</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">])</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;# description: </span><span class="si">{</span><span class="n">case</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">])</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;# unit: </span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">])</span>
-            <span class="n">header</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s1">&#39;N&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Iterations&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Rounds&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Elapsed Seconds&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;mean (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;median (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;min (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;max (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;5th (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;95th (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;std dev (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;rsd (%)&#39;</span>
-            <span class="p">]</span>
-            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">header</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">options</span><span class="o">.</span><span class="n">variation_cols_last</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">included_fields</span><span class="p">:</span>
+                <span class="k">match</span> <span class="n">field</span><span class="p">:</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">N</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">ITERATIONS</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Iterations&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">ROUNDS</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Rounds&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">ELAPSED_SECONDS</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Elapsed Seconds&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">MEAN</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mean (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">MEDIAN</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;median (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">MIN</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;min (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">MAX</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;max (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">P5</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;5th (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">P95</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;95th (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">STD_DEV</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;std dev (</span><span class="si">{</span><span class="n">common_unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">RSD_PERCENT</span><span class="p">:</span>
+                        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;rsd (%)&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">variation_cols_last</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
                 <span class="n">stats_target</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
-                <span class="n">row</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">iterations</span><span class="p">),</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">total_elapsed</span> <span class="o">*</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">median</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">minimum</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">maximum</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">95</span><span class="p">]</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">adjusted_standard_deviation</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">),</span>
-                    <span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">adjusted_relative_standard_deviation</span><span class="p">)</span>
-                <span class="p">]</span>
-                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">variation_marks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">row</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">options</span><span class="o">.</span><span class="n">variation_cols_last</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">variation_marks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                        <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">included_fields</span><span class="p">:</span>
+                        <span class="k">match</span> <span class="n">field</span><span class="p">:</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">N</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">ITERATIONS</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">iterations</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">ROUNDS</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">rounds</span><span class="p">)</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">ELAPSED_SECONDS</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">total_elapsed</span> <span class="o">*</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">MEAN</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">MEDIAN</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">median</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">MIN</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">minimum</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">MAX</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">maximum</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">P5</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">P95</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">percentiles</span><span class="p">[</span><span class="mi">95</span><span class="p">]</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">STD_DEV</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">adjusted_standard_deviation</span> <span class="o">*</span> <span class="n">common_scale</span><span class="p">))</span>
+                            <span class="k">case</span> <span class="n">CSVField</span><span class="o">.</span><span class="n">RSD_PERCENT</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">adjusted_relative_standard_deviation</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">variation_cols_last</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">variation_marks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                        <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
             <span class="n">csvfile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>

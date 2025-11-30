@@ -305,7 +305,7 @@ here for completeness.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableConfig" title="simplebench.reporters.rich_table.RichTableConfig"><em>RichTableConfig</em></a><em> | </em><em>None</em>) – An optional configuration object to override default reporter settings.
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="simplebench.reporters.rich_table.reporter.config.html#simplebench.reporters.rich_table.reporter.config.RichTableConfig" title="simplebench.reporters.rich_table.reporter.config.RichTableConfig"><em>RichTableConfig</em></a><em> | </em><em>None</em>) – An optional configuration object to override default reporter settings.
 If not provided, default settings will be used.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -323,7 +323,7 @@ values are invalid.</p></li>
 
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
 </dl>
@@ -332,6 +332,9 @@ values are invalid.</p></li>
 <dd><p>Prints the benchmark results in a rich table format if available.</p>
 <p>It creates a <a class="reference external" href="https://rich.readthedocs.io/en/latest/reference/table.html#rich.table.Table" title="(in Rich)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a> instance containing the benchmark results
 for the specified section.</p>
+<p>The table includes the fields specified in the <cite>options</cite> argument, formatted
+appropriately based on the results data.</p>
+<p>Depending on the <cite>options</cite>, variation columns can be placed at the start or end of the rows.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

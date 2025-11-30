@@ -7,12 +7,11 @@ from __future__ import annotations
 
 import csv
 from io import StringIO
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
-# simplebench.reporters imports
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.results import Results
@@ -23,7 +22,9 @@ from simplebench.validators import validate_type
 
 from .config import CSVConfig
 from .exceptions import _CSVReporterErrorTag
-from .options import CSVOptions
+from .options import CSVField, CSVOptions
+
+Options: TypeAlias = CSVOptions
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -97,14 +98,10 @@ class CSVReporter(Reporter):
 
         :param case: The :class:`~simplebench.case.Case` instance representing the
                      benchmarked code.
-        :type case: :class:`~simplebench.case.Case`
         :param section: The section to output (eg. :attr:`~simplebench.enums.Section.OPS` or
                         :attr:`~simplebench.enums.Section.TIMING`).
-        :type section: :class:`~simplebench.enums.Section`
-        :param options: The options for the CSV report. (Currently unused.)
-        :type options: :class:`~simplebench.reporters.reporter.options.ReporterOptions`
+        :param options: The options for the CSV report.
         :return: The benchmark results formatted as tagged CSV data.
-        :rtype: str
         :raises SimpleBenchValueError: If the specified section is unsupported.
         """
         if not is_case(case):  # Handle deferred import type checking
@@ -113,8 +110,10 @@ class CSVReporter(Reporter):
                 tag=_CSVReporterErrorTag.RENDER_INVALID_CASE)
         section = validate_type(section, Section, 'section',
                                 _CSVReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(options, self.options_type, 'options',
+        options = validate_type(options, Options, 'options',
                                 _CSVReporterErrorTag.RENDER_INVALID_OPTIONS)
+
+        included_fields = options.fields
 
         base_unit: str = self.get_base_unit_for_section(section=section)
         results: list[Results] = case.results
@@ -130,41 +129,83 @@ class CSVReporter(Reporter):
             writer.writerow([f'# title: {case.title}'])
             writer.writerow([f'# description: {case.description}'])
             writer.writerow([f'# unit: {common_unit}'])
-            header: list[str] = [
-                'N',
-                'Iterations',
-                'Rounds',
-                'Elapsed Seconds',
-                f'mean ({common_unit})',
-                f'median ({common_unit})',
-                f'min ({common_unit})',
-                f'max ({common_unit})',
-                f'5th ({common_unit})',
-                f'95th ({common_unit})',
-                f'std dev ({common_unit})',
-                'rsd (%)'
-            ]
-            for value in case.variation_cols.values():
-                header.append(value)
+            header: list[str] = []
+
+            if not options.variation_cols_last:
+                for value in case.variation_cols.values():
+                    header.append(value)
+
+            for field in included_fields:
+                match field:
+                    case CSVField.N:
+                        header.append('N')
+                    case CSVField.ITERATIONS:
+                        header.append('Iterations')
+                    case CSVField.ROUNDS:
+                        header.append('Rounds')
+                    case CSVField.ELAPSED_SECONDS:
+                        header.append('Elapsed Seconds')
+                    case CSVField.MEAN:
+                        header.append(f'mean ({common_unit})')
+                    case CSVField.MEDIAN:
+                        header.append(f'median ({common_unit})')
+                    case CSVField.MIN:
+                        header.append(f'min ({common_unit})')
+                    case CSVField.MAX:
+                        header.append(f'max ({common_unit})')
+                    case CSVField.P5:
+                        header.append(f'5th ({common_unit})')
+                    case CSVField.P95:
+                        header.append(f'95th ({common_unit})')
+                    case CSVField.STD_DEV:
+                        header.append(f'std dev ({common_unit})')
+                    case CSVField.RSD_PERCENT:
+                        header.append('rsd (%)')
+
+            if options.variation_cols_last:
+                for value in case.variation_cols.values():
+                    header.append(value)
+
             writer.writerow(header)
             for result in results:
                 stats_target = result.results_section(section)
-                row: list[str | float | int] = [
-                    result.n,
-                    len(result.iterations),
-                    result.rounds,
-                    sigfigs(result.total_elapsed * DEFAULT_INTERVAL_SCALE, 10),
-                    sigfigs(stats_target.mean * common_scale),
-                    sigfigs(stats_target.median * common_scale),
-                    sigfigs(stats_target.minimum * common_scale),
-                    sigfigs(stats_target.maximum * common_scale),
-                    sigfigs(stats_target.percentiles[5] * common_scale),
-                    sigfigs(stats_target.percentiles[95] * common_scale),
-                    sigfigs(stats_target.adjusted_standard_deviation * common_scale),
-                    sigfigs(stats_target.adjusted_relative_standard_deviation)
-                ]
-                for value in result.variation_marks.values():
-                    row.append(value)
+                row: list[str | float | int] = []
+
+                if not options.variation_cols_last:
+                    for value in result.variation_marks.values():
+                        row.append(value)
+
+                    for field in included_fields:
+                        match field:
+                            case CSVField.N:
+                                row.append(result.n)
+                            case CSVField.ITERATIONS:
+                                row.append(len(result.iterations))
+                            case CSVField.ROUNDS:
+                                row.append(result.rounds)
+                            case CSVField.ELAPSED_SECONDS:
+                                row.append(sigfigs(result.total_elapsed * DEFAULT_INTERVAL_SCALE, 10))
+                            case CSVField.MEAN:
+                                row.append(sigfigs(stats_target.mean * common_scale))
+                            case CSVField.MEDIAN:
+                                row.append(sigfigs(stats_target.median * common_scale))
+                            case CSVField.MIN:
+                                row.append(sigfigs(stats_target.minimum * common_scale))
+                            case CSVField.MAX:
+                                row.append(sigfigs(stats_target.maximum * common_scale))
+                            case CSVField.P5:
+                                row.append(sigfigs(stats_target.percentiles[5] * common_scale))
+                            case CSVField.P95:
+                                row.append(sigfigs(stats_target.percentiles[95] * common_scale))
+                            case CSVField.STD_DEV:
+                                row.append(sigfigs(stats_target.adjusted_standard_deviation * common_scale))
+                            case CSVField.RSD_PERCENT:
+                                row.append(sigfigs(stats_target.adjusted_relative_standard_deviation))
+
+                if options.variation_cols_last:
+                    for value in result.variation_marks.values():
+                        row.append(value)
+
                 writer.writerow(row)
 
             csvfile.seek(0)

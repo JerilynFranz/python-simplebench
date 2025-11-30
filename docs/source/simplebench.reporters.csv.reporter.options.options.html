@@ -260,14 +260,76 @@
 to hold options specific to the CSV reporter.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.options.options.CSVOptions">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.options.options.</span></span><span class="sig-name descname"><span class="pre">CSVOptions</span></span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/options/options.html#CSVOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.options.options.CSVOptions" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.options.options.</span></span><span class="sig-name descname"><span class="pre">CSVOptions</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><span class="pre">CSVField</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">variation_cols_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/options/options.html#CSVOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.options.options.CSVOptions" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
-<p>Class for holding CSV reporter specific options.</p>
-<p>This class provides additional configuration options specific to the CSV reporter.
-It is accessed via the <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice.options" title="simplebench.reporters.choice.Choice.options"><code class="xref py py-attr docutils literal notranslate"><span class="pre">options</span></code></a>
-attribute of a <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance or a
-<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
-<p>It is currently only a stub for future expansion.</p>
+<p>Class for holding CSV reporter specific options in a Choice.</p>
+<p>This class provides additional configuration options specific to the JSON reporter.
+It is accessed via the <code class="docutils literal notranslate"><span class="pre">options</span></code> attribute of a
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fields</strong> – <p>A tuple of CSV fields to include in the output.
+If none is specifically set, a predefined set of fields is used. The fields appear in the order
+specified in the sequence.</p>
+<p>If specified, all fields must be from the <a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField" title="simplebench.reporters.csv.CSVField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVField</span></code></a> enum.</p>
+<p>The default fields, in order, are:</p>
+<ul>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.N" title="simplebench.reporters.csv.CSVField.N"><code class="xref py py-attr docutils literal notranslate"><span class="pre">N</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.ITERATIONS" title="simplebench.reporters.csv.CSVField.ITERATIONS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ITERATIONS</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.ROUNDS" title="simplebench.reporters.csv.CSVField.ROUNDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ROUNDS</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.ELAPSED_SECONDS" title="simplebench.reporters.csv.CSVField.ELAPSED_SECONDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ELAPSED_SECONDS</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.MEAN" title="simplebench.reporters.csv.CSVField.MEAN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MEAN</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.MEDIAN" title="simplebench.reporters.csv.CSVField.MEDIAN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MEDIAN</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.MIN" title="simplebench.reporters.csv.CSVField.MIN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MIN</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.MAX" title="simplebench.reporters.csv.CSVField.MAX"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MAX</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.P5" title="simplebench.reporters.csv.CSVField.P5"><code class="xref py py-attr docutils literal notranslate"><span class="pre">P5</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.P95" title="simplebench.reporters.csv.CSVField.P95"><code class="xref py py-attr docutils literal notranslate"><span class="pre">P95</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.STD_DEV" title="simplebench.reporters.csv.CSVField.STD_DEV"><code class="xref py py-attr docutils literal notranslate"><span class="pre">STD_DEV</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.RSD_PERCENT" title="simplebench.reporters.csv.CSVField.RSD_PERCENT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RSD_PERCENT</span></code></a></p></li>
+</ul>
+</p></li>
+<li><p><strong>variation_cols_last</strong> – Whether to place the variation columns (if any) at the end of the rows.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code> - which places the variation columns at the start of the rows.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – Any parameter is of an invalid type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">fields</span></code> is an empty sequence.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize CSVOptions instance.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.options.options.CSVOptions.fields">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><span class="pre">CSVField</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.options.options.CSVOptions.fields" title="Link to this definition">🔗</a></dt>
+<dd><p>Return the fields, in order, to include in the CSV table when rendering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple of CSVField enums representing the default fields.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.options.options.CSVOptions.variation_cols_last">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols_last</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.options.options.CSVOptions.variation_cols_last" title="Link to this definition">🔗</a></dt>
+<dd><p>Return whether variation columns are placed at the end of the rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if variation columns are placed at the end, False if at the start.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -310,7 +372,11 @@ attribute of a <a class="reference internal" href="simplebench.reporters.choice.
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.reporters.csv.reporter.options.options module</a><ul>
-<li><a class="reference internal" href="#simplebench.reporters.csv.reporter.options.options.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.reporter.options.options.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.csv.reporter.options.options.CSVOptions.fields"><code class="docutils literal notranslate"><span class="pre">CSVOptions.fields</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.reporter.options.options.CSVOptions.variation_cols_last"><code class="docutils literal notranslate"><span class="pre">CSVOptions.variation_cols_last</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

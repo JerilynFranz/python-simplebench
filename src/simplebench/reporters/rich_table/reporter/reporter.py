@@ -8,7 +8,6 @@ from rich.table import Table
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
-# simplebench.reporters imports
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
@@ -18,7 +17,7 @@ from simplebench.validators import validate_type
 
 from .config import RichTableConfig
 from .exceptions import _RichTableReporterErrorTag
-from .options import RichTableOptions
+from .options import RichTableField, RichTableOptions
 
 Options: TypeAlias = RichTableOptions
 
@@ -92,6 +91,11 @@ class RichTableReporter(Reporter):
         It creates a :class:`~rich.table.Table` instance containing the benchmark results
         for the specified section.
 
+        The table includes the fields specified in the `options` argument, formatted
+        appropriately based on the results data.
+
+        Depending on the `options`, variation columns can be placed at the start or end of the rows.
+
         :param case: The :class:`~simplebench.case.Case` instance representing the
             benchmarked code.
         :param options: The options specifying the report configuration.
@@ -109,6 +113,7 @@ class RichTableReporter(Reporter):
                                 _RichTableReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options',
                                 _RichTableReporterErrorTag.RENDER_INVALID_OPTIONS)
+        included_fields = options.fields
 
         base_unit: str = self.get_base_unit_for_section(section=section)
         results: list[Results] = case.results
@@ -139,38 +144,82 @@ class RichTableReporter(Reporter):
                       show_header=True,
                       title_style='bold green1',
                       header_style='bold magenta')
-        table.add_column('N', justify='center')
-        table.add_column('Iterations', justify='center')
-        table.add_column('Rounds', justify='center')
-        table.add_column('Elapsed Seconds', justify='center', max_width=7)
-        table.add_column(f'mean {mean_unit}', justify='center', vertical='bottom', overflow='fold')
-        table.add_column(f'median {median_unit}', justify='center', vertical='bottom', overflow='fold')
-        table.add_column(f'min {min_unit}', justify='center', vertical='bottom', overflow='fold')
-        table.add_column(f'max {max_unit}', justify='center', vertical='bottom', overflow='fold')
-        table.add_column(f'5th {p5_unit}', justify='center', vertical='bottom', overflow='fold')
-        table.add_column(f'95th {p95_unit}', justify='center', vertical='bottom', overflow='fold')
-        table.add_column(f'std dev {stddev_unit}', justify='center', vertical='bottom', overflow='fold')
-        table.add_column('rsd%', justify='center', vertical='bottom', overflow='fold')
-        for value in case.variation_cols.values():
-            table.add_column(value, justify='center', vertical='bottom', overflow='fold')
+
+        if not options.variation_cols_last:
+            for value in case.variation_cols.values():
+                table.add_column(value, justify='center', vertical='bottom', overflow='fold')
+
+        for field in included_fields:
+            match field:
+                case RichTableField.N:
+                    table.add_column('N', justify='center')
+                case RichTableField.ITERATIONS:
+                    table.add_column('Iterations', justify='center')
+                case RichTableField.ROUNDS:
+                    table.add_column('Rounds', justify='center')
+                case RichTableField.ELAPSED_SECONDS:
+                    table.add_column('Elapsed Seconds', justify='center', max_width=7)
+                case RichTableField.MEAN:
+                    table.add_column(f'mean {mean_unit}', justify='center', vertical='bottom', overflow='fold')
+                case RichTableField.MEDIAN:
+                    table.add_column(f'median {median_unit}', justify='center', vertical='bottom', overflow='fold')
+                case RichTableField.MIN:
+                    table.add_column(f'min {min_unit}', justify='center', vertical='bottom', overflow='fold')
+                case RichTableField.MAX:
+                    table.add_column(f'max {max_unit}', justify='center', vertical='bottom', overflow='fold')
+                case RichTableField.P5:
+                    table.add_column(f'5th {p5_unit}', justify='center', vertical='bottom', overflow='fold')
+                case RichTableField.P95:
+                    table.add_column(f'95th {p95_unit}', justify='center', vertical='bottom', overflow='fold')
+                case RichTableField.STD_DEV:
+                    table.add_column(f'std dev {stddev_unit}', justify='center', vertical='bottom', overflow='fold')
+                case RichTableField.RSD_PERCENT:
+                    table.add_column('rsd%', justify='center', vertical='bottom', overflow='fold')
+
+        if options.variation_cols_last:
+            for value in case.variation_cols.values():
+                table.add_column(value, justify='center', vertical='bottom', overflow='fold')
+
         for result in results:
             stats_target = result.results_section(section)
-            row: list[str] = [
-                f'{str(result.n):>6}',
-                f'{len(result.iterations):>6d}',
-                f'{result.rounds:>6d}',
-                f'{result.total_elapsed * DEFAULT_INTERVAL_SCALE:>4.2f}',
-                f'{sigfigs(stats_target.mean * mean_scale):>8.2f}',
-                f'{sigfigs(stats_target.median * median_scale):>8.2f}',
-                f'{sigfigs(stats_target.minimum * min_scale):>8.2f}',
-                f'{sigfigs(stats_target.maximum * max_scale):>8.2f}',
-                f'{sigfigs(stats_target.percentiles[5] * p5_scale):>8.2f}',
-                f'{sigfigs(stats_target.percentiles[95] * p95_scale):>8.2f}',
-                f'{sigfigs(stats_target.adjusted_standard_deviation * stddev_scale):>8.2f}',
-                f'{sigfigs(stats_target.adjusted_relative_standard_deviation):>5.2f}%'
-            ]
-            for value in result.variation_marks.values():
-                row.append(f'{value!s}')
+            row: list[str] = []
+
+            if not options.variation_cols_last:
+                for value in result.variation_marks.values():
+                    row.append(f'{value!s}')
+
+            # Add main fields
+            for field in included_fields:
+                match field:
+                    case RichTableField.N:
+                        row.append(f'{str(result.n):>6}')
+                    case RichTableField.ITERATIONS:
+                        row.append(f'{len(result.iterations):>6d}')
+                    case RichTableField.ROUNDS:
+                        row.append(f'{result.rounds:>6d}')
+                    case RichTableField.ELAPSED_SECONDS:
+                        row.append(f'{result.total_elapsed * DEFAULT_INTERVAL_SCALE:>4.2f}')
+                    case RichTableField.MEAN:
+                        row.append(f'{sigfigs(stats_target.mean * mean_scale):>8.2f}')
+                    case RichTableField.MEDIAN:
+                        row.append(f'{sigfigs(stats_target.median * median_scale):>8.2f}')
+                    case RichTableField.MIN:
+                        row.append(f'{sigfigs(stats_target.minimum * min_scale):>8.2f}')
+                    case RichTableField.MAX:
+                        row.append(f'{sigfigs(stats_target.maximum * max_scale):>8.2f}')
+                    case RichTableField.P5:
+                        row.append(f'{sigfigs(stats_target.percentiles[5] * p5_scale):>8.2f}')
+                    case RichTableField.P95:
+                        row.append(f'{sigfigs(stats_target.percentiles[95] * p95_scale):>8.2f}')
+                    case RichTableField.STD_DEV:
+                        row.append(f'{sigfigs(stats_target.adjusted_standard_deviation * stddev_scale):>8.2f}')
+                    case RichTableField.RSD_PERCENT:
+                        row.append(f'{sigfigs(stats_target.adjusted_relative_standard_deviation):>5.2f}%')
+
+            if options.variation_cols_last:
+                for value in result.variation_marks.values():
+                    row.append(f'{value!s}')
+
             table.add_row(*row)
 
         return table
