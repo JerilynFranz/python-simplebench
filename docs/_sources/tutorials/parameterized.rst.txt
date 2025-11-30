@@ -11,13 +11,13 @@ Parameterized benchmarks allow you to run the same benchmark function multiple t
 The key components of a parameterized benchmark are:
 
 - **Benchmark Function**: A function decorated with `@simplebench.benchmark` that contains the code to be benchmarked.
-  The function must accept parameters that will be varied during the benchmark runs. The parameters are defined
-  as keyword arguments and passed to the function during each execution.
+  The function's signature should explicitly define the parameters that will be varied. SimpleBench will automatically
+  pass the values from the `kwargs_variations` to these parameters.
 
-- **Parameters**: Defined as arguments for the decorator, which specifies different values or sets of values to be used as inputs to the benchmark function.
+- **Parameters**: Defined as arguments for the `@simplebench.benchmark` decorator, which specifies different values to be used as inputs to the benchmark function.
 
-``kwarg_variations``
-  A dictionary where the keys are parameter names to be passed to the benchmarked
+``kwargs_variations``
+  A dictionary where the keys are parameter names that match the arguments of the benchmarked
   function and values are lists of possible values for those parameters.
 
   The benchmark will be executed for every combination of the provided parameter values.
@@ -43,7 +43,7 @@ The key components of a parameterized benchmark are:
 ``variation_cols``  
     A dictionary where keys are parameter names and values are display names for reporting. Fields not
     included here will usually not display in a report. Fields specified here must be a subset of the
-    keys in ``kwarg_variations``.
+    keys in ``kwargs_variations``.
 
     **Example**
 
@@ -60,7 +60,7 @@ The key components of a parameterized benchmark are:
 ``use_field_for_n``
     A string specifying a parameter to use as the 'N' field in reports, which is often used
     to indicate input size for complexity analysis. This parameter should be one of the keys in
-    ``kwarg_variations``. It is optional; if not specified, the 'N' field will default to the value '1.0'.
+    ``kwargs_variations``. It is optional; if not specified, the 'N' field will default to the value '1.0'.
 
     This is useful when you want to analyze how the performance of the benchmarked function
     scales with different input sizes or configurations. It is not required that the field be
@@ -147,7 +147,7 @@ Multi-dimensional Parameters
 ----------------------------
 
 You can define multiple parameters for a benchmark function by defining multiple
-parameters for the kwarg_variations.
+parameters for the kwargs_variations.
 
 
 For example, to benchmark a function with two parameters, `size` and `mode`, you can define
@@ -188,7 +188,7 @@ You can customize the parameter values and names as needed for your specific ben
    
    From the 'parameterized/' directory, run the following command:
 
-       python minimal_parameterized_benchmark.py --rich-table.ops > minimal_parameterized_output.txt
+       python multidimensional_parameterized_benchmark.py --rich-table.ops > multidimensional_parameterized_output.txt
 
    The --progress option is omitted here because it produces dynamic output
    that changes as the benchmark runs and does not appear in the expected output file
