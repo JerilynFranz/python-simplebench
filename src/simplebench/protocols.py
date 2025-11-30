@@ -24,12 +24,10 @@ class ActionRunner(Protocol):
                 pass
             return bench.run(action=some_function_to_benchmark, **kwargs)
     """
-    def __call__(self, bench: SimpleRunner, **kwargs) -> Results:  # type: ignore[reportReturnType]
+    def __call__(self, _bench: SimpleRunner, **kwargs) -> Results:  # type: ignore[reportReturnType]
         """Run the benchmark action.
 
-        :param bench: The SimpleRunner instance.
-        :type bench: SimpleRunner
+        :param _bench: The SimpleRunner instance.
         :param kwargs: Additional keyword arguments for the action.
         :return: The results of the benchmark action.
-        :rtype: Results
         """

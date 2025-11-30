@@ -18,10 +18,10 @@ Tutorials
     to advanced reporting techniques, you'll find a variety of topics covered
     here.
 
-
 .. toctree::
    :name: tutorials
    :maxdepth: 1
    :caption: List of Tutorials
    
    tutorials/basic
+   tutorials/parameterized

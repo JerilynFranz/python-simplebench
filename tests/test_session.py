@@ -29,20 +29,18 @@ _SAVED_ARGV = sys.argv.copy()
 """Saved copy of sys.argv for restoring after tests."""
 
 
-def benchcase(bench: SimpleRunner, **kwargs) -> Results:
+def benchcase(_bench: SimpleRunner, **kwargs) -> Results:
     """A simple benchmark case function.
 
-    :param bench: The benchmark runner.
-    :type bench: SimpleRunner
+    :param _bench: The benchmark runner.
     :param kwargs: Keyword arguments for the benchmark.
     :return: The benchmark results.
-    :rtype: Results
     """
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return bench.run(n=1000, action=action, **kwargs)
+    return _bench.run(n=1000, action=action, **kwargs)
 
 
 @pytest.mark.parametrize("testspec", [

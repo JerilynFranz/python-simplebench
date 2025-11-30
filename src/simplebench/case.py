@@ -5,7 +5,7 @@ import inspect
 import itertools
 from copy import copy
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, get_type_hints
 
 import simplebench.defaults as defaults
 
@@ -89,102 +89,6 @@ def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str
 
 class Case:
     '''
-    :param benchmark_id: An optional unique identifier for the benchmark case.
-
-        If None, a transient ID is assigned. This is meant to provide a stable identifier for the
-        benchmark case across multiple runs for tracking purposes. If not provided,
-        an attempt will be made to generate a stable ID based on the the action function
-        name, signature, and group.
-
-        If that is not possible, a transient ID based on the instance's id() will be used.
-        If a transient ID is used, it will differ between runs and cannot be used to
-        correlate results across multiple runs.
-
-        Benchmark ids must be unique within a benchmarking session and stable across runs
-        or they cannot be used for tracking benchmark results over time.
-
-    :param git_info: An optional GitInfo instance representing the state of the Git repository.
-
-        If not provided, the GitInfo will be automatically retrieved from the current
-        context of the caller if the code is part of a Git repository.
-
-    :param action: The function to perform the benchmark. This function must
-        accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
-        See the :class:`~simplebench.protocols.ActionRunner` protocol for the exact function
-        signature required.
-
-        It must return a `Results` object.
-
-    :param group: The benchmark reporting group to which the benchmark case belongs.
-
-    :param title: The title of the benchmark case.
-
-        If None, the name of the action function will be used. Cannot be a blank
-        string (a string that is empty or consists only of whitespace).
-
-    :param description: A brief description of the benchmark case.
-
-        If None, the docstring of the action function will be used, or '(no description)' if no docstring
-        is available. Cannot be blank.
-    :param iterations: The minimum number of iterations to run for the benchmark.
-    :param warmup_iterations: The number of warmup iterations to run before the benchmark.
-    :param rounds: The number of rounds to run for the benchmark.
-
-        Rounds are multiple runs of calls to the action within an iteration to mitigate timer
-        quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
-        functions are called only once per iteration (all rounds in the same iteration share the same
-        setup/teardown context).
-    :param min_time: The minimum time for the benchmark in seconds.
-    :param max_time: The maximum time for the benchmark in seconds.
-    :param timeout: How long to wait before timing out a benchmark run (in seconds).
-
-        If None, it waits the full duration of ``max_time`` plus the default timeout
-        grace period in seconds ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a
-        positive float or int that is greater than ``max_time`` if provided.
-        This is a safety mechanism to prevent runaway benchmarks.
-
-        If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``
-        will be raised.
-    :param variation_cols: kwargs to be used for cols to denote kwarg variations.
-
-        Each key is a keyword argument name, and the value is the column label to use for that
-        argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
-        added to the output of reporters that support them as columns of data with the specified labels.
-        If None, an empty dict is used.
-    :param kwargs_variations: A mapping of keyword argument key names to
-        a list of possible values for that argument. Default is {}. When tests are run, the benchmark
-        will be executed for each combination of the specified keyword argument variations. The action
-        function will be called with a `bench` parameter that is an instance of the runner and the
-        keyword arguments for the current variation.
-        If None, an empty dict is used.
-    :param runner: A custom runner class for the benchmark.
-        Any custom runner classes must be a subclass of SimpleRunner and must have a method
-        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
-        The action function will be called with a `bench` parameter that is an instance of the
-        custom runner.
-        It may also accept additional parameters to the run method as needed. If additional
-        parameters are needed for the custom runner, they will need to be passed to the run
-        method as keyword arguments.
-        No support is provided for passing additional parameters to a custom runner from the @benchmark
-        decorator.
-    :param callback:
-        A callback function for additional processing of the report. The function should accept
-        four arguments: the Case instance, the Section, the Format, and the generated report data.
-        The callback function will be called with the following arguments:
-            - case (Case): The `Case` instance processed for the report.
-            - section (Section): The `Section` of the report.
-            - output_format (Format): The `Format` of the report.
-            - output (Any): The generated report data. Note that the actual type of this data will
-                depend on the Format specified for the report and the type generated by the
-                reporter for that Format
-        Omit if no callback is needed by a reporter.
-    :param options: A list of additional options for the benchmark case.
-        Each option is an instance of ReporterOption or a subclass of ReporterOption.
-        Reporter options can be used to customize the output of the benchmark reports for
-        specific reporters. Reporters are responsible for extracting applicable ReporterOptions
-        from the list of options themselves.
-        If None, an empty list is used.
-
     A benchmark case defines the specific benchmark to be run, including the
     action to be performed, the parameters for the benchmark, and any variations
     of those parameters as well as the reporting group and title for the benchmark.
@@ -251,13 +155,13 @@ class Case:
             Case, SimpleRunner, Results, main)
 
 
-        def my_benchmark_action(bench: SimpleRunner,
+        def my_benchmark_action(_bench: SimpleRunner,
                                 **kwargs) -> Results:
             # Perform benchmark action here
             def benchmark_operation():
                 sum(range(1000))  # Example operation to benchmark
 
-            return bench.run(benchmark_operation)
+            return _bench.run(benchmark_operation)
 
 
         if __name__ == '__main__':
@@ -265,7 +169,6 @@ class Case:
                 Case(action=my_benchmark_action)
             ]
             main(cases_list)
-
 
     '''
     __slots__ = ('_group', '_title', '_description', '_action',
@@ -293,9 +196,7 @@ class Case:
                  runner: Optional[type[SimpleRunner]] = None,
                  callback: Optional[ReporterCallback] = None,
                  options: Optional[Iterable[ReporterOptions]] = None) -> None:
-        """Constructor for Case. This defines a benchmark case.
-
-        The only REQUIRED parameter is `action`.
+        """The only REQUIRED parameter is `action`.
 
         :param benchmark_id: An optional unique identifier for the benchmark case.
 
@@ -319,9 +220,8 @@ class Case:
             protocol for the exact signature required. It must return a `Results` object.
         :param group: The benchmark reporting group to which the benchmark case belongs.
 
-        Benchmarks with the same group can be selected for execution without running
-        other benchmarks. If not specified, the default group 'default' is used.
-
+            Benchmarks with the same group can be selected for execution without running
+            other benchmarks. If not specified, the default group 'default' is used.
         :param title: The title of the benchmark case.
 
             If None, the name of the action function will be used. Cannot be blank.
@@ -377,12 +277,14 @@ class Case:
 
             The function should must four arguments: the Case instance, the Section,
             the Format, and the generated report data.
-                - case (Case): The `Case` instance processed for the report.
-                - section (Section): The `Section` of the report.
-                - output_format (Format): The `Format` of the report.
-                - output (Any): The generated report data. Note that the actual type of this data will
-                    depend on the Format specified for the report and the type generated by the
-                    reporter for that Format
+
+            - case (Case): The `Case` instance processed for the report.
+            - section (Section): The `Section` of the report.
+            - output_format (Format): The `Format` of the report.
+            - output (Any): The generated report data. Note that the actual type of this data will
+                depend on the Format specified for the report and the type generated by the
+                reporter for that Format
+
             Omit if no callback is needed by a reporter.
         :param options: A list of additional options for the benchmark case.
 
@@ -391,12 +293,17 @@ class Case:
             specific reporters. Reporters are responsible for extracting applicable ReporterOptions
             from the list of options themselves.
             If None, an empty list is used.
+        :raises SimpleBenchTypeError: If any parameter is of incorrect type.
+        :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
         self._group = validate_non_blank_string(
                         group, "group",
                         _CaseErrorTag.INVALID_GROUP_TYPE,
                         _CaseErrorTag.INVALID_GROUP_VALUE)
-        self._action = Case.validate_action_signature(action)
+        # Processed first so can be used for cross-validation of action signature
+        self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
+        self._action = Case.validate_action_signature(action=action,
+                                                      kwargs_variations=self._kwargs_variations)
         title = action.__name__ if title is None else title  # type: ignore[attr-defined]
         self._title = validate_non_blank_string(
                         title, "title",
@@ -450,7 +357,6 @@ class Case:
                 _CaseErrorTag.INVALID_BENCHMARK_ID_TYPE,
                 _CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
                 strip=True, allow_blank=False, allow_empty=False)
-        self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
         self._variation_cols = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
         self._runner = Case.validate_runner(runner)
         self._callback = validate_reporter_callback(callback, allow_none=True)
@@ -477,43 +383,96 @@ class Case:
                 tag=_CaseErrorTag.INVALID_TIME_RANGE)
 
     @staticmethod
-    def validate_action_signature(action: ActionRunner) -> ActionRunner:
+    def validate_action_signature(action: ActionRunner,
+                                  kwargs_variations: dict[str, Any]) -> ActionRunner:
         """Validate that action has correct signature.
 
-        An action function must accept the following two parameters:
-            - bench: SimpleRunner
+        An action function must accept one of the two following formats for its parameters:
+
+        **Two Parameters**
+            - _bench: SimpleRunner
             - **kwargs: Arbitrary keyword arguments
+
+        **Explicit Parameters**
+            - _bench: SimpleRunner
+            - any number of explicit parameters
 
         This is equivalent to the `ActionRunner` protocol.
 
         :param action: The action function to validate.
-        :type action: ActionRunner
+        :param kwargs_variations: The kwargs variations for the case.
         :return: The validated action function.
-        :rtype: ActionRunner
-        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature.
+        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature or
+            if the kwargs_variations is not a dictionary with valid keys or if the action signature
+            does not match the kwargs_variations keys.
         """
         if not callable(action):
             raise SimpleBenchTypeError(
                 f'Invalid action: {action}. Must be a callable.',
                 tag=_CaseErrorTag.INVALID_ACTION_NOT_CALLABLE
                 )
+
+        # Resolve type hints to handle string annotations (from __future__ import annotations)
+        try:
+            type_hints = get_type_hints(action)
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Fallback for callables where get_type_hints might fail (e.g. partials without globals)
+            type_hints = {}
+
         action_signature = inspect.signature(action)
-        if 'bench' not in action_signature.parameters:
+        kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
+
+        bench_param = action_signature.parameters.get('_bench')
+        if bench_param is None:
             raise SimpleBenchTypeError(
-                f'Invalid action: {action}. Must accept a "bench" parameter.',
+                f'Invalid action: {action}. Must accept a "_bench" parameter.',
                 tag=_CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER
                 )
-        kwargs_param = action_signature.parameters.get('kwargs')
-        if kwargs_param is None or kwargs_param.kind not in (inspect.Parameter.VAR_KEYWORD,):
+        if bench_param.annotation is inspect.Parameter.empty:
             raise SimpleBenchTypeError(
-                f'Invalid action: {action}. Must accept "**kwargs" parameter.',
-                tag=_CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER
+                f'Invalid action: {action}. "_bench" parameter must be annotated with SimpleRunner.',
+                tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED
                 )
-        if len(action_signature.parameters) != 2:
-            raise SimpleBenchValueError(
-                f'Invalid action: {action}. Must accept exactly 2 parameters: bench and **kwargs.',
-                tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT
-            )
+
+        # Use the resolved type hint if available, otherwise use the annotation from signature
+        actual_annotation = type_hints.get('_bench', bench_param.annotation)
+
+        if actual_annotation != SimpleRunner:
+            raise SimpleBenchTypeError(
+                f'Invalid action: {action}. "_bench" parameter must be of type SimpleRunner.',
+                tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE
+                )
+
+        # No arguments other than _bench
+        if len(action_signature.parameters) == 1:
+            return action
+
+        # Two arguments: _bench and **kwargs
+        if len(action_signature.parameters) == 2:
+            # Check for **kwargs parameter
+            kwargs_param = action_signature.parameters.get('kwargs')
+            if kwargs_param is not None and kwargs_param.kind == inspect.Parameter.VAR_KEYWORD:
+                return action
+
+        # 2 or more arguments, _bench and explicit keyword-only parameters
+        for param_name in action_signature.parameters:
+            if param_name == '_bench':
+                continue
+            if param_name not in kwargs_variations:
+                raise SimpleBenchTypeError(
+                    (f'Invalid action: {action}. Parameter "{param_name}" '
+                     'not found in kwargs_variations.'),
+                    tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS
+                    )
+        for param_name in kwargs_variations:
+            if param_name not in action_signature.parameters:
+                raise SimpleBenchTypeError(
+                    (f'Invalid action: {action}. kwargs_variations key "{param_name}" '
+                     'not found in action parameters.'),
+                    tag=_CaseErrorTag.INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS
+                    )
+
+        # All checks passed
         return action
 
     @staticmethod
@@ -639,7 +598,6 @@ class Case:
         """Validate the options list.
 
         :param value: The options iterable to validate or None.
-        :type value: Iterable[ReporterOption] | None
         :return: A shallow copy of the validated options as a list or an empty list if not provided.
         :rtype: list[ReporterOptions]
         :raises SimpleBenchTypeError: If options is not a list or if any entry is not a ReporterOption.
@@ -994,7 +952,6 @@ class Case:
         set `full_data` to True.
 
         :param full_data: Whether to include full results data. Defaults to False.
-        :type full_data: bool
         :return: A JSON serializable dict representation of the benchmark case and results.
         :rtype: dict[str, Any]
         """

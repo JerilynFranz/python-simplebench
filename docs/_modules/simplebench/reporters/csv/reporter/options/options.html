@@ -5,12 +5,13 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.csv.reporter.options.options - simplebench 0.3.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.csv.reporter.options.options - simplebench 0.4.1-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=6b1eff16" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -162,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">simplebench 0.4.1-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +184,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.4.1-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,8 +198,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../reports/json_report.html">JSON Report</a></li>
@@ -246,22 +252,94 @@
 <span class="sd">:class:`~simplebench.reporters.reporter.options.ReporterOptions` and is used</span>
 <span class="sd">to hold options specific to the CSV reporter.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="c1"># simplebench.reporters.reporter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_bool</span><span class="p">,</span> <span class="n">validate_sequence_of_type</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CSVOptionsErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">CSVField</span>
+
+<span class="n">_DEFAULT_RICH_TABLE_FIELDS</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CSVField</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">N</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">ITERATIONS</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">ROUNDS</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">ELAPSED_SECONDS</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">MEAN</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">MEDIAN</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">MIN</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">MAX</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">P5</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">P95</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">STD_DEV</span><span class="p">,</span>
+    <span class="n">CSVField</span><span class="o">.</span><span class="n">RSD_PERCENT</span><span class="p">,</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="CSVOptions">
 <a class="viewcode-back" href="../../../../../../source/simplebench.reporters.csv.reporter.options.options.html#simplebench.CSVOptions">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CSVOptions</span><span class="p">(</span><span class="n">ReporterOptions</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for holding CSV reporter specific options.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for holding CSV reporter specific options in a Choice.</span>
 
-<span class="sd">    This class provides additional configuration options specific to the CSV reporter.</span>
-<span class="sd">    It is accessed via the :attr:`~simplebench.reporters.choice.Choice.options`</span>
-<span class="sd">    attribute of a :class:`~simplebench.reporters.choice.Choice` instance or a</span>
-<span class="sd">    :class:`~simplebench.case.Case` instance.</span>
+<span class="sd">    This class provides additional configuration options specific to the JSON reporter.</span>
+<span class="sd">    It is accessed via the ``options`` attribute of a</span>
+<span class="sd">    :class:`~simplebench.reporters.choice.Choice` instance.</span>
 
-<span class="sd">    It is currently only a stub for future expansion.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    :param fields: A tuple of CSV fields to include in the output.</span>
+<span class="sd">        If none is specifically set, a predefined set of fields is used. The fields appear in the order</span>
+<span class="sd">        specified in the sequence.</span>
+
+<span class="sd">        If specified, all fields must be from the :class:`~.CSVField` enum.</span>
+
+<span class="sd">        The default fields, in order, are:</span>
+
+<span class="sd">        - :attr:`~.CSVField.N`</span>
+<span class="sd">        - :attr:`~.CSVField.ITERATIONS`</span>
+<span class="sd">        - :attr:`~.CSVField.ROUNDS`</span>
+<span class="sd">        - :attr:`~.CSVField.ELAPSED_SECONDS`</span>
+<span class="sd">        - :attr:`~.CSVField.MEAN`</span>
+<span class="sd">        - :attr:`~.CSVField.MEDIAN`</span>
+<span class="sd">        - :attr:`~.CSVField.MIN`</span>
+<span class="sd">        - :attr:`~.CSVField.MAX`</span>
+<span class="sd">        - :attr:`~.CSVField.P5`</span>
+<span class="sd">        - :attr:`~.CSVField.P95`</span>
+<span class="sd">        - :attr:`~.CSVField.STD_DEV`</span>
+<span class="sd">        - :attr:`~.CSVField.RSD_PERCENT`</span>
+
+<span class="sd">    :param variation_cols_last: Whether to place the variation columns (if any) at the end of the rows.</span>
+<span class="sd">        Defaults to ``False`` - which places the variation columns at the start of the rows.</span>
+<span class="sd">    :raises ~simplebench.exceptions.SimpleBenchTypeError: Any parameter is of an invalid type.</span>
+<span class="sd">    :raises ~simplebench.exceptions.SimpleBenchValueError: If ``fields`` is an empty sequence.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">fields</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">CSVField</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">variation_cols_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize CSVOptions instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">CSVField</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">validate_sequence_of_type</span><span class="p">(</span>
+            <span class="n">fields</span> <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_DEFAULT_RICH_TABLE_FIELDS</span><span class="p">,</span>
+            <span class="n">CSVField</span><span class="p">,</span> <span class="s1">&#39;fields&#39;</span><span class="p">,</span>
+            <span class="n">_CSVOptionsErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_FIELDS_TYPE</span><span class="p">,</span>
+            <span class="n">_CSVOptionsErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_FIELDS_VALUE</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols_last</span> <span class="o">=</span> <span class="n">validate_bool</span><span class="p">(</span>
+            <span class="n">variation_cols_last</span><span class="p">,</span> <span class="s1">&#39;variation_cols_last&#39;</span><span class="p">,</span>
+            <span class="n">_CSVOptionsErrorTag</span><span class="o">.</span><span class="n">INVALID_VARIATION_COLS_LAST_TYPE</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">CSVField</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the fields, in order, to include in the CSV table when rendering.</span>
+
+<span class="sd">        :return: A tuple of CSVField enums representing the default fields.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols_last</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether variation columns are placed at the end of the rows.</span>
+
+<span class="sd">        :return: True if variation columns are placed at the end, False if at the start.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols_last</span></div>
 
 </pre></div>
         </article>
@@ -295,11 +373,12 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=1162025f"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=d4d890f0"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../../_static/copybutton.js?v=30646c52"></script>
+    <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

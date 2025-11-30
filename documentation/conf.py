@@ -235,7 +235,7 @@ copybutton_prompt_is_regexp = True
 
 # This value controls how to represent the signature of a class.
 # 'class' shows the class name, 'init' shows the __init__ signature.
-autodoc_class_signature = 'init'
+autodoc_class_signature = 'mixed'
 
 # This value selects what content will be inserted into the main body of an
 # autoclass directive. The possible values are:

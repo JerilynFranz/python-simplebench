@@ -6,13 +6,13 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.csv package - simplebench 0.4.0-alpha.0 documentation</title>
+        <title>simplebench.reporters.csv package - simplebench 0.4.1-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=6b3a7b69" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -164,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.4.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.4.1-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -185,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.4.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.4.1-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,7 +200,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Usage Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/parameterized.html">Parameterized Benchmark</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../command_line_options.html">Command-Line Options</a></li>
@@ -260,6 +261,7 @@ from benchmark results.</p>
 <section id="public-api">
 <h2>Public API<a class="headerlink" href="#public-api" title="Link to this heading">🔗</a></h2>
 <ul class="simple">
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField" title="simplebench.reporters.csv.CSVField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVField</span></code></a>: Enum defining the fields available for CSV reporting.</p></li>
 <li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVOptions" title="simplebench.reporters.csv.CSVOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVOptions</span></code></a>: Options class for the CSV reporter.</p></li>
 <li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVReporter" title="simplebench.reporters.csv.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a>: The CSV reporter class.</p></li>
 <li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVConfig" title="simplebench.reporters.csv.CSVConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVConfig</span></code></a>: Configuration class for the CSV reporter.</p></li>
@@ -301,15 +303,156 @@ CSVReporter will be used.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.</span></span><span class="sig-name descname"><span class="pre">CSVField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/options/fields.html#CSVField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.CSVField" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Fields available for CSV reporter output.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.ELAPSED_SECONDS">
+<span class="sig-name descname"><span class="pre">ELAPSED_SECONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Elapsed</span> <span class="pre">Seconds'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.ELAPSED_SECONDS" title="Link to this definition">🔗</a></dt>
+<dd><p>The total elapsed time in seconds.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.ITERATIONS">
+<span class="sig-name descname"><span class="pre">ITERATIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Iterations'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.ITERATIONS" title="Link to this definition">🔗</a></dt>
+<dd><p>The number of iterations performed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.MAX">
+<span class="sig-name descname"><span class="pre">MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'max'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.MAX" title="Link to this definition">🔗</a></dt>
+<dd><p>The statistical maximum value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.MEAN">
+<span class="sig-name descname"><span class="pre">MEAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mean'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.MEAN" title="Link to this definition">🔗</a></dt>
+<dd><p>The statistical mean value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.MEDIAN">
+<span class="sig-name descname"><span class="pre">MEDIAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'median'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.MEDIAN" title="Link to this definition">🔗</a></dt>
+<dd><p>The statistical median value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.MIN">
+<span class="sig-name descname"><span class="pre">MIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'min'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.MIN" title="Link to this definition">🔗</a></dt>
+<dd><p>The statistical minimum value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.N">
+<span class="sig-name descname"><span class="pre">N</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'N'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.N" title="Link to this definition">🔗</a></dt>
+<dd><p>The O() complexity value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.P5">
+<span class="sig-name descname"><span class="pre">P5</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'5th'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.P5" title="Link to this definition">🔗</a></dt>
+<dd><p>The statistical 5th percentile.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.P95">
+<span class="sig-name descname"><span class="pre">P95</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'95th'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.P95" title="Link to this definition">🔗</a></dt>
+<dd><p>The statistical 95th percentile.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.ROUNDS">
+<span class="sig-name descname"><span class="pre">ROUNDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Rounds'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.ROUNDS" title="Link to this definition">🔗</a></dt>
+<dd><p>The number of rounds performed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.RSD_PERCENT">
+<span class="sig-name descname"><span class="pre">RSD_PERCENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rsd%'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.RSD_PERCENT" title="Link to this definition">🔗</a></dt>
+<dd><p>The relative standard deviation percentage.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVField.STD_DEV">
+<span class="sig-name descname"><span class="pre">STD_DEV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'std</span> <span class="pre">dev'</span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVField.STD_DEV" title="Link to this definition">🔗</a></dt>
+<dd><p>The adjusted standard deviation of operation times.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.CSVOptions">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.</span></span><span class="sig-name descname"><span class="pre">CSVOptions</span></span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/options/options.html#CSVOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.CSVOptions" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.</span></span><span class="sig-name descname"><span class="pre">CSVOptions</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><span class="pre">CSVField</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">variation_cols_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/options/options.html#CSVOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.CSVOptions" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
-<p>Class for holding CSV reporter specific options.</p>
-<p>This class provides additional configuration options specific to the CSV reporter.
-It is accessed via the <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice.options" title="simplebench.reporters.choice.Choice.options"><code class="xref py py-attr docutils literal notranslate"><span class="pre">options</span></code></a>
-attribute of a <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance or a
-<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
-<p>It is currently only a stub for future expansion.</p>
+<p>Class for holding CSV reporter specific options in a Choice.</p>
+<p>This class provides additional configuration options specific to the JSON reporter.
+It is accessed via the <code class="docutils literal notranslate"><span class="pre">options</span></code> attribute of a
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fields</strong> – <p>A tuple of CSV fields to include in the output.
+If none is specifically set, a predefined set of fields is used. The fields appear in the order
+specified in the sequence.</p>
+<p>If specified, all fields must be from the <a class="reference internal" href="#simplebench.reporters.csv.CSVField" title="simplebench.reporters.csv.CSVField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVField</span></code></a> enum.</p>
+<p>The default fields, in order, are:</p>
+<ul>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.N" title="simplebench.reporters.csv.CSVField.N"><code class="xref py py-attr docutils literal notranslate"><span class="pre">N</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.ITERATIONS" title="simplebench.reporters.csv.CSVField.ITERATIONS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ITERATIONS</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.ROUNDS" title="simplebench.reporters.csv.CSVField.ROUNDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ROUNDS</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.ELAPSED_SECONDS" title="simplebench.reporters.csv.CSVField.ELAPSED_SECONDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ELAPSED_SECONDS</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.MEAN" title="simplebench.reporters.csv.CSVField.MEAN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MEAN</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.MEDIAN" title="simplebench.reporters.csv.CSVField.MEDIAN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MEDIAN</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.MIN" title="simplebench.reporters.csv.CSVField.MIN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MIN</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.MAX" title="simplebench.reporters.csv.CSVField.MAX"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MAX</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.P5" title="simplebench.reporters.csv.CSVField.P5"><code class="xref py py-attr docutils literal notranslate"><span class="pre">P5</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.P95" title="simplebench.reporters.csv.CSVField.P95"><code class="xref py py-attr docutils literal notranslate"><span class="pre">P95</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.STD_DEV" title="simplebench.reporters.csv.CSVField.STD_DEV"><code class="xref py py-attr docutils literal notranslate"><span class="pre">STD_DEV</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.reporters.csv.CSVField.RSD_PERCENT" title="simplebench.reporters.csv.CSVField.RSD_PERCENT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RSD_PERCENT</span></code></a></p></li>
+</ul>
+</p></li>
+<li><p><strong>variation_cols_last</strong> – Whether to place the variation columns (if any) at the end of the rows.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code> - which places the variation columns at the start of the rows.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – Any parameter is of an invalid type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">fields</span></code> is an empty sequence.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize CSVOptions instance.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVOptions.fields">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><span class="pre">CSVField</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.csv.CSVOptions.fields" title="Link to this definition">🔗</a></dt>
+<dd><p>Return the fields, in order, to include in the CSV table when rendering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple of CSVField enums representing the default fields.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.CSVOptions.variation_cols_last">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols_last</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.reporters.csv.CSVOptions.variation_cols_last" title="Link to this definition">🔗</a></dt>
+<dd><p>Return whether variation columns are placed at the end of the rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if variation columns are placed at the end, False if at the start.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -390,21 +533,18 @@ If not provided, default settings will be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>case</strong> (<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>) – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the
+<li><p><strong>case</strong> – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the
 benchmarked code.</p></li>
-<li><p><strong>section</strong> (<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – The section to output (eg. <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section.OPS" title="simplebench.enums.Section.OPS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">OPS</span></code></a> or
+<li><p><strong>section</strong> – The section to output (eg. <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section.OPS" title="simplebench.enums.Section.OPS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">OPS</span></code></a> or
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section.TIMING" title="simplebench.enums.Section.TIMING"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TIMING</span></code></a>).</p></li>
-<li><p><strong>options</strong> (<a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a>) – The options for the CSV report. (Currently unused.)</p></li>
+<li><p><strong>options</strong> – The options for the CSV report.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The benchmark results formatted as tagged CSV data.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the specified section is unsupported.</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the specified section is unsupported.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -417,13 +557,33 @@ benchmarked code.</p></li>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.csv.reporter.html">simplebench.reporters.csv.reporter package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.ELAPSED_SECONDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ELAPSED_SECONDS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.ITERATIONS"><code class="docutils literal notranslate"><span class="pre">CSVField.ITERATIONS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.MAX"><code class="docutils literal notranslate"><span class="pre">CSVField.MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.MEAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEAN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.MEDIAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEDIAN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.MIN"><code class="docutils literal notranslate"><span class="pre">CSVField.MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.N"><code class="docutils literal notranslate"><span class="pre">CSVField.N</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.P5"><code class="docutils literal notranslate"><span class="pre">CSVField.P5</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.P95"><code class="docutils literal notranslate"><span class="pre">CSVField.P95</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.ROUNDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ROUNDS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.RSD_PERCENT"><code class="docutils literal notranslate"><span class="pre">CSVField.RSD_PERCENT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField.STD_DEV"><code class="docutils literal notranslate"><span class="pre">CSVField.STD_DEV</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptions.fields"><code class="docutils literal notranslate"><span class="pre">CSVOptions.fields</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptions.variation_cols_last"><code class="docutils literal notranslate"><span class="pre">CSVOptions.variation_cols_last</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html">simplebench.reporters.csv.reporter.options package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#submodules">Submodules</a></li>
 </ul>
@@ -489,7 +649,26 @@ benchmarked code.</p></li>
 <li><a class="reference internal" href="#">simplebench.reporters.csv package</a><ul>
 <li><a class="reference internal" href="#public-api">Public API</a></li>
 <li><a class="reference internal" href="#simplebench.reporters.csv.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.csv.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.ELAPSED_SECONDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ELAPSED_SECONDS</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.ITERATIONS"><code class="docutils literal notranslate"><span class="pre">CSVField.ITERATIONS</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.MAX"><code class="docutils literal notranslate"><span class="pre">CSVField.MAX</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.MEAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEAN</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.MEDIAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEDIAN</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.MIN"><code class="docutils literal notranslate"><span class="pre">CSVField.MIN</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.N"><code class="docutils literal notranslate"><span class="pre">CSVField.N</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.P5"><code class="docutils literal notranslate"><span class="pre">CSVField.P5</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.P95"><code class="docutils literal notranslate"><span class="pre">CSVField.P95</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.ROUNDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ROUNDS</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.RSD_PERCENT"><code class="docutils literal notranslate"><span class="pre">CSVField.RSD_PERCENT</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVField.STD_DEV"><code class="docutils literal notranslate"><span class="pre">CSVField.STD_DEV</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVOptions.fields"><code class="docutils literal notranslate"><span class="pre">CSVOptions.fields</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.csv.CSVOptions.variation_cols_last"><code class="docutils literal notranslate"><span class="pre">CSVOptions.variation_cols_last</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#simplebench.reporters.csv.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.reporters.csv.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
 </ul>
@@ -506,7 +685,7 @@ benchmarked code.</p></li>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a9a3c2eb"></script>
+</div><script src="../_static/documentation_options.js?v=d4d890f0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

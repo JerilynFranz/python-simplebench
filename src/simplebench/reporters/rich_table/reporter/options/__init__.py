@@ -1,6 +1,6 @@
-"""Rich Table Options Module"""
-from simplebench.reporters.rich_table.reporter.options.exceptions import _RichTableOptionsErrorTag
-from simplebench.reporters.rich_table.reporter.options.options import RichTableOptions
+"""Rich Table Options Module public interface."""
+from .exceptions import _RichTableOptionsErrorTag
+from .fields import RichTableField
+from .options import RichTableOptions
 
-__all__ = ['RichTableOptions', '_RichTableOptionsErrorTag']
-"""List of all public objects in the module importable via *"""
+__all__ = ['RichTableField', 'RichTableOptions', '_RichTableOptionsErrorTag']

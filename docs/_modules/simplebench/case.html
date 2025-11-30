@@ -5,12 +5,13 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.case - simplebench 0.4.0-alpha.0 documentation</title>
+        <title>simplebench.case - simplebench 0.4.1-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=4307924e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -162,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">simplebench 0.4.0-alpha.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">simplebench 0.4.1-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +184,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.4.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.4.1-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,9 +198,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reports/json_report.html">JSON Report</a></li>
@@ -248,7 +253,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">get_type_hints</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">defaults</span>
 
@@ -337,102 +342,6 @@
 <a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Case</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    :param benchmark_id: An optional unique identifier for the benchmark case.</span>
-
-<span class="sd">        If None, a transient ID is assigned. This is meant to provide a stable identifier for the</span>
-<span class="sd">        benchmark case across multiple runs for tracking purposes. If not provided,</span>
-<span class="sd">        an attempt will be made to generate a stable ID based on the the action function</span>
-<span class="sd">        name, signature, and group.</span>
-
-<span class="sd">        If that is not possible, a transient ID based on the instance&#39;s id() will be used.</span>
-<span class="sd">        If a transient ID is used, it will differ between runs and cannot be used to</span>
-<span class="sd">        correlate results across multiple runs.</span>
-
-<span class="sd">        Benchmark ids must be unique within a benchmarking session and stable across runs</span>
-<span class="sd">        or they cannot be used for tracking benchmark results over time.</span>
-
-<span class="sd">    :param git_info: An optional GitInfo instance representing the state of the Git repository.</span>
-
-<span class="sd">        If not provided, the GitInfo will be automatically retrieved from the current</span>
-<span class="sd">        context of the caller if the code is part of a Git repository.</span>
-
-<span class="sd">    :param action: The function to perform the benchmark. This function must</span>
-<span class="sd">        accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments (&#39;**kwargs&#39;).</span>
-<span class="sd">        See the :class:`~simplebench.protocols.ActionRunner` protocol for the exact function</span>
-<span class="sd">        signature required.</span>
-
-<span class="sd">        It must return a `Results` object.</span>
-
-<span class="sd">    :param group: The benchmark reporting group to which the benchmark case belongs.</span>
-
-<span class="sd">    :param title: The title of the benchmark case.</span>
-
-<span class="sd">        If None, the name of the action function will be used. Cannot be a blank</span>
-<span class="sd">        string (a string that is empty or consists only of whitespace).</span>
-
-<span class="sd">    :param description: A brief description of the benchmark case.</span>
-
-<span class="sd">        If None, the docstring of the action function will be used, or &#39;(no description)&#39; if no docstring</span>
-<span class="sd">        is available. Cannot be blank.</span>
-<span class="sd">    :param iterations: The minimum number of iterations to run for the benchmark.</span>
-<span class="sd">    :param warmup_iterations: The number of warmup iterations to run before the benchmark.</span>
-<span class="sd">    :param rounds: The number of rounds to run for the benchmark.</span>
-
-<span class="sd">        Rounds are multiple runs of calls to the action within an iteration to mitigate timer</span>
-<span class="sd">        quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown</span>
-<span class="sd">        functions are called only once per iteration (all rounds in the same iteration share the same</span>
-<span class="sd">        setup/teardown context).</span>
-<span class="sd">    :param min_time: The minimum time for the benchmark in seconds.</span>
-<span class="sd">    :param max_time: The maximum time for the benchmark in seconds.</span>
-<span class="sd">    :param timeout: How long to wait before timing out a benchmark run (in seconds).</span>
-
-<span class="sd">        If None, it waits the full duration of ``max_time`` plus the default timeout</span>
-<span class="sd">        grace period in seconds ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a</span>
-<span class="sd">        positive float or int that is greater than ``max_time`` if provided.</span>
-<span class="sd">        This is a safety mechanism to prevent runaway benchmarks.</span>
-
-<span class="sd">        If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``</span>
-<span class="sd">        will be raised.</span>
-<span class="sd">    :param variation_cols: kwargs to be used for cols to denote kwarg variations.</span>
-
-<span class="sd">        Each key is a keyword argument name, and the value is the column label to use for that</span>
-<span class="sd">        argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
-<span class="sd">        added to the output of reporters that support them as columns of data with the specified labels.</span>
-<span class="sd">        If None, an empty dict is used.</span>
-<span class="sd">    :param kwargs_variations: A mapping of keyword argument key names to</span>
-<span class="sd">        a list of possible values for that argument. Default is {}. When tests are run, the benchmark</span>
-<span class="sd">        will be executed for each combination of the specified keyword argument variations. The action</span>
-<span class="sd">        function will be called with a `bench` parameter that is an instance of the runner and the</span>
-<span class="sd">        keyword arguments for the current variation.</span>
-<span class="sd">        If None, an empty dict is used.</span>
-<span class="sd">    :param runner: A custom runner class for the benchmark.</span>
-<span class="sd">        Any custom runner classes must be a subclass of SimpleRunner and must have a method</span>
-<span class="sd">        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.</span>
-<span class="sd">        The action function will be called with a `bench` parameter that is an instance of the</span>
-<span class="sd">        custom runner.</span>
-<span class="sd">        It may also accept additional parameters to the run method as needed. If additional</span>
-<span class="sd">        parameters are needed for the custom runner, they will need to be passed to the run</span>
-<span class="sd">        method as keyword arguments.</span>
-<span class="sd">        No support is provided for passing additional parameters to a custom runner from the @benchmark</span>
-<span class="sd">        decorator.</span>
-<span class="sd">    :param callback:</span>
-<span class="sd">        A callback function for additional processing of the report. The function should accept</span>
-<span class="sd">        four arguments: the Case instance, the Section, the Format, and the generated report data.</span>
-<span class="sd">        The callback function will be called with the following arguments:</span>
-<span class="sd">            - case (Case): The `Case` instance processed for the report.</span>
-<span class="sd">            - section (Section): The `Section` of the report.</span>
-<span class="sd">            - output_format (Format): The `Format` of the report.</span>
-<span class="sd">            - output (Any): The generated report data. Note that the actual type of this data will</span>
-<span class="sd">                depend on the Format specified for the report and the type generated by the</span>
-<span class="sd">                reporter for that Format</span>
-<span class="sd">        Omit if no callback is needed by a reporter.</span>
-<span class="sd">    :param options: A list of additional options for the benchmark case.</span>
-<span class="sd">        Each option is an instance of ReporterOption or a subclass of ReporterOption.</span>
-<span class="sd">        Reporter options can be used to customize the output of the benchmark reports for</span>
-<span class="sd">        specific reporters. Reporters are responsible for extracting applicable ReporterOptions</span>
-<span class="sd">        from the list of options themselves.</span>
-<span class="sd">        If None, an empty list is used.</span>
-
 <span class="sd">    A benchmark case defines the specific benchmark to be run, including the</span>
 <span class="sd">    action to be performed, the parameters for the benchmark, and any variations</span>
 <span class="sd">    of those parameters as well as the reporting group and title for the benchmark.</span>
@@ -499,13 +408,13 @@
 <span class="sd">            Case, SimpleRunner, Results, main)</span>
 
 
-<span class="sd">        def my_benchmark_action(bench: SimpleRunner,</span>
+<span class="sd">        def my_benchmark_action(_bench: SimpleRunner,</span>
 <span class="sd">                                **kwargs) -&gt; Results:</span>
 <span class="sd">            # Perform benchmark action here</span>
 <span class="sd">            def benchmark_operation():</span>
 <span class="sd">                sum(range(1000))  # Example operation to benchmark</span>
 
-<span class="sd">            return bench.run(benchmark_operation)</span>
+<span class="sd">            return _bench.run(benchmark_operation)</span>
 
 
 <span class="sd">        if __name__ == &#39;__main__&#39;:</span>
@@ -513,7 +422,6 @@
 <span class="sd">                Case(action=my_benchmark_action)</span>
 <span class="sd">            ]</span>
 <span class="sd">            main(cases_list)</span>
-
 
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_group&#39;</span><span class="p">,</span> <span class="s1">&#39;_title&#39;</span><span class="p">,</span> <span class="s1">&#39;_description&#39;</span><span class="p">,</span> <span class="s1">&#39;_action&#39;</span><span class="p">,</span>
@@ -541,9 +449,7 @@
                  <span class="n">runner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">SimpleRunner</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReporterCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for Case. This defines a benchmark case.</span>
-
-<span class="sd">        The only REQUIRED parameter is `action`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The only REQUIRED parameter is `action`.</span>
 
 <span class="sd">        :param benchmark_id: An optional unique identifier for the benchmark case.</span>
 
@@ -567,9 +473,8 @@
 <span class="sd">            protocol for the exact signature required. It must return a `Results` object.</span>
 <span class="sd">        :param group: The benchmark reporting group to which the benchmark case belongs.</span>
 
-<span class="sd">        Benchmarks with the same group can be selected for execution without running</span>
-<span class="sd">        other benchmarks. If not specified, the default group &#39;default&#39; is used.</span>
-
+<span class="sd">            Benchmarks with the same group can be selected for execution without running</span>
+<span class="sd">            other benchmarks. If not specified, the default group &#39;default&#39; is used.</span>
 <span class="sd">        :param title: The title of the benchmark case.</span>
 
 <span class="sd">            If None, the name of the action function will be used. Cannot be blank.</span>
@@ -625,12 +530,14 @@
 
 <span class="sd">            The function should must four arguments: the Case instance, the Section,</span>
 <span class="sd">            the Format, and the generated report data.</span>
-<span class="sd">                - case (Case): The `Case` instance processed for the report.</span>
-<span class="sd">                - section (Section): The `Section` of the report.</span>
-<span class="sd">                - output_format (Format): The `Format` of the report.</span>
-<span class="sd">                - output (Any): The generated report data. Note that the actual type of this data will</span>
-<span class="sd">                    depend on the Format specified for the report and the type generated by the</span>
-<span class="sd">                    reporter for that Format</span>
+
+<span class="sd">            - case (Case): The `Case` instance processed for the report.</span>
+<span class="sd">            - section (Section): The `Section` of the report.</span>
+<span class="sd">            - output_format (Format): The `Format` of the report.</span>
+<span class="sd">            - output (Any): The generated report data. Note that the actual type of this data will</span>
+<span class="sd">                depend on the Format specified for the report and the type generated by the</span>
+<span class="sd">                reporter for that Format</span>
+
 <span class="sd">            Omit if no callback is needed by a reporter.</span>
 <span class="sd">        :param options: A list of additional options for the benchmark case.</span>
 
@@ -639,12 +546,17 @@
 <span class="sd">            specific reporters. Reporters are responsible for extracting applicable ReporterOptions</span>
 <span class="sd">            from the list of options themselves.</span>
 <span class="sd">            If None, an empty list is used.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If any parameter is of incorrect type.</span>
+<span class="sd">        :raises SimpleBenchValueError: If any parameter has an invalid value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_group</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
                         <span class="n">group</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_GROUP_TYPE</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_GROUP_VALUE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_action</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="c1"># Processed first so can be used for cross-validation of action signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                                                      <span class="n">kwargs_variations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span>  <span class="c1"># type: ignore[attr-defined]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
                         <span class="n">title</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span>
@@ -698,7 +610,6 @@
                 <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_BENCHMARK_ID_TYPE</span><span class="p">,</span>
                 <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_BENCHMARK_ID_VALUE</span><span class="p">,</span>
                 <span class="n">strip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_runner</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_runner</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">validate_reporter_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -730,43 +641,96 @@
 <div class="viewcode-block" id="Case.validate_action_signature">
 <a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_action_signature">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="p">:</span> <span class="n">ActionRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionRunner</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="p">:</span> <span class="n">ActionRunner</span><span class="p">,</span>
+                                  <span class="n">kwargs_variations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ActionRunner</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that action has correct signature.</span>
 
-<span class="sd">        An action function must accept the following two parameters:</span>
-<span class="sd">            - bench: SimpleRunner</span>
+<span class="sd">        An action function must accept one of the two following formats for its parameters:</span>
+
+<span class="sd">        **Two Parameters**</span>
+<span class="sd">            - _bench: SimpleRunner</span>
 <span class="sd">            - **kwargs: Arbitrary keyword arguments</span>
+
+<span class="sd">        **Explicit Parameters**</span>
+<span class="sd">            - _bench: SimpleRunner</span>
+<span class="sd">            - any number of explicit parameters</span>
 
 <span class="sd">        This is equivalent to the `ActionRunner` protocol.</span>
 
 <span class="sd">        :param action: The action function to validate.</span>
-<span class="sd">        :type action: ActionRunner</span>
+<span class="sd">        :param kwargs_variations: The kwargs variations for the case.</span>
 <span class="sd">        :return: The validated action function.</span>
-<span class="sd">        :rtype: ActionRunner</span>
-<span class="sd">        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature or</span>
+<span class="sd">            if the kwargs_variations is not a dictionary with valid keys or if the action signature</span>
+<span class="sd">            does not match the kwargs_variations keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must be a callable.&#39;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_NOT_CALLABLE</span>
                 <span class="p">)</span>
+
+        <span class="c1"># Resolve type hints to handle string annotations (from __future__ import annotations)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">type_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-exception-caught</span>
+            <span class="c1"># Fallback for callables where get_type_hints might fail (e.g. partials without globals)</span>
+            <span class="n">type_hints</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="n">action_signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;bench&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+        <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
+
+        <span class="n">bench_param</span> <span class="o">=</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_bench&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bench_param</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept a &quot;bench&quot; parameter.&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept a &quot;_bench&quot; parameter.&#39;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_MISSING_BENCH_PARAMETER</span>
                 <span class="p">)</span>
-        <span class="n">kwargs_param</span> <span class="o">=</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;kwargs&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">kwargs_param</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">kwargs_param</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">,):</span>
+        <span class="k">if</span> <span class="n">bench_param</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept &quot;**kwargs&quot; parameter.&#39;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_MISSING_KWARGS_PARAMETER</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. &quot;_bench&quot; parameter must be annotated with SimpleRunner.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED</span>
                 <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept exactly 2 parameters: bench and **kwargs.&#39;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_PARAMETER_COUNT</span>
-            <span class="p">)</span>
+
+        <span class="c1"># Use the resolved type hint if available, otherwise use the annotation from signature</span>
+        <span class="n">actual_annotation</span> <span class="o">=</span> <span class="n">type_hints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_bench&#39;</span><span class="p">,</span> <span class="n">bench_param</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">actual_annotation</span> <span class="o">!=</span> <span class="n">SimpleRunner</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. &quot;_bench&quot; parameter must be of type SimpleRunner.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE</span>
+                <span class="p">)</span>
+
+        <span class="c1"># No arguments other than _bench</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">action</span>
+
+        <span class="c1"># Two arguments: _bench and **kwargs</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Check for **kwargs parameter</span>
+            <span class="n">kwargs_param</span> <span class="o">=</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;kwargs&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kwargs_param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kwargs_param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">action</span>
+
+        <span class="c1"># 2 or more arguments, _bench and explicit keyword-only parameters</span>
+        <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param_name</span> <span class="o">==</span> <span class="s1">&#39;_bench&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs_variations</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Parameter &quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
+                     <span class="s1">&#39;not found in kwargs_variations.&#39;</span><span class="p">),</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS</span>
+                    <span class="p">)</span>
+        <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">kwargs_variations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. kwargs_variations key &quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
+                     <span class="s1">&#39;not found in action parameters.&#39;</span><span class="p">),</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># All checks passed</span>
         <span class="k">return</span> <span class="n">action</span></div>
 
 
@@ -904,7 +868,6 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the options list.</span>
 
 <span class="sd">        :param value: The options iterable to validate or None.</span>
-<span class="sd">        :type value: Iterable[ReporterOption] | None</span>
 <span class="sd">        :return: A shallow copy of the validated options as a list or an empty list if not provided.</span>
 <span class="sd">        :rtype: list[ReporterOptions]</span>
 <span class="sd">        :raises SimpleBenchTypeError: If options is not a list or if any entry is not a ReporterOption.</span>
@@ -1265,7 +1228,6 @@
 <span class="sd">        set `full_data` to True.</span>
 
 <span class="sd">        :param full_data: Whether to include full results data. Defaults to False.</span>
-<span class="sd">        :type full_data: bool</span>
 <span class="sd">        :return: A JSON serializable dict representation of the benchmark case and results.</span>
 <span class="sd">        :rtype: dict[str, Any]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1315,11 +1277,12 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=a9a3c2eb"></script>
+</div><script src="../../_static/documentation_options.js?v=d4d890f0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=30646c52"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

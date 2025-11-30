@@ -8,6 +8,7 @@
 ],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}",
   "explorer.autoRevealExclude": {
     ".mypy_cache": true,
     ".venv": true,
@@ -51,7 +52,6 @@
   "python.createEnvironment.contentButton": "show",
   "python.envFile": "${workspaceFolder}/.env",
   "python.terminal.launchArgs": [],
-  "python.testing.cwd": "${workspaceFolder}",
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
   "pylint.cwd": "${workspaceFolder}/src",
   "codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",

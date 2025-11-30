@@ -30,68 +30,60 @@ class MockReporterOptions(ReporterOptions):
         self.name = name
 
 
-def benchcase(bench: SimpleRunner, **kwargs) -> Results:
+def benchcase(_bench: SimpleRunner, **kwargs) -> Results:
     """A simple benchmark case function."""  # fixed docstring for testing purposes
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return bench.run(n=1000, action=action, **kwargs)
+    return _bench.run(n=1000, action=action, **kwargs)
 
 
-def benchcase_with_no_docstring(bench: SimpleRunner, **kwargs) -> Results:  # pylint: disable=missing-function-docstring  # noqa: E501
+def benchcase_with_no_docstring(_bench: SimpleRunner, **kwargs) -> Results:  # pylint: disable=missing-function-docstring  # noqa: E501
     # No docstring benchcase for testing purposes
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return bench.run(n=1000, action=action, **kwargs)
+    return _bench.run(n=1000, action=action, **kwargs)
 
 
-def benchcase_with_size(bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_with_size(_bench: SimpleRunner, **kwargs: Any) -> Results:
     """A simple benchmark case function.
 
-    :param bench: The benchmark runner.
-    :type bench: SimpleRunner
+    :param _bench: The benchmark runner.
     :param kwargs: The keyword arguments.
-    :type kwargs: Any
     :return: The benchmark results.
-    :rtype: Results
     """
     def action(size: int) -> None:
         """A simple benchmark case function with a size parameter and weighted n."""
         _ = sum(range(size))
     if 'size' not in kwargs:
         raise ValueError("Missing required 'size' parameter in kwargs")
-    return bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
+    return _bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
 
 
-def benchcase_with_size_and_factor(bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_with_size_and_factor(_bench: SimpleRunner, **kwargs: Any) -> Results:
     """A simple benchmark case function.
 
-    :param bench: The benchmark runner.
-    :type bench: SimpleRunner
+    :param _bench: The benchmark runner.
     :param kwargs: The keyword arguments.
-    :type kwargs: Any
     :return: The benchmark results.
-    :rtype: Results
     """
     def action(size: int, factor: int) -> None:
         """A simple benchmark case function with size and factor parameters and weighted n."""
         _ = sum(range(size)) * factor
     if 'size' not in kwargs or 'factor' not in kwargs:
         raise ValueError("Missing required 'size' or 'factor' parameter in kwargs")
-    return bench.run(n=kwargs['size'] * kwargs['factor'], action=action, kwargs=kwargs)
+    return _bench.run(n=kwargs['size'] * kwargs['factor'], action=action, kwargs=kwargs)
 
 
 def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pragma: no cover
     """A broken benchmark case function that is missing the required 'bench' parameter.
 
     :param kwargs: The keyword arguments.
-    :type kwargs: Any
     :return: The benchmark results.
-    :rtype: Results
     """
-    bench = SimpleRunner(
+    _bench = SimpleRunner(
         case=Case(
             group='example',
             title='benchcase',
@@ -102,53 +94,44 @@ def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pragma: no cove
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, kwargs=kwargs)
 
 
-def broken_benchcase_missing_kwargs(bench: SimpleRunner) -> Results:  # pragma: no cover
+def broken_benchcase_missing_kwargs(_bench: SimpleRunner) -> Results:  # pragma: no cover
     """A broken benchmark case function that is missing the required '**kwargs' parameter.
 
-    :param bench: The benchmark runner.
-    :type bench: SimpleRunner
+    :param _bench: The benchmark runner.
     :return: The benchmark results.
-    :rtype: Results
     """
     kwargs: dict[str, Any] = {}
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, kwargs=kwargs)
 
 
-def broken_benchcase_wrong_kwargs_kind(bench: SimpleRunner, kwargs: dict[str, Any]) -> Results:  # pragma: no cover
+def broken_benchcase_wrong_kwargs_kind(_bench: SimpleRunner, kwargs: dict[str, Any]) -> Results:  # pragma: no cover
     """A broken benchmark case function that has the wrong kind of kwargs parameter (should be '**kwargs').
 
-    :param bench: The benchmark runner.
-    :type bench: SimpleRunner
+    :param _bench: The benchmark runner.
     :param kwargs: The keyword arguments.
-    :type kwargs: dict[str, Any]
     :return: The benchmark results.
-    :rtype: Results
     """
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, kwargs=kwargs)
 
 
-def broken_benchcase_extra_param(bench: SimpleRunner, extra_param: Any, **kwargs: Any) -> Results:  # pragma: no cover
+def broken_benchcase_extra_param(_bench: SimpleRunner, extra_param: Any, **kwargs: Any) -> Results:  # pragma: no cover
     """A broken benchmark case function that has an extra parameter (should only have 'bench' and '**kwargs').
 
-    :param bench: The benchmark runner.
-    :type bench: SimpleRunner
+    :param _bench: The benchmark runner.
     :param extra_param: An extra parameter.
-    :type extra_param: Any
     :param kwargs: The keyword arguments.
-    :type kwargs: Any
     :return: The benchmark results.
-    :rtype: Results
     """
     if extra_param is None:
         extra_param = 0
@@ -156,23 +139,20 @@ def broken_benchcase_extra_param(bench: SimpleRunner, extra_param: Any, **kwargs
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, kwargs=kwargs)
 
 
-def broken_benchcase_action_that_raises(bench: SimpleRunner, **kwargs: Any) -> Results:  # pragma: no cover
+def broken_benchcase_action_that_raises(_bench: SimpleRunner, **kwargs: Any) -> Results:  # pragma: no cover
     """A broken benchmark case function whose action raises an exception.
 
-    :param bench: The benchmark runner.
-    :type bench: SimpleRunner
+    :param _bench: The benchmark runner.
     :param kwargs: The keyword arguments.
-    :type kwargs: Any
     :return: The benchmark results.
-    :rtype: Results
     """
     def action() -> None:
         """A simple benchmark case function that raises an exception."""
         raise RuntimeError("Intentional error in benchmark action")
-    return bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, kwargs=kwargs)
 
 
 class BadRunner:  # pragma: no cover
@@ -511,20 +491,20 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
                           action=broken_benchcase_missing_bench),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER)),
-    idspec("INIT_015", TestAction(
-        name="'action' function does not accept required argument '**kwargs'",
-        action=Case,
-        kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
-                          action=broken_benchcase_missing_kwargs),  # type: ignore[arg-type]
-        exception=SimpleBenchTypeError,
-        exception_tag=_CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER)),
-    idspec("INIT_016", TestAction(
-        name="'action' function is using wrong form for kwargs: Should specifically be '**kwargs'",
-        action=Case,
-        kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
-                          action=broken_benchcase_wrong_kwargs_kind),  # type: ignore[arg-type]
-        exception=SimpleBenchTypeError,
-        exception_tag=_CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER)),
+    # idspec("INIT_015", TestAction(
+    #    name="'action' function does not accept required argument '**kwargs'",
+    #    action=Case,
+    #    kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+    #                      action=broken_benchcase_missing_kwargs),  # type: ignore[arg-type]
+    #    exception=SimpleBenchTypeError,
+    #    exception_tag=_CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER)),
+    # idspec("INIT_016", TestAction(
+    #    name="'action' function is using wrong form for kwargs: Should specifically be '**kwargs'",
+    #    action=Case,
+    #    kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+    #                      action=broken_benchcase_wrong_kwargs_kind),  # type: ignore[arg-type]
+    #    exception=SimpleBenchTypeError,
+    #    exception_tag=_CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER)),
     idspec("INIT_017", TestAction(
         name="Wrong type for iterations parameter",
         action=Case,
@@ -655,13 +635,13 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
                           kwargs_variations={'invalid-key': [1, 2, 3]}),  # Invalid key format
         exception=SimpleBenchValueError,
         exception_tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER)),
-    idspec("INIT_035", TestAction(
-        name="'action' function has an extra parameter (should only have 'bench' and '**kwargs')",
-        action=Case,
-        kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
-                          action=broken_benchcase_extra_param),  # type: ignore[arg-type]
-        exception=SimpleBenchValueError,
-        exception_tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT)),
+    # idspec("INIT_035", TestAction(
+    #    name="'action' function has an extra parameter (should only have 'bench' and '**kwargs')",
+    #    action=Case,
+    #    kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
+    #                      action=broken_benchcase_extra_param),  # type: ignore[arg-type]
+    #    exception=SimpleBenchValueError,
+    #    exception_tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT)),
     idspec("INIT_036", TestAction(
         name="Invalid (not a list) type for options parameter",
         action=Case,

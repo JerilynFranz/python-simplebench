@@ -6,13 +6,13 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters package - simplebench 0.4.0-alpha.0 documentation</title>
+        <title>simplebench.reporters package - simplebench 0.4.1-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=6b3a7b69" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -164,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.4.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.4.1-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -185,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.4.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.4.1-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -200,7 +200,8 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Usage Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/parameterized.html">Parameterized Benchmark</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../command_line_options.html">Command-Line Options</a></li>
@@ -350,7 +351,26 @@
 <li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.csv.html">simplebench.reporters.csv package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.html#public-api">Public API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.ELAPSED_SECONDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ELAPSED_SECONDS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.ITERATIONS"><code class="docutils literal notranslate"><span class="pre">CSVField.ITERATIONS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.MAX"><code class="docutils literal notranslate"><span class="pre">CSVField.MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.MEAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEAN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.MEDIAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEDIAN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.MIN"><code class="docutils literal notranslate"><span class="pre">CSVField.MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.N"><code class="docutils literal notranslate"><span class="pre">CSVField.N</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.P5"><code class="docutils literal notranslate"><span class="pre">CSVField.P5</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.P95"><code class="docutils literal notranslate"><span class="pre">CSVField.P95</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.ROUNDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ROUNDS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.RSD_PERCENT"><code class="docutils literal notranslate"><span class="pre">CSVField.RSD_PERCENT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.STD_DEV"><code class="docutils literal notranslate"><span class="pre">CSVField.STD_DEV</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVOptions.fields"><code class="docutils literal notranslate"><span class="pre">CSVOptions.fields</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVOptions.variation_cols_last"><code class="docutils literal notranslate"><span class="pre">CSVOptions.variation_cols_last</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
 </ul>
@@ -358,6 +378,7 @@
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.html">simplebench.reporters.csv.reporter package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#simplebench.reporters.csv.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.html#subpackages">Subpackages</a></li>
@@ -614,7 +635,24 @@
 <li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.rich_table.html">simplebench.reporters.rich_table package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.rich_table.html#public-api">Public API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableConfig"><code class="docutils literal notranslate"><span class="pre">RichTableConfig</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField"><code class="docutils literal notranslate"><span class="pre">RichTableField</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.ELAPSED_SECONDS"><code class="docutils literal notranslate"><span class="pre">RichTableField.ELAPSED_SECONDS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.ITERATIONS"><code class="docutils literal notranslate"><span class="pre">RichTableField.ITERATIONS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.MAX"><code class="docutils literal notranslate"><span class="pre">RichTableField.MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.MEAN"><code class="docutils literal notranslate"><span class="pre">RichTableField.MEAN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.MEDIAN"><code class="docutils literal notranslate"><span class="pre">RichTableField.MEDIAN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.MIN"><code class="docutils literal notranslate"><span class="pre">RichTableField.MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.N"><code class="docutils literal notranslate"><span class="pre">RichTableField.N</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.P5"><code class="docutils literal notranslate"><span class="pre">RichTableField.P5</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.P95"><code class="docutils literal notranslate"><span class="pre">RichTableField.P95</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.ROUNDS"><code class="docutils literal notranslate"><span class="pre">RichTableField.ROUNDS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.RSD_PERCENT"><code class="docutils literal notranslate"><span class="pre">RichTableField.RSD_PERCENT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.STD_DEV"><code class="docutils literal notranslate"><span class="pre">RichTableField.STD_DEV</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableOptions"><code class="docutils literal notranslate"><span class="pre">RichTableOptions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableOptions.fields"><code class="docutils literal notranslate"><span class="pre">RichTableOptions.fields</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableOptions.variation_cols_last"><code class="docutils literal notranslate"><span class="pre">RichTableOptions.variation_cols_last</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableOptions.virtual_width"><code class="docutils literal notranslate"><span class="pre">RichTableOptions.virtual_width</span></code></a></li>
 </ul>
 </li>
@@ -625,6 +663,7 @@
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.rich_table.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.rich_table.reporter.html">simplebench.reporters.rich_table.reporter package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.rich_table.reporter.html#simplebench.reporters.rich_table.reporter.RichTableConfig"><code class="docutils literal notranslate"><span class="pre">RichTableConfig</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.rich_table.reporter.html#simplebench.reporters.rich_table.reporter.RichTableField"><code class="docutils literal notranslate"><span class="pre">RichTableField</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.rich_table.reporter.html#simplebench.reporters.rich_table.reporter.RichTableOptions"><code class="docutils literal notranslate"><span class="pre">RichTableOptions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.rich_table.reporter.html#simplebench.reporters.rich_table.reporter.RichTableReporter"><code class="docutils literal notranslate"><span class="pre">RichTableReporter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.rich_table.reporter.html#subpackages">Subpackages</a></li>
@@ -706,7 +745,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a9a3c2eb"></script>
+</div><script src="../_static/documentation_options.js?v=d4d890f0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

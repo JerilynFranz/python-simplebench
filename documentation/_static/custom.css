@@ -311,6 +311,24 @@ dl.py.class dd dl.py.method dd dl.simple.field-list dt.field-odd {
     margin-top: .25rem
 }
 
+/* field names for class parameters */
+dl.py.class dd dl.field-list.simple dd.field-odd ul.simple li p:first-child strong {
+    font-weight: bold;
+    color: #7b7b11;
+}
+
+/* field names for method parameters */
+dl.py.class dd dl.py.method dd dl.simple.field-list dd.field-odd p:first-child strong {
+    font-weight: bold;
+    color: #7b7b11;
+}
+
+/* field names for function parameters */
+dl.py.function dd dl.simple.field-list dd.field-odd ul.simple li p:first-child strong {
+    font-weight: bold;
+    color: #7b7b11;
+}
+
 /* Make field list terms for method 'raises' bold and not all uppercase */
 dl.py.class dd dl.py.method dd dl.simple.field-list dt.field-even {
     text-transform: none;

@@ -1,8 +1,11 @@
-====================
-Basic Usage Tutorial
-====================
+===============
+Basic Benchmark
+===============
 
-This tutorial demonstrates how to create a simple benchmark using SimpleBench, run it, and generate a report.
+.. _simplebench-tutorials-basic:
+
+This tutorial demonstrates how to create a simple benchmark using SimpleBench,
+run it, and generate a report.
 
 The minimal code required to create and run a benchmark using SimpleBench is creating
 a script that defines a function to be benchmarked with `@simplebench.benchmark`
@@ -34,7 +37,7 @@ your terminal:
 
 This will produce output similar to the following:
 
-.. literalinclude:: basic/expected_output.txt
+.. literalinclude:: basic/basic_output.txt
    :caption: Expected Output from Running the Basic Benchmark
    :name: expected-basic-benchmark-output
    :language: text
@@ -52,11 +55,17 @@ of the documentation.
 
 ..
    TO REGENERATE THE GOLDEN MASTER FILE FOR THIS TEST:
-   From the 'documentation/' directory, run the following command:
-   python _helpers/doctest_utils.py tutorials/basic/expected_output.txt tutorials/basic/basic_benchmark.py --rich-table.ops
+   From the basic/ directory, run the following command:
 
-   The doctests will verify that the output of the benchmark script matches this
-   expected output: if the output changes unexpectedly, the doctest will fail.
+       python basic_benchmark.py --rich-table.ops > basic_output.txt
+
+   The --progress option is omitted here because it produces dynamic output
+   that changes as the benchmark runs and does not appear in the expected output file
+   when piped to a file instead of the terminal anyway.
+
+   The doctests will verify that the output of the benchmark script matches the
+   format of the expected output: if the output format changes unexpectedly,
+   the doctest will fail.
 
    Doctests are run from the 'documentation/' directory, so paths in the test
    configuration are relative to that directory: 'make doctest' handles this
@@ -68,7 +77,7 @@ of the documentation.
    # Paths are relative to the 'documentation/' directory.
 
    script_to_run = "tutorials/basic/basic_benchmark.py"
-   expected_output_file = "tutorials/basic/expected_output.txt"
+   expected_output_file = "tutorials/basic/basic_output.txt"
    script_args = ["--rich-table.ops"]
    
    # --------------------------

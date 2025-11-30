@@ -1,4 +1,3 @@
-
 [project]
 dynamic = ["version"]
 name = "simplebench"
@@ -135,8 +134,9 @@ max-line-length = 120
 [tool.pylint.MASTER]
 suggestion-mode = 'yes'
 
-[tool.pytest]
-testpaths = 'tests'
+[tool.pytest.ini_options]
+testpaths = "tests"
+norecursedirs = ".git .tox .vscode venv* .*_cache build dist testplan.py"
 
 [tool.coverage.run]
 branch = true
