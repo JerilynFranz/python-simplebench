@@ -282,10 +282,9 @@ function and values are lists of possible values for those parameters.</p>
 </pre></div>
 </div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">variation_cols</span></code></dt><dd><blockquote>
-<div><p>A dictionary where keys are parameter names and values are display names for reporting. Fields not
-included here will usually not display in a report. Fields specified here must be a subset of the
-keys in <code class="docutils literal notranslate"><span class="pre">kwargs_variations</span></code>.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">variation_cols</span></code></dt><dd><p>A dictionary where keys are parameter names and values are display names for
+reporting. Fields not included here will usually not display in a report.
+Fields specified here must be a subset of the keys in <code class="docutils literal notranslate"><span class="pre">kwargs_variations</span></code>.</p>
 <p><strong>Example</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">variation_cols</span><span class="o">=</span><span class="p">{</span>
     <span class="s1">&#39;arg1&#39;</span><span class="p">:</span> <span class="s1">&#39;Argument 1&#39;</span><span class="p">,</span>
@@ -293,9 +292,9 @@ keys in <code class="docutils literal notranslate"><span class="pre">kwargs_vari
 <span class="p">}</span>
 </pre></div>
 </div>
-</div></blockquote>
-<p>This will result in the report displaying columns/fields labeled ‘Argument 1’ and ‘Argument 2’
-corresponding to the values of ‘arg1’ and ‘arg2’ used in each benchmark run.</p>
+<p>This will result in the report displaying columns/fields labeled ‘Argument 1’
+and ‘Argument 2’ corresponding to the values of ‘arg1’ and ‘arg2’ used in
+each benchmark run.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">use_field_for_n</span></code></dt><dd><p>A string specifying a parameter to use as the ‘N’ field in reports, which is often used
 to indicate input size for complexity analysis. This parameter should be one of the keys in
