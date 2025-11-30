@@ -312,7 +312,7 @@ a script that defines a function to be benchmarked with <cite>&#64;simplebench.b
 specifying parameters using the <cite>&#64;simplebench.benchmark</cite> decorator, and that calls <cite>simplebench.main()</cite></p>
 <div class="literal-block-wrapper docutils container" id="minimal-parameterized-benchmark-example">
 <div class="code-block-caption"><span class="caption-text">A minimal parameterized benchmark example</span><a class="headerlink" href="#minimal-parameterized-benchmark-example" title="Link to this code">🔗</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="sd">&quot;&quot;&quot;A basic benchmark.&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="sd">&quot;&quot;&quot;A basic parameterized benchmark.&quot;&quot;&quot;</span>
 <span class="linenos"> 2</span><span class="kn">import</span><span class="w"> </span><span class="nn">simplebench</span>
 <span class="linenos"> 3</span>
 <span class="linenos"> 4</span>
@@ -375,7 +375,75 @@ from the terminal once the benchmark completes.</p>
 <section id="multi-dimensional-parameters">
 <h2>Multi-dimensional Parameters<a class="headerlink" href="#multi-dimensional-parameters" title="Link to this heading">🔗</a></h2>
 <p>You can define multiple parameters for a benchmark function by defining multiple
-parameters for the kwarg_variations</p>
+parameters for the kwarg_variations.</p>
+<p>For example, to benchmark a function with two parameters, <cite>size</cite> and <cite>mode</cite>, you can define
+the benchmark as follows:</p>
+<div class="literal-block-wrapper docutils container" id="multidimensional-parameterized-benchmark-example">
+<div class="code-block-caption"><span class="caption-text">A multidimensional parameterized benchmark example</span><a class="headerlink" href="#multidimensional-parameterized-benchmark-example" title="Link to this code">🔗</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="sd">&quot;&quot;&quot;A multidimensional parameterized benchmark.&quot;&quot;&quot;</span>
+<span class="linenos"> 2</span><span class="kn">import</span><span class="w"> </span><span class="nn">simplebench</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="nd">@simplebench</span><span class="o">.</span><span class="n">benchmark</span><span class="p">(</span>
+<span class="linenos"> 6</span>        <span class="n">kwargs_variations</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos"> 7</span>            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
+<span class="linenos"> 8</span>            <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;fast&#39;</span><span class="p">,</span> <span class="s1">&#39;slow&#39;</span><span class="p">]</span>
+<span class="linenos"> 9</span>        <span class="p">},</span>
+<span class="linenos">10</span>        <span class="n">variation_cols</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos">11</span>            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;Input Size&#39;</span><span class="p">,</span>
+<span class="linenos">12</span>            <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;Mode&#39;</span>
+<span class="linenos">13</span>        <span class="p">},</span>
+<span class="linenos">14</span>        <span class="n">use_field_for_n</span><span class="o">=</span><span class="s1">&#39;size&#39;</span><span class="p">)</span>
+<span class="linenos">15</span><span class="k">def</span><span class="w"> </span><span class="nf">my_benchmark</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">16</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;A benchmark for summing a range of numbers that varies by size and mode.&quot;&quot;&quot;</span>
+<span class="linenos">17</span>    <span class="k">match</span> <span class="n">mode</span><span class="p">:</span>
+<span class="linenos">18</span>        <span class="k">case</span> <span class="s1">&#39;fast&#39;</span><span class="p">:</span>
+<span class="linenos">19</span>            <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+<span class="linenos">20</span>        <span class="k">case</span> <span class="s1">&#39;slow&#39;</span><span class="p">:</span>
+<span class="linenos">21</span>            <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos">22</span>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+<span class="linenos">23</span>                <span class="n">total</span> <span class="o">+=</span> <span class="n">i</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">27</span>    <span class="n">simplebench</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Save this code to a file, for example
+<a class="reference download internal" download="" href="../_downloads/f8498575ecb8c45b1316b8a0fefda355/multidimensional_parameterized_benchmark.py"><code class="xref download docutils literal notranslate"><span class="pre">multidimensional_parameterized_benchmark.py</span></code></a>,
+and then run it from your terminal:</p>
+<div class="literal-block-wrapper docutils container" id="run-multidimensional-parameterized-benchmark">
+<div class="code-block-caption"><span class="caption-text">Generate a rich table report for operations-per-second by running a multidimensional parameterized benchmark</span><a class="headerlink" href="#run-multidimensional-parameterized-benchmark" title="Link to this code">🔗</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w"> </span>python<span class="w"> </span>multidimensional_parameterized_benchmark.py<span class="w"> </span>--rich-table.ops<span class="w"> </span>--progress
+</pre></div>
+</div>
+</div>
+<p>This will run the benchmark for all combinations of <cite>size</cite> and <cite>mode</cite>, resulting in
+six different benchmark runs (3 sizes x 2 modes). The report will include columns for both
+‘Input Size’ and ‘Mode’, allowing you to analyze the performance across these different dimensions.</p>
+<p>And you will see output similar to the following:</p>
+<div class="literal-block-wrapper docutils container" id="expected-multidimensional-parameterized-benchmark-output">
+<div class="code-block-caption"><span class="caption-text">Expected Output from Running the Multidimensional Parameterized Benchmark</span><a class="headerlink" href="#expected-multidimensional-parameterized-benchmark-output" title="Link to this code">🔗</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>                                                                               my_benchmark                                                                                
+                                                                           operations per second                                                                           
+                                                                                                                                                                           
+                                                 A benchmark for summing a range of numbers that varies by size and mode.                                                  
+┏━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃            ┃      ┃        ┃            ┃        ┃ Elapsed ┃             ┃               ┃            ┃            ┃            ┃             ┃                ┃        ┃
+┃ Input Size ┃ Mode ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃ mean kOps/s ┃ median kOps/s ┃ min kOps/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃ std dev kOps/s ┃  rsd%  ┃
+┡━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│     10     │ fast │   10.0 │   927749   │      1 │  0.25   │   3800.00   │    4000.00    │     28.70  │   8000.00  │   3420.00  │   4000.00   │      392.00    │ 10.30% │
+│     10     │ slow │   10.0 │   728337   │      1 │  0.32   │   2330.00   │    2400.00    │     35.00  │   3440.00  │   2180.00  │   2670.00   │      161.00    │  6.92% │
+│    100     │ fast │  100.0 │   537489   │      1 │  0.31   │   1740.00   │    1720.00    │     24.70  │   2400.00  │   1600.00  │   1850.00   │      116.00    │  6.65% │
+│    100     │ slow │  100.0 │   139185   │      1 │  0.33   │    425.00   │     428.00    │     26.20  │    471.00  │    414.00  │    444.00   │       25.50    │  5.99% │
+│    1000    │ fast │ 1000.0 │    22429   │      1 │  0.16   │    140.00   │     141.00    │     27.60  │    149.00  │    138.00  │    146.00   │        8.45    │  6.03% │
+│    1000    │ slow │ 1000.0 │     7963   │      1 │  0.20   │     40.50   │      40.80    │      9.17  │     43.50  │     39.10  │     42.10   │        2.20    │  5.44% │
+└────────────┴──────┴────────┴────────────┴────────┴─────────┴─────────────┴───────────────┴────────────┴────────────┴────────────┴─────────────┴────────────────┴────────┘
+</pre></div>
+</div>
+</div>
+<p>You can customize the parameter values and names as needed for your specific benchmarking scenarios.</p>
 </section>
 </section>
 

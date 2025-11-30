@@ -147,4 +147,75 @@ Multi-dimensional Parameters
 ----------------------------
 
 You can define multiple parameters for a benchmark function by defining multiple
-parameters for the kwarg_variations
+parameters for the kwarg_variations.
+
+
+For example, to benchmark a function with two parameters, `size` and `mode`, you can define
+the benchmark as follows:
+
+.. literalinclude:: parameterized/multidimensional_parameterized_benchmark.py
+  :language: python
+  :caption: A multidimensional parameterized benchmark example
+  :name: multidimensional-parameterized-benchmark-example
+  :linenos:
+
+Save this code to a file, for example
+:download:`multidimensional_parameterized_benchmark.py <parameterized/multidimensional_parameterized_benchmark.py>`,
+and then run it from your terminal:
+
+.. code-block:: shell
+   :caption: Generate a rich table report for operations-per-second by running a multidimensional parameterized benchmark    
+   :name: run-multidimensional-parameterized-benchmark
+
+    python multidimensional_parameterized_benchmark.py --rich-table.ops --progress
+
+This will run the benchmark for all combinations of `size` and `mode`, resulting in
+six different benchmark runs (3 sizes x 2 modes). The report will include columns for both
+'Input Size' and 'Mode', allowing you to analyze the performance across these different dimensions.
+
+And you will see output similar to the following:
+
+.. literalinclude:: parameterized/multidimensional_parameterized_output.txt
+   :caption: Expected Output from Running the Multidimensional Parameterized Benchmark
+   :name: expected-multidimensional-parameterized-benchmark-output
+   :language: text
+
+You can customize the parameter values and names as needed for your specific benchmarking scenarios.
+
+
+..
+   TO REGENERATE THE GOLDEN MASTER FILE FOR THIS TEST:
+   
+   From the 'parameterized/' directory, run the following command:
+
+       python minimal_parameterized_benchmark.py --rich-table.ops > minimal_parameterized_output.txt
+
+   The --progress option is omitted here because it produces dynamic output
+   that changes as the benchmark runs and does not appear in the expected output file
+   when piped to a file instead of the terminal anyway.
+
+   The doctests will verify that the output of the benchmark script matches the
+   format of the expected output: if the output format changes unexpectedly,
+   the doctest will fail.
+
+   Doctests are run from the 'documentation/' directory, so paths in the test
+   configuration are relative to that directory: 'make doctest' handles this
+   automatically.
+
+.. testcode::
+   :hide:
+
+   # --- Test Configuration ---
+   # Paths are relative to the 'documentation/' directory.
+
+   script_to_run = "tutorials/parameterized/multidimensional_parameterized_benchmark.py"
+   expected_output_file = "tutorials/parameterized/multidimensional_parameterized_output.txt"
+   script_args = ["--rich-table.ops"]
+   
+   # --------------------------
+
+   actual_output = run_script_and_get_raw_output(
+       script_path=script_to_run,
+       args=script_args
+   )
+   assert_benchmark_output(actual_output, expected_output_file)

@@ -1,4 +1,4 @@
-"""A basic benchmark."""
+"""A basic parameterized benchmark."""
 import simplebench
 
 
