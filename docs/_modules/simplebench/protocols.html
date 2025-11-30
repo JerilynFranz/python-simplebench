@@ -274,14 +274,12 @@
 <span class="sd">                pass</span>
 <span class="sd">            return bench.run(action=some_function_to_benchmark, **kwargs)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>  <span class="c1"># type: ignore[reportReturnType]</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>  <span class="c1"># type: ignore[reportReturnType]</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the benchmark action.</span>
 
-<span class="sd">        :param bench: The SimpleRunner instance.</span>
-<span class="sd">        :type bench: SimpleRunner</span>
+<span class="sd">        :param _bench: The SimpleRunner instance.</span>
 <span class="sd">        :param kwargs: Additional keyword arguments for the action.</span>
 <span class="sd">        :return: The results of the benchmark action.</span>
-<span class="sd">        :rtype: Results</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
 </pre></div>

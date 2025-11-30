@@ -26,7 +26,7 @@ from .reporter_callback import default_reporter_callback
 from .reporter_options import default_reporter_options_tuple
 
 
-def default_benchcase(bench: SimpleRunner, **kwargs) -> Results:
+def default_benchcase(_bench: SimpleRunner, **kwargs) -> Results:
     """A simple benchmark case function.
 
     .. code-block:: python
@@ -43,7 +43,7 @@ def default_benchcase(bench: SimpleRunner, **kwargs) -> Results:
         """A simple benchmark case function."""
         sum(range(10))  # Example operation to benchmark
 
-    return bench.run(n=10, action=action, **kwargs)
+    return _bench.run(n=10, action=action, **kwargs)
 
 
 @cached_factory

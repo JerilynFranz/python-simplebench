@@ -480,13 +480,12 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The actual decorator that wraps the user&#39;s function.&quot;&quot;&quot;</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">case_action_wrapper</span><span class="p">(</span><span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">case_action_wrapper</span><span class="p">(</span><span class="n">_bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;This wrapper becomes the `action` for the `Case`.</span>
 
 <span class="sd">            It calls the user&#39;s decorated function inside `runner.run()`.</span>
 
-<span class="sd">            :param bench: The benchmark runner executing the benchmark.</span>
-<span class="sd">            :type bench: SimpleRunner</span>
+<span class="sd">            :param _bench: The benchmark runner executing the benchmark.</span>
 <span class="sd">            :param kwargs: Any keyword arguments from `kwargs_variations`.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="c1"># The designated use_field_for_n field will always be present</span>
@@ -496,7 +495,7 @@
                 <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
                     <span class="s2">&quot;The &#39;n&#39; value determined for the benchmark run must be a positive integer.&quot;</span><span class="p">,</span>
                     <span class="n">tag</span><span class="o">=</span><span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_N_FOR_RUN_INVALID_VALUE</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">bench</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_for_run</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_bench</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_for_run</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">final_benchmark_id</span> <span class="o">=</span> <span class="n">benchmark_id</span>
         <span class="k">if</span> <span class="n">final_benchmark_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

@@ -616,9 +616,7 @@ def test_decorator_use_field_for_n_valid() -> None:
         """A test function for valid use_field_for_n.
 
         :param size: The size parameter.
-        :type size: int
         :return: The sum of the range.
-        :rtype: int
         """
         return sum(range(size))
 

@@ -253,7 +253,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">get_type_hints</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">defaults</span>
 
@@ -553,7 +553,10 @@
                         <span class="n">group</span><span class="p">,</span> <span class="s2">&quot;group&quot;</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_GROUP_TYPE</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_GROUP_VALUE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_action</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="c1"># Processed first so can be used for cross-validation of action signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                                                      <span class="n">kwargs_variations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span>  <span class="c1"># type: ignore[attr-defined]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">validate_non_blank_string</span><span class="p">(</span>
                         <span class="n">title</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span>
@@ -607,7 +610,6 @@
                 <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_BENCHMARK_ID_TYPE</span><span class="p">,</span>
                 <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_BENCHMARK_ID_VALUE</span><span class="p">,</span>
                 <span class="n">strip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_runner</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_runner</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">validate_reporter_callback</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -639,43 +641,96 @@
 <div class="viewcode-block" id="Case.validate_action_signature">
 <a class="viewcode-back" href="../../source/simplebench.case.html#simplebench.Case.validate_action_signature">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="p">:</span> <span class="n">ActionRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionRunner</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_action_signature</span><span class="p">(</span><span class="n">action</span><span class="p">:</span> <span class="n">ActionRunner</span><span class="p">,</span>
+                                  <span class="n">kwargs_variations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ActionRunner</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that action has correct signature.</span>
 
-<span class="sd">        An action function must accept the following two parameters:</span>
-<span class="sd">            - bench: SimpleRunner</span>
+<span class="sd">        An action function must accept one of the two following formats for its parameters:</span>
+
+<span class="sd">        **Two Parameters**</span>
+<span class="sd">            - _bench: SimpleRunner</span>
 <span class="sd">            - **kwargs: Arbitrary keyword arguments</span>
+
+<span class="sd">        **Explicit Parameters**</span>
+<span class="sd">            - _bench: SimpleRunner</span>
+<span class="sd">            - any number of explicit parameters</span>
 
 <span class="sd">        This is equivalent to the `ActionRunner` protocol.</span>
 
 <span class="sd">        :param action: The action function to validate.</span>
-<span class="sd">        :type action: ActionRunner</span>
+<span class="sd">        :param kwargs_variations: The kwargs variations for the case.</span>
 <span class="sd">        :return: The validated action function.</span>
-<span class="sd">        :rtype: ActionRunner</span>
-<span class="sd">        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature or</span>
+<span class="sd">            if the kwargs_variations is not a dictionary with valid keys or if the action signature</span>
+<span class="sd">            does not match the kwargs_variations keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must be a callable.&#39;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_NOT_CALLABLE</span>
                 <span class="p">)</span>
+
+        <span class="c1"># Resolve type hints to handle string annotations (from __future__ import annotations)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">type_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># Fallback for callables where get_type_hints might fail (e.g. partials without globals)</span>
+            <span class="n">type_hints</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="n">action_signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;bench&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+        <span class="n">kwargs_variations</span> <span class="o">=</span> <span class="n">Case</span><span class="o">.</span><span class="n">validate_kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
+
+        <span class="n">bench_param</span> <span class="o">=</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_bench&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bench_param</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept a &quot;bench&quot; parameter.&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept a &quot;_bench&quot; parameter.&#39;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_MISSING_BENCH_PARAMETER</span>
                 <span class="p">)</span>
-        <span class="n">kwargs_param</span> <span class="o">=</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;kwargs&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">kwargs_param</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">kwargs_param</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">,):</span>
+        <span class="k">if</span> <span class="n">bench_param</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept &quot;**kwargs&quot; parameter.&#39;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_MISSING_KWARGS_PARAMETER</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. &quot;_bench&quot; parameter must be annotated with SimpleRunner.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED</span>
                 <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Must accept exactly 2 parameters: bench and **kwargs.&#39;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_PARAMETER_COUNT</span>
-            <span class="p">)</span>
+
+        <span class="c1"># Use the resolved type hint if available, otherwise use the annotation from signature</span>
+        <span class="n">actual_annotation</span> <span class="o">=</span> <span class="n">type_hints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_bench&#39;</span><span class="p">,</span> <span class="n">bench_param</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">actual_annotation</span> <span class="o">!=</span> <span class="n">SimpleRunner</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. &quot;_bench&quot; parameter must be of type SimpleRunner.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE</span>
+                <span class="p">)</span>
+
+        <span class="c1"># No arguments other than _bench</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">action</span>
+
+        <span class="c1"># Two arguments: _bench and **kwargs</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Check for **kwargs parameter</span>
+            <span class="n">kwargs_param</span> <span class="o">=</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;kwargs&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kwargs_param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kwargs_param</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">action</span>
+
+        <span class="c1"># 2 or more arguments, _bench and explicit keyword-only parameters</span>
+        <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param_name</span> <span class="o">==</span> <span class="s1">&#39;_bench&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs_variations</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. Parameter &quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
+                     <span class="s1">&#39;not found in kwargs_variations.&#39;</span><span class="p">),</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS</span>
+                    <span class="p">)</span>
+        <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">kwargs_variations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">action_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">. kwargs_variations key &quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
+                     <span class="s1">&#39;not found in action parameters.&#39;</span><span class="p">),</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># All checks passed</span>
         <span class="k">return</span> <span class="n">action</span></div>
 
 

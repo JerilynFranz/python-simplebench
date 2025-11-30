@@ -5,7 +5,7 @@ import inspect
 import itertools
 from copy import copy
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, get_type_hints
 
 import simplebench.defaults as defaults
 
@@ -300,7 +300,10 @@ class Case:
                         group, "group",
                         _CaseErrorTag.INVALID_GROUP_TYPE,
                         _CaseErrorTag.INVALID_GROUP_VALUE)
-        self._action = Case.validate_action_signature(action)
+        # Processed first so can be used for cross-validation of action signature
+        self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
+        self._action = Case.validate_action_signature(action=action,
+                                                      kwargs_variations=self._kwargs_variations)
         title = action.__name__ if title is None else title  # type: ignore[attr-defined]
         self._title = validate_non_blank_string(
                         title, "title",
@@ -354,7 +357,6 @@ class Case:
                 _CaseErrorTag.INVALID_BENCHMARK_ID_TYPE,
                 _CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
                 strip=True, allow_blank=False, allow_empty=False)
-        self._kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
         self._variation_cols = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
         self._runner = Case.validate_runner(runner)
         self._callback = validate_reporter_callback(callback, allow_none=True)
@@ -381,43 +383,96 @@ class Case:
                 tag=_CaseErrorTag.INVALID_TIME_RANGE)
 
     @staticmethod
-    def validate_action_signature(action: ActionRunner) -> ActionRunner:
+    def validate_action_signature(action: ActionRunner,
+                                  kwargs_variations: dict[str, Any]) -> ActionRunner:
         """Validate that action has correct signature.
 
-        An action function must accept the following two parameters:
-            - bench: SimpleRunner
+        An action function must accept one of the two following formats for its parameters:
+
+        **Two Parameters**
+            - _bench: SimpleRunner
             - **kwargs: Arbitrary keyword arguments
+
+        **Explicit Parameters**
+            - _bench: SimpleRunner
+            - any number of explicit parameters
 
         This is equivalent to the `ActionRunner` protocol.
 
         :param action: The action function to validate.
-        :type action: ActionRunner
+        :param kwargs_variations: The kwargs variations for the case.
         :return: The validated action function.
-        :rtype: ActionRunner
-        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature.
+        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature or
+            if the kwargs_variations is not a dictionary with valid keys or if the action signature
+            does not match the kwargs_variations keys.
         """
         if not callable(action):
             raise SimpleBenchTypeError(
                 f'Invalid action: {action}. Must be a callable.',
                 tag=_CaseErrorTag.INVALID_ACTION_NOT_CALLABLE
                 )
+
+        # Resolve type hints to handle string annotations (from __future__ import annotations)
+        try:
+            type_hints = get_type_hints(action)
+        except Exception:
+            # Fallback for callables where get_type_hints might fail (e.g. partials without globals)
+            type_hints = {}
+
         action_signature = inspect.signature(action)
-        if 'bench' not in action_signature.parameters:
+        kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
+
+        bench_param = action_signature.parameters.get('_bench')
+        if bench_param is None:
             raise SimpleBenchTypeError(
-                f'Invalid action: {action}. Must accept a "bench" parameter.',
+                f'Invalid action: {action}. Must accept a "_bench" parameter.',
                 tag=_CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER
                 )
-        kwargs_param = action_signature.parameters.get('kwargs')
-        if kwargs_param is None or kwargs_param.kind not in (inspect.Parameter.VAR_KEYWORD,):
+        if bench_param.annotation is inspect.Parameter.empty:
             raise SimpleBenchTypeError(
-                f'Invalid action: {action}. Must accept "**kwargs" parameter.',
-                tag=_CaseErrorTag.INVALID_ACTION_MISSING_KWARGS_PARAMETER
+                f'Invalid action: {action}. "_bench" parameter must be annotated with SimpleRunner.',
+                tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED
                 )
-        if len(action_signature.parameters) != 2:
-            raise SimpleBenchValueError(
-                f'Invalid action: {action}. Must accept exactly 2 parameters: bench and **kwargs.',
-                tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT
-            )
+
+        # Use the resolved type hint if available, otherwise use the annotation from signature
+        actual_annotation = type_hints.get('_bench', bench_param.annotation)
+
+        if actual_annotation != SimpleRunner:
+            raise SimpleBenchTypeError(
+                f'Invalid action: {action}. "_bench" parameter must be of type SimpleRunner.',
+                tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE
+                )
+
+        # No arguments other than _bench
+        if len(action_signature.parameters) == 1:
+            return action
+
+        # Two arguments: _bench and **kwargs
+        if len(action_signature.parameters) == 2:
+            # Check for **kwargs parameter
+            kwargs_param = action_signature.parameters.get('kwargs')
+            if kwargs_param is not None and kwargs_param.kind == inspect.Parameter.VAR_KEYWORD:
+                return action
+
+        # 2 or more arguments, _bench and explicit keyword-only parameters
+        for param_name in action_signature.parameters:
+            if param_name == '_bench':
+                continue
+            if param_name not in kwargs_variations:
+                raise SimpleBenchTypeError(
+                    (f'Invalid action: {action}. Parameter "{param_name}" '
+                     'not found in kwargs_variations.'),
+                    tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS
+                    )
+        for param_name in kwargs_variations:
+            if param_name not in action_signature.parameters:
+                raise SimpleBenchTypeError(
+                    (f'Invalid action: {action}. kwargs_variations key "{param_name}" '
+                     'not found in action parameters.'),
+                    tag=_CaseErrorTag.INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS
+                    )
+
+        # All checks passed
         return action
 
     @staticmethod

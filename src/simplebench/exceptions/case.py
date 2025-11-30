@@ -8,6 +8,18 @@ from .base import ErrorTag
 class _CaseErrorTag(ErrorTag):
     """ErrorTags for case-related exceptions.
     """
+    INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS = "INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS"
+    """A key in kwargs_variations was not found in the action function parameters."""
+    INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS = "INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS"
+    """A keyword-only parameter in the action function was not found in kwargs_variations."""
+    INVALID_ACTION_NON_KEYWORD_ONLY_PARAMETERS = "INVALID_ACTION_NON_KEYWORD_ONLY_PARAMETERS"
+    """The action function contains non-keyword-only parameters other than the required '_bench' parameter."""
+    INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED = "INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED"
+    """The '_bench' parameter in the action function is not annotated with SimpleRunner."""
+    INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE = "INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE"
+    """The '_bench' parameter in the action function is not annotated with SimpleRunner."""
+    INVALID_ACTION_BENCH_PARAMETER_NOT_POSITIONAL_ONLY = "INVALID_ACTION_BENCH_PARAMETER_NOT_POSITIONAL_ONLY"
+    """The '_bench' parameter in the action function is not positional-only."""
     INVALID_TIMEOUT_TYPE = "INVALID_TIMEOUT_TYPE"
     """Invalid timeout argument type passed to the Case() constructor"""
     INVALID_TIMEOUT_VALUE = "INVALID_TIMEOUT_VALUE"

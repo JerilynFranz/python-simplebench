@@ -230,13 +230,12 @@ def benchmark(
 
     def decorator(func):
         """The actual decorator that wraps the user's function."""
-        def case_action_wrapper(bench: SimpleRunner, **kwargs) -> Any:
+        def case_action_wrapper(_bench: SimpleRunner, **kwargs) -> Any:
             """This wrapper becomes the `action` for the `Case`.
 
             It calls the user's decorated function inside `runner.run()`.
 
-            :param bench: The benchmark runner executing the benchmark.
-            :type bench: SimpleRunner
+            :param _bench: The benchmark runner executing the benchmark.
             :param kwargs: Any keyword arguments from `kwargs_variations`.
             """
             # The designated use_field_for_n field will always be present
@@ -246,7 +245,7 @@ def benchmark(
                 raise SimpleBenchValueError(
                     "The 'n' value determined for the benchmark run must be a positive integer.",
                     tag=_DecoratorsErrorTag.BENCHMARK_N_FOR_RUN_INVALID_VALUE)
-            return bench.run(action=func, n=n_for_run, kwargs=kwargs)
+            return _bench.run(action=func, n=n_for_run, kwargs=kwargs)
 
         final_benchmark_id = benchmark_id
         if final_benchmark_id is None:
