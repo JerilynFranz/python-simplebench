@@ -89,102 +89,6 @@ def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str
 
 class Case:
     '''
-    :param benchmark_id: An optional unique identifier for the benchmark case.
-
-        If None, a transient ID is assigned. This is meant to provide a stable identifier for the
-        benchmark case across multiple runs for tracking purposes. If not provided,
-        an attempt will be made to generate a stable ID based on the the action function
-        name, signature, and group.
-
-        If that is not possible, a transient ID based on the instance's id() will be used.
-        If a transient ID is used, it will differ between runs and cannot be used to
-        correlate results across multiple runs.
-
-        Benchmark ids must be unique within a benchmarking session and stable across runs
-        or they cannot be used for tracking benchmark results over time.
-
-    :param git_info: An optional GitInfo instance representing the state of the Git repository.
-
-        If not provided, the GitInfo will be automatically retrieved from the current
-        context of the caller if the code is part of a Git repository.
-
-    :param action: The function to perform the benchmark. This function must
-        accept a `bench` instance of type SimpleRunner and arbitrary keyword arguments ('**kwargs').
-        See the :class:`~simplebench.protocols.ActionRunner` protocol for the exact function
-        signature required.
-
-        It must return a `Results` object.
-
-    :param group: The benchmark reporting group to which the benchmark case belongs.
-
-    :param title: The title of the benchmark case.
-
-        If None, the name of the action function will be used. Cannot be a blank
-        string (a string that is empty or consists only of whitespace).
-
-    :param description: A brief description of the benchmark case.
-
-        If None, the docstring of the action function will be used, or '(no description)' if no docstring
-        is available. Cannot be blank.
-    :param iterations: The minimum number of iterations to run for the benchmark.
-    :param warmup_iterations: The number of warmup iterations to run before the benchmark.
-    :param rounds: The number of rounds to run for the benchmark.
-
-        Rounds are multiple runs of calls to the action within an iteration to mitigate timer
-        quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
-        functions are called only once per iteration (all rounds in the same iteration share the same
-        setup/teardown context).
-    :param min_time: The minimum time for the benchmark in seconds.
-    :param max_time: The maximum time for the benchmark in seconds.
-    :param timeout: How long to wait before timing out a benchmark run (in seconds).
-
-        If None, it waits the full duration of ``max_time`` plus the default timeout
-        grace period in seconds ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a
-        positive float or int that is greater than ``max_time`` if provided.
-        This is a safety mechanism to prevent runaway benchmarks.
-
-        If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``
-        will be raised.
-    :param variation_cols: kwargs to be used for cols to denote kwarg variations.
-
-        Each key is a keyword argument name, and the value is the column label to use for that
-        argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
-        added to the output of reporters that support them as columns of data with the specified labels.
-        If None, an empty dict is used.
-    :param kwargs_variations: A mapping of keyword argument key names to
-        a list of possible values for that argument. Default is {}. When tests are run, the benchmark
-        will be executed for each combination of the specified keyword argument variations. The action
-        function will be called with a `bench` parameter that is an instance of the runner and the
-        keyword arguments for the current variation.
-        If None, an empty dict is used.
-    :param runner: A custom runner class for the benchmark.
-        Any custom runner classes must be a subclass of SimpleRunner and must have a method
-        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
-        The action function will be called with a `bench` parameter that is an instance of the
-        custom runner.
-        It may also accept additional parameters to the run method as needed. If additional
-        parameters are needed for the custom runner, they will need to be passed to the run
-        method as keyword arguments.
-        No support is provided for passing additional parameters to a custom runner from the @benchmark
-        decorator.
-    :param callback:
-        A callback function for additional processing of the report. The function should accept
-        four arguments: the Case instance, the Section, the Format, and the generated report data.
-        The callback function will be called with the following arguments:
-            - case (Case): The `Case` instance processed for the report.
-            - section (Section): The `Section` of the report.
-            - output_format (Format): The `Format` of the report.
-            - output (Any): The generated report data. Note that the actual type of this data will
-                depend on the Format specified for the report and the type generated by the
-                reporter for that Format
-        Omit if no callback is needed by a reporter.
-    :param options: A list of additional options for the benchmark case.
-        Each option is an instance of ReporterOption or a subclass of ReporterOption.
-        Reporter options can be used to customize the output of the benchmark reports for
-        specific reporters. Reporters are responsible for extracting applicable ReporterOptions
-        from the list of options themselves.
-        If None, an empty list is used.
-
     A benchmark case defines the specific benchmark to be run, including the
     action to be performed, the parameters for the benchmark, and any variations
     of those parameters as well as the reporting group and title for the benchmark.
@@ -266,7 +170,6 @@ class Case:
             ]
             main(cases_list)
 
-
     '''
     __slots__ = ('_group', '_title', '_description', '_action',
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
@@ -293,9 +196,7 @@ class Case:
                  runner: Optional[type[SimpleRunner]] = None,
                  callback: Optional[ReporterCallback] = None,
                  options: Optional[Iterable[ReporterOptions]] = None) -> None:
-        """Constructor for Case. This defines a benchmark case.
-
-        The only REQUIRED parameter is `action`.
+        """The only REQUIRED parameter is `action`.
 
         :param benchmark_id: An optional unique identifier for the benchmark case.
 
@@ -319,9 +220,8 @@ class Case:
             protocol for the exact signature required. It must return a `Results` object.
         :param group: The benchmark reporting group to which the benchmark case belongs.
 
-        Benchmarks with the same group can be selected for execution without running
-        other benchmarks. If not specified, the default group 'default' is used.
-
+            Benchmarks with the same group can be selected for execution without running
+            other benchmarks. If not specified, the default group 'default' is used.
         :param title: The title of the benchmark case.
 
             If None, the name of the action function will be used. Cannot be blank.
@@ -377,12 +277,14 @@ class Case:
 
             The function should must four arguments: the Case instance, the Section,
             the Format, and the generated report data.
-                - case (Case): The `Case` instance processed for the report.
-                - section (Section): The `Section` of the report.
-                - output_format (Format): The `Format` of the report.
-                - output (Any): The generated report data. Note that the actual type of this data will
-                    depend on the Format specified for the report and the type generated by the
-                    reporter for that Format
+
+            - case (Case): The `Case` instance processed for the report.
+            - section (Section): The `Section` of the report.
+            - output_format (Format): The `Format` of the report.
+            - output (Any): The generated report data. Note that the actual type of this data will
+                depend on the Format specified for the report and the type generated by the
+                reporter for that Format
+
             Omit if no callback is needed by a reporter.
         :param options: A list of additional options for the benchmark case.
 
@@ -391,6 +293,8 @@ class Case:
             specific reporters. Reporters are responsible for extracting applicable ReporterOptions
             from the list of options themselves.
             If None, an empty list is used.
+        :raises SimpleBenchTypeError: If any parameter is of incorrect type.
+        :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
         self._group = validate_non_blank_string(
                         group, "group",
@@ -639,7 +543,6 @@ class Case:
         """Validate the options list.
 
         :param value: The options iterable to validate or None.
-        :type value: Iterable[ReporterOption] | None
         :return: A shallow copy of the validated options as a list or an empty list if not provided.
         :rtype: list[ReporterOptions]
         :raises SimpleBenchTypeError: If options is not a list or if any entry is not a ReporterOption.
@@ -994,7 +897,6 @@ class Case:
         set `full_data` to True.
 
         :param full_data: Whether to include full results data. Defaults to False.
-        :type full_data: bool
         :return: A JSON serializable dict representation of the benchmark case and results.
         :rtype: dict[str, Any]
         """

@@ -5,12 +5,13 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.decorators - simplebench 0.4.0-alpha.0 documentation</title>
+        <title>simplebench.decorators - simplebench 0.4.1-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=4307924e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=a3748921" />
     
     
 
@@ -162,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">simplebench 0.4.0-alpha.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">simplebench 0.4.1-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +184,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.4.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.4.1-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,9 +198,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reports/json_report.html">JSON Report</a></li>
@@ -246,15 +251,10 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">ParamSpec</span><span class="p">,</span> <span class="n">TypeVar</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">defaults</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span><span class="p">,</span> <span class="n">generate_benchmark_id</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
-    <span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span>
-    <span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span>
-    <span class="n">DEFAULT_ROUNDS</span><span class="p">,</span>
-    <span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="p">,</span>
-    <span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.doc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_docstring</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span><span class="p">,</span> <span class="n">_DecoratorsErrorTag</span>
 <span class="c1"># simplebench.reporters.reporter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
@@ -277,17 +277,18 @@
 
 <div class="viewcode-block" id="benchmark">
 <a class="viewcode-back" href="../../source/simplebench.decorators.html#simplebench.benchmark">[docs]</a>
+<span class="nd">@format_docstring</span><span class="p">(</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="o">=</span><span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">benchmark</span><span class="p">(</span>
         <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>  <span class="c1"># group can be the function when used without params</span>
         <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>  <span class="c1"># keyword-only parameters after this point</span>
         <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">benchmark_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
-        <span class="n">warmup_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
-        <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ROUNDS</span><span class="p">,</span>
-        <span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span>
-        <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span>
+        <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
+        <span class="n">warmup_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
+        <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_ROUNDS</span><span class="p">,</span>
+        <span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span>
+        <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span>
         <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">variation_cols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">kwargs_variations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -342,65 +343,49 @@
 <span class="sd">    You should read the documentation for :class:`Case` for full details on the parameters and their</span>
 <span class="sd">    meanings.</span>
 
-<span class="sd">    :param group: The benchmark reporting group to which the benchmark</span>
-<span class="sd">        case belongs for selection and reporting purposes. It is used to categorize and filter benchmark cases.</span>
-<span class="sd">        Cannot be blank. The group parameter is positional-only. All other parameters must be passed as keyword</span>
-<span class="sd">        arguments. When the decorator is used without parameters, the group defaults to &#39;default&#39;.</span>
-<span class="sd">        This has special handling to allow the decorator to be used easily without any parameters.</span>
-<span class="sd">    :type group: str, positional-only</span>
+<span class="sd">    :param group: The benchmark reporting group to which the benchmark case belongs.</span>
+
+<span class="sd">        Used to categorize and filter benchmark cases for selection and reporting.</span>
+<span class="sd">        Cannot be blank (a string composed only of whitespace). The group parameter</span>
+<span class="sd">        is positional-only. All other parameters must be passed as keyword</span>
+<span class="sd">        arguments. When the decorator is used without parameters, the group defaults</span>
+<span class="sd">        to &#39;default&#39;. This has special handling to allow the decorator to be used</span>
+<span class="sd">        easily without any parameters.</span>
 <span class="sd">    :param title: The title of the benchmark case. Uses the function</span>
 <span class="sd">        name if None. Cannot be blank.</span>
-<span class="sd">    :type title: Optional[str]</span>
 <span class="sd">    :param benchmark_id: An optional identifier for the benchmark case.</span>
-<span class="sd">        If None, no identifier is set.</span>
-<span class="sd">    :type benchmark_id: Optional[str]</span>
+<span class="sd">        If None, a benchmark ID is generated based on the function name and module.</span>
 <span class="sd">    :param description: A description for the case.</span>
 <span class="sd">        Uses the function&#39;s docstring if None or &#39;(no description)&#39; if there is no docstring.</span>
 <span class="sd">        Cannot be blank.</span>
-<span class="sd">    :type description: Optional[str]</span>
-<span class="sd">    :param iterations: The minimum number of iterations to run for</span>
-<span class="sd">        the benchmark.</span>
-<span class="sd">    :type iterations: int</span>
-<span class="sd">    :param warmup_iterations: The number of warmup iterations</span>
-<span class="sd">        to run before the benchmark.</span>
-<span class="sd">    :type warmup_iterations: int</span>
-<span class="sd">    :param rounds: The number of rounds to run the benchmark within each</span>
-<span class="sd">        iteration.</span>
-<span class="sd">    :type rounds: int</span>
-<span class="sd">    :param min_time: The minimum time in seconds to run the benchmark.</span>
-<span class="sd">        Must be a positive number.</span>
-<span class="sd">    :type min_time: int | float</span>
+<span class="sd">    :param iterations: The minimum number of iterations to run for the benchmark.</span>
+<span class="sd">    :param warmup_iterations: The number of warmup iterations to run before the benchmark.</span>
+<span class="sd">    :param rounds: The number of rounds to run the benchmark within each iteration.</span>
+<span class="sd">    :param min_time: The minimum time in seconds to run the benchmark.  Must be a positive number.</span>
 <span class="sd">    :param max_time: The maximum time in seconds to run the benchmark.</span>
 <span class="sd">        Must be a positive number greater than min_time.</span>
-<span class="sd">    : param timeout: The maximum time in seconds to allow the benchmark</span>
+<span class="sd">    :param timeout: The maximum time in seconds to allow the benchmark</span>
 <span class="sd">        to run before timing out. If None, a default timeout of</span>
-<span class="sd">        `max_time` + {DEFAULT_TIMEOUT_GRACE_PERIOD} is used.</span>
-<span class="sd">    : type timeout: Optional[int | float]</span>
-<span class="sd">    :type max_time: int | float</span>
+<span class="sd">        `max_time` + {DEFAULT_TIMEOUT_GRACE_PERIOD} is used. Must be a positive number.</span>
 <span class="sd">    :param variation_cols: kwargs to be used for cols to denote kwarg</span>
 <span class="sd">        variations. Each key is a keyword argument name, and the value is the column label to use for that</span>
 <span class="sd">        argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
 <span class="sd">        added to the output of reporters that support them as columns of data with the specified labels.</span>
 <span class="sd">        If None, an empty dict is used.</span>
-<span class="sd">    :type variation_cols: Optional[dict[str, str]]</span>
 <span class="sd">    :param kwargs_variations: A mapping of keyword argument key names to</span>
 <span class="sd">        a list of possible values for that argument. Default is {}. When tests are run, the benchmark</span>
 <span class="sd">        will be executed for each combination of the specified keyword argument variations. The action</span>
 <span class="sd">        function will be called with a `bench` parameter that is an instance of the runner and the</span>
 <span class="sd">        keyword arguments for the current variation.</span>
 <span class="sd">        If None, an empty dict is used.</span>
-<span class="sd">    :type kwargs_variations: Optional[dict[str, list[Any]]]</span>
 <span class="sd">    :param options: A list of additional options for the benchmark case.</span>
 <span class="sd">        Each option is an instance of ReporterOptions or a subclass of ReporterOptions.</span>
 <span class="sd">        Reporter options can be used to customize the output of the benchmark reports for</span>
 <span class="sd">        specific reporters. Reporters are responsible for extracting applicable ReporterOptionss</span>
 <span class="sd">        from the list of options themselves.</span>
-<span class="sd">    :type options: Optional[list[ReporterOptions]]</span>
 <span class="sd">    :param n: The &#39;n&#39; weighting of the benchmark case. Must be a positive integer or float.</span>
-<span class="sd">    :type n: int | float</span>
 <span class="sd">    :param use_field_for_n: If provided, use the value of this field from kwargs_variations</span>
 <span class="sd">        to set &#39;n&#39; dynamically for each variation.</span>
-<span class="sd">    :type use_field_for_n: Optional[str]</span>
 <span class="sd">    :return: A decorator that registers the function for benchmarking and returns it unmodified.</span>
 <span class="sd">    :rtype: Callable[[Callable[P, R]], Callable[P, R]]</span>
 <span class="sd">    :raises SimpleBenchTypeError: If any argument is of an incorrect type.</span>
@@ -454,7 +439,7 @@
         <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_MAX_TIME_TYPE</span><span class="p">,</span>
         <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_MAX_TIME_VALUE</span><span class="p">)</span>
 
-    <span class="n">timeout_value</span> <span class="o">=</span> <span class="n">max_time</span> <span class="o">+</span> <span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span> <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">timeout</span>
+    <span class="n">timeout_value</span> <span class="o">=</span> <span class="n">max_time</span> <span class="o">+</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span> <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">timeout</span>
     <span class="n">timeout</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
         <span class="n">timeout_value</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">,</span>
         <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_TIMEOUT_TYPE</span><span class="p">,</span>
@@ -615,11 +600,12 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=a9a3c2eb"></script>
+</div><script src="../../_static/documentation_options.js?v=d4d890f0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=30646c52"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

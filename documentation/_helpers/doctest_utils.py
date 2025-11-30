@@ -1,3 +1,5 @@
+"""Helpers for running doctest benchmarks and validating their output."""
+import difflib
 import os
 import re
 import subprocess
@@ -52,8 +54,8 @@ def assert_benchmark_output(actual_raw: str, expected_output_file: str):
     # Construct the full path to the expected output file from the docs root.
     full_expected_path = os.path.join(DOCS_ROOT, expected_output_file)
 
-    with open(full_expected_path) as f:
-        expected_raw = f.read()
+    with open(full_expected_path, encoding="utf-8") as fh:
+        expected_raw = fh.read()
 
     actual_sanitized = _sanitize_output(actual_raw)
     expected_sanitized = _sanitize_output(expected_raw)
@@ -63,7 +65,6 @@ def assert_benchmark_output(actual_raw: str, expected_output_file: str):
     expected_normalized = " ".join(expected_sanitized.split())
 
     if actual_normalized != expected_normalized:
-        import difflib
         diff = difflib.unified_diff(
             expected_sanitized.splitlines(keepends=True),
             actual_sanitized.splitlines(keepends=True),
@@ -75,11 +76,9 @@ def assert_benchmark_output(actual_raw: str, expected_output_file: str):
 
 
 if __name__ == "__main__":
-    """
-    This block allows the script to be used as a command-line tool to
-    generate the "golden master" output files for doctests.
-    Run this script from the 'documentation' directory.
-    """
+    # This block allows the script to be used as a command-line tool to
+    # generate the "golden master" output files for doctests.
+    # Run this script from the 'documentation' directory.
     if len(sys.argv) < 3:
         print(f"Usage: python {sys.argv[0]} <output_file> <script_to_run> [args...]")
         print("  (Run from 'documentation/' directory, paths are relative to it)")
@@ -93,7 +92,7 @@ if __name__ == "__main__":
 
     raw_output = run_script_and_get_raw_output(script_to_run, script_args)
 
-    with open(output_file_path, "w") as f:
+    with open(output_file_path, "w", encoding="utf-8") as f:
         f.write(raw_output)
 
     print(f"Successfully generated golden master file: {output_file_path}")

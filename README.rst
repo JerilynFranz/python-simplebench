@@ -1,7 +1,7 @@
 SimpleBench
 ===========
 
-**SimpleBench** is a Python framework for benchmarking and performance testing of code.
+**SimpleBench** is a modern Python framework for benchmarking and performance testing of code.
 
 As such it has the following goals:
 
@@ -48,7 +48,8 @@ Documentation
 * `Installation <https://python-simplebench.readthedocs.io/en/latest/installation.html>`_
 * `Using SimpleBench <https://python-simplebench.readthedocs.io/en/latest/usage.html>`_
 * `Tutorials <https://python-simplebench.readthedocs.io/en/latest/tutorials.html>`_
-   * `Basic Usage Tutorial <https://python-simplebench.readthedocs.io/en/latest/tutorials/basic.html>`_
+   * `Basic Benchmark <https://python-simplebench.readthedocs.io/en/latest/tutorials/basic.html>`_
+   * `Parameterized Benchmark <https://python-simplebench.readthedocs.io/en/latest/tutorials/parameterized.html>`_
 * `Command-Line Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options.html>`_
 * `Reports <https://python-simplebench.readthedocs.io/en/latest/reports.html>`_
    * `Rich Table Report <https://python-simplebench.readthedocs.io/en/latest/reports/rich_table_report.html>`_
