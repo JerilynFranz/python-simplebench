@@ -257,26 +257,22 @@
 <p id="simplebench-tutorials-parameterized">This tutorial demonstrates how to create a parameterized benchmark using SimpleBench, run it, and generate a report.</p>
 <p>Parameterized benchmarks allow you to run the same benchmark function multiple times with different input parameters.</p>
 <p>The key components of a parameterized benchmark are:</p>
-<ul>
+<ul class="simple">
 <li><p><strong>Benchmark Function</strong>: A function decorated with <cite>&#64;simplebench.benchmark</cite> that contains the code to be benchmarked.</p></li>
-<li><p><strong>Parameters</strong>: Defined as arguments for the decorator, which specifies different values or sets of values to be used as inputs to the benchmark function.
-<cite>kwarg_variations`</cite></p>
-<blockquote>
-<div><p>A dictionary where the keys are parameter names to be passed to the benchmarked function and values are lists of possible values for those parameters.</p>
-</div></blockquote>
-<dl>
-<dt>variation_cols</dt><dd><blockquote>
-<div><p>A dictionary where keys are parameter names and values are human-readable column names for reporting. Fields not
-included here not appear in the report.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>use_field_for_n</dt><dd><p>A string specifying a parameter to use as the ‘n’ field in reports, which is often used to indicate input size or complexity.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</li>
+<li><p><strong>Parameters</strong>: Defined as arguments for the decorator, which specifies different values or sets of values to be used as inputs to the benchmark function.</p></li>
 </ul>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code></dt><dd><p>A dictionary where the keys are parameter names to be passed to the benchmarked
+function and values are lists of possible values for those parameters.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">variation_cols</span></code></dt><dd><p>A dictionary where keys are parameter names and values are human-readable column names for reporting. Fields not
+included here not appear in the report.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">use_field_for_n</span></code></dt><dd><p>A string specifying a parameter to use as the ‘N’ field in reports, which is often used
+to indicate input size for complexity analysis. This parameter should be one of the keys in
+<code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code>.</p>
+</dd>
+</dl>
 <section id="minimal-example">
 <h2>Minimal Example<a class="headerlink" href="#minimal-example" title="Link to this heading">🔗</a></h2>
 <p>The minimal code required to create and run a parameterized benchmark using SimpleBench is creating
@@ -316,18 +312,18 @@ your terminal:</p>
                                                                        operations per second                                                                        
                                                                                                                                                                     
                                                    A simple addition benchmark of Python&#39;s built-in sum function.                                                   
-┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┓
-┃        ┃            ┃        ┃ Elapsed ┃             ┃               ┃            ┃            ┃            ┃             ┃                ┃        ┃            ┃
-┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃ mean kOps/s ┃ median kOps/s ┃ min kOps/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃ std dev kOps/s ┃  rsd%  ┃ Input Size ┃
-┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━┩
-│    1.0 │   761953   │      1 │  0.17   │   4500.00   │    4780.00    │      6.13  │   8000.00  │   4000.00  │   4810.00   │      459.00    │ 10.20% │     1      │
-│    5.0 │   648710   │      1 │  0.15   │   4320.00   │    4000.00    │     85.40  │   8000.00  │   4000.00  │   4810.00   │      425.00    │  9.84% │     5      │
-│   10.0 │   534179   │      1 │  0.14   │   4000.00   │    4000.00    │      4.11  │   8000.00  │   3420.00  │   4810.00   │      349.00    │  8.72% │     10     │
-│   50.0 │   443637   │      1 │  0.18   │   2550.00   │    2670.00    │      4.64  │   3440.00  │   2400.00  │   2670.00   │      189.00    │  7.42% │     50     │
-│  100.0 │   347641   │      1 │  0.20   │   1780.00   │    1850.00    │      4.02  │   2180.00  │   1600.00  │   1850.00   │      133.00    │  7.46% │    100     │
-│  500.0 │    49964   │      1 │  0.16   │    329.00   │     338.00    │      4.20  │    353.00  │    308.00  │    343.00   │       27.80    │  8.46% │    500     │
-│ 1000.0 │    18582   │      1 │  0.13   │    144.00   │     146.00    │      3.73  │    151.00  │    137.00  │    147.00   │        9.31    │  6.45% │    1000    │
-└────────┴────────────┴────────┴─────────┴─────────────┴───────────────┴────────────┴────────────┴────────────┴─────────────┴────────────────┴────────┴────────────┘
+┏━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃            ┃        ┃            ┃        ┃ Elapsed ┃             ┃               ┃            ┃            ┃            ┃             ┃                ┃        ┃
+┃ Input Size ┃   N    ┃ Iterations ┃ Rounds ┃ Seconds ┃ mean kOps/s ┃ median kOps/s ┃ min kOps/s ┃ max kOps/s ┃ 5th kOps/s ┃ 95th kOps/s ┃ std dev kOps/s ┃  rsd%  ┃
+┡━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│     1      │    1.0 │  1010264   │      1 │  0.22   │   4710.00   │    4810.00    │     46.50  │  12000.00  │   4000.00  │   5990.00   │      483.00    │ 10.30% │
+│     5      │    5.0 │   792381   │      1 │  0.18   │   4500.00   │    4780.00    │     40.10  │  12000.00  │   4000.00  │   4810.00   │      426.00    │  9.48% │
+│     10     │   10.0 │   626015   │      1 │  0.15   │   4170.00   │    4000.00    │     26.40  │   8000.00  │   4000.00  │   4810.00   │      388.00    │  9.30% │
+│     50     │   50.0 │   481444   │      1 │  0.19   │   2600.00   │    2670.00    │     42.20  │   4000.00  │   2400.00  │   2670.00   │      195.00    │  7.51% │
+│    100     │  100.0 │   358702   │      1 │  0.20   │   1840.00   │    1850.00    │     48.10  │   2400.00  │   1720.00  │   2000.00   │      116.00    │  6.28% │
+│    500     │  500.0 │    38035   │      1 │  0.11   │    340.00   │     343.00    │     47.70  │    358.00  │    333.00  │    348.00   │       20.90    │  6.15% │
+│    1000    │ 1000.0 │    13805   │      1 │  0.09   │    147.00   │     149.00    │     11.50  │    152.00  │    144.00  │    150.00   │        8.38    │  5.69% │
+└────────────┴────────┴────────────┴────────┴─────────┴─────────────┴───────────────┴────────────┴────────────┴────────────┴─────────────┴────────────────┴────────┘
 </pre></div>
 </div>
 </div>

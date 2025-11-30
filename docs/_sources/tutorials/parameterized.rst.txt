@@ -12,14 +12,17 @@ The key components of a parameterized benchmark are:
 
 - **Benchmark Function**: A function decorated with `@simplebench.benchmark` that contains the code to be benchmarked.
 - **Parameters**: Defined as arguments for the decorator, which specifies different values or sets of values to be used as inputs to the benchmark function.
-  `kwarg_variations``
-      A dictionary where the keys are parameter names to be passed to the benchmarked function and values are lists of possible values for those parameters.
-  variation_cols
-      A dictionary where keys are parameter names and values are human-readable column names for reporting. Fields not
-      included here not appear in the report.
-   use_field_for_n
-      A string specifying a parameter to use as the 'n' field in reports, which is often used to indicate input size or complexity.
 
+``kwarg_variations``
+    A dictionary where the keys are parameter names to be passed to the benchmarked
+    function and values are lists of possible values for those parameters.
+``variation_cols``  
+    A dictionary where keys are parameter names and values are human-readable column names for reporting. Fields not
+    included here not appear in the report.
+``use_field_for_n``
+    A string specifying a parameter to use as the 'N' field in reports, which is often used
+    to indicate input size for complexity analysis. This parameter should be one of the keys in
+    ``kwarg_variations``.
 
 Minimal Example
 ---------------
