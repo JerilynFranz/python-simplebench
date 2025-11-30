@@ -11,18 +11,60 @@ Parameterized benchmarks allow you to run the same benchmark function multiple t
 The key components of a parameterized benchmark are:
 
 - **Benchmark Function**: A function decorated with `@simplebench.benchmark` that contains the code to be benchmarked.
+  The function must accept parameters that will be varied during the benchmark runs. The parameters are defined
+  as keyword arguments and passed to the function during each execution.
+
 - **Parameters**: Defined as arguments for the decorator, which specifies different values or sets of values to be used as inputs to the benchmark function.
 
 ``kwarg_variations``
-    A dictionary where the keys are parameter names to be passed to the benchmarked
-    function and values are lists of possible values for those parameters.
+  A dictionary where the keys are parameter names to be passed to the benchmarked
+  function and values are lists of possible values for those parameters.
+
+  The benchmark will be executed for every combination of the provided parameter values.
+
+  **Example**
+
+  .. code-block:: python
+
+    kwargs_variations={
+        'arg1': [1, 2],
+        'arg2': ['a', 'b']
+    }
+
+  will result in the following combinations being tested:
+
+  .. code-block:: python
+
+    {'arg1': 1, 'arg2': 'a'}
+    {'arg1': 1, 'arg2': 'b'}
+    {'arg1': 2, 'arg2': 'a'}
+    {'arg1': 2, 'arg2': 'b'}
+
 ``variation_cols``  
-    A dictionary where keys are parameter names and values are human-readable column names for reporting. Fields not
-    included here not appear in the report.
+    A dictionary where keys are parameter names and values are display names for reporting. Fields not
+    included here will usually not display in a report. Fields specified here must be a subset of the
+    keys in ``kwarg_variations``.
+
+    **Example**
+
+    .. code-block:: python
+
+      variation_cols={
+          'arg1': 'Argument 1',
+          'arg2': 'Argument 2'
+      }
+
+   This will result in the report displaying columns/fields labeled 'Argument 1' and 'Argument 2'
+   corresponding to the values of 'arg1' and 'arg2' used in each benchmark run.
+
 ``use_field_for_n``
     A string specifying a parameter to use as the 'N' field in reports, which is often used
     to indicate input size for complexity analysis. This parameter should be one of the keys in
-    ``kwarg_variations``.
+    ``kwarg_variations``. It is optional; if not specified, the 'N' field will default to the value '1.0'.
+
+    This is useful when you want to analyze how the performance of the benchmarked function
+    scales with different input sizes or configurations. It is not required that the field be
+    defined in ``variation_cols`` to be used as the 'N' field.
 
 Minimal Example
 ---------------

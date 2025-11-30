@@ -258,19 +258,51 @@
 <p>Parameterized benchmarks allow you to run the same benchmark function multiple times with different input parameters.</p>
 <p>The key components of a parameterized benchmark are:</p>
 <ul class="simple">
-<li><p><strong>Benchmark Function</strong>: A function decorated with <cite>&#64;simplebench.benchmark</cite> that contains the code to be benchmarked.</p></li>
+<li><p><strong>Benchmark Function</strong>: A function decorated with <cite>&#64;simplebench.benchmark</cite> that contains the code to be benchmarked.
+The function must accept parameters that will be varied during the benchmark runs. The parameters are defined
+as keyword arguments and passed to the function during each execution.</p></li>
 <li><p><strong>Parameters</strong>: Defined as arguments for the decorator, which specifies different values or sets of values to be used as inputs to the benchmark function.</p></li>
 </ul>
-<dl class="simple">
+<dl>
 <dt><code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code></dt><dd><p>A dictionary where the keys are parameter names to be passed to the benchmarked
 function and values are lists of possible values for those parameters.</p>
+<p>The benchmark will be executed for every combination of the provided parameter values.</p>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs_variations</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;arg1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="s1">&#39;arg2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>will result in the following combinations being tested:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;arg1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">:</span> <span class="s1">&#39;a&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;arg1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;arg1&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">:</span> <span class="s1">&#39;a&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;arg1&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">variation_cols</span></code></dt><dd><p>A dictionary where keys are parameter names and values are human-readable column names for reporting. Fields not
-included here not appear in the report.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">variation_cols</span></code></dt><dd><blockquote>
+<div><p>A dictionary where keys are parameter names and values are display names for reporting. Fields not
+included here will usually not display in a report. Fields specified here must be a subset of the
+keys in <code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code>.</p>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">variation_cols</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;arg1&#39;</span><span class="p">:</span> <span class="s1">&#39;Argument 1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;arg2&#39;</span><span class="p">:</span> <span class="s1">&#39;Argument 2&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>This will result in the report displaying columns/fields labeled ‘Argument 1’ and ‘Argument 2’
+corresponding to the values of ‘arg1’ and ‘arg2’ used in each benchmark run.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">use_field_for_n</span></code></dt><dd><p>A string specifying a parameter to use as the ‘N’ field in reports, which is often used
 to indicate input size for complexity analysis. This parameter should be one of the keys in
-<code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">kwarg_variations</span></code>. It is optional; if not specified, the ‘N’ field will default to the value ‘1.0’.</p>
+<p>This is useful when you want to analyze how the performance of the benchmarked function
+scales with different input sizes or configurations. It is not required that the field be
+defined in <code class="docutils literal notranslate"><span class="pre">variation_cols</span></code> to be used as the ‘N’ field.</p>
 </dd>
 </dl>
 <section id="minimal-example">
