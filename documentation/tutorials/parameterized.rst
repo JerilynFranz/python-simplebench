@@ -40,31 +40,32 @@ The key components of a parameterized benchmark are:
     {'arg1': 2, 'arg2': 'a'}
     {'arg1': 2, 'arg2': 'b'}
 
-``variation_cols``  
-    A dictionary where keys are parameter names and values are display names for reporting. Fields not
-    included here will usually not display in a report. Fields specified here must be a subset of the
-    keys in ``kwargs_variations``.
+``variation_cols``
+  A dictionary where keys are parameter names and values are display names for
+  reporting. Fields not included here will usually not display in a report.
+  Fields specified here must be a subset of the keys in ``kwargs_variations``.
 
-    **Example**
+  **Example**
 
-    .. code-block:: python
+  .. code-block:: python
 
-      variation_cols={
-          'arg1': 'Argument 1',
-          'arg2': 'Argument 2'
-      }
+    variation_cols={
+        'arg1': 'Argument 1',
+        'arg2': 'Argument 2'
+    }
 
-   This will result in the report displaying columns/fields labeled 'Argument 1' and 'Argument 2'
-   corresponding to the values of 'arg1' and 'arg2' used in each benchmark run.
+  This will result in the report displaying columns/fields labeled 'Argument 1'
+  and 'Argument 2' corresponding to the values of 'arg1' and 'arg2' used in
+  each benchmark run.
 
 ``use_field_for_n``
-    A string specifying a parameter to use as the 'N' field in reports, which is often used
-    to indicate input size for complexity analysis. This parameter should be one of the keys in
-    ``kwargs_variations``. It is optional; if not specified, the 'N' field will default to the value '1.0'.
+  A string specifying a parameter to use as the 'N' field in reports, which is often used
+  to indicate input size for complexity analysis. This parameter should be one of the keys in
+  ``kwargs_variations``. It is optional; if not specified, the 'N' field will default to the value '1.0'.
 
-    This is useful when you want to analyze how the performance of the benchmarked function
-    scales with different input sizes or configurations. It is not required that the field be
-    defined in ``variation_cols`` to be used as the 'N' field.
+  This is useful when you want to analyze how the performance of the benchmarked function
+  scales with different input sizes or configurations. It is not required that the field be
+  defined in ``variation_cols`` to be used as the 'N' field.
 
 Minimal Example
 ---------------
