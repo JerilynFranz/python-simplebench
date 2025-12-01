@@ -14,7 +14,7 @@ As such it has the following goals:
 Current Status
 --------------
 
-Alpha release 0.4.1-alpha.0
+Alpha release 0.5.1-alpha.0
 
 Functionally complete but not yet 100% tested or documented.
 There may be breaking changes before reaching version 1.0.

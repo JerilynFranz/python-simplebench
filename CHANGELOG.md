@@ -3,6 +3,8 @@ SimpleBench
 
 A framework for building and running benchmarks.
 
+* 0.5.1-alpha-0 2025-11-30
+  * Documentation updates
 * 0.5.0-alpha-0 2025-11-30
   * Extended CSVReporter and RichTableReporter to allow customization
     of output columns using options.
