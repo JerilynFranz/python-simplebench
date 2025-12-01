@@ -175,9 +175,10 @@ class Case:
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
                  '_variation_cols', '_kwargs_variations', '_runner',
                  '_callback', '_results', '_options', '_rounds',
-                 '_benchmark_id', '_git_info', '_timeout')
+                 '_benchmark_id', '_git_info', '_timeout', '_timer')
 
-    @format_docstring(DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD)
+    @format_docstring(DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD,
+                      DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__,)
     def __init__(self, *,
                  benchmark_id: Optional[str] = None,
                  git_info: Optional[GitInfo] = None,
@@ -188,6 +189,7 @@ class Case:
                  iterations: int = defaults.DEFAULT_ITERATIONS,
                  warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
                  rounds: int = defaults.DEFAULT_ROUNDS,
+                 timer: Callable[[], float | int] | None = None,
                  min_time: float = defaults.DEFAULT_MIN_TIME,
                  max_time: float = defaults.DEFAULT_MAX_TIME,
                  timeout: float | int | None = None,
@@ -237,9 +239,17 @@ class Case:
             quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
             functions are called only once per iteration (all rounds in the same iteration share the same
             setup/teardown context).
-        :param min_time: The minimum time for the benchmark to run in seconds.
-        :param max_time: The maximum time for the benchmark run in seconds.
-        :param timeout: How long to wait before timing out a benchmark run (in seconds).
+        :param timer: The timer function to use for the benchmark. If None, the default timer
+            from the Session() (if set) or from `simplebench.defaults.DEFAULT_TIMER` ({DEFAULT_TIMER})
+            is used by benchmark runners that require a timer.
+
+            The timer function should be a callable that returns a float or int representing the current time.
+        :param min_time: The minimum time for the benchmark to run in seconds. Its reference depends on the timer used,
+            but by default it is wall-clock time.
+        :param max_time: The maximum time for the benchmark run in seconds. Its reference depends on the timer used,
+            but by default it is wall-clock time.
+        :param timeout: How long to wait before timing out a benchmark run (in seconds). It is
+            measured as wall-clock time.
 
             If None, it waits the full duration of ``max_time`` plus the default timeout grace period
             ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a positive float or int that is greater
@@ -327,6 +337,20 @@ class Case:
                         rounds, "rounds",
                         _CaseErrorTag.INVALID_ROUNDS_TYPE,
                         _CaseErrorTag.INVALID_ROUNDS_VALUE)
+        if timer is None:
+            self._timer: Callable[[], float | int] | None = None
+        elif not callable(timer):
+            raise SimpleBenchTypeError(
+                f'Invalid timer: {type(timer)}. Must be a callable.',
+                tag=_CaseErrorTag.INVALID_TIMER_NOT_CALLABLE)
+        else:
+            test_value = timer()
+            if not isinstance(test_value, (float, int)):
+                raise SimpleBenchTypeError(
+                    (f'Invalid timer: {type(timer)}. Timer callable must return float or int, '
+                     f'got {type(test_value)}.'),
+                    tag=_CaseErrorTag.INVALID_TIMER_RETURN_TYPE)
+        self._timer = timer
         self._min_time = validate_positive_float(
                         min_time, "min_time",
                         _CaseErrorTag.INVALID_MIN_TIME_TYPE,
@@ -728,6 +752,17 @@ class Case:
         Rounds are multiple runs of the entire benchmark to get a better average for an iteration.
         Each iteration will run the specified number of rounds after setup and before teardown. (default: 1)"""
         return self._rounds
+
+    @property
+    def timer(self) -> Callable[[], float | int] | None:
+        """The timer function to use for the benchmark.
+
+        If None, the default timer from the Session() (if set) or from
+        `simplebench.defaults.DEFAULT_TIMER` is used by benchmark runners.
+
+        The timer function should be a callable that returns a float or int representing the current time.
+        """
+        return self._timer
 
     @property
     def min_time(self) -> float:

@@ -151,7 +151,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     graphfile.flush()
             return graphfile.getvalue()
 
-    def old_render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
+    def _old_render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
         """Render the scatter plot graph and return it as bytes.
 
         :param case: The :class:`~simplebench.case.Case` instance representing the

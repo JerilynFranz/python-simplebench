@@ -13,7 +13,8 @@ Key Control Options
 --------------------
 
 **min_time**
-  A float specifying the minimum wallclock time (in seconds) to spend on each benchmark run.
+  A float specifying the minimum time (in seconds) to spend on each benchmark run.
+  By default, this is measured as wallclock time.
 
   This ensures that benchmarks run long enough to get accurate measurements,
   particularly for very fast functions. The benchmark will continue running
@@ -35,7 +36,8 @@ Key Control Options
   The default is :data:`simplebench.defaults.DEFAULT_MIN_TIME`.
 
 **max_time**
-  A float specifying the maximum wallclock time (in seconds) to spend on each benchmark run.
+  A float specifying the maximum time (in seconds) to spend on each benchmark run.
+  By default, this is measured as wallclock time.
 
   This helps ensure that benchmarks complete in a reasonable timeframe,
   especially for functions that may take longer to execute.

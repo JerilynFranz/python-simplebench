@@ -277,7 +277,7 @@ It is accessed via the <code class="docutils literal notranslate"><span class="p
 <li><p><strong>fields</strong> – <p>A tuple of CSV fields to include in the output.
 If none is specifically set, a predefined set of fields is used. The fields appear in the order
 specified in the sequence.</p>
-<p>If specified, all fields must be from the <a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVField</span></code></a> enum.</p>
+<p>If specified, all fields must be from the <a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField" title="simplebench.reporters.csv.CSVField"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVField</span></code></a> enum.</p>
 <p>The default fields, in order, are:</p>
 <ul>
 <li><p><a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVField.N" title="simplebench.reporters.csv.CSVField.N"><code class="xref py py-attr docutils literal notranslate"><span class="pre">N</span></code></a></p></li>
@@ -345,6 +345,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">False</
 <dd><em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">warmup_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">min_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -479,9 +480,17 @@ quantization, loop overhead, and other measurement effects for very fast actions
 functions are called only once per iteration (all rounds in the same iteration share the same
 setup/teardown context).</p>
 </p></li>
-<li><p><strong>min_time</strong> – The minimum time for the benchmark to run in seconds.</p></li>
-<li><p><strong>max_time</strong> – The maximum time for the benchmark run in seconds.</p></li>
-<li><p><strong>timeout</strong> – <p>How long to wait before timing out a benchmark run (in seconds).</p>
+<li><p><strong>timer</strong> – <p>The timer function to use for the benchmark. If None, the default timer
+from the Session() (if set) or from <cite>simplebench.defaults.DEFAULT_TIMER</cite> (perf_counter_ns)
+is used by benchmark runners that require a timer.</p>
+<p>The timer function should be a callable that returns a float or int representing the current time.</p>
+</p></li>
+<li><p><strong>min_time</strong> – The minimum time for the benchmark to run in seconds. Its reference depends on the timer used,
+but by default it is wall-clock time.</p></li>
+<li><p><strong>max_time</strong> – The maximum time for the benchmark run in seconds. Its reference depends on the timer used,
+but by default it is wall-clock time.</p></li>
+<li><p><strong>timeout</strong> – <p>How long to wait before timing out a benchmark run (in seconds). It is
+measured as wall-clock time.</p>
 <p>If None, it waits the full duration of <code class="docutils literal notranslate"><span class="pre">max_time</span></code> plus the default timeout grace period
 (10.0 seconds). It must be a positive float or int that is greater
 than <code class="docutils literal notranslate"><span class="pre">max_time</span></code> if provided. This is a safety mechanism to prevent runaway benchmarks.</p>
@@ -828,6 +837,15 @@ parameters are required, they must be specified in the <cite>action</cite> funct
 <dt class="sig sig-object py" id="simplebench.Case.timeout">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.Case.timeout" title="Link to this definition">🔗</a></dt>
 <dd><p>The timeout for the benchmark in seconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.Case.timer">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.Case.timer" title="Link to this definition">🔗</a></dt>
+<dd><p>The timer function to use for the benchmark.</p>
+<p>If None, the default timer from the Session() (if set) or from
+<cite>simplebench.defaults.DEFAULT_TIMER</cite> is used by benchmark runners.</p>
+<p>The timer function should be a callable that returns a float or int representing the current time.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1410,7 +1428,7 @@ better control over the appearance of the table in different contexts.</p>
 <li><p><strong>fields</strong> – <p>A tuple of Rich Table fields to include in the output.
 If none is specifically set, a predefined set of fields is used. The fields appear in the order
 specified in the sequence.</p>
-<p>If specified, all fields must be from the <a class="reference internal" href="simplebench.reporters.rich_table.reporter.options.html#simplebench.reporters.rich_table.reporter.options.RichTableField" title="simplebench.reporters.rich_table.reporter.options.fields.RichTableField"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTableField</span></code></a> enum.</p>
+<p>If specified, all fields must be from the <a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField" title="simplebench.reporters.rich_table.RichTableField"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTableField</span></code></a> enum.</p>
 <p>The default fields, in order, are:</p>
 <ul>
 <li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.N" title="simplebench.reporters.rich_table.RichTableField.N"><code class="xref py py-attr docutils literal notranslate"><span class="pre">N</span></code></a></p></li>
@@ -1552,12 +1570,13 @@ be between 50 and 400.</p></li>
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#simplebench.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">default_runner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><span class="pre">ArgumentParser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">console</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://rich.readthedocs.io/en/latest/reference/console.html#rich.console.Console" title="(in Rich)"><span class="pre">Console</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/session.html#Session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Session" title="Link to this definition">🔗</a></dt>
@@ -1586,6 +1605,9 @@ Defaults to False.</p></li>
 <li><p><strong>output_path</strong> – The output path for reports. Defaults to None.</p></li>
 <li><p><strong>console</strong> – A Rich Console instance for displaying output. If None,
 a new Console will be automatically created. Defaults to None.</p></li>
+<li><p><strong>timer</strong> – A callable that returns the current time for timing benchmarks.
+If None, a default timer <cite>simplebench.defaults.DEFAULT_TIMER</cite> (perf_counter_ns)
+will be used. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -1801,8 +1823,14 @@ without command line args, you should call <a class="reference internal" href="#
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="simplebench.Session.timer">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.Session.timer" title="Link to this definition">🔗</a></dt>
+<dd><p>The timer function used for benchmarking.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="simplebench.Session.verbosity">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></em><a class="headerlink" href="#simplebench.Session.verbosity" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verbosity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></em><a class="headerlink" href="#simplebench.Session.verbosity" title="Link to this definition">🔗</a></dt>
 <dd><p>The Verbosity level for this session.</p>
 </dd></dl>
 
@@ -1994,9 +2022,9 @@ without command line args, you should call <a class="reference internal" href="#
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/graph/matplotlib/theme/base.html#Theme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Theme" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RcParams</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.RcParams" title="(in Matplotlib v3.10.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RcParams</span></code></a></p>
 <p>An immutable MatPlotLib base theme class for the graphs.</p>
-<p>This is a subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.RcParams</span></code> that represents a theme for Matplotlib graphs.
+<p>This is a subclass of <a class="reference external" href="https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.RcParams" title="(in Matplotlib v3.10.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.RcParams</span></code></a> that represents a theme for Matplotlib graphs.
 It can be used to define custom styles for Matplotlib graphs generated by SimpleBench.</p>
 <p>See <a class="reference external" href="https://matplotlib.org/stable/tutorials/introductory/customizing.html">Customizing Matplotlib with style sheets and rcParams</a>
 for more information on customizing Matplotlib themes.</p>
@@ -2095,6 +2123,7 @@ Status displays are not shown during runs.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">warmup_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">min_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -2165,12 +2194,17 @@ Cannot be blank.</p></li>
 <li><p><strong>iterations</strong> – The minimum number of iterations to run for the benchmark.</p></li>
 <li><p><strong>warmup_iterations</strong> – The number of warmup iterations to run before the benchmark.</p></li>
 <li><p><strong>rounds</strong> – The number of rounds to run the benchmark within each iteration.</p></li>
-<li><p><strong>min_time</strong> – The minimum time in seconds to run the benchmark.  Must be a positive number.</p></li>
+<li><p><strong>timer</strong> – A callable that returns the current time. If None, the default timer is used.
+The timer function should return a float or int representing the current time.</p></li>
+<li><p><strong>min_time</strong> – The minimum time in seconds to run the benchmark.  Must be a positive number.
+Its reference depends on the timer used, but by default it is wall-clock time.</p></li>
 <li><p><strong>max_time</strong> – The maximum time in seconds to run the benchmark.
-Must be a positive number greater than min_time.</p></li>
+Must be a positive number greater than min_time. Its reference depends on the timer used,
+but by default it is wall-clock time.</p></li>
 <li><p><strong>timeout</strong> – The maximum time in seconds to allow the benchmark
 to run before timing out. If None, a default timeout of
-<cite>max_time</cite> + 10.0 is used. Must be a positive number.</p></li>
+<cite>max_time</cite> + 10.0 is used. Must be a positive number.
+Time for timeout is always referenced to wall-clock time.</p></li>
 <li><p><strong>variation_cols</strong> – kwargs to be used for cols to denote kwarg
 variations. Each key is a keyword argument name, and the value is the column label to use for that
 argument. Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These fields will be
@@ -2190,6 +2224,9 @@ from the list of options themselves.</p></li>
 <li><p><strong>n</strong> – The ‘n’ weighting of the benchmark case. Must be a positive integer or float.</p></li>
 <li><p><strong>use_field_for_n</strong> – If provided, use the value of this field from kwargs_variations
 to set ‘n’ dynamically for each variation.</p></li>
+<li><p><strong>timer</strong> – The timer function to use for the benchmark. If None, the default timer is used.
+The timer function should be a callable that returns a float or int representing the current
+time.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2652,6 +2689,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.run"><code class="docutils literal notranslate"><span class="pre">Case.run()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.runner"><code class="docutils literal notranslate"><span class="pre">Case.runner</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.timeout"><code class="docutils literal notranslate"><span class="pre">Case.timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.timer"><code class="docutils literal notranslate"><span class="pre">Case.timer</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.title"><code class="docutils literal notranslate"><span class="pre">Case.title</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.validate_action_signature"><code class="docutils literal notranslate"><span class="pre">Case.validate_action_signature()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.validate_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.validate_kwargs_variations()</span></code></a></li>
@@ -2674,6 +2712,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 <li class="toctree-l2"><a class="reference internal" href="simplebench.decorators.html#simplebench.decorators.benchmark"><code class="docutils literal notranslate"><span class="pre">benchmark()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.decorators.html#simplebench.decorators.clear_registered_cases"><code class="docutils literal notranslate"><span class="pre">clear_registered_cases()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.decorators.html#simplebench.decorators.get_registered_cases"><code class="docutils literal notranslate"><span class="pre">get_registered_cases()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.decorators.html#simplebench.decorators.validate_timer"><code class="docutils literal notranslate"><span class="pre">validate_timer()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.defaults.html">simplebench.defaults module</a><ul>
@@ -2844,6 +2883,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 <li class="toctree-l3"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session.run"><code class="docutils literal notranslate"><span class="pre">Session.run()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session.show_progress"><code class="docutils literal notranslate"><span class="pre">Session.show_progress</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session.tasks"><code class="docutils literal notranslate"><span class="pre">Session.tasks</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session.timer"><code class="docutils literal notranslate"><span class="pre">Session.timer</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.session.html#simplebench.session.Session.verbosity"><code class="docutils literal notranslate"><span class="pre">Session.verbosity</span></code></a></li>
 </ul>
 </li>
@@ -3004,6 +3044,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 <li><a class="reference internal" href="#simplebench.Case.run"><code class="docutils literal notranslate"><span class="pre">Case.run()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.runner"><code class="docutils literal notranslate"><span class="pre">Case.runner</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.timeout"><code class="docutils literal notranslate"><span class="pre">Case.timeout</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.Case.timer"><code class="docutils literal notranslate"><span class="pre">Case.timer</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.title"><code class="docutils literal notranslate"><span class="pre">Case.title</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.validate_action_signature"><code class="docutils literal notranslate"><span class="pre">Case.validate_action_signature()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.validate_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.validate_kwargs_variations()</span></code></a></li>
@@ -3074,6 +3115,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 <li><a class="reference internal" href="#simplebench.Session.run"><code class="docutils literal notranslate"><span class="pre">Session.run()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Session.show_progress"><code class="docutils literal notranslate"><span class="pre">Session.show_progress</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Session.tasks"><code class="docutils literal notranslate"><span class="pre">Session.tasks</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.Session.timer"><code class="docutils literal notranslate"><span class="pre">Session.timer</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Session.verbosity"><code class="docutils literal notranslate"><span class="pre">Session.verbosity</span></code></a></li>
 </ul>
 </li>

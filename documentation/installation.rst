@@ -25,6 +25,11 @@ This is the recommended way to install SimpleBench.
 
     python -m pip install simplebench[graphs]
 
+.. note::
+   Please be aware that the ``[graphs]`` extra will install several large
+   third-party libraries (such as Matplotlib, Pandas, and Seaborn),
+   increasing the total installation size by over 200 MB.
+
 .. code-block:: shell
   :caption: Install using pip with all optional features (currently only graphs)
   :name: install-using-pip-with-all-extras

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.decorators - simplebench 0.5.0-alpha.0 documentation</title>
+        <title>simplebench.decorators - simplebench 0.6.1-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -163,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">simplebench 0.5.0-alpha.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">simplebench 0.6.1-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +184,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.5.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.6.1-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -201,6 +201,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/basic.html">Basic Benchmark</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/controlling.html">Controlling Benchmark Execution</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../command_line_options.html">Command-Line Options</a></li>
@@ -256,7 +257,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span><span class="p">,</span> <span class="n">generate_benchmark_id</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.doc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_docstring</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span><span class="p">,</span> <span class="n">_DecoratorsErrorTag</span>
-<span class="c1"># simplebench.reporters.reporter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleRunner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -287,6 +287,7 @@
         <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
         <span class="n">warmup_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
         <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_ROUNDS</span><span class="p">,</span>
+        <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span>
         <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span>
         <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -361,12 +362,17 @@
 <span class="sd">    :param iterations: The minimum number of iterations to run for the benchmark.</span>
 <span class="sd">    :param warmup_iterations: The number of warmup iterations to run before the benchmark.</span>
 <span class="sd">    :param rounds: The number of rounds to run the benchmark within each iteration.</span>
+<span class="sd">    :param timer: A callable that returns the current time. If None, the default timer is used.</span>
+<span class="sd">        The timer function should return a float or int representing the current time.</span>
 <span class="sd">    :param min_time: The minimum time in seconds to run the benchmark.  Must be a positive number.</span>
+<span class="sd">        Its reference depends on the timer used, but by default it is wall-clock time.</span>
 <span class="sd">    :param max_time: The maximum time in seconds to run the benchmark.</span>
-<span class="sd">        Must be a positive number greater than min_time.</span>
+<span class="sd">        Must be a positive number greater than min_time. Its reference depends on the timer used,</span>
+<span class="sd">        but by default it is wall-clock time.</span>
 <span class="sd">    :param timeout: The maximum time in seconds to allow the benchmark</span>
 <span class="sd">        to run before timing out. If None, a default timeout of</span>
 <span class="sd">        `max_time` + {DEFAULT_TIMEOUT_GRACE_PERIOD} is used. Must be a positive number.</span>
+<span class="sd">        Time for timeout is always referenced to wall-clock time.</span>
 <span class="sd">    :param variation_cols: kwargs to be used for cols to denote kwarg</span>
 <span class="sd">        variations. Each key is a keyword argument name, and the value is the column label to use for that</span>
 <span class="sd">        argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be</span>
@@ -386,6 +392,9 @@
 <span class="sd">    :param n: The &#39;n&#39; weighting of the benchmark case. Must be a positive integer or float.</span>
 <span class="sd">    :param use_field_for_n: If provided, use the value of this field from kwargs_variations</span>
 <span class="sd">        to set &#39;n&#39; dynamically for each variation.</span>
+<span class="sd">    :param timer: The timer function to use for the benchmark. If None, the default timer is used.</span>
+<span class="sd">        The timer function should be a callable that returns a float or int representing the current</span>
+<span class="sd">        time.</span>
 <span class="sd">    :return: A decorator that registers the function for benchmarking and returns it unmodified.</span>
 <span class="sd">    :rtype: Callable[[Callable[P, R]], Callable[P, R]]</span>
 <span class="sd">    :raises SimpleBenchTypeError: If any argument is of an incorrect type.</span>
@@ -428,6 +437,11 @@
         <span class="n">rounds</span><span class="p">,</span> <span class="s1">&#39;rounds&#39;</span><span class="p">,</span>
         <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_ROUNDS_TYPE</span><span class="p">,</span>
         <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_ROUNDS_VALUE</span><span class="p">)</span>
+
+    <span class="n">timer</span> <span class="o">=</span> <span class="n">validate_timer</span><span class="p">(</span>
+        <span class="n">timer</span><span class="p">,</span> <span class="s1">&#39;timer&#39;</span><span class="p">,</span>
+        <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_TIMER_TYPE</span><span class="p">,</span>
+        <span class="n">_DecoratorsErrorTag</span><span class="o">.</span><span class="n">BENCHMARK_TIMER_RETURN_TYPE</span><span class="p">)</span>
 
     <span class="n">min_time</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
         <span class="n">min_time</span><span class="p">,</span> <span class="s1">&#39;min_time&#39;</span><span class="p">,</span>
@@ -526,6 +540,7 @@
             <span class="n">iterations</span><span class="o">=</span><span class="n">iterations</span><span class="p">,</span>
             <span class="n">warmup_iterations</span><span class="o">=</span><span class="n">warmup_iterations</span><span class="p">,</span>
             <span class="n">rounds</span><span class="o">=</span><span class="n">rounds</span><span class="p">,</span>
+            <span class="n">timer</span><span class="o">=</span><span class="n">timer</span><span class="p">,</span>
             <span class="n">min_time</span><span class="o">=</span><span class="n">min_time</span><span class="p">,</span>
             <span class="n">max_time</span><span class="o">=</span><span class="n">max_time</span><span class="p">,</span>
             <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
@@ -567,6 +582,41 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_DECORATOR_CASES</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
+
+
+<div class="viewcode-block" id="validate_timer">
+<a class="viewcode-back" href="../../source/simplebench.decorators.html#simplebench.validate_timer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_timer</span><span class="p">(</span>
+        <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">type_error_tag</span><span class="p">:</span> <span class="n">_DecoratorsErrorTag</span><span class="p">,</span>
+        <span class="n">return_type_error_tag</span><span class="p">:</span> <span class="n">_DecoratorsErrorTag</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate the timer parameter for the benchmark decorator.</span>
+
+<span class="sd">    :param timer: The timer function to validate.</span>
+<span class="sd">    :param param_name: The name of the parameter (for error messages).</span>
+<span class="sd">    :param type_error_tag: The error tag to use for type errors.</span>
+<span class="sd">    :param return_type_error_tag: The error tag to use for return type errors.</span>
+<span class="sd">    :return: The validated timer function or None.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the timer is not callable.</span>
+<span class="sd">    :raises SimpleBenchTypeError: If the timer does not return a float or int.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">timer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">timer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The &#39;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">&#39; parameter to the @benchmark decorator must be a callable if provided.&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">type_error_tag</span><span class="p">)</span>
+
+        <span class="n">test_value</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The callable provided for the &#39;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">&#39; parameter to the @benchmark decorator &quot;</span>
+                <span class="s2">&quot;must return a float or int.&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">return_type_error_tag</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">timer</span></div>
+
 </pre></div>
         </article>
       </div>
@@ -599,7 +649,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=85f044d2"></script>
+</div><script src="../../_static/documentation_options.js?v=8c7f9c82"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
