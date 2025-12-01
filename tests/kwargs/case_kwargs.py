@@ -1,7 +1,7 @@
 """simplebench.cases.Case KWArgs package for SimpleBench tests."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterable
+from typing import TYPE_CHECKING, Any, Callable, Iterable
 
 from simplebench.case import Case
 from simplebench.vcs import GitInfo
@@ -37,6 +37,7 @@ class CaseKWArgs(KWArgs):
             iterations: int | NoDefaultValue = NoDefaultValue(),
             warmup_iterations: int | NoDefaultValue = NoDefaultValue(),
             rounds: int | NoDefaultValue = NoDefaultValue(),
+            timer: Callable[[], float | int] | NoDefaultValue = NoDefaultValue(),
             min_time: float | NoDefaultValue = NoDefaultValue(),
             max_time: float | NoDefaultValue = NoDefaultValue(),
             timeout: float | NoDefaultValue = NoDefaultValue(),
@@ -70,6 +71,9 @@ class CaseKWArgs(KWArgs):
         :type warmup_iterations: int
         :param rounds: The number of test rounds that will be run by the action on each iteration. (default: 1)
         :type rounds: int
+        :param timer: A callable that returns the current time. If None, the default timer is used.
+                      The timer function should return a float or int representing the current time.
+        :type timer: Callable[[], float | int] | None
         :param min_time: The minimum time for the benchmark in seconds. (default: 5.0)
         :type min_time: float
         :param max_time: The maximum time for the benchmark in seconds. (default: 20.0)

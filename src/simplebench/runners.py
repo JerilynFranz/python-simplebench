@@ -274,6 +274,13 @@ class SimpleRunner:
         max_time: float = self.case.max_time
         iterations: int = self.case.iterations
 
+        # Prioritize the timer from the case, then from the session, then use the default timer
+        timer = DEFAULT_TIMER
+        if self.case.timer is not None:
+            timer = self.case.timer
+        elif self.session is not None and self.session.timer is not None:
+            timer = self.session.timer
+
         # We force a garbage collection before measuring memory usage to reduce noise
         # from uncollected garbage. It is run separately from the timing to avoid
         # it affecting the timing measurements.
@@ -290,10 +297,10 @@ class SimpleRunner:
         # We start the count from -warmup_iterations to ensure we do the correct number of warmup
         # iterations even if warmup_iterations is 0.
         iteration_pass: int = -self.case.warmup_iterations
-        time_start: float = float(DEFAULT_TIMER())
+        time_start: float = float(timer())
         max_stop_at: float = float(max_time / DEFAULT_INTERVAL_SCALE) + time_start
         min_stop_at: float = float(min_time / DEFAULT_INTERVAL_SCALE) + time_start
-        wall_time: float = float(DEFAULT_TIMER())
+        wall_time: float = float(timer())
         iterations_min: int = max(MIN_MEASURED_ITERATIONS, iterations)
 
         gc.collect()
@@ -319,7 +326,7 @@ class SimpleRunner:
                 # for less than 1000 rounds, we can use the generated timer function directly
                 if callable(setup):
                     setup()
-                elapsed = timer_function(DEFAULT_TIMER, action, kwargs)
+                elapsed = timer_function(timer, action, kwargs)
                 if callable(teardown):
                     teardown()
             else:
@@ -332,11 +339,11 @@ class SimpleRunner:
                 if callable(setup):
                     setup()
                 while kiloround_chunks:
-                    elapsed += kiloround_timer(DEFAULT_TIMER, action, kwargs)
+                    elapsed += kiloround_timer(timer, action, kwargs)
                     kiloround_chunks -= 1
                 if remaining_rounds:
                     partial_timer = self._timer_function(remaining_rounds)
-                    elapsed += partial_timer(DEFAULT_TIMER, action, kwargs)
+                    elapsed += partial_timer(timer, action, kwargs)
                 if callable(teardown):
                     teardown()
 
@@ -372,7 +379,7 @@ class SimpleRunner:
                 n=n, rounds=self.case.rounds, elapsed=elapsed, memory=memory, peak_memory=peak_memory)
             iterations_list.append(iteration_result)
             total_elapsed += iteration_result.elapsed
-            wall_time = float(DEFAULT_TIMER())
+            wall_time = float(timer())
 
             # Update progress display if showing progress
             iteration_completion: float = progress_max * iteration_pass / iterations_min

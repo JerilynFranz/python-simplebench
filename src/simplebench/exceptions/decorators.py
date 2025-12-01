@@ -6,6 +6,10 @@ from .base import ErrorTag
 @enum_docstrings
 class _DecoratorsErrorTag(ErrorTag):
     """ErrorTags for simplebench.decorators in SimpleBench."""
+    BENCHMARK_TIMER_TYPE = "BENCHMARK_TIMER_TYPE"
+    """Something other than a callable was passed as the timer"""
+    BENCHMARK_TIMER_RETURN_TYPE = "BENCHMARK_TIMER_RETURN_TYPE"
+    """The callable passed as the timer did not return a float or int"""
     BENCHMARK_GROUP_TYPE = "BENCHMARK_GROUP_TYPE"
     """Something other than a str was passed as the group"""
     BENCHMARK_GROUP_VALUE = "BENCHMARK_GROUP_VALUE"

@@ -4,12 +4,14 @@ from __future__ import annotations
 from argparse import ArgumentError, ArgumentParser, Namespace
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Callable, Optional, Sequence
 
 from rich.console import Console
 from rich.progress import Progress
 
+from simplebench import defaults
 from simplebench.case import Case
+from simplebench.doc_utils import format_docstring
 from simplebench.enums import Color, Target, Verbosity
 from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.choice import Choice
@@ -34,6 +36,7 @@ class Session():
     This makes it the primary orchestrator for running benchmarks and generating
     reports.
     """
+    @format_docstring(DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__)
     def __init__(self,
                  *,
                  cases: Optional[Sequence[Case]] = None,
@@ -42,7 +45,8 @@ class Session():
                  args_parser: Optional[ArgumentParser] = None,
                  show_progress: bool = False,
                  output_path: Optional[Path] = None,
-                 console: Optional[Console] = None) -> None:
+                 console: Optional[Console] = None,
+                 timer: Callable[[], float | int] | None = None) -> None:
         """Container and orchestrator for session related information while running benchmarks.
 
         :param cases: A Sequence of benchmark cases for the session.
@@ -60,6 +64,9 @@ class Session():
         :param output_path: The output path for reports. Defaults to None.
         :param console: A Rich Console instance for displaying output. If None,
             a new Console will be automatically created. Defaults to None.
+        :param timer: A callable that returns the current time for timing benchmarks.
+            If None, a default timer `simplebench.defaults.DEFAULT_TIMER` ({DEFAULT_TIMER})
+            will be used. Defaults to None.
         :raises SimpleBenchTypeError: If the arguments are of the wrong type.
         """  # params here are for IDEs
         # public read/write properties with private backing fields
@@ -71,6 +78,7 @@ class Session():
         self.show_progress = show_progress
         self.output_path = output_path
         self.console = Console() if console is None else console
+        self.timer = defaults.DEFAULT_TIMER if timer is None else timer
 
         # private attributes
         self._args_parsed: bool = False
@@ -351,6 +359,32 @@ class Session():
 
         self.tasks.stop()
         self.tasks.clear()
+
+    @property
+    def timer(self) -> Callable[[], float | int]:
+        """The timer function used for benchmarking."""
+        return self._timer
+
+    @timer.setter
+    def timer(self, value: Callable[[], float | int]) -> None:
+        """Set the timer function used for benchmarking.
+
+        :param value: The timer function used for benchmarking.
+        :type value: Callable[[], float | int]
+        :raises SimpleBenchTypeError: If the value is not a callable that returns a float or int.
+        """
+        if not callable(value):
+            raise SimpleBenchTypeError(
+                f'timer must be a callable - cannot be a {type(value)}',
+                tag=_SessionErrorTag.PROPERTY_INVALID_TIMER_ARG
+            )
+        test_result = value()
+        if not isinstance(test_result, (float, int)):
+            raise SimpleBenchTypeError(
+                f'timer callable must return a float or int - cannot return a {type(test_result)}',
+                tag=_SessionErrorTag.PROPERTY_INVALID_TIMER_RETURN_TYPE
+            )
+        self._timer = value
 
     @property
     def default_runner(self) -> type[SimpleRunner] | None:

@@ -270,6 +270,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">warmup_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">min_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -340,12 +341,17 @@ Cannot be blank.</p></li>
 <li><p><strong>iterations</strong> – The minimum number of iterations to run for the benchmark.</p></li>
 <li><p><strong>warmup_iterations</strong> – The number of warmup iterations to run before the benchmark.</p></li>
 <li><p><strong>rounds</strong> – The number of rounds to run the benchmark within each iteration.</p></li>
-<li><p><strong>min_time</strong> – The minimum time in seconds to run the benchmark.  Must be a positive number.</p></li>
+<li><p><strong>timer</strong> – A callable that returns the current time. If None, the default timer is used.
+The timer function should return a float or int representing the current time.</p></li>
+<li><p><strong>min_time</strong> – The minimum time in seconds to run the benchmark.  Must be a positive number.
+Its reference depends on the timer used, but by default it is wall-clock time.</p></li>
 <li><p><strong>max_time</strong> – The maximum time in seconds to run the benchmark.
-Must be a positive number greater than min_time.</p></li>
+Must be a positive number greater than min_time. Its reference depends on the timer used,
+but by default it is wall-clock time.</p></li>
 <li><p><strong>timeout</strong> – The maximum time in seconds to allow the benchmark
 to run before timing out. If None, a default timeout of
-<cite>max_time</cite> + 10.0 is used. Must be a positive number.</p></li>
+<cite>max_time</cite> + 10.0 is used. Must be a positive number.
+Time for timeout is always referenced to wall-clock time.</p></li>
 <li><p><strong>variation_cols</strong> – kwargs to be used for cols to denote kwarg
 variations. Each key is a keyword argument name, and the value is the column label to use for that
 argument. Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These fields will be
@@ -365,6 +371,9 @@ from the list of options themselves.</p></li>
 <li><p><strong>n</strong> – The ‘n’ weighting of the benchmark case. Must be a positive integer or float.</p></li>
 <li><p><strong>use_field_for_n</strong> – If provided, use the value of this field from kwargs_variations
 to set ‘n’ dynamically for each variation.</p></li>
+<li><p><strong>timer</strong> – The timer function to use for the benchmark. If None, the default timer is used.
+The timer function should be a callable that returns a float or int representing the current
+time.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -399,6 +408,40 @@ to set ‘n’ dynamically for each variation.</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case">Case</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.decorators.validate_timer">
+<span class="sig-prename descclassname"><span class="pre">simplebench.decorators.</span></span><span class="sig-name descname"><span class="pre">validate_timer</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">param_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">type_error_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_DecoratorsErrorTag</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">return_type_error_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_DecoratorsErrorTag</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/decorators.html#validate_timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.decorators.validate_timer" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate the timer parameter for the benchmark decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timer</strong> – The timer function to validate.</p></li>
+<li><p><strong>param_name</strong> – The name of the parameter (for error messages).</p></li>
+<li><p><strong>type_error_tag</strong> – The error tag to use for type errors.</p></li>
+<li><p><strong>return_type_error_tag</strong> – The error tag to use for return type errors.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The validated timer function or None.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the timer is not callable.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the timer does not return a float or int.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -446,6 +489,7 @@ to set ‘n’ dynamically for each variation.</p></li>
 <li><a class="reference internal" href="#simplebench.decorators.benchmark"><code class="docutils literal notranslate"><span class="pre">benchmark()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.decorators.clear_registered_cases"><code class="docutils literal notranslate"><span class="pre">clear_registered_cases()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.decorators.get_registered_cases"><code class="docutils literal notranslate"><span class="pre">get_registered_cases()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.decorators.validate_timer"><code class="docutils literal notranslate"><span class="pre">validate_timer()</span></code></a></li>
 </ul>
 </li>
 </ul>

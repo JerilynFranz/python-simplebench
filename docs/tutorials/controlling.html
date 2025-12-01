@@ -261,7 +261,8 @@ control how benchmarks are executed.</p>
 <section id="key-control-options">
 <h2>Key Control Options<a class="headerlink" href="#key-control-options" title="Link to this heading">🔗</a></h2>
 <dl>
-<dt><strong>min_time</strong></dt><dd><p>A float specifying the minimum wallclock time (in seconds) to spend on each benchmark run.</p>
+<dt><strong>min_time</strong></dt><dd><p>A float specifying the minimum time (in seconds) to spend on each benchmark run.
+By default, this is measured as wallclock time.</p>
 <p>This ensures that benchmarks run long enough to get accurate measurements,
 particularly for very fast functions. The benchmark will continue running
 iterations <em>at least</em> until this minimum wallclock time is reached. If it has not
@@ -281,7 +282,8 @@ the system CPU time used.</p>
 </div>
 <p>The default is <a class="reference internal" href="../source/simplebench.defaults.html#simplebench.defaults.DEFAULT_MIN_TIME" title="simplebench.defaults.DEFAULT_MIN_TIME"><code class="xref py py-data docutils literal notranslate"><span class="pre">simplebench.defaults.DEFAULT_MIN_TIME</span></code></a>.</p>
 </dd>
-<dt><strong>max_time</strong></dt><dd><p>A float specifying the maximum wallclock time (in seconds) to spend on each benchmark run.</p>
+<dt><strong>max_time</strong></dt><dd><p>A float specifying the maximum time (in seconds) to spend on each benchmark run.
+By default, this is measured as wallclock time.</p>
 <p>This helps ensure that benchmarks complete in a reasonable timeframe,
 especially for functions that may take longer to execute.</p>
 <p>If the benchmark reaches this maximum time before completing the specified

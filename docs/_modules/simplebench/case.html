@@ -429,9 +429,10 @@
                  <span class="s1">&#39;_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_warmup_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_min_time&#39;</span><span class="p">,</span> <span class="s1">&#39;_max_time&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_variation_cols&#39;</span><span class="p">,</span> <span class="s1">&#39;_kwargs_variations&#39;</span><span class="p">,</span> <span class="s1">&#39;_runner&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_callback&#39;</span><span class="p">,</span> <span class="s1">&#39;_results&#39;</span><span class="p">,</span> <span class="s1">&#39;_options&#39;</span><span class="p">,</span> <span class="s1">&#39;_rounds&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;_benchmark_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_git_info&#39;</span><span class="p">,</span> <span class="s1">&#39;_timeout&#39;</span><span class="p">)</span>
+                 <span class="s1">&#39;_benchmark_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_git_info&#39;</span><span class="p">,</span> <span class="s1">&#39;_timeout&#39;</span><span class="p">,</span> <span class="s1">&#39;_timer&#39;</span><span class="p">)</span>
 
-    <span class="nd">@format_docstring</span><span class="p">(</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="o">=</span><span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="p">)</span>
+    <span class="nd">@format_docstring</span><span class="p">(</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="o">=</span><span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="p">,</span>
+                      <span class="n">DEFAULT_TIMER</span><span class="o">=</span><span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMER</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,)</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">benchmark_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">git_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GitInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -442,6 +443,7 @@
                  <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_ITERATIONS</span><span class="p">,</span>
                  <span class="n">warmup_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_WARMUP_ITERATIONS</span><span class="p">,</span>
                  <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_ROUNDS</span><span class="p">,</span>
+                 <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">min_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_MIN_TIME</span><span class="p">,</span>
                  <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_MAX_TIME</span><span class="p">,</span>
                  <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -491,9 +493,17 @@
 <span class="sd">            quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown</span>
 <span class="sd">            functions are called only once per iteration (all rounds in the same iteration share the same</span>
 <span class="sd">            setup/teardown context).</span>
-<span class="sd">        :param min_time: The minimum time for the benchmark to run in seconds.</span>
-<span class="sd">        :param max_time: The maximum time for the benchmark run in seconds.</span>
-<span class="sd">        :param timeout: How long to wait before timing out a benchmark run (in seconds).</span>
+<span class="sd">        :param timer: The timer function to use for the benchmark. If None, the default timer</span>
+<span class="sd">            from the Session() (if set) or from `simplebench.defaults.DEFAULT_TIMER` ({DEFAULT_TIMER})</span>
+<span class="sd">            is used by benchmark runners that require a timer.</span>
+
+<span class="sd">            The timer function should be a callable that returns a float or int representing the current time.</span>
+<span class="sd">        :param min_time: The minimum time for the benchmark to run in seconds. Its reference depends on the timer used,</span>
+<span class="sd">            but by default it is wall-clock time.</span>
+<span class="sd">        :param max_time: The maximum time for the benchmark run in seconds. Its reference depends on the timer used,</span>
+<span class="sd">            but by default it is wall-clock time.</span>
+<span class="sd">        :param timeout: How long to wait before timing out a benchmark run (in seconds). It is</span>
+<span class="sd">            measured as wall-clock time.</span>
 
 <span class="sd">            If None, it waits the full duration of ``max_time`` plus the default timeout grace period</span>
 <span class="sd">            ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a positive float or int that is greater</span>
@@ -581,6 +591,20 @@
                         <span class="n">rounds</span><span class="p">,</span> <span class="s2">&quot;rounds&quot;</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ROUNDS_TYPE</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_ROUNDS_VALUE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">timer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">timer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Invalid timer: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span><span class="si">}</span><span class="s1">. Must be a callable.&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMER_NOT_CALLABLE</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">test_value</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                    <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid timer: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span><span class="si">}</span><span class="s1">. Timer callable must return float or int, &#39;</span>
+                     <span class="sa">f</span><span class="s1">&#39;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">test_value</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">),</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMER_RETURN_TYPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span> <span class="o">=</span> <span class="n">timer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_min_time</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
                         <span class="n">min_time</span><span class="p">,</span> <span class="s2">&quot;min_time&quot;</span><span class="p">,</span>
                         <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_MIN_TIME_TYPE</span><span class="p">,</span>
@@ -1000,6 +1024,17 @@
 <span class="sd">        Rounds are multiple runs of the entire benchmark to get a better average for an iteration.</span>
 <span class="sd">        Each iteration will run the specified number of rounds after setup and before teardown. (default: 1)&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rounds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The timer function to use for the benchmark.</span>
+
+<span class="sd">        If None, the default timer from the Session() (if set) or from</span>
+<span class="sd">        `simplebench.defaults.DEFAULT_TIMER` is used by benchmark runners.</span>
+
+<span class="sd">        The timer function should be a callable that returns a float or int representing the current time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">min_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>

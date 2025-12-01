@@ -271,6 +271,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">warmup_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">min_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -405,9 +406,17 @@ quantization, loop overhead, and other measurement effects for very fast actions
 functions are called only once per iteration (all rounds in the same iteration share the same
 setup/teardown context).</p>
 </p></li>
-<li><p><strong>min_time</strong> – The minimum time for the benchmark to run in seconds.</p></li>
-<li><p><strong>max_time</strong> – The maximum time for the benchmark run in seconds.</p></li>
-<li><p><strong>timeout</strong> – <p>How long to wait before timing out a benchmark run (in seconds).</p>
+<li><p><strong>timer</strong> – <p>The timer function to use for the benchmark. If None, the default timer
+from the Session() (if set) or from <cite>simplebench.defaults.DEFAULT_TIMER</cite> (perf_counter_ns)
+is used by benchmark runners that require a timer.</p>
+<p>The timer function should be a callable that returns a float or int representing the current time.</p>
+</p></li>
+<li><p><strong>min_time</strong> – The minimum time for the benchmark to run in seconds. Its reference depends on the timer used,
+but by default it is wall-clock time.</p></li>
+<li><p><strong>max_time</strong> – The maximum time for the benchmark run in seconds. Its reference depends on the timer used,
+but by default it is wall-clock time.</p></li>
+<li><p><strong>timeout</strong> – <p>How long to wait before timing out a benchmark run (in seconds). It is
+measured as wall-clock time.</p>
 <p>If None, it waits the full duration of <code class="docutils literal notranslate"><span class="pre">max_time</span></code> plus the default timeout grace period
 (10.0 seconds). It must be a positive float or int that is greater
 than <code class="docutils literal notranslate"><span class="pre">max_time</span></code> if provided. This is a safety mechanism to prevent runaway benchmarks.</p>
@@ -696,7 +705,7 @@ accept them.</p>
 <dd class="field-odd"><p>A list of Results objects for each variation run of the benchmark case.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.html#simplebench.Results" title="simplebench.Results">Results</a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="simplebench.results.html#simplebench.results.Results" title="simplebench.results.Results">Results</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -754,6 +763,15 @@ parameters are required, they must be specified in the <cite>action</cite> funct
 <dt class="sig sig-object py" id="simplebench.case.Case.timeout">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.Case.timeout" title="Link to this definition">🔗</a></dt>
 <dd><p>The timeout for the benchmark in seconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.Case.timer">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.case.Case.timer" title="Link to this definition">🔗</a></dt>
+<dd><p>The timer function to use for the benchmark.</p>
+<p>If None, the default timer from the Session() (if set) or from
+<cite>simplebench.defaults.DEFAULT_TIMER</cite> is used by benchmark runners.</p>
+<p>The timer function should be a callable that returns a float or int representing the current time.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1078,6 +1096,7 @@ a transient ID based on the instance’s id() will be used.</p>
 <li><a class="reference internal" href="#simplebench.case.Case.run"><code class="docutils literal notranslate"><span class="pre">Case.run()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.runner"><code class="docutils literal notranslate"><span class="pre">Case.runner</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.timeout"><code class="docutils literal notranslate"><span class="pre">Case.timeout</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.Case.timer"><code class="docutils literal notranslate"><span class="pre">Case.timer</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.title"><code class="docutils literal notranslate"><span class="pre">Case.title</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.validate_action_signature"><code class="docutils literal notranslate"><span class="pre">Case.validate_action_signature()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.validate_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.validate_kwargs_variations()</span></code></a></li>

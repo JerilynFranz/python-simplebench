@@ -3,6 +3,12 @@ SimpleBench
 
 A framework for building and running benchmarks.
 
+* 0.7.0-alpha.0 2025-12-1
+  * Added configuration options for the timer used by benchmarking code.
+  * Enhanced the documentation for the Matplotlib theme class to include external links to the Matplotlib API.
+  * Added a note in the installation guide regarding the size impact of installing optional dependencies for graphs.
+  * Refactored the ScatterPlotReporter class method name for clarity.
+  * Adjusted the `pyproject.toml` to properly define optional dependencies for Matplotlib, Pandas, and Seaborn.
 * 0.6.1-alpha.0 2025-12-1
   * Fix for failed imports related to optional [graphs] dependencies in default install
 * 0.6.0-alpha.0 2025-12-1

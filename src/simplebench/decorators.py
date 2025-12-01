@@ -8,7 +8,6 @@ import simplebench.defaults as defaults
 from .case import Case, generate_benchmark_id
 from .doc_utils import format_docstring
 from .exceptions import SimpleBenchTypeError, SimpleBenchValueError, _DecoratorsErrorTag
-# simplebench.reporters.reporter
 from .reporters.reporter.options import ReporterOptions
 from .runners import SimpleRunner
 from .validators import (
@@ -37,6 +36,7 @@ def benchmark(
         iterations: int = defaults.DEFAULT_ITERATIONS,
         warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
         rounds: int = defaults.DEFAULT_ROUNDS,
+        timer: Callable[[], float | int] | None = None,
         min_time: float = defaults.DEFAULT_MIN_TIME,
         max_time: float = defaults.DEFAULT_MAX_TIME,
         timeout: float | None = None,
@@ -111,12 +111,17 @@ def benchmark(
     :param iterations: The minimum number of iterations to run for the benchmark.
     :param warmup_iterations: The number of warmup iterations to run before the benchmark.
     :param rounds: The number of rounds to run the benchmark within each iteration.
+    :param timer: A callable that returns the current time. If None, the default timer is used.
+        The timer function should return a float or int representing the current time.
     :param min_time: The minimum time in seconds to run the benchmark.  Must be a positive number.
+        Its reference depends on the timer used, but by default it is wall-clock time.
     :param max_time: The maximum time in seconds to run the benchmark.
-        Must be a positive number greater than min_time.
+        Must be a positive number greater than min_time. Its reference depends on the timer used,
+        but by default it is wall-clock time.
     :param timeout: The maximum time in seconds to allow the benchmark
         to run before timing out. If None, a default timeout of
         `max_time` + {DEFAULT_TIMEOUT_GRACE_PERIOD} is used. Must be a positive number.
+        Time for timeout is always referenced to wall-clock time.
     :param variation_cols: kwargs to be used for cols to denote kwarg
         variations. Each key is a keyword argument name, and the value is the column label to use for that
         argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
@@ -136,6 +141,9 @@ def benchmark(
     :param n: The 'n' weighting of the benchmark case. Must be a positive integer or float.
     :param use_field_for_n: If provided, use the value of this field from kwargs_variations
         to set 'n' dynamically for each variation.
+    :param timer: The timer function to use for the benchmark. If None, the default timer is used.
+        The timer function should be a callable that returns a float or int representing the current
+        time.
     :return: A decorator that registers the function for benchmarking and returns it unmodified.
     :rtype: Callable[[Callable[P, R]], Callable[P, R]]
     :raises SimpleBenchTypeError: If any argument is of an incorrect type.
@@ -178,6 +186,11 @@ def benchmark(
         rounds, 'rounds',
         _DecoratorsErrorTag.BENCHMARK_ROUNDS_TYPE,
         _DecoratorsErrorTag.BENCHMARK_ROUNDS_VALUE)
+
+    timer = validate_timer(
+        timer, 'timer',
+        _DecoratorsErrorTag.BENCHMARK_TIMER_TYPE,
+        _DecoratorsErrorTag.BENCHMARK_TIMER_RETURN_TYPE)
 
     min_time = validate_positive_float(
         min_time, 'min_time',
@@ -276,6 +289,7 @@ def benchmark(
             iterations=iterations,
             warmup_iterations=warmup_iterations,
             rounds=rounds,
+            timer=timer,
             min_time=min_time,
             max_time=max_time,
             timeout=timeout,
@@ -310,3 +324,35 @@ def clear_registered_cases() -> None:
     This can be useful in testing scenarios to reset the state.
     """
     _DECORATOR_CASES.clear()
+
+
+def validate_timer(
+        timer: Callable[[], float | int] | None,
+        param_name: str,
+        type_error_tag: _DecoratorsErrorTag,
+        return_type_error_tag: _DecoratorsErrorTag
+) -> Callable[[], float | int] | None:
+    """Validate the timer parameter for the benchmark decorator.
+
+    :param timer: The timer function to validate.
+    :param param_name: The name of the parameter (for error messages).
+    :param type_error_tag: The error tag to use for type errors.
+    :param return_type_error_tag: The error tag to use for return type errors.
+    :return: The validated timer function or None.
+    :raises SimpleBenchTypeError: If the timer is not callable.
+    :raises SimpleBenchTypeError: If the timer does not return a float or int.
+    """
+    if timer is not None:
+        if not callable(timer):
+            raise SimpleBenchTypeError(
+                f"The '{param_name}' parameter to the @benchmark decorator must be a callable if provided.",
+                tag=type_error_tag)
+
+        test_value = timer()
+        if not isinstance(test_value, (float, int)):
+            raise SimpleBenchTypeError(
+                f"The callable provided for the '{param_name}' parameter to the @benchmark decorator "
+                "must return a float or int.",
+                tag=return_type_error_tag)
+
+    return timer

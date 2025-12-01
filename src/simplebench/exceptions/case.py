@@ -8,6 +8,10 @@ from .base import ErrorTag
 class _CaseErrorTag(ErrorTag):
     """ErrorTags for case-related exceptions.
     """
+    INVALID_TIMER_NOT_CALLABLE = "INVALID_TIMER_NOT_CALLABLE"
+    """The timer argument passed to the Case() constructor is not a callable."""
+    INVALID_TIMER_RETURN_TYPE = "INVALID_TIMER_RETURN_TYPE"
+    """The timer callable passed to the Case() constructor does not return a float or int."""
     INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS = "INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS"
     """A key in kwargs_variations was not found in the action function parameters."""
     INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS = "INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS"

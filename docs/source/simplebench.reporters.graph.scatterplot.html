@@ -416,43 +416,6 @@ values are invalid.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.graph.scatterplot.ScatterPlotReporter.old_render">
-<span class="sig-name descname"><span class="pre">old_render</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/graph/scatterplot/reporter/reporter.html#ScatterPlotReporter.old_render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.old_render" title="Link to this definition">🔗</a></dt>
-<dd><p>Render the scatter plot graph and return it as bytes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>case</strong> – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance representing the
-benchmarked code.</p></li>
-<li><p><strong>section</strong> – The section of the results to plot.</p></li>
-<li><p><strong>options</strong> – The options for rendering the scatter plot.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The rendered graph as bytes. The format is determined by the options.
-The defaults are defined in <a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotOptions" title="simplebench.reporters.graph.scatterplot.ScatterPlotOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a>.</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided arguments are not
-of the expected types or values.</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the provided values are not
-valid.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.graph.scatterplot.ScatterPlotReporter.render">
 <span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span>
 
@@ -500,7 +463,6 @@ valid.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotConfig"><code class="docutils literal notranslate"><span class="pre">ScatterPlotConfig</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotOptions"><code class="docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter.old_render"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter.old_render()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.graph.scatterplot.reporter.html#simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter.render"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter.render()</span></code></a></li>
 </ul>
 </li>
@@ -573,7 +535,6 @@ valid.</p></li>
 <li><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotConfig"><code class="docutils literal notranslate"><span class="pre">ScatterPlotConfig</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotOptions"><code class="docutils literal notranslate"><span class="pre">ScatterPlotOptions</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.old_render"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter.old_render()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.graph.scatterplot.ScatterPlotReporter.render"><code class="docutils literal notranslate"><span class="pre">ScatterPlotReporter.render()</span></code></a></li>
 </ul>
 </li>
