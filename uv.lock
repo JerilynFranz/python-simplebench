@@ -2365,10 +2365,19 @@ name = "simplebench"
 source = { editable = "." }
 dependencies = [
     { name = "dulwich" },
-    { name = "matplotlib" },
-    { name = "pandas" },
     { name = "py-cpuinfo" },
     { name = "rich" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "matplotlib" },
+    { name = "pandas" },
+    { name = "seaborn" },
+]
+graphs = [
+    { name = "matplotlib" },
+    { name = "pandas" },
     { name = "seaborn" },
 ]
 
@@ -2399,13 +2408,16 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "dulwich", specifier = ">=0.24.10" },
-    { name = "matplotlib", specifier = ">=3.10.6" },
-    { name = "pandas", specifier = ">=2.3.2" },
+    { name = "matplotlib", marker = "extra == 'all'", specifier = ">=3.10.6" },
+    { name = "matplotlib", marker = "extra == 'graphs'", specifier = ">=3.10.6" },
+    { name = "pandas", marker = "extra == 'all'", specifier = ">=2.3.2" },
+    { name = "pandas", marker = "extra == 'graphs'", specifier = ">=2.3.2" },
     { name = "py-cpuinfo", specifier = ">=9.0.0" },
     { name = "rich", specifier = ">=14.1.0" },
-    { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "seaborn", marker = "extra == 'all'", specifier = ">=0.13.2" },
+    { name = "seaborn", marker = "extra == 'graphs'", specifier = ">=0.13.2" },
 ]
-provides-extras = ["dev"]
+provides-extras = ["all", "graphs"]
 
 [package.metadata.requires-dev]
 dev = [
