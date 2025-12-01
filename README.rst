@@ -50,7 +50,7 @@ Minimum Python Version: 3.10
 
   git clone https://github.com/JerilynFranz/python-simplebench
   cd python-simplebench
-  python3 -m pip install .
+  python3 -m pip install .[all]
 
 Documentation
 -------------
