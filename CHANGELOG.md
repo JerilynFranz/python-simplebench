@@ -3,6 +3,8 @@ SimpleBench
 
 A framework for building and running benchmarks.
 
+* 0.6.1-alpha.0 2025-12-1
+  * Fix for failed imports related to optional [graphs] dependencies in default install
 * 0.6.0-alpha.0 2025-12-1
   * Splitting of pypi install groups
     * default - all reporters except graph reporters
