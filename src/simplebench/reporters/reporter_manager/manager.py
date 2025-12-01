@@ -10,22 +10,23 @@ global registry.
 """
 from __future__ import annotations
 
+import importlib
 from argparse import ArgumentParser
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
-from simplebench.reporters.csv import CSVReporter
-from simplebench.reporters.graph.scatterplot import ScatterPlotReporter
-from simplebench.reporters.json import JSONReporter
 from simplebench.reporters.reporter import Reporter
-from simplebench.reporters.rich_table import RichTableReporter
 
 from .decorators.register_reporter import get_registered_reporters
 from .exceptions import _ReporterManagerErrorTag
 
-_PREDEFINED_REPORTERS: list[type[Reporter]] = [
-    CSVReporter, ScatterPlotReporter, RichTableReporter, JSONReporter]
+_PREDEFINED_REPORTERS: list[tuple[str, str]] = [
+    ("simplebench.reporters.csv", "CSVReporter"),
+    ("simplebench.reporters.graph.scatterplot", "ScatterPlotReporter"),
+    ("simplebench.reporters.rich_table", "RichTableReporter"),
+    ("simplebench.reporters.json", "JSONReporter"),
+]
 """Container for all predefined Reporter classes.
 
 These reporters are registered by default in the ReporterManager.
@@ -72,6 +73,9 @@ class ReporterManager():
         By default, this loads a set of predefined :class:`~simplebench.reporters.reporter.Reporter`
         instances and then any reporters registered via the :func:`~.register_reporter` decorator.
 
+        If one of the predefined reporters' dependencies are not installed, that reporter
+        will be skipped and not registered.
+
         If desired, this can be skipped by setting ``load_defaults`` to ``False``. In
         which case, the manager starts with an empty registry and
         :class:`~simplebench.reporters.reporter.Reporter` instances can be added via the
@@ -86,8 +90,16 @@ class ReporterManager():
 
         if not load_defaults:
             return
-        for predefined_reporter in _PREDEFINED_REPORTERS:
-            self.register(predefined_reporter())  # type: ignore[reportCallIssue, call-arg]
+        for module_name, class_name in _PREDEFINED_REPORTERS:
+            try:
+                module = importlib.import_module(module_name)
+                reporter_class = getattr(module, class_name)
+                self.register(reporter_class())
+            except ImportError:
+                # This allows for optional dependencies. If a reporter's dependencies
+                # are not installed, it will not be available and we can just
+                # skip it.
+                pass
         for registered_reporter in get_registered_reporters():
             self.register(registered_reporter)
 
