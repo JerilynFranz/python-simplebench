@@ -10,4 +10,3 @@ __all__ = [
     "_ReporterErrorTag",
     "ReporterOptions",
 ]
-"""Reporter base package in the reporters package."""

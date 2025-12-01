@@ -14,7 +14,7 @@ As such it has the following goals:
 Current Status
 --------------
 
-Alpha release 0.5.1-alpha.0
+Alpha release 0.6.1-alpha.0
 
 Functionally complete but not yet 100% tested or documented.
 There may be breaking changes before reaching version 1.0.
@@ -50,7 +50,7 @@ Minimum Python Version: 3.10
 
   git clone https://github.com/JerilynFranz/python-simplebench
   cd python-simplebench
-  python3 -m pip install .
+  python3 -m pip install .[all]
 
 Documentation
 -------------
