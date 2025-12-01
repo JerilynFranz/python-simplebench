@@ -29,9 +29,19 @@ Minimum Python Version: 3.10
 **From PyPI**
 
 .. code-block:: shell
-  :name: install-simplebench
+  :name: install-using-pip
 
-    python3 -m pip install simplebench
+    python -m pip install simplebench
+
+.. code-block:: shell
+  :name: install-using-pip-with-graphs
+
+    python -m pip install simplebench[graphs]
+
+.. code-block:: shell
+  :name: install-using-pip-with-all-extras
+
+    python -m pip install simplebench[all]
 
 **From Source**
 
