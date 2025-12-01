@@ -3,9 +3,14 @@ SimpleBench
 
 A framework for building and running benchmarks.
 
-* 0.5.1-alpha-0 2025-11-30
+* 0.6.0-alpha.0 2025-12-1
+  * Splitting of pypi install groups
+    * default - all reporters except graph reporters
+    * graph - add graph reporters to default install
+    * all - all reporters including graph reporters
+* 0.5.1-alpha.0 2025-11-30
   * Documentation updates
-* 0.5.0-alpha-0 2025-11-30
+* 0.5.0-alpha.0 2025-11-30
   * Extended CSVReporter and RichTableReporter to allow customization
     of output columns using options.
   * Added checked support for explict parameters in benchmark functions.
