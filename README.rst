@@ -60,6 +60,7 @@ Documentation
 * `Tutorials <https://python-simplebench.readthedocs.io/en/latest/tutorials.html>`_
    * `Basic Benchmark <https://python-simplebench.readthedocs.io/en/latest/tutorials/basic.html>`_
    * `Parameterized Benchmark <https://python-simplebench.readthedocs.io/en/latest/tutorials/parameterized.html>`_
+   * `Controlling Benchmark Execution <https://python-simplebench.readthedocs.io/en/latest/tutorials/controlling.html>`_
 * `Command-Line Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options.html>`_
 * `Reports <https://python-simplebench.readthedocs.io/en/latest/reports.html>`_
    * `Rich Table Report <https://python-simplebench.readthedocs.io/en/latest/reports/rich_table_report.html>`_
