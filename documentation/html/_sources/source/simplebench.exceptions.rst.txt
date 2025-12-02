@@ -23,4 +23,3 @@ Submodules
    simplebench.exceptions.session
    simplebench.exceptions.si_units
    simplebench.exceptions.tasks
-   simplebench.exceptions.utils

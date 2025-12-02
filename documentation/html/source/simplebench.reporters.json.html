@@ -6,12 +6,13 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.json package - simplebench 0.3.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.json package - simplebench 0.7.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.7.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.7.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -198,8 +199,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/controlling.html">Controlling Benchmark Execution</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/json_report.html">JSON Report</a></li>
@@ -268,10 +275,10 @@ from benchmark results.</p>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">sections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">default_targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><span class="pre">Format</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">sections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section" title="simplebench.enums.section.Section"><span class="pre">Section</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">default_targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format" title="simplebench.enums.format.Format"><span class="pre">Format</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">file_suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">file_unique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -285,6 +292,10 @@ from benchmark results.</p>
 <p>This class inherits from <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig" title="simplebench.reporters.reporter.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a> and provides a
 type-safe, discoverable interface for overriding the default settings
 of a <a class="reference internal" href="#simplebench.reporters.json.JSONReporter" title="simplebench.reporters.json.JSONReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONReporter</span></code></a>.</p>
+<p>Initialize the JSONReporter configuration.</p>
+<p>Accepts keyword arguments to override any of the default configurations.
+All arguments are optional. If not provided, the default value for
+JSONReporter will be used.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -299,6 +310,13 @@ instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to include full data in the JSON output.</p>
+</dd>
+</dl>
+<p>Initialize JSONChoiceOptions with default targets and subdirectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to include full data in the JSON output.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 </dd>
 </dl>
 <dl class="py property">
@@ -363,44 +381,27 @@ name, supported <a class="reference internal" href="simplebench.enums.html#simpl
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.json.JSONReporter.mean_change">
-<span class="sig-name descname"><span class="pre">mean_change</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">second</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/json/reporter/reporter.html#JSONReporter.mean_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.json.JSONReporter.mean_change" title="Link to this definition">🔗</a></dt>
-<dd><p>Compare two Case instances for a given section and return the change as a float ratio.</p>
-<p>The float ratio is calculated as <code class="docutils literal notranslate"><span class="pre">(value2</span> <span class="pre">-</span> <span class="pre">value1)</span> <span class="pre">/</span> <span class="pre">value1</span></code>, where <code class="docutils literal notranslate"><span class="pre">value1</span></code> and
-<code class="docutils literal notranslate"><span class="pre">value2</span></code> are the mean values for the specified section in the first and second
-cases, respectively.</p>
-<p>A value of <code class="docutils literal notranslate"><span class="pre">0.0</span></code> indicates no change, a positive value indicates an increase,
-and a negative value indicates a decrease. If either case does not have data for the
-specified section, <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned. The ratio is limited to 3 significant digits
-for clarity and to prevent a false sense of precision to the result.</p>
-<p>If first mean value is <code class="docutils literal notranslate"><span class="pre">0.0</span></code> and second mean value is also <code class="docutils literal notranslate"><span class="pre">0.0</span></code>, the change is
-defined as <code class="docutils literal notranslate"><span class="pre">0.0</span></code>. If first mean value is <code class="docutils literal notranslate"><span class="pre">0.0</span></code> and second mean value is non-zero,
-the change is defined as <code class="docutils literal notranslate"><span class="pre">None</span></code> to indicate incomparability.</p>
+<p>Initialize the JSONReporter.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The exception documentation below refers to validation of subclass configuration
+class variables <code class="docutils literal notranslate"><span class="pre">_OPTIONS_TYPE</span></code> and <code class="docutils literal notranslate"><span class="pre">_OPTIONS_KWARGS</span></code>. These must be correctly
+defined in any subclass of <a class="reference internal" href="#simplebench.reporters.json.JSONReporter" title="simplebench.reporters.json.JSONReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONReporter</span></code></a> to ensure proper functionality.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>first</strong> – The first <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance to compare.</p></li>
-<li><p><strong>second</strong> – The second <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance to compare.</p></li>
-<li><p><strong>section</strong> – The <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> to compare.</p></li>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="#simplebench.reporters.json.JSONConfig" title="simplebench.reporters.json.JSONConfig"><em>JSONConfig</em></a><em> | </em><em>None</em>) – An optional configuration object to override default reporter settings.
+If not provided, default settings will be used.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the subclass configuration
+types are invalid.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the subclass configuration
+values are invalid.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The change between the mean for two cases for the specified section,
-or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the section is not present in either case or the numbers are
-incomparable.</p>
-</dd>
 </dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.json.JSONReporter.render">
 <span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span>
@@ -496,7 +497,6 @@ needed.</p></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter"><code class="docutils literal notranslate"><span class="pre">JSONReporter</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.mean_change"><code class="docutils literal notranslate"><span class="pre">JSONReporter.mean_change()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.render"><code class="docutils literal notranslate"><span class="pre">JSONReporter.render()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.json.reporter.html#simplebench.reporters.json.reporter.JSONReporter.run_report"><code class="docutils literal notranslate"><span class="pre">JSONReporter.run_report()</span></code></a></li>
 </ul>
@@ -573,7 +573,6 @@ needed.</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.reporters.json.JSONReporter"><code class="docutils literal notranslate"><span class="pre">JSONReporter</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.reporters.json.JSONReporter.mean_change"><code class="docutils literal notranslate"><span class="pre">JSONReporter.mean_change()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.json.JSONReporter.render"><code class="docutils literal notranslate"><span class="pre">JSONReporter.render()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.json.JSONReporter.run_report"><code class="docutils literal notranslate"><span class="pre">JSONReporter.run_report()</span></code></a></li>
 </ul>
@@ -590,11 +589,12 @@ needed.</p></li>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=1162025f"></script>
+</div><script src="../_static/documentation_options.js?v=dd5748a0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

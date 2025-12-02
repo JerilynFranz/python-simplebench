@@ -5,12 +5,13 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.rich_table.reporter.options.options - simplebench 0.3.0-alpha.0 documentation</title>
+        <title>simplebench.reporters.rich_table.reporter.options.options - simplebench 0.6.1-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -162,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../../index.html"><div class="brand">simplebench 0.3.0-alpha.0 documentation</div></a>
+      <a href="../../../../../../index.html"><div class="brand">simplebench 0.6.1-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,7 +184,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.6.1-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -197,8 +198,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/controlling.html">Controlling Benchmark Execution</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../../reports/json_report.html">JSON Report</a></li>
@@ -240,12 +247,29 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.reporters.rich_table.reporter.options.options</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Reporter for benchmark results using Rich tables on the console.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Reporter for benchmark results using Rich tables on the console.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_int_range</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_bool</span><span class="p">,</span> <span class="n">validate_int_range</span><span class="p">,</span> <span class="n">validate_sequence_of_type</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RichTableOptionsErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">RichTableField</span>
+
+<span class="n">_DEFAULT_RICH_TABLE_FIELDS</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">RichTableField</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">N</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">ITERATIONS</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">ROUNDS</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">ELAPSED_SECONDS</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">MEAN</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">MEDIAN</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">MIN</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">MAX</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">P5</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">P95</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">STD_DEV</span><span class="p">,</span>
+    <span class="n">RichTableField</span><span class="o">.</span><span class="n">RSD_PERCENT</span><span class="p">,</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="RichTableOptions">
@@ -257,28 +281,46 @@
 <span class="sd">    It is accessed via the ``options`` attribute of a</span>
 <span class="sd">    :class:`~simplebench.reporters.choice.Choice` instance.</span>
 
-<span class="sd">    :ivar virtual_width: The width of the Rich table output in characters when rendered</span>
+<span class="sd">    :param virtual_width: The width of the Rich table output in characters when rendered</span>
 <span class="sd">        to the filesystem or via callback. Must be between 80 and 1000 characters or</span>
 <span class="sd">        ``None``. If ``None``, no width constraint is applied.</span>
 
 <span class="sd">        The virtual width is used to determine how the table should be formatted when</span>
 <span class="sd">        rendered to non-console outputs, such as files or callbacks. This allows for</span>
 <span class="sd">        better control over the appearance of the table in different contexts.</span>
-<span class="sd">    :vartype virtual_width: int, optional</span>
+<span class="sd">    :param fields: A tuple of Rich Table fields to include in the output.</span>
+<span class="sd">        If none is specifically set, a predefined set of fields is used. The fields appear in the order</span>
+<span class="sd">        specified in the sequence.</span>
+
+<span class="sd">        If specified, all fields must be from the :class:`~.RichTableField` enum.</span>
+
+<span class="sd">        The default fields, in order, are:</span>
+
+<span class="sd">        - :attr:`~.RichTableField.N`</span>
+<span class="sd">        - :attr:`~.RichTableField.ITERATIONS`</span>
+<span class="sd">        - :attr:`~.RichTableField.ROUNDS`</span>
+<span class="sd">        - :attr:`~.RichTableField.ELAPSED_SECONDS`</span>
+<span class="sd">        - :attr:`~.RichTableField.MEAN`</span>
+<span class="sd">        - :attr:`~.RichTableField.MEDIAN`</span>
+<span class="sd">        - :attr:`~.RichTableField.MIN`</span>
+<span class="sd">        - :attr:`~.RichTableField.MAX`</span>
+<span class="sd">        - :attr:`~.RichTableField.P5`</span>
+<span class="sd">        - :attr:`~.RichTableField.P95`</span>
+<span class="sd">        - :attr:`~.RichTableField.STD_DEV`</span>
+<span class="sd">        - :attr:`~.RichTableField.RSD_PERCENT`</span>
+
+<span class="sd">    :param variation_cols_last: Whether to place the variation columns (if any) at the end of the rows.</span>
+<span class="sd">        Defaults to ``False`` - which places the variation columns at the start of the rows.</span>
+<span class="sd">    :raises ~simplebench.exceptions.SimpleBenchTypeError: If any parameter is of an invalid type.</span>
+<span class="sd">    :raises ~simplebench.exceptions.SimpleBenchValueError: If ``virtual_width`` is not</span>
+<span class="sd">        between 80 and 10000 characters when specified or if ``fields`` is an empty sequence.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">virtual_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a RichTableOptions instance.</span>
-
-<span class="sd">        :param virtual_width: The width of the Rich table output when rendered to the</span>
-<span class="sd">            filesystem or via callback. Must be between 80 and 1000 characters or</span>
-<span class="sd">            ``None``. If ``None``, no width constraint is applied. Defaults to ``None``.</span>
-<span class="sd">        :type virtual_width: int, optional</span>
-<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchTypeError: If ``virtual_width`` is not</span>
-<span class="sd">            an integer or ``None``.</span>
-<span class="sd">        :raises ~simplebench.exceptions.SimpleBenchValueError: If ``virtual_width`` is not</span>
-<span class="sd">            between 80 and 10000 characters when specified.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+                 <span class="n">virtual_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">fields</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">RichTableField</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">variation_cols_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RichTableOptions instance.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">virtual_width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_virtual_width</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
@@ -287,6 +329,15 @@
                 <span class="n">_RichTableOptionsErrorTag</span><span class="o">.</span><span class="n">INVALID_VIRTUAL_WIDTH_TYPE</span><span class="p">,</span>
                 <span class="n">_RichTableOptionsErrorTag</span><span class="o">.</span><span class="n">INVALID_VIRTUAL_WIDTH_VALUE</span><span class="p">,</span>
                 <span class="n">min_value</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RichTableField</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">validate_sequence_of_type</span><span class="p">(</span>
+            <span class="n">fields</span> <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_DEFAULT_RICH_TABLE_FIELDS</span><span class="p">,</span>
+            <span class="n">RichTableField</span><span class="p">,</span> <span class="s1">&#39;fields&#39;</span><span class="p">,</span>
+            <span class="n">_RichTableOptionsErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_FIELDS_TYPE</span><span class="p">,</span>
+            <span class="n">_RichTableOptionsErrorTag</span><span class="o">.</span><span class="n">INVALID_DEFAULT_FIELDS_VALUE</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols_last</span> <span class="o">=</span> <span class="n">validate_bool</span><span class="p">(</span>
+            <span class="n">variation_cols_last</span><span class="p">,</span> <span class="s1">&#39;variation_cols_last&#39;</span><span class="p">,</span>
+            <span class="n">_RichTableOptionsErrorTag</span><span class="o">.</span><span class="n">INVALID_VARIATION_COLS_LAST_TYPE</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">virtual_width</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -295,9 +346,24 @@
 <span class="sd">        The virtual width is used when rendered to the filesystem or via callback.</span>
 
 <span class="sd">        :return: The virtual width of the Rich table output in characters.</span>
-<span class="sd">        :rtype: int, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_virtual_width</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_virtual_width</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RichTableField</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the fields, in order, to include in the Rich table when rendering.</span>
+
+<span class="sd">        :return: A tuple of RichTableField enums representing the default fields.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols_last</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether variation columns are placed at the end of the rows.</span>
+
+<span class="sd">        :return: True if variation columns are placed at the end, False if at the start.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols_last</span></div>
 
 </pre></div>
         </article>
@@ -331,11 +397,12 @@
       
     </aside>
   </div>
-</div><script src="../../../../../../_static/documentation_options.js?v=6c195044"></script>
+</div><script src="../../../../../../_static/documentation_options.js?v=8c7f9c82"></script>
     <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../../_static/copybutton.js?v=30646c52"></script>
+    <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

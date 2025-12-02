@@ -6,12 +6,13 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.enums module - simplebench 0.3.1-alpha.0 documentation</title>
+        <title>simplebench.enums package - simplebench 0.7.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.7.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.7.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -198,8 +199,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/controlling.html">Controlling Benchmark Execution</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/json_report.html">JSON Report</a></li>
@@ -247,11 +254,25 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-simplebench.enums">
-<span id="simplebench-enums-module"></span><h1>simplebench.enums module<a class="headerlink" href="#module-simplebench.enums" title="Link to this heading">🔗</a></h1>
-<p>Various enums for SimpleBench.</p>
+<span id="simplebench-enums-package"></span><h1>simplebench.enums package<a class="headerlink" href="#module-simplebench.enums" title="Link to this heading">🔗</a></h1>
+<p>Public API for enums.</p>
+<p>Enumarations used throughout SimpleBench.</p>
+<section id="provides">
+<h2>Provides<a class="headerlink" href="#provides" title="Link to this heading">🔗</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#simplebench.enums.Color" title="simplebench.enums.Color"><code class="xref py py-class docutils literal notranslate"><span class="pre">Color</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.enums.ExitCode" title="simplebench.enums.ExitCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExitCode</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.enums.FlagType" title="simplebench.enums.FlagType"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlagType</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.enums.Verbosity" title="simplebench.enums.Verbosity"><code class="xref py py-class docutils literal notranslate"><span class="pre">Verbosity</span></code></a></p></li>
+<li><p><a class="reference internal" href="#simplebench.enums.enum_docstrings" title="simplebench.enums.enum_docstrings"><code class="xref py py-func docutils literal notranslate"><span class="pre">enum_docstrings()</span></code></a></p></li>
+</ul>
+</section>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.enums.Color">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums.html#Color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Color" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/color.html#Color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Color" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Colors for console output.</p>
 <dl class="simple">
@@ -318,8 +339,61 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="simplebench.enums.ExitCode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">ExitCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/exit_code.html#ExitCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.ExitCode" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Exit codes for SimpleBench CLI.</p>
+<dl class="simple">
+<dt>Defined Exit Codes are:</dt><dd><ul class="simple">
+<li><p>SUCCESS: Successful execution.</p></li>
+<li><p>RUNTIME_ERROR: General runtime error during execution.</p></li>
+<li><p>CLI_ARGUMENTS_ERROR: Error while processing command line arguments.</p></li>
+<li><p>KEYBOARD_INTERRUPT: Keyboard interrupt occurred.</p></li>
+<li><p>BENCHMARK_TIMED_OUT: Benchmark execution timed out.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.ExitCode.BENCHMARK_ERROR">
+<span class="sig-name descname"><span class="pre">BENCHMARK_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#simplebench.enums.ExitCode.BENCHMARK_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>An error occurred during benchmark execution.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.ExitCode.BENCHMARK_TIMED_OUT">
+<span class="sig-name descname"><span class="pre">BENCHMARK_TIMED_OUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#simplebench.enums.ExitCode.BENCHMARK_TIMED_OUT" title="Link to this definition">🔗</a></dt>
+<dd><p>Benchmark execution timed out.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.ExitCode.CLI_ARGUMENTS_ERROR">
+<span class="sig-name descname"><span class="pre">CLI_ARGUMENTS_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#simplebench.enums.ExitCode.CLI_ARGUMENTS_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>Error while processing command line arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.ExitCode.KEYBOARD_INTERRUPT">
+<span class="sig-name descname"><span class="pre">KEYBOARD_INTERRUPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#simplebench.enums.ExitCode.KEYBOARD_INTERRUPT" title="Link to this definition">🔗</a></dt>
+<dd><p>Keyboard interrupt occurred.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.ExitCode.RUNTIME_ERROR">
+<span class="sig-name descname"><span class="pre">RUNTIME_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.enums.ExitCode.RUNTIME_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>Runtime error during execution.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.enums.ExitCode.SUCCESS">
+<span class="sig-name descname"><span class="pre">SUCCESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#simplebench.enums.ExitCode.SUCCESS" title="Link to this definition">🔗</a></dt>
+<dd><p>Successful execution.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="simplebench.enums.FlagType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">FlagType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums.html#FlagType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.FlagType" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">FlagType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/flag_type.html#FlagType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.FlagType" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Types of command-line flags for reporters.</p>
 <dl class="simple">
@@ -362,13 +436,12 @@ in which case the reporter will use the default targets.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.enums.Format">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums.html#Format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Format" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/format.html#Format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Format" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Categories for different output formats.</p>
 <dl class="simple">
 <dt>Defined Formats are:</dt><dd><ul class="simple">
 <li><p>PLAIN_TEXT: Plain text format.</p></li>
-<li><p>MARKDOWN: Markdown format.</p></li>
 <li><p>RICH_TEXT: Rich text format.</p></li>
 <li><p>CSV: CSV format.</p></li>
 <li><p>JSON: JSON format.</p></li>
@@ -402,12 +475,6 @@ in which case the reporter will use the default targets.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.enums.Format.MARKDOWN">
-<span class="sig-name descname"><span class="pre">MARKDOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'markdown'</span></em><a class="headerlink" href="#simplebench.enums.Format.MARKDOWN" title="Link to this definition">🔗</a></dt>
-<dd><p>Markdown format</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.enums.Format.PLAIN_TEXT">
 <span class="sig-name descname"><span class="pre">PLAIN_TEXT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'plain</span> <span class="pre">text'</span></em><a class="headerlink" href="#simplebench.enums.Format.PLAIN_TEXT" title="Link to this definition">🔗</a></dt>
 <dd><p>Plain text format</p>
@@ -423,7 +490,7 @@ in which case the reporter will use the default targets.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.enums.Section">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums.html#Section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Section" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/section.html#Section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Section" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Categories for case results sections in reporters.</p>
 <p>This is used by reporters to specify which sections of benchmark results to include
@@ -472,7 +539,7 @@ in their output.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.enums.Target">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums.html#Target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Target" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/target.html#Target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Target" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Categories for different output targets.</p>
 <p>The enums are used in generating calling parameters
@@ -527,7 +594,7 @@ for the report() methods in the Reporter subclasses.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.enums.Verbosity">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Verbosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums.html#Verbosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Verbosity" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.</span></span><span class="sig-name descname"><span class="pre">Verbosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/verbosity.html#Verbosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.Verbosity" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Verbosity level enums for console output.</p>
 <dl class="simple">
@@ -578,7 +645,7 @@ Status displays are not shown during runs.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">enum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">E</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">E</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/enums.html#enum_docstrings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.enum_docstrings" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">E</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/enums/decorators.html#enum_docstrings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.enum_docstrings" title="Link to this definition">🔗</a></dt>
 <dd><p>Attach docstrings to enum members.</p>
 <p>Docstrings are string literals that appear directly below the enum member
 assignment expression within triple-quotes.</p>
@@ -588,30 +655,120 @@ docstrings for each member and attaches them to the respective enum members.</p>
 that can extract and display these docstrings.</p>
 <p>This code is adapted from:
 <a class="reference external" href="https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums">https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums</a></p>
-<p class="rubric">Example</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@enum_docstrings</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">SomeEnum</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Docstring for the SomeEnum enum&#39;&#39;&#39;</span>
-
-    <span class="n">foo_member</span> <span class="o">=</span> <span class="s2">&quot;foo_value&quot;</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Docstring for the foo_member enum member&#39;&#39;&#39;</span>
-
-<span class="n">SomeEnum</span><span class="o">.</span><span class="n">foo_member</span><span class="o">.</span><span class="vm">__doc__</span>  <span class="c1"># &#39;Docstring for the foo_member enum member&#39;</span>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Example usage of enum_docstrings decorator</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nd">@enum_docstrings</span>
+<span class="linenos">2</span><span class="k">class</span><span class="w"> </span><span class="nc">SomeEnum</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="linenos">3</span><span class="w">    </span><span class="sd">&#39;&#39;&#39;Docstring for the SomeEnum enum&#39;&#39;&#39;</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span>    <span class="n">foo_member</span> <span class="o">=</span> <span class="s2">&quot;foo_value&quot;</span>
+<span class="linenos">6</span><span class="w">    </span><span class="sd">&#39;&#39;&#39;Docstring for the foo_member enum member&#39;&#39;&#39;</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span><span class="n">SomeEnum</span><span class="o">.</span><span class="n">foo_member</span><span class="o">.</span><span class="vm">__doc__</span>  <span class="c1"># &#39;Docstring for the foo_member enum member&#39;</span>
 </pre></div>
+</div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>enum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><em>type</em></a><em>[</em><em>Enum</em><em>]</em>) – The enum class to process.</p>
+<dd class="field-odd"><p><strong>enum</strong> – The enum class to process.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The same enum class with member docstrings attached.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)">type</a>[E]</p>
-</dd>
 </dl>
 </dd></dl>
 
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.enums.color.html">simplebench.enums.color module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color"><code class="docutils literal notranslate"><span class="pre">Color</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color.BLACK"><code class="docutils literal notranslate"><span class="pre">Color.BLACK</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color.BLUE"><code class="docutils literal notranslate"><span class="pre">Color.BLUE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color.CYAN"><code class="docutils literal notranslate"><span class="pre">Color.CYAN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color.GREEN"><code class="docutils literal notranslate"><span class="pre">Color.GREEN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color.MAGENTA"><code class="docutils literal notranslate"><span class="pre">Color.MAGENTA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color.RED"><code class="docutils literal notranslate"><span class="pre">Color.RED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color.WHITE"><code class="docutils literal notranslate"><span class="pre">Color.WHITE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.color.html#simplebench.enums.color.Color.YELLOW"><code class="docutils literal notranslate"><span class="pre">Color.YELLOW</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.enums.decorators.html">simplebench.enums.decorators module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.decorators.html#simplebench.enums.decorators.enum_docstrings"><code class="docutils literal notranslate"><span class="pre">enum_docstrings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.enums.exit_code.html">simplebench.enums.exit_code module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.exit_code.html#simplebench.enums.exit_code.ExitCode"><code class="docutils literal notranslate"><span class="pre">ExitCode</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.exit_code.html#simplebench.enums.exit_code.ExitCode.BENCHMARK_ERROR"><code class="docutils literal notranslate"><span class="pre">ExitCode.BENCHMARK_ERROR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.exit_code.html#simplebench.enums.exit_code.ExitCode.BENCHMARK_TIMED_OUT"><code class="docutils literal notranslate"><span class="pre">ExitCode.BENCHMARK_TIMED_OUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.exit_code.html#simplebench.enums.exit_code.ExitCode.CLI_ARGUMENTS_ERROR"><code class="docutils literal notranslate"><span class="pre">ExitCode.CLI_ARGUMENTS_ERROR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.exit_code.html#simplebench.enums.exit_code.ExitCode.KEYBOARD_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">ExitCode.KEYBOARD_INTERRUPT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.exit_code.html#simplebench.enums.exit_code.ExitCode.RUNTIME_ERROR"><code class="docutils literal notranslate"><span class="pre">ExitCode.RUNTIME_ERROR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.exit_code.html#simplebench.enums.exit_code.ExitCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">ExitCode.SUCCESS</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.enums.flag_type.html">simplebench.enums.flag_type module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.flag_type.html#simplebench.enums.flag_type.FlagType"><code class="docutils literal notranslate"><span class="pre">FlagType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.flag_type.html#simplebench.enums.flag_type.FlagType.BOOLEAN"><code class="docutils literal notranslate"><span class="pre">FlagType.BOOLEAN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.flag_type.html#simplebench.enums.flag_type.FlagType.INVALID"><code class="docutils literal notranslate"><span class="pre">FlagType.INVALID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.flag_type.html#simplebench.enums.flag_type.FlagType.TARGET_LIST"><code class="docutils literal notranslate"><span class="pre">FlagType.TARGET_LIST</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.enums.format.html">simplebench.enums.format module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format"><code class="docutils literal notranslate"><span class="pre">Format</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format.CSV"><code class="docutils literal notranslate"><span class="pre">Format.CSV</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format.CUSTOM"><code class="docutils literal notranslate"><span class="pre">Format.CUSTOM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format.GRAPH"><code class="docutils literal notranslate"><span class="pre">Format.GRAPH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format.JSON"><code class="docutils literal notranslate"><span class="pre">Format.JSON</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format.PLAIN_TEXT"><code class="docutils literal notranslate"><span class="pre">Format.PLAIN_TEXT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format.RICH_TEXT"><code class="docutils literal notranslate"><span class="pre">Format.RICH_TEXT</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.enums.section.html">simplebench.enums.section module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section"><code class="docutils literal notranslate"><span class="pre">Section</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section.MEMORY"><code class="docutils literal notranslate"><span class="pre">Section.MEMORY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section.NULL"><code class="docutils literal notranslate"><span class="pre">Section.NULL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section.OPS"><code class="docutils literal notranslate"><span class="pre">Section.OPS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section.PEAK_MEMORY"><code class="docutils literal notranslate"><span class="pre">Section.PEAK_MEMORY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section.TIMING"><code class="docutils literal notranslate"><span class="pre">Section.TIMING</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.enums.target.html">simplebench.enums.target module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target"><code class="docutils literal notranslate"><span class="pre">Target</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target.CALLBACK"><code class="docutils literal notranslate"><span class="pre">Target.CALLBACK</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target.CONSOLE"><code class="docutils literal notranslate"><span class="pre">Target.CONSOLE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target.CUSTOM"><code class="docutils literal notranslate"><span class="pre">Target.CUSTOM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target.FILESYSTEM"><code class="docutils literal notranslate"><span class="pre">Target.FILESYSTEM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target.INVALID"><code class="docutils literal notranslate"><span class="pre">Target.INVALID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target.NULL"><code class="docutils literal notranslate"><span class="pre">Target.NULL</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.enums.verbosity.html">simplebench.enums.verbosity module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.enums.verbosity.html#simplebench.enums.verbosity.Verbosity"><code class="docutils literal notranslate"><span class="pre">Verbosity</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.verbosity.html#simplebench.enums.verbosity.Verbosity.DEBUG"><code class="docutils literal notranslate"><span class="pre">Verbosity.DEBUG</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.verbosity.html#simplebench.enums.verbosity.Verbosity.NORMAL"><code class="docutils literal notranslate"><span class="pre">Verbosity.NORMAL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.verbosity.html#simplebench.enums.verbosity.Verbosity.QUIET"><code class="docutils literal notranslate"><span class="pre">Verbosity.QUIET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.enums.verbosity.html#simplebench.enums.verbosity.Verbosity.VERBOSE"><code class="docutils literal notranslate"><span class="pre">Verbosity.VERBOSE</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 </section>
 
         </article>
@@ -651,7 +808,8 @@ that can extract and display these docstrings.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">simplebench.enums module</a><ul>
+<li><a class="reference internal" href="#">simplebench.enums package</a><ul>
+<li><a class="reference internal" href="#provides">Provides</a></li>
 <li><a class="reference internal" href="#simplebench.enums.Color"><code class="docutils literal notranslate"><span class="pre">Color</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.enums.Color.BLACK"><code class="docutils literal notranslate"><span class="pre">Color.BLACK</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.enums.Color.BLUE"><code class="docutils literal notranslate"><span class="pre">Color.BLUE</span></code></a></li>
@@ -661,6 +819,15 @@ that can extract and display these docstrings.</p>
 <li><a class="reference internal" href="#simplebench.enums.Color.RED"><code class="docutils literal notranslate"><span class="pre">Color.RED</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.enums.Color.WHITE"><code class="docutils literal notranslate"><span class="pre">Color.WHITE</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.enums.Color.YELLOW"><code class="docutils literal notranslate"><span class="pre">Color.YELLOW</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.enums.ExitCode"><code class="docutils literal notranslate"><span class="pre">ExitCode</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.enums.ExitCode.BENCHMARK_ERROR"><code class="docutils literal notranslate"><span class="pre">ExitCode.BENCHMARK_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.enums.ExitCode.BENCHMARK_TIMED_OUT"><code class="docutils literal notranslate"><span class="pre">ExitCode.BENCHMARK_TIMED_OUT</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.enums.ExitCode.CLI_ARGUMENTS_ERROR"><code class="docutils literal notranslate"><span class="pre">ExitCode.CLI_ARGUMENTS_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.enums.ExitCode.KEYBOARD_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">ExitCode.KEYBOARD_INTERRUPT</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.enums.ExitCode.RUNTIME_ERROR"><code class="docutils literal notranslate"><span class="pre">ExitCode.RUNTIME_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.enums.ExitCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">ExitCode.SUCCESS</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.enums.FlagType"><code class="docutils literal notranslate"><span class="pre">FlagType</span></code></a><ul>
@@ -674,7 +841,6 @@ that can extract and display these docstrings.</p>
 <li><a class="reference internal" href="#simplebench.enums.Format.CUSTOM"><code class="docutils literal notranslate"><span class="pre">Format.CUSTOM</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.enums.Format.GRAPH"><code class="docutils literal notranslate"><span class="pre">Format.GRAPH</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.enums.Format.JSON"><code class="docutils literal notranslate"><span class="pre">Format.JSON</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.enums.Format.MARKDOWN"><code class="docutils literal notranslate"><span class="pre">Format.MARKDOWN</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.enums.Format.PLAIN_TEXT"><code class="docutils literal notranslate"><span class="pre">Format.PLAIN_TEXT</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.enums.Format.RICH_TEXT"><code class="docutils literal notranslate"><span class="pre">Format.RICH_TEXT</span></code></a></li>
 </ul>
@@ -704,6 +870,7 @@ that can extract and display these docstrings.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.enums.enum_docstrings"><code class="docutils literal notranslate"><span class="pre">enum_docstrings()</span></code></a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
@@ -715,11 +882,12 @@ that can extract and display these docstrings.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=1162025f"></script>
+</div><script src="../_static/documentation_options.js?v=dd5748a0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

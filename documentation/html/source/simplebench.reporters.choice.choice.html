@@ -6,12 +6,13 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.choice.choice module - simplebench 0.3.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.choice.choice module - simplebench 0.7.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.7.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.7.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -198,8 +199,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/controlling.html">Controlling Benchmark Execution</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/json_report.html">JSON Report</a></li>
@@ -325,6 +332,25 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 </ul>
 </dd>
 </dl>
+<p>Construct a <a class="reference internal" href="#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance from a
+<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> and a <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reporter</strong> (<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>) – An instance of a <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a>
+subclass.</p></li>
+<li><p><strong>choice_conf</strong> (<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>) – An instance of <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> containing the configuration
+for the choice.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any argument is of an incorrect type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any argument has an invalid value (e.g., empty strings
+or empty sequences).</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.choice.choice.Choice.choice_conf">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">choice_conf</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choice.choice_conf.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.choice_conf" title="Link to this definition">🔗</a></dt>
@@ -333,7 +359,7 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.choice.choice.Choice.default_targets">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.default_targets" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.default_targets" title="Link to this definition">🔗</a></dt>
 <dd><p>Default output targets for the choice.</p>
 <p>These are the default output targets that the associated
 <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> subclass
@@ -388,7 +414,7 @@ setting should be used.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.choice.choice.Choice.flag_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flag_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.FlagType" title="simplebench.enums.FlagType"><span class="pre">FlagType</span></a></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.flag_type" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flag_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.flag_type.html#simplebench.enums.flag_type.FlagType" title="simplebench.enums.flag_type.FlagType"><span class="pre">FlagType</span></a></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.flag_type" title="Link to this definition">🔗</a></dt>
 <dd><p>The type of command-line flag (e.g., <a class="reference internal" href="simplebench.enums.html#simplebench.enums.FlagType.BOOLEAN" title="simplebench.enums.FlagType.BOOLEAN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">BOOLEAN</span></code></a>,
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.FlagType.TARGET_LIST" title="simplebench.enums.FlagType.TARGET_LIST"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TARGET_LIST</span></code></a>, etc.).</p>
 </dd></dl>
@@ -424,7 +450,7 @@ instance for additional configuration.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.choice.choice.Choice.output_format">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><span class="pre">Format</span></a></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.output_format" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format" title="simplebench.enums.format.Format"><span class="pre">Format</span></a></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.output_format" title="Link to this definition">🔗</a></dt>
 <dd><p>Output format for the choice.</p>
 <p>This is the output format that the associated
 <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> subclass
@@ -447,7 +473,7 @@ is expected to use when this choice is selected.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.choice.choice.Choice.sections">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.sections" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section" title="simplebench.enums.section.Section"><span class="pre">Section</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.sections" title="Link to this definition">🔗</a></dt>
 <dd><p>Sections included in the choice.</p>
 <p>These are the sections that the associated
 <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> subclass
@@ -467,7 +493,7 @@ should be used.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.choice.choice.Choice.targets">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.targets" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.choice.choice.Choice.targets" title="Link to this definition">🔗</a></dt>
 <dd><p>Output targets for the choice.</p>
 <p>These are the output targets that the associated
 <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> subclass
@@ -554,11 +580,12 @@ to avoid circular imports during initialization.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=1162025f"></script>
+</div><script src="../_static/documentation_options.js?v=dd5748a0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

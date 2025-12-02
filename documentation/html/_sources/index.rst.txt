@@ -22,6 +22,7 @@ Contents
 
    installation
    usage
+   tutorials
    command_line_options
    reports
    genindex
