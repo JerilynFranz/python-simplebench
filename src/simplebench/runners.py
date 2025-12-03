@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test runners for benchmarking."""
 from __future__ import annotations
 

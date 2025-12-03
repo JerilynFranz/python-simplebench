@@ -7,13 +7,13 @@ authors = [
 maintainers = [
     {name = "Jerilyn Franz", email = "opensource@snowhare.com"}
 ]
-description = "A simple suite for benchmarking"
+description = "A powerful and customizable benchmarking framework that is simple to use."
 readme = "README.rst"
-keywords = ["benchmark", "performance"]
+keywords = ["benchmark", "performance", "framework", "testing"]
 license = "Apache-2.0"
 license-files = ["LICENSE*"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
