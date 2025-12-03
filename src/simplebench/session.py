@@ -90,6 +90,8 @@ class Session():
         """Whether the command line arguments have been parsed."""
         self._reporter_flags_added: bool = False
         """Whether the reporter flags have been added to the ArgumentParser."""
+        self._run_called: bool = False
+        """Whether the run() method has been called."""
         self._progress_tasks: RichProgressTasks = RichProgressTasks(verbosity=verbosity, console=self.console)
         """ProgressTasks instance for managing progress tasks - backing field for the 'tasks' attribute."""
         self._progress: Progress = self.tasks.progress
@@ -128,7 +130,6 @@ class Session():
         log.debug("Session.parse_args called with: %s", args)
         if self._args_parsed:
             return
-        self._args_parsed = True
 
         if args is not None:
             if not isinstance(args, Sequence):
@@ -144,6 +145,7 @@ class Session():
 
         self.add_reporter_flags()
         self._args = self._args_parser.parse_args(args=args)
+        self._args_parsed = True
 
     @property
     def reporter_manager(self) -> ReporterManager:
@@ -239,6 +241,7 @@ class Session():
         progress_tracker.stop()
         self.tasks.stop()
         self.tasks.clear()
+        self._run_called = True
         log.info("Session.run() finished.")
 
     def report_keys(self) -> list[str]:
@@ -269,14 +272,21 @@ class Session():
         return report_keys
 
     def report(self) -> None:
-        """Generate reports for all benchmark cases in the session."""
+        """Generate reports for all benchmark cases in the session.
+
+        If the :meth:`run` method has not been called prior to invoking this method,
+        it will be called automatically to ensure that benchmark cases have been executed.
+        """
 
         # all_choice_args returns a set of all Namespace args from all Choice instances
         # we check each arg to see if it is set in self.args.
         # The logic here is that if the arg is set, the user wants that report. By
         # making the lookup go from the defined Choices to the args, we ensure
         # that we only consider valid args that are associated with a Choice.
+        if not self._run_called:
+            self.run()
         log.info("Session.report() started for %d cases.", len(self.cases))
+
         if self.verbosity > Verbosity.NORMAL:
             self._console.print(f"Generating reports for {len(self.cases)} case(s)...")
         now = datetime.now()

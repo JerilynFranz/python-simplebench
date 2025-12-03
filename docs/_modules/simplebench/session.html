@@ -341,6 +341,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the command line arguments have been parsed.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reporter_flags_added</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the reporter flags have been added to the ArgumentParser.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_called</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the run() method has been called.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress_tasks</span><span class="p">:</span> <span class="n">RichProgressTasks</span> <span class="o">=</span> <span class="n">RichProgressTasks</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">,</span> <span class="n">console</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="p">)</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;ProgressTasks instance for managing progress tasks - backing field for the &#39;tasks&#39; attribute.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_progress</span><span class="p">:</span> <span class="n">Progress</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">progress</span>
@@ -381,7 +383,6 @@
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Session.parse_args called with: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args_parsed</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args_parsed</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
@@ -396,7 +397,8 @@
                     <span class="n">tag</span><span class="o">=</span><span class="n">_SessionErrorTag</span><span class="o">.</span><span class="n">PARSE_ARGS_INVALID_ARGS_TYPE</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_reporter_flags</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args_parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args_parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args_parsed</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
     <span class="nd">@property</span>
@@ -498,6 +500,7 @@
         <span class="n">progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_called</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Session.run() finished.&quot;</span><span class="p">)</span></div>
 
 
@@ -534,14 +537,21 @@
 <div class="viewcode-block" id="Session.report">
 <a class="viewcode-back" href="../../source/simplebench.session.html#simplebench.Session.report">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate reports for all benchmark cases in the session.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate reports for all benchmark cases in the session.</span>
+
+<span class="sd">        If the :meth:`run` method has not been called prior to invoking this method,</span>
+<span class="sd">        it will be called automatically to ensure that benchmark cases have been executed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># all_choice_args returns a set of all Namespace args from all Choice instances</span>
         <span class="c1"># we check each arg to see if it is set in self.args.</span>
         <span class="c1"># The logic here is that if the arg is set, the user wants that report. By</span>
         <span class="c1"># making the lookup go from the defined Choices to the args, we ensure</span>
         <span class="c1"># that we only consider valid args that are associated with a Choice.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_called</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Session.report() started for </span><span class="si">%d</span><span class="s2"> cases.&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">))</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating reports for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">)</span><span class="si">}</span><span class="s2"> case(s)...&quot;</span><span class="p">)</span>
         <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
