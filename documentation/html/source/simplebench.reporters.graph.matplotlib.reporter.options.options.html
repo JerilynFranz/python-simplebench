@@ -6,12 +6,13 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.graph.matplotlib.reporter.options.options module - simplebench 0.3.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.graph.matplotlib.reporter.options.options module - simplebench 0.7.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.7.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.7.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -198,8 +199,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/controlling.html">Controlling Benchmark Execution</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/json_report.html">JSON Report</a></li>
@@ -319,6 +326,44 @@ over the class defaults. This allows for flexible configuration at multiple leve
 <li><p><strong>style</strong> (<a class="reference internal" href="simplebench.reporters.graph.matplotlib.enums.style.html#simplebench.reporters.graph.matplotlib.enums.style.Style" title="simplebench.reporters.graph.matplotlib.enums.style.Style"><code class="xref py py-class docutils literal notranslate"><span class="pre">Style</span></code></a>) – The default style for the MatPlotLib graphs.</p></li>
 <li><p><strong>theme</strong> (<a class="reference internal" href="simplebench.reporters.graph.matplotlib.theme.html#simplebench.reporters.graph.matplotlib.theme.Theme" title="simplebench.reporters.graph.matplotlib.theme.Theme"><code class="xref py py-class docutils literal notranslate"><span class="pre">Theme</span></code></a>) – The default theme to use for the MatPlotLib graphs.</p></li>
 <li><p><strong>image_type</strong> (<a class="reference internal" href="simplebench.reporters.graph.enums.image_type.html#simplebench.reporters.graph.enums.image_type.ImageType" title="simplebench.reporters.graph.enums.image_type.ImageType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageType</span></code></a>) – The output image format for the graph files.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Create a <a class="reference internal" href="#simplebench.reporters.graph.matplotlib.reporter.options.options.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.reporter.options.options.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a> instance.</p>
+<p>To ensure accuracy in graph rendering, the default width, height, and DPI should be set with
+the width and height being exact multiples of the DPI. This is because the underlying
+rendering engine uses DPI to determine the pixel dimensions of the output graph from the
+specified width and height in inches.</p>
+<p>If the width and height are not exact multiples of the DPI, it may lead to
+unexpected scaling or distortion of the graph when rendered, as the rendering engine
+may round the pixel dimensions to the nearest whole number.</p>
+<p>The default values provided here are chosen to balance quality and performance for
+most common use cases. However, users can customize these values based on their specific
+requirements for graph resolution and size.</p>
+<p>The use of <code class="docutils literal notranslate"><span class="pre">None</span></code> for (or, equivalently the omission of) any argument indicates that the default
+value defined in the next lower precedence level should be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The width in pixels of a MatPlotLib output when rendered.
+It should be an exact multiple of the dpi and can only be between 500 and 4000 pixels.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the default <a class="reference internal" href="#simplebench.reporters.graph.matplotlib.reporter.options.options.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.reporter.options.options.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a> default width will be used.</p></li>
+<li><p><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The height in pixels of a MatPlotLib output when rendered.
+It should be an exact multiple of the dpi and can only be between 500 and 4000 pixels.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the default <a class="reference internal" href="#simplebench.reporters.graph.matplotlib.reporter.options.options.MatPlotLibOptions" title="simplebench.reporters.graph.matplotlib.reporter.options.options.MatPlotLibOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MatPlotLibOptions</span></code></a> default height will be used.</p></li>
+<li><p><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The default DPI (dots per inch) for a MatPlotLib output. It must
+be between 50 and 400.</p></li>
+<li><p><strong>y_starts_at_zero</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> | </em><em>None</em>) – Whether the Y-axis should start at zero.</p></li>
+<li><p><strong>x_labels_rotation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> | </em><em>None</em>) – The rotation angle in degrees for X-axis labels.</p></li>
+<li><p><strong>style</strong> (<a class="reference internal" href="simplebench.reporters.graph.matplotlib.enums.style.html#simplebench.reporters.graph.matplotlib.enums.style.Style" title="simplebench.reporters.graph.matplotlib.enums.style.Style"><code class="xref py py-class docutils literal notranslate"><span class="pre">Style</span></code></a> | None) – The default style for the MatPlotLib graphs.</p></li>
+<li><p><strong>theme</strong> (<a class="reference internal" href="simplebench.reporters.graph.matplotlib.theme.html#simplebench.reporters.graph.matplotlib.theme.Theme" title="simplebench.reporters.graph.matplotlib.theme.Theme"><code class="xref py py-class docutils literal notranslate"><span class="pre">Theme</span></code></a> | None) – The theme to use for the MatPlotLib graphs.</p></li>
+<li><p><strong>image_type</strong> (<a class="reference internal" href="simplebench.reporters.graph.enums.image_type.html#simplebench.reporters.graph.enums.image_type.ImageType" title="simplebench.reporters.graph.enums.image_type.ImageType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageType</span></code></a> | None) – The output format for the graph files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any of the arguments are of incorrect type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any of the arguments have invalid values.</p></li>
 </ul>
 </dd>
 </dl>
@@ -969,11 +1014,12 @@ The width must be between 500 and 4000 pixels.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=1162025f"></script>
+</div><script src="../_static/documentation_options.js?v=dd5748a0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

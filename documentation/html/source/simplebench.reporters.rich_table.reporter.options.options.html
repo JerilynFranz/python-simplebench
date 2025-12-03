@@ -6,12 +6,13 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.rich_table.reporter.options.options module - simplebench 0.3.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.rich_table.reporter.options.options module - simplebench 0.7.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.7.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.7.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -198,8 +199,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/controlling.html">Controlling Benchmark Execution</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/json_report.html">JSON Report</a></li>
@@ -251,23 +258,85 @@
 <p>Reporter for benchmark results using Rich tables on the console.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.rich_table.reporter.options.options.RichTableOptions">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.rich_table.reporter.options.options.</span></span><span class="sig-name descname"><span class="pre">RichTableOptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">virtual_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/rich_table/reporter/options/options.html#RichTableOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.rich_table.reporter.options.options.</span></span><span class="sig-name descname"><span class="pre">RichTableOptions</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">virtual_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.rich_table.reporter.options.fields.html#simplebench.reporters.rich_table.reporter.options.fields.RichTableField" title="simplebench.reporters.rich_table.reporter.options.fields.RichTableField"><span class="pre">RichTableField</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">variation_cols_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/rich_table/reporter/options/options.html#RichTableOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
 <p>Class for holding Rich table reporter specific options in a Choice.</p>
 <p>This class provides additional configuration options specific to the JSON reporter.
 It is accessed via the <code class="docutils literal notranslate"><span class="pre">options</span></code> attribute of a
 <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>virtual_width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – <p>The width of the Rich table output in characters when rendered
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>virtual_width</strong> – <p>The width of the Rich table output in characters when rendered
 to the filesystem or via callback. Must be between 80 and 1000 characters or
 <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no width constraint is applied.</p>
 <p>The virtual width is used to determine how the table should be formatted when
 rendered to non-console outputs, such as files or callbacks. This allows for
 better control over the appearance of the table in different contexts.</p>
-</p>
+</p></li>
+<li><p><strong>fields</strong> – <p>A tuple of Rich Table fields to include in the output.
+If none is specifically set, a predefined set of fields is used. The fields appear in the order
+specified in the sequence.</p>
+<p>If specified, all fields must be from the <a class="reference internal" href="simplebench.reporters.rich_table.reporter.options.fields.html#simplebench.reporters.rich_table.reporter.options.fields.RichTableField" title="simplebench.reporters.rich_table.reporter.options.fields.RichTableField"><code class="xref py py-class docutils literal notranslate"><span class="pre">RichTableField</span></code></a> enum.</p>
+<p>The default fields, in order, are:</p>
+<ul>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.N" title="simplebench.reporters.rich_table.RichTableField.N"><code class="xref py py-attr docutils literal notranslate"><span class="pre">N</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.ITERATIONS" title="simplebench.reporters.rich_table.RichTableField.ITERATIONS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ITERATIONS</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.ROUNDS" title="simplebench.reporters.rich_table.RichTableField.ROUNDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ROUNDS</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.ELAPSED_SECONDS" title="simplebench.reporters.rich_table.RichTableField.ELAPSED_SECONDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ELAPSED_SECONDS</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.MEAN" title="simplebench.reporters.rich_table.RichTableField.MEAN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MEAN</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.MEDIAN" title="simplebench.reporters.rich_table.RichTableField.MEDIAN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MEDIAN</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.MIN" title="simplebench.reporters.rich_table.RichTableField.MIN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MIN</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.MAX" title="simplebench.reporters.rich_table.RichTableField.MAX"><code class="xref py py-attr docutils literal notranslate"><span class="pre">MAX</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.P5" title="simplebench.reporters.rich_table.RichTableField.P5"><code class="xref py py-attr docutils literal notranslate"><span class="pre">P5</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.P95" title="simplebench.reporters.rich_table.RichTableField.P95"><code class="xref py py-attr docutils literal notranslate"><span class="pre">P95</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.STD_DEV" title="simplebench.reporters.rich_table.RichTableField.STD_DEV"><code class="xref py py-attr docutils literal notranslate"><span class="pre">STD_DEV</span></code></a></p></li>
+<li><p><a class="reference internal" href="simplebench.reporters.rich_table.html#simplebench.reporters.rich_table.RichTableField.RSD_PERCENT" title="simplebench.reporters.rich_table.RichTableField.RSD_PERCENT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RSD_PERCENT</span></code></a></p></li>
+</ul>
+</p></li>
+<li><p><strong>variation_cols_last</strong> – Whether to place the variation columns (if any) at the end of the rows.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code> - which places the variation columns at the start of the rows.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any parameter is of an invalid type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">virtual_width</span></code> is not
+between 80 and 10000 characters when specified or if <code class="docutils literal notranslate"><span class="pre">fields</span></code> is an empty sequence.</p></li>
+</ul>
 </dd>
 </dl>
+<p>Initialize RichTableOptions instance.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.fields">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.rich_table.reporter.options.fields.html#simplebench.reporters.rich_table.reporter.options.fields.RichTableField" title="simplebench.reporters.rich_table.reporter.options.fields.RichTableField"><span class="pre">RichTableField</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.fields" title="Link to this definition">🔗</a></dt>
+<dd><p>Return the fields, in order, to include in the Rich table when rendering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple of RichTableField enums representing the default fields.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.variation_cols_last">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols_last</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.variation_cols_last" title="Link to this definition">🔗</a></dt>
+<dd><p>Return whether variation columns are placed at the end of the rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if variation columns are placed at the end, False if at the start.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.virtual_width">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">virtual_width</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.virtual_width" title="Link to this definition">🔗</a></dt>
@@ -276,9 +345,6 @@ better control over the appearance of the table in different contexts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The virtual width of the Rich table output in characters.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>, optional</p>
 </dd>
 </dl>
 </dd></dl>
@@ -326,6 +392,8 @@ better control over the appearance of the table in different contexts.</p>
             <ul>
 <li><a class="reference internal" href="#">simplebench.reporters.rich_table.reporter.options.options module</a><ul>
 <li><a class="reference internal" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions"><code class="docutils literal notranslate"><span class="pre">RichTableOptions</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.fields"><code class="docutils literal notranslate"><span class="pre">RichTableOptions.fields</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.variation_cols_last"><code class="docutils literal notranslate"><span class="pre">RichTableOptions.variation_cols_last</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.rich_table.reporter.options.options.RichTableOptions.virtual_width"><code class="docutils literal notranslate"><span class="pre">RichTableOptions.virtual_width</span></code></a></li>
 </ul>
 </li>
@@ -340,11 +408,12 @@ better control over the appearance of the table in different contexts.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=1162025f"></script>
+</div><script src="../_static/documentation_options.js?v=dd5748a0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

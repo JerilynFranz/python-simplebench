@@ -3,6 +3,14 @@ SimpleBench
 
 A framework for building and running benchmarks.
 
+* 0.8.0-alpha.0 2025-12-2
+  * Implemented auto-calibration of rounds
+    * Added timers module for measuring overhead and precision of timers
+    * Implemented auto-calibration of number of rounds by default
+  * Fixed major bugs in timing measurements
+    * Was incorrectly dividing total time for an interation by number of rounds twice
+    * Was incorrectly adjusting for effect of rounds on std deviation calculation
+  * Refactored utils module into separate files
 * 0.7.0-alpha.0 2025-12-1
   * Added configuration options for the timer used by benchmarking code.
   * Enhanced the documentation for the Matplotlib theme class to include external links to the Matplotlib API.

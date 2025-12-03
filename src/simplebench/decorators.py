@@ -35,8 +35,8 @@ def benchmark(
         description: str | None = None,
         iterations: int = defaults.DEFAULT_ITERATIONS,
         warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
-        rounds: int = defaults.DEFAULT_ROUNDS,
-        timer: Callable[[], float | int] | None = None,
+        rounds: int | None = None,
+        timer: Callable[[], int] | None = None,
         min_time: float = defaults.DEFAULT_MIN_TIME,
         max_time: float = defaults.DEFAULT_MAX_TIME,
         timeout: float | None = None,
@@ -110,7 +110,20 @@ def benchmark(
         Cannot be blank.
     :param iterations: The minimum number of iterations to run for the benchmark.
     :param warmup_iterations: The number of warmup iterations to run before the benchmark.
-    :param rounds: The number of rounds to run the benchmark within each iteration.
+    :param rounds: The number of rounds to run for the benchmark.
+
+            Rounds are multiple runs of calls to the action within an iteration to mitigate timer
+            quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
+            functions are called only once per iteration (all rounds in the same iteration share the same
+            setup/teardown context).
+
+            If None, rounds will be auto-calibrated based on the precision and overhead of the
+            timer function and the expected execution time of the action. If the action is very
+            fast (e.g., under 10 microseconds), rounds will be set to a higher value to improve
+            measurement accuracy with the goal of reducing timer quantization errors.
+            If the action is slower, rounds will be set to a lower value.
+
+            If specified, it must be a positive integer.
     :param timer: A callable that returns the current time. If None, the default timer is used.
         The timer function should return a float or int representing the current time.
     :param min_time: The minimum time in seconds to run the benchmark.  Must be a positive number.
@@ -182,10 +195,11 @@ def benchmark(
         _DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_TYPE,
         _DecoratorsErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE)
 
-    rounds = validate_positive_int(
-        rounds, 'rounds',
-        _DecoratorsErrorTag.BENCHMARK_ROUNDS_TYPE,
-        _DecoratorsErrorTag.BENCHMARK_ROUNDS_VALUE)
+    if rounds is not None:
+        rounds = validate_positive_int(
+            rounds, 'rounds',
+            _DecoratorsErrorTag.BENCHMARK_ROUNDS_TYPE,
+            _DecoratorsErrorTag.BENCHMARK_ROUNDS_VALUE)
 
     timer = validate_timer(
         timer, 'timer',
@@ -327,11 +341,11 @@ def clear_registered_cases() -> None:
 
 
 def validate_timer(
-        timer: Callable[[], float | int] | None,
+        timer: Callable[[], int] | None,
         param_name: str,
         type_error_tag: _DecoratorsErrorTag,
         return_type_error_tag: _DecoratorsErrorTag
-) -> Callable[[], float | int] | None:
+) -> Callable[[], int] | None:
     """Validate the timer parameter for the benchmark decorator.
 
     :param timer: The timer function to validate.
@@ -349,10 +363,10 @@ def validate_timer(
                 tag=type_error_tag)
 
         test_value = timer()
-        if not isinstance(test_value, (float, int)):
+        if not isinstance(test_value, int):
             raise SimpleBenchTypeError(
                 f"The callable provided for the '{param_name}' parameter to the @benchmark decorator "
-                "must return a float or int.",
+                "must return an int.",
                 tag=return_type_error_tag)
 
     return timer

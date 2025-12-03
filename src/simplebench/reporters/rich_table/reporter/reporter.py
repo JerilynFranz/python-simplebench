@@ -137,7 +137,7 @@ class RichTableReporter(Reporter):
             numbers=[result.results_section(section).percentiles[95] for result in results],
             base_unit=base_unit)
         stddev_unit, stddev_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).adjusted_standard_deviation for result in results],
+            numbers=[result.results_section(section).standard_deviation for result in results],
             base_unit=base_unit)
 
         table = Table(title=(case.title + f'\n{section.value}\n\n' + case.description),
@@ -212,9 +212,9 @@ class RichTableReporter(Reporter):
                     case RichTableField.P95:
                         row.append(f'{sigfigs(stats_target.percentiles[95] * p95_scale):>8.2f}')
                     case RichTableField.STD_DEV:
-                        row.append(f'{sigfigs(stats_target.adjusted_standard_deviation * stddev_scale):>8.2f}')
+                        row.append(f'{sigfigs(stats_target.standard_deviation * stddev_scale):>8.2f}')
                     case RichTableField.RSD_PERCENT:
-                        row.append(f'{sigfigs(stats_target.adjusted_relative_standard_deviation):>5.2f}%')
+                        row.append(f'{sigfigs(stats_target.relative_standard_deviation):>5.2f}%')
 
             if options.variation_cols_last:
                 for value in result.variation_marks.values():

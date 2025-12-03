@@ -6,12 +6,13 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.case module - simplebench 0.3.1-alpha.0 documentation</title>
+        <title>simplebench.case module - simplebench 0.7.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=06aecd32" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=36100fe8" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c2cf19b8" />
     
     
 
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.3.1-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.7.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.3.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.7.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -198,8 +199,14 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage.html">Using SimpleBench</a><input aria-label="Toggle navigation of Using SimpleBench" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/basic.html">Basic Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/parameterized.html">Parameterized Benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/controlling.html">Controlling Benchmark Execution</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../command_line_options.html">Command-Line Options</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reports.html">Reports</a><input aria-label="Toggle navigation of Reports" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reports/rich_table_report.html">Rich Table Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/csv_report.html">CSV Report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reports/json_report.html">JSON Report</a></li>
@@ -264,6 +271,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">warmup_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">min_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20.0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -276,106 +284,6 @@
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/case.html#Case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.Case" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>benchmark_id</strong> – <p>An optional unique identifier for the benchmark case.</p>
-<p>If None, a transient ID is assigned. This is meant to provide a stable identifier for the
-benchmark case across multiple runs for tracking purposes. If not provided,
-an attempt will be made to generate a stable ID based on the the action function
-name, signature, and group.</p>
-<p>If that is not possible, a transient ID based on the instance’s id() will be used.
-If a transient ID is used, it will differ between runs and cannot be used to
-correlate results across multiple runs.</p>
-<p>Benchmark ids must be unique within a benchmarking session and stable across runs
-or they cannot be used for tracking benchmark results over time.</p>
-</p></li>
-<li><p><strong>git_info</strong> – <p>An optional GitInfo instance representing the state of the Git repository.</p>
-<p>If not provided, the GitInfo will be automatically retrieved from the current
-context of the caller if the code is part of a Git repository.</p>
-</p></li>
-<li><p><strong>action</strong> – <p>The function to perform the benchmark. This function must
-accept a <cite>bench</cite> instance of type SimpleRunner and arbitrary keyword arguments (’<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs’).
-See the <a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionRunner</span></code></a> protocol for the exact function
-signature required.</p>
-<p>It must return a <cite>Results</cite> object.</p>
-</p></li>
-<li><p><strong>group</strong> – The benchmark reporting group to which the benchmark case belongs.</p></li>
-<li><p><strong>title</strong> – <p>The title of the benchmark case.</p>
-<p>If None, the name of the action function will be used. Cannot be a blank
-string (a string that is empty or consists only of whitespace).</p>
-</p></li>
-<li><p><strong>description</strong> – <p>A brief description of the benchmark case.</p>
-<p>If None, the docstring of the action function will be used, or ‘(no description)’ if no docstring
-is available. Cannot be blank.</p>
-</p></li>
-<li><p><strong>iterations</strong> – The minimum number of iterations to run for the benchmark.</p></li>
-<li><p><strong>warmup_iterations</strong> – The number of warmup iterations to run before the benchmark.</p></li>
-<li><p><strong>rounds</strong> – <p>The number of rounds to run for the benchmark.</p>
-<p>Rounds are multiple runs of calls to the action within an iteration to mitigate timer
-quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
-functions are called only once per iteration (all rounds in the same iteration share the same
-setup/teardown context).</p>
-</p></li>
-<li><p><strong>min_time</strong> – The minimum time for the benchmark in seconds.</p></li>
-<li><p><strong>max_time</strong> – The maximum time for the benchmark in seconds.</p></li>
-<li><p><strong>timeout</strong> – <p>How long to wait before timing out a benchmark run (in seconds).</p>
-<p>If None, it waits the full duration of <code class="docutils literal notranslate"><span class="pre">max_time</span></code> plus the default timeout
-grace period in seconds ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a
-positive float or int that is greater than <code class="docutils literal notranslate"><span class="pre">max_time</span></code> if provided.
-This is a safety mechanism to prevent runaway benchmarks.</p>
-<p>If the timeout is reached during a run, a <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleBenchTimeoutError`</span></code>
-will be raised.</p>
-</p></li>
-<li><p><strong>variation_cols</strong> – <p>kwargs to be used for cols to denote kwarg variations.</p>
-<p>Each key is a keyword argument name, and the value is the column label to use for that
-argument. Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These fields will be
-added to the output of reporters that support them as columns of data with the specified labels.
-If None, an empty dict is used.</p>
-</p></li>
-<li><p><strong>kwargs_variations</strong> – A mapping of keyword argument key names to
-a list of possible values for that argument. Default is {}. When tests are run, the benchmark
-will be executed for each combination of the specified keyword argument variations. The action
-function will be called with a <cite>bench</cite> parameter that is an instance of the runner and the
-keyword arguments for the current variation.
-If None, an empty dict is used.</p></li>
-<li><p><strong>runner</strong> – A custom runner class for the benchmark.
-Any custom runner classes must be a subclass of SimpleRunner and must have a method
-named <cite>run</cite> that accepts the same parameters as SimpleRunner.run and returns a Results object.
-The action function will be called with a <cite>bench</cite> parameter that is an instance of the
-custom runner.
-It may also accept additional parameters to the run method as needed. If additional
-parameters are needed for the custom runner, they will need to be passed to the run
-method as keyword arguments.
-No support is provided for passing additional parameters to a custom runner from the &#64;benchmark
-decorator.</p></li>
-<li><p><strong>callback</strong> – <p>A callback function for additional processing of the report. The function should accept
-four arguments: the Case instance, the Section, the Format, and the generated report data.
-The callback function will be called with the following arguments:</p>
-<blockquote>
-<div><ul>
-<li><p>case (Case): The <cite>Case</cite> instance processed for the report.</p></li>
-<li><p>section (Section): The <cite>Section</cite> of the report.</p></li>
-<li><p>output_format (Format): The <cite>Format</cite> of the report.</p></li>
-<li><dl class="simple">
-<dt>output (Any): The generated report data. Note that the actual type of this data will</dt><dd><p>depend on the Format specified for the report and the type generated by the
-reporter for that Format</p>
-</dd>
-</dl>
-</li>
-</ul>
-</div></blockquote>
-<p>Omit if no callback is needed by a reporter.</p>
-</p></li>
-<li><p><strong>options</strong> – A list of additional options for the benchmark case.
-Each option is an instance of ReporterOption or a subclass of ReporterOption.
-Reporter options can be used to customize the output of the benchmark reports for
-specific reporters. Reporters are responsible for extracting applicable ReporterOptions
-from the list of options themselves.
-If None, an empty list is used.</p></li>
-</ul>
-</dd>
-</dl>
 <p>A benchmark case defines the specific benchmark to be run, including the
 action to be performed, the parameters for the benchmark, and any variations
 of those parameters as well as the reporting group and title for the benchmark.</p>
@@ -439,13 +347,13 @@ keyword argument variations.</p>
       <span class="n">Case</span><span class="p">,</span> <span class="n">SimpleRunner</span><span class="p">,</span> <span class="n">Results</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span>
 
 
-  <span class="k">def</span><span class="w"> </span><span class="nf">my_benchmark_action</span><span class="p">(</span><span class="n">bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">my_benchmark_action</span><span class="p">(</span><span class="n">_bench</span><span class="p">:</span> <span class="n">SimpleRunner</span><span class="p">,</span>
                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
       <span class="c1"># Perform benchmark action here</span>
       <span class="k">def</span><span class="w"> </span><span class="nf">benchmark_operation</span><span class="p">():</span>
           <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>  <span class="c1"># Example operation to benchmark</span>
 
-      <span class="k">return</span> <span class="n">bench</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">benchmark_operation</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">_bench</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">benchmark_operation</span><span class="p">)</span>
 
 
   <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
@@ -456,6 +364,122 @@ keyword argument variations.</p>
 </pre></div>
 </div>
 </div>
+<p>The only REQUIRED parameter is <cite>action</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>benchmark_id</strong> – <p>An optional unique identifier for the benchmark case.</p>
+<p>If None, a transient ID is assigned. This is meant to provide a stable identifier for the
+benchmark case across multiple runs for tracking purposes. If not provided,
+an attempt will be made to generate a stable ID based on the the action function
+name, signature, and group. If that is not possible, a transient ID based
+on the instance’s id() will be used. If a transient ID is used, it will differ
+between runs and cannot be used to correlate results across multiple runs.</p>
+<p>Benchmark ids must be unique within a benchmarking session and stable across runs
+or they cannot be used for tracking benchmark results over time.</p>
+</p></li>
+<li><p><strong>git_info</strong> – <p>An optional GitInfo instance representing the state of the Git repository.</p>
+<p>If not provided, the GitInfo will be automatically retrieved from the current
+context of the caller if the code is part of a Git repository.</p>
+</p></li>
+<li><p><strong>action</strong> – <p>The function to perform the benchmark.</p>
+<p>This function must accept a <cite>bench</cite> instance of type SimpleRunner and
+arbitrary keyword arguments (’<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs’). See the <code class="docutils literal notranslate"><span class="pre">ActionRunner</span></code>
+protocol for the exact signature required. It must return a <cite>Results</cite> object.</p>
+</p></li>
+<li><p><strong>group</strong> – <p>The benchmark reporting group to which the benchmark case belongs.</p>
+<p>Benchmarks with the same group can be selected for execution without running
+other benchmarks. If not specified, the default group ‘default’ is used.</p>
+</p></li>
+<li><p><strong>title</strong> – <p>The title of the benchmark case.</p>
+<p>If None, the name of the action function will be used. Cannot be blank.</p>
+</p></li>
+<li><p><strong>description</strong> – <p>A brief description of the benchmark case.</p>
+<p>If None, the docstring of the action function will be used, or
+‘(no description)’ if no docstring is available. Cannot be blank.</p>
+</p></li>
+<li><p><strong>iterations</strong> – The minimum number of iterations to run for the benchmark.</p></li>
+<li><p><strong>warmup_iterations</strong> – The number of warmup iterations to run before the benchmark.</p></li>
+<li><p><strong>rounds</strong> – <p>The number of rounds to run for the benchmark.</p>
+<p>Rounds are multiple runs of calls to the action within an iteration to mitigate timer
+quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
+functions are called only once per iteration (all rounds in the same iteration share the same
+setup/teardown context).</p>
+</p></li>
+<li><p><strong>timer</strong> – <p>The timer function to use for the benchmark. If None, the default timer
+from the Session() (if set) or from <cite>simplebench.defaults.DEFAULT_TIMER</cite> (perf_counter_ns)
+is used by benchmark runners that require a timer.</p>
+<p>The timer function should be a callable that returns a float or int representing the current time.</p>
+</p></li>
+<li><p><strong>min_time</strong> – The minimum time for the benchmark to run in seconds. Its reference depends on the timer used,
+but by default it is wall-clock time.</p></li>
+<li><p><strong>max_time</strong> – The maximum time for the benchmark run in seconds. Its reference depends on the timer used,
+but by default it is wall-clock time.</p></li>
+<li><p><strong>timeout</strong> – <p>How long to wait before timing out a benchmark run (in seconds). It is
+measured as wall-clock time.</p>
+<p>If None, it waits the full duration of <code class="docutils literal notranslate"><span class="pre">max_time</span></code> plus the default timeout grace period
+(10.0 seconds). It must be a positive float or int that is greater
+than <code class="docutils literal notranslate"><span class="pre">max_time</span></code> if provided. This is a safety mechanism to prevent runaway benchmarks.</p>
+<p>If the timeout is reached during a run, a <code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleBenchTimeoutError`</span></code>
+will be raised, and the benchmark case’s state will be set to TIMED_OUT.</p>
+</p></li>
+<li><p><strong>variation_cols</strong> – <p>kwargs to be used for cols to denote kwarg variations.</p>
+<p>Each key is a keyword argument name, and the value is the column label to use for that
+argument. Only keywords that are also in <cite>kwargs_variations</cite> can be used here. These
+fields will be added to the output of reporters that support them as columns of data
+with the specified labels.</p>
+<p>If None, an empty dict is used.</p>
+</p></li>
+<li><p><strong>kwargs_variations</strong> – <p>A map of keyword argument names to a list of possible values for that argument.</p>
+<p>Default is {}. When tests are run, the benchmark
+will be executed for each combination of the specified keyword argument variations. The action
+function will be called with a <cite>bench</cite> parameter that is an instance of the runner and the
+keyword arguments for the current variation.
+If None, an empty dict is used.</p>
+</p></li>
+<li><p><strong>runner</strong> – <p>A custom runner class for the benchmark.</p>
+<p>Any custom runner classes must be a subclass of SimpleRunner and must have a method
+named <cite>run</cite> that accepts the same parameters as SimpleRunner.run and returns a Results object.
+The action function will be called with a <cite>bench</cite> parameter that is an instance of the
+custom runner.
+It may also accept additional parameters to the run method as needed. If additional
+parameters are needed for the custom runner, they will need to be passed to the run
+method as keyword arguments.
+No support is provided for passing additional parameters to a custom runner from the &#64;benchmark
+decorator.</p>
+</p></li>
+<li><p><strong>callback</strong> – <p>A callback function for additional processing of the report.</p>
+<p>The function should must four arguments: the Case instance, the Section,
+the Format, and the generated report data.</p>
+<ul>
+<li><p>case (Case): The <cite>Case</cite> instance processed for the report.</p></li>
+<li><p>section (Section): The <cite>Section</cite> of the report.</p></li>
+<li><p>output_format (Format): The <cite>Format</cite> of the report.</p></li>
+<li><dl class="simple">
+<dt>output (Any): The generated report data. Note that the actual type of this data will</dt><dd><p>depend on the Format specified for the report and the type generated by the
+reporter for that Format</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Omit if no callback is needed by a reporter.</p>
+</p></li>
+<li><p><strong>options</strong> – <p>A list of additional options for the benchmark case.</p>
+<p>Each option is an instance of ReporterOption or a subclass of ReporterOption.
+Reporter options can be used to customize the output of the benchmark reports for
+specific reporters. Reporters are responsible for extracting applicable ReporterOptions
+from the list of options themselves.
+If None, an empty list is used.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any parameter is of incorrect type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any parameter has an invalid value.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.action">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">action</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></em><a class="headerlink" href="#simplebench.case.Case.action" title="Link to this definition">🔗</a></dt>
@@ -500,7 +524,7 @@ arbitrary keyword arguments (’<a href="#id3"><span class="problematic" id="id4
 set <cite>full_data</cite> to True.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to include full results data. Defaults to False.</p>
+<dd class="field-odd"><p><strong>full_data</strong> – Whether to include full results data. Defaults to False.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A JSON serializable dict representation of the benchmark case and results.</p>
@@ -711,7 +735,13 @@ benchmarks, the results will be stored in the <cite>self.results</cite> attribut
 control verbosity, and pass CLI arguments to the benchmark runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>session</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="simplebench.html#simplebench.Session" title="simplebench.Session"><em>Session</em></a><em>]</em>) – The session to use for the benchmark case.</p>
+<dd class="field-odd"><p><strong>session</strong> – The session to use for the benchmark case.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>SimpleBenchTimeoutError</strong> – If a timeout occurs during the benchmark action.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchBenchmarkError" title="simplebench.exceptions.SimpleBenchBenchmarkError"><strong>SimpleBenchBenchmarkError</strong></a> – If an error occurs during the benchmark action.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -729,42 +759,19 @@ custom runner.</p>
 parameters are required, they must be specified in the <cite>action</cite> function signature.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.case.Case.section_mean">
-<span class="sig-name descname"><span class="pre">section_mean</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case.html#Case.section_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.Case.section_mean" title="Link to this definition">🔗</a></dt>
-<dd><p>Calculate the mean value for a specific section across all results.</p>
-<p>This method computes the mean value for the specified section
-(either OPS or TIMING) across all benchmark results associated with this case.</p>
-<p>This is a very ‘hand-wavy’ mean calculation that simply averages
-the means of each result. It does not take into account the number
-of iterations or other statistical factors. It is intended to provide
-a rough estimate of the overall performance for the specified section for
-use in comparisons between successive benchmark runs in tests looking for
-large performance regressions. As such, it should not be used for any rigorous
-statistical analysis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>section</strong> (<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><em>Section</em></a>) – The section for which to calculate the mean.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The mean value for the specified section.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.Case.timeout">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.Case.timeout" title="Link to this definition">🔗</a></dt>
 <dd><p>The timeout for the benchmark in seconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.Case.timer">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.case.Case.timer" title="Link to this definition">🔗</a></dt>
+<dd><p>The timer function to use for the benchmark.</p>
+<p>If None, the default timer from the Session() (if set) or from
+<cite>simplebench.defaults.DEFAULT_TIMER</cite> is used by benchmark runners.</p>
+<p>The timer function should be a callable that returns a float or int representing the current time.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -781,30 +788,39 @@ Cannot be blank.</p>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">kwargs_variations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><span class="pre">ActionRunner</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case.html#Case.validate_action_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.Case.validate_action_signature" title="Link to this definition">🔗</a></dt>
 <dd><p>Validate that action has correct signature.</p>
+<p>An action function must accept one of the two following formats for its parameters:</p>
 <dl class="simple">
-<dt>An action function must accept the following two parameters:</dt><dd><ul class="simple">
-<li><p>bench: SimpleRunner</p></li>
+<dt><strong>Two Parameters</strong></dt><dd><ul class="simple">
+<li><p>_bench: SimpleRunner</p></li>
 <li><p><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Arbitrary keyword arguments</p></li>
+</ul>
+</dd>
+<dt><strong>Explicit Parameters</strong></dt><dd><ul class="simple">
+<li><p>_bench: SimpleRunner</p></li>
+<li><p>any number of explicit parameters</p></li>
 </ul>
 </dd>
 </dl>
 <p>This is equivalent to the <cite>ActionRunner</cite> protocol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>action</strong> (<a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><em>ActionRunner</em></a>) – The action function to validate.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> – The action function to validate.</p></li>
+<li><p><strong>kwargs_variations</strong> – The kwargs variations for the case.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The validated action function.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner">ActionRunner</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the action is not callable or has an invalid signature.</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the action is not callable or has an invalid signature or
+if the kwargs_variations is not a dictionary with valid keys or if the action signature
+does not match the kwargs_variations keys.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -858,7 +874,7 @@ that is a valid Python identifier.</p></li>
 <dd><p>Validate the options list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>Iterable</em><em>[</em><em>ReporterOption</em><em>] </em><em>| </em><em>None</em>) – The options iterable to validate or None.</p>
+<dd class="field-odd"><p><strong>value</strong> – The options iterable to validate or None.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A shallow copy of the validated options as a list or an empty list if not provided.</p>
@@ -994,7 +1010,6 @@ updating it may require changes to both variation_cols and kwargs_variations_col
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case.html#generate_benchmark_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.generate_benchmark_id" title="Link to this definition">🔗</a></dt>
@@ -1007,8 +1022,7 @@ a transient ID based on the instance’s id() will be used.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obj</strong> – An object instance related to the benchmark case, used for transient ID generation if needed.</p></li>
-<li><p><strong>action</strong> (<a class="reference internal" href="simplebench.protocols.html#simplebench.protocols.ActionRunner" title="simplebench.protocols.ActionRunner"><em>ActionRunner</em></a>) – The action function of the benchmark case.</p></li>
-<li><p><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The group of the benchmark case.</p></li>
+<li><p><strong>action</strong> – The action function of the benchmark case.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1016,6 +1030,9 @@ a transient ID based on the instance’s id() will be used.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchAttributeError" title="simplebench.exceptions.SimpleBenchAttributeError"><strong>SimpleBenchAttributeError</strong></a> – If the action is a lambda function.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1078,8 +1095,8 @@ a transient ID based on the instance’s id() will be used.</p>
 <li><a class="reference internal" href="#simplebench.case.Case.rounds"><code class="docutils literal notranslate"><span class="pre">Case.rounds</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.run"><code class="docutils literal notranslate"><span class="pre">Case.run()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.runner"><code class="docutils literal notranslate"><span class="pre">Case.runner</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.case.Case.section_mean"><code class="docutils literal notranslate"><span class="pre">Case.section_mean()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.timeout"><code class="docutils literal notranslate"><span class="pre">Case.timeout</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.Case.timer"><code class="docutils literal notranslate"><span class="pre">Case.timer</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.title"><code class="docutils literal notranslate"><span class="pre">Case.title</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.validate_action_signature"><code class="docutils literal notranslate"><span class="pre">Case.validate_action_signature()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.Case.validate_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.validate_kwargs_variations()</span></code></a></li>
@@ -1103,11 +1120,12 @@ a transient ID based on the instance’s id() will be used.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=1162025f"></script>
+</div><script src="../_static/documentation_options.js?v=dd5748a0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=30646c52"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     </body>
 </html>

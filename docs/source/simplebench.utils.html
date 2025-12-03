@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.utils module - simplebench 0.6.1-alpha.0 documentation</title>
+        <title>simplebench.utils package - simplebench 0.8.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.6.1-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -185,7 +185,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.6.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -254,11 +254,11 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-simplebench.utils">
-<span id="simplebench-utils-module"></span><h1>simplebench.utils module<a class="headerlink" href="#module-simplebench.utils" title="Link to this heading">🔗</a></h1>
-<p>Utility functions</p>
+<span id="simplebench-utils-package"></span><h1>simplebench.utils package<a class="headerlink" href="#module-simplebench.utils" title="Link to this heading">🔗</a></h1>
+<p>Utility functions for simplebench.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.utils.MachineInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">MachineInfo</span></span><a class="reference internal" href="../_modules/simplebench/utils.html#MachineInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.MachineInfo" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">MachineInfo</span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#MachineInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.MachineInfo" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypedDict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
 <p>TypedDict for machine info returned by <a class="reference internal" href="#simplebench.utils.get_machine_info" title="simplebench.utils.get_machine_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_machine_info()</span></code></a>.</p>
 <dl class="field-list simple">
@@ -331,7 +331,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.arg_to_flag">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">arg_to_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#arg_to_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.arg_to_flag" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">arg_to_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/flags_and_args.html#arg_to_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.arg_to_flag" title="Link to this definition">🔗</a></dt>
 <dd><p>Convert a Python argument name to a command-line flag.</p>
 <p>This function takes a Python argument name (e.g., ‘my_flag’) and converts it
 to a command-line flag (e.g., ‘–my-flag’) by adding leading dashes and
@@ -365,7 +365,7 @@ replacing underscores with hyphens.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#collect_arg_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.collect_arg_list" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/utils/flags_and_args.html#collect_arg_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.collect_arg_list" title="Link to this definition">🔗</a></dt>
 <dd><p>Collects a list of argument values from a Namespace for a given flag.</p>
 <p>This function retrieves the values associated with the specified flag from
 the provided <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a> object. If the value is a sequence (excluding str and bytes),
@@ -395,33 +395,8 @@ if the retrieved argument value is of an unexpected type.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="simplebench.utils.first_not_none">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">first_not_none</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#first_not_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.first_not_none" title="Link to this definition">🔗</a></dt>
-<dd><p>Return the first not None element from a sequence of items. If all are None, return None.</p>
-<p>This utility method is used to prioritize non-None values when determining
-configuration settings, such as default options or targets.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>items</strong> (<em>Sequence</em><em>[</em><em>T</em><em>]</em>) – The sequence of items to check.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The first not None element from items, or None if all are None.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>T or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.flag_to_arg">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">flag_to_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#flag_to_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.flag_to_arg" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">flag_to_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/flags_and_args.html#flag_to_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.flag_to_arg" title="Link to this definition">🔗</a></dt>
 <dd><p>Convert a command-line flag to a valid Python argument name.</p>
 <p>This function takes a command-line flag (e.g., ‘–my-flag’) and converts it
 to a valid Python argument name (e.g., ‘my_flag’) as expected in a <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>
@@ -447,7 +422,7 @@ result by removing leading dashes and replacing hyphens with underscores.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.get_machine_info">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">get_machine_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.utils.MachineInfo" title="simplebench.utils.MachineInfo"><span class="pre">MachineInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#get_machine_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.get_machine_info" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">get_machine_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo" title="simplebench.utils.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#get_machine_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.get_machine_info" title="Link to this definition">🔗</a></dt>
 <dd><p>Return a dictionary of information about the current machine and Python version.</p>
 </dd></dl>
 
@@ -459,7 +434,7 @@ result by removing leading dashes and replacing hyphens with underscores.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#kwargs_variations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.kwargs_variations" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/utils/kwargs_variations.html#kwargs_variations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.kwargs_variations" title="Link to this definition">🔗</a></dt>
 <dd><p>Variations of keyword arguments for the benchmark.</p>
 <p>This function takes a dictionary where each key is a keyword argument name
 and the value is a Sequence of possible values for that argument. It returns a list
@@ -495,7 +470,7 @@ The value must be a Sequence (e.g., list, tuple, set), but not a str or bytes in
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.platform_architecture">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_architecture</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_architecture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_architecture" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_architecture</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#platform_architecture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_architecture" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the current architecture.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -509,7 +484,7 @@ The value must be a Sequence (e.g., list, tuple, set), but not a str or bytes in
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.platform_id">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_id" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#platform_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_id" title="Link to this definition">🔗</a></dt>
 <dd><p>Return a string that uniquely identifies the current machine and Python version.</p>
 <p>The platform ID is a lowercase string that combines the operating system, Python implementation,
 Python version, and architecture.</p>
@@ -525,7 +500,7 @@ Python version, and architecture.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.platform_implementation">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_implementation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_implementation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_implementation" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_implementation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#platform_implementation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_implementation" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the current Python implementation name.</p>
 <p>See <a class="reference external" href="https://docs.python.org/3/library/platform.html#platform.python_implementation" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">platform.python_implementation()</span></code></a> for details.</p>
 <dl class="field-list simple">
@@ -540,7 +515,7 @@ Python version, and architecture.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.platform_machine">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_machine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_machine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_machine" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_machine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#platform_machine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_machine" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the current machine type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -554,7 +529,7 @@ Python version, and architecture.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.platform_processor">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_processor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_processor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_processor" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_processor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#platform_processor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_processor" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the current processor name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -568,7 +543,7 @@ Python version, and architecture.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.platform_system">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_system</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_system" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_system</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#platform_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_system" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the current operating system name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -582,7 +557,7 @@ Python version, and architecture.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.platform_version">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#platform_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_version" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">platform_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#platform_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.platform_version" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the current Python version.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -596,7 +571,7 @@ Python version, and architecture.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.python_implementation_version">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">python_implementation_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#python_implementation_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.python_implementation_version" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">python_implementation_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/machine_info.html#python_implementation_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.python_implementation_version" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the Python implementation version.</p>
 <p>For CPython, this is the same as <a class="reference external" href="https://docs.python.org/3/library/platform.html#platform.python_version" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">platform.python_version()</span></code></a>.
 For PyPy, this is the PyPy version (e.g., ‘7.3.5’).</p>
@@ -612,7 +587,7 @@ For PyPy, this is the PyPy version (e.g., ‘7.3.5’).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.sanitize_filename">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">sanitize_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#sanitize_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.sanitize_filename" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">sanitize_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/filenames.html#sanitize_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.sanitize_filename" title="Link to this definition">🔗</a></dt>
 <dd><p>Sanitizes a filename by replacing invalid characters with _ (underline).</p>
 <p>Only a-z, A-Z, 0-9, _  (underline), and - (dash) characters are allowed. All other
 characters are replaced with _ and multiple sequential _ characters are then
@@ -654,7 +629,7 @@ leading and trailing _ and - characters are removed.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.utils.sigfigs">
-<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">sigfigs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">figures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils.html#sigfigs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.sigfigs" title="Link to this definition">🔗</a></dt>
+<span class="sig-prename descclassname"><span class="pre">simplebench.utils.</span></span><span class="sig-name descname"><span class="pre">sigfigs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">figures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../_modules/simplebench/utils/significant_figures.html#sigfigs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.utils.sigfigs" title="Link to this definition">🔗</a></dt>
 <dd><p>Rounds a floating point number to the specified number of significant figures.</p>
 <p>If the number of significant figures is not specified, it defaults to
 <a class="reference internal" href="simplebench.defaults.html#simplebench.defaults.DEFAULT_SIGNIFICANT_FIGURES" title="simplebench.defaults.DEFAULT_SIGNIFICANT_FIGURES"><code class="xref py py-data docutils literal notranslate"><span class="pre">DEFAULT_SIGNIFICANT_FIGURES</span></code></a>.</p>
@@ -687,6 +662,57 @@ leading and trailing _ and - characters are removed.</p>
 </dl>
 </dd></dl>
 
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.utils.exceptions.html">simplebench.utils.exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.utils.filenames.html">simplebench.utils.filenames module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.filenames.html#simplebench.utils.filenames.sanitize_filename"><code class="docutils literal notranslate"><span class="pre">sanitize_filename()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.utils.flags_and_args.html">simplebench.utils.flags_and_args module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.flags_and_args.html#simplebench.utils.flags_and_args.arg_to_flag"><code class="docutils literal notranslate"><span class="pre">arg_to_flag()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.flags_and_args.html#simplebench.utils.flags_and_args.collect_arg_list"><code class="docutils literal notranslate"><span class="pre">collect_arg_list()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.flags_and_args.html#simplebench.utils.flags_and_args.flag_to_arg"><code class="docutils literal notranslate"><span class="pre">flag_to_arg()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.utils.kwargs_variations.html">simplebench.utils.kwargs_variations module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.kwargs_variations.html#simplebench.utils.kwargs_variations.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">kwargs_variations()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.utils.machine_info.html">simplebench.utils.machine_info module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo"><code class="docutils literal notranslate"><span class="pre">MachineInfo</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfo.cpu</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfo.machine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.processor"><code class="docutils literal notranslate"><span class="pre">MachineInfo.processor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.python_build"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_build</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.python_compiler"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_compiler</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.python_implementation"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_implementation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.python_implementation_version"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_implementation_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.python_version"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.release"><code class="docutils literal notranslate"><span class="pre">MachineInfo.release</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo.system"><code class="docutils literal notranslate"><span class="pre">MachineInfo.system</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.get_machine_info"><code class="docutils literal notranslate"><span class="pre">get_machine_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_architecture"><code class="docutils literal notranslate"><span class="pre">platform_architecture()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_id"><code class="docutils literal notranslate"><span class="pre">platform_id()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_implementation"><code class="docutils literal notranslate"><span class="pre">platform_implementation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_machine"><code class="docutils literal notranslate"><span class="pre">platform_machine()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_processor"><code class="docutils literal notranslate"><span class="pre">platform_processor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_system"><code class="docutils literal notranslate"><span class="pre">platform_system()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_version"><code class="docutils literal notranslate"><span class="pre">platform_version()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.python_implementation_version"><code class="docutils literal notranslate"><span class="pre">python_implementation_version()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.utils.significant_figures.html">simplebench.utils.significant_figures module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.significant_figures.html#simplebench.utils.significant_figures.sigfigs"><code class="docutils literal notranslate"><span class="pre">sigfigs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 </section>
 
         </article>
@@ -726,7 +752,7 @@ leading and trailing _ and - characters are removed.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">simplebench.utils module</a><ul>
+<li><a class="reference internal" href="#">simplebench.utils package</a><ul>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo"><code class="docutils literal notranslate"><span class="pre">MachineInfo</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfo.cpu</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.MachineInfo.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfo.machine</span></code></a></li>
@@ -742,7 +768,6 @@ leading and trailing _ and - characters are removed.</p>
 </li>
 <li><a class="reference internal" href="#simplebench.utils.arg_to_flag"><code class="docutils literal notranslate"><span class="pre">arg_to_flag()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.collect_arg_list"><code class="docutils literal notranslate"><span class="pre">collect_arg_list()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.utils.first_not_none"><code class="docutils literal notranslate"><span class="pre">first_not_none()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.flag_to_arg"><code class="docutils literal notranslate"><span class="pre">flag_to_arg()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.get_machine_info"><code class="docutils literal notranslate"><span class="pre">get_machine_info()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">kwargs_variations()</span></code></a></li>
@@ -756,6 +781,7 @@ leading and trailing _ and - characters are removed.</p>
 <li><a class="reference internal" href="#simplebench.utils.python_implementation_version"><code class="docutils literal notranslate"><span class="pre">python_implementation_version()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.sanitize_filename"><code class="docutils literal notranslate"><span class="pre">sanitize_filename()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.utils.sigfigs"><code class="docutils literal notranslate"><span class="pre">sigfigs()</span></code></a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
@@ -767,7 +793,7 @@ leading and trailing _ and - characters are removed.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=8c7f9c82"></script>
+</div><script src="../_static/documentation_options.js?v=a100ed86"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

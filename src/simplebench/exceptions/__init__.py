@@ -16,7 +16,6 @@ from .runners import _RunnersErrorTag
 from .session import _SessionErrorTag
 from .si_units import _SIUnitsErrorTag
 from .tasks import _RichProgressTasksErrorTag, _RichTaskErrorTag
-from .utils import _UtilsErrorTag
 
 __all__ = [
     "TaggedException",
@@ -40,7 +39,6 @@ __all__ = [
     "_RunnersErrorTag",
     "_SessionErrorTag",
     "_SIUnitsErrorTag",
-    "_UtilsErrorTag",
 ]
 
 
