@@ -513,9 +513,10 @@
 <span class="sd">        :return: The elapsed time for the iteration in seconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kiloround_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
-
+        <span class="n">timer_sections</span><span class="p">:</span> <span class="nb">int</span>
         <span class="k">if</span> <span class="n">rounds</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
             <span class="c1"># for less than 1000 rounds, we can use the generated timer function directly</span>
+            <span class="n">timer_sections</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
                 <span class="n">setup</span><span class="p">()</span>
             <span class="n">elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">rounds</span><span class="p">)(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
@@ -524,21 +525,23 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a &quot;kiloround&quot;)</span>
             <span class="c1"># to reduce the footprint of the generated timer functions and avoid hitting</span>
-            <span class="c1"># Python&#39;s function size limits. Breaking into chunks of 1000 also</span>
-            <span class="c1"># reduces the overhead of the loop in the timing function to a negligible level.</span>
+            <span class="c1"># Python&#39;s function size limits.</span>
             <span class="n">elapsed</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">timer_sections</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">kiloround_chunks</span><span class="p">,</span> <span class="n">remaining_rounds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">rounds</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
                 <span class="n">setup</span><span class="p">()</span>
             <span class="k">while</span> <span class="n">kiloround_chunks</span><span class="p">:</span>
                 <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">kiloround_chunks</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">timer_sections</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">remaining_rounds</span><span class="p">:</span>
                 <span class="n">partial_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">remaining_rounds</span><span class="p">)</span>
                 <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">timer_sections</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
                 <span class="n">teardown</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">elapsed</span>
+        <span class="k">return</span> <span class="n">elapsed</span> <span class="o">-</span> <span class="n">timer_overhead_ns</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span> <span class="o">*</span> <span class="n">timer_sections</span>
 
 <div class="viewcode-block" id="SimpleRunner.default_runner">
 <a class="viewcode-back" href="../../source/simplebench.runners.html#simplebench.runners.SimpleRunner.default_runner">[docs]</a>
@@ -767,32 +770,37 @@
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># Loop until we find an adequate rounds estimate</span>
             <span class="c1"># Use kiloround chunking to avoid generating excessively large timer functions</span>
             <span class="n">total_action_time_ns</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">timer_sections</span><span class="p">:</span> <span class="nb">int</span>
             <span class="k">if</span> <span class="n">estimate_rounds</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
                 <span class="n">estimate_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">estimate_rounds</span><span class="p">)</span>
                 <span class="n">total_action_time_ns</span> <span class="o">=</span> <span class="n">estimate_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">timer_sections</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">total_action_time_ns</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">timer_sections</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">kiloround_chunks</span><span class="p">,</span> <span class="n">remaining_rounds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">estimate_rounds</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
                 <span class="k">while</span> <span class="n">kiloround_chunks</span><span class="p">:</span>
                     <span class="n">total_action_time_ns</span> <span class="o">+=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
                     <span class="n">kiloround_chunks</span> <span class="o">-=</span> <span class="mi">1</span>
+                    <span class="n">timer_sections</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">remaining_rounds</span><span class="p">:</span>
                     <span class="n">partial_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">remaining_rounds</span><span class="p">)</span>
                     <span class="n">total_action_time_ns</span> <span class="o">+=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">timer_sections</span> <span class="o">+=</span> <span class="mi">1</span>
 
-            <span class="c1"># Subtract the overhead of one timer call (start/end) to get the true action time.</span>
-            <span class="n">total_measured_time_ns</span> <span class="o">=</span> <span class="n">total_action_time_ns</span> <span class="o">-</span> <span class="n">timer_overhead</span>
+            <span class="c1"># Subtract the cumulative overhead from all timed sections.</span>
+            <span class="n">total_measured_time_ns</span> <span class="o">=</span> <span class="n">total_action_time_ns</span> <span class="o">-</span> <span class="p">(</span><span class="n">timer_overhead</span> <span class="o">*</span> <span class="n">timer_sections</span><span class="p">)</span>
 
             <span class="c1"># loop exit condition</span>
             <span class="k">if</span> <span class="n">total_measured_time_ns</span> <span class="o">&gt;=</span> <span class="n">target_time_ns</span><span class="p">:</span>
                 <span class="k">break</span>
 
-            <span class="k">if</span> <span class="n">total_action_time_ns</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">total_measured_time_ns</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">estimate_rounds</span> <span class="o">*=</span> <span class="mi">10</span>
                 <span class="k">continue</span>
 
             <span class="c1"># Calculate the average time to estimate the next number of rounds.</span>
-            <span class="n">avg_action_time_ns</span> <span class="o">=</span> <span class="n">total_action_time_ns</span> <span class="o">/</span> <span class="n">estimate_rounds</span>
+            <span class="n">avg_action_time_ns</span> <span class="o">=</span> <span class="n">total_measured_time_ns</span> <span class="o">/</span> <span class="n">estimate_rounds</span>
             <span class="n">required_rounds</span> <span class="o">=</span> <span class="n">target_time_ns</span> <span class="o">/</span> <span class="n">avg_action_time_ns</span>
             <span class="n">estimate_rounds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">required_rounds</span><span class="p">,</span> <span class="n">estimate_rounds</span> <span class="o">*</span> <span class="mi">10</span><span class="p">))</span>
 
