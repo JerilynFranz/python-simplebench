@@ -46,7 +46,7 @@ class Session():
                  show_progress: bool = False,
                  output_path: Optional[Path] = None,
                  console: Optional[Console] = None,
-                 timer: Callable[[], float | int] | None = None) -> None:
+                 timer: Callable[[], int] | None = None) -> None:
         """Container and orchestrator for session related information while running benchmarks.
 
         :param cases: A Sequence of benchmark cases for the session.
@@ -361,17 +361,16 @@ class Session():
         self.tasks.clear()
 
     @property
-    def timer(self) -> Callable[[], float | int]:
+    def timer(self) -> Callable[[], int]:
         """The timer function used for benchmarking."""
         return self._timer
 
     @timer.setter
-    def timer(self, value: Callable[[], float | int]) -> None:
+    def timer(self, value: Callable[[], int]) -> None:
         """Set the timer function used for benchmarking.
 
         :param value: The timer function used for benchmarking.
-        :type value: Callable[[], float | int]
-        :raises SimpleBenchTypeError: If the value is not a callable that returns a float or int.
+        :raises SimpleBenchTypeError: If the value is not a callable that returns an int.
         """
         if not callable(value):
             raise SimpleBenchTypeError(
@@ -379,9 +378,9 @@ class Session():
                 tag=_SessionErrorTag.PROPERTY_INVALID_TIMER_ARG
             )
         test_result = value()
-        if not isinstance(test_result, (float, int)):
+        if not isinstance(test_result, int):
             raise SimpleBenchTypeError(
-                f'timer callable must return a float or int - cannot return a {type(test_result)}',
+                f'timer callable must return an int - cannot return a {type(test_result)}',
                 tag=_SessionErrorTag.PROPERTY_INVALID_TIMER_RETURN_TYPE
             )
         self._timer = value

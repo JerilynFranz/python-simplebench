@@ -136,9 +136,10 @@ class Case:
     The unrolled loop means that setup and teardown functions (if any) are called only once per iteration,
     not once per round. All rounds in the same iteration share the same setup/teardown context.
 
-    If your action is not extremely fast (~ 10 nanoseconds or faster), it is recommended to leave
-    `rounds` at its default value of 1. If you do use it, you may want to run dual benchmarks
-    with `rounds=1` and `rounds>1` to see how much the reported variability and other metrics change.
+    It is recommended to leave `rounds` to its default of ``None``. A setting of ``None`` enables
+    auto-calibration of rounds based on the expected execution time of the action and the
+    precision and overhead of the timer function. If you do use it, you may want to run dual benchmarks
+    with `rounds=1` and `rounds >> 1` to see how much the reported variability and other metrics change.
 
     The Case class is designed to be immutable after creation. Once a Case instance
     is created, its properties cannot be directly changed. This immutability ensures that
@@ -188,8 +189,8 @@ class Case:
                  description: Optional[str] = None,
                  iterations: int = defaults.DEFAULT_ITERATIONS,
                  warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
-                 rounds: int = defaults.DEFAULT_ROUNDS,
-                 timer: Callable[[], float | int] | None = None,
+                 rounds: int | None = None,
+                 timer: Callable[[], int] | None = None,
                  min_time: float = defaults.DEFAULT_MIN_TIME,
                  max_time: float = defaults.DEFAULT_MAX_TIME,
                  timeout: float | int | None = None,
@@ -239,6 +240,14 @@ class Case:
             quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
             functions are called only once per iteration (all rounds in the same iteration share the same
             setup/teardown context).
+
+            If None, rounds will be auto-calibrated based on the precision and overhead of the timer function
+            and the expected execution time of the action. If the action is very fast (e.g., under
+            10 microseconds), rounds will be set to a higher value to improve measurement accuracy
+            with the goal of reducing timer quantization errors. If the action is slower, rounds
+            will be set lower values.
+
+            If specified, it must be a positive integer.
         :param timer: The timer function to use for the benchmark. If None, the default timer
             from the Session() (if set) or from `simplebench.defaults.DEFAULT_TIMER` ({DEFAULT_TIMER})
             is used by benchmark runners that require a timer.
@@ -333,21 +342,23 @@ class Case:
                         warmup_iterations, "warmup_iterations",
                         _CaseErrorTag.INVALID_WARMUP_ITERATIONS_TYPE,
                         _CaseErrorTag.INVALID_WARMUP_ITERATIONS_VALUE)
-        self._rounds = validate_positive_int(
+        self._rounds: int | None = None
+        if rounds is not None:
+            self._rounds = validate_positive_int(
                         rounds, "rounds",
                         _CaseErrorTag.INVALID_ROUNDS_TYPE,
                         _CaseErrorTag.INVALID_ROUNDS_VALUE)
         if timer is None:
-            self._timer: Callable[[], float | int] | None = None
+            self._timer: Callable[[], int] | None = None
         elif not callable(timer):
             raise SimpleBenchTypeError(
                 f'Invalid timer: {type(timer)}. Must be a callable.',
                 tag=_CaseErrorTag.INVALID_TIMER_NOT_CALLABLE)
         else:
             test_value = timer()
-            if not isinstance(test_value, (float, int)):
+            if not isinstance(test_value, int):
                 raise SimpleBenchTypeError(
-                    (f'Invalid timer: {type(timer)}. Timer callable must return float or int, '
+                    (f'Invalid timer: {type(timer)}. Timer callable must return an int, '
                      f'got {type(test_value)}.'),
                     tag=_CaseErrorTag.INVALID_TIMER_RETURN_TYPE)
         self._timer = timer
@@ -746,7 +757,7 @@ class Case:
         return self._warmup_iterations
 
     @property
-    def rounds(self) -> int:
+    def rounds(self) -> int | None:
         """The number of rounds to run for the benchmark for each iteration.
 
         Rounds are multiple runs of the entire benchmark to get a better average for an iteration.
@@ -754,13 +765,13 @@ class Case:
         return self._rounds
 
     @property
-    def timer(self) -> Callable[[], float | int] | None:
+    def timer(self) -> Callable[[], int] | None:
         """The timer function to use for the benchmark.
 
         If None, the default timer from the Session() (if set) or from
         `simplebench.defaults.DEFAULT_TIMER` is used by benchmark runners.
 
-        The timer function should be a callable that returns a float or int representing the current time.
+        The timer function should be a callable that returns an int representing the current time.
         """
         return self._timer
 

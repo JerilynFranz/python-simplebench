@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import statistics
-from math import isclose, sqrt
+from math import isclose
 from typing import Any, Sequence
 
 from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError
@@ -31,15 +31,11 @@ class Stats:
     :ivar float minimum: The minimum operations per time interval. (read only)
     :ivar float maximum: The maximum operations per time interval. (read only)
     :ivar float standard_deviation: The standard deviation of operations per time interval. (read only)
-    :ivar float adjusted_standard_deviation: The standard deviation adjusted for the number of rounds. (read only)
     :ivar float relative_standard_deviation: The relative standard deviation of ops per time interval. (read only)
-    :ivar float adjusted_relative_standard_deviation: The adjusted relative standard deviation of ops per
-        time interval. (read only)
     :ivar tuple[float, ...] percentiles: Percentiles of operations per time interval. (read only)
     '''
     __slots__ = ('_unit', '_scale', '_rounds', '_data', '_percentiles', '_mean', '_median',
-                 '_minimum', '_maximum', '_standard_deviation', '_adjusted_standard_deviation',
-                 '_relative_standard_deviation', '_adjusted_relative_standard_deviation',
+                 '_minimum', '_maximum', '_standard_deviation', '_relative_standard_deviation',
                  '_statistics_as_dict', '_statistics_and_data_as_dict')
 
     def __init__(self, *, unit: str, scale: float, data: Sequence[int | float], rounds: int = 1) -> None:
@@ -77,9 +73,7 @@ class Stats:
         self._minimum: float | None = None
         self._maximum: float | None = None
         self._standard_deviation: float | None = None
-        self._adjusted_standard_deviation: float | None = None
         self._relative_standard_deviation: float | None = None
-        self._adjusted_relative_standard_deviation: float | None = None
         self._statistics_as_dict: dict[str, str | float | dict[int, float] | list[int | float]] | None = None
         self._statistics_and_data_as_dict: dict[str, str | float | dict[int, float] | list[int | float]] | None = None
 
@@ -139,31 +133,11 @@ class Stats:
         return self._standard_deviation
 
     @property
-    def adjusted_standard_deviation(self) -> float:
-        '''The standard deviation adjusted for the number of rounds.
-
-        This metric "un-suppresses" the variability that is reduced by averaging
-        across multiple rounds. It is calculated by multiplying the standard
-        deviation by the square root of the number of rounds.
-        '''
-        if self._adjusted_standard_deviation is None:
-            self._adjusted_standard_deviation = self.standard_deviation * sqrt(self.rounds)
-        return self._adjusted_standard_deviation
-
-    @property
     def relative_standard_deviation(self) -> float:
         '''The relative standard deviation of the data.'''
         if self._relative_standard_deviation is None:
             self._relative_standard_deviation = abs(self.standard_deviation / self.mean * 100) if self.mean else 0.0
         return self._relative_standard_deviation
-
-    @property
-    def adjusted_relative_standard_deviation(self) -> float:
-        '''The adjusted relative standard deviation of the data.'''
-        if self._adjusted_relative_standard_deviation is None:
-            self._adjusted_relative_standard_deviation = abs(
-                self.adjusted_standard_deviation / self.mean * 100) if self.mean else 0.0
-        return self._adjusted_relative_standard_deviation
 
     @property
     def percentiles(self) -> tuple[float, ...]:
@@ -350,7 +324,6 @@ class StatsSummary:
     '''
     __slots__ = ('_unit', '_scale', '_rounds', '_mean', '_median', '_minimum', '_maximum',
                  '_standard_deviation', '_relative_standard_deviation', '_percentiles',
-                 '_adjusted_standard_deviation', '_adjusted_relative_standard_deviation',
                  '_statistics_as_dict')
 
     def __init__(self,  # pylint: disable=too-many-arguments
@@ -417,8 +390,6 @@ class StatsSummary:
                         allow_empty=False,
                         type_tag=_StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_TYPE,
                         value_tag=_StatsSummaryErrorTag.INVALID_PERCENTILES_ARG_VALUE))
-        self._adjusted_standard_deviation: float | None = None
-        self._adjusted_relative_standard_deviation: float | None = None
         self._statistics_as_dict = None
 
     @property
@@ -462,24 +433,9 @@ class StatsSummary:
         return self._standard_deviation
 
     @property
-    def adjusted_standard_deviation(self) -> float:
-        '''The standard deviation adjusted for the number of rounds.'''
-        if self._adjusted_standard_deviation is None:
-            self._adjusted_standard_deviation = self.standard_deviation * sqrt(self.rounds)
-        return self._adjusted_standard_deviation
-
-    @property
     def relative_standard_deviation(self) -> float:
         '''The relative standard deviation of the data.'''
         return self._relative_standard_deviation
-
-    @property
-    def adjusted_relative_standard_deviation(self) -> float:
-        '''The adjusted relative standard deviation of the data.'''
-        if self._adjusted_relative_standard_deviation is None:
-            self._adjusted_relative_standard_deviation = abs(
-                self.adjusted_standard_deviation / self.mean * 100) if self.mean else 0.0
-        return self._adjusted_relative_standard_deviation
 
     @property
     def percentiles(self) -> tuple[float, ...]:
@@ -645,7 +601,6 @@ class StatsSummary:
             'minimum': self.minimum / self.scale,
             'maximum': self.maximum / self.scale,
             'standard_deviation': self.standard_deviation / self.scale,
-            'adjusted_standard_deviation': self.adjusted_standard_deviation / self.scale,
             'relative_standard_deviation': self.relative_standard_deviation,
             'percentiles': tuple(value / self.scale for value in self.percentiles)
         }

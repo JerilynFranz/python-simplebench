@@ -8,7 +8,6 @@ from simplebench.defaults import (
     DEFAULT_ITERATIONS,
     DEFAULT_MAX_TIME,
     DEFAULT_MIN_TIME,
-    DEFAULT_ROUNDS,
     DEFAULT_WARMUP_ITERATIONS,
 )
 from simplebench.enums import Verbosity
@@ -654,8 +653,8 @@ def test_decorator_with_no_parameters() -> None:
         "Expected default title to be the function name.")
     assert test_case.iterations == DEFAULT_ITERATIONS, (
         f"Expected default iterations to be {DEFAULT_ITERATIONS}.")
-    assert test_case.rounds == DEFAULT_ROUNDS, (
-        f"Expected default rounds to be {DEFAULT_ROUNDS}.")
+    assert test_case.rounds is None, (
+        "Expected default rounds to be None.")
     assert test_case.min_time == DEFAULT_MIN_TIME, (
         f"Expected default min_time to be {DEFAULT_MIN_TIME}.")
     assert test_case.max_time == DEFAULT_MAX_TIME, (
@@ -688,8 +687,8 @@ def test_decorator_with_empty_parameters() -> None:
         "Expected default title to be the function name.")
     assert test_case.iterations == DEFAULT_ITERATIONS, (
         f"Expected default iterations to be {DEFAULT_ITERATIONS}.")
-    assert test_case.rounds == DEFAULT_ROUNDS, (
-        f"Expected default rounds to be {DEFAULT_ROUNDS}.")
+    assert test_case.rounds is None, (
+        "Expected default rounds to be None.")
     assert test_case.min_time == DEFAULT_MIN_TIME, (
         f"Expected default min_time to be {DEFAULT_MIN_TIME}.")
     assert test_case.max_time == DEFAULT_MAX_TIME, (

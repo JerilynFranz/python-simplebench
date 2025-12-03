@@ -9,7 +9,7 @@ class _SessionErrorTag(ErrorTag):
     PROPERTY_INVALID_TIMER_ARG = "PROPERTY_INVALID_TIMER_ARG"
     """Something other than a callable was assigned to the timer property"""
     PROPERTY_INVALID_TIMER_RETURN_TYPE = "PROPERTY_INVALID_TIMER_RETURN_TYPE"
-    """The callable assigned to the timer property did not return a float or int"""
+    """The callable assigned to the timer property did not return an int"""
     INVALID_CASES_SEQUENCE_ARG = "INVALID_CASES_SEQUENCE_ARG"
     """Something other than a Sequence of Case instances was passed to the Session() constructor"""
     INIT_INVALID_CASE_ARG_IN_SEQUENCE = "INIT_INVALID_CASE_ARG_IN_SEQUENCE"

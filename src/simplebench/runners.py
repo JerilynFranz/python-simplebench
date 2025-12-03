@@ -4,18 +4,20 @@ from __future__ import annotations
 
 import gc
 import importlib.util
+import math
 import sys
 import tracemalloc
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
-from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_TIMER, MIN_MEASURED_ITERATIONS
+from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_SIGNIFICANT_FIGURES, DEFAULT_TIMER, MIN_MEASURED_ITERATIONS
 from .enums import Color
-from .exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, _RunnersErrorTag
+from .exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError, _RunnersErrorTag
 from .iteration import Iteration
 from .results import Results
 from .tasks import ProgressTracker
 from .timeout import Timeout
+from .timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
 from .validators import validate_positive_int
 
 if TYPE_CHECKING:
@@ -173,7 +175,7 @@ class SimpleRunner:
             [Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]:
         """Return a timer function for the benchmark.
 
-        The generated function will call the action `rounds` times and return the average time taken.
+        The generated function will call the action `rounds` times and return the total time taken.
         The function is generated as a string and then compiled to avoid the overhead of
         a loop in Python during the actual timing benchmark.
 
@@ -214,7 +216,7 @@ class SimpleRunner:
             time_function_lines.append('    start = timer()')
             time_function_lines.extend(['    action(**kwargs)'] * rounds)
             time_function_lines.append('    end = timer()')
-            time_function_lines.append(f'    return float((end - start) / {rounds})')
+            time_function_lines.append('    return float(end - start)')
             time_function_code = '\n'.join(time_function_lines)
             exec(time_function_code, _timers_module.__dict__)  # pylint: disable=exec-used
 
@@ -235,6 +237,55 @@ class SimpleRunner:
         """
         return {key: self.kwargs.get(key, None) for key in self.case.variation_cols.keys()}
 
+    def _run_timed_iteration(
+            self,
+            *,
+            rounds: int,
+            timer: Callable[[], int | float],
+            action: Callable[..., Any],
+            kwargs: dict[str, Any],
+            setup: Optional[Callable[..., Any]],
+            teardown: Optional[Callable[..., Any]]) -> float:
+        """Run a single timed iteration of the benchmark action for a given number of rounds.
+        This method uses an unrolled loop to call the action the specified number of rounds,
+        minimizing the overhead of loop control in Python.
+
+        :param rounds: The number of test rounds that will be run by the action for the iteration.
+        :param timer: The timer function to use for timing.
+        :param action: The action to benchmark.
+        :param kwargs: Keyword arguments to pass to the action.
+        :param setup: A setup function to run before the iteration.
+        :param teardown: A teardown function to run after the iteration.
+        :return: The elapsed time for the iteration in seconds.
+        """
+        kiloround_timer = self._timer_function(1000)
+
+        if rounds < 1000:
+            # for less than 1000 rounds, we can use the generated timer function directly
+            if callable(setup):
+                setup()
+            elapsed = self._timer_function(rounds)(timer, action, kwargs)
+            if callable(teardown):
+                teardown()
+        else:
+            # for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a "kiloround")
+            # to reduce the footprint of the generated timer functions and avoid hitting
+            # Python's function size limits. Breaking into chunks of 1000 also
+            # reduces the overhead of the loop in the timing function to a negligible level.
+            elapsed = 0.0
+            kiloround_chunks, remaining_rounds = divmod(rounds, 1000)
+            if callable(setup):
+                setup()
+            while kiloround_chunks:
+                elapsed += kiloround_timer(timer, action, kwargs)
+                kiloround_chunks -= 1
+            if remaining_rounds:
+                partial_timer = self._timer_function(remaining_rounds)
+                elapsed += partial_timer(timer, action, kwargs)
+            if callable(teardown):
+                teardown()
+        return elapsed
+
     def default_runner(
             self,
             *,
@@ -252,15 +303,10 @@ class SimpleRunner:
             sorts a list of length n, then n should be the length of the list.
             If the action being benchmarked is a function that performs
             a constant-time operation, then n should be 1.
-        :type n: int
         :param action: The action to benchmark.
-        :type action: Callable[..., Any]
         :param setup: A setup function to run before each iteration.
-        :type setup: Callable[..., Any], optional
         :param teardown: A teardown function to run after each iteration.
-        :type teardown: Callable[..., Any], optional
         :param kwargs: Keyword arguments to pass to the action.
-        :type kwargs: dict[str, Any], optional
         :return: The results of the benchmark.
         :rtype: Results
         """
@@ -303,6 +349,17 @@ class SimpleRunner:
         wall_time: float = float(timer())
         iterations_min: int = max(MIN_MEASURED_ITERATIONS, iterations)
 
+        rounds: int
+        if self.case.rounds is None:
+            rounds = self.calibrate_rounds(
+                timer=timer,
+                kwargs=kwargs,
+                setup=setup,
+                teardown=teardown,
+                action=action)
+        else:
+            rounds = self.case.rounds
+
         gc.collect()
 
         progress_max: float = 100.0
@@ -313,39 +370,20 @@ class SimpleRunner:
             description=f'Benchmarking {group} (iteration {0:<6d}; time {0.00:<3.2f}s)',
             color=Color.GREEN)
 
-        timer_function = self._timer_function(self.case.rounds)
         total_elapsed: float = 0.0
         iterations_list: list[Iteration] = []
-        kiloround_timer = self._timer_function(1000)
 
         while ((iteration_pass <= iterations_min or wall_time < min_stop_at)
                 and wall_time < max_stop_at):
             iteration_pass += 1
             # Time the action
-            if self.case.rounds < 1000:
-                # for less than 1000 rounds, we can use the generated timer function directly
-                if callable(setup):
-                    setup()
-                elapsed = timer_function(timer, action, kwargs)
-                if callable(teardown):
-                    teardown()
-            else:
-                # for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a "kiloround")
-                # to reduce the footprint of the generated timer functions and avoid hitting
-                # Python's function size limits. Breaking into chunks of 1000 also
-                # reduces the overhead of the loop in the timing function to a negligible level.
-                elapsed = 0.0
-                kiloround_chunks, remaining_rounds = divmod(self.case.rounds, 1000)
-                if callable(setup):
-                    setup()
-                while kiloround_chunks:
-                    elapsed += kiloround_timer(timer, action, kwargs)
-                    kiloround_chunks -= 1
-                if remaining_rounds:
-                    partial_timer = self._timer_function(remaining_rounds)
-                    elapsed += partial_timer(timer, action, kwargs)
-                if callable(teardown):
-                    teardown()
+            elapsed = self._run_timed_iteration(
+                rounds=rounds,
+                timer=timer,
+                action=action,
+                kwargs=kwargs,
+                setup=setup,
+                teardown=teardown)
 
             # Measure memory usage of the action
             # We force a garbage collection before measuring memory usage to reduce noise
@@ -376,7 +414,7 @@ class SimpleRunner:
             memory = end_memory_current - start_memory_current - memory_overhead
             peak_memory = end_memory_peak - start_memory_peak - peak_memory_overhead
             iteration_result = Iteration(
-                n=n, rounds=self.case.rounds, elapsed=elapsed, memory=memory, peak_memory=peak_memory)
+                n=n, rounds=rounds, elapsed=elapsed, memory=memory, peak_memory=peak_memory)
             iterations_list.append(iteration_result)
             total_elapsed += iteration_result.elapsed
             wall_time = float(timer())
@@ -398,10 +436,108 @@ class SimpleRunner:
             description=description,
             variation_marks=self.variation_marks,
             n=n,
-            rounds=self.case.rounds,
+            rounds=rounds,
             iterations=iterations_list,
             total_elapsed=total_elapsed,
             extra_info={})
         progress_tracker.stop()
 
         return benchmark_results
+
+    def calibrate_rounds(self, *,
+                         timer: Callable[[], int],
+                         kwargs: dict[str, Any],
+                         setup: Optional[Callable[..., Any]] = None,
+                         teardown: Optional[Callable[..., Any]] = None,
+                         action: Callable[..., Any]) -> int:
+        """Auto-calibrate the number of rounds for the benchmark.
+
+        This method estimates an appropriate number of rounds to use for the benchmark
+        based on the precision and overhead of the timer function and the expected
+        execution time of the action being benchmarked.
+
+        The goal is to choose a number of rounds such that the total time taken
+        for the action is significantly larger than the timer precision and overhead,
+        to reduce the impact of timer quantization errors on the measurement.
+
+        :param timer: The timer function to use for the benchmark.
+        :param kwargs: Keyword arguments to pass to the action.
+        :param setup: A setup function to run before each iteration.
+        :param teardown: A teardown function to run after each iteration.
+        :param action: The action to benchmark.
+        :return: The calibrated number of rounds for the benchmark.
+        """
+        if not is_valid_timer(timer):
+            raise SimpleBenchTypeError(
+                'Invalid timer function provided for rounds calibration',
+                tag=_RunnersErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION)
+        if not isinstance(kwargs, dict):
+            raise SimpleBenchTypeError(
+                'Invalid kwargs provided for rounds calibration; must be a dict',
+                tag=_RunnersErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_TYPE)
+        if not all(isinstance(key, str) for key in kwargs.keys()):
+            raise SimpleBenchTypeError(
+                'Invalid kwargs provided for rounds calibration; all keys must be strings',
+                tag=_RunnersErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_KEY_TYPE)
+        if not callable(action):
+            raise SimpleBenchTypeError(
+                'Invalid action provided for rounds calibration; must be callable',
+                tag=_RunnersErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_ACTION_TYPE)
+        if setup is not None and not callable(setup):
+            raise SimpleBenchTypeError(
+                'Invalid setup function provided for rounds calibration; must be callable',
+                tag=_RunnersErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_SETUP)
+        if teardown is not None and not callable(teardown):
+            raise SimpleBenchTypeError(
+                'Invalid teardown function provided for rounds calibration; must be callable',
+                tag=_RunnersErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TEARDOWN)
+
+        timer_overhead: float = timer_overhead_ns(timer)
+        timer_precision: float = timer_precision_ns(timer)
+
+        # Target significant figures for the measurement
+        multiplier: float = math.pow(10, DEFAULT_SIGNIFICANT_FIGURES)
+        noise_floor_ns = timer_precision + timer_overhead
+        target_time_ns = multiplier * noise_floor_ns
+
+        if callable(setup):
+            setup()
+
+        kiloround_timer = self._timer_function(1000)
+        estimate_rounds: int = 1
+        while True:  # Loop until we find an adequate rounds estimate
+            # Use kiloround chunking to avoid generating excessively large timer functions
+            total_action_time_ns: float
+            if estimate_rounds < 1000:
+                estimate_timer = self._timer_function(estimate_rounds)
+                total_action_time_ns = estimate_timer(timer, action, kwargs)
+            else:
+                total_action_time_ns = 0.0
+                kiloround_chunks, remaining_rounds = divmod(estimate_rounds, 1000)
+                while kiloround_chunks:
+                    total_action_time_ns += kiloround_timer(timer, action, kwargs)
+                    kiloround_chunks -= 1
+                if remaining_rounds:
+                    partial_timer = self._timer_function(remaining_rounds)
+                    total_action_time_ns += partial_timer(timer, action, kwargs)
+
+            # Subtract the overhead of one timer call (start/end) to get the true action time.
+            total_measured_time_ns = total_action_time_ns - timer_overhead
+
+            # loop exit condition
+            if total_measured_time_ns >= target_time_ns:
+                break
+
+            if total_action_time_ns <= 0:
+                estimate_rounds *= 10
+                continue
+
+            # Calculate the average time to estimate the next number of rounds.
+            avg_action_time_ns = total_action_time_ns / estimate_rounds
+            required_rounds = target_time_ns / avg_action_time_ns
+            estimate_rounds = int(max(required_rounds, estimate_rounds * 10))
+
+        if callable(teardown):
+            teardown()
+
+        return estimate_rounds

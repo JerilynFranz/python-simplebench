@@ -198,9 +198,9 @@ class CSVReporter(Reporter):
                             case CSVField.P95:
                                 row.append(sigfigs(stats_target.percentiles[95] * common_scale))
                             case CSVField.STD_DEV:
-                                row.append(sigfigs(stats_target.adjusted_standard_deviation * common_scale))
+                                row.append(sigfigs(stats_target.standard_deviation * common_scale))
                             case CSVField.RSD_PERCENT:
-                                row.append(sigfigs(stats_target.adjusted_relative_standard_deviation))
+                                row.append(sigfigs(stats_target.relative_standard_deviation))
 
                 if options.variation_cols_last:
                     for value in result.variation_marks.values():
