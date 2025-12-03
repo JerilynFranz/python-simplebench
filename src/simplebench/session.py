@@ -1,6 +1,7 @@
 """Session management for SimpleBench."""
 from __future__ import annotations
 
+import logging
 from argparse import ArgumentError, ArgumentParser, Namespace
 from datetime import datetime
 from pathlib import Path
@@ -22,6 +23,8 @@ from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.runners import SimpleRunner
 from simplebench.tasks import ProgressTracker, RichProgressTasks
 from simplebench.utils import sanitize_filename
+
+log = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from simplebench.reporters.reporter import Reporter
@@ -69,6 +72,8 @@ class Session():
             will be used. Defaults to None.
         :raises SimpleBenchTypeError: If the arguments are of the wrong type.
         """  # params here are for IDEs
+        log.debug("Initializing Session instance")
+
         # public read/write properties with private backing fields
         self.default_runner = default_runner
         self.args_parser = ArgumentParser() if args_parser is None else args_parser
@@ -120,6 +125,7 @@ class Session():
         :type args: Sequence[str], optional
         :raises SimpleBenchTypeError: If the ``args_parser`` is not set.
         """
+        log.debug("Session.parse_args called with: %s", args)
         if self._args_parsed:
             return
         self._args_parsed = True
@@ -169,6 +175,7 @@ class Session():
 
         :raises SimpleBenchArgumentError: If there is a conflict or other error in reporter flag names.
         """
+        log.debug("Adding reporter flags to Session ArgumentParser")
         if self._reporter_flags_added:
             return
         try:
@@ -198,6 +205,7 @@ class Session():
         :raises SimpleBenchTimeoutError: If a benchmark case times out during execution.
         :raises SimpleBenchBenchmarkError: If an error occurs during the execution of a benchmark.
         """
+        log.info("Session.run() started for %d cases.", len(self.cases))
         if not self._args_parsed:
             self.parse_args()
         if self._verbosity > Verbosity.NORMAL:
@@ -231,6 +239,7 @@ class Session():
         progress_tracker.stop()
         self.tasks.stop()
         self.tasks.clear()
+        log.info("Session.run() finished.")
 
     def report_keys(self) -> list[str]:
         """Get a list of report keys for all reports to be generated in this session.
@@ -267,6 +276,7 @@ class Session():
         # The logic here is that if the arg is set, the user wants that report. By
         # making the lookup go from the defined Choices to the args, we ensure
         # that we only consider valid args that are associated with a Choice.
+        log.info("Session.report() started for %d cases.", len(self.cases))
         if self.verbosity > Verbosity.NORMAL:
             self._console.print(f"Generating reports for {len(self.cases)} case(s)...")
         now = datetime.now()
@@ -359,6 +369,7 @@ class Session():
 
         self.tasks.stop()
         self.tasks.clear()
+        log.info("Session.report() finished.")
 
     @property
     def timer(self) -> Callable[[], int]:

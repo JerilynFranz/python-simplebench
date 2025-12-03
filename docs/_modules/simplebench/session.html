@@ -250,6 +250,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Session management for SimpleBench.&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentError</span><span class="p">,</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">Namespace</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -271,6 +272,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleRunner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressTracker</span><span class="p">,</span> <span class="n">RichProgressTasks</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">sanitize_filename</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reporter</span>
@@ -320,6 +323,8 @@
 <span class="sd">            will be used. Defaults to None.</span>
 <span class="sd">        :raises SimpleBenchTypeError: If the arguments are of the wrong type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># params here are for IDEs</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing Session instance&quot;</span><span class="p">)</span>
+
         <span class="c1"># public read/write properties with private backing fields</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_runner</span> <span class="o">=</span> <span class="n">default_runner</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args_parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span> <span class="k">if</span> <span class="n">args_parser</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">args_parser</span>
@@ -373,6 +378,7 @@
 <span class="sd">        :type args: Sequence[str], optional</span>
 <span class="sd">        :raises SimpleBenchTypeError: If the ``args_parser`` is not set.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Session.parse_args called with: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args_parsed</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_args_parsed</span> <span class="o">=</span> <span class="kc">True</span>
@@ -425,6 +431,7 @@
 
 <span class="sd">        :raises SimpleBenchArgumentError: If there is a conflict or other error in reporter flag names.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Adding reporter flags to Session ArgumentParser&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reporter_flags_added</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">try</span><span class="p">:</span>
@@ -457,6 +464,7 @@
 <span class="sd">        :raises SimpleBenchTimeoutError: If a benchmark case times out during execution.</span>
 <span class="sd">        :raises SimpleBenchBenchmarkError: If an error occurs during the execution of a benchmark.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Session.run() started for </span><span class="si">%d</span><span class="s2"> cases.&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args_parsed</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">:</span>
@@ -489,7 +497,8 @@
             <span class="k">case</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Session.run() finished.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.report_keys">
@@ -532,6 +541,7 @@
         <span class="c1"># The logic here is that if the arg is set, the user wants that report. By</span>
         <span class="c1"># making the lookup go from the defined Choices to the args, we ensure</span>
         <span class="c1"># that we only consider valid args that are associated with a Choice.</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Session.report() started for </span><span class="si">%d</span><span class="s2"> cases.&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating reports for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cases</span><span class="p">)</span><span class="si">}</span><span class="s2"> case(s)...&quot;</span><span class="p">)</span>
         <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
@@ -623,7 +633,8 @@
         <span class="n">reports_progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Session.report() finished.&quot;</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>

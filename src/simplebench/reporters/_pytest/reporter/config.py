@@ -1,4 +1,4 @@
-"""Configuration for a RichTableReporter."""
+"""Configuration for a PytestReporter."""
 from __future__ import annotations
 
 from typing import Any
@@ -9,12 +9,12 @@ from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
 
 
-class RichTableConfig(ReporterConfig):
-    """Configuration for a RichTableReporter.
+class PytestConfig(ReporterConfig):
+    """Configuration for a PytestReporter.
 
     This class inherits from :class:`~.ReporterConfig` and provides a
     type-safe, discoverable interface for overriding the default settings
-    of a :class:`~.RichTableReporter`.
+    of a :class:`~.PytestReporter`.
     """
 
     def __init__(
@@ -32,18 +32,18 @@ class RichTableConfig(ReporterConfig):
         file_append: bool | None = None,
         subdir: str | None = None
     ) -> None:
-        """Initialize the RichTableReporter configuration.
+        """Initialize the PytestReporter configuration.
 
         Accepts keyword arguments to override any of the default configurations.
         All arguments are optional. If not provided, the default value for
-        RichTableReporter will be used.
+        PytestReporter will be used.
 
         .. note::
 
             The parameters of this constructor correspond directly to the
             parameters of the base :class:`~.ReporterConfig` class. This design
             allows users to easily discover and override any configuration option
-            available for the RichTableReporter while maintaining type safety
+            available for the PytestReporter while maintaining type safety
             and discoverability through IDEs and documentation tools.
 
             To prevent future breakage, avoid using the 'rc_', or 'rich_table_' prefixes
@@ -51,11 +51,11 @@ class RichTableConfig(ReporterConfig):
 
         **Default Values**:
 
-        *   **name**: ``'rich-table'``
+        *   **name**: ``'pytest'``
         *   **description**: ``'Displays benchmark results as a rich text table on the console.'``
         *   **sections**: ``{Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY}``
-        *   **targets**: ``{Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}``
-        *   **default_targets**: ``{Target.CONSOLE}``
+        *   **targets**: ``{Target.CUSTOM}``
+        *   **default_targets**: ``{Target.CUSTOM}``
         *   **formats**: ``{Format.RICH_TEXT}``
         *   **choices**: A ``ChoicesConf`` with predefined ``ChoiceConf`` objects for rich table reporting.
         *   **file_suffix**: ``'txt'``
@@ -78,14 +78,14 @@ class RichTableConfig(ReporterConfig):
         :raises SimpleBenchValueError: If any provided argument has an invalid value or combination of values.
         """
         init_sections = {Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY}
-        init_targets = {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
+        init_targets = {Target.CUSTOM}
 
         defaults: dict[str, Any] = {
-            'name': 'rich-table',
+            'name': 'pytest',
             'description': 'Displays benchmark results as a rich text table on the console.',
             'sections': init_sections,
             'targets': init_targets,
-            'default_targets': {Target.CONSOLE},
+            'default_targets': {Target.CUSTOM},
             'formats': {Format.RICH_TEXT},
             'file_suffix': 'txt',
             'file_unique': False,
@@ -93,27 +93,27 @@ class RichTableConfig(ReporterConfig):
             'subdir': 'rich',
             'choices': ChoicesConf([
                 ChoiceConf(
-                    flags=['--rich-table'], flag_type=FlagType.TARGET_LIST, name='rich-table',
-                    description='All results as rich text tables (filesystem, console, callback, default=console)',
+                    flags=['--pytest'], flag_type=FlagType.TARGET_LIST, name='pytest',
+                    description='All results as rich text tables',
                     sections=init_sections,
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
-                    flags=['--rich-table.ops'], flag_type=FlagType.TARGET_LIST, name='rich-table-ops',
+                    flags=['--pytest.ops'], flag_type=FlagType.TARGET_LIST, name='pytest-ops',
                     description=(
-                        'Ops/second results as rich text tables (filesystem, console, callback, default=console)'),
+                        'Ops/second results as rich text tables'),
                     sections={Section.OPS},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
-                    flags=['--rich-table.timing'], flag_type=FlagType.TARGET_LIST, name='rich-table-timing',
-                    description='Timing results as rich text tables (filesystem, console, callback, default=console)',
+                    flags=['--pytest.timing'], flag_type=FlagType.TARGET_LIST, name='pytest-timing',
+                    description='Timing results as rich text tables',
                     sections={Section.TIMING},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
-                    flags=['--rich-table.memory'], flag_type=FlagType.TARGET_LIST, name='rich-table-memory',
-                    description='Memory results as rich text tables (filesystem, console, callback, default=console)',
+                    flags=['--pytest.memory'], flag_type=FlagType.TARGET_LIST, name='pytest-memory',
+                    description='Memory results as rich text tables',
                     sections={Section.MEMORY, Section.PEAK_MEMORY},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),

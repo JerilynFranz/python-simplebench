@@ -238,7 +238,7 @@ class ReporterManager():
             )
         self.unregister(self._registered_reporters[name])
 
-    def unregister_all(self) -> None:
+    def unregister_all_reporters(self) -> None:
         """Unregister all :class:`~simplebench.reporters.reporter.Reporter` instances.
 
         This clears the entire registry of :class:`~simplebench.reporters.reporter.Reporter`

@@ -64,6 +64,7 @@ intersphinx_mapping = {
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
     'seaborn': ('https://seaborn.pydata.org/', None),
     'dulwich': ('https://www.dulwich.io/docs/', None),
+    'pytest': ('https://docs.pytest.org/en/latest/', None),
 }
 intersphinx_disabled_domains = ['std']
 

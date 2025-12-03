@@ -2375,12 +2375,16 @@ dependencies = [
 all = [
     { name = "matplotlib" },
     { name = "pandas" },
+    { name = "pytest" },
     { name = "seaborn" },
 ]
 graphs = [
     { name = "matplotlib" },
     { name = "pandas" },
     { name = "seaborn" },
+]
+pytest = [
+    { name = "pytest" },
 ]
 
 [package.dev-dependencies]
@@ -2416,11 +2420,13 @@ requires-dist = [
     { name = "pandas", marker = "extra == 'all'", specifier = ">=2.3.2" },
     { name = "pandas", marker = "extra == 'graphs'", specifier = ">=2.3.2" },
     { name = "py-cpuinfo", specifier = ">=9.0.0" },
+    { name = "pytest", marker = "extra == 'all'", specifier = ">=8.4.1,<9.0.0" },
+    { name = "pytest", marker = "extra == 'pytest'", specifier = ">=8.4.1,<9.0.0" },
     { name = "rich", specifier = ">=14.1.0" },
     { name = "seaborn", marker = "extra == 'all'", specifier = ">=0.13.2" },
     { name = "seaborn", marker = "extra == 'graphs'", specifier = ">=0.13.2" },
 ]
-provides-extras = ["all", "graphs"]
+provides-extras = ["all", "graphs", "pytest"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -2435,7 +2441,7 @@ dev = [
     { name = "pandas-stubs", specifier = ">=2.3.2.250827" },
     { name = "pydeps", specifier = ">=1.23.2" },
     { name = "pylint", specifier = ">=3.3.8" },
-    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest", specifier = ">=8.4.1,<9.0.0" },
     { name = "pytest-cov", specifier = ">=6.2.1" },
     { name = "sphinx", specifier = ">=8.1.3" },
     { name = "sphinx-copybutton", specifier = ">=0.5.2" },
