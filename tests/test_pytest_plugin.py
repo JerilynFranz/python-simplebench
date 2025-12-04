@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 def test_sleep(benchmark: BenchmarkRegistrar) -> None:
     """Test that the pytest simplebench plugin can benchmark a sleep action."""
     def sleep_action(duration: float) -> None:
+        """Action that sleeps for the given duration in seconds."""
         time.sleep(duration)
 
     benchmark(action=sleep_action,

@@ -244,6 +244,9 @@ class BenchmarkRegistrar:
             # The `kwargs` here are the per-variation kwargs from the Case.
             return _bench.run(action=action, n=1, kwargs=kwargs)
 
+        if description is None:
+            description = action.__doc__ or "(no description)"
+
         # Create a simplebench Case, passing the explicit arguments from the signature.
         case = Case(
             action=benchmark_action_wrapper,
