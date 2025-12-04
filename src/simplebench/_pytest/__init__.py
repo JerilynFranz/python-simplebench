@@ -76,8 +76,8 @@ def pytest_configure(config: Config) -> None:
 
     sb_session.parse_args(['--pytest'])
 
-    config._simplebench_session = sb_session  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
-    config._simplebench_pytest_reporter = pytest_reporter  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
+    config._simplebench_session: Session = sb_session  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
+    config._simplebench_pytest_reporter: PytestReporter = pytest_reporter  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
     log.debug("simplebench configured with session %r and reporter %r", sb_session, pytest_reporter)
 
 
