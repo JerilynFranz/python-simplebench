@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional
 import pytest
 from rich.console import Console
 
-import simplebench.defaults as defaults
+from simplebench import defaults
 from simplebench.case import Case
 from simplebench.reporters._pytest.reporter.reporter import PytestReporter
 from simplebench.reporters.protocols import ReporterCallback
