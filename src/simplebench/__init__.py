@@ -33,3 +33,11 @@ try:
     __all__.extend(["ImageType", "Style", "Theme", "ScatterPlotOptions"])
 except ImportError:
     pass
+
+# Optional imports for pytest plugin functionality
+try:
+    from simplebench._pytest import BenchmarkRegistrar  # noqa: F401
+
+    __all__.append("BenchmarkRegistrar")
+except ImportError:
+    pass
