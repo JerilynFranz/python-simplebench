@@ -13,4 +13,7 @@ def test_sleep(benchmark: BenchmarkRegistrar) -> None:
     def sleep_action(duration: float) -> None:
         time.sleep(duration)
 
-    benchmark(action=sleep_action, benchmark_id="sleep_0.01", iterations=5, kwargs_variations={'duration': [0.01]})
+    benchmark(action=sleep_action,
+              benchmark_id="sleep_0.01",
+              iterations=5,
+              kwargs_variations={'duration': [0.01]})
