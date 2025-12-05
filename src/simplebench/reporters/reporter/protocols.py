@@ -680,3 +680,14 @@ class ReporterProtocol(Protocol):
         :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
         ...
+
+    @property
+    def schema_version(self) -> int:
+        """Get the schema version for the reporter.
+
+        This method returns a number representing the schema version used by the reporter.
+        It is useful for ensuring compatibility and versioning of report formats.
+
+        :return: The schema version number.
+        """
+        ...

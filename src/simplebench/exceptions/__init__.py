@@ -3,6 +3,7 @@
 import argparse
 import re
 from enum import Enum
+from json import JSONDecodeError
 from textwrap import dedent
 from typing import Any, Generic, TypeVar
 
@@ -430,6 +431,111 @@ class SimpleBenchBenchmarkError(TaggedException[RuntimeError]):
     """
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
         """Raises a SimpleBenchBenchmarkError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchFileNotFoundError(TaggedException[FileNotFoundError]):
+    """Exceptions raised for file not found errors in simplebench.
+
+    Usage:
+        raise SimpleBenchFileNotFoundError("An error occurred",
+                                           tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchFileNotFoundError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchPermissionError(TaggedException[PermissionError]):
+    """Exceptions raised for permission errors in simplebench.
+
+    Usage:
+        raise SimpleBenchPermissionError("An error occurred",
+                                         tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchPermissionError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchOSError(TaggedException[OSError]):
+    """Exceptions raised for OS errors in simplebench.
+
+    Usage:
+        raise SimpleBenchOSError("An error occurred",
+                                 tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchOSError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchJSONDecodeError(TaggedException[JSONDecodeError]):
+    """Exceptions raised for JSON decode errors in simplebench.
+
+    Usage:
+        raise SimpleBenchJSONDecodeError("An error occurred",
+                                         tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchJSONDecodeError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchNotAFileError(TaggedException[OSError]):
+    """Exceptions raised when a given path is not a file in simplebench.
+
+    Usage:
+        raise SimpleBenchNotAFileError("An error occurred",
+                                       tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchNotAFileError with the given message and tag.
 
         Args:
             msg (str): The error message.

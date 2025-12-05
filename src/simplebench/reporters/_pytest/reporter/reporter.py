@@ -33,18 +33,15 @@ class PytestReporter(Reporter):
     """Class for outputting benchmark results as Rich Tables.
 
     It supports reporting operations per second and per round timing results,
-    either separately or together, to the console, to files, and/or via a callback function.
+    either separately or together.
 
     **Defined command-line flags:**
 
-    * ``--pytest``: Outputs all results as rich text tables on the console.
-    * ``--pytest.ops``: Outputs only operations per second results.
-    * ``--pytest.timings``: Outputs only per round timing results.
-    * ``--pytest.memory``: Outputs only memory usage results.
-    * ``--pytest.peak-memory``: Outputs only peak memory usage results.
-
-    Each flag supports multiple targets: ``console``, ``filesystem``, and ``callback`` with
-    the default target being ``console``.
+    * ``--pytest``: Outputs all results as rich text tables.
+    * ``--pytest.ops``: Outputs operations per second results as rich text tables.
+    * ``--pytest.timing``: Outputs timing results as rich text tables.
+    * ``--pytest.memory``: Outputs memory usage results as rich text tables.
+    * ``--pytest.peak_memory``: Outputs peak memory usage results as rich text tables
 
     :ivar name: The unique identifying name of the reporter.
     :vartype name: str
@@ -160,11 +157,23 @@ class PytestReporter(Reporter):
         max_unit, max_scale = si_scale_for_smallest(
             numbers=[result.results_section(section).maximum for result in results],
             base_unit=base_unit)
+        p1_unit, p1_scale = si_scale_for_smallest(
+            numbers=[result.results_section(section).percentiles[1] for result in results],
+            base_unit=base_unit)
         p5_unit, p5_scale = si_scale_for_smallest(
             numbers=[result.results_section(section).percentiles[5] for result in results],
             base_unit=base_unit)
+        p25_unit, p25_scale = si_scale_for_smallest(
+            numbers=[result.results_section(section).percentiles[25] for result in results],
+            base_unit=base_unit)
+        p75_unit, p75_scale = si_scale_for_smallest(
+            numbers=[result.results_section(section).percentiles[75] for result in results],
+            base_unit=base_unit)
         p95_unit, p95_scale = si_scale_for_smallest(
             numbers=[result.results_section(section).percentiles[95] for result in results],
+            base_unit=base_unit)
+        p99_unit, p99_scale = si_scale_for_smallest(
+            numbers=[result.results_section(section).percentiles[99] for result in results],
             base_unit=base_unit)
         stddev_unit, stddev_scale = si_scale_for_smallest(
             numbers=[result.results_section(section).standard_deviation for result in results],
@@ -197,10 +206,18 @@ class PytestReporter(Reporter):
                     table.add_column(f'min {min_unit}', justify='center', vertical='bottom', overflow='fold')
                 case PytestField.MAX:
                     table.add_column(f'max {max_unit}', justify='center', vertical='bottom', overflow='fold')
+                case PytestField.P1:
+                    table.add_column(f'1st {p1_unit}', justify='center', vertical='bottom', overflow='fold')
                 case PytestField.P5:
                     table.add_column(f'5th {p5_unit}', justify='center', vertical='bottom', overflow='fold')
+                case PytestField.P25:
+                    table.add_column(f'25th {p25_unit}', justify='center', vertical='bottom', overflow='fold')
+                case PytestField.P75:
+                    table.add_column(f'75th {p75_unit}', justify='center', vertical='bottom', overflow='fold')
                 case PytestField.P95:
                     table.add_column(f'95th {p95_unit}', justify='center', vertical='bottom', overflow='fold')
+                case PytestField.P99:
+                    table.add_column(f'99th {p99_unit}', justify='center', vertical='bottom', overflow='fold')
                 case PytestField.STD_DEV:
                     table.add_column(f'std dev {stddev_unit}', justify='center', vertical='bottom', overflow='fold')
                 case PytestField.RSD_PERCENT:
@@ -237,10 +254,18 @@ class PytestReporter(Reporter):
                         row.append(f'{sigfigs(stats_target.minimum * min_scale):>8.2f}')
                     case PytestField.MAX:
                         row.append(f'{sigfigs(stats_target.maximum * max_scale):>8.2f}')
+                    case PytestField.P1:
+                        row.append(f'{sigfigs(stats_target.percentiles[1] * p1_scale):>8.2f}')
                     case PytestField.P5:
                         row.append(f'{sigfigs(stats_target.percentiles[5] * p5_scale):>8.2f}')
+                    case PytestField.P25:
+                        row.append(f'{sigfigs(stats_target.percentiles[25] * p25_scale):>8.2f}')
+                    case PytestField.P75:
+                        row.append(f'{sigfigs(stats_target.percentiles[75] * p75_scale):>8.2f}')
                     case PytestField.P95:
                         row.append(f'{sigfigs(stats_target.percentiles[95] * p95_scale):>8.2f}')
+                    case PytestField.P99:
+                        row.append(f'{sigfigs(stats_target.percentiles[99] * p99_scale):>8.2f}')
                     case PytestField.STD_DEV:
                         row.append(f'{sigfigs(stats_target.standard_deviation * stddev_scale):>8.2f}')
                     case PytestField.RSD_PERCENT:

@@ -644,3 +644,17 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
                 stats.percentiles[5], stats.percentiles[95]
             ])
         return all_numbers
+
+    @property
+    def schema_version(self) -> int:
+        """Get the schema version number for the reporter.
+
+        This method returns the schema version number that indicates
+        the version of the report schema used by the reporter.
+
+        This defaults to ``1`` and can be overridden by subclasses
+        if they implement a different schema version.
+
+        :return: The schema version number.
+        """
+        return 1

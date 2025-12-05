@@ -21,3 +21,17 @@ class _ReportLogMetadataErrorTag(ErrorTag):
     # save_to_log() errors
     REPORTS_LOG_PATH_NOT_SET = "REPORTS_LOG_PATH_NOT_SET"
     """The reports_log_path is not set when attempting to save to log."""
+
+    # LogReader errors
+    LOG_FILE_NOT_FOUND = "LOG_FILE_NOT_FOUND"
+    """The log file could not be found at the specified path."""
+    INVALID_LOG_PATH_TYPE = "INVALID_LOG_PATH_TYPE"
+    """The log_path provided to LogReader is not a Path instance."""
+    LOG_NOT_A_FILE = "LOG_NOT_A_FILE"
+    """The log_path provided to LogReader is not a file."""
+    LOG_PERMISSION_DENIED = "LOG_PERMISSION_DENIED"
+    """Permission denied when trying to read the log file."""
+    LOG_OS_ERROR = "LOG_OS_ERROR"
+    """An OS error occurred when trying to read the log file."""
+    INVALID_LOG_FILE_OBJ_TYPE = "INVALID_LOG_FILE_OBJ_TYPE"
+    """The file object provided to LogReader._import_log_entries() is not a TextIOWrapper instance."""

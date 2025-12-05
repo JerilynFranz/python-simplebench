@@ -179,11 +179,13 @@ class ReportLogMetadata:
         git_info = self.case.git_info.to_dict() if isinstance(self.case.git_info, GitInfo) else None
 
         return {
+            "version": 1,
             "timestamp": self.timestamp,
             "benchmark_id": self.case.benchmark_id,
             "benchmark_group": self.case.group,
             "reporter_type": self.choice.reporter.__class__.__name__,
             "reporter_name": self.choice.reporter.name,
+            "reporter_schema_version": self.choice.reporter.schema_version,
             "output_format": self.choice.output_format.name,
             "benchmark_title": self.case.title,
             "filepath": self.filepath.as_posix() if self.filepath else None,

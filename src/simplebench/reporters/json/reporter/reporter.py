@@ -19,6 +19,7 @@ from simplebench.validators import validate_type
 from .config import JSONConfig
 from .exceptions import _JSONReporterErrorTag
 from .options import JSONOptions
+from .schemas import LATEST_SCHEMA_VERSION
 
 Options: TypeAlias = JSONOptions
 
@@ -186,6 +187,7 @@ class JSONReporter(Reporter):
         with StringIO() as jsonfile:
             case_dict = case.as_dict(full_data=full_data)
             try:
+                case_dict['version'] = self.schema_version
                 case_dict['metadata'] = get_machine_info()
                 json.dump(case_dict, jsonfile, indent=4)
                 jsonfile.seek(0)
@@ -194,3 +196,8 @@ class JSONReporter(Reporter):
                     f'Error generating JSON output for case {case.title}: {exc}',
                     tag=_JSONReporterErrorTag.JSON_OUTPUT_ERROR) from exc
             return jsonfile.read()
+
+    @property
+    def schema_version(self) -> int:
+        """The current schema version for the JSON reporter."""
+        return LATEST_SCHEMA_VERSION

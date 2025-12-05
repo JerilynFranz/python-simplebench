@@ -5,6 +5,7 @@ powered by the simplebench framework.
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional
 
 import pytest
@@ -12,7 +13,8 @@ from rich.console import Console
 
 from simplebench import defaults
 from simplebench.case import Case
-from simplebench.reporters._pytest.reporter.reporter import PytestReporter
+from simplebench.reporters._pytest import PytestReporter
+from simplebench.reporters.json import JSONReporter
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.results import Results
@@ -41,15 +43,22 @@ def pytest_addoption(parser: Parser) -> None:
         "--sb-enable",
         action="store_true",
         default=False,
-        help="Enable simplebench benchmarking (disables pytest-benchmark if installed)."
+        help="Enable simplebench benchmarking."
     )
-    # Example of adding a simplebench config option
+
     group.addoption(
-        "--sb-iterations",
-        type=int,
-        default=None,
-        help="Number of iterations per benchmark. Overrides simplebench defaults."
+        "--sb-save",
+        action="store_true",
+        default=False,
+        help="Save benchmark results to the default output location .benchmarks."
     )
+
+    # group.addoption(
+    #    "--sb-compare",
+    #    type="str",
+    #   default="",
+    #   help="Compare current benchmark results against a previous benchmark report file."
+    # )#
 
 
 def pytest_configure(config: Config) -> None:
@@ -73,8 +82,15 @@ def pytest_configure(config: Config) -> None:
     reporter_manager.unregister_all_reporters()
     pytest_reporter = PytestReporter()
     reporter_manager.register(pytest_reporter)
+    json_reporter = JSONReporter()
+    reporter_manager.register(json_reporter)
 
-    sb_session.parse_args(['--pytest'])
+    args = ['--pytest']
+    if config.getoption("--sb-save"):
+        args.extend(['--json', 'filesystem'])
+        log.debug("simplebench save option enabled.")
+    sb_session.parse_args(args)
+    sb_session.output_path = Path('.benchmarks')  # Ensure output path is set
 
     config._simplebench_session: Session = sb_session  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
     config._simplebench_pytest_reporter: PytestReporter = pytest_reporter  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
