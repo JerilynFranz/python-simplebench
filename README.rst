@@ -74,6 +74,7 @@ Minimum Python Version: 3.10
     python -m pip install simplebench[jsonschema]
 
 **Installing SimpleBench with pytest support**
+
 .. code-block:: shell
   :name: install-using-pip-with-pytest-support
 
