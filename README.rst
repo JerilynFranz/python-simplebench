@@ -25,6 +25,24 @@ There may be breaking changes before reaching version 1.0.
 
 Additional report formats and benchmark options are planned.
 
+Documentation
+-------------
+
+* `Installation <https://python-simplebench.readthedocs.io/en/latest/installation.html>`_
+* `Using SimpleBench <https://python-simplebench.readthedocs.io/en/latest/usage.html>`_
+* `Tutorials <https://python-simplebench.readthedocs.io/en/latest/tutorials.html>`_
+   * `Basic Benchmark <https://python-simplebench.readthedocs.io/en/latest/tutorials/basic.html>`_
+   * `Parameterized Benchmark <https://python-simplebench.readthedocs.io/en/latest/tutorials/parameterized.html>`_
+   * `Controlling Benchmark Execution <https://python-simplebench.readthedocs.io/en/latest/tutorials/controlling.html>`_
+* `Command-Line Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options.html>`_
+* `Reports <https://python-simplebench.readthedocs.io/en/latest/reports.html>`_
+   * `Rich Table Report <https://python-simplebench.readthedocs.io/en/latest/reports/rich_table_report.html>`_
+   * `CSV Report <https://python-simplebench.readthedocs.io/en/latest/reports/csv_report.html>`_
+   * `JSON Report <https://python-simplebench.readthedocs.io/en/latest/reports/json_report.html>`_
+   * `Scatterplot Graph Report <https://python-simplebench.readthedocs.io/en/latest/reports/graphs/scatterplot_graph_report.html>`_
+* `Documentation Index <https://python-simplebench.readthedocs.io/en/latest/genindex.html>`_
+* `Module Index <https://python-simplebench.readthedocs.io/en/latest/py-modindex.html>`_
+
 Installing
 ------------
 
@@ -77,24 +95,6 @@ Minimum Python Version: 3.10
   git clone https://github.com/JerilynFranz/python-simplebench
   cd python-simplebench
   python3 -m pip install .[all]
-
-Documentation
--------------
-
-* `Installation <https://python-simplebench.readthedocs.io/en/latest/installation.html>`_
-* `Using SimpleBench <https://python-simplebench.readthedocs.io/en/latest/usage.html>`_
-* `Tutorials <https://python-simplebench.readthedocs.io/en/latest/tutorials.html>`_
-   * `Basic Benchmark <https://python-simplebench.readthedocs.io/en/latest/tutorials/basic.html>`_
-   * `Parameterized Benchmark <https://python-simplebench.readthedocs.io/en/latest/tutorials/parameterized.html>`_
-   * `Controlling Benchmark Execution <https://python-simplebench.readthedocs.io/en/latest/tutorials/controlling.html>`_
-* `Command-Line Options <https://python-simplebench.readthedocs.io/en/latest/command_line_options.html>`_
-* `Reports <https://python-simplebench.readthedocs.io/en/latest/reports.html>`_
-   * `Rich Table Report <https://python-simplebench.readthedocs.io/en/latest/reports/rich_table_report.html>`_
-   * `CSV Report <https://python-simplebench.readthedocs.io/en/latest/reports/csv_report.html>`_
-   * `JSON Report <https://python-simplebench.readthedocs.io/en/latest/reports/json_report.html>`_
-   * `Scatterplot Graph Report <https://python-simplebench.readthedocs.io/en/latest/reports/graphs/scatterplot_graph_report.html>`_
-* `Documentation Index <https://python-simplebench.readthedocs.io/en/latest/genindex.html>`_
-* `Module Index <https://python-simplebench.readthedocs.io/en/latest/py-modindex.html>`_
 
 Basic Example
 -------------
