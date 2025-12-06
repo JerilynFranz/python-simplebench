@@ -3,8 +3,8 @@ SimpleBench Changelog
 =====================
 All notable changes to this project will be documented in this file.
 
-  0.9.0-alpha.0 2025-12-5
-=========================
+v0.9.0-alpha.0 2025-12-5
+========================
 
 * full pytest support added
 * Added logo
@@ -18,8 +18,8 @@ All notable changes to this project will be documented in this file.
   change to not adjust by sqrt(rounds) was incorrect. Apologies for the confusion.
 
 
-0.8.0-alpha.0 2025-12-2
-=======================
+v0.8.0-alpha.0 2025-12-2
+========================
 * Implemented auto-calibration of rounds
   * Added timers module for measuring overhead and precision of timers
   * Implemented auto-calibration of number of rounds by default
@@ -28,45 +28,45 @@ All notable changes to this project will be documented in this file.
   * Was incorrectly adjusting for effect of rounds on std deviation calculation
 * Refactored utils module into separate files
   
-0.7.0-alpha.0 2025-12-1
-=======================
+v0.7.0-alpha.0 2025-12-1
+========================
 * Added configuration options for the timer used by benchmarking code.
 * Enhanced the documentation for the Matplotlib theme class to include external links to the Matplotlib API.
 * Added a note in the installation guide regarding the size impact of installing optional dependencies for graphs.
 * Refactored the ScatterPlotReporter class method name for clarity.
 * Adjusted the `pyproject.toml` to properly define optional dependencies for Matplotlib, Pandas, and Seaborn.
 
-0.6.1-alpha.0 2025-12-1
-=======================
+v0.6.1-alpha.0 2025-12-1
+========================
 * Fix for failed imports related to optional [graphs] dependencies in default install
 
 0.6.0-alpha.0 2025-12-1
-=======================
+========================
 * Splitting of pypi install groups
   * default - all reporters except graph reporters
   * graph - add graph reporters to default install
   * all - all reporters including graph reporters
   
-0.5.1-alpha.0 2025-11-30
-========================
+v0.5.1-alpha.0 2025-11-30
+=========================
   * Documentation updates
   
-0.5.0-alpha.0 2025-11-30
-========================
+v0.5.0-alpha.0 2025-11-30
+=========================
 * Extended CSVReporter and RichTableReporter to allow customization
   of output columns using options.
 * Added checked support for explict parameters in benchmark functions.
 * Completed documentation for parameterized benchmarks.
 
-0.4.1-alpha.0 2025-11-29
+0.4.1-alpha.0 2025-11-29=
 ========================
 * **Documentation Update**
   * Migration of README to .rst format
   * Addition of doctest support
   * Creation of first tutorials
 
-0.4.0-alpha.0 2025-11-27
-========================
+v0.4.0-alpha.0 2025-11-27
+=========================
 * **Major Refactoring of Command-Line Interface (`cli.py`)**:
   * The main CLI logic has been significantly refactored for improved structure, robustness, and readability.
   * The `main()` function is now a high-level orchestrator, with argument parsing and session configuration moved into dedicated helper functions (`_create_parser`, `_configure_session_from_args`).
@@ -91,28 +91,28 @@ All notable changes to this project will be documented in this file.
   * Added new unit tests for the `Session.report_keys()` method.
   * Added new unit tests for the `Session.add_reporter_flags()` method.
 
-0.3.1-alpha.0 2025-11-25
-========================
+v0.3.1-alpha.0 2025-11-25
+=========================
 * Fixed bug in rich tables report caused by switch to floats for 'n' complexity weights
 * Switched to a furo derived theme for Sphinx documentation
 
-0.3.0-alpha.0 2025-11-24
-========================
+v0.3.0-alpha.0 2025-11-24
+=========================
 * Added enforced timeouts for benchmark runs
 * Updated 'n' complexity handling to allow floats as well as int
 * Changed 'progress' init parameter for Session() to 'show_progress'
 
-0.2.1-alpha.0 2025-11-23
+v0.2.1-alpha.0 2025-11-23
 * Changed _report_log format to use 'benchmark_id', 'benchmark_title', and 'benchmark_group'
 * Fixed oversharing issue with building tarball in dist
 
-0.2.0-alpha.0 2025-11-23
-========================
+v0.2.0-alpha.0 2025-11-23
+=========================
 * Added support for tracking git commits and stable case_ids.
 * Added JSON structured _report_log for filesystem reports.
 * Restructured filesystem output directory
 * Added benchmark environment to _report_log entries
   
-0.1.0-alpha.0 2025-11-21
-========================
+v0.1.0-alpha.0 2025-11-21
+=========================
 * First public release to PyPI. First alpha release.
