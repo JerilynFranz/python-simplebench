@@ -1,3 +1,8 @@
+.. figure:: documentation/_static/images/simplebench-logo.svg
+   :alt: SimpleBench Logo
+   :align: center
+
+
 SimpleBench
 ===========
 
