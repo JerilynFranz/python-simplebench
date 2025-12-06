@@ -3,23 +3,48 @@ SimpleBench Changelog
 =====================
 All notable changes to this project will be documented in this file.
 
-v0.9.0-alpha 2025-12-5
-======================
+0.9.0-alpha 2025-12-6
+=====================
 
 * full pytest support added
 * Added logo
 * Added support for writing and reading JSON reports and report log entries
   and public JSON Schemas for documentation and validation of formats
-* Reverted standard deviation calculation to the previous method of calculating
-  the estimated standard deviation of the mean by adjusting by the sqrt(rounds).
+* Reverted standard deviation calculation change in 0.8.0-alpha.0 to the previous
+  method of calculating the estimated standard deviation by adjusting by the
+  sqrt(rounds).
 
   This is more statistically correct for the use case of benchmarking
   where each data point is an average of multiple rounds. The previous
-  change to not adjust by sqrt(rounds) was incorrect. Apologies for the confusion.
+  change to not adjust by sqrt(rounds) was incorrect.
+  
+  Without this adjustment, the standard deviation would be artificially
+  low when using multiple rounds, giving a false impression of low variability.
 
+  This will have the effect of increasing reported standard deviation values
+  when using multiple rounds, which is the correct statistical behavior.
 
-v0.8.0-alpha.0 2025-12-2
-========================
+  It will also affect (future) graphs and analysis that rely on standard deviation
+  because the standard deviation values will be 'wider' than the apparent data
+  variability in graphs. That is because the graphs show the mean of multiple rounds,
+  while the standard deviation now correctly reflects the variability of the
+  underlying individual measurements. It isn't possible to show both in the same graph
+  without plotting all individual measurements - which can't be done because
+  only the mean can be stored for measurements that use multiple rounds.
+
+  This is unavoidable given the use of rounds to analyze data which is beyond
+  the time resolution of the timers. The use of rounds can accurately measure
+  the mean time of execution even when an individual round is much shorter than
+  the timer resolution, but the standard deviation must reflect the variability of the
+  underlying measurements, which is higher than the variability of the means.
+
+  This is not a bug, but a statistical reality of measuring fast code with limited timer
+  resolution.
+
+  Apologies for the confusion.
+
+0.8.0-alpha.0 2025-12-2
+=======================
 * Implemented auto-calibration of rounds
   * Added timers module for measuring overhead and precision of timers
   * Implemented auto-calibration of number of rounds by default
@@ -28,45 +53,45 @@ v0.8.0-alpha.0 2025-12-2
   * Was incorrectly adjusting for effect of rounds on std deviation calculation
 * Refactored utils module into separate files
   
-v0.7.0-alpha.0 2025-12-1
-========================
+0.7.0-alpha.0 2025-12-1
+=======================
 * Added configuration options for the timer used by benchmarking code.
 * Enhanced the documentation for the Matplotlib theme class to include external links to the Matplotlib API.
 * Added a note in the installation guide regarding the size impact of installing optional dependencies for graphs.
 * Refactored the ScatterPlotReporter class method name for clarity.
 * Adjusted the `pyproject.toml` to properly define optional dependencies for Matplotlib, Pandas, and Seaborn.
 
-v0.6.1-alpha.0 2025-12-1
-========================
+0.6.1-alpha.0 2025-12-1
+=======================
 * Fix for failed imports related to optional [graphs] dependencies in default install
 
 0.6.0-alpha.0 2025-12-1
-========================
+=======================
 * Splitting of pypi install groups
   * default - all reporters except graph reporters
   * graph - add graph reporters to default install
   * all - all reporters including graph reporters
   
-v0.5.1-alpha.0 2025-11-30
-=========================
+0.5.1-alpha.0 2025-11-30
+========================
   * Documentation updates
   
-v0.5.0-alpha.0 2025-11-30
-=========================
+0.5.0-alpha.0 2025-11-30
+========================
 * Extended CSVReporter and RichTableReporter to allow customization
   of output columns using options.
 * Added checked support for explict parameters in benchmark functions.
 * Completed documentation for parameterized benchmarks.
 
-0.4.1-alpha.0 2025-11-29=
+0.4.1-alpha.0 2025-11-29
 ========================
 * **Documentation Update**
   * Migration of README to .rst format
   * Addition of doctest support
   * Creation of first tutorials
 
-v0.4.0-alpha.0 2025-11-27
-=========================
+0.4.0-alpha.0 2025-11-27
+========================
 * **Major Refactoring of Command-Line Interface (`cli.py`)**:
   * The main CLI logic has been significantly refactored for improved structure, robustness, and readability.
   * The `main()` function is now a high-level orchestrator, with argument parsing and session configuration moved into dedicated helper functions (`_create_parser`, `_configure_session_from_args`).
@@ -91,28 +116,29 @@ v0.4.0-alpha.0 2025-11-27
   * Added new unit tests for the `Session.report_keys()` method.
   * Added new unit tests for the `Session.add_reporter_flags()` method.
 
-v0.3.1-alpha.0 2025-11-25
-=========================
+0.3.1-alpha.0 2025-11-25
+========================
 * Fixed bug in rich tables report caused by switch to floats for 'n' complexity weights
 * Switched to a furo derived theme for Sphinx documentation
 
-v0.3.0-alpha.0 2025-11-24
-=========================
+0.3.0-alpha.0 2025-11-24
+========================
 * Added enforced timeouts for benchmark runs
 * Updated 'n' complexity handling to allow floats as well as int
 * Changed 'progress' init parameter for Session() to 'show_progress'
 
-v0.2.1-alpha.0 2025-11-23
+0.2.1-alpha.0 2025-11-23
+========================
 * Changed _report_log format to use 'benchmark_id', 'benchmark_title', and 'benchmark_group'
 * Fixed oversharing issue with building tarball in dist
 
-v0.2.0-alpha.0 2025-11-23
-=========================
+0.2.0-alpha.0 2025-11-23
+========================
 * Added support for tracking git commits and stable case_ids.
 * Added JSON structured _report_log for filesystem reports.
 * Restructured filesystem output directory
 * Added benchmark environment to _report_log entries
   
-v0.1.0-alpha.0 2025-11-21
-=========================
+0.1.0-alpha.0 2025-11-21
+========================
 * First public release to PyPI. First alpha release.
