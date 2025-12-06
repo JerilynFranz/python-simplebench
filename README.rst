@@ -1,6 +1,6 @@
 .. image:: documentation/_static/images/simplebench-logo.svg
     :align: center
- 
+
 ==========
 SimpleBench
 ===========
