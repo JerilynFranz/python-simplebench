@@ -1,44 +1,54 @@
-"""
-Docstring for simplebench.reporters.log.log_entry
+"""JSON report log entry factory and validation."""
 
-{
-    "version": 1,
-    "timestamp": 1764844778.490837,
-    "benchmark_id": "sleep_0.01",
-    "benchmark_group": "default",
-    "reporter_type": "JSONReporter",
-    "reporter_name": "json",
-    "output_format": "JSON",
-    "benchmark_title": "tests/test_pytest_plugin.py::test_sleep",
-    "filepath": ".benchmarks/20251204023938/default/001_tests_test_pytest_plugin_py_test_sleep.json",
-    "git": {
-        "commit": "db0623b0d298d9aa781e40d52fce9d435d4c0dcf",
-        "date": "2025-12-04T00:24:58+00:00",
-        "dirty": true
-    },
-    "machine_info": {
-        "processor": "arm",
-        "machine": "arm64",
-        "python_compiler":
-        "Clang 17.0.0 (clang-1700.3.19.1)",
-        "python_implementation": "CPython",
-        "python_implementation_version": "3.10.19",
-        "python_version": "3.10.19",
-        "python_build": ["main", "Oct  9 2025 15:25:03"],
-        "release": "25.1.0",
-        "system": "Darwin",
-        "cpu": {
-            "python_version": "3.10.19.final.0 (64 bit)",
-            "cpuinfo_version": [9, 0, 0],
-            "cpuinfo_version_string": "9.0.0",
-            "arch": "ARM_8",
-            "bits": 64,
-            "count": 24,
-            "arch_string_raw": "arm64",
-            "brand_raw": "Apple M2 Ultra"
-        }
-    }
-}
+from simplebench.exceptions import SimpleBenchValueError
+
+from .base import ReportLogEntry, ReportLogEntrySchema
+from .exceptions import _ReportLogEntryErrorTag, _ReportLogEntrySchemaErrorTag
+from .versions import json_class
+
+_JSON_SCHEMA_AVAILABLE: bool = False
+try:
+    from jsonschema import validate
+    from jsonschema.exceptions import ValidationError
+
+    _JSON_SCHEMA_AVAILABLE = True
+except ImportError:
+    pass
 
 
-"""
+def from_dict(data: dict) -> ReportLogEntry:
+    """Create a ReportLogEntry instance from a dictionary, with validation.
+
+    It checks the version in the data and instantates the appropriate sub-class
+
+    :param data: Dictionary containing the JSON report data.
+    :return: JSONReport sub-class instance.
+    """
+    version: int = data.get('version', 0)  # Default to 0 if not present
+
+    report_class: type[ReportLogEntry] = json_class(
+        version,
+        ReportLogEntry,
+        _ReportLogEntryErrorTag.INVALID_VERSION_TYPE,
+        _ReportLogEntryErrorTag.UNSUPPORTED_VERSION
+    )
+
+    # Only perform JSON Schema validation if the jsonschema package is installed
+    if _JSON_SCHEMA_AVAILABLE:
+        schema_class: type[ReportLogEntrySchema] = json_class(
+            version,
+            ReportLogEntrySchema,
+            _ReportLogEntrySchemaErrorTag.INVALID_VERSION_TYPE,
+            _ReportLogEntrySchemaErrorTag.UNSUPPORTED_VERSION
+        )
+
+        try:
+            schema = schema_class.json_schema_dict()
+            validate(instance=data, schema=schema)  # type: ignore[reportPossiblyUnboundVariable]
+        except ValidationError as exc:  # type: ignore[reportPossiblyUnboundVariable]
+            raise SimpleBenchValueError(
+                f"JSON report data failed validation for version {version}: {exc.message}",
+                tag=_ReportLogEntrySchemaErrorTag.JSON_SCHEMA_VALIDATION_ERROR
+            ) from exc
+
+    return report_class.from_dict(data)

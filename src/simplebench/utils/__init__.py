@@ -15,6 +15,7 @@ from .machine_info import (
     python_implementation_version,
 )
 from .significant_figures import sigfigs
+from .timestamp import iso8601_to_timestamp, timestamp_to_iso8601
 
 __all__ = [
     # filenames.py
@@ -42,4 +43,8 @@ __all__ = [
 
     # significant_figures.py
     'sigfigs',
+
+    # timestamp.py
+    'timestamp_to_iso8601',
+    'iso8601_to_timestamp',
 ]

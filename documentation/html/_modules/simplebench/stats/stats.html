@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.stats.stats - simplebench 0.6.1-alpha.0 documentation</title>
+        <title>simplebench.stats.stats - simplebench 0.8.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -163,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">simplebench 0.6.1-alpha.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +184,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.6.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -252,7 +252,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclose</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclose</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchKeyError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span>
@@ -282,15 +282,11 @@
 <span class="sd">    :ivar float minimum: The minimum operations per time interval. (read only)</span>
 <span class="sd">    :ivar float maximum: The maximum operations per time interval. (read only)</span>
 <span class="sd">    :ivar float standard_deviation: The standard deviation of operations per time interval. (read only)</span>
-<span class="sd">    :ivar float adjusted_standard_deviation: The standard deviation adjusted for the number of rounds. (read only)</span>
 <span class="sd">    :ivar float relative_standard_deviation: The relative standard deviation of ops per time interval. (read only)</span>
-<span class="sd">    :ivar float adjusted_relative_standard_deviation: The adjusted relative standard deviation of ops per</span>
-<span class="sd">        time interval. (read only)</span>
 <span class="sd">    :ivar tuple[float, ...] percentiles: Percentiles of operations per time interval. (read only)</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_unit&#39;</span><span class="p">,</span> <span class="s1">&#39;_scale&#39;</span><span class="p">,</span> <span class="s1">&#39;_rounds&#39;</span><span class="p">,</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_percentiles&#39;</span><span class="p">,</span> <span class="s1">&#39;_mean&#39;</span><span class="p">,</span> <span class="s1">&#39;_median&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;_minimum&#39;</span><span class="p">,</span> <span class="s1">&#39;_maximum&#39;</span><span class="p">,</span> <span class="s1">&#39;_standard_deviation&#39;</span><span class="p">,</span> <span class="s1">&#39;_adjusted_standard_deviation&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;_relative_standard_deviation&#39;</span><span class="p">,</span> <span class="s1">&#39;_adjusted_relative_standard_deviation&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_minimum&#39;</span><span class="p">,</span> <span class="s1">&#39;_maximum&#39;</span><span class="p">,</span> <span class="s1">&#39;_standard_deviation&#39;</span><span class="p">,</span> <span class="s1">&#39;_relative_standard_deviation&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_statistics_as_dict&#39;</span><span class="p">,</span> <span class="s1">&#39;_statistics_and_data_as_dict&#39;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span> <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -328,9 +324,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_relative_standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_relative_standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_statistics_as_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_statistics_and_data_as_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -390,31 +384,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_deviation</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">adjusted_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;The standard deviation adjusted for the number of rounds.</span>
-
-<span class="sd">        This metric &quot;un-suppresses&quot; the variability that is reduced by averaging</span>
-<span class="sd">        across multiple rounds. It is calculated by multiplying the standard</span>
-<span class="sd">        deviation by the square root of the number of rounds.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_standard_deviation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_standard_deviation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rounds</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_standard_deviation</span>
-
-    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">relative_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;The relative standard deviation of the data.&#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relative_standard_deviation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_relative_standard_deviation</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="k">else</span> <span class="mf">0.0</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relative_standard_deviation</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">adjusted_relative_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;The adjusted relative standard deviation of the data.&#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_relative_standard_deviation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_relative_standard_deviation</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">adjusted_standard_deviation</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="k">else</span> <span class="mf">0.0</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_relative_standard_deviation</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">percentiles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
@@ -607,7 +581,6 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_unit&#39;</span><span class="p">,</span> <span class="s1">&#39;_scale&#39;</span><span class="p">,</span> <span class="s1">&#39;_rounds&#39;</span><span class="p">,</span> <span class="s1">&#39;_mean&#39;</span><span class="p">,</span> <span class="s1">&#39;_median&#39;</span><span class="p">,</span> <span class="s1">&#39;_minimum&#39;</span><span class="p">,</span> <span class="s1">&#39;_maximum&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_standard_deviation&#39;</span><span class="p">,</span> <span class="s1">&#39;_relative_standard_deviation&#39;</span><span class="p">,</span> <span class="s1">&#39;_percentiles&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;_adjusted_standard_deviation&#39;</span><span class="p">,</span> <span class="s1">&#39;_adjusted_relative_standard_deviation&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_statistics_as_dict&#39;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
@@ -674,8 +647,6 @@
                         <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="n">type_tag</span><span class="o">=</span><span class="n">_StatsSummaryErrorTag</span><span class="o">.</span><span class="n">INVALID_PERCENTILES_ARG_TYPE</span><span class="p">,</span>
                         <span class="n">value_tag</span><span class="o">=</span><span class="n">_StatsSummaryErrorTag</span><span class="o">.</span><span class="n">INVALID_PERCENTILES_ARG_VALUE</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_relative_standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_statistics_as_dict</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -719,24 +690,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_deviation</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">adjusted_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;The standard deviation adjusted for the number of rounds.&#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_standard_deviation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_standard_deviation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rounds</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_standard_deviation</span>
-
-    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">relative_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;The relative standard deviation of the data.&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relative_standard_deviation</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">adjusted_relative_standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;The adjusted relative standard deviation of the data.&#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_relative_standard_deviation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_relative_standard_deviation</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">adjusted_standard_deviation</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="k">else</span> <span class="mf">0.0</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjusted_relative_standard_deviation</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">percentiles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
@@ -908,7 +864,6 @@
             <span class="s1">&#39;minimum&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span>
             <span class="s1">&#39;maximum&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span>
             <span class="s1">&#39;standard_deviation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span>
-            <span class="s1">&#39;adjusted_standard_deviation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjusted_standard_deviation</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span>
             <span class="s1">&#39;relative_standard_deviation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_standard_deviation</span><span class="p">,</span>
             <span class="s1">&#39;percentiles&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">percentiles</span><span class="p">)</span>
         <span class="p">}</span>
@@ -952,7 +907,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=8c7f9c82"></script>
+</div><script src="../../../_static/documentation_options.js?v=a100ed86"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

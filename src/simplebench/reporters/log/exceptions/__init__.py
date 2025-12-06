@@ -1,7 +1,9 @@
 """simplebench.reporters.log.exceptions package initialization."""
 
-from .report_log_metadata import _ReportLogMetadataErrorTag
+from .report_log_entry import _ReportLogEntryErrorTag
+from .report_log_entry_schema import _ReportLogEntrySchemaErrorTag
 
 __all__ = [
-    "_ReportLogMetadataErrorTag",
+    "_ReportLogEntryErrorTag",
+    "_ReportLogEntrySchemaErrorTag",
 ]

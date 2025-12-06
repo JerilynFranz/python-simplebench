@@ -7,7 +7,7 @@ from typing import Any, Sequence
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_float, validate_string
 
-from .exceptions import _JSONStatsErrorTag
+from ..exceptions import _JSONStatsErrorTag
 
 
 class JSONStats(ABC):

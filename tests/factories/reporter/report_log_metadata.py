@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from simplebench.case import Case
-from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
+from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
 
 from ...factories import case_factory, default_timestamp, output_path_factory, reports_log_path_factory
 from ...kwargs import NoDefaultValue
@@ -46,7 +46,7 @@ def report_log_metadata_factory(  # pylint: disable=unused-argument
     reports_log_path: Path | NoDefaultValue = NoDefaultValue(),
     case: Case | NoDefaultValue = NoDefaultValue(),
     choice: Choice | NoDefaultValue = NoDefaultValue(),
-) -> ReportLogMetadata:
+) -> ReportLogEntry:
     """Create a ReportLogMetadata instance for testing.
 
     :param filepath: The path to the generated report file. If None, no file path is set.
@@ -68,4 +68,4 @@ def report_log_metadata_factory(  # pylint: disable=unused-argument
         if not isinstance(locals()[key], NoDefaultValue):
             kwargs[key] = locals()[key]
 
-    return ReportLogMetadata(**kwargs)  # type: ignore[arg-type]
+    return ReportLogEntry(**kwargs)  # type: ignore[arg-type]

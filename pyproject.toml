@@ -93,16 +93,16 @@ graphs = [
     "pandas>=2.3.2",
     "seaborn>=0.13.2",
 ]
-json = [
+jsonschema = [
     "jsonschema>=4.0.0",
 ]
 pytest = [
     "pytest>=8.4.1,<9.0.0",
-    "simplebench[json]",
+    "simplebench[jsonschema]",
 ]
 all = [
     "simplebench[graphs]",
-    "simplebench[json]",
+    "simplebench[jsonschema]",
     "simplebench[pytest]",
 ]
 
@@ -111,7 +111,7 @@ Homepage = "https://github.com/JerilynFranz/python-simplebench"
 Documentation = "https://python-simplebench.readthedocs.io/en/latest/"
 Repository = "https://github.com/JerilynFranz/python-simplebench.git"
 Issues = "https://github.com/JerilynFranz/python-simplebench/issues"
-Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGELOG.md"
+Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGELOG.rst"
 
 
 [tool.flake8]

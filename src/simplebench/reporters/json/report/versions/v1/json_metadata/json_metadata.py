@@ -1,7 +1,7 @@
 """V1 JSONResults class"""
 from typing import Any
 
-from simplebench.reporters.json.report.base_json_metadata import JSONMetadata as BaseMetadata
+from simplebench.reporters.json.report.base.json_metadata import JSONMetadata as BaseMetadata
 
 
 class JSONMetadata(BaseMetadata):
@@ -9,6 +9,7 @@ class JSONMetadata(BaseMetadata):
 
     VERSION: int = 1
     """The JSON metadata version number."""
+
     def __init__(self, results: list[dict[str, Any]]):  # pylint: disable=super-init-not-called
         """Initialize JSONMetadata with a list of result dictionaries.
         :param results: A list of dictionaries representing individual results.

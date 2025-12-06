@@ -7,9 +7,9 @@ from typing import Any
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_float, validate_string
 
-from . import stats
-from .base_json_stats import JSONStats
-from .exceptions import _JSONResultsErrorTag
+from .. import stats
+from .json_stats import JSONStats
+from ..exceptions import _JSONResultsErrorTag
 
 
 class JSONResults(ABC):

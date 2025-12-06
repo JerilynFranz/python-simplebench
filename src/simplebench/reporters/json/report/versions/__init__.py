@@ -11,11 +11,7 @@ from typing import TypeAlias, TypeVar
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_int
 
-from ..base_json_metadata import JSONMetadata
-from ..base_json_report import JSONReport
-from ..base_json_report_schema import JSONReportSchema
-from ..base_json_results import JSONResults
-from ..base_json_stats import JSONStats
+from ..base import JSONMetadata, JSONReport, JSONReportSchema, JSONResults, JSONStats
 from ..exceptions import _JSONMetadataErrorTag, _JSONReportErrorTag, _JSONReportSchemaErrorTag, _JSONResultsErrorTag
 from . import v1
 

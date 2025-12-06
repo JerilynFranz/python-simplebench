@@ -1,6 +1,7 @@
 """Class for reading log files."""
+from __future__ import annotations
 
-from json import JSONDecoder, JSONDecodeError
+from json import JSONDecodeError, JSONDecoder
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -11,7 +12,7 @@ from simplebench.exceptions import (
     SimpleBenchTypeError,
 )
 
-from .exceptions import _ReportLogMetadataErrorTag
+from .exceptions import _ReportLogEntryErrorTag
 
 if TYPE_CHECKING:
     from io import TextIOWrapper
@@ -42,7 +43,7 @@ class LogReader:
         if not isinstance(value, Path):
             raise SimpleBenchTypeError(
                 f"Expected log_path to be a Path instance, got {type(value)}",
-                tag=_ReportLogMetadataErrorTag.INVALID_LOG_PATH_TYPE)
+                tag=_ReportLogEntryErrorTag.INVALID_LOG_PATH_TYPE)
         self._log_path: Path = value
 
     def read(self) -> None:
@@ -50,23 +51,23 @@ class LogReader:
         if not self.log_path.exists():
             raise SimpleBenchFileNotFoundError(
                 f"Log file not found: {self.log_path}",
-                tag=_ReportLogMetadataErrorTag.LOG_FILE_NOT_FOUND)
+                tag=_ReportLogEntryErrorTag.LOG_FILE_NOT_FOUND)
         if not self.log_path.is_file():
             raise SimpleBenchFileNotFoundError(
                 f"Log path is not a file: {self.log_path}",
-                tag=_ReportLogMetadataErrorTag.LOG_NOT_A_FILE)
+                tag=_ReportLogEntryErrorTag.LOG_NOT_A_FILE)
         try:
             with self.log_path.open('r') as file:
                 self._import_log_entries(file)
         except PermissionError as e:
             raise SimpleBenchPermissionError(
                 f"Permission denied when trying to read log file: {self.log_path}",
-                tag=_ReportLogMetadataErrorTag.LOG_PERMISSION_DENIED
+                tag=_ReportLogEntryErrorTag.LOG_PERMISSION_DENIED
             ) from e
         except OSError as e:
             raise SimpleBenchOSError(
                 f"OS error occurred when trying to read log file: {self.log_path}",
-                tag=_ReportLogMetadataErrorTag.LOG_OS_ERROR
+                tag=_ReportLogEntryErrorTag.LOG_OS_ERROR
             ) from e
 
     def _import_log_entries(self, file: TextIOWrapper) -> None:
@@ -77,7 +78,7 @@ class LogReader:
         if not isinstance(file, TextIOWrapper):
             raise SimpleBenchTypeError(
                 f"Expected file to be a TextIOWrapper instance, got {type(file)}",
-                tag=_ReportLogMetadataErrorTag.INVALID_LOG_FILE_OBJ_TYPE)
+                tag=_ReportLogEntryErrorTag.INVALID_LOG_FILE_OBJ_TYPE)
         for line in file:
             try:
                 log_entry = JSONDecoder().decode(line)

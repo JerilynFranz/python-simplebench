@@ -1,5 +1,5 @@
 """JSON Results classes"""
-from .base_json_results import JSONResults
+from .base import JSONResults
 from .exceptions import _JSONResultsErrorTag
 from .versions import json_class
 

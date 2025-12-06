@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.runners - simplebench 0.6.1-alpha.0 documentation</title>
+        <title>simplebench.runners - simplebench 0.8.0-alpha.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -163,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">simplebench 0.6.1-alpha.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,7 +184,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">simplebench 0.6.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -247,24 +247,25 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.runners</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Test runners for benchmarking.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Test runners for benchmarking.&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tracemalloc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span> <span class="n">DEFAULT_TIMER</span><span class="p">,</span> <span class="n">MIN_MEASURED_ITERATIONS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span> <span class="n">DEFAULT_SIGNIFICANT_FIGURES</span><span class="p">,</span> <span class="n">DEFAULT_TIMER</span><span class="p">,</span> <span class="n">MIN_MEASURED_ITERATIONS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchImportError</span><span class="p">,</span> <span class="n">SimpleBenchTimeoutError</span><span class="p">,</span> <span class="n">_RunnersErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchImportError</span><span class="p">,</span> <span class="n">SimpleBenchTimeoutError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">_RunnersErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.iteration</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iteration</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressTracker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.timeout</span><span class="w"> </span><span class="kn">import</span> <span class="n">Timeout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.timers</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_valid_timer</span><span class="p">,</span> <span class="n">timer_overhead_ns</span><span class="p">,</span> <span class="n">timer_precision_ns</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_positive_int</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -427,7 +428,7 @@
             <span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a timer function for the benchmark.</span>
 
-<span class="sd">        The generated function will call the action `rounds` times and return the average time taken.</span>
+<span class="sd">        The generated function will call the action `rounds` times and return the total time taken.</span>
 <span class="sd">        The function is generated as a string and then compiled to avoid the overhead of</span>
 <span class="sd">        a loop in Python during the actual timing benchmark.</span>
 
@@ -468,7 +469,7 @@
             <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    start = timer()&#39;</span><span class="p">)</span>
             <span class="n">time_function_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;    action(**kwargs)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rounds</span><span class="p">)</span>
             <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    end = timer()&#39;</span><span class="p">)</span>
-            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    return float((end - start) / </span><span class="si">{</span><span class="n">rounds</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    return float(end - start)&#39;</span><span class="p">)</span>
             <span class="n">time_function_code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">time_function_lines</span><span class="p">)</span>
             <span class="n">exec</span><span class="p">(</span><span class="n">time_function_code</span><span class="p">,</span> <span class="n">_timers_module</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>  <span class="c1"># pylint: disable=exec-used</span>
 
@@ -489,6 +490,58 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_timed_iteration</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="o">*</span><span class="p">,</span>
+            <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+            <span class="n">action</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+            <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+            <span class="n">setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+            <span class="n">teardown</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a single timed iteration of the benchmark action for a given number of rounds.</span>
+<span class="sd">        This method uses an unrolled loop to call the action the specified number of rounds,</span>
+<span class="sd">        minimizing the overhead of loop control in Python.</span>
+
+<span class="sd">        :param rounds: The number of test rounds that will be run by the action for the iteration.</span>
+<span class="sd">        :param timer: The timer function to use for timing.</span>
+<span class="sd">        :param action: The action to benchmark.</span>
+<span class="sd">        :param kwargs: Keyword arguments to pass to the action.</span>
+<span class="sd">        :param setup: A setup function to run before the iteration.</span>
+<span class="sd">        :param teardown: A teardown function to run after the iteration.</span>
+<span class="sd">        :return: The elapsed time for the iteration in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kiloround_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="n">timer_sections</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">if</span> <span class="n">rounds</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+            <span class="c1"># for less than 1000 rounds, we can use the generated timer function directly</span>
+            <span class="n">timer_sections</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
+                <span class="n">setup</span><span class="p">()</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">rounds</span><span class="p">)(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
+                <span class="n">teardown</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a &quot;kiloround&quot;)</span>
+            <span class="c1"># to reduce the footprint of the generated timer functions and avoid hitting</span>
+            <span class="c1"># Python&#39;s function size limits.</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">timer_sections</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">kiloround_chunks</span><span class="p">,</span> <span class="n">remaining_rounds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">rounds</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
+                <span class="n">setup</span><span class="p">()</span>
+            <span class="k">while</span> <span class="n">kiloround_chunks</span><span class="p">:</span>
+                <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">kiloround_chunks</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">timer_sections</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">remaining_rounds</span><span class="p">:</span>
+                <span class="n">partial_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">remaining_rounds</span><span class="p">)</span>
+                <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">timer_sections</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
+                <span class="n">teardown</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">elapsed</span> <span class="o">-</span> <span class="n">timer_overhead_ns</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span> <span class="o">*</span> <span class="n">timer_sections</span>
+
 <div class="viewcode-block" id="SimpleRunner.default_runner">
 <a class="viewcode-back" href="../../source/simplebench.runners.html#simplebench.runners.SimpleRunner.default_runner">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">default_runner</span><span class="p">(</span>
@@ -508,15 +561,10 @@
 <span class="sd">            sorts a list of length n, then n should be the length of the list.</span>
 <span class="sd">            If the action being benchmarked is a function that performs</span>
 <span class="sd">            a constant-time operation, then n should be 1.</span>
-<span class="sd">        :type n: int</span>
 <span class="sd">        :param action: The action to benchmark.</span>
-<span class="sd">        :type action: Callable[..., Any]</span>
 <span class="sd">        :param setup: A setup function to run before each iteration.</span>
-<span class="sd">        :type setup: Callable[..., Any], optional</span>
 <span class="sd">        :param teardown: A teardown function to run after each iteration.</span>
-<span class="sd">        :type teardown: Callable[..., Any], optional</span>
 <span class="sd">        :param kwargs: Keyword arguments to pass to the action.</span>
-<span class="sd">        :type kwargs: dict[str, Any], optional</span>
 <span class="sd">        :return: The results of the benchmark.</span>
 <span class="sd">        :rtype: Results</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -559,6 +607,17 @@
         <span class="n">wall_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">timer</span><span class="p">())</span>
         <span class="n">iterations_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">MIN_MEASURED_ITERATIONS</span><span class="p">,</span> <span class="n">iterations</span><span class="p">)</span>
 
+        <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibrate_rounds</span><span class="p">(</span>
+                <span class="n">timer</span><span class="o">=</span><span class="n">timer</span><span class="p">,</span>
+                <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="p">,</span>
+                <span class="n">teardown</span><span class="o">=</span><span class="n">teardown</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span>
+
         <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 
         <span class="n">progress_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span>
@@ -569,39 +628,20 @@
             <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Benchmarking </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s1"> (iteration </span><span class="si">{</span><span class="mi">0</span><span class="si">:</span><span class="s1">&lt;6d</span><span class="si">}</span><span class="s1">; time </span><span class="si">{</span><span class="mf">0.00</span><span class="si">:</span><span class="s1">&lt;3.2f</span><span class="si">}</span><span class="s1">s)&#39;</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span><span class="p">)</span>
 
-        <span class="n">timer_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span><span class="p">)</span>
         <span class="n">total_elapsed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">iterations_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Iteration</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">kiloround_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
 
         <span class="k">while</span> <span class="p">((</span><span class="n">iteration_pass</span> <span class="o">&lt;=</span> <span class="n">iterations_min</span> <span class="ow">or</span> <span class="n">wall_time</span> <span class="o">&lt;</span> <span class="n">min_stop_at</span><span class="p">)</span>
                 <span class="ow">and</span> <span class="n">wall_time</span> <span class="o">&lt;</span> <span class="n">max_stop_at</span><span class="p">):</span>
             <span class="n">iteration_pass</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="c1"># Time the action</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
-                <span class="c1"># for less than 1000 rounds, we can use the generated timer function directly</span>
-                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
-                    <span class="n">setup</span><span class="p">()</span>
-                <span class="n">elapsed</span> <span class="o">=</span> <span class="n">timer_function</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
-                    <span class="n">teardown</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a &quot;kiloround&quot;)</span>
-                <span class="c1"># to reduce the footprint of the generated timer functions and avoid hitting</span>
-                <span class="c1"># Python&#39;s function size limits. Breaking into chunks of 1000 also</span>
-                <span class="c1"># reduces the overhead of the loop in the timing function to a negligible level.</span>
-                <span class="n">elapsed</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="n">kiloround_chunks</span><span class="p">,</span> <span class="n">remaining_rounds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
-                    <span class="n">setup</span><span class="p">()</span>
-                <span class="k">while</span> <span class="n">kiloround_chunks</span><span class="p">:</span>
-                    <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-                    <span class="n">kiloround_chunks</span> <span class="o">-=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">remaining_rounds</span><span class="p">:</span>
-                    <span class="n">partial_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">remaining_rounds</span><span class="p">)</span>
-                    <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
-                    <span class="n">teardown</span><span class="p">()</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_timed_iteration</span><span class="p">(</span>
+                <span class="n">rounds</span><span class="o">=</span><span class="n">rounds</span><span class="p">,</span>
+                <span class="n">timer</span><span class="o">=</span><span class="n">timer</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="p">,</span>
+                <span class="n">teardown</span><span class="o">=</span><span class="n">teardown</span><span class="p">)</span>
 
             <span class="c1"># Measure memory usage of the action</span>
             <span class="c1"># We force a garbage collection before measuring memory usage to reduce noise</span>
@@ -632,7 +672,7 @@
             <span class="n">memory</span> <span class="o">=</span> <span class="n">end_memory_current</span> <span class="o">-</span> <span class="n">start_memory_current</span> <span class="o">-</span> <span class="n">memory_overhead</span>
             <span class="n">peak_memory</span> <span class="o">=</span> <span class="n">end_memory_peak</span> <span class="o">-</span> <span class="n">start_memory_peak</span> <span class="o">-</span> <span class="n">peak_memory_overhead</span>
             <span class="n">iteration_result</span> <span class="o">=</span> <span class="n">Iteration</span><span class="p">(</span>
-                <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span> <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span> <span class="n">peak_memory</span><span class="o">=</span><span class="n">peak_memory</span><span class="p">)</span>
+                <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rounds</span><span class="o">=</span><span class="n">rounds</span><span class="p">,</span> <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span> <span class="n">peak_memory</span><span class="o">=</span><span class="n">peak_memory</span><span class="p">)</span>
             <span class="n">iterations_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iteration_result</span><span class="p">)</span>
             <span class="n">total_elapsed</span> <span class="o">+=</span> <span class="n">iteration_result</span><span class="o">.</span><span class="n">elapsed</span>
             <span class="n">wall_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">timer</span><span class="p">())</span>
@@ -654,13 +694,119 @@
             <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
             <span class="n">variation_marks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">variation_marks</span><span class="p">,</span>
             <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
-            <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span>
+            <span class="n">rounds</span><span class="o">=</span><span class="n">rounds</span><span class="p">,</span>
             <span class="n">iterations</span><span class="o">=</span><span class="n">iterations_list</span><span class="p">,</span>
             <span class="n">total_elapsed</span><span class="o">=</span><span class="n">total_elapsed</span><span class="p">,</span>
             <span class="n">extra_info</span><span class="o">=</span><span class="p">{})</span>
         <span class="n">progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">benchmark_results</span></div>
+
+
+<div class="viewcode-block" id="SimpleRunner.calibrate_rounds">
+<a class="viewcode-back" href="../../source/simplebench.runners.html#simplebench.runners.SimpleRunner.calibrate_rounds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calibrate_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                         <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">],</span>
+                         <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+                         <span class="n">setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">teardown</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">action</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Auto-calibrate the number of rounds for the benchmark.</span>
+
+<span class="sd">        This method estimates an appropriate number of rounds to use for the benchmark</span>
+<span class="sd">        based on the precision and overhead of the timer function and the expected</span>
+<span class="sd">        execution time of the action being benchmarked.</span>
+
+<span class="sd">        The goal is to choose a number of rounds such that the total time taken</span>
+<span class="sd">        for the action is significantly larger than the timer precision and overhead,</span>
+<span class="sd">        to reduce the impact of timer quantization errors on the measurement.</span>
+
+<span class="sd">        :param timer: The timer function to use for the benchmark.</span>
+<span class="sd">        :param kwargs: Keyword arguments to pass to the action.</span>
+<span class="sd">        :param setup: A setup function to run before each iteration.</span>
+<span class="sd">        :param teardown: A teardown function to run after each iteration.</span>
+<span class="sd">        :param action: The action to benchmark.</span>
+<span class="sd">        :return: The calibrated number of rounds for the benchmark.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid timer function provided for rounds calibration&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid kwargs provided for rounds calibration; must be a dict&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid kwargs provided for rounds calibration; all keys must be strings&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_KEY_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid action provided for rounds calibration; must be callable&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_ACTION_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">setup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid setup function provided for rounds calibration; must be callable&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_SETUP</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">teardown</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid teardown function provided for rounds calibration; must be callable&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_RunnersErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TEARDOWN</span><span class="p">)</span>
+
+        <span class="n">timer_overhead</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timer_overhead_ns</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span>
+        <span class="n">timer_precision</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timer_precision_ns</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span>
+
+        <span class="c1"># Target significant figures for the measurement</span>
+        <span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">DEFAULT_SIGNIFICANT_FIGURES</span><span class="p">)</span>
+        <span class="n">noise_floor_ns</span> <span class="o">=</span> <span class="n">timer_precision</span> <span class="o">+</span> <span class="n">timer_overhead</span>
+        <span class="n">target_time_ns</span> <span class="o">=</span> <span class="n">multiplier</span> <span class="o">*</span> <span class="n">noise_floor_ns</span>
+
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
+            <span class="n">setup</span><span class="p">()</span>
+
+        <span class="n">kiloround_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="n">estimate_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># Loop until we find an adequate rounds estimate</span>
+            <span class="c1"># Use kiloround chunking to avoid generating excessively large timer functions</span>
+            <span class="n">total_action_time_ns</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">timer_sections</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="k">if</span> <span class="n">estimate_rounds</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+                <span class="n">estimate_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">estimate_rounds</span><span class="p">)</span>
+                <span class="n">total_action_time_ns</span> <span class="o">=</span> <span class="n">estimate_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">timer_sections</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total_action_time_ns</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">timer_sections</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">kiloround_chunks</span><span class="p">,</span> <span class="n">remaining_rounds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">estimate_rounds</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+                <span class="k">while</span> <span class="n">kiloround_chunks</span><span class="p">:</span>
+                    <span class="n">total_action_time_ns</span> <span class="o">+=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">kiloround_chunks</span> <span class="o">-=</span> <span class="mi">1</span>
+                    <span class="n">timer_sections</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">remaining_rounds</span><span class="p">:</span>
+                    <span class="n">partial_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">remaining_rounds</span><span class="p">)</span>
+                    <span class="n">total_action_time_ns</span> <span class="o">+=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">timer_sections</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Subtract the cumulative overhead from all timed sections.</span>
+            <span class="n">total_measured_time_ns</span> <span class="o">=</span> <span class="n">total_action_time_ns</span> <span class="o">-</span> <span class="p">(</span><span class="n">timer_overhead</span> <span class="o">*</span> <span class="n">timer_sections</span><span class="p">)</span>
+
+            <span class="c1"># loop exit condition</span>
+            <span class="k">if</span> <span class="n">total_measured_time_ns</span> <span class="o">&gt;=</span> <span class="n">target_time_ns</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">total_measured_time_ns</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">estimate_rounds</span> <span class="o">*=</span> <span class="mi">10</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Calculate the average time to estimate the next number of rounds.</span>
+            <span class="n">avg_action_time_ns</span> <span class="o">=</span> <span class="n">total_measured_time_ns</span> <span class="o">/</span> <span class="n">estimate_rounds</span>
+            <span class="n">required_rounds</span> <span class="o">=</span> <span class="n">target_time_ns</span> <span class="o">/</span> <span class="n">avg_action_time_ns</span>
+            <span class="n">estimate_rounds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">required_rounds</span><span class="p">,</span> <span class="n">estimate_rounds</span> <span class="o">*</span> <span class="mi">10</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
+            <span class="n">teardown</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">estimate_rounds</span></div>
 </div>
 
 </pre></div>
@@ -695,7 +841,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=8c7f9c82"></script>
+</div><script src="../../_static/documentation_options.js?v=a100ed86"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

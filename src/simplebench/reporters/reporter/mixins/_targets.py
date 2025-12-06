@@ -11,7 +11,7 @@ from rich.text import Text
 
 from simplebench.enums import Format, Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
+from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
@@ -26,7 +26,7 @@ class _ReporterTargetMixin:
     """Mixin for target-related functionality for the Reporter class."""
 
     def target_filesystem(self: ReporterProtocol, *,
-                          log_metadata: ReportLogMetadata,
+                          log_metadata: ReportLogEntry,
                           path: Path | None,
                           subdir: str,
                           filename: str,
@@ -77,7 +77,7 @@ class _ReporterTargetMixin:
             already exists and neither append nor unique options were specified.
         """
         validate_type(
-            log_metadata, ReportLogMetadata, 'log_metadata',
+            log_metadata, ReportLogEntry, 'log_metadata',
             _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_LOG_METADATA_ARG_TYPE)
         path = validate_type(
             path, Path, 'path',

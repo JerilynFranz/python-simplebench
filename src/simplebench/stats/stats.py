@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import statistics
-from math import isclose
+from math import isclose, sqrt
 from typing import Any, Sequence
 
 from ..exceptions import SimpleBenchKeyError, SimpleBenchTypeError
@@ -127,14 +127,26 @@ class Stats:
 
     @property
     def standard_deviation(self) -> float:
-        '''The standard deviation of the data.'''
+        '''The estimated population standard deviation of the data.
+
+        This is computed using the sample standard deviation formula (Bessel's correction)
+        adjusted by the square root of the number of rounds to estimate the population
+        standard deviation.
+
+        This provides a better estimate of the true standard deviation of the underlying
+        population when each data point represents multiple rounds of measurement.
+        '''
         if self._standard_deviation is None:
-            self._standard_deviation = statistics.stdev(self.data) if len(self.data) > 1 else 0.0
+            self._standard_deviation = statistics.stdev(self.data) * sqrt(self.rounds) if len(self.data) > 1 else 0.0
         return self._standard_deviation
 
     @property
     def relative_standard_deviation(self) -> float:
-        '''The relative standard deviation of the data.'''
+        '''The relative standard deviation of the data.
+
+        This is expressed as the absolute value of the standard deviation as a
+        percentage of the mean.
+        '''
         if self._relative_standard_deviation is None:
             self._relative_standard_deviation = abs(self.standard_deviation / self.mean * 100) if self.mean else 0.0
         return self._relative_standard_deviation

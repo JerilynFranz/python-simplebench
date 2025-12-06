@@ -12,4 +12,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.reporters.log.exceptions.report_log_metadata
+   simplebench.reporters.log.exceptions.report_log_entry
+   simplebench.reporters.log.exceptions.report_log_entry_schema

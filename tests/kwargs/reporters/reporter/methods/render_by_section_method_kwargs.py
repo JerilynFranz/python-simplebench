@@ -6,7 +6,7 @@ from pathlib import Path
 
 from simplebench.case import Case
 from simplebench.reporters.choice.choice import Choice
-from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
+from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
@@ -25,7 +25,7 @@ class RenderBySectionMethodKWArgs(KWArgs):
             *,
             renderer: ReportRenderer | NoDefaultValue = NoDefaultValue(),
             args: Namespace | NoDefaultValue = NoDefaultValue(),
-            log_metadata: ReportLogMetadata | NoDefaultValue = NoDefaultValue(),
+            log_metadata: ReportLogEntry | NoDefaultValue = NoDefaultValue(),
             case: Case | NoDefaultValue = NoDefaultValue(),
             choice: Choice | NoDefaultValue = NoDefaultValue(),
             path: Path | NoDefaultValue = NoDefaultValue(),

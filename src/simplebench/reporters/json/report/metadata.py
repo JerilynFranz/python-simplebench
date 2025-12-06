@@ -1,6 +1,6 @@
 """JSON Metadata classes"""
 
-from .base_json_metadata import JSONMetadata
+from .base import JSONMetadata
 from .exceptions import _JSONMetadataErrorTag
 from .versions import json_class
 

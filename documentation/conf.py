@@ -65,6 +65,7 @@ intersphinx_mapping = {
     'seaborn': ('https://seaborn.pydata.org/', None),
     'dulwich': ('https://www.dulwich.io/docs/', None),
     'pytest': ('https://docs.pytest.org/en/latest/', None),
+    'jsonschema': ('https://python-jsonschema.readthedocs.io/en/stable/', None),
 }
 intersphinx_disabled_domains = ['std']
 
@@ -119,6 +120,7 @@ maximum_signature_line_length: int = 50
 #
 # html_theme = 'sphinxawesome_theme'
 html_theme: str = 'furo'
+html_logo = '_static/images/simplebench-logo.svg'
 
 
 # Theme options are theme-specific and customize the look and feel of a theme

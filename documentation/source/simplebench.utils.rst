@@ -18,3 +18,4 @@ Submodules
    simplebench.utils.kwargs_variations
    simplebench.utils.machine_info
    simplebench.utils.significant_figures
+   simplebench.utils.timestamp

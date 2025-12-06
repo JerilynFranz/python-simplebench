@@ -6,7 +6,7 @@ from typing import Any
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from .exceptions import _JSONMetadataErrorTag
+from ..exceptions import _JSONMetadataErrorTag
 
 
 class JSONMetadata(ABC):

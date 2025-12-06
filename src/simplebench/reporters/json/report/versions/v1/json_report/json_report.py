@@ -2,7 +2,7 @@
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchValueError
-from simplebench.reporters.json.report.base_json_report import JSONReport as BaseJSONReport
+from simplebench.reporters.json.report.base.json_report import JSONReport as BaseJSONReport
 
 from .exceptions import _JSONReportErrorTag
 

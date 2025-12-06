@@ -1,7 +1,7 @@
 """V1 JSONResults class"""
 from typing import Any
 
-from simplebench.reporters.json.report.base_json_results import JSONResults as BaseJSONResults
+from simplebench.reporters.json.report.base.json_results import JSONResults as BaseJSONResults
 
 
 class JSONResults(BaseJSONResults):

@@ -17,6 +17,7 @@ Subpackages
    simplebench.reporters
    simplebench.stats
    simplebench.timeout
+   simplebench.timers
    simplebench.type_proxies
    simplebench.utils
    simplebench.validators

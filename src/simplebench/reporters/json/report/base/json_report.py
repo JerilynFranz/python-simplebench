@@ -6,9 +6,9 @@ from typing import Any, Sequence
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchValueError
 from simplebench.validators import validate_sequence_of_str, validate_sequence_of_type, validate_string
 
-from . import results
-from .base_json_results import JSONResults
-from .exceptions import _JSONReportErrorTag
+from .. import results
+from ..exceptions import _JSONReportErrorTag
+from .json_results import JSONResults
 
 _JSON_SCHEMA_URI: str = "https://json-schema.org/draft/2020-12/schema"
 _VERSION: int = 0

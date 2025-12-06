@@ -16,7 +16,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.enums import Format, Section
-from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
+from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 
 from ...cache_factory import CacheId, cached_factory
@@ -368,7 +368,7 @@ class FileSystemCall:
     :ivar append: Whether to append to the file if it exists.
     :vartype append: bool
     """
-    log_metadata: ReportLogMetadata
+    log_metadata: ReportLogEntry
     path: Path
     subdir: str
     filename: str
@@ -392,7 +392,7 @@ class FileSystemSpy:
 
     def __call__(self, *,
                  path: Path,
-                 log_metadata: ReportLogMetadata,
+                 log_metadata: ReportLogEntry,
                  subdir: str,
                  filename: str,
                  output: Output,

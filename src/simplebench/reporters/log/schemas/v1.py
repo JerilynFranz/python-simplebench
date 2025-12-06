@@ -6,6 +6,7 @@ class LogReportMetadataSchema:
 
     json_schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://simplebench.readthedocs.io/schemas/log/report-metadata-v1.json",
         "description": "SimpleBench Log Reporter Metadata Schema V1",
         "type": "object",
         "properties": {
@@ -14,8 +15,9 @@ class LogReportMetadataSchema:
                 "type": "integer"
             },
             "timestamp": {
-                "description": "Timestamp of the report in seconds since epoch",
-                "type": "number"
+                "description": "Timestamp of the report as an ISO 8601 string in UTC",
+                "type": "string",
+                "format": "date-time"
             },
             "benchmark_id": {
                 "description": "Unique identifier for the benchmark",
@@ -41,9 +43,10 @@ class LogReportMetadataSchema:
                 "description": "Title of the benchmark",
                 "type": "string"
             },
-            "filepath": {
-                "description": "Path to the benchmark file",
-                "type": "string"
+            "uri": {
+                "description": "URI reference to the benchmark output file",
+                "type": "string",
+                "format": "uri-reference"
             },
             "git": {
                 "description": "Git repository information",
@@ -55,7 +58,8 @@ class LogReportMetadataSchema:
                     },
                     "date": {
                         "description": "Date of the commit as an ISO 8601 string",
-                        "type": "string"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "dirty": {
                         "description": "Indicates if the repository has uncommitted changes",
@@ -103,7 +107,7 @@ class LogReportMetadataSchema:
                                 "type": "string"
                         },
                         "minItems": 2,
-                        "maxItems": 2
+                        "maxItems": 4
                     },
                     "release": {
                         "description": "Release information",
@@ -190,7 +194,6 @@ class LogReportMetadataSchema:
             "reporter_name",
             "output_format",
             "benchmark_title",
-            "filepath",
             "git",
             "machine_info"
         ]

@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.log.report_log_metadata import ReportLogMetadata
+from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.type_proxies import is_case
@@ -112,7 +112,7 @@ class JSONReporter(Reporter):
     def run_report(self,
                    *,
                    args: Namespace,
-                   log_metadata: ReportLogMetadata,
+                   log_metadata: ReportLogEntry,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,

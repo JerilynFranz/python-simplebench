@@ -1,6 +1,6 @@
 """JSON Stats classes"""
 
-from .base_json_stats import JSONStats
+from .base import JSONStats
 from .exceptions import _JSONStatsErrorTag
 from .versions import json_class
 

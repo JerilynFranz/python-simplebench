@@ -6,6 +6,17 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _UtilsErrorTag(ErrorTag):
     """ErrorTags for simplebench.utils in SimpleBench."""
+
+    # utils.timestamp_to_iso8601() tags
+    TIMESTAMP_TO_ISO8601_INVALID_TIMESTAMP_ARG_TYPE = "TIMESTAMP_TO_ISO8601_INVALID_TIMESTAMP_ARG_TYPE"
+    """The timestamp argument was not a float"""
+
+    # utils.iso8601_to_timestamp() tags
+    TIMESTAMP_TO_ISO8601_INVALID_ISO8601_STR_ARG_TYPE = "TIMESTAMP_TO_ISO8601_INVALID_ISO8601_STR_ARG_TYPE"
+    """The iso8601_str argument was not a str"""
+    TIMESTAMP_TO_ISO8601_EMPTY_ISO8601_STR_ARG_VALUE = "TIMESTAMP_TO_ISO8601_EMPTY_ISO8601_STR_ARG_VALUE"
+    """The iso8601_str argument was an empty str"""
+
     # utils.sanitize_filename() tags
     SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE = "SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE"
     """The filename argument was not a str"""
