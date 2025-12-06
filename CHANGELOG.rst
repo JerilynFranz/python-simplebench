@@ -3,8 +3,8 @@ SimpleBench Changelog
 =====================
 All notable changes to this project will be documented in this file.
 
-v0.9.0-alpha.0 2025-12-5
-========================
+v0.9.0-alpha 2025-12-5
+======================
 
 * full pytest support added
 * Added logo
