@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/vcs/git-info.json",
-    "title": "Git Info",
-    "description": "Git repository information",
+    "title": "Git Info (V1)",
+    "description": "Git repository information (V1)",
     "type": "object",
     "properties": {
         "commit": {

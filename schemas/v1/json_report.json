@@ -251,6 +251,15 @@
                     "items": {"type": "number"},
                     "minItems": 101,
                     "maxItems": 101
+                },
+                "measurements": {
+                    "title": "Measurements",
+                    "description": "Raw data series of measurements collected (one value per iteration)",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "default": []
                 }
             },
             "required": [

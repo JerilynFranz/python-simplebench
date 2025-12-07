@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/vcs/hg-info.json",
-    "title": "Mercurial Info",
-    "description": "Mercurial repository information",
+    "title": "Mercurial Info (V1)",
+    "description": "Mercurial repository information (V1)",
     "type": "object",
     "properties": {
         "changeset_id": {

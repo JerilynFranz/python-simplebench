@@ -1,9 +1,9 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json",
-    "title": "Python Info",
+    "title": "Python Info (V1)",
     "type": "object",
-    "description": "Python interpreter information",
+    "description": "Python interpreter information (V1)",
     "properties": {
         "compiler": {
             "title": "Python Compiler",
