@@ -1,0 +1,38 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/machine-info.json",
+    "title": "Machine Info",
+    "description": "Machine information",
+    "type": "object",
+    "properties": {
+        "processor": {
+            "title": "Processor",
+            "description": "Processor information",
+            "type": "string"
+        },
+        "machine": {
+            "title": "Machine",
+            "description": "Machine type",
+            "type": "string"
+        },
+        "node": {
+            "title": "Node",
+            "description": "Identifier for the machine (blank by default)",
+            "type": "string",
+            "default": ""
+        },
+        "python": {
+            "$ref": "python-info.json"
+        },
+        "cpu": {
+            "$ref": "cpu-info.json"
+        }
+    },
+    "required": [
+        "processor",
+        "machine",
+        "python",
+        "cpu"
+    ],
+    "additionalProperties": false
+}

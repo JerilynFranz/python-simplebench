@@ -23,8 +23,8 @@ class ReportLogEntrySchema:
             "type": "object",
             "properties": {
                 "version": {
-                    "title": "Version",
-                    "description": "Schema version",
+                    "title": "Log Version",
+                    "description": "Schema version for the log entry",
                     "type": "integer",
                     "const": 1
                 },
@@ -40,69 +40,106 @@ class ReportLogEntrySchema:
                     "type": "string",
                     "format": "date-time"
                 },
-                "benchmark_id": {
-                    "title": "Benchmark ID",
-                    "description": "Unique identifier for the benchmark",
-                    "type": "string"
-                },
-                "benchmark_group": {
-                    "title": "Benchmark Group",
-                    "description": "Group to which the benchmark belongs",
-                    "type": "string"
-                },
-                "reporter_type": {
-                    "title": "Reporter Type",
-                    "description": "Type of the reporter",
-                    "type": "string"
-                },
-                "reporter_name": {
-                    "title": "Reporter Name",
-                    "description": "Name of the reporter",
-                    "type": "string"
-                },
-                "output_format": {
-                    "title": "Output Format",
-                    "description": "Format of the output",
-                    "type": "string"
-                },
-                "benchmark_title": {
-                    "title": "Benchmark Title",
-                    "description": "Title of the benchmark",
-                    "type": "string"
-                },
-                "uri": {
-                    "title": "URI",
-                    "description": "URI reference to the benchmark output file",
-                    "type": "string",
-                    "format": "uri-reference"
-                },
-                "git": {
-                    "title": "Git Info",
-                    "description": "Git repository information",
+                "benchmark": {
+                    "title": "Benchmark Info",
                     "type": "object",
+                    "description": "Information about the benchmark itself",
                     "properties": {
-                        "commit": {
-                            "title": "Commit",
-                            "description": "Git commit hash",
+                        "id": {
+                            "title": "Benchmark ID",
+                            "description": "Unique identifier for the benchmark",
                             "type": "string"
                         },
-                        "date": {
-                            "title": "Date",
-                            "description": "Date of the commit as an ISO 8601 string",
-                            "type": "string",
-                            "format": "date-time"
+                        "name": {
+                            "title": "Benchmark Name",
+                            "description": "Name of the benchmark (qv.the benchmark definition 'title')",
+                            "type": "string"
                         },
-                        "dirty": {
-                            "title": "Dirty",
-                            "description": "Indicates if the repository has uncommitted changes",
-                            "type": "boolean"
-                        }
+                        "group": {
+                            "title": "Benchmark Group",
+                            "description": "Group to which the benchmark belongs",
+                            "type": "string"
+                        },
                     },
                     "required": [
-                        "commit",
-                        "date",
-                        "dirty"
-                    ]
+                        "id",
+                        "name",
+                        "group"
+                    ],
+                    "additionalProperties": False
+                },
+                "report": {
+                    "title": "Reporter Info",
+                    "description": "Information about the reporter generating the log entry",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "title": "Reporter Type",
+                            "description": "Type of the reporter that generated the report",
+                            "type": "string"
+                        },
+                        "name": {
+                            "title": "Reporter Name",
+                            "description": "Name of the reporter that generated the report",
+                            "type": "string"
+                        },
+                        "output_format": {
+                            "title": "Output Format",
+                            "description": "Format of the output",
+                            "type": "string"
+                        },
+                        "uri": {
+                            "title": "URI",
+                            "description": "URI reference to the output for the report. If a relative-uri, it is relative to the directory containing the report log file.",  # noqa: E501
+                            "type": "string",
+                            "format": "uri-reference",
+                            "examples": ["20251204023938/default/001_tests_test_pytest_plugin_py_test_sleep.json"]
+                        },
+                    },
+                    "required": [
+                        "type",
+                        "name",
+                        "output_format",
+                        "uri"
+                    ],
+                    "additionalProperties": False
+                },
+                "vcs": {
+                    "title": "VCS Info",
+                    "description": "Version control system information",
+                    "type": "object",
+                    "properties": {
+                        "git": {
+                            "title": "Git Info",
+                            "description": "Git repository information",
+                            "type": "object",
+                            "properties": {
+                                "commit": {
+                                    "title": "Commit",
+                                    "description": "Git commit hash",
+                                    "type": "string"
+                                },
+                                "date": {
+                                    "title": "Date",
+                                    "description": "Date of the commit as an ISO 8601 string",
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "dirty": {
+                                    "title": "Dirty",
+                                    "description": "Indicates if the repository has uncommitted changes",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "commit",
+                                "date",
+                                "dirty"
+                            ],
+                            "additionalProperties": False
+                        }
+                    },
+                    "additionalProperties": False
                 },
                 "machine_info": {
                     "title": "Machine Info",
@@ -119,44 +156,67 @@ class ReportLogEntrySchema:
                             "description": "Machine type",
                             "type": "string"
                         },
-                        "python_compiler": {
-                            "title": "Python Compiler",
-                            "description": "Python compiler information",
-                            "type": "string"
+                        "node": {
+                            "title": "Node",
+                            "description": "Identifier for the machine (blank by default)",
+                            "type": "string",
+                            "default": ""
                         },
-                        "python_implementation": {
-                            "title": "Python Implementation",
-                            "description": "Python implementation",
-                            "type": "string"
-                        },
-                        "python_implementation_version": {
-                            "title": "Python Implementation Version",
-                            "description": "Version of the Python implementation",
-                            "type": "string"
-                        },
-                        "python_version": {
-                            "title": "Python Version",
-                            "description": "Python version",
-                            "type": "string"
-                        },
-                        "python_build": {
-                            "title": "Python Build",
-                            "description": "Python build information",
-                            "type": "array",
-                            "items": {
+                        "python": {
+                            "title": "Python Info",
+                            "type": "object",
+                            "description": "Python interpreter information",
+                            "properties": {
+                                "compiler": {
+                                    "title": "Python Compiler",
+                                    "description": "Python compiler information",
                                     "type": "string"
+                                },
+                                "implementation": {
+                                    "title": "Python Implementation",
+                                    "description": "Python implementation",
+                                    "type": "string"
+                                },
+                                "implementation_version": {
+                                    "title": "Python Implementation Version",
+                                    "description": "Version of the Python implementation",
+                                    "type": "string"
+                                },
+                                "version": {
+                                    "title": "Python Version",
+                                    "description": "Python version",
+                                    "type": "string"
+                                },
+                                "build": {
+                                    "title": "Python Build",
+                                    "description": "Python build information",
+                                    "type": "array",
+                                    "items": {
+                                            "type": "string"
+                                    },
+                                    "minItems": 3,
+                                },
+                                "release": {
+                                    "title": "Release",
+                                    "description": "Release information",
+                                    "type": "string"
+                                },
+                                "system": {
+                                    "title": "System",
+                                    "description": "System information",
+                                    "type": "string"
+                                },
                             },
-                            "minItems": 3,
-                        },
-                        "release": {
-                            "title": "Release",
-                            "description": "Release information",
-                            "type": "string"
-                        },
-                        "system": {
-                            "title": "System",
-                            "description": "System information",
-                            "type": "string"
+                            "required": [
+                                "compiler",
+                                "implementation",
+                                "implementation_version",
+                                "version",
+                                "build",
+                                "release",
+                                "system"
+                            ],
+                            "additionalProperties": False
                         },
                         "cpu": {
                             "title": "CPU",
@@ -210,33 +270,26 @@ class ReportLogEntrySchema:
                                 "count",
                                 "arch_string_raw",
                                 "brand_raw"
-                            ]
-                        }
+                            ],
+                            "additionalProperties": False
+                        },
                     },
                     "required": [
                         "processor",
                         "machine",
-                        "python_compiler",
-                        "python_implementation",
-                        "python_implementation_version",
-                        "python_version",
-                        "python_build",
-                        "release",
-                        "system",
+                        "python",
                         "cpu"
-                    ]
+                    ],
+                    "additionalProperties": False
                 }
             },
             "required": [
                 "version",
+                "type",
                 "timestamp",
-                "benchmark_id",
-                "benchmark_group",
-                "reporter_type",
-                "reporter_name",
-                "output_format",
-                "benchmark_title",
-                "git",
-                "machine_info"
-            ]
+                "benchmark",
+                "report",
+                "vcs",
+                "machine_info"],
+            "additionalProperties": False
         }

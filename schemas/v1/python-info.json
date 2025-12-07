@@ -1,0 +1,58 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json",
+    "title": "Python Info",
+    "type": "object",
+    "description": "Python interpreter information",
+    "properties": {
+        "compiler": {
+            "title": "Python Compiler",
+            "description": "Python compiler information",
+            "type": "string"
+        },
+        "implementation": {
+            "title": "Python Implementation",
+            "description": "Python implementation",
+            "type": "string"
+        },
+        "implementation_version": {
+            "title": "Python Implementation Version",
+            "description": "Version of the Python implementation",
+            "type": "string"
+        },
+        "version": {
+            "title": "Python Version",
+            "description": "Python version",
+            "type": "string"
+        },
+        "build": {
+            "title": "Python Build",
+            "description": "Python build information",
+            "type": "array",
+            "items": {
+                    "type": "string"
+            },
+            "minItems": 3
+        },
+        "release": {
+            "title": "Release",
+            "description": "Release information",
+            "type": "string"
+        },
+        "system": {
+            "title": "System",
+            "description": "System information",
+            "type": "string"
+        }
+    },
+    "required": [
+        "compiler",
+        "implementation",
+        "implementation_version",
+        "version",
+        "build",
+        "release",
+        "system"
+    ],
+    "additionalProperties": false
+}

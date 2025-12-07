@@ -148,9 +148,10 @@ class ReportLogEntry(ABC):
             return None
         if hasattr(self, '_reports_log_path') and self.reports_log_path is not None:
             try:
-                root_path = self.reports_log_path.parent
-                relative_path = self.filepath.relative_to(root_path)
-                return relative_path.as_uri()
+                root_uri = self.reports_log_path.parent.as_uri()
+                file_uri = self.filepath.relative_to(self.reports_log_path.parent).as_uri()
+                final_uri = file_uri.replace(root_uri, '')
+                return self.filepath.relative_to(self.reports_log_path.parent).as_posix()
             except ValueError:
                 pass  # filepath is not relative to reports_log_path parent
         return self.filepath.as_uri()

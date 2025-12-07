@@ -1,7 +1,5 @@
 """JSON Report Log Entry Version 1"""
-from typing import Any
-
-from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.log.base import ReportLogEntry as BaseReportLogEntry
 
 from .exceptions import _ReportLogEntryErrorTag
@@ -34,13 +32,10 @@ class ReportLogEntry(BaseReportLogEntry):
         BaseReportLogEntry.validate_schema_uri(data.get('$schema'))
         BaseReportLogEntry.validate_version(data.get('version'))
         BaseReportLogEntry.validate_type(data.get('type'), 'ReportLogEntry')
+        file_uri = data.get('uri')
+
         report = cls(
-           
+            filepath=data.get('filepath'),
+            timestamp=data.get('timestamp'),
         )
-
         return report
-
-    def __init__(self, *,  # pylint: disable=super-init-not-called
-                 ) -> None:
-        """Initialize a JSONReport v1 instance."""
-

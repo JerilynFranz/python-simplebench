@@ -6,7 +6,7 @@ from pathlib import Path
 from rich.table import Table
 from rich.text import Text
 
-from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
+from simplebench.reporters.log.versions.v1 import ReportMetadata
 from simplebench.reporters.reporter import Reporter
 
 from ....kwargs import KWArgs, NoDefaultValue
@@ -26,7 +26,7 @@ class TargetFilesystemMethodKWArgs(KWArgs):
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
-            log_metadata: ReportLogEntry | NoDefaultValue = NoDefaultValue(),
+            log_metadata: ReportMetadata | NoDefaultValue = NoDefaultValue(),
             path: Path | NoDefaultValue = NoDefaultValue(),
             subdir: str | NoDefaultValue = NoDefaultValue(),
             filename: str | NoDefaultValue = NoDefaultValue(),

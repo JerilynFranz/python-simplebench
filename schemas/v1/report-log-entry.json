@@ -1,0 +1,47 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/report-log-entry.json",
+    "title": "Log Entry Schema (V1)",
+    "description": "SimpleBench Report Log Entry Schema (V1)",
+    "type": "object",
+    "properties": {
+        "version": {
+            "title": "Log Version",
+            "description": "Schema version for the log entry",
+            "type": "integer",
+            "const": 1
+        },
+        "type": {
+            "title": "Type",
+            "description": "Type of the log entry",
+            "type": "string",
+            "const": "ReportLogEntry::V1"
+        },
+        "timestamp": {
+            "title": "Timestamp",
+            "description": "Timestamp of the report as an ISO 8601 string in UTC",
+            "type": "string",
+            "format": "date-time"
+        },
+        "benchmark": {
+            "$ref": "benchmark-info.json"
+        },
+        "report": {
+            "$ref": "report-info.json"
+        },
+        "vcs": {
+            "$ref": "vcs-info.json"
+        },
+        "machine": {
+            "$ref": "machine-info.json"
+        }
+    },
+    "required": [
+        "version",
+        "type",
+        "timestamp",
+        "benchmark",
+        "report",
+        "machine"],
+    "additionalProperties": false
+}

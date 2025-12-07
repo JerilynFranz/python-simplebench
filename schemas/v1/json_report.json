@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/report-v1.json",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/json_report-v1.json",
     "title": "Report Schema (V1)",
     "description": "SimpleBench JSON Report Schema (V1)",
     "type": "object",
@@ -159,132 +159,8 @@
             },
             "minItems": 1
         },
-        "metadata": {
-            "title": "Metadata",
-            "description": "Metadata about the benchmark run",
-            "type": "object",
-            "properties": {
-                "processor": {
-                    "title": "Processor",
-                    "description": "Processor information",
-                    "type": "string"
-                },
-                "machine": {
-                    "title": "Machine",
-                    "description": "Machine information",
-                    "type": "string"
-                },
-                "python_compiler": {
-                    "title": "Python Compiler",
-                    "description": "Python compiler information",
-                    "type": "string"
-                },
-                "python_implementation": {
-                    "title": "Python Implementation",
-                    "description": "Python implementation information",
-                    "type": "string"
-                },
-                "python_implementation_version": {
-                    "title": "Python Implementation Version",
-                    "description": "Python implementation version information",
-                    "type": "string"
-                },
-                "python_version": {
-                    "title": "Python Version",
-                    "description": "Python version information",
-                    "type": "string"
-                },
-                "python_build": {
-                    "title": "Python Build",
-                    "description": "Python build information",
-                    "type": "array",
-                    "items": {
-                            "type": "string"
-                        },
-                    "minItems": 3
-                },
-                "release": {
-                    "title": "Release",
-                    "description": "Release information",
-                    "type": "string"
-                },
-                "system": {
-                    "title": "System",
-                    "description": "System information",
-                    "type": "string"
-                },
-                "cpu": {
-                    "title": "CPU",
-                    "description": "CPU information",
-                    "type": "object",
-                    "properties": {
-                        "cpuinfo_version": {
-                            "title": "CPUInfo Version",
-                            "description": "Version of the cpuinfo library",
-                            "type": "array",
-                            "items": {
-                                    "type": "integer"
-                            },
-                            "minItems": 3
-                        },
-                        "cpuinfo_version_string": {
-                            "title": "CPUInfo Version String",
-                            "description": "Version string of the cpuinfo library",
-                            "type": "string"
-                        },
-                        "arch": {
-                            "title": "CPU Architecture",
-                            "description": "CPU architecture",
-                            "type": "string"
-                        },
-                        "bits": {
-                            "title": "CPU Bits",
-                            "description": "Number of bits of the CPU",
-                            "type": "integer"
-                        },
-                        "count": {
-                            "title": "CPU Core Count",
-                            "description": "Number of CPU cores",
-                            "type": "integer"
-                        },
-                        "arch_string_raw": {
-                            "title": "Raw Architecture String",
-                            "description": "Raw architecture string",
-                            "type": "string"
-                        },
-                        "brand_raw": {
-                            "title": "Raw Brand String",
-                            "description": "Raw brand string",
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "python_version",
-                        "cpuinfo_version",
-                        "cpuinfo_version_string",
-                        "arch",
-                        "bits",
-                        "count",
-                        "arch_string_raw",
-                        "brand_raw"
-                    ],
-                    "additionalProperties": false
-                }
-            },
-            "required": [
-                "version",
-                "processor",
-                "machine",
-                "python_compiler",
-                "python_implementation",
-                "python_implementation_version",
-                "python_version",
-                "python_build",
-                "release",
-                "system",
-                "cpu"
-            ],
-            "additionalProperties": false
+        "machine": {
+            "$ref": "machine-info.json"
         }
     },
     "required": [
@@ -295,7 +171,7 @@
         "description",
         "variation_cols",
         "results",
-        "metadata"
+        "machine"
     ],
     "additionalProperties": false,
     "$defs": {

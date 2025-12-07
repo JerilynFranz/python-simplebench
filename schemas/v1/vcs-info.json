@@ -1,0 +1,18 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/vcs-info.json",
+    "title": "VCS Info",
+    "description": "Version control system information",
+    "type": "object",
+    "oneOf": [
+        {
+            "properties": { "git": { "$ref": "vcs/git-info.json" } },
+            "required": ["git"]
+        },
+        {
+            "properties": { "hg": { "$ref": "vcs/hg-info.json" } },
+            "required": ["hg"]
+        }
+    ],
+    "additionalProperties": false
+}

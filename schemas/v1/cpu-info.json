@@ -1,0 +1,57 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/cpu-info.json",
+    "title": "CPU",
+    "description": "CPU information",
+    "type": "object",
+    "properties": {
+        "cpuinfo_version": {
+            "title": "CPU Info Version",
+            "description": "Version of the cpuinfo library",
+            "type": "array",
+            "items": {
+                "type": "integer"
+            },
+            "minItems": 3
+        },
+        "cpuinfo_version_string": {
+            "title": "CPU Info Version String",
+            "description": "CPU info version as a string",
+            "type": "string"
+        },
+        "arch": {
+            "description": "CPU architecture",
+            "type": "string"
+        },
+        "bits": {
+            "title": "Bits",
+            "description": "Number of bits of the CPU",
+            "type": "integer"
+        },
+        "count": {
+            "title": "Count",
+            "description": "Number of CPU cores",
+            "type": "integer"
+        },
+        "arch_string_raw": {
+            "title": "Arch String Raw",
+            "description": "Raw architecture string",
+            "type": "string"
+        },
+        "brand_raw": {
+            "title": "Brand Raw",
+            "description": "Raw brand string",
+            "type": "string"
+        }
+    },
+    "required": [
+        "cpuinfo_version",
+        "cpuinfo_version_string",
+        "arch",
+        "bits",
+        "count",
+        "arch_string_raw",
+        "brand_raw"
+    ],
+    "additionalProperties": false
+}

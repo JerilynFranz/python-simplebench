@@ -1,0 +1,31 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/vcs/git-info.json",
+    "title": "Git Info",
+    "description": "Git repository information",
+    "type": "object",
+    "properties": {
+        "commit": {
+            "title": "Commit",
+            "description": "Git commit hash",
+            "type": "string"
+        },
+        "date": {
+            "title": "Date",
+            "description": "Date of the commit as an ISO 8601 string",
+            "type": "string",
+            "format": "date-time"
+        },
+        "dirty": {
+            "title": "Dirty",
+            "description": "Indicates if the repository has uncommitted changes",
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "commit",
+        "date",
+        "dirty"
+    ],
+    "additionalProperties": false
+}

@@ -1,4 +1,7 @@
-"""JSON Metadata classes"""
+"""JSON Metadata
+
+This module provides functionality to handle metadata for SimpleBench reports.
+"""
 
 from .base import JSONMetadata
 from .exceptions import _JSONMetadataErrorTag

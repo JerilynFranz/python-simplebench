@@ -1,0 +1,31 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/vcs/hg-info.json",
+    "title": "Mercurial Info",
+    "description": "Mercurial repository information",
+    "type": "object",
+    "properties": {
+        "changeset_id": {
+            "title": "Changeset ID",
+            "description": "Mercurial Changeset ID",
+            "type": "string"
+        },
+        "date": {
+            "title": "Date",
+            "description": "Date of the commit as an ISO 8601 string",
+            "type": "string",
+            "format": "date-time"
+        },
+        "dirty": {
+            "title": "Dirty",
+            "description": "Indicates if the repository has uncommitted changes",
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "changeset_id",
+        "date",
+        "dirty"
+    ],
+    "additionalProperties": false
+}

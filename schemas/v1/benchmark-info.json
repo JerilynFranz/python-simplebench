@@ -1,0 +1,30 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/benchmark-info.json",
+    "title": "Benchmark Info Schema (V1)",
+    "type": "object",
+    "description": "Information about the benchmark itself (V1)",
+    "properties": {
+        "id": {
+            "title": "Benchmark ID",
+            "description": "Unique identifier for the benchmark",
+            "type": "string"
+        },
+        "name": {
+            "title": "Benchmark Name",
+            "description": "Name of the benchmark (qv.the benchmark definition 'title')",
+            "type": "string"
+        },
+        "group": {
+            "title": "Benchmark Group",
+            "description": "Group to which the benchmark belongs",
+            "type": "string"
+        }
+    },
+    "required": [
+        "id",
+        "name",
+        "group"
+    ],
+    "additionalProperties": false
+}

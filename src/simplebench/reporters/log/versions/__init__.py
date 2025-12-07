@@ -14,7 +14,7 @@ from ..base import ReportLogEntry, ReportLogEntrySchema
 from ..exceptions import _ReportLogEntryErrorTag, _ReportLogEntrySchemaErrorTag
 from . import v1
 
-JSONErrorTags: TypeAlias = _ReportLogEntryErrorTag |_ReportLogEntrySchemaErrorTag
+JSONErrorTags: TypeAlias = _ReportLogEntryErrorTag | _ReportLogEntrySchemaErrorTag
 """Type alias for all JSON log entry related error tags."""
 
 CLASSES = (ReportLogEntry, ReportLogEntrySchema)

@@ -1,0 +1,38 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/report-info.json",
+    "title": "Report Info",
+    "description": "Information about the report the log entry is associated with",
+    "type": "object",
+    "properties": {
+        "type": {
+            "title": "Reporter Type",
+            "description": "Type of the reporter that generated the report",
+            "type": "string"
+        },
+        "name": {
+            "title": "Reporter Name",
+            "description": "Name of the reporter that generated the report",
+            "type": "string"
+        },
+        "output_format": {
+            "title": "Output Format",
+            "description": "Format of the output",
+            "type": "string"
+        },
+        "uri": {
+            "title": "URI",
+            "description": "URI reference to the output for the report. If a relative-uri, it is relative to the directory containing the report log file.",
+            "type": "string",
+            "format": "uri-reference",
+            "examples": ["20251204023938/default/001_tests_test_pytest_plugin_py_test_sleep.json"]
+        }
+    },
+    "required": [
+        "type",
+        "name",
+        "output_format",
+        "uri"
+    ],
+    "additionalProperties": false
+}

@@ -11,7 +11,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.enums import Format, Section, Target
-from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
+from simplebench.reporters.log.versions.v1 import ReportMetadata
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.config import ReporterConfig
 
@@ -332,7 +332,7 @@ class ReporterProtocol(Protocol):
         self,
         *,
         args: Namespace,
-        log_metadata: ReportLogEntry,
+        log_metadata: ReportMetadata,
         case: Case,
         choice: Choice,
         path: Path | None = None,
@@ -389,7 +389,7 @@ class ReporterProtocol(Protocol):
         self,
         *,
         args: Namespace,
-        log_metadata: ReportLogEntry,
+        log_metadata: ReportMetadata,
         case: Case,
         choice: Choice,
         path: Path | None = None,
@@ -432,7 +432,7 @@ class ReporterProtocol(Protocol):
 
     def render_by_section(self, *,
                           renderer: ReportRenderer,
-                          log_metadata: ReportLogEntry,
+                          log_metadata: ReportMetadata,
                           args: Namespace,
                           case: Case,
                           choice: Choice,
@@ -465,7 +465,7 @@ class ReporterProtocol(Protocol):
 
     def render_by_case(self, *,
                        renderer: ReportRenderer,
-                       log_metadata: ReportLogEntry,
+                       log_metadata: ReportMetadata,
                        args: Namespace,
                        case: Case,
                        choice: Choice,
@@ -500,7 +500,7 @@ class ReporterProtocol(Protocol):
     def target_filesystem(
         self,
         *,
-        log_metadata: ReportLogEntry,
+        log_metadata: ReportMetadata,
         path: Path | None,
         subdir: str,
         filename: str,
@@ -612,7 +612,7 @@ class ReporterProtocol(Protocol):
     def _validate_render_by_args(
         self, *,
         renderer: ReportRenderer,
-        log_metadata: ReportLogEntry,
+        log_metadata: ReportMetadata,
         args: Namespace,
         case: Case,
         choice: Choice,
@@ -644,7 +644,7 @@ class ReporterProtocol(Protocol):
     def dispatch_to_targets(
             self, *,
             output: str | bytes | Text | Table,
-            log_metadata: ReportLogEntry,
+            log_metadata: ReportMetadata,
             filename_base: str,
             args: Namespace,
             choice: Choice,

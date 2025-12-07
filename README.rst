@@ -7,13 +7,15 @@ SimpleBench
 
 **SimpleBench** is a modern Python framework for benchmarking and performance testing of code.
 
-As such it has the following goals:
+It has the following goals:
 
-- Simple to use for simple benchmarks
-- Powerful enough to handle sophisticated benchmarking needs out-of-the-box
-- Flexible enough to handle complex custom benchmarking scenarios
-- Extensible to allow users to add their own functionality as needed
-- Full API and command-line interface support
+    - Simple to use for simple benchmarks
+    - Powerful enough to handle sophisticated benchmarking needs out-of-the-box
+    - Flexible enough to handle complex custom benchmarking scenarios
+    - Extensible to allow users to cleanly add their own functionality as needed
+    - Robustly documented with tutorials and examples
+    - Fully documented API, command-line interface, pytest, and data export formats
+    - Designed for maintainability and long-term sustainability
 
 Current Status
 --------------

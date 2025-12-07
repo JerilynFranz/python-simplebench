@@ -11,7 +11,7 @@ from simplebench.case import Case
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choice import Choice
-from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
+from simplebench.reporters.log.versions.v1 import ReportMetadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -43,7 +43,7 @@ class MockReporter(Reporter):
     def run_report(self,
                    *,
                    args: Namespace,
-                   log_metadata: ReportLogEntry,
+                   log_metadata: ReportMetadata,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,
