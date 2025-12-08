@@ -5,16 +5,17 @@
     "description": "Version control system information (V1)",
     "type": "object",
     "properties": {
-        "type": {
+        "vcs_type": {
             "title": "VCS Type",
             "description": "The type of version control system",
             "type": "string",
-            "enum": ["git", "hg", "svn", "bzr"]
+            "enum": ["git", "hg", "svn", "perforce", "tfvc"]
         },
-        "commit_hash": {
-            "title": "Commit Hash",
-            "description": "The commit hash of the current revision",
-            "type": "string"
+        "commit_id": {
+            "title": "Commit ID",
+            "description": "The unique identifier (hash, changeset ID, etc.) of the current revision",
+            "type": "string",
+            "minLength": 1
         },
         "branch": {
             "title": "Branch",
@@ -40,8 +41,8 @@
         }
     },
     "required": [
-        "type",
-        "commit_hash",
+        "vcs_type",
+        "commit_id",
         "branch",
         "is_dirty",
         "commit_datetime"
