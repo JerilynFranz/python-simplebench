@@ -25,6 +25,16 @@ __all__ = [
     "SimpleBenchValueError",
     "SimpleBenchKeyError",
     "SimpleBenchRuntimeError",
+    "SimpleBenchSubprocessExecutableNotFoundError",
+    "SimpleBenchNotARepositoryError",
+    "SimpleBenchRepositoryActionFailedError",
+    "SimpleBenchTimeoutError",
+    "SimpleBenchUsageError",
+    "SimpleBenchFileNotFoundError",
+    "SimpleBenchPermissionError",
+    "SimpleBenchOSError",
+    "SimpleBenchJSONDecodeError",
+    "SimpleBenchNotAFileError",
     "SimpleBenchNotImplementedError",
     "SimpleBenchAttributeError",
     "SimpleBenchArgumentError",
@@ -536,6 +546,90 @@ class SimpleBenchNotAFileError(TaggedException[OSError]):
     """
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
         """Raises a SimpleBenchNotAFileError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchNotARepositoryError(TaggedException[Exception]):
+    """Exception raised when a directory is not a VCS repository in simplebench.
+
+    This exception is raised when an operation expects to be performed
+    within a version control system (VCS) repository (e.g., Git, Mercurial)
+    but the current directory or specified path is not part of such a repository
+    or the repository cannot be found.
+
+    It indicates that the required VCS context is missing for the operation to proceed.
+
+    It also probably indicates that the code throwing the exception either
+    did not properly check for repository presence before attempting
+    VCS-specific operations or that the user expected to be in a repository
+    but is not, or both.
+
+    Usage:
+        raise SimpleBenchNotARepositoryError("An error occurred",
+                                            tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchNotARepositoryError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchRepositoryActionFailedError(TaggedException[Exception]):
+    """Exception raised when a VCS repository action fails in simplebench.
+
+    This exception is raised when an operation intended to interact
+    with a version control system (VCS) repository (e.g., Git, Mercurial)
+    fails to complete successfully. This could be due to various reasons,
+    such as permission issues, repository corruption, or unexpected
+    conditions within the repository.
+
+    It indicates that while the code was able to locate and identify
+    the repository, the specific action attempted could not be completed.
+
+    Usage:
+        raise SimpleBenchRepositoryActionFailedError("An error occurred",
+                                                     tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchRepositoryActionFailedError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchSubprocessExecutableNotFoundError(TaggedException[FileNotFoundError]):
+    """Exceptions raised when a required executable is not found in simplebench.
+
+    Usage:
+        raise SimpleBenchExecutableNotFoundError("An error occurred",
+                                                 tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchExecutableNotFoundError with the given message and tag.
 
         Args:
             msg (str): The error message.

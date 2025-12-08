@@ -1,4 +1,4 @@
-"""Version Control System utilities using Dulwich."""
+"""Version Control System utilities using Dulwich for Git."""
 from __future__ import annotations
 
 import sys
@@ -27,7 +27,10 @@ class GitInfo:
     dirty: bool
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary for JSON serialization."""
+        """Convert to dictionary for JSON serialization.
+
+        :return: Dictionary representation of GitInfo.
+        """
         return asdict(self)
 
 
@@ -37,9 +40,7 @@ def get_git_info(search_path: Path | None = None) -> GitInfo | None:
     :param search_path: The path to start searching for the git repository.
                         If None, defaults to the directory of the main script
                         or the current working directory.
-    :type search_path: Path | None
     :return: A dictionary with git info, or None if not a git repository.
-    :rtype: dict[str, Any] | None
     """
     # Determine the starting path for the repo search
     has_modules_main = sys.modules.get('__main__') is not None
@@ -85,3 +86,4 @@ def get_git_info(search_path: Path | None = None) -> GitInfo | None:
         # Fallback: Repo exists but is corrupt, unreadable, or other unexpected error.
         # We swallow this to prevent crashing the benchmark.
         return None
+
