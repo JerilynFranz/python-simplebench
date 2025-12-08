@@ -4,15 +4,47 @@
     "title": "VCS Info (V1)",
     "description": "Version control system information (V1)",
     "type": "object",
-    "oneOf": [
-        {
-            "properties": { "git": { "$ref": "vcs/git-info.json" } },
-            "required": ["git"]
+    "properties": {
+        "type": {
+            "title": "VCS Type",
+            "description": "The type of version control system",
+            "type": "string",
+            "enum": ["git", "hg", "svn", "bzr"]
         },
-        {
-            "properties": { "hg": { "$ref": "vcs/hg-info.json" } },
-            "required": ["hg"]
+        "commit_hash": {
+            "title": "Commit Hash",
+            "description": "The commit hash of the current revision",
+            "type": "string"
+        },
+        "branch": {
+            "title": "Branch",
+            "description": "The current branch name",
+            "type": "string"
+        },
+        "repository_url": {
+            "title": "Repository URL",
+            "description": "The URL of the remote repository (optional)",
+            "type": "string",
+            "format": "uri"
+        },
+        "is_dirty": {
+            "title": "Is Dirty",
+            "description": "Indicates if there are uncommitted changes in the working directory",
+            "type": "boolean"
+        },
+        "commit_datetime": {
+            "title": "Commit Datetime",
+            "description": "The datetime of the current commit in ISO 8601 format",
+            "type": "string",
+            "format": "date-time"
         }
+    },
+    "required": [
+        "type",
+        "commit_hash",
+        "branch",
+        "is_dirty",
+        "commit_datetime"
     ],
     "additionalProperties": false
 }
