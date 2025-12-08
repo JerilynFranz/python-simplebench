@@ -45,9 +45,6 @@ class Hg:
         else:
             self.hg_cwd = None
 
-        self._hg_available: bool = False
-        """Indicates if hg is available on the system (private attribute)."""
-
     def run(self, cmd: Sequence[str], cwd: Path | None = None) -> str:
         """Run an hg command and return its output.
 
