@@ -1,31 +1,29 @@
-"""Hg (Mercurial) Info record."""
-from dataclasses import asdict, dataclass
+"""Version Control System record for Hg (Mercurial)."""
+from ..vcs_info import VCSInfo
+from ..vcs_type import VCSType
 
 
-@dataclass(frozen=True, kw_only=True, repr=True)
-class HgInfo:
-    """Dataclass to hold Hg Info about the repository.
-
-    The information is gathered from the 'hg' command line tool and
-    gives basic information about the current repository state.
-
-    It is intended to be serialized to JSON for reporting purposes
-    and used in filtering benchmark results based on VCS matching.
+class HgInfo(VCSInfo):
+    """Dataclass to hold Hg (Mercurial) repository information.
 
     Attributes:
-        branch_name (str): The current branch name.
-        changeset_id (str): The current changeset id for HEAD
-        date (str): The date of the current HEAD commit in ISO8601 format.
+        branch (str): The current branch name.
+        commit_id (str): The current changeset hash.
+        date (str): The date of the current commit in ISO format.
         dirty (bool): Whether there are uncommitted changes in the working directory.
     """
-    branch_name: str
-    changeset_id: str
-    date: str
-    dirty: bool
+    def __init__(self, branch: str, commit_id: str, date: str, dirty: bool) -> None:
+        """Initialize GitInfo with branch, commit, date, and dirty status.
 
-    def to_dict(self) -> dict[str, str | bool]:
-        """Convert to dictionary for JSON serialization.
-
-        :return: Dictionary representation of GitInfo.
+        :param branch: The current branch name.
+        :param commit_id: The current commit hash.
+        :param date: The date of the current commit in ISO format.
+        :param dirty: Whether there are uncommitted changes in the working directory.
         """
-        return asdict(self)
+        super().__init__(
+            vcs_type=VCSType.HG,
+            branch=branch,
+            commit_id=commit_id,
+            date=date,
+            dirty=dirty,
+        )

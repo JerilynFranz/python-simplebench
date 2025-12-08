@@ -16,7 +16,7 @@ from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_sequence_of_str, validate_type
 
 from .exceptions import _HgErrorTag
-from .exit_codes import _HgExitCode
+from .exit_codes import HgExitCode
 from .hg_info import HgInfo
 
 # Global caches for hg availability and version.
@@ -96,7 +96,7 @@ class Hg:
                 tag=_HgErrorTag.HG_NOT_AVAILABLE
             ) from exc
         except subprocess.CalledProcessError as exc:
-            if exc.returncode == _HgExitCode.REPO_NOT_FOUND:
+            if exc.returncode == HgExitCode.REPO_NOT_FOUND:
                 raise SimpleBenchNotARepositoryError(
                     "The specified directory is not a Mercurial (hg) repository.",
                     tag=_HgErrorTag.HG_NOT_A_REPOSITORY
@@ -296,8 +296,8 @@ class Hg:
         date: str = timestamp_to_iso8601(epoch_date)
         dirty: bool = self.is_dirty(cwd=cwd)
         return HgInfo(
-            branch_name=branch_name,
-            changeset_id=changeset_id,
+            branch=branch_name,
+            commit_id=changeset_id,
             date=date,
             dirty=dirty
         )

@@ -34,7 +34,7 @@ from .validators import (
     validate_string,
     validate_type,
 )
-from .vcs import GitInfo, get_git_info
+from .vcs import VCSInfo, get_vcs_info
 
 if TYPE_CHECKING:
     from .session import Session
@@ -176,13 +176,13 @@ class Case:
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
                  '_variation_cols', '_kwargs_variations', '_runner',
                  '_callback', '_results', '_options', '_rounds',
-                 '_benchmark_id', '_git_info', '_timeout', '_timer')
+                 '_benchmark_id', '_vcs_info', '_timeout', '_timer')
 
     @format_docstring(DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD,
                       DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__,)
     def __init__(self, *,
                  benchmark_id: Optional[str] = None,
-                 git_info: Optional[GitInfo] = None,
+                 vcs_info: Optional[VCSInfo] = None,
                  action: ActionRunner,
                  group: str = 'default',
                  title: Optional[str] = None,
@@ -212,10 +212,10 @@ class Case:
 
             Benchmark ids must be unique within a benchmarking session and stable across runs
             or they cannot be used for tracking benchmark results over time.
-        :param git_info: An optional GitInfo instance representing the state of the Git repository.
+        :param vcs_info: An optional VCSInfo instance representing the state of the VCS repository.
 
-            If not provided, the GitInfo will be automatically retrieved from the current
-            context of the caller if the code is part of a Git repository.
+            If not provided, the VCSInfo will be automatically retrieved from the current
+            context of the caller if the code is part of a VCS repository.
         :param action: The function to perform the benchmark.
 
             This function must accept a `bench` instance of type SimpleRunner and
@@ -398,9 +398,8 @@ class Case:
         self._options = Case.validate_options(options)
         self._results: list[Results] = []  # No validation needed here
         self.validate_time_range(self._min_time, self._max_time)
-        self._git_info: GitInfo | None = get_git_info() if git_info is None else validate_type(
-            git_info, GitInfo, 'git_info', _CaseErrorTag.INVALID_GIT_INFO_ARG_TYPE
-        )
+        self._vcs_info: VCSInfo | None = get_vcs_info() if vcs_info is None else validate_type(
+            vcs_info, VCSInfo, 'vcs_info', _CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE)
 
     @staticmethod
     def validate_time_range(min_time: float, max_time: float) -> None:
@@ -733,18 +732,19 @@ class Case:
         return self._benchmark_id
 
     @property
-    def git_info(self) -> GitInfo | None:
-        """Git information for the benchmark case.
+    def vcs_info(self) -> VCSInfo | None:
+        """VCS information for the benchmark case.
 
-        This is a read-only attribute that provides git information
-        such as the current commit hash, branch name, and repository URL.
-        If the benchmark is not in a file managed by a git repository,
+        This is a read-only attribute that provides VCS information
+        such as the current commit hash, branch name, datetime, and
+        dirty status of the local repository.
+
+        If the benchmark is not in a file managed by a VCS repository,
         a None value is returned.
 
-        :return: A GitInfo object containing git information, or None if not in a git repository.
-        :rtype: GitInfo | None
+        :return: A VCSInfo object containing VCS information, or None if not in a VCS repository.
         """
-        return self._git_info
+        return self._vcs_info
 
     @property
     def iterations(self) -> int:

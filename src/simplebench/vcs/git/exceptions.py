@@ -1,11 +1,12 @@
 """Errors related to Git operations."""
+
 from simplebench.enums import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
 class _GitErrorTag(ErrorTag):
-    """Error tags for Git operations."""
+    """Error tags for Git operations by the Git class."""
     GIT_NOT_AVAILABLE = "GIT_NOT_AVAILABLE"
     """Git is not available on the system."""
     GIT_COMMAND_FAILED = "GIT_COMMAND_FAILED"
@@ -18,3 +19,5 @@ class _GitErrorTag(ErrorTag):
     """The cmd argument provided is not a list of strings."""
     INVALID_CMD_ARG_ELEMENT_VALUE = "INVALID_CMD_ARG_ELEMENT_VALUE"
     """An element in the cmd argument list is not a valid string."""
+    USER_INTERRUPT = "USER_INTERRUPT"
+    """The git command was interrupted by the user."""

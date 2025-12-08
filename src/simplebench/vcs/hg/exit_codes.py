@@ -5,7 +5,7 @@ from simplebench.enums import enum_docstrings
 
 
 @enum_docstrings
-class _HgExitCode(IntEnum):
+class HgExitCode(IntEnum):
     """Exit codes for Mercurial (hg) commands."""
     SUCCESS = 0
     """The command completed successfully."""
@@ -43,6 +43,6 @@ def exit_code_to_name(code: int) -> str:
     :return: The name of the exit code, or "UKNOWN_EXIT_CODE: {value}" if not found.
     """
     try:
-        return _HgExitCode(code).name
+        return HgExitCode(code).name
     except ValueError:
         return f"UNKNOWN_EXIT_CODE: {code}"
