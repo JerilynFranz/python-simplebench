@@ -26,9 +26,9 @@ from rich.text import Text
 from simplebench.defaults import BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT, BASE_OPS_PER_INTERVAL_UNIT
 from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metadata import Metadata
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
-from simplebench.reporters.log.base.report_log_entry import ReportLogEntry
 from simplebench.reporters.protocols import ReporterCallback
 # simplebench.reporters.reporter
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -289,7 +289,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
 
     def report(self,
                *,
-               log_metadata: ReportLogEntry,
+               log_metadata: Metadata,
                args: Namespace,
                case: Case,
                choice: Choice,
@@ -319,7 +319,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
         validate_type(
-            log_metadata, ReportLogEntry, 'log_metadata',
+            log_metadata, Metadata, 'log_metadata',
             _ReporterErrorTag.REPORT_INVALID_LOG_METADATA_ARG)
         if not isinstance(args, Namespace):
             raise SimpleBenchTypeError(
@@ -417,7 +417,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
     def run_report(self,
                    *,
                    args: Namespace,
-                   log_metadata: ReportLogEntry,
+                   log_metadata: Metadata,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,

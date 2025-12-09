@@ -16,7 +16,7 @@ from rich.text import Text
 from simplebench.enums import Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice import Choice
-from simplebench.reporters.log.versions.v1 import ReportMetadata
+from simplebench.metadata import Metadata
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.prioritized import Prioritized
@@ -49,7 +49,7 @@ class _ReporterOrchestrationMixin:
     def _validate_render_by_args(
         self: ReporterProtocol, *,
         renderer: ReportRenderer | None,
-        log_metadata: ReportMetadata,
+        log_metadata: Metadata,
         args: Namespace,
         case: Case,
         choice: Choice,
@@ -86,7 +86,7 @@ class _ReporterOrchestrationMixin:
                 tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)
 
         validate_type(
-            log_metadata, ReportMetadata, 'log_metadata',
+            log_metadata, Metadata, 'log_metadata',
             _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_LOG_METADATA_ARG_TYPE)
 
         args = validate_type(
@@ -132,7 +132,7 @@ class _ReporterOrchestrationMixin:
 
     def render_by_case(self: ReporterProtocol, *,
                        renderer: ReportRenderer | None = None,
-                       log_metadata: ReportMetadata,
+                       log_metadata: Metadata,
                        args: Namespace,
                        case: Case,
                        choice: Choice,
@@ -236,7 +236,7 @@ class _ReporterOrchestrationMixin:
             self: ReporterProtocol,
             *,
             renderer: ReportRenderer | None = None,
-            log_metadata: ReportMetadata,
+            log_metadata: Metadata,
             args: Namespace,
             case: Case,
             choice: Choice,
@@ -339,7 +339,7 @@ class _ReporterOrchestrationMixin:
     def dispatch_to_targets(
             self: ReporterProtocol, *,
             output: str | bytes | Text | Table,
-            log_metadata: ReportMetadata,
+            log_metadata: Metadata,
             filename_base: str,
             args: Namespace,
             choice: Choice,
@@ -376,7 +376,7 @@ class _ReporterOrchestrationMixin:
                                'output',
                                _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)
         log_metadata = validate_type(
-            log_metadata, ReportMetadata, 'log_metadata',
+            log_metadata, Metadata, 'log_metadata',
             _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_LOG_METADATA_ARG_TYPE)
         filename_base = validate_string(
                             filename_base, 'filename_base',

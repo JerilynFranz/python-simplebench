@@ -44,7 +44,7 @@ class Metadata(ABC):
     :ivar choice: The Choice instance specifying the report configuration.
     """
     VERSION: int = 0
-    """The version of the ReportMetadata structure."""
+    """The version of the Metadata structure."""
 
     def __init__(
         self,

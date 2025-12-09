@@ -2,14 +2,16 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_float, validate_string
 
 from .. import stats
-from .json_stats import JSONStats
 from ..exceptions import _JSONResultsErrorTag
+
+if TYPE_CHECKING:
+    from .json_stats import JSONStats
 
 
 class JSONResults(ABC):

@@ -1,8 +1,24 @@
 """JSON Stats classes"""
+from typing import TYPE_CHECKING
 
-from .base import JSONStats
+from .base.json_stats import JSONStats
 from .exceptions import _JSONStatsErrorTag
-from .versions import json_class
+
+_JSON_CLASS_LOADED: bool = False
+
+if TYPE_CHECKING:
+    from .versions import json_class
+    _JSON_CLASS_LOADED = True  # To avoid import issues during type checking
+else:
+    json_class = None   # pylint: disable=invalid-name
+
+
+def _load_deferred_imports() -> None:
+    """Load deferred imports."""
+    global _JSON_CLASS_LOADED, json_class  # pylint: disable=global-statement
+    if not _JSON_CLASS_LOADED:
+        from .versions import json_class  # pylint: disable=import-outside-toplevel
+        _JSON_CLASS_LOADED = True
 
 
 def from_dict(data: dict, version: int) -> JSONStats:
@@ -13,6 +29,7 @@ def from_dict(data: dict, version: int) -> JSONStats:
     :param version: The version of the JSON stats data.
     :return: JSONStats sub-class instance.
     """
+    _load_deferred_imports()
     return json_class(
         version,
         JSONStats,

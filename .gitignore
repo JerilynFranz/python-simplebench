@@ -1,3 +1,6 @@
+# Test repos
+test_repos/
+
 *.py[oc]
 
 # codeql

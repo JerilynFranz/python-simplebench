@@ -108,19 +108,27 @@ class Git:
 
         working_cwd = cwd or self.git_cwd or Path.cwd()
 
+        run_command = ["git"] + list(cmd)
         try:
             result = subprocess.run(
-                ["git"] + cmd,
+                run_command,
                 cwd=str(working_cwd),
                 capture_output=True,
                 text=True,
                 check=True
             )
         except FileNotFoundError as exc:
-            raise SimpleBenchSubprocessExecutableNotFoundError(
-                "The 'git' command line tool was not found.",
-                tag=_GitErrorTag.GIT_NOT_AVAILABLE
-            ) from exc
+            if self.is_available:
+                # Git is available but the command failed for some other reason
+                raise SimpleBenchRepositoryActionFailedError(
+                    f"The git command failed to execute: {run_command!r}",
+                    tag=_GitErrorTag.GIT_COMMAND_FAILED
+                ) from exc
+            else:
+                raise SimpleBenchSubprocessExecutableNotFoundError(
+                    f"The 'git' command line tool was not found: {run_command!r}",
+                    tag=_GitErrorTag.GIT_NOT_AVAILABLE
+                ) from exc
         except subprocess.CalledProcessError as exc:
             common_code = self.common_code(exc.returncode, cmd[0])
             match common_code:
@@ -193,8 +201,16 @@ class Git:
         """
         global _GIT_IS_AVAILABLE_CACHE  # pylint: disable=global-statement
         if _GIT_IS_AVAILABLE_CACHE is None:
+            # First time check for git availability
+            # has to be run outside of .run() to avoid recursion
             try:
-                git_version = self.run(cmd=["--version"])
+                run_command = ["git", "--version"]
+                git_version: str = subprocess.run(
+                    run_command,
+                    capture_output=True,
+                    text=True,
+                    check=True
+                ).stdout.strip()
                 git_regex = re.compile(r'git version', re.IGNORECASE)
                 match = git_regex.search(git_version)
                 _GIT_IS_AVAILABLE_CACHE = bool(match)
@@ -273,7 +289,7 @@ class Git:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the git command is not found.
         """
         self.validate_is_repo(cwd=cwd)
-        return self.run(cmd=["branch", '--show-current'], cwd=cwd)
+        return self.run(cmd=["branch", "--show-current"], cwd=cwd)
 
     def root(self, cwd: Path | None = None) -> Path:
         """Get the root path of the git repository.
@@ -297,7 +313,7 @@ class Git:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the git command is not found
         """
         self.validate_is_repo(cwd=cwd)
-        status_output = self.run(cmd=["status", "--short"], cwd=cwd)
+        status_output = self.run(cmd=["status", "--porcelain", "v1"], cwd=cwd)
         return bool(status_output)
 
     def status(self, cwd: Path | None = None) -> str:
@@ -312,7 +328,7 @@ class Git:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the git command is not found.
         """
         self.validate_is_repo(cwd=cwd)
-        return self.run(cmd=["status"], cwd=cwd)
+        return self.run(cmd=["status", "--porcelain", "v1"], cwd=cwd)
 
     def head(self, cwd: Path | None = None) -> GitInfo:
         """Fetch git repository information for the current HEAD.
@@ -347,6 +363,6 @@ class Git:
         return GitInfo(
             branch=branch,
             commit_id=commit_id,
-            date=date,
+            commit_datetime=date,
             dirty=dirty
         )

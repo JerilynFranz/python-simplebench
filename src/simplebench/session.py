@@ -17,7 +17,7 @@ from simplebench.enums import Color, Target, Verbosity
 from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
-from simplebench.reporters.log.versions.v1 import ReportMetadata
+from simplebench.metadata import Metadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.runners import SimpleRunner
@@ -360,7 +360,7 @@ class Session():
                     output_path = output_path / timestamp / group_path
                     if self.verbosity >= Verbosity.DEBUG:
                         self._console.print(f"[DEBUG] Output path for report: {output_path}")
-                log_metadata = ReportMetadata(
+                log_metadata = Metadata(
                     timestamp=epoch_timestamp,
                     case=case,
                     choice=choice,

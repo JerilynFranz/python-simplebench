@@ -13,7 +13,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.iteration import Iteration
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
-from simplebench.reporters.log.versions.v1 import ReportMetadata
+from simplebench.metadata import Metadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
@@ -102,7 +102,7 @@ class GoodReporter(Reporter):
     def run_report(self,  # pylint: disable=useless-parent-delegation
                    *,
                    args: Namespace,
-                   log_metadata: ReportMetadata,
+                   log_metadata: Metadata,
                    case: Case,
                    choice: Choice,
                    path: Optional[Path] = None,

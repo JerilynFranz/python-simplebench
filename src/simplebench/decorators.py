@@ -16,7 +16,7 @@ from .validators import (
     validate_positive_float,
     validate_positive_int,
 )
-from .vcs import get_git_info
+from .vcs import get_vcs_info
 
 # A global registry to hold benchmark cases created by the decorator.
 _DECORATOR_CASES: list[Case] = []
@@ -253,7 +253,7 @@ def benchmark(
                 "must all be positive integers when used with 'use_field_for_n'.",
                 tag=_DecoratorsErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE)
 
-    git_info = get_git_info()
+    vcs_info = get_vcs_info()
 
     def decorator(func):
         """The actual decorator that wraps the user's function."""
@@ -295,7 +295,7 @@ def benchmark(
 
         case = Case(
             group=group,
-            git_info=git_info,
+            vcs_info=vcs_info,
             title=inferred_title,
             benchmark_id=final_benchmark_id,
             action=case_action_wrapper,

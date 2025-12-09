@@ -1,14 +1,17 @@
 """Abstract Base Class for JSON reports."""
+from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any, Sequence
 
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchValueError
 from simplebench.validators import validate_sequence_of_str, validate_sequence_of_type, validate_string
 
 from .. import results
 from ..exceptions import _JSONReportErrorTag
-from .json_results import JSONResults
+
+if TYPE_CHECKING:
+    from .json_results import JSONResults
 
 _JSON_SCHEMA_URI: str = "https://json-schema.org/draft/2020-12/schema"
 _VERSION: int = 0
@@ -19,7 +22,7 @@ class JSONReport(ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> "JSONReport":
+    def from_dict(cls, data: dict) -> JSONReport:
         """Create a JSONReport instance from a dictionary.
 
         :param data: Dictionary containing the JSON report data.

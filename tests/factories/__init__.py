@@ -98,7 +98,7 @@ from .case import (
     runner_factory,
 )
 from .console import console_factory
-from .path import path_factory, reports_log_path_factory
+from .path import path_factory, reports_log_path_factory, temp_dir
 from .reporter import (
     FactoryReporter,
     choice_conf_factory,
@@ -227,6 +227,7 @@ __all__ = [
     # Path factories
     'path_factory',
     'reports_log_path_factory',
+    'temp_dir',
 
     # Console factories
     'console_factory',

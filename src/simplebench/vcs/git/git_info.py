@@ -12,18 +12,18 @@ class GitInfo(VCSInfo):
         date (str): The date of the current commit in ISO format.
         dirty (bool): Whether there are uncommitted changes in the working directory.
     """
-    def __init__(self, branch: str, commit_id: str, date: str, dirty: bool) -> None:
-        """Initialize GitInfo with branch, commit, date, and dirty status.
+    def __init__(self, branch: str, commit_id: str, commit_datetime: str, dirty: bool) -> None:
+        """Initialize GitInfo with branch, commit_id, commit_datetime, and dirty status.
 
         :param branch: The current branch name.
         :param commit_id: The current commit hash.
-        :param date: The date of the current commit in ISO format.
+        :param commit_datetime: The date of the current commit in ISO format.
         :param dirty: Whether there are uncommitted changes in the working directory.
         """
         super().__init__(
             vcs_type=VCSType.GIT,
             branch=branch,
             commit_id=commit_id,
-            date=date,
+            commit_datetime=commit_datetime,
             dirty=dirty,
         )

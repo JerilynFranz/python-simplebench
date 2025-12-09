@@ -1455,6 +1455,46 @@ wheels = [
 ]
 
 [[package]]
+name = "mercurial"
+version = "7.1.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f8/1b/07cf18f16c369c50dc60e264714b328e4ba7822d4ee6813dd54574ad3812/mercurial-7.1.2.tar.gz", hash = "sha256:ce27b9a4767cf2ea496b51468bae512fa6a6eaf0891e49f8961dc694b4dc81ca", size = 9059642, upload-time = "2025-11-14T09:03:46.431Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ad/3c/1dd478325bdd15bed208755af1a84b4a9d30f2a52d1f4eb75de3194812de/mercurial-7.1.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:f3bc29121fe4a2b4c79dcc8815979bc41e2b4836d17ed3e7bdc606d1c31ea77c", size = 5301013, upload-time = "2025-11-14T09:03:42.855Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/47/092374c22bbadabd427d605579ea6711a81b2a91a747889655ade9daa145/mercurial-7.1.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:297b97ea10c6ab448307ae1961aba2b3518f47296218ce5bdeedd52be64446b8", size = 7449739, upload-time = "2025-11-14T09:03:02.713Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/26/38509ed43c7e5fb0c2f25c7a119031dc36f68b3987f787266ef678adcaf4/mercurial-7.1.2-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:b22bf8200bd5823ad53421f3becb26bd1e117d64992e11cde72639f935890cfb", size = 7145495, upload-time = "2025-11-14T09:03:06.053Z" },
+    { url = "https://files.pythonhosted.org/packages/e3/49/b1f6c35aebbd186d91805ed2f5f335b07dc9837c699b4f99125e220991fb/mercurial-7.1.2-cp310-cp310-musllinux_1_2_i686.whl", hash = "sha256:58dff368fa2e1623bdfa8ffb922617a75927ad7add8ff4044766ae28dbb02870", size = 7111878, upload-time = "2025-11-14T09:03:08.206Z" },
+    { url = "https://files.pythonhosted.org/packages/13/4e/5984c1a834396f618594fb9fe63f5bf1f20ffaea2d3df80d13defc679fd4/mercurial-7.1.2-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:648eee6cf0550a25fedd89e49fe9ffb2145371ba7a4a8331598c8a115bd3f26f", size = 7337910, upload-time = "2025-11-14T09:03:09.951Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/d5/57c6fcfacb76474ae83c7c7aa10a1ecbf9f69b967503f6eb317949ec2b54/mercurial-7.1.2-cp310-cp310-win32.whl", hash = "sha256:58b0d2d908ae99890bb70f4f7e044fb2e6eb9ed1cd2428ddb0f095c98d6fea17", size = 6407969, upload-time = "2025-11-14T09:03:54.43Z" },
+    { url = "https://files.pythonhosted.org/packages/74/0c/9f9a4147214c2cdc1c291608adee89d8cd853903974c5ae6afd97e48ab13/mercurial-7.1.2-cp310-cp310-win_amd64.whl", hash = "sha256:cbb1fce11db576b3177c88af64096ac8be85eb4201f633f9dfc5205f36247f99", size = 6669217, upload-time = "2025-11-14T09:03:56.64Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/ba/e36587f74ea20e4d388f9bd0bfa26e4396590d2459df590c234f511fb037/mercurial-7.1.2-cp310-cp310-win_arm64.whl", hash = "sha256:05ac3b5bb3f7b7a6ed0efa1a884b9fffa91008295f05ac1ebd655ff8e2bffd64", size = 6634086, upload-time = "2025-11-14T09:03:58.373Z" },
+    { url = "https://files.pythonhosted.org/packages/31/b8/1f7421beb48af4035748b0cc9560f5e5450bac69340fadf1a0612e191343/mercurial-7.1.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:0ab8d783825cbabfa3ccd6fd0fb366aab0279b08aea97baec35753ed338d35f2", size = 5301749, upload-time = "2025-11-14T09:03:45.095Z" },
+    { url = "https://files.pythonhosted.org/packages/af/6b/e8e15fd314b9e08ec17d00c3fb6c95d5169f2ff564d17ae7c0c906c15da1/mercurial-7.1.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d5bbd5fce6d9140b6217eae3a1dbb98a2944d27591006ef57fd41f5e0fb0afbd", size = 7461888, upload-time = "2025-11-14T09:03:12.225Z" },
+    { url = "https://files.pythonhosted.org/packages/e9/d3/1176c87398302a646ad0e731f2dcad5c553ade4667ad873d63c6416e7c3c/mercurial-7.1.2-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0fb87c11615edfa75534cb9d71de4061717f5bbcbc33a040c7a203204d092f66", size = 7157846, upload-time = "2025-11-14T09:03:15.226Z" },
+    { url = "https://files.pythonhosted.org/packages/28/d4/d34b7da77433d2318fcc7dd3915e774261d689e57fa18c6151af82e9d446/mercurial-7.1.2-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:a03f82debda6d19639d8c08adcb4f1679a7970a4953d7af3503596c351f65e26", size = 7122757, upload-time = "2025-11-14T09:03:17.34Z" },
+    { url = "https://files.pythonhosted.org/packages/38/a3/5e018e4dfe87e20f837c999ba197c56cc314421c692fb787f9e639a31abf/mercurial-7.1.2-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:707007a038f63adf9df93d980e3294795621183216d54add5e065e48cb9e4aa3", size = 7348913, upload-time = "2025-11-14T09:03:19.218Z" },
+    { url = "https://files.pythonhosted.org/packages/62/6a/19fc161b3e19362aaaa3415bd80104e0ba095aa72e8b603fa766f2a36f7a/mercurial-7.1.2-cp311-cp311-win32.whl", hash = "sha256:1be5a57aa8ff6fbb508abe59c119552bd6d49e4e4075994fb0e4ac9fd931f9e8", size = 6697007, upload-time = "2025-11-14T09:04:00.042Z" },
+    { url = "https://files.pythonhosted.org/packages/08/d8/b4fd7c7b43301e5c8d6c687e705323920d0e9c2e69e7c08043685bc307c3/mercurial-7.1.2-cp311-cp311-win_amd64.whl", hash = "sha256:6e84e9851e4aa23356ebcc1a5d751b53f2c6262628be2dde1318bc3a977e1411", size = 6995716, upload-time = "2025-11-14T09:04:02.007Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/34/412caf06044e6e0687fc32f9f6bc9c205b8165e4d7103522a09d19e76932/mercurial-7.1.2-cp311-cp311-win_arm64.whl", hash = "sha256:f698bf2034ae43a3bd7ac0d8573aa0223fcebca946ca2c2fee0f0ed3aaf6ed01", size = 6960682, upload-time = "2025-11-14T09:04:04.315Z" },
+    { url = "https://files.pythonhosted.org/packages/95/4d/6fe1af157bf07dd7c8eee9b89509cc3c6a05e76c10a701d0676865c491ba/mercurial-7.1.2-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:9770eedd8ddfd8f3bc429ceefc20a4326de91faec798a42bdb1df0de18d4872a", size = 5300388, upload-time = "2025-11-14T09:03:47.563Z" },
+    { url = "https://files.pythonhosted.org/packages/1d/7d/70c62fe69a43d47eb09c95451249b3b2b3733bfc2a4c1ca3ca82c82ec476/mercurial-7.1.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:c311d37115ffd62b6cb04f6c90100cc237309e43657b9dc32d130b91ef6b5d62", size = 7463498, upload-time = "2025-11-14T09:03:21.439Z" },
+    { url = "https://files.pythonhosted.org/packages/04/6f/38c52c4913da2a76bf400e08f71f19b535d899e7e241a2001939975cb763/mercurial-7.1.2-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:bf6039fa6898ab3b5d3459b9b48880196eec3dcc70dfc99ec6e4cca8980ba6f2", size = 7155533, upload-time = "2025-11-14T09:03:23.615Z" },
+    { url = "https://files.pythonhosted.org/packages/68/14/c5b586eb8bfa83e678c0d9ea0ebddc4b08fd16fc9060771f0c9bdf892f03/mercurial-7.1.2-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:5982102461ac28bf468591953b3130012133c3a0d0b64080b0bcb3a187dc9a6b", size = 7125243, upload-time = "2025-11-14T09:03:25.352Z" },
+    { url = "https://files.pythonhosted.org/packages/d7/30/e98f4000661fb9158019ce02023a4ccccdd1f92252206c05045913fd9ef1/mercurial-7.1.2-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:3ed7abf90cabbd167b9db09812d330319938c8cedf7382a4c99b71f8d614ec56", size = 7350222, upload-time = "2025-11-14T09:03:27.517Z" },
+    { url = "https://files.pythonhosted.org/packages/72/48/c9188ac1f729f7dce7bb4dee16ea60c130a3ab2158c4bb89c3093e620b30/mercurial-7.1.2-cp312-cp312-win32.whl", hash = "sha256:9d11021d51fcc0399d7e42b9eb04091e66d1555d6b8dcec991a76c4d4fdeb3bb", size = 6929684, upload-time = "2025-11-14T09:04:06.61Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/8a/7453c6d0e1362021d75ac5eae086e5892fda04f979586ca00a58c79ece34/mercurial-7.1.2-cp312-cp312-win_amd64.whl", hash = "sha256:d39eef08c84a64db8e03d46920edc685b0494a6f6fb7c69f42d63cb8ec61b202", size = 7255490, upload-time = "2025-11-14T09:04:08.771Z" },
+    { url = "https://files.pythonhosted.org/packages/7d/b8/f635c0266b898b2ac3f41332fcc75ca70d0bdd8ddfba3548e9536d9a4e13/mercurial-7.1.2-cp312-cp312-win_arm64.whl", hash = "sha256:96008556ade189916ea3d7bd6f03a50667ca95c11d322e7232fdfa442965553f", size = 7220140, upload-time = "2025-11-14T09:04:11.211Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/9e/eecd03fc00555ab4ed1f4e91a4fe9de06de416ae8759795a9521a9ee55a4/mercurial-7.1.2-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:42e2bac0b59969cc9cb43e0dcc7f32ea4afb28ace247e8683aca969b226da944", size = 5300171, upload-time = "2025-11-14T09:03:51.044Z" },
+    { url = "https://files.pythonhosted.org/packages/57/79/51ec82f2152b61e4bbe0de2555ff2862b442ae1242b1c680caaa171ad6fb/mercurial-7.1.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:e39e531233c584833731296ef97170c9bab8d4b39b3cb81f0494ba094bfbdc9a", size = 7463956, upload-time = "2025-11-14T09:03:29.667Z" },
+    { url = "https://files.pythonhosted.org/packages/34/aa/396d824af5e8f34ea13730b2e301a68c7a1dec3c97b9ffbacdb95ecb83d0/mercurial-7.1.2-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4a190ff88063232c76d4dfcc4bb493c573e66750ec6a02b07c33b33cbf7d420c", size = 7155361, upload-time = "2025-11-14T09:03:31.949Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/5b/d3616814e94f6094ad27da314f04689c2cf71098111af2b723745b347621/mercurial-7.1.2-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:bd13568088b88b5e6dc0cea0e90451c9e608e55145afc11661eac8a0fb11a4bf", size = 7125689, upload-time = "2025-11-14T09:03:33.681Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/bd/b599f3f754f1fe05003d91c2b960baa8ca86c1ef92ba8960d09fa6e01967/mercurial-7.1.2-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:7e998c649ad189455a7cd56eb6a491b2bac9fb9baa9ed69ea66225d5a5850d15", size = 7350563, upload-time = "2025-11-14T09:03:35.548Z" },
+    { url = "https://files.pythonhosted.org/packages/68/fb/d4da8cac169eccf687d691b6c273eadaff3e4d864502b8caed6a3ae69fca/mercurial-7.1.2-cp313-cp313-win32.whl", hash = "sha256:36da6b010589c54aac38975373c826a6721de4f929ffcb752161ce01d3648567", size = 6801397, upload-time = "2025-11-14T09:04:13.496Z" },
+    { url = "https://files.pythonhosted.org/packages/a1/51/c11fad57df48736430b105840f986ace562112f9fc61f74ae0bdef1826bc/mercurial-7.1.2-cp313-cp313-win_amd64.whl", hash = "sha256:8171062573348e664a863c3772cdf6c6174f241110d3a5165fe31aa11bb38e0a", size = 7191417, upload-time = "2025-11-14T09:04:15.274Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/7f/8921157ffe088d22c02dbe466837a1cf588f0eec3bb4205579497c5cd215/mercurial-7.1.2-cp313-cp313-win_arm64.whl", hash = "sha256:3e2009595ed89af411904029b5a657f327d74548cab19ecd6ae3677f2c22e288", size = 7156024, upload-time = "2025-11-14T09:04:17.132Z" },
+]
+
+[[package]]
 name = "more-itertools"
 version = "10.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2556,7 +2596,7 @@ graphs = [
     { name = "pandas" },
     { name = "seaborn" },
 ]
-json = [
+jsonschema = [
     { name = "jsonschema" },
 ]
 pytest = [
@@ -2574,6 +2614,7 @@ dev = [
     { name = "hatchling" },
     { name = "isort" },
     { name = "jsonschema" },
+    { name = "mercurial" },
     { name = "mypy" },
     { name = "pandas-stubs" },
     { name = "pydeps" },
@@ -2593,7 +2634,7 @@ dev = [
 requires-dist = [
     { name = "dulwich", specifier = ">=0.24.10" },
     { name = "jsonschema", marker = "extra == 'all'", specifier = ">=4.0.0" },
-    { name = "jsonschema", marker = "extra == 'json'", specifier = ">=4.0.0" },
+    { name = "jsonschema", marker = "extra == 'jsonschema'", specifier = ">=4.0.0" },
     { name = "jsonschema", marker = "extra == 'pytest'", specifier = ">=4.0.0" },
     { name = "matplotlib", marker = "extra == 'all'", specifier = ">=3.10.6" },
     { name = "matplotlib", marker = "extra == 'graphs'", specifier = ">=3.10.6" },
@@ -2607,7 +2648,7 @@ requires-dist = [
     { name = "seaborn", marker = "extra == 'all'", specifier = ">=0.13.2" },
     { name = "seaborn", marker = "extra == 'graphs'", specifier = ">=0.13.2" },
 ]
-provides-extras = ["all", "graphs", "json", "pytest"]
+provides-extras = ["all", "graphs", "jsonschema", "pytest"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -2619,6 +2660,7 @@ dev = [
     { name = "hatchling", specifier = ">=1.27" },
     { name = "isort", specifier = ">=5.12.0" },
     { name = "jsonschema", specifier = ">=4.0.0" },
+    { name = "mercurial", specifier = ">=6.1" },
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "pandas-stubs", specifier = ">=2.3.2.250827" },
     { name = "pydeps", specifier = ">=1.23.2" },

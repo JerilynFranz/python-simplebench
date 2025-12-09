@@ -22,12 +22,6 @@ JSONErrorTags: TypeAlias = (
     _JSONReportSchemaErrorTag)
 """Type alias for all JSON report related error tags."""
 
-CLASSES = (JSONMetadata, JSONReport, JSONReportSchema, JSONResults, JSONStats)
-"""Tuple of all JSON report related classes."""
-
-CLASS_TYPES = (type[JSONMetadata], type[JSONReport], type[JSONReportSchema], type[JSONResults], type[JSONStats])
-"""Tuple of all JSON report related class types."""
-
 T = TypeVar('T',
             type[JSONMetadata],
             type[JSONReport],

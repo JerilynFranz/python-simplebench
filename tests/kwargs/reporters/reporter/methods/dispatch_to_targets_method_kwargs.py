@@ -10,7 +10,7 @@ from rich.text import Text
 from simplebench.case import Case
 from simplebench.enums import Section
 from simplebench.reporters.choice.choice import Choice
-from simplebench.reporters.log.versions.v1 import ReportMetadata
+from simplebench.metadata import Metadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
@@ -34,7 +34,7 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
             *,
             output: str | bytes | Text | Table | NoDefaultValue = NoDefaultValue(),
             filename_base: str | NoDefaultValue = NoDefaultValue(),
-            log_metadata: ReportMetadata | NoDefaultValue = NoDefaultValue(),
+            log_metadata: Metadata | NoDefaultValue = NoDefaultValue(),
             args: Namespace | NoDefaultValue = NoDefaultValue(),
             choice: Choice | NoDefaultValue = NoDefaultValue(),
             case: Case | NoDefaultValue = NoDefaultValue(),

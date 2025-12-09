@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.log.versions.v1 import ReportMetadata
+from simplebench.metadata import Metadata
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.type_proxies import is_case
@@ -19,7 +19,7 @@ from simplebench.validators import validate_type
 from .config import JSONConfig
 from .exceptions import _JSONReporterErrorTag
 from .options import JSONOptions
-from .schemas import LATEST_SCHEMA_VERSION
+from simplebench.reporters.json.report.versions import CURRENT_VERSION
 
 Options: TypeAlias = JSONOptions
 
@@ -112,7 +112,7 @@ class JSONReporter(Reporter):
     def run_report(self,
                    *,
                    args: Namespace,
-                   log_metadata: ReportMetadata,
+                   log_metadata: Metadata,
                    case: Case,
                    choice: Choice,
                    path: Path | None = None,
@@ -200,4 +200,4 @@ class JSONReporter(Reporter):
     @property
     def schema_version(self) -> int:
         """The current schema version for the JSON reporter."""
-        return LATEST_SCHEMA_VERSION
+        return CURRENT_VERSION

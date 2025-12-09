@@ -298,6 +298,6 @@ class Hg:
         return HgInfo(
             branch=branch_name,
             commit_id=changeset_id,
-            date=date,
+            commit_datetime=date,
             dirty=dirty
         )
