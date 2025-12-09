@@ -119,9 +119,9 @@ class Git:
             )
         except FileNotFoundError as exc:
             if self.is_available:
-                # Git is available but the command failed for some other reason
                 raise SimpleBenchRepositoryActionFailedError(
-                    f"The git command failed to execute: {run_command!r}",
+                    ("The git command failed to execute, possibly due to an invalid working "
+                     f"directory '{working_cwd} or a missing file: {run_command!r}"),
                     tag=_GitErrorTag.GIT_COMMAND_FAILED
                 ) from exc
             else:
@@ -255,7 +255,7 @@ class Git:
         except SimpleBenchNotARepositoryError:
             return False
 
-    def validate_is_repo(self, cwd: Path | None = None) -> None:
+    def validate_is_repo(self, cwd: Path | None) -> None:
         """Check if the current directory is inside a git repository.
 
         This is done by calling is_repo() and raising an exception if not in a repo.
@@ -320,7 +320,6 @@ class Git:
         """Run 'git status' and return its output.
 
         Any output other than an empty string indicates uncommitted changes.
-
         :param cwd: The working directory to check. If None, uses the current git_cwd or os.getcwd().
         :return: The command output as a string.
         :raises SimpleBenchNotARepositoryError: If not inside a git repository.
@@ -344,10 +343,16 @@ class Git:
         self.validate_is_repo(cwd=cwd)
 
         branch = self.branch(cwd=cwd)
-        commit_info = self.run(cmd=["log", "-1", "--format=commit: %H%ndate: %ct"], cwd=cwd)
+        fields = {
+            "commit": "%H",
+            "date": "%ct",
+        }
+        fields_list = [f"{key}: {value}" for key, value in fields.items()]
+        log_format = f"--format={'%x00'.join(fields_list)}"
+        commit_info = self.run(cmd=["log", "-1", log_format], cwd=cwd)
         commit_id: str = ""
         epoch_date: float = 0.0
-        for line in commit_info.splitlines():
+        for line in commit_info.split('\x00'):
             if not line:
                 continue
             key, value = line.split(": ", 1)
