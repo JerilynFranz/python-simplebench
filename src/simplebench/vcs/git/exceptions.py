@@ -21,3 +21,7 @@ class _GitErrorTag(ErrorTag):
     """An element in the cmd argument list is not a valid string."""
     USER_INTERRUPT = "USER_INTERRUPT"
     """The git command was interrupted by the user."""
+    COMMIT_ID_INVALID_TYPE = "COMMIT_ID_INVALID_TYPE"
+    """The commit_id attribute is not of type string."""
+    COMMIT_ID_INVALID_VALUE = "COMMIT_ID_INVALID_VALUE"
+    """The commit_id attribute does not match expected format."""

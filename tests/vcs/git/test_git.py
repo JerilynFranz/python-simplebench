@@ -116,6 +116,11 @@ def clean_one_commited_file_testspecs() -> list[TestSpec]:
             action=git.is_dirty,
             assertion=Assert.EQUAL,
             expected=False)),
+        idspec("COCF_003:get_info()", TestAction(
+            name="Git get_info() in clean repo with one committed file",
+            action=git.head,
+            assertion=Assert.IS,
+            expected=GitInfo)),
     ]
     return testspecs
 

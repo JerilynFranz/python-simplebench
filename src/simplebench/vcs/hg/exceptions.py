@@ -18,3 +18,7 @@ class _HgErrorTag(ErrorTag):
     """The cmd argument provided is not a list of strings."""
     INVALID_CMD_ARG_ELEMENT_VALUE = "INVALID_CMD_ARG_ELEMENT_VALUE"
     """An element in the cmd argument list is not a valid string."""
+    COMMIT_ID_INVALID_TYPE = "COMMIT_ID_INVALID_TYPE"
+    """The commit_id attribute is not of type string."""
+    COMMIT_ID_INVALID_VALUE = "COMMIT_ID_INVALID_VALUE"
+    """The commit_id attribute does not match expected format."""

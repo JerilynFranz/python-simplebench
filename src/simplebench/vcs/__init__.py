@@ -3,12 +3,12 @@ from pathlib import Path
 
 from .git import Git, GitInfo
 from .hg import Hg, HgInfo
-from .utils import identify_repo_starting_path
+from .utils import resolve_vcs_path
 from .vcs_info import VCSInfo
 from .vcs_type import VCSType
 
 __all__ = [
-    "identify_repo_starting_path",
+    "resolve_vcs_path",
     "GitInfo",
     "Hg",
     "HgInfo",
@@ -29,7 +29,7 @@ def get_vcs_info(cwd: str | None = None) -> VCSInfo | None:
     :return: VCSInfo object containing information about the repository.
     :raises RuntimeError: If no supported VCS is found in the specified directory.
     """
-    start_path = identify_repo_starting_path(Path(cwd) if cwd else None)
+    start_path = resolve_vcs_path(Path(cwd) if cwd else None)
 
     git = Git(cwd=start_path)
     if git.is_repo():

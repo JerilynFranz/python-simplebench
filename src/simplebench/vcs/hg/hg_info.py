@@ -1,6 +1,11 @@
 """Version Control System record for Hg (Mercurial)."""
+import re
+
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+
 from ..vcs_info import VCSInfo
 from ..vcs_type import VCSType
+from .exceptions import _HgErrorTag
 
 
 class HgInfo(VCSInfo):
@@ -27,3 +32,20 @@ class HgInfo(VCSInfo):
             commit_datetime=commit_datetime,
             dirty=dirty,
         )
+
+    def validate_commit_id(self, commit_id: str) -> None:
+        """Validate the commit_id.
+
+        :param commit_id: The commit ID to validate.
+        :raises SimpleBenchTypeError: If commit_id is not a string or vcs_type is invalid.
+        :raises SimpleBenchValueError: If commit_id does not match expected format or length.
+        """
+        if not isinstance(commit_id, str):
+            raise SimpleBenchTypeError(
+                f"commit_id must be a string, got {type(commit_id)}",
+                tag=_HgErrorTag.COMMIT_ID_INVALID_TYPE)
+
+        if not re.compile(r'^[0-9a-fA-F]{40}$').match(commit_id):
+            raise SimpleBenchValueError(
+                f"Invalid hg (Mercurial) commit ID: {commit_id}",
+                tag=_HgErrorTag.COMMIT_ID_INVALID_VALUE)

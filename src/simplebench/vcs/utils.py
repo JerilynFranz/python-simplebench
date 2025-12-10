@@ -4,11 +4,7 @@ import sys
 from pathlib import Path
 
 
-def find_repo_root(search_path: Path | None = None, markers=('.git', '.hg')):
-    """Find the root directory of a version control repository."""
-
-
-def identify_repo_starting_path(search_path: Path | None = None) -> Path:
+def resolve_vcs_path(search_path: Path | None = None) -> Path:
     """Identify the starting path for repository search.
 
     This function determines the appropriate starting directory
