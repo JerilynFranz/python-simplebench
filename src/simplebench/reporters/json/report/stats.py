@@ -1,8 +1,8 @@
 """JSON Stats classes"""
 from typing import TYPE_CHECKING
 
-from .base.json_stats import JSONStats
-from .exceptions import _JSONStatsErrorTag
+from .base.stats import Stats
+from .exceptions import _StatsBlockErrorTag
 
 _JSON_CLASS_LOADED: bool = False
 
@@ -21,7 +21,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def from_dict(data: dict, version: int) -> JSONStats:
+def from_dict(data: dict, version: int) -> Stats:
     """Create a JSONStats instance from a dictionary.
     It checks the version in the data and instantates the appropriate sub-class
 
@@ -32,6 +32,6 @@ def from_dict(data: dict, version: int) -> JSONStats:
     _load_deferred_imports()
     return json_class(
         version,
-        JSONStats,
-        _JSONStatsErrorTag.INVALID_VERSION_TYPE,
-        _JSONStatsErrorTag.UNSUPPORTED_VERSION).from_dict(data)
+        Stats,
+        _StatsBlockErrorTag.INVALID_VERSION_TYPE,
+        _StatsBlockErrorTag.UNSUPPORTED_VERSION).from_dict(data)

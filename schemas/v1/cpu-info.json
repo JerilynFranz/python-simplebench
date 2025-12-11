@@ -7,7 +7,7 @@
     "properties": {
         "cpuinfo_version": {
             "title": "CPU Info Version",
-            "description": "Version of the cpuinfo library",
+            "description": "Optional version of the cpuinfo library",
             "type": "array",
             "items": {
                 "type": "integer"
@@ -16,8 +16,14 @@
         },
         "cpuinfo_version_string": {
             "title": "CPU Info Version String",
-            "description": "CPU info version as a string",
+            "description": "Optional version of the cpuinfo library as a string",
             "type": "string"
+        },
+        "hash_id": {
+            "title": "Hash ID",
+            "description": "Unique 64 byte hexadecimal hash identifier for the CPU information data. This can be used to identify identical CPU configurations without revealing details.",
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
         },
         "arch": {
             "description": "CPU architecture",
@@ -45,8 +51,7 @@
         }
     },
     "required": [
-        "cpuinfo_version",
-        "cpuinfo_version_string",
+        "hash_id",
         "arch",
         "bits",
         "count",

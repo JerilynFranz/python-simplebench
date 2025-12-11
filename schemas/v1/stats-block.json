@@ -1,0 +1,119 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/stats-block.json",
+    "title": "Statistics Block (V1)",
+    "description": "Block containing statistical measurements",
+    "type": "object",
+    "properties": {
+        "type": {
+            "title": "Block Type",
+            "description": "The type of the block. Must be 'SimpleBenchStatsBlock::V1' for Statistics Block version 1.",
+            "type": "string",
+            "const": "SimpleBenchStatsBlock::V1"
+        },
+        "semantic_type": {
+            "title": "Measurement Type",
+            "description": "The semantic type of the measurements, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Standard types use the 'simplebench_std' namespace. Users can define custom types using their own namespace.",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-ZaZ0-9])?$",
+            "examples": [
+                "simplebench_std::time_per_operation",
+                "simplebench_std::operations_per_second",
+                "simplebench_std::memory_usage",
+                "simplebench_std::peak_memory_usage",
+                "my_plugin::syscalls_per_operation"
+            ]
+        },
+        "timer": {
+            "title": "Timer",
+            "description": "The timing function used for this measurement (e.g., 'perf_counter'). Should be included for any timing-related metrics.",
+            "type": "string"
+        },
+        "unit": {
+            "title": "Measurement Unit",
+            "description": "Unit of the measurement values",
+            "type": "string",
+            "minLength": 1
+        },
+        "scale": {
+            "title": "Measurement Scale",
+            "description": "Scale of the measurement values",
+            "type": "number",
+            "exclusiveMinimum": 0
+        },
+        "iterations": {
+            "title": "Number of Iterations",
+            "description": "Number of measured iterations",
+            "type": "integer",
+            "exclusiveMinimum": 0
+        },
+        "rounds": {
+            "title": "Number of Rounds",
+            "description": "Number of rounds executed for each iteration",
+            "type": "integer",
+            "exclusiveMinimum": 0
+        },
+        "mean": {
+            "title": "Mean",
+            "description": "Mean of the measurements",
+            "type": "number"
+        },
+        "median": {
+            "title": "Median",
+            "description": "Median of the measurements",
+            "type": "number"
+        },
+        "minimum": {
+            "title": "Minimum",
+            "description": "Minimum value of the measurements",
+            "type": "number"
+        },
+        "maximum": {
+            "title": "Maximum",
+            "description": "Maximum value of the measurements",
+            "type": "number"
+        },
+        "standard_deviation": {
+            "title": "Standard Deviation",
+            "description": "Standard deviation of the measurements",
+            "type": "number"
+        },
+        "relative_standard_deviation": {
+            "title": "Relative Standard Deviation",
+            "description": "Relative standard deviation of the measurements",
+            "type": "number"
+        },
+        "percentiles": {
+            "title": "Percentiles",
+            "description": "Percentiles of the measurements",
+            "type": "array",
+            "items": {"type": "number"},
+            "minItems": 101,
+            "maxItems": 101
+        },
+        "measurements": {
+            "title": "Measurements",
+            "description": "Raw data series of measurements collected (one value per iteration)",
+            "type": "array",
+            "items": {
+                "type": "number"
+            },
+            "default": []
+        }
+    },
+    "required": [
+        "type",
+        "unit",
+        "scale",
+        "iterations",
+        "rounds",
+        "mean",
+        "median",
+        "minimum",
+        "maximum",
+        "standard_deviation",
+        "relative_standard_deviation",
+        "percentiles"
+    ],
+    "additionalProperties": false
+}

@@ -4,8 +4,8 @@ This module provides functionality to handle metadata for SimpleBench reports.
 """
 from typing import TYPE_CHECKING
 
-from .base import JSONMetadata
-from .exceptions import _JSONMetadataErrorTag
+from .base import Metadata
+from .exceptions import _MetadataErrorTag
 
 _JSON_CLASS_LOADED: bool = False
 
@@ -24,7 +24,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def from_dict(data: dict, version: int) -> JSONMetadata:
+def from_dict(data: dict, version: int) -> Metadata:
     """Create a JSONMetadata instance from a dictionary.
     It checks the passed version and instantates the appropriate sub-class
 
@@ -34,6 +34,6 @@ def from_dict(data: dict, version: int) -> JSONMetadata:
     """
     return json_class(
         version,
-        JSONMetadata,
-        _JSONMetadataErrorTag.INVALID_VERSION_TYPE,
-        _JSONMetadataErrorTag.UNSUPPORTED_VERSION).from_dict(data)
+        Metadata,
+        _MetadataErrorTag.INVALID_VERSION_TYPE,
+        _MetadataErrorTag.UNSUPPORTED_VERSION).from_dict(data)

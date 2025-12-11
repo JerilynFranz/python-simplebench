@@ -7,6 +7,10 @@ from simplebench.exceptions import ErrorTag
 class _ValidatorsErrorTag(ErrorTag):
     """ErrorTags for validator-related exceptions."""
     # validate_dirpath() tags
+    INVALID_NAMESPACED_IDENTIFIER_TYPE = "INVALID_NAMESPACED_IDENTIFIER_TYPE"
+    """The namespaced identifier is not of type string."""
+    INVALID_NAMESPACED_IDENTIFIER = "INVALID_NAMESPACED_IDENTIFIER"
+    """The namespaced identifier is not valid."""
     VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE = "VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE"
     """The 'dirpath' argument must be a str."""
     VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE = "VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE"

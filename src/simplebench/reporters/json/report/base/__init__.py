@@ -1,15 +1,21 @@
 """Base class for JSON report representation."""
 
-from .json_metadata import JSONMetadata
-from .json_report import JSONReport
-from .json_report_schema import JSONReportSchema
-from .json_results import JSONResults
-from .json_stats import JSONStats
+from .json_schema import JSONSchema
+from .machine_info import MachineInfo
+from .metadata import Metadata
+from .metrics import Metrics
+from .report import Report
+from .results import Results
+from .stats_block import StatsBlock
+from .value_block import ValueBlock
 
 __all__ = [
-    "JSONMetadata",
-    "JSONReport",
-    "JSONReportSchema",
-    "JSONResults",
-    "JSONStats",
+    "MachineInfo",
+    "Metadata",
+    "Metrics",
+    "Report",
+    "JSONSchema",
+    "Results",
+    "StatsBlock",
+    "ValueBlock",
 ]

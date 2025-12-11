@@ -5,6 +5,12 @@
     "type": "object",
     "description": "Python interpreter information (V1)",
     "properties": {
+        "hash_id": {
+            "title": "Hash ID",
+            "description": "Unique 64 byte hexadecimal hash identifier for the Python interpreter information data. This can be used to identify identical Python interpreter configurations without revealing details.",
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+        },
         "compiler": {
             "title": "Python Compiler",
             "description": "Python compiler information",
@@ -46,6 +52,7 @@
         }
     },
     "required": [
+        "hash_id",
         "compiler",
         "implementation",
         "implementation_version",

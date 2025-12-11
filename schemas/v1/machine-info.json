@@ -5,6 +5,12 @@
     "description": "Machine information (V1)",
     "type": "object",
     "properties": {
+        "hash_id": {
+            "title": "Hash ID",
+            "description": "Unique 64 byte hexadecimal hash identifier for the machine information data. This can be used to identify identical machine configurations without revealing details.",
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+        },
         "processor": {
             "title": "Processor",
             "description": "Processor information",
@@ -15,23 +21,44 @@
             "description": "Machine type",
             "type": "string"
         },
+        "system": {
+            "title": "System",
+            "description": "Operating system name",
+            "type": "string"
+        },
+        "release": {
+            "title": "Release",
+            "description": "Operating system release",
+            "type": "string"
+        },
         "node": {
             "title": "Node",
             "description": "Identifier for the machine (blank by default)",
             "type": "string",
             "default": ""
         },
-        "python": {
-            "$ref": "python-info.json"
+        "execution_environment": {
+            "title": "Execution Environment",
+            "description": "Information about the execution environment(s) or runtime(s).",
+            "type": "object",
+            "properties": {
+                "python": {
+                    "$ref": "python-info.json"
+                }
+            },
+            "additionalProperties": true
         },
         "cpu": {
             "$ref": "cpu-info.json"
         }
     },
     "required": [
+        "hash_id",
         "processor",
         "machine",
-        "python",
+        "system",
+        "release",
+        "execution_environment",
         "cpu"
     ],
     "additionalProperties": false

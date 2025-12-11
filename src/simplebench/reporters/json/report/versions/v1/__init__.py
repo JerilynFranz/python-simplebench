@@ -1,15 +1,13 @@
 """V1 json report classes"""
 
-from .json_metadata import JSONMetadata
-from .json_report import JSONReport
-from .json_report_schema import JSONReportSchema
-from .json_results import JSONResults
-from .json_stats import JSONStatsSummary
+from .metadata import Metadata
+from .report import Report
+from .results import Results
+from .stats import Stats
 
 __all__ = [
-    "JSONMetadata",
-    "JSONReport",
-    "JSONReportSchema",
-    "JSONResults",
-    "JSONStatsSummary",
+    "Metadata",
+    "Report",
+    "Results",
+    "Stats",
 ]

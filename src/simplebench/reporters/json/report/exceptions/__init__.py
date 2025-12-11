@@ -1,14 +1,22 @@
 """Exceptions for JSON reports and schemas."""
-from .json_metadata import _JSONMetadataErrorTag
-from .json_report import _JSONReportErrorTag
-from .json_report_schema import _JSONReportSchemaErrorTag
-from .json_results import _JSONResultsErrorTag
-from .json_stats import _JSONStatsErrorTag
+from .cpu_info import _CPUInfoErrorTag
+from .machine_info import _MachineInfoErrorTag
+from .metadata import _MetadataErrorTag
+from .metrics import _MetricsErrorTag
+from .report import _ReportErrorTag
+from .report_schema import _ReportSchemaErrorTag
+from .results import _ResultsErrorTag
+from .stats_block import _StatsBlockErrorTag
+from .value_block import _ValueBlockErrorTag
 
 __all__ = [
-    "_JSONReportSchemaErrorTag",
-    "_JSONReportErrorTag",
-    "_JSONResultsErrorTag",
-    "_JSONStatsErrorTag",
-    "_JSONMetadataErrorTag",
+    "_CPUInfoErrorTag",
+    "_MachineInfoErrorTag",
+    "_MetadataErrorTag",
+    "_MetricsErrorTag",
+    "_ReportErrorTag",
+    "_ReportSchemaErrorTag",
+    "_ResultsErrorTag",
+    "_StatsBlockErrorTag",
+    "_ValueBlockErrorTag",
 ]

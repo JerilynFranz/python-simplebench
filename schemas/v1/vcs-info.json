@@ -24,20 +24,21 @@
         },
         "repository_url": {
             "title": "Repository URL",
-            "description": "The URL of the remote repository (optional)",
+            "description": "Optional URL of the primary remote repository (e.g., 'origin' in Git, 'default' in Mercurial)",
             "type": "string",
             "format": "uri"
         },
         "is_dirty": {
             "title": "Is Dirty",
-            "description": "Indicates if there are uncommitted changes in the working directory",
+            "description": "Indicates if there are uncommitted changes in the working tree",
             "type": "boolean"
         },
         "commit_datetime": {
             "title": "Commit Datetime",
-            "description": "The datetime of the current commit in ISO 8601 format",
+            "description": "The UTC datetime of the current commit in ISO 8601 format",
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "examples": ["2024-01-15T12:34:56Z"]
         }
     },
     "required": [

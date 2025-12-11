@@ -11,23 +11,21 @@ from typing import TypeAlias, TypeVar
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_int
 
-from ..base import JSONMetadata, JSONReport, JSONReportSchema, JSONResults, JSONStats
-from ..exceptions import _JSONMetadataErrorTag, _JSONReportErrorTag, _JSONReportSchemaErrorTag, _JSONResultsErrorTag
+from ..base import Metadata, Report, Results, Stats
+from ..exceptions import _MetadataErrorTag, _ReportErrorTag, _ResultsErrorTag
 from . import v1
 
 JSONErrorTags: TypeAlias = (
-    _JSONMetadataErrorTag |
-    _JSONReportErrorTag |
-    _JSONResultsErrorTag |
-    _JSONReportSchemaErrorTag)
+    _MetadataErrorTag |
+    _ReportErrorTag |
+    _ResultsErrorTag)
 """Type alias for all JSON report related error tags."""
 
 T = TypeVar('T',
-            type[JSONMetadata],
-            type[JSONReport],
-            type[JSONReportSchema],
-            type[JSONResults],
-            type[JSONStats])
+            type[Metadata],
+            type[Report],
+            type[Results],
+            type[Stats])
 """Type variable for JSON report related class types."""
 
 _known_versions: dict[int, ModuleType] = {

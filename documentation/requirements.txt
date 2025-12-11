@@ -1,4 +1,3 @@
-dulwich>=0.24.10
 furo>=2025.9.25
 jsonschema>=4.0.0
 matplotlib>=3.10.6
