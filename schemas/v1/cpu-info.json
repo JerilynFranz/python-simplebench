@@ -5,6 +5,17 @@
     "description": "CPU information (V1)",
     "type": "object",
     "properties": {
+        "version": {
+            "description": "The version of the CPU information schema",
+            "type": "integer",
+            "const": 1
+        },
+        "type": {
+            "title": "Type",
+            "description": "Type of the CPU information schema",
+            "type": "string",
+            "const": "CPUInfo::V1"
+        },
         "cpuinfo_version": {
             "title": "CPU Info Version",
             "description": "Optional version of the cpuinfo library",
@@ -32,12 +43,14 @@
         "bits": {
             "title": "Bits",
             "description": "Number of bits of the CPU",
-            "type": "integer"
+            "type": "integer",
+            "minimum": 16
         },
         "count": {
             "title": "Count",
             "description": "Number of CPU cores",
-            "type": "integer"
+            "type": "integer",
+            "minimum": 1
         },
         "arch_string_raw": {
             "title": "Arch String Raw",

@@ -687,6 +687,18 @@ wheels = [
 ]
 
 [[package]]
+name = "flake8-pyproject"
+version = "1.2.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flake8" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/85/6a/cdee9ff7f2b7c6ddc219fd95b7c70c0a3d9f0367a506e9793eedfc72e337/flake8_pyproject-1.2.4-py3-none-any.whl", hash = "sha256:ea34c057f9a9329c76d98723bb2bb498cc6ba8ff9872c4d19932d48c91249a77", size = 5694, upload-time = "2025-11-28T21:40:01.309Z" },
+]
+
+[[package]]
 name = "fonttools"
 version = "4.59.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2570,6 +2582,7 @@ pytest = [
 dev = [
     { name = "coverage" },
     { name = "flake8" },
+    { name = "flake8-pyproject" },
     { name = "furo" },
     { name = "graphviz" },
     { name = "hatch" },
@@ -2615,6 +2628,7 @@ provides-extras = ["all", "graphs", "jsonschema", "pytest"]
 dev = [
     { name = "coverage", specifier = ">=7.10.6" },
     { name = "flake8", specifier = ">=7.3.0" },
+    { name = "flake8-pyproject", specifier = ">=1.2.4" },
     { name = "furo", specifier = ">=2025.9.25" },
     { name = "graphviz", specifier = ">=0.21" },
     { name = "hatch", specifier = ">=1.13" },

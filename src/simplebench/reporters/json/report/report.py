@@ -53,7 +53,7 @@ def from_dict(data: dict) -> Report:
 
     # Only perform JSON Schema validation if the jsonschema package is available
     if _JSON_SCHEMA_AVAILABLE:
-        schema_class: type[JSONSchema] = report_class.schema
+        schema_class: type[JSONSchema] = report_class.SCHEMA
 
         try:
             schema_dict = schema_class.as_dict()
@@ -80,4 +80,4 @@ def schema(version: int) -> type[JSONSchema]:
         Report,
         _ReportSchemaErrorTag.INVALID_VERSION_TYPE,
         _ReportSchemaErrorTag.UNSUPPORTED_VERSION
-    ).schema
+    ).SCHEMA

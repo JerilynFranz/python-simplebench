@@ -115,8 +115,10 @@ Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGE
 
 [tool.flake8]
 max-line-length = 120
-extend-ignore = ["E203"]
 max-complexity = 10
+# E203: whitespace before ':' (conflicts with black)
+# E501: line too long (handled by pylint)
+extend-ignore = ["E203", "E501"]
 
 [tool.isort]
 line_length = 120
@@ -153,10 +155,7 @@ norecursedirs = ".git .tox .vscode venv* .*_cache build dist testplan.py"
 
 [tool.coverage.run]
 branch = true
-omit = [
-    'test_plan.py',
-    'tests/testspec.py'
-]
+source = ["simplebench"]
 
 [tool.coverage.report]
 # Regexes for lines to exclude from consideration
@@ -232,6 +231,7 @@ exclude_exact = [
 dev = [
     "coverage>=7.10.6",
     "flake8>=7.3.0",
+    "Flake8-pyproject>=1.2.4",
     "furo>=2025.09.25",
     "graphviz>=0.21",
     "hatch>=1.13",

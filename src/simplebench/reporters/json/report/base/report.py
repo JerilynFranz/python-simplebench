@@ -25,7 +25,7 @@ class Report(ABC):
     TYPE: str = "SimpleBenchReport::V0"
     """The type of the JSON report schema this class implements."""
 
-    schema: type[JSONSchema] = JSONSchema
+    SCHEMA: type[JSONSchema] = JSONSchema
     """The JSON schema class for this report version.
 
     Has to be overridden in subclasses.

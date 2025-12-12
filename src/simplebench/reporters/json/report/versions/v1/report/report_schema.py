@@ -1,11 +1,6 @@
 """Schema for JSON reporter v1 validation."""
-import json
-from functools import cache
-from io import StringIO
-
-from simplebench.exceptions import SimpleBenchTypeError
+# pylint: disable=line-too-long
 from simplebench.reporters.json.report.base import JSONSchema
-from simplebench.reporters.json.report.exceptions import _ReportSchemaErrorTag
 
 
 class ReportSchema(JSONSchema):
@@ -13,6 +8,9 @@ class ReportSchema(JSONSchema):
 
     VERSION: int = 1
     """The JSON report schema version number."""
+
+    TYPE: str = "SimpleBenchReport::V1"
+    """The JSON report schema type property value for version 1 reports."""
 
     @classmethod
     def as_dict(cls) -> dict[str, object]:
@@ -24,7 +22,7 @@ class ReportSchema(JSONSchema):
         The caller can modify the returned dictionary as needed or cache it for performance.
 
         Usage:
-            schema_dict = JSONReportSchema.json_schema_dict()
+            schema_dict = ReportSchema.as_dict()
         """
         return {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -36,13 +34,13 @@ class ReportSchema(JSONSchema):
                 "version": {
                     "description": "The version of the JSON report schema",
                     "type": "integer",
-                    "const": 1
+                    "const": ReportSchema.VERSION
                 },
                 "type": {
                     "title": "Type",
                     "description": "Type of the benchmark report",
                     "type": "string",
-                    "const": "SimpleBenchReport::V1"
+                    "const": ReportSchema.TYPE
                 },
                 "group": {
                     "title": "Group",
@@ -74,7 +72,8 @@ class ReportSchema(JSONSchema):
                             "type": {
                                 "title": "Type",
                                 "description": "Type of the result",
-                                "type": "string"
+                                "type": "string",
+                                "const": "SimpleBenchResult::V1"
                             },
                             "group": {
                                 "title": "Group",
@@ -151,10 +150,11 @@ class ReportSchema(JSONSchema):
                         "- `simplebench_std::operations_per_second`\n"
                         "- `simplebench_std::memory_usage`\n"
                         "- `simplebench_std::peak_memory_usage`\n"
-                        "- `simplebench_std::wallclock_time`"
-                        "\n- `my_plugin::custom_metric`"),
+                        "- `simplebench_std::wallclock_time`\n"
+                        "- `my_plugin::custom_metric`"
+                    ),
                     "patternProperties": {
-                        "^[a-zA-Z0-9_]+::[a-zA-Z0-9_]+$": {
+                        "^[A-Za-z0-9](?:[_A-ZaZ0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$": {
                             "$ref": "#/$defs/metric_block"
                         }
                     },
@@ -162,9 +162,7 @@ class ReportSchema(JSONSchema):
                 },
                 "metric_block": {
                     "title": "Metric Block",
-                    "description": (
-                        "A container for a measurement, which can be a single "
-                        "value or a statistical summary."),
+                    "description": "A container for a measurement, which can be a single value or a statistical summary.",
                     "oneOf": [
                         {
                             "$ref": "stats-block.json"
@@ -172,30 +170,10 @@ class ReportSchema(JSONSchema):
                         {
                             "$ref": "value-block.json"
                         }
-                    ]
+                    ],
+                    "discriminator": {
+                        "propertyName": "type"
+                    }
                 }
             }
         }
-
-    @classmethod
-    @cache
-    def as_string(cls) -> str:
-        """Get the JSON schema as a JSON string.
-
-        Usage:
-            schema_json = JSONReportSchema.as_string()
-        """
-        schema_dict = cls.as_dict()
-        with StringIO() as jsonfile:
-            try:
-                json.dump(schema_dict, jsonfile, indent=2)
-                jsonfile.seek(0)
-            # If an error occurs during dumping, it will be caught below
-            # and is pretty much certain to be some version of type error
-            # because the schema is a static dict. Bad programmer, no cookie.
-            except Exception as exc:
-                raise SimpleBenchTypeError(
-                    f'Error generating JSON output for JSON Reporter schema: {exc}',
-                    tag=_ReportSchemaErrorTag.SCHEMA_EXPORT_ERROR) from exc
-            schema_text = jsonfile.read()
-        return schema_text

@@ -71,17 +71,13 @@ class Results(ABC):
 
         cls.validate_type(data.get('type'), cls.TYPE)
 
-        metrics: dict[str, Metrics] = {}
-
-
-
         return cls(
             group=data.get('group'),  # type: ignore[reportArgumentType]
             title=data.get('title'),  # type: ignore[reportArgumentType]
             description=data.get('description'),  # type: ignore[reportArgumentType]
             n=data.get('n'),  # type: ignore[reportArgumentType]
             variation_cols=data.get('variation_cols'),  # type: ignore[reportArgumentType]
-            metrics=data.get('metrics'),  # type: ignore[reportArgumentType]
+            metrics=Metrics.from_dict(data.get('metrics')),  # type: ignore[reportArgumentType]
             extra_info=data.get('extra_info'))  # type: ignore[reportArgumentType]
 
     def __init__(self,
@@ -91,7 +87,7 @@ class Results(ABC):
                  description: str,
                  n: float,
                  variation_cols: dict[str, Any],
-                 metrics: dict[str, Any],
+                 metrics: Metrics,
                  extra_info: dict[str, Any]
                  ):  # pylint: disable=super-init-not-called
         """Initialize a Results v1 instance.
@@ -231,7 +227,7 @@ class Results(ABC):
         """
         if not isinstance(value, Metrics):
             raise SimpleBenchTypeError(
-                f"metrics must be a Metrics instances, got {type(value)}",
+                f"metrics must be a Metrics instance, got {type(value)}",
                 tag=_ResultsErrorTag.INVALID_TYPE_TYPE)
 
         self._metrics: Metrics = value

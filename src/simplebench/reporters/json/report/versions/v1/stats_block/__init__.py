@@ -1,6 +1,6 @@
 """JSON Stats Summary version 1 package"""
-from .stats import Stats
+from .stats_block import StatsBlock
 
 __all__ = [
-    "Stats",
+    "StatsBlock",
 ]

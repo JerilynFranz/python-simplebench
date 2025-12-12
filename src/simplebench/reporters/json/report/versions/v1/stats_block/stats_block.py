@@ -1,10 +1,10 @@
 """V1 JSONResults class"""
 from typing import Any
 
-from simplebench.reporters.json.report.base.stats import Stats as BaseJSONStatsSummary
+from simplebench.reporters.json.report.base import StatsBlock as BaseStatsBlock
 
 
-class Stats(BaseJSONStatsSummary):
+class StatsBlock(BaseStatsBlock):
     """Class representing JSON stats summary for V1 reports."""
 
     VERSION: int = 1

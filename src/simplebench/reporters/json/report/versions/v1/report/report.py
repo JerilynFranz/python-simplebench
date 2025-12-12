@@ -28,5 +28,5 @@ class Report(BaseReport):
     VERSION: int = 1
     """The JSON report version number."""
 
-    schema: type[JSONSchema] = ReportSchema
+    SCHEMA: type[JSONSchema] = ReportSchema
     """The JSON schema class for version 1 reports."""

@@ -15,7 +15,7 @@
             "title": "Measurement Type",
             "description": "The semantic type of the measurements, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Standard types use the 'simplebench_std' namespace. Users can define custom types using their own namespace.",
             "type": "string",
-            "pattern": "^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-ZaZ0-9])?$",
+            "pattern": "^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$",
             "examples": [
                 "simplebench_std::time_per_operation",
                 "simplebench_std::operations_per_second",
@@ -43,49 +43,49 @@
         },
         "iterations": {
             "title": "Number of Iterations",
-            "description": "Number of measured iterations",
+            "description": "Number of measured iterations. This corresponds to the number of items in the 'measurements' array.",
             "type": "integer",
             "exclusiveMinimum": 0
         },
         "rounds": {
             "title": "Number of Rounds",
-            "description": "Number of rounds executed for each iteration",
+            "description": "Number of rounds executed for each iteration. The total number of operations is iterations * rounds.",
             "type": "integer",
             "exclusiveMinimum": 0
         },
         "mean": {
             "title": "Mean",
-            "description": "Mean of the measurements",
+            "description": "The mean of the per-iteration measurements.",
             "type": "number"
         },
         "median": {
             "title": "Median",
-            "description": "Median of the measurements",
+            "description": "The median of the per-iteration measurements.",
             "type": "number"
         },
         "minimum": {
             "title": "Minimum",
-            "description": "Minimum value of the measurements",
+            "description": "The minimum value of the per-iteration measurements.",
             "type": "number"
         },
         "maximum": {
             "title": "Maximum",
-            "description": "Maximum value of the measurements",
+            "description": "The maximum value of the per-iteration measurements.",
             "type": "number"
         },
         "standard_deviation": {
             "title": "Standard Deviation",
-            "description": "Standard deviation of the measurements",
+            "description": "The standard deviation of a single underlying operation (round). If rounds > 1, this value is scaled from the standard deviation of the iterations to counter the effect of averaging.",
             "type": "number"
         },
         "relative_standard_deviation": {
             "title": "Relative Standard Deviation",
-            "description": "Relative standard deviation of the measurements",
+            "description": "The relative standard deviation (coefficient of variation), based on the scaled standard deviation of a single round.",
             "type": "number"
         },
         "percentiles": {
             "title": "Percentiles",
-            "description": "Percentiles of the measurements",
+            "description": "Percentiles of the per-iteration measurements.",
             "type": "array",
             "items": {"type": "number"},
             "minItems": 101,
@@ -93,7 +93,7 @@
         },
         "measurements": {
             "title": "Measurements",
-            "description": "Raw data series of measurements collected (one value per iteration)",
+            "description": "Raw data series of measurements collected (one value per iteration). The values are the AVERAGE per iteration (i.e., total time for the iteration divided by number of rounds). This array may be empty if raw measurements were not recorded.",
             "type": "array",
             "items": {
                 "type": "number"
@@ -103,6 +103,7 @@
     },
     "required": [
         "type",
+        "semantic_type",
         "unit",
         "scale",
         "iterations",

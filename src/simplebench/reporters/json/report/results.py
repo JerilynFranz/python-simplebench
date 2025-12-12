@@ -51,4 +51,4 @@ def schema(version: int) -> type[JSONSchema]:
         Results,
         _ResultsErrorTag.INVALID_VERSION_TYPE,
         _ResultsErrorTag.UNSUPPORTED_VERSION
-    ).schema
+    ).SCHEMA

@@ -5,6 +5,18 @@
     "description": "Machine information (V1)",
     "type": "object",
     "properties": {
+        "version": {
+            "title": "Version",
+            "description": "Version of the machine information schema",
+            "type": "integer",
+            "const": 1
+        },
+        "type": {
+            "title": "Type",
+            "description": "Type of the machine information",
+            "type": "string",
+            "const": "SimpleBenchMachineInfo::V1"
+        },
         "hash_id": {
             "title": "Hash ID",
             "description": "Unique 64 byte hexadecimal hash identifier for the machine information data. This can be used to identify identical machine configurations without revealing details.",
