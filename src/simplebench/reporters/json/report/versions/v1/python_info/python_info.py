@@ -27,7 +27,7 @@ class PythonInfo(BasePythonInfo):
     SCHEMA: type[JSONSchema] = PythonInfoSchema
     """The JSON schema class for version 1 reports."""
 
-    def __init__(self,
+    def __init__(self, *,
                  hash_id: str,
                  compiler: str,
                  implementation: str,
@@ -206,15 +206,15 @@ class PythonInfo(BasePythonInfo):
         :return: The hash_id string.
         """
         if self._hash_id == '':
-            hash_input = (
-                f"compiler:{self.compiler}\x00" +
-                f"implementation:{self.implementation}\x00" +
-                f"implementation_version:{self.implementation_version}\x00" +
-                f"python_version:{self.python_version}\x00" +
-                f"build:{self.build}\x00" +
-                f"release:{self.release}\x00" +
-                f"system:{self.system}"
+            # Get all __init__ params except 'hash_id' itself.
+            # Sorting ensures a consistent order for hashing.
+            hash_keys = sorted(k for k in self.init_params() if k != 'hash_id')
+
+            # Create a null-byte separated string of "key:value" pairs.
+            hash_input = "\x00".join(
+                f"{key}:{getattr(self, key)}" for key in hash_keys
             ).encode('utf-8')
+
             self._hash_id = hashlib.sha256(hash_input).hexdigest()
         return self._hash_id
 
@@ -257,67 +257,16 @@ class PythonInfo(BasePythonInfo):
         :param data: The dictionary containing PythonInfo information.
         :return: A PythonInfo instance.
         """
-        if not isinstance(data, dict):
-            raise SimpleBenchTypeError(
-                "data must be a dictionary",
-                tag=_PythonInfoErrorTag.INVALID_DATA_ARG_TYPE)
-
-        known_keys = {
-            'hash_id',
-            'compiler',
-            'implementation',
-            'implementation_version',
-            'python_version',
-            'build',
-            'release',
-            'system'
-        }
-
-        version = data.get('version') or cls.VERSION
-        if not isinstance(version, int):
-            raise SimpleBenchTypeError(
-                "The 'version' property must be of type 'int' if set",
-                tag=_PythonInfoErrorTag.INVALID_VERSION_TYPE)
-
-        if version != cls.VERSION:
-            raise SimpleBenchTypeError(
-                f"The 'version' property must have the value {cls.VERSION} if set",
-                tag=_PythonInfoErrorTag.UNSUPPORTED_VERSION)
-
-        type_str = data.get('type') or cls.TYPE
-        if not isinstance(type_str, str):
-            raise SimpleBenchTypeError(
-                "The 'type' property must be of type 'str' if set",
-                tag=_PythonInfoErrorTag.INVALID_TYPE_TYPE)
-
-        if type_str != cls.TYPE:
-            raise SimpleBenchTypeError(
-                f"The 'type' property must have tye value '{cls.TYPE}' if set",
-                tag=_PythonInfoErrorTag.INVALID_TYPE_VALUE)
-
-        extra_keys = set(data.keys()) - known_keys - {'version', 'type'}
-        if extra_keys:
-            raise SimpleBenchTypeError(
-                f"Unexpected keys in data dictionary: {extra_keys}",
-                tag=_PythonInfoErrorTag.INVALID_DATA_ARG_EXTRA_KEYS)
-        missing_keys = known_keys - data.keys() - {'hash_id'}
-        if missing_keys:
-            raise SimpleBenchTypeError(
-                f"Missing required keys in data dictionary: {missing_keys}",
-                tag=_PythonInfoErrorTag.INVALID_DATA_ARG_MISSING_KEYS)
-
-        instance = cls(
-            hash_id=data.get('hash_id', ''),
-            compiler=data['compiler'],
-            implementation=data['implementation'],
-            implementation_version=data['implementation_version'],
-            python_version=data['python_version'],
-            build=data['build'],
-            release=data['release'],
-            system=data['system']
-        )
-
-        return instance
+        allowed_keys = cls.init_params()
+        allowed_keys['version'] = int
+        allowed_keys['type'] = str
+        kwargs = cls.import_data(
+            data=data,
+            allowed=allowed_keys,
+            skip={'version', 'type'},
+            optional={'hash_id'},
+            match_on={'version': cls.VERSION, 'type': cls.TYPE})
+        return cls(**kwargs)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert the PythonInfo to a dictionary suitable for JSON serialization.
@@ -327,17 +276,9 @@ class PythonInfo(BasePythonInfo):
 
         :return: A dictionary representation of the PythonInfo.
         """
-        cls = self.__class__
-        result: dict[str, Any] = {
-            'version': cls.VERSION,
-            'type': cls.TYPE,
-            'hash_id': self.hash_id,
-            'compiler': self.compiler,
-            'implementation': self.implementation,
-            'implementation_version': self.implementation_version,
-            'python_version': self.python_version,
-            'build': self.build,
-            'release': self.release,
-            'system': self.system
-        }
-        return result
+        property_keys = self.init_params().keys()
+        data = {key: getattr(self, key) for key in property_keys}
+        data['type'] = self.TYPE
+        data['version'] = self.VERSION
+
+        return data

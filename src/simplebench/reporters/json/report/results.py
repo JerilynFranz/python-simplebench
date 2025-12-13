@@ -1,8 +1,8 @@
 """JSON Results classes"""
 from typing import TYPE_CHECKING
 
-from .base import JSONSchema, Results
-from .exceptions import _ResultsErrorTag
+from .base import JSONSchema, ResultsInfo
+from .exceptions import _ResultsInfoErrorTag
 
 _JSON_CLASS_LOADED: bool = False
 
@@ -21,7 +21,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def from_dict(data: dict, version: int) -> Results:
+def from_dict(data: dict, version: int) -> ResultsInfo:
     """Create a JSONResults instance from a dictionary.
 
     It checks the version and instantates the appropriate sub-class
@@ -33,9 +33,9 @@ def from_dict(data: dict, version: int) -> Results:
     _load_deferred_imports()
     return json_class(
         version,
-        Results,
-        _ResultsErrorTag.INVALID_VERSION_TYPE,
-        _ResultsErrorTag.UNSUPPORTED_VERSION).from_dict(data)
+        ResultsInfo,
+        _ResultsInfoErrorTag.INVALID_VERSION_TYPE,
+        _ResultsInfoErrorTag.UNSUPPORTED_VERSION).from_dict(data)
 
 
 def schema(version: int) -> type[JSONSchema]:
@@ -48,7 +48,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        Results,
-        _ResultsErrorTag.INVALID_VERSION_TYPE,
-        _ResultsErrorTag.UNSUPPORTED_VERSION
+        ResultsInfo,
+        _ResultsInfoErrorTag.INVALID_VERSION_TYPE,
+        _ResultsInfoErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

@@ -16,10 +16,11 @@ of the base JSONMachineInfo representation at the time of the V1 schema release.
 from abc import ABC, abstractmethod
 from typing import Any
 
+from .hydrator import Hydrator
 from .json_schema import JSONSchema
 
 
-class MachineInfo(ABC):
+class MachineInfo(Hydrator, ABC):
     """Class representing machine information in a JSON report."""
 
     VERSION: int = 0
@@ -46,6 +47,7 @@ class MachineInfo(ABC):
     SCHEMA: type[JSONSchema] = JSONSchema
     """The JSON schema class for reports."""
 
+    @abstractmethod
     def __init__(self) -> None:
         """Initialize MachineInfo."""
         raise NotImplementedError("MachineInfo is an abstract base class and cannot be instantiated")

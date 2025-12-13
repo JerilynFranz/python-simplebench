@@ -11,20 +11,20 @@ from typing import TypeAlias, TypeVar
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_int
 
-from ..base import Metadata, Report, Results, Stats
-from ..exceptions import _MetadataErrorTag, _ReportErrorTag, _ResultsErrorTag
+from ..base import Metadata, Report, ResultsInfo, Stats
+from ..exceptions import _MetadataErrorTag, _ReportErrorTag, _ResultsInfoErrorTag
 from . import v1
 
 JSONErrorTags: TypeAlias = (
     _MetadataErrorTag |
     _ReportErrorTag |
-    _ResultsErrorTag)
+    _ResultsInfoErrorTag)
 """Type alias for all JSON report related error tags."""
 
 T = TypeVar('T',
             type[Metadata],
             type[Report],
-            type[Results],
+            type[ResultsInfo],
             type[Stats])
 """Type variable for JSON report related class types."""
 

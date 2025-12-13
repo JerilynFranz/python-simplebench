@@ -31,7 +31,7 @@ def validate_iterable_of_type(
         exact_type: bool = False) -> list[Any]: ...
 
 
-def validate_iterable_of_type(
+def validate_iterable_of_type(  # noqa: C901
         value: Any,
         types: type[T] | tuple[type, ...],
         field_name: str,

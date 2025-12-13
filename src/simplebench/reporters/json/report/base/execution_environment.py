@@ -54,7 +54,7 @@ class ExecutionEnvironment(ABC):
         if not isinstance(data, dict):
             raise SimpleBenchTypeError(
                 "data must be a dictionary",
-                tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_TYPE)    
+                tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_TYPE)
 
         # Additional allowed execution environment types can be added here
 

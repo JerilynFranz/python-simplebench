@@ -2,10 +2,12 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+from simplebench.reporters.json.report.base import Hydrator
+
 from ..protocols import Environment
 
 
-class PythonInfo(ABC, Environment):
+class PythonInfo(ABC, Environment, Hydrator):
     """Base class for all PythonInfo classes."""
 
     VERSION: int = 0

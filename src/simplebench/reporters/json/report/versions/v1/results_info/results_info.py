@@ -1,84 +1,32 @@
-"""report Results base class.
+"""V1 Results object class
 
-This class represents Results in a JSON report.
+The V1 Results object represents the results section of a version 1 JSON report.
 
-It implements validation and serialization/deserialization methods to and from dictionaries
-for the results property object in the following JSON Schema version:
-
-https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json
-
-It is not a standalone JSON schema object, but rather a component of the overall JSON report schema object
-
-It is the base implemention of the JSON results object representation.
-
-This makes the implementations of Results backwards compatible with future versions
-of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
-of the results object representation at the time of the V1 schema release."""
-from __future__ import annotations
-
-from abc import ABC
+"""
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.reporters.json.report.base import Metrics
+from simplebench.reporters.json.report.base import ResultsInfo as BaseResultsInfo
+from simplebench.reporters.json.report.exceptions import _ResultsInfoErrorTag
 from simplebench.validators import validate_float, validate_string
 
-from ..exceptions import _ResultsErrorTag
-from .metrics import Metrics
+from .results_info_schema import ResultsInfoSchema
 
 
-class Results(ABC):
-    """Base class representing JSON results."""
+class ResultsInfo(BaseResultsInfo):
+    """Class representing JSON results object for V1 reports."""
+    SCHEMA = ResultsInfoSchema
+    """The JSON report schema for version 1 reports."""
 
-    VERSION: int = 0
-    """The JSON results version number.
+    TYPE: str = SCHEMA.TYPE
+    """The JSON report type property value for version 1 reports."""
 
-    :note: This should be overridden in sub-classes."""
+    VERSION: int = SCHEMA.VERSION
+    """The JSON report version number."""
 
-    TYPE: str = "SimpleBenchResults::V0"
-    """The JSON results type.
-
-    :note: This should be overridden in sub-classes.
-    """
-
-    @classmethod
-    def from_dict(cls, data: dict) -> Results:
-        """Create a JSON Results object instance from a dictionary.
-
-        :param data: Dictionary containing the JSON results object data.
-        :return: JSON Results object instance.
-        """
-        known_keys = {
-            'type',
-            'group',
-            'title',
-            'description',
-            'n',
-            'variation_cols',
-            'metrics',
-            'extra_info',
-        }
-        extra_keys = set(data.keys()) - known_keys
-        if extra_keys:
-            raise SimpleBenchTypeError(
-                f"Unexpected keys in data dictionary: {extra_keys}",
-                tag=_ResultsErrorTag.INVALID_DATA_ARG_EXTRA_KEYS)
-
-        missing_keys = known_keys - data.keys()
-        if missing_keys:
-            raise SimpleBenchTypeError(
-                f"Missing required keys in data dictionary: {missing_keys}",
-                tag=_ResultsErrorTag.INVALID_DATA_ARG_MISSING_KEYS)
-
-        cls.validate_type(data.get('type'), cls.TYPE)
-
-        return cls(
-            group=data.get('group'),  # type: ignore[reportArgumentType]
-            title=data.get('title'),  # type: ignore[reportArgumentType]
-            description=data.get('description'),  # type: ignore[reportArgumentType]
-            n=data.get('n'),  # type: ignore[reportArgumentType]
-            variation_cols=data.get('variation_cols'),  # type: ignore[reportArgumentType]
-            metrics=Metrics.from_dict(data.get('metrics')),  # type: ignore[reportArgumentType]
-            extra_info=data.get('extra_info'))  # type: ignore[reportArgumentType]
+    ID: str = SCHEMA.ID
+    """The JSON report ID property value for version 1 reports."""
 
     def __init__(self,
                  *,
@@ -109,24 +57,40 @@ class Results(ABC):
         self.extra_info = extra_info
 
     @classmethod
-    def validate_type(cls, found: Any, expected: str) -> str:
-        """Validate the type.
+    def from_dict(cls, data: dict) -> 'ResultsInfo':
+        """Create a JSON Results object instance from a dictionary.
 
-        :param found: The type string to validate.
-        :param expected: The expected type string.
-        :return: The validated type string.
-        :raise SimpleBenchTypeError: If the type is not a string.
-        :raises SimpleBenchValueError: If the type is invalid.
+        :param data: Dictionary containing the JSON results object data.
+        :return: JSON Results object instance.
         """
-        if not isinstance(found, str):
-            raise SimpleBenchValueError(
-                f"type must be a string, got {type(found)}",
-                tag=_ResultsErrorTag.INVALID_TYPE_TYPE)
-        if found != expected:
-            raise SimpleBenchValueError(
-                f"Incorrect type for JSONResults: {found} (expected '{expected}')",
-                tag=_ResultsErrorTag.INVALID_TYPE_VALUE)
-        return found
+        allowed_keys = cls.init_params()
+        allowed_keys['version'] = int
+        allowed_keys['type'] = str
+
+        kwargs = cls.import_data(
+            data=data,
+            allowed=allowed_keys,
+            skip={'version', 'type'},
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+            process_as={'metrics': Metrics.from_dict})
+        return cls(**kwargs)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert the JSON Results object instance to a dictionary.
+
+        :return: Dictionary containing the JSON results object data.
+        """
+        data: dict[str, Any] = {}
+        for key in self.init_params():
+            value = getattr(self, key)
+            if hasattr(value, 'to_dict'):
+                data[key] = value.to_dict()
+            else:
+                data[key] = value
+
+        data['type'] = self.TYPE
+        data['version'] = self.VERSION
+        return data
 
     @property
     def group(self) -> str:
@@ -138,8 +102,8 @@ class Results(ABC):
         """Set the group property."""
         self._group: str = validate_string(
             value, 'group',
-            _ResultsErrorTag.INVALID_GROUP_TYPE,
-            _ResultsErrorTag.INVALID_GROUP_VALUE_EMPTY_STRING,
+            _ResultsInfoErrorTag.INVALID_GROUP_TYPE,
+            _ResultsInfoErrorTag.INVALID_GROUP_VALUE_EMPTY_STRING,
             allow_empty=False)
 
     @property
@@ -152,8 +116,8 @@ class Results(ABC):
         """Set the title property."""
         self._title: str = validate_string(
             value, 'title',
-            _ResultsErrorTag.INVALID_TITLE_TYPE,
-            _ResultsErrorTag.INVALID_TITLE_VALUE_EMPTY_STRING,
+            _ResultsInfoErrorTag.INVALID_TITLE_TYPE,
+            _ResultsInfoErrorTag.INVALID_TITLE_VALUE_EMPTY_STRING,
             allow_empty=False)
 
     @property
@@ -166,8 +130,8 @@ class Results(ABC):
         """Set the description property."""
         self._description: str = validate_string(
             value, 'description',
-            _ResultsErrorTag.INVALID_DESCRIPTION_TYPE,
-            _ResultsErrorTag.INVALID_DESCRIPTION_EMPTY_STRING,
+            _ResultsInfoErrorTag.INVALID_DESCRIPTION_TYPE,
+            _ResultsInfoErrorTag.INVALID_DESCRIPTION_EMPTY_STRING,
             allow_empty=False)
 
     @property
@@ -179,11 +143,11 @@ class Results(ABC):
     def n(self, value: float) -> None:
         """Set the n property."""
         self._n: float = validate_float(
-            value, 'n', _ResultsErrorTag.INVALID_N_TYPE)
+            value, 'n', _ResultsInfoErrorTag.INVALID_N_TYPE)
         if self._n < 1:
             raise SimpleBenchValueError(
                 f"n must be >= 1, got {self._n}",
-                tag=_ResultsErrorTag.INVALID_N_VALUE)
+                tag=_ResultsInfoErrorTag.INVALID_N_VALUE)
 
     @property
     def variation_cols(self) -> dict[str, str]:
@@ -202,12 +166,12 @@ class Results(ABC):
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f"variation_cols must be a dictionary, got {type(value)}",
-                tag=_ResultsErrorTag.INVALID_VARIATION_COLS_TYPE)
+                tag=_ResultsInfoErrorTag.INVALID_VARIATION_COLS_TYPE)
 
         if not all(isinstance(k, str) and isinstance(v, str) for k, v in value.items()):
             raise SimpleBenchTypeError(
                 "All keys and values in variation_cols must be strings",
-                tag=_ResultsErrorTag.INVALID_VARIATION_COLS_CONTENT)
+                tag=_ResultsInfoErrorTag.INVALID_VARIATION_COLS_CONTENT)
 
         self._variation_cols: dict[str, str] = value
 
@@ -228,7 +192,7 @@ class Results(ABC):
         if not isinstance(value, Metrics):
             raise SimpleBenchTypeError(
                 f"metrics must be a Metrics instance, got {type(value)}",
-                tag=_ResultsErrorTag.INVALID_TYPE_TYPE)
+                tag=_ResultsInfoErrorTag.INVALID_TYPE_TYPE)
 
         self._metrics: Metrics = value
 
@@ -249,5 +213,5 @@ class Results(ABC):
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f"extra_info must be a dictionary, got {type(value)}",
-                tag=_ResultsErrorTag.INVALID_TYPE_TYPE)
+                tag=_ResultsInfoErrorTag.INVALID_TYPE_TYPE)
         self._extra_info: dict[str, Any] = value

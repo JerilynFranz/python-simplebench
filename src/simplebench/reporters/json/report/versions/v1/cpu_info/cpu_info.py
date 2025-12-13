@@ -67,13 +67,15 @@ class CPUInfo(BaseCPUInfo):
         :return: The hash_id string.
         """
         if self._hash_id == '':
-            hash_input = (
-                f"arch:{self.arch}\x00" +
-                f"bits:{self.bits}\x00" +
-                f"count:{self.count}\x00" +
-                f"arch_string_raw:{self.arch_string_raw}\x00" +
-                f"brand_raw:{self.brand_raw}"
+            # Get all __init__ params except 'hash_id' itself.
+            # Sorting ensures a consistent order for hashing.
+            hash_keys = sorted(k for k in self.init_params() if k != 'hash_id')
+
+            # Create a null-byte separated string of "key:value" pairs.
+            hash_input = "\x00".join(
+                f"{key}:{getattr(self, key)}" for key in hash_keys
             ).encode('utf-8')
+
             self._hash_id = hashlib.sha256(hash_input).hexdigest()
         return self._hash_id
 
@@ -221,62 +223,18 @@ class CPUInfo(BaseCPUInfo):
         :param data: The dictionary containing CPU information.
         :return: A CPUInfo instance.
         """
-        if not isinstance(data, dict):
-            raise SimpleBenchTypeError(
-                "data must be a dictionary",
-                tag=_CPUInfoErrorTag.INVALID_DATA_ARG_TYPE)
+        allowed_keys = cls.init_params()
+        allowed_keys['version'] = int
+        allowed_keys['type'] = str
 
-        known_keys = {
-            'hash_id',
-            'arch',
-            'bits',
-            'count',
-            'arch_string_raw',
-            'brand_raw',
-        }
-
-        version = data.get('version') or cls.VERSION
-        if not isinstance(version, int):
-            raise SimpleBenchTypeError(
-                "The 'version' property must be of type 'int' if set",
-                tag=_CPUInfoErrorTag.INVALID_VERSION_TYPE)
-
-        if version != cls.VERSION:
-            raise SimpleBenchTypeError(
-                f"The 'version' property must have the value {cls.VERSION} if set",
-                tag=_CPUInfoErrorTag.UNSUPPORTED_VERSION)
-
-        type_str = data.get('type') or cls.TYPE
-        if not isinstance(type_str, str):
-            raise SimpleBenchTypeError(
-                "The 'type' property must be of type 'str' if set",
-                tag=_CPUInfoErrorTag.INVALID_VERSION_TYPE)
-
-        if type_str != cls.TYPE:
-            raise SimpleBenchTypeError(
-                f"The 'type' property must have tye value '{cls.TYPE}' if set",
-                tag=_CPUInfoErrorTag.UNSUPPORTED_VERSION)
-
-        extra_keys = set(data.keys()) - known_keys - {'version', 'type'}
-        if extra_keys:
-            raise SimpleBenchTypeError(
-                f"Unexpected keys in data dictionary: {extra_keys}",
-                tag=_CPUInfoErrorTag.INVALID_DATA_ARG_EXTRA_KEYS)
-        missing_keys = known_keys - data.keys() - {'hash_id'}
-        if missing_keys:
-            raise SimpleBenchTypeError(
-                f"Missing required keys in data dictionary: {missing_keys}",
-                tag=_CPUInfoErrorTag.INVALID_DATA_ARG_MISSING_KEYS)
-
-        instance = cls(
-            hash_id=data.get('hash_id', ''),
-            arch=data['arch'],
-            bits=data['bits'],
-            count=data['count'],
-            arch_string_raw=data['arch_string_raw'],
-            brand_raw=data['brand_raw'])
-
-        return instance
+        kwargs = cls.import_data(
+            data=data,
+            allowed=allowed_keys,
+            skip={'version', 'type'},
+            optional={'hash_id'},
+            default={'hash_id': ''},
+            match_on={'version': cls.VERSION, 'type': cls.TYPE})
+        return cls(**kwargs)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert the CPUInfo to a dictionary suitable for JSON serialization.
@@ -286,15 +244,9 @@ class CPUInfo(BaseCPUInfo):
 
         :return: A dictionary representation of the CPUInfo.
         """
-        cls = self.__class__
-        result: dict[str, Any] = {
-            'version': cls.VERSION,
-            'type': cls.TYPE,
-            'hash_id': self.hash_id,
-            'arch': self.arch,
-            'bits': self.bits,
-            'count': self.count,
-            'arch_string_raw': self.arch_string_raw,
-            'brand_raw': self.brand_raw,
-        }
-        return result
+        property_keys = self.init_params().keys()
+        data = {key: getattr(self, key) for key in property_keys}
+        data['type'] = self.TYPE
+        data['version'] = self.VERSION
+
+        return data

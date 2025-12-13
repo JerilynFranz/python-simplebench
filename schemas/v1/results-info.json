@@ -1,61 +1,66 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json",
-    "title": "Report Schema (V1)",
-    "description": "SimpleBench JSON Report Schema (V1)",
+    "$id": "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json",
+    "title": "Results Schema (V1)",
+    "description": "SimpleBench JSON Results Schema (V1)",
     "type": "object",
     "properties": {
         "version": {
-            "description": "The version of the JSON report schema",
+            "title": "Version",
+            "description": "Version of the schema",
             "type": "integer",
             "const": 1
         },
         "type": {
             "title": "Type",
-            "description": "Type of the benchmark report",
+            "description": "Type of the result",
             "type": "string",
-            "const": "SimpleBenchReport::V1"
+            "const": "SimpleBenchResult::V1"
         },
         "group": {
             "title": "Group",
-            "description": "Group of the benchmark",
+            "description": "Group of the result",
             "type": "string"
         },
         "title": {
             "title": "Title",
-            "description": "Title of the benchmark",
+            "description": "Title of the result",
             "type": "string"
         },
         "description": {
             "title": "Description",
-            "description": "Description of the benchmark",
+            "description": "Description of the result",
             "type": "string"
+        },
+        "n": {
+            "title": "N",
+            "description": "Complexity analysis N value for the result",
+            "type": "number"
         },
         "variation_cols": {
             "title": "Variation Columns",
-            "description": "Variation columns for the benchmark",
+            "description": "Variation columns for the result",
             "type": "object"
         },
-        "results": {
-            "title": "Results",
-            "description": "Benchmark results",
-            "type": "array",
-            "$ref": "results-info.json",
-            "minItems": 1
+        "metrics": {
+            "$ref": "#/$defs/metrics"
         },
-        "machine": {
-            "$ref": "machine-info.json"
+        "extra_info": {
+            "title": "Extra Info",
+            "description": "A free-form object for third-party extensions or extra data.",
+            "type": "object",
+            "additionalProperties": true
         }
     },
     "required": [
-        "version",
         "type",
         "group",
         "title",
         "description",
+        "n",
         "variation_cols",
-        "results",
-        "machine"
+        "metrics",
+        "extra_info"
     ],
     "additionalProperties": false,
     "$defs": {

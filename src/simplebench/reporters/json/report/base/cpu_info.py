@@ -16,10 +16,11 @@ of the base CPUInfo representation at the time of the V1 schema release.
 from abc import ABC, abstractmethod
 from typing import Any
 
+from .hydrator import Hydrator
 from .json_schema import JSONSchema
 
 
-class CPUInfo(ABC):
+class CPUInfo(Hydrator, ABC):
     """Class representing CPU information in a JSON report."""
 
     VERSION: int = 0

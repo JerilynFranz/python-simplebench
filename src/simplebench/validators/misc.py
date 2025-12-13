@@ -209,7 +209,7 @@ def validate_type(
     return value  # type: ignore[return-value]
 
 
-def validate_string(
+def validate_string(  # noqa: C901
         value: Any,
         field_name: str,
         type_error_tag: ErrorTag,

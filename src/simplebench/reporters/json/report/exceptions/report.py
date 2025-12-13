@@ -6,6 +6,12 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ReportErrorTag(ErrorTag):
     """Error tags for JSON report exceptions."""
+    INVALID_DATA_ARG_EXTRA_KEYS = 'INVALID_DATA_ARG_EXTRA_KEYS'
+    """The data argument has extra keys that are not allowed."""
+    INVALID_DATA_ARG_MISSING_KEYS = 'INVALID_DATA_ARG_MISSING_KEYS'
+    """The data argument is missing required keys."""
+    INVALID_DATA_ARG_TYPE = 'INVALID_DATA_ARG_TYPE'
+    """The data argument is not of type dict."""
     INVALID_RESULTS_PROPERTY_ELEMENT_NOT_DICT = 'INVALID_RESULTS_PROPERTY_ELEMENT_NOT_DICT'
     """An element in the results object is not a dictionary."""
     INVALID_MACHINE_PROPERTY_TYPE = 'INVALID_MACHINE_PROPERTY_TYPE'

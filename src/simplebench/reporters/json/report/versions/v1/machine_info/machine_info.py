@@ -81,14 +81,16 @@ class MachineInfo(BaseMachineInfo):
         :return: The hash_id string.
         """
         if self._hash_id == '':
-            hash_input = (
-                f"processor:{self.processor}\x00" +
-                f"machine:{self.machine}\x00" +
-                f"system:{self.system}\x00" +
-                f"release:{self.release}\x00" +
-                f"node:{self.node}\x00" +
-                f"execution_environment:{self.execution_environment.hash_id}\x00" +
-                f"cpu:{self.cpu.hash_id}"
+            hash_keys = sorted(k for k in self.init_params() if k != 'hash_id')
+
+            def get_val(key: str) -> Any:
+                value = getattr(self, key)
+                if hasattr(value, 'hash_id'):
+                    return value.hash_id
+                return value
+
+            hash_input = "\x00".join(
+                f"{key}:{get_val(key)}" for key in hash_keys
             ).encode('utf-8')
             self._hash_id = hashlib.sha256(hash_input).hexdigest()
         return self._hash_id
@@ -266,62 +268,36 @@ class MachineInfo(BaseMachineInfo):
         :param data: The dictionary containing machine information.
         :return: A MachineInfo instance.
         """
-        if not isinstance(data, dict):
-            raise SimpleBenchTypeError(
-                "data must be a dictionary",
-                tag=_MachineInfoErrorTag.INVALID_DATA_ARG_TYPE)
-        known_keys = {
-            'hash_id',
-            'processor',
-            'machine',
-            'system',
-            'release',
-            'node',
-            'execution_environment',
-            'cpu',
-        }
-        extra_keys = set(data.keys()) - known_keys
-        if extra_keys:
-            raise SimpleBenchTypeError(
-                f"Unexpected keys in data dictionary: {extra_keys}",
-                tag=_MachineInfoErrorTag.INVALID_DATA_ARG_EXTRA_KEYS)
+        allowed_keys = cls.init_params()
+        allowed_keys['version'] = int
+        allowed_keys['type'] = str
 
-        missing_keys = known_keys - data.keys() - {'node'}
-        if missing_keys:
-            raise SimpleBenchTypeError(
-                f"Missing required keys in data dictionary: {missing_keys}",
-                tag=_MachineInfoErrorTag.INVALID_DATA_ARG_MISSING_KEYS)
-
-        instance = cls(
-            hash_id=data['hash_id'],
-            processor=data['processor'],
-            machine=data['machine'],
-            system=data['system'],
-            release=data['release'],
-            node=data.get('node', ''),
-            execution_environment=ExecutionEnvironmentV1.from_dict(
-                data['execution_environment']),
-            cpu=CPUInfoV1.from_dict(data['cpu'])
-        )
-
-        return instance
+        kwargs = cls.import_data(
+            data=data,
+            allowed=allowed_keys,
+            skip={'version', 'type'},
+            optional={'hash_id', 'node'},
+            default={'hash_id': '', 'node': ''},
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+            process_as={
+                'execution_environment': ExecutionEnvironmentV1.from_dict,
+                'cpu': CPUInfoV1.from_dict
+            })
+        return cls(**kwargs)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert the MachineInfo to a dictionary.
 
         :return: A dictionary representation of the MachineInfo.
         """
-        result: dict[str, Any] = {
-            'type': self.TYPE,
-            'version': self.VERSION,
-            'schema': self.ID,
-            'hash_id': self.hash_id,
-            'processor': self.processor,
-            'machine': self.machine,
-            'system': self.system,
-            'release': self.release,
-            'node': self.node,
-            'execution_environment': self.execution_environment.to_dict(),
-            'cpu': self.cpu.to_dict(),
-        }
-        return result
+        data: dict[str, Any] = {}
+        for key in self.init_params():
+            value = getattr(self, key)
+            if hasattr(value, 'to_dict'):
+                data[key] = value.to_dict()
+            else:
+                data[key] = value
+
+        data['type'] = self.TYPE
+        data['version'] = self.VERSION
+        return data

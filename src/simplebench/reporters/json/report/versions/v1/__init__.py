@@ -6,7 +6,7 @@ from .machine_info import MachineInfo
 from .metadata import Metadata
 from .python_info import PythonInfo
 from .report import Report
-from .results import Results
+from .results_info import ResultsInfo
 from .stats_block import StatsBlock
 
 __all__ = [
@@ -16,6 +16,6 @@ __all__ = [
     "Metadata",
     "PythonInfo",
     "Report",
-    "Results",
+    "ResultsInfo",
     "StatsBlock",
 ]

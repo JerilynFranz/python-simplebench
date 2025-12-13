@@ -4,8 +4,16 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class _ResultsErrorTag(ErrorTag):
+class _ResultsInfoErrorTag(ErrorTag):
     """Error tags for JSONResults v1 exceptions."""
+    INVALID_DATA_ARG_TYPE = "INVALID_DATA_ARG_TYPE"
+    """The data is not of type dict."""
+    UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION"
+    """The version is not supported."""
+    INVALID_TYPE_TYPE = "INVALID_TYPE_TYPE"
+    """The type is not of type string."""
+    INVALID_TYPE_VALUE = "INVALID_TYPE_VALUE"
+    """The type has an invalid value."""
     INVALID_METRICS_TYPE = "INVALID_METRICS_TYPE"
     """The metrics is not of type list."""
     INVALID_METRICS_CONTENT = "INVALID_METRICS_CONTENT"
@@ -50,16 +58,10 @@ class _ResultsErrorTag(ErrorTag):
     """The group is not of type string."""
     INVALID_GROUP_VALUE_EMPTY_STRING = "INVALID_GROUP_VALUE_EMPTY_STRING"
     """The group has an invalid value. Cannot be an empty string."""
-    INVALID_TYPE_TYPE = "INVALID_TYPE_TYPE"
-    """The type is not of type string."""
-    INVALID_TYPE_VALUE = "INVALID_TYPE_VALUE"
-    """The type has an invalid value."""
     INVALID_VERSION_TYPE = "INVALID_VERSION_TYPE"
     """The version is not of type integer."""
     INVALID_VERSION_VALUE = "INVALID_VERSION_VALUE"
     """The version has an invalid value."""
-    UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION"
-    """The version is not supported."""
     MISSING_INIT_IMPLEMENTATION = "MISSING_INIT_IMPLEMENTATION"
     """The __init__ method is not implemented in a subclass."""
     FROM_DICT_INVALID_DATA_TYPE = "FROM_DICT_INVALID_DATA_TYPE"

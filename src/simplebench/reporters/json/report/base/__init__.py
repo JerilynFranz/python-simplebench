@@ -2,26 +2,28 @@
 
 from .cpu_info import CPUInfo
 from .execution_environment import ExecutionEnvironment
+from .hydrator import Hydrator
 from .json_schema import JSONSchema
 from .machine_info import MachineInfo
 from .metadata import Metadata
 from .metrics import Metrics
 from .python_info import PythonInfo
 from .report import Report
-from .results import Results
+from .results_info import ResultsInfo
 from .stats_block import StatsBlock
 from .value_block import ValueBlock
 
 __all__ = [
     "CPUInfo",
     "ExecutionEnvironment",
+    "Hydrator",
     "JSONSchema",
     "MachineInfo",
     "Metadata",
     "Metrics",
     "PythonInfo",
     "Report",
-    "Results",
+    "ResultsInfo",
     "StatsBlock",
     "ValueBlock",
 ]

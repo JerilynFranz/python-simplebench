@@ -11,6 +11,12 @@
             "type": "string",
             "const": "SimpleBenchStatsBlock::V1"
         },
+        "version": {
+            "title": "Block Version",
+            "description": "The version of the block format. Must be '1' for Statistics Block version 1.",
+            "type": "integer",
+            "const": 1
+        },
         "semantic_type": {
             "title": "Measurement Type",
             "description": "The semantic type of the measurements, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Standard types use the 'simplebench_std' namespace. Users can define custom types using their own namespace.",
@@ -23,6 +29,17 @@
                 "simplebench_std::peak_memory_usage",
                 "my_plugin::syscalls_per_operation"
             ]
+        },
+        "name": {
+            "title": "Measurement Name",
+            "description": "Name of the measurement. This should be a human-readable string that describes the measurement.",
+            "type": "string",
+            "minLength": 1
+        },
+        "description": {
+            "title": "Measurement Description",
+            "description": "Description of the measurement. This should be a human-readable string that provides more details about the measurement.",
+            "type": "string"
         },
         "timer": {
             "title": "Timer",
@@ -103,7 +120,9 @@
     },
     "required": [
         "type",
+        "version",
         "semantic_type",
+        "name",
         "unit",
         "scale",
         "iterations",
