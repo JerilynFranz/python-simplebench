@@ -41,6 +41,21 @@ _BASE_TIMER_NAMES: dict[Callable[[], int], str] = {
 }
 
 
+def timer_identifier(timer: Callable[[], int]) -> str:
+    """Return a human-readable identifier for the given timer function.
+
+    :param timer: The timer function to identify.
+    :return: A string identifier for the timer.
+    :rtype: str
+    :raises SimpleBenchTypeError: If the provided timer is not supported.
+    """
+    if timer not in _BASE_TIMER_NAMES:
+        raise SimpleBenchTypeError(
+            f"The timer argument function '{str(timer)}' is not a supported timer function",
+            tag=_TimersErrorTag.TIMER_IDENTIFIER_INVALID_TIMER_FUNCTION)
+    return _BASE_TIMER_NAMES[timer]
+
+
 def _create_timers_profiles_module() -> ModuleType:
     """Create a module to hold dynamically created timer profile functions.
 

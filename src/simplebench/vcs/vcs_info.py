@@ -54,7 +54,7 @@ class VCSInfo(ABC):
                 tag=_VCSInfoErrorTag.BRANCH_INVALID_TYPE)
         self.validate_commit_id(self.commit_id)
         validate_iso8601_datetime(
-            self.commit_datetime,
+            self.commit_datetime, 'commit_datetime',
             type_tag=_VCSInfoErrorTag.COMMIT_DATETIME_INVALID_TYPE,
             value_tag=_VCSInfoErrorTag.COMMIT_DATETIME_INVALID_VALUE)
 

@@ -6,6 +6,7 @@ from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchVa
 
 
 def validate_iso8601_datetime(dt_str: str,
+                              field_name: str,
                               type_tag: ErrorTag,
                               value_tag: ErrorTag) -> str:
     """Validate that a string is a valid ISO 8601 datetime and return a string representation in UTC time.
@@ -19,11 +20,11 @@ def validate_iso8601_datetime(dt_str: str,
     """
     if not isinstance(dt_str, str):
         raise SimpleBenchTypeError(
-            f"Expected a string for ISO 8601 datetime, got {type(dt_str)}",
+            f"Expected a string for {field_name} ISO 8601 datetime, got {type(dt_str)}",
             tag=type_tag)
     if not dt_str:
         raise SimpleBenchValueError(
-            "ISO 8601 datetime string cannot be empty",
+            f"{field_name} ISO 8601 datetime string cannot be empty",
             tag=value_tag)
     try:
         dt = datetime.fromisoformat(dt_str)
@@ -31,5 +32,5 @@ def validate_iso8601_datetime(dt_str: str,
         return dt.isoformat()
     except ValueError as e:
         raise SimpleBenchValueError(
-            f"Invalid ISO 8601 datetime string: {dt_str}",
+            f"Invalid {field_name} ISO 8601 datetime string: {dt_str}",
             tag=value_tag) from e

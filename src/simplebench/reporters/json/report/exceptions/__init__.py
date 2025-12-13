@@ -3,7 +3,6 @@ from .cpu_info import _CPUInfoErrorTag
 from .execution_environment import _ExecutionEnvironmentErrorTag
 from .json_schema import _JSONSchemaErrorTag
 from .machine_info import _MachineInfoErrorTag
-from .metadata import _MetadataErrorTag
 from .metrics import _MetricsErrorTag
 from .python_info import _PythonInfoErrorTag
 from .report import _ReportErrorTag
@@ -17,7 +16,6 @@ __all__ = [
     "_ExecutionEnvironmentErrorTag",
     "_JSONSchemaErrorTag",
     "_MachineInfoErrorTag",
-    "_MetadataErrorTag",
     "_MetricsErrorTag",
     "_PythonInfoErrorTag",
     "_ReportErrorTag",

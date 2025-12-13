@@ -5,6 +5,18 @@
     "type": "object",
     "description": "Python interpreter information (V1)",
     "properties": {
+        "version": {
+            "title": "Schema Version",
+            "description": "Version of the Python interpreter information schema",
+            "type": "integer",
+            "const": 1
+        },
+        "type": {
+            "title": "Python Type",
+            "description": "Type of the Python information schema",
+            "type": "string",
+            "const": "SimpleBenchPythonInfo::V1 "
+        },
         "hash_id": {
             "title": "Hash ID",
             "description": "Unique 64 byte hexadecimal hash identifier for the Python interpreter information data. This can be used to identify identical Python interpreter configurations without revealing details.",
@@ -26,7 +38,7 @@
             "description": "Version of the Python implementation",
             "type": "string"
         },
-        "version": {
+        "python_version": {
             "title": "Python Version",
             "description": "Python version",
             "type": "string"
@@ -52,11 +64,13 @@
         }
     },
     "required": [
+        "version",
+        "type",
         "hash_id",
         "compiler",
         "implementation",
         "implementation_version",
-        "version",
+        "python_version",
         "build",
         "release",
         "system"

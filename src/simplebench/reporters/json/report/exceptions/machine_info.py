@@ -6,6 +6,12 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _MachineInfoErrorTag(ErrorTag):
     """Error tags for JSONMachineInfo exceptions."""
+    INVALID_VERSION_TYPE = 'INVALID_VERSION_TYPE'
+    """Attempted to set the version property to something other than a type int."""
+    UNSUPPORTED_VERSION = 'UNSUPPORTED_VERSION'
+    """Attempted to set the version property to an unsupported value."""
+    JSON_SCHEMA_VALIDATION_ERROR = 'JSON_SCHEMA_VALIDATION_ERROR'
+    """JSON schema validation failed for the MachineInfo object."""
     INVALID_HASH_ID_PROPERTY_TYPE = 'INVALID_HASH_ID_PROPERTY_TYPE'
     """Attempted to set the hash_id property to something other than a type str."""
     INVALID_HASH_ID_PROPERTY_VALUE = 'INVALID_HASH_ID_PROPERTY_VALUE'

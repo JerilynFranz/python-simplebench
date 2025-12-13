@@ -5,10 +5,17 @@ from typing import Any
 from simplebench.base import Hydrator
 
 from ..protocols import Environment
+from .json_schema import JSONSchema
 
 
 class PythonInfo(ABC, Environment, Hydrator):
     """Base class for all PythonInfo classes."""
+
+    SCHEMA: type[JSONSchema] = JSONSchema
+    """The JSON schema class for the PythonInfo class.
+
+    It must be overridden in subclasses to specify the correct JSON schema class.
+    """
 
     VERSION: int = 0
     """The PythonInfo version number.
@@ -43,41 +50,6 @@ class PythonInfo(ABC, Environment, Hydrator):
     def to_dict(self) -> dict:
         """Convert the PythonInfo object to a dictionary."""
         raise NotImplementedError("This method should be overridden by subclasses")
-
-    @property
-    @abstractmethod
-    def hash_id(self) -> str:
-        """Return the hash ID of the PythonInfo object.
-
-        The hash ID is a unique identifier for the PythonInfo object and
-        is used to uniquely identify the PythonInfo object in a collection.
-
-        It must be overridden in subclasses to specify the correct hash ID
-        for the subclass. It is a required property and must match the
-        following pattern: ^[a-f0-9]{64}$
-        """
-        raise NotImplementedError("This method should be overridden by subclasses")
-
-    @hash_id.setter
-    @abstractmethod
-    def hash_id(self, value: str) -> None:
-        """Set the hash ID of the PythonInfo object."""
-        raise NotImplementedError("This method should be overridden by subclasses")
-
-    @property
-    def version(self) -> int:
-        """Return the version of the PythonInfo object."""
-        return self.VERSION
-
-    @property
-    def type(self) -> str:
-        """Return the type of the PythonInfo object."""
-        return self.TYPE
-
-    @property
-    def schema_id(self) -> str:
-        """Return the JSON Schema $id of the PythonInfo object."""
-        return self.ID
 
     def is_execution_environment(self) -> None:
         """Declare that the PythonInfo object is an execution environment.

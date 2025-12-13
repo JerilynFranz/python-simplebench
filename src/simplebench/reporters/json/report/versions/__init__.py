@@ -6,39 +6,18 @@ numbers and dynamic retrieval of the appropriate class implementations based
 on the specified version.
 """
 from types import ModuleType
-from typing import TypeAlias, TypeVar
+from typing import TypeVar
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_int
 
-from ..base import ExecutionEnvironment, MachineInfo, Metadata, PythonInfo, Report, ResultsInfo, StatsBlock, ValueBlock
-from ..exceptions import (
-    _ExecutionEnvironmentErrorTag,
-    _MachineInfoErrorTag,
-    _MetadataErrorTag,
-    _PythonInfoErrorTag,
-    _ReportErrorTag,
-    _ResultsInfoErrorTag,
-    _StatsBlockErrorTag,
-    _ValueBlockErrorTag,
-)
+from ..base import CPUInfo, ExecutionEnvironment, MachineInfo, PythonInfo, Report, ResultsInfo, StatsBlock, ValueBlock
 from . import v1
 
-JSONErrorTags: TypeAlias = (
-    _ExecutionEnvironmentErrorTag |
-    _MachineInfoErrorTag |
-    _MetadataErrorTag |
-    _PythonInfoErrorTag |
-    _ReportErrorTag |
-    _ResultsInfoErrorTag |
-    _StatsBlockErrorTag |
-    _ValueBlockErrorTag)
-"""Type alias for all JSON report related error tags."""
-
 T = TypeVar('T',
+            type[CPUInfo],
             type[ExecutionEnvironment],
             type[MachineInfo],
-            type[Metadata],
             type[PythonInfo],
             type[Report],
             type[ResultsInfo],
@@ -55,9 +34,9 @@ CURRENT_VERSION: int = max(_known_versions.keys())
 """The current JSON report version number."""
 
 
-def validate_version(version: int,
-                     type_tag: ErrorTag,
-                     value_tag: ErrorTag) -> int:
+def _validate_version(version: int,
+                      type_tag: ErrorTag,
+                      value_tag: ErrorTag) -> int:
     """Validate if the given version is supported.
 
     :param version: The version number to validate.
@@ -81,9 +60,9 @@ def json_class(version: int,
                unsupported_tag: ErrorTag) -> T:
 
     """Get the JSON class type for a given version and class type."""
-    validate_version(version,
-                     type_tag,
-                     unsupported_tag)
+    _validate_version(version,
+                      type_tag,
+                      unsupported_tag)
     versioned_module: ModuleType = _known_versions[version]
     if not hasattr(versioned_module, class_type.__name__):
         raise SimpleBenchTypeError(

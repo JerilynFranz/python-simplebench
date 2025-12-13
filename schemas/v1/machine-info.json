@@ -65,6 +65,8 @@
         }
     },
     "required": [
+        "version",
+        "type",
         "hash_id",
         "processor",
         "machine",

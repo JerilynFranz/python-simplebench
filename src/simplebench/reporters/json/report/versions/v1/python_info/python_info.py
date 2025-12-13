@@ -15,17 +15,17 @@ from .python_info_schema import PythonInfoSchema
 class PythonInfo(BasePythonInfo):
     """Class representing machine information in a JSON report."""
 
-    TYPE: str = PythonInfoSchema.TYPE
-    """The JSON PythonInfo type property value for version 1 reports."""
-
-    VERSION: int = PythonInfoSchema.VERSION
-    """The JSON PythonInfo version number."""
-
-    ID: str = PythonInfoSchema.ID
-    """The JSON PythonInfo identifier property value for version 1 reports."""
-
     SCHEMA: type[JSONSchema] = PythonInfoSchema
     """The JSON schema class for version 1 reports."""
+
+    TYPE: str = SCHEMA.TYPE
+    """The JSON PythonInfo type property value for version 1 reports."""
+
+    VERSION: int = SCHEMA.VERSION
+    """The JSON PythonInfo version number."""
+
+    ID: str = SCHEMA.ID
+    """The JSON PythonInfo identifier property value for version 1 reports."""
 
     def __init__(self, *,
                  hash_id: str,

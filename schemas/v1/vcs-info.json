@@ -5,7 +5,19 @@
     "description": "Version control system information (V1)",
     "type": "object",
     "properties": {
-        "vcs_type": {
+        "version": {
+            "title": "Version",
+            "description": "The version of the VCS info schema",
+            "type": "integer",
+            "const": 1
+        },
+        "type": {
+            "title": "Type",
+            "description": "The type of the VCS info schema",
+            "type": "string",
+            "const": "SimpleBenchVCSInfo::V1"
+        },
+        "vcs": {
             "title": "VCS Type",
             "description": "The type of version control system",
             "type": "string",
@@ -42,7 +54,9 @@
         }
     },
     "required": [
-        "vcs_type",
+        "version",
+        "type",
+        "vcs",
         "commit_id",
         "branch",
         "is_dirty",

@@ -6,6 +6,12 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ValueBlockErrorTag(ErrorTag):
     """Error tags for JSON value block representation exceptions."""
+    INVALID_VERSION_TYPE = "INVALID_VERSION_TYPE"
+    """The version value is not an integer."""
+    UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION"
+    """The version value is not supported."""
+    JSON_SCHEMA_VALIDATION_ERROR = "JSON_SCHEMA_VALIDATION_ERROR"
+    """The JSON value does not conform to the expected schema."""
     INVALID_DATA_ARG_EXTRA_KEYS = "INVALID_DATA_ARG_EXTRA_KEYS"
     """The data argument contains unexpected extra keys."""
     INVALID_DATA_ARG_MISSING_KEYS = "INVALID_DATA_ARG_MISSING_KEYS"

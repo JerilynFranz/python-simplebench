@@ -19,11 +19,11 @@ from copy import copy
 from typing import Any, TypeAlias
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.reporters.json.report.exceptions import _MetricsErrorTag
 from simplebench.validators import validate_namespaced_identifier, validate_string
 
-from ..exceptions import _MetricsErrorTag
-from .stats_block import StatsBlock
-from .value_block import ValueBlock
+from ..stats_block import StatsBlock
+from ..value_block import ValueBlock
 
 MetricItem: TypeAlias = StatsBlock | ValueBlock
 
@@ -36,15 +36,6 @@ class Metrics(UserDict):
 
     The typing enforcement is done in the __setitem__ method.
     """
-
-    VERSION: int = 0
-    """The JSON metrics version number.
-
-    :note: This should be overridden in sub-classes."""
-
-    TYPE: str = "SimpleBenchMetrics::V0"
-    """The JSON metrics type."""
-
     @classmethod
     def from_dict(cls, data: dict[str, dict[str, Any]]) -> "Metrics":
         """Create a Metrics object instance from a dictionary.
@@ -52,11 +43,8 @@ class Metrics(UserDict):
         :param data: Dictionary containing the JSON results object data.
         :return: JSON Metrics object instance.
         """
-
-        cls.validate_type(data.get('type'), cls.TYPE)
-
-        value_block: str = f"SimpleBenchValueBlock::V{cls.VERSION}"
-        stats_block: str = f"SimpleBenchStatsBlock::V{cls.VERSION}"
+        value_block: str = ValueBlock.TYPE
+        stats_block: str = StatsBlock.TYPE
 
         metrics: dict[str, MetricItem] = {}
         for metric_name, metric_data in data.get('metrics', {}).items():
@@ -100,26 +88,6 @@ class Metrics(UserDict):
                     f"Metric item must be a StatsBlock or ValueBlock, got {type(metric_object)}",
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
         super().__init__(copy(metrics))
-
-    @classmethod
-    def validate_type(cls, found: Any, expected: str) -> str:
-        """Validate the type.
-
-        :param found: The type string to validate.
-        :param expected: The expected type string.
-        :return: The validated type string.
-        :raise SimpleBenchTypeError: If the type is not a string.
-        :raises SimpleBenchValueError: If the type is invalid.
-        """
-        if not isinstance(found, str):
-            raise SimpleBenchValueError(
-                f"type must be a string, got {type(found)}",
-                tag=_MetricsErrorTag.INVALID_TYPE_TYPE)
-        if found != expected:
-            raise SimpleBenchValueError(
-                f"Incorrect type for JSONMetrics: {found} (expected '{expected}')",
-                tag=_MetricsErrorTag.INVALID_TYPE_VALUE)
-        return found
 
     def __setitem__(self, key: str, value: MetricItem) -> None:
         """Set a metric item in the metrics dictionary.

@@ -19,7 +19,12 @@ from simplebench.reporters.json.report.base import JSONSchema, MachineInfo
 from simplebench.reporters.json.report.base import Report as BaseReport
 from simplebench.reporters.json.report.base import ResultsInfo
 from simplebench.reporters.json.report.exceptions import _ReportErrorTag
-from simplebench.validators import validate_sequence_of_str, validate_sequence_of_type, validate_string
+from simplebench.validators import (
+    validate_iso8601_datetime,
+    validate_sequence_of_str,
+    validate_sequence_of_type,
+    validate_string,
+)
 
 from ..machine_info import MachineInfo as MachineInfoV1
 from ..results_info import ResultsInfo as ResultsV1
@@ -42,6 +47,7 @@ class Report(BaseReport):
     """The JSON report ID property value for version 1 reports."""
 
     def __init__(self, *,
+                 timestamp: str,
                  group: str,
                  title: str,
                  description: str,
@@ -49,6 +55,7 @@ class Report(BaseReport):
                  results: list[ResultsInfo],
                  machine: MachineInfo) -> None:
         """Initialize a Report base instance."""
+        self.timestamp = timestamp
         self.group = group
         self.title = title
         self.description = description
@@ -107,6 +114,22 @@ class Report(BaseReport):
         data['type'] = self.TYPE
         data['version'] = self.VERSION
         return data
+
+    @property
+    def timestamp(self) -> str:
+        """Get the timestamp property."""
+        return self._timestamp
+
+    @timestamp.setter
+    def timestamp(self, value: str) -> None:
+        """Set the timestamp property.
+
+        :param value: The timestamp value to set.
+        """
+        self._timestamp: str = validate_iso8601_datetime(
+            value, 'timestamp',
+            _ReportErrorTag.INVALID_TIMESTAMP_PROPERTY_TYPE,
+            _ReportErrorTag.INVALID_TIMESTAMP_PROPERTY_VALUE)
 
     @property
     def group(self) -> str:

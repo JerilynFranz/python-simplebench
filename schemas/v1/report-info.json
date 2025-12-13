@@ -43,6 +43,8 @@
     },
     "required": [
         "type",
+        "version",
+        "reporter_type",
         "name",
         "output_format",
         "uri"

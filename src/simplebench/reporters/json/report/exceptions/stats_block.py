@@ -6,6 +6,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _StatsBlockErrorTag(ErrorTag):
     """Error tags for JSON stats summary exceptions."""
+    JSON_SCHEMA_VALIDATION_ERROR = "JSON_SCHEMA_VALIDATION_ERROR"
+    """The JSON data does not conform to the expected schema."""
     INVALID_DATA_ARG_EXTRA_KEYS = "INVALID_DATA_ARG_EXTRA_KEYS"
     """The data argument contains extra keys."""
     INVALID_DATA_ARG_MISSING_KEYS = "INVALID_DATA_ARG_MISSING_KEYS"

@@ -64,6 +64,8 @@
         }
     },
     "required": [
+        "version",
+        "type",
         "hash_id",
         "arch",
         "bits",

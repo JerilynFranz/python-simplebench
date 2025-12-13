@@ -54,6 +54,7 @@
     },
     "required": [
         "type",
+        "version",
         "group",
         "title",
         "description",

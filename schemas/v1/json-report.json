@@ -16,6 +16,13 @@
             "type": "string",
             "const": "SimpleBenchReport::V1"
         },
+        "timestamp": {
+            "title": "Time Stamp",
+            "description": "Datetime of the benchmark report as an ISO 8601 datetime string in UTC",
+            "type": "string",
+            "format": "date-time",
+            "examples": ["2023-10-05T14:48:00.000Z"]
+        },
         "group": {
             "title": "Group",
             "description": "Group of the benchmark",
@@ -50,6 +57,7 @@
     "required": [
         "version",
         "type",
+        "timestamp",
         "group",
         "title",
         "description",

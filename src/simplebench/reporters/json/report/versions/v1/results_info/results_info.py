@@ -6,11 +6,11 @@ The V1 Results object represents the results section of a version 1 JSON report.
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.json.report.base import Metrics
 from simplebench.reporters.json.report.base import ResultsInfo as BaseResultsInfo
 from simplebench.reporters.json.report.exceptions import _ResultsInfoErrorTag
 from simplebench.validators import validate_float, validate_string
 
+from .. import Metrics
 from .results_info_schema import ResultsInfoSchema
 
 

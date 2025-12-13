@@ -45,6 +45,13 @@ class ReportSchema(JSONSchema):
                     "type": "string",
                     "const": cls.TYPE
                 },
+                "timestamp": {
+                    "title": "Timestamp",
+                    "description": "Timestamp of the benchmark report in ISO 8601 format (UTC)",
+                    "type": "string",
+                    "format": "date-time",
+                    "examples": ["2023-04-01T12:00:00Z"]
+                },
                 "group": {
                     "title": "Group",
                     "description": "Group of the benchmark",

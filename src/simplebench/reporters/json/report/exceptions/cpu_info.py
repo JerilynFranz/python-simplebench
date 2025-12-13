@@ -6,6 +6,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _CPUInfoErrorTag(ErrorTag):
     """Error tags for JSONCPUInfo reporter base class."""
+    JSON_SCHEMA_VALIDATION_ERROR = "JSON_SCHEMA_VALIDATION_ERROR"
+    """The JSON data does not conform to the expected schema."""
     INVALID_VERSION_TYPE = "INVALID_VERSION_TYPE"
     """The 'version' property is not of type 'int'."""
     UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION"

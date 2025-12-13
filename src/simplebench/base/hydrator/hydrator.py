@@ -1,32 +1,30 @@
-"""Base class for JSON objects
+"""Base class for object <-> dictionary conversion and validation.
 
-This module defines an base class `Hydrator` for objects, which includes methods
+This module defines a base class `Hydrator` for objects, which includes methods
 for initializing, converting to and from dictionaries, and validating against a
 set of allowed parameters.
-
 """
 import inspect
 from functools import cache
 from typing import Any, Callable, Iterable, Sequence, get_args, get_origin, get_type_hints
 
-from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_iterable_of_type, validate_type
 
 from .exceptions import _HydratorErrorTag
 
 
 def _validate_allowed(
-        allowed: dict[str, Any], error_tag: type[ErrorTag]) -> dict[str, Any]:
+        allowed: dict[str, Any]) -> dict[str, Any]:
     """Validate the allowed parameters dictionary.
 
     :param allowed: The allowed parameters dictionary to validate.
-    :param error_tag: The error tag to use for raising exceptions.
     :return: The validated allowed parameters dictionary.
     :raises: SimpleBenchTypeError if the allowed parameters dictionary is invalid.
     :raises: SimpleBenchValueError if the allowed parameters dictionary is empty.
     """
     validate_type(allowed, dict, 'allowed',
-                  error_tag.INVALID_ALLOWED_TYPE)  # type: ignore[reportAttributeAccessIssue]
+                  _HydratorErrorTag.INVALID_ALLOWED_TYPE)
 
     for value in allowed.values():
         # A valid type annotation is either a simple type (like `int`)
@@ -36,65 +34,62 @@ def _validate_allowed(
         if not (is_simple_type or is_generic_type):
             raise SimpleBenchTypeError(
                 f"All values in `allowed` must be a valid type annotation, but got {value}",
-                tag=error_tag.INVALID_ALLOWED_VALUE_TYPE)  # type: ignore[reportAttributeAccessIssue]
+                tag=_HydratorErrorTag.INVALID_ALLOWED_VALUE_TYPE)
 
     if len(allowed) == 0:
         raise SimpleBenchValueError(
             "The `allowed` dictionary cannot be empty",
-            tag=error_tag.INVALID_ALLOWED_EMPTY)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_ALLOWED_EMPTY)
     return allowed
 
 
-def _validate_skip(skip: Iterable[str], allowed: dict[str, type], error_tag: type[ErrorTag]) -> set[str]:
+def _validate_skip(skip: Iterable[str], allowed: dict[str, type]) -> set[str]:
     """Validate the skip iterable.
 
     :param skip: The skip iterable to validate.
-    :param error_tag: The error tag to use for raising exceptions.
     :return: The validated skip set.
     :raises: SimpleBenchTypeError if the skip iterable is invalid.
     """
     skip_set = set(validate_iterable_of_type(
         skip, str, 'skip',
-        error_tag.INVALID_SKIP_TYPE,  # type: ignore[reportAttributeAccessIssue]
-        error_tag.INVALID_SKIP_ITEM_TYPE,  # type: ignore[reportAttributeAccessIssue]
+        _HydratorErrorTag.INVALID_SKIP_TYPE,
+        _HydratorErrorTag.INVALID_SKIP_ITEM_TYPE,
         allow_empty=True, exact_type=False))
     if not all(field in allowed for field in skip_set):
         raise SimpleBenchValueError(
             "All values in `skip` must match a key in `allowed`",
-            tag=error_tag.INVALID_SKIP_VALUE)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_SKIP_VALUE)
 
     return skip_set
 
 
-def _validate_optional(optional: Iterable[str], allowed: dict[str, type], error_tag: type[ErrorTag]) -> set[str]:
+def _validate_optional(optional: Iterable[str], allowed: dict[str, type]) -> set[str]:
     """Validate the optional iterable.
 
     :param optional: The optional iterable to validate.
     :param allowed: The allowed parameters dictionary to use for validation.
-    :param error_tag: The error tag to use for raising exceptions.
     :return: The validated optional set.
     :raises: SimpleBenchTypeError if the optional iterable is invalid.
     :raises: SimpleBenchValueError if the optional iterable contains invalid values.
     """
     optional_set = set(validate_iterable_of_type(
         optional, str, 'optional',
-        error_tag.INVALID_OPTIONAL_TYPE,  # type: ignore[reportAttributeAccessIssue]
-        error_tag.INVALID_OPTIONAL_ITEM_TYPE,  # type: ignore[reportAttributeAccessIssue]
+        _HydratorErrorTag.INVALID_OPTIONAL_TYPE,
+        _HydratorErrorTag.INVALID_OPTIONAL_ITEM_TYPE,
         allow_empty=True, exact_type=False))
     if not all(field in allowed for field in optional_set):
         raise SimpleBenchValueError(
             "All values in `optional` must match a key in `allowed`",
-            tag=error_tag.INVALID_OPTIONAL_ITEM_VALUE)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_OPTIONAL_ITEM_VALUE)
 
     return optional_set
 
 
-def _validate_default(default: dict[str, Any], optional: set[str], error_tag: type[ErrorTag]) -> dict[str, Any]:
+def _validate_default(default: dict[str, Any], optional: set[str]) -> dict[str, Any]:
     """Validate the default dictionary.
 
     :param default: The default dictionary to validate.
     :param optional: The optional set to use for validation.
-    :param error_tag: The error tag to use for raising exceptions.
     :return: The validated default dictionary.
     :raises: SimpleBenchTypeError if the default dictionary is invalid.
     :raises: SimpleBenchValueError if the default dictionary contains invalid values.
@@ -102,22 +97,21 @@ def _validate_default(default: dict[str, Any], optional: set[str], error_tag: ty
     if not isinstance(default, dict):
         raise SimpleBenchTypeError(
             "The `default` parameter must be of type `dict`",
-            tag=error_tag.INVALID_DEFAULT_TYPE)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_DEFAULT_TYPE)
 
     if not all(field in optional for field in default.keys()):
         raise SimpleBenchValueError(
             "All keys in `default` must match a key in `optional`",
-            tag=error_tag.INVALID_DEFAULT_KEY)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_DEFAULT_KEY)
 
     return default
 
 
-def _validate_match_on(match_on: dict[str, Any], allowed: dict[str, type], error_tag: type[ErrorTag]) -> dict[str, Any]:
+def _validate_match_on(match_on: dict[str, Any], allowed: dict[str, type]) -> dict[str, Any]:
     """Validate the match_on dictionary.
 
     :param match_on: The match_on dictionary to validate.
     :param allowed: The allowed parameters dictionary to use for validation.
-    :param error_tag: The error tag to use for raising exceptions.
     :return: The validated match_on dictionary.
     :raises: SimpleBenchTypeError if the match_on dictionary is invalid.
     :raises: SimpleBenchValueError if the match_on dictionary contains invalid values.
@@ -125,25 +119,23 @@ def _validate_match_on(match_on: dict[str, Any], allowed: dict[str, type], error
     if not isinstance(match_on, dict):
         raise SimpleBenchTypeError(
             "The `match_on` parameter must be of type `dict`",
-            tag=error_tag.INVALID_MATCH_ON_TYPE)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_MATCH_ON_TYPE)
 
     if not all(field in allowed for field in match_on.keys()):
         raise SimpleBenchValueError(
             "All keys in `match_on` must match a key in `allowed`",
-            tag=error_tag.INVALID_MATCH_ON_KEY)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_MATCH_ON_KEY)
 
     return match_on
 
 
 def _validate_process_as(
         process_as: dict[str, Callable[[Any], Any]],
-        allowed: dict[str, type],
-        error_tag: type[ErrorTag]) -> dict[str, Callable[[Any], Any]]:
+        allowed: dict[str, type]) -> dict[str, Callable[[Any], Any]]:
     """Validate the process_as dictionary.
 
     :param process_as: The process_as dictionary to validate.
     :param allowed: The allowed parameters dictionary to use for validation.
-    :param error_tag: The error tag to use for raising exceptions.
     :return: The validated process_as dictionary.
     :raises: SimpleBenchTypeError if the process_as dictionary is invalid.
     :raises: SimpleBenchValueError if the process_as dictionary contains invalid values.
@@ -151,36 +143,36 @@ def _validate_process_as(
     if not isinstance(process_as, dict):
         raise SimpleBenchTypeError(
             "The `process_as` parameter must be of type `dict`",
-            tag=error_tag.INVALID_PROCESS_AS_TYPE)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_PROCESS_AS_TYPE)
 
     if not all(field in allowed for field in process_as.keys()):
         raise SimpleBenchValueError(
             "All keys in `process_as` must match a key in `allowed`",
-            tag=error_tag.INVALID_PROCESS_AS_KEY)  # type: ignore[reportAttributeAccessIssue]
+            tag=_HydratorErrorTag.INVALID_PROCESS_AS_KEY)
 
     for call in process_as.values():
         # must be callable with exactly one parameter and a return type annotation
         if not callable(call):
             raise SimpleBenchTypeError(
                 "All values in `process_as` must be callable",
-                tag=error_tag.INVALID_PROCESS_AS_VALUE)  # type: ignore[reportAttributeAccessIssue]
+                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NOT_CALLABLE)
 
         call_signature = inspect.signature(call)
         if len(call_signature.parameters) != 1:
             raise SimpleBenchTypeError(
                 "All values in `process_as` must be callable with exactly one parameter",
-                tag=error_tag.INVALID_PROCESS_AS_VALUE)  # type: ignore[reportAttributeAccessIssue]
+                tag=_HydratorErrorTag.INVALID_PROCESS_AS_TOO_MANY_PARAMETERS)
         param = list(call_signature.parameters.values())[0]
         if param.kind not in [inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.POSITIONAL_ONLY]:
             raise SimpleBenchTypeError(
                 "All values in `process_as` must be callable with a single positional parameter",
-                tag=error_tag.INVALID_PROCESS_AS_VALUE)  # type: ignore[reportAttributeAccessIssue]
+                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NOT_POSITIONAL)
 
         return_annotation = call_signature.return_annotation
-        if return_annotation == inspect.Parameter.empty or not issubclass(return_annotation, type):
+        if return_annotation == inspect.Parameter.empty:
             raise SimpleBenchTypeError(
                 "All values in `process_as` must be callable with a return type annotation",
-                tag=error_tag.INVALID_PROCESS_AS_VALUE)  # type: ignore[reportAttributeAccessIssue]
+                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NO_RETURN_ANNOTATION)
 
     return process_as
 
@@ -259,8 +251,7 @@ class Hydrator:
             optional: Iterable[str] | None = None,
             default: dict[str, Any] | None = None,
             match_on: dict[str, Any] | None = None,
-            process_as: dict[str, Callable[[Any], Any]] | None = None,
-            error_tag: type[ErrorTag] = _HydratorErrorTag) -> dict[str, Any]:
+            process_as: dict[str, Callable[[Any], Any]] | None = None) -> dict[str, Any]:
         """Process and validate the data dictionary.
 
         :param data: The data dictionary to process.
@@ -281,50 +272,36 @@ class Hydrator:
                         the input data before storing in the output. This is processed AFTER the
                         match_on rules for input are checked.
                         Only keys that are present in the `allowed` dictionary can have process_as rules.
-        :param error_tag: The error tag to use for raising exceptions. Default is `_BuilderErrorTag`.
-            If passed, it will be used to raise exceptions with a custom error tag. This is useful
-            for overriding the default error tag with a custom one. The same enum keys are used to raise
-            exceptions with a custom error tag.
         :return: The processed and validated data dictionary.
         :raises: SimpleBenchTypeError if the data does not match the rules.
 
         Raises:
             SimpleBenchValueError: If the data does not match the rules.
         """
-        error_tag = validate_type(
-                        error_tag, type[ErrorTag], 'error_tag',
-                        _HydratorErrorTag.INVALID_ERROR_TAG_TYPE)
-
         validate_type(data, dict, 'data',
-                      error_tag.INVALID_DATA_TYPE)  # type: ignore[reportAttributeAccessIssue]
+                      _HydratorErrorTag.INVALID_DATA_TYPE)
         if not all(isinstance(key, str) for key in data.keys()):
             raise SimpleBenchTypeError(
                 "All keys in the data dictionary must be of type 'str'",
-                tag=error_tag.INVALID_DATA_KEY_TYPE)  # type: ignore[reportAttributeAccessIssue]
+                tag=_HydratorErrorTag.INVALID_DATA_KEY_TYPE)
 
-        allowed_fields: dict[str, type] = _validate_allowed(allowed=allowed,
-                                                            error_tag=error_tag)
+        allowed_fields: dict[str, type] = _validate_allowed(allowed=allowed)
 
         skip_fields: set[str] = _validate_skip(skip=skip or set(),
-                                               allowed=allowed_fields,
-                                               error_tag=error_tag)
+                                               allowed=allowed_fields)
 
         optional_fields: set[str] = _validate_optional(optional=optional or set(),
-                                                       allowed=allowed_fields,
-                                                       error_tag=error_tag)
+                                                       allowed=allowed_fields)
 
         default_fields: dict[str, Any] = _validate_default(default=default or {},
-                                                           optional=optional_fields,
-                                                           error_tag=error_tag)
+                                                           optional=optional_fields)
 
         match_on_fields: dict[str, Any] = _validate_match_on(match_on=match_on or {},
-                                                             allowed=allowed_fields,
-                                                             error_tag=error_tag)
+                                                             allowed=allowed_fields)
 
         process_as_fields: dict[str, Callable[[Any], Any]] = _validate_process_as(
                                                                 process_as=process_as or {},
-                                                                allowed=allowed_fields,
-                                                                error_tag=error_tag)
+                                                                allowed=allowed_fields)
 
         # Apply default values to the data dictionary
         for field, default_value in default_fields.items():
@@ -336,21 +313,21 @@ class Hydrator:
             if data.get(field) != expected_value:
                 raise SimpleBenchValueError(
                     f"The value of '{field}' must be '{expected_value}'",
-                    tag=error_tag.INVALID_MATCH_ON_VALUE)  # type: ignore[reportAttributeAccessIssue]
+                    tag=_HydratorErrorTag.INVALID_MATCH_ON_VALUE)
 
         # Validate the data dictionary against the allowed fields
         for field in data.keys():
             if field not in allowed_fields:
                 raise SimpleBenchValueError(
                     f"The key '{field}' is not allowed",
-                    tag=error_tag.INVALID_DATA_KEY)  # type: ignore[reportAttributeAccessIssue]
+                    tag=_HydratorErrorTag.INVALID_DATA_KEY)
 
         # Validate the data dictionary against the optional fields
         for field in allowed_fields:
             if field not in data and field not in optional_fields:
                 raise SimpleBenchValueError(
                     f"The key '{field}' is missing",
-                    tag=error_tag.INVALID_DATA_KEY)  # type: ignore[reportAttributeAccessIssue]
+                    tag=_HydratorErrorTag.INVALID_DATA_KEY)
 
         # Shallow copy the data dictionary to the output dictionary
         output: dict[str, Any] = data.copy()
@@ -372,6 +349,6 @@ class Hydrator:
             if not _is_instance_of_generic(value, allowed_fields[field]):
                 raise SimpleBenchTypeError(
                     f"The value of '{field}' does not match the expected type '{allowed_fields[field]}'",
-                    tag=error_tag.INVALID_DATA_VALUE_TYPE)  # type: ignore[reportAttributeAccessIssue]
+                    tag=_HydratorErrorTag.INVALID_DATA_VALUE_TYPE)
 
         return output

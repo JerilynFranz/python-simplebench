@@ -1,1 +1,1 @@
-"""JSONReport public API."""
+"""JSON Report public API."""

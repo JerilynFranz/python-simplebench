@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ReportErrorTag(ErrorTag):
     """Error tags for JSON report exceptions."""
+    INVALID_TIMESTAMP_PROPERTY_TYPE = 'INVALID_TIMESTAMP_PROPERTY_TYPE'
+    """Attempted to set the timestamp property to something other than a type str."""
+    INVALID_TIMESTAMP_PROPERTY_VALUE = 'INVALID_TIMESTAMP_PROPERTY_VALUE'
+    """Attempted to set the timestamp property to something other than an ISO 8601 datetime string."""
     INVALID_DATA_ARG_EXTRA_KEYS = 'INVALID_DATA_ARG_EXTRA_KEYS'
     """The data argument has extra keys that are not allowed."""
     INVALID_DATA_ARG_MISSING_KEYS = 'INVALID_DATA_ARG_MISSING_KEYS'

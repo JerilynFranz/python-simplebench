@@ -6,6 +6,11 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _TimersErrorTag(ErrorTag):
     """ErrorTags for simplebench.timers in SimpleBench."""
+
+    # timer_identifier() tags
+    TIMER_IDENTIFIER_INVALID_TIMER_FUNCTION = "TIMER_IDENTIFIER_INVALID_TIMER_FUNCTION"
+    """The timer argument was not a supported timer function"""
+
     # _timer_profile_function() tags
     TIMER_PROFILE_FUNCTION_INVALID_ROUNDS_TYPE = "TIMER_PROFILE_FUNCTION_INVALID_ROUNDS_TYPE"
     """The rounds argument was not an int"""

@@ -6,6 +6,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _PythonInfoErrorTag(ErrorTag):
     """ErrorTags for PythonInfo classes"""
+    JSON_SCHEMA_VALIDATION_ERROR = "JSON_SCHEMA_VALIDATION_ERROR"
+    """JSON schema validation error"""
     INVALID_COMPILER_PROPERTY_TYPE = "INVALID_COMPILER_PROPERTY_TYPE"
     """Invalid compiler property type"""
     INVALID_COMPILER_PROPERTY_VALUE = "INVALID_COMPILER_PROPERTY_VALUE"
