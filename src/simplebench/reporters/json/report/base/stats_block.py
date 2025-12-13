@@ -38,8 +38,8 @@ class StatsBlock(Hydrator, ABC):
         """Initialize a StatsBlock base instance."""
         raise NotImplementedError("__init__ must be overridden in subclasses")
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_dict(cls, data: dict) -> 'StatsBlock':
         """Create a StatsBlock instance from a dictionary.
 

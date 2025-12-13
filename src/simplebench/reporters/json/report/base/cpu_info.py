@@ -55,8 +55,8 @@ class CPUInfo(Hydrator, ABC):
             "__init__ is an abstract method and must be implemented by a subclass."
         )
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_dict(cls, data: dict[str, Any]) -> 'CPUInfo':
         """Create a CPUInfo instance from a dictionary."""
         raise NotImplementedError(

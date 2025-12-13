@@ -40,8 +40,8 @@ class PythonInfo(ABC, Environment, Hydrator):
         """Initialize the PythonInfo class."""
         raise NotImplementedError("This method should be overridden by subclasses")
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_dict(cls, data: dict[str, Any]) -> 'PythonInfo':
         """Create a PythonInfo object from a dictionary."""
         raise NotImplementedError("This method should be overridden by subclasses")

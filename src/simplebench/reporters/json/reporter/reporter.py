@@ -16,10 +16,10 @@ from simplebench.type_proxies import is_case
 from simplebench.utils import get_machine_info
 from simplebench.validators import validate_type
 
+from ..report.versions import CURRENT_VERSION
 from .config import JSONConfig
 from .exceptions import _JSONReporterErrorTag
 from .options import JSONOptions
-from simplebench.reporters.json.report.versions import CURRENT_VERSION
 
 Options: TypeAlias = JSONOptions
 
@@ -184,6 +184,7 @@ class JSONReporter(Reporter):
                                 _JSONReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         full_data: bool = options.full_data if isinstance(options, Options) else False
+
         with StringIO() as jsonfile:
             case_dict = case.as_dict(full_data=full_data)
             try:

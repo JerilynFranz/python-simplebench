@@ -21,8 +21,8 @@ class ValueBlock(Hydrator, ABC):
     SCHEMA: type[JSONSchema] = JSONSchema
     """JSON schema for the ValueBlock class."""
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_dict(cls, data: dict) -> "ValueBlock":
         """Create a ValueBlock instance from a dictionary.
 

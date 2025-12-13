@@ -27,8 +27,8 @@ class Report(Hydrator, ABC):
         """Initialize a Report base instance."""
         raise NotImplementedError("__init__ must be overridden in subclasses")
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_dict(cls, data: dict) -> Report:
         """Create a Report instance from a dictionary.
 

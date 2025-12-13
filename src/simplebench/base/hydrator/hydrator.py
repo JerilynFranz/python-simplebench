@@ -213,8 +213,8 @@ def _is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
 class Hydrator:
     """Base class providing convience methods for processing a JSON object."""
 
-    @cache
     @classmethod
+    @cache
     def init_params(cls) -> dict[str, Any]:
         """Return a dictionary of the parameters that can be passed to the constructor.
 

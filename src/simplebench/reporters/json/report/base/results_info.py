@@ -52,8 +52,8 @@ class ResultsInfo(Hydrator, ABC):
         """
         raise NotImplementedError("This method should be overridden in sub-classes")
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_dict(cls, data: dict) -> 'ResultsInfo':
         """Create a JSON Results object instance from a dictionary.
 
