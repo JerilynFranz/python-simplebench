@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ExecutionEnvironmentErrorTag(ErrorTag):
     """Error tags for execution environment exceptions."""
+    INVALID_VERSION_TYPE = "Invalid version type"
+    """The version provided to the execution environment is of an invalid type."""
+    UNSUPPORTED_VERSION = "Unsupported version"
+    """The version provided to the execution environment is not supported."""
     INVALID_DATA_ARG_TYPE = "Invalid data argument type"
     """The data argument provided to the execution environment is of an invalid type."""
     INVALID_DATA_ARG_EXTRA_KEYS = "Invalid data argument extra keys"

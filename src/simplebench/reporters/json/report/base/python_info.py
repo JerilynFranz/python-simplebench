@@ -51,6 +51,11 @@ class PythonInfo(ABC, Environment, Hydrator):
         """Convert the PythonInfo object to a dictionary."""
         raise NotImplementedError("This method should be overridden by subclasses")
 
+    @abstractmethod
+    def hash_id(self) -> str:
+        """Return a unique hash ID for the PythonInfo object."""
+        raise NotImplementedError("This method should be overridden by subclasses")
+
     def is_execution_environment(self) -> None:
         """Declare that the PythonInfo object is an execution environment.
 

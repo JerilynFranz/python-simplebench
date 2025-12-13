@@ -11,9 +11,9 @@ from simplebench.case import Case
 from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.iteration import Iteration
+from simplebench.metadata import Metadata
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
-from simplebench.metadata import Metadata
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.reporters.reporter.exceptions import _ReporterErrorTag

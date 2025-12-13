@@ -32,6 +32,22 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
+def stats_block(version: int) -> type[StatsBlock]:
+    """Retrieve a StatsBlock class for the specified version.
+
+    :param version: The JSON report version number.
+    :return: A StatsBlock class for the specified version.
+    """
+    _load_deferred_imports()
+
+    return json_class(
+        version,
+        StatsBlock,
+        _StatsBlockErrorTag.INVALID_VERSION_TYPE,
+        _StatsBlockErrorTag.UNSUPPORTED_VERSION
+    )
+
+
 def from_dict(data: dict) -> StatsBlock:
     """Create a json StatsBlock instance from a dictionary, with validation.
 

@@ -14,13 +14,24 @@ from typing import TypeVar
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_int
 
-from ..base import CPUInfo, ExecutionEnvironment, MachineInfo, PythonInfo, Report, ResultsInfo, StatsBlock, ValueBlock
+from ..base import (
+    CPUInfo,
+    ExecutionEnvironment,
+    MachineInfo,
+    Metrics,
+    PythonInfo,
+    Report,
+    ResultsInfo,
+    StatsBlock,
+    ValueBlock,
+)
 from . import v1
 
 T = TypeVar('T',
             type[CPUInfo],
             type[ExecutionEnvironment],
             type[MachineInfo],
+            type[Metrics],
             type[PythonInfo],
             type[Report],
             type[ResultsInfo],

@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _MetricsErrorTag(ErrorTag):
     """Error tags for JSON Metrics v1 exceptions."""
+    INVALID_VERSION_TYPE = "INVALID_VERSION_TYPE"
+    """The version is not of type int."""
+    UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION"
+    """The version is not supported."""
     INVALID_VARIATION_COLS_TYPE = "INVALID_VARIATION_COLS_TYPE"
     """The variation_cols is not of type dict."""
     INVALID_VARIATION_COLS_CONTENT = "INVALID_VARIATION_COLS_CONTENT"

@@ -25,8 +25,6 @@ from simplebench.validators import validate_namespaced_identifier, validate_stri
 from ..stats_block import StatsBlock
 from ..value_block import ValueBlock
 
-MetricItem: TypeAlias = StatsBlock | ValueBlock
-
 
 class Metrics(UserDict):
     """Base class representing the 'metrics' object in a JSON report results object.
@@ -36,6 +34,13 @@ class Metrics(UserDict):
 
     The typing enforcement is done in the __setitem__ method.
     """
+
+    MetricItem: TypeAlias = StatsBlock | ValueBlock
+    """Type alias for the possible types of metric items in the metrics dictionary.
+
+    Currently, the only possible types are StatsBlock and ValueBlock.
+    """
+
     @classmethod
     def from_dict(cls, data: dict[str, dict[str, Any]]) -> "Metrics":
         """Create a Metrics object instance from a dictionary.
@@ -46,7 +51,7 @@ class Metrics(UserDict):
         value_block: str = ValueBlock.TYPE
         stats_block: str = StatsBlock.TYPE
 
-        metrics: dict[str, MetricItem] = {}
+        metrics: dict[str, Metrics.MetricItem] = {}
         for metric_name, metric_data in data.get('metrics', {}).items():
             validated_metric_name: str = validate_string(
                 metric_name, 'metric name',
@@ -72,10 +77,10 @@ class Metrics(UserDict):
 
         return cls(metrics=metrics)
 
-    def __init__(self, metrics: dict[str, MetricItem]):
+    def __init__(self, metrics: dict[str, 'Metrics.MetricItem']):
         """Initialize a Metrics v1 instance.
         :param metrics: The metrics dictionary. The keys are metric names
-            and the values are MetricItem objects (either a StatsBlock or a ValueBlock).
+            and the values are Metrics.MetricItem objects (either a StatsBlock or a ValueBlock).
 
             The keys must must be in the format 'namespace::type_name'
             where both namespace and type_name start and end with an alphanumeric character
@@ -83,7 +88,7 @@ class Metrics(UserDict):
         """
         for metric_name, metric_object in metrics.items():
             validate_namespaced_identifier(metric_name)
-            if not isinstance(metric_object, MetricItem):
+            if not isinstance(metric_object, Metrics.MetricItem):
                 raise SimpleBenchTypeError(
                     f"Metric item must be a StatsBlock or ValueBlock, got {type(metric_object)}",
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
@@ -103,13 +108,13 @@ class Metrics(UserDict):
             raise SimpleBenchKeyError(
                 f"Invalid metric name '{key}': {e}",
                 tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE) from e
-        if not isinstance(value, MetricItem):
+        if not isinstance(value, Metrics.MetricItem):
             raise SimpleBenchTypeError(
                 f"Metric item must be a StatsBlock or ValueBlock, got {type(value)}",
                 tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
         super().__setitem__(key, value)
 
-    def __getitem__(self, key: str) -> MetricItem:
+    def __getitem__(self, key: str) -> 'Metrics.MetricItem':
         """Get a metric item from the metrics dictionary.
 
         :param key: The metric name.

@@ -21,6 +21,22 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
+def results_info(version: int) -> type[ResultsInfo]:
+    """Retrieve a ResultsInfo class for the specified version.
+
+    :param version: The JSON report version number.
+    :return: A ResultsInfo class for the specified version.
+    """
+    _load_deferred_imports()
+
+    return json_class(
+        version,
+        ResultsInfo,
+        _ResultsInfoErrorTag.INVALID_VERSION_TYPE,
+        _ResultsInfoErrorTag.UNSUPPORTED_VERSION
+    )
+
+
 def from_dict(data: dict, version: int) -> ResultsInfo:
     """Create a JSONResults instance from a dictionary.
 

@@ -32,6 +32,22 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
+def value_block(version: int) -> type[ValueBlock]:
+    """Retrieve a ValueBlock class for the specified version.
+
+    :param version: The JSON report version number.
+    :return: A ValueBlock class for the specified version.
+    """
+    _load_deferred_imports()
+
+    return json_class(
+        version,
+        ValueBlock,
+        _ValueBlockErrorTag.INVALID_VERSION_TYPE,
+        _ValueBlockErrorTag.UNSUPPORTED_VERSION
+    )
+
+
 def from_dict(data: dict) -> ValueBlock:
     """Create a json ValueBlock instance from a dictionary, with validation.
 

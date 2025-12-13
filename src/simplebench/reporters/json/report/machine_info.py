@@ -32,6 +32,22 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
+def machine_info(version: int) -> type[MachineInfo]:
+    """Retrieve a MachineInfo class for the specified version.
+
+    :param version: The JSON report version number.
+    :return: A MachineInfo class for the specified version.
+    """
+    _load_deferred_imports()
+
+    return json_class(
+        version,
+        MachineInfo,
+        _MachineInfoErrorTag.INVALID_VERSION_TYPE,
+        _MachineInfoErrorTag.UNSUPPORTED_VERSION
+    )
+
+
 def from_dict(data: dict) -> MachineInfo:
     """Create a json MachineInfo instance from a dictionary, with validation.
 

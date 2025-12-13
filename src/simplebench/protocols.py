@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from .results import Results
+from .results.results import Results
 from .runners import SimpleRunner
 
 

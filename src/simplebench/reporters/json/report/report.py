@@ -32,6 +32,22 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
+def report(version: int) -> type[Report]:
+    """Retrieve a Report class for the specified version.
+
+    :param version: The JSON report version number.
+    :return: A Report class for the specified version.
+    """
+    _load_deferred_imports()
+
+    return json_class(
+        version,
+        Report,
+        _ReportErrorTag.INVALID_VERSION_TYPE,
+        _ReportErrorTag.UNSUPPORTED_VERSION
+    )
+
+
 def from_dict(data: dict) -> Report:
     """Create a json Report instance from a dictionary, with validation.
 

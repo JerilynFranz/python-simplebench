@@ -13,7 +13,7 @@ from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_SIGNIFICANT_FIGURES, DEFAU
 from .enums import Color
 from .exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError, _RunnersErrorTag
 from .iteration import Iteration
-from .results import Results
+from .results.results import Results
 from .tasks import ProgressTracker
 from .timeout import Timeout
 from .timers import is_valid_timer, timer_overhead_ns, timer_precision_ns

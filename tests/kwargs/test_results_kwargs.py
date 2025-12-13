@@ -1,9 +1,9 @@
 """simplebench.cases.Case KWArgs package for SimpleBench tests."""
 from __future__ import annotations
 
+from simplebench.results import Results as _MODELED_CLASS
 from tests.kwargs import kwargs_class_matches_modeled_call
 
-from simplebench.results import Results as _MODELED_CLASS
 from .results_kwargs import ResultsKWArgs as _KWARGS_CLASS
 
 _MODELED_CALL = _MODELED_CLASS.__init__

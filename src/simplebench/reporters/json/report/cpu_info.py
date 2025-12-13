@@ -32,6 +32,22 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
+def cpu_info(version: int) -> type[CPUInfo]:
+    """Retrieve a CPUInfo instance for the specified version.
+
+    :param version: The JSON report version number.
+    :return: A CPUInfo class for the specified version.
+    """
+    _load_deferred_imports()
+
+    return json_class(
+        version,
+        CPUInfo,
+        _CPUInfoErrorTag.INVALID_VERSION_TYPE,
+        _CPUInfoErrorTag.UNSUPPORTED_VERSION
+    )
+
+
 def from_dict(data: dict) -> CPUInfo:
     """Create a json CPUInfo instance from a dictionary, with validation.
 

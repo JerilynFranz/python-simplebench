@@ -230,7 +230,7 @@ class Report(BaseReport):
             value, ResultsInfo, 'results',
             _ReportErrorTag.INVALID_RESULTS_PROPERTY_NOT_A_SEQUENCE,
             _ReportErrorTag.INVALID_RESULTS_PROPERTY_ELEMENT_NOT_RESULTS_INSTANCE,
-            allow_empty=False)
+            allow_empty=True)
 
         self._results: list[ResultsInfo] = validated_results
 

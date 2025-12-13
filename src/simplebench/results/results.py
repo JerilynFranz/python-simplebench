@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Container for the results of a single benchmark test."""
 from __future__ import annotations
 
@@ -8,11 +7,11 @@ from typing import Any, Optional, Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
 
-from .defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
-from .enums import Section
-from .iteration import Iteration
-from .stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
-from .validators import validate_non_blank_string, validate_positive_float, validate_positive_int
+from ..defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT, DEFAULT_MEMORY_SCALE, DEFAULT_MEMORY_UNIT
+from ..enums import Section
+from ..iteration import Iteration
+from ..stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
+from ..validators import validate_non_blank_string, validate_positive_float, validate_positive_int
 
 
 class Results:

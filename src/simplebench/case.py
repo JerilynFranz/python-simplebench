@@ -23,7 +23,7 @@ from .protocols import ActionRunner
 from .reporters.protocols import ReporterCallback
 from .reporters.reporter.options import ReporterOptions
 from .reporters.validators.validators import validate_reporter_callback
-from .results import Results
+from .results.results import Results
 from .runners import SimpleRunner
 from .tasks import ProgressTracker
 from .validators import (

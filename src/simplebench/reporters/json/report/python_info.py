@@ -32,6 +32,22 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
+def python_info(version: int) -> type[PythonInfo]:
+    """Retrieve a PythonInfo class for the specified version.
+
+    :param version: The JSON report version number.
+    :return: A PythonInfo class for the specified version.
+    """
+    _load_deferred_imports()
+
+    return json_class(
+        version,
+        PythonInfo,
+        _PythonInfoErrorTag.INVALID_VERSION_TYPE,
+        _PythonInfoErrorTag.UNSUPPORTED_VERSION
+    )
+
+
 def from_dict(data: dict) -> PythonInfo:
     """Create a json PythonInfo instance from a dictionary, with validation.
 

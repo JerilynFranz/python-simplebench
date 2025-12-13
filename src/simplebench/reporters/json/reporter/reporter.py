@@ -16,7 +16,16 @@ from simplebench.type_proxies import is_case
 from simplebench.utils import get_machine_info
 from simplebench.validators import validate_type
 
-from ..report.versions import CURRENT_VERSION
+from ..report import (
+    CURRENT_VERSION,
+    cpu_info,
+    machine_info,
+    python_info,
+    report,
+    results_info,
+    stats_block,
+    value_block,
+)
 from .config import JSONConfig
 from .exceptions import _JSONReporterErrorTag
 from .options import JSONOptions
