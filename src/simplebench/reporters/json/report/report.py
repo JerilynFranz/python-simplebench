@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from simplebench.exceptions import SimpleBenchValueError
 
 from .base import JSONSchema, Report
-from .exceptions import _ReportErrorTag, _ReportSchemaErrorTag
+from .exceptions import _ReportErrorTag
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -78,6 +78,6 @@ def schema(version: int) -> type[JSONSchema]:
     return json_class(
         version,
         Report,
-        _ReportSchemaErrorTag.INVALID_VERSION_TYPE,
-        _ReportSchemaErrorTag.UNSUPPORTED_VERSION
+        _ReportErrorTag.INVALID_VERSION_TYPE,
+        _ReportErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

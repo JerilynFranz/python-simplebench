@@ -6,7 +6,6 @@ from .machine_info import _MachineInfoErrorTag
 from .metrics import _MetricsErrorTag
 from .python_info import _PythonInfoErrorTag
 from .report import _ReportErrorTag
-from .report_schema import _ReportSchemaErrorTag
 from .results_info import _ResultsInfoErrorTag
 from .stats_block import _StatsBlockErrorTag
 from .value_block import _ValueBlockErrorTag
@@ -19,7 +18,6 @@ __all__ = [
     "_MetricsErrorTag",
     "_PythonInfoErrorTag",
     "_ReportErrorTag",
-    "_ReportSchemaErrorTag",
     "_ResultsInfoErrorTag",
     "_StatsBlockErrorTag",
     "_ValueBlockErrorTag",

@@ -4,6 +4,9 @@ This module provides functionality to manage different versions of JSON report
 schemas, metadata, results, and statistics. It includes validation for version
 numbers and dynamic retrieval of the appropriate class implementations based
 on the specified version.
+
+
+:var CURRENT_VERSION: The current JSON report version number.
 """
 from types import ModuleType
 from typing import TypeVar
