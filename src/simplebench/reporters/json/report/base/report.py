@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from .hydrator import Hydrator
+from simplebench.base import Hydrator
+
 from .json_schema import JSONSchema
 
 

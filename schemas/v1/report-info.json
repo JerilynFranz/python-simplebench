@@ -5,10 +5,23 @@
     "description": "Information about the report the log entry is associated with (V1)",
     "type": "object",
     "properties": {
+        "version": {
+            "title": "Version",
+            "description": "Version of the report info schema",
+            "type": "integer",
+            "const": 1
+        },
         "type": {
+            "title": "Type",
+            "description": "Type of the report info object",
+            "type": "string",
+            "const": "SimpleBenchReportInfo::V1"
+        },
+        "reporter_type": {
             "title": "Reporter Type",
             "description": "Type of the reporter that generated the report",
-            "type": "string"
+            "type": "string",
+            "examples": ["simplebench::json", "simplebench::rich_text", "simplebench::csv"]
         },
         "name": {
             "title": "Reporter Name",

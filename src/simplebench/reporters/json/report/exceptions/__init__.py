@@ -1,5 +1,4 @@
 """Exceptions for JSON reports and schemas."""
-from .hydrator import _HydratorErrorTag
 from .cpu_info import _CPUInfoErrorTag
 from .execution_environment import _ExecutionEnvironmentErrorTag
 from .json_schema import _JSONSchemaErrorTag
@@ -14,7 +13,6 @@ from .stats_block import _StatsBlockErrorTag
 from .value_block import _ValueBlockErrorTag
 
 __all__ = [
-    "_HydratorErrorTag",
     "_CPUInfoErrorTag",
     "_ExecutionEnvironmentErrorTag",
     "_JSONSchemaErrorTag",

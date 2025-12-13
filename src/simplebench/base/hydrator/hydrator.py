@@ -1,8 +1,8 @@
 """Base class for JSON objects
 
-This module defines an base class `Builder` for JSON objects,
-which includes methods for initializing, converting to and from dictionaries,
-and validating against a set of allowed parameters.
+This module defines an base class `Hydrator` for objects, which includes methods
+for initializing, converting to and from dictionaries, and validating against a
+set of allowed parameters.
 
 """
 import inspect
@@ -12,10 +12,10 @@ from typing import Any, Callable, Iterable, Sequence, get_args, get_origin, get_
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_iterable_of_type, validate_type
 
-from ..exceptions import _HydratorErrorTag
+from .exceptions import _HydratorErrorTag
 
 
-def validate_allowed(
+def _validate_allowed(
         allowed: dict[str, Any], error_tag: type[ErrorTag]) -> dict[str, Any]:
     """Validate the allowed parameters dictionary.
 
@@ -45,7 +45,7 @@ def validate_allowed(
     return allowed
 
 
-def validate_skip(skip: Iterable[str], allowed: dict[str, type], error_tag: type[ErrorTag]) -> set[str]:
+def _validate_skip(skip: Iterable[str], allowed: dict[str, type], error_tag: type[ErrorTag]) -> set[str]:
     """Validate the skip iterable.
 
     :param skip: The skip iterable to validate.
@@ -66,7 +66,7 @@ def validate_skip(skip: Iterable[str], allowed: dict[str, type], error_tag: type
     return skip_set
 
 
-def validate_optional(optional: Iterable[str], allowed: dict[str, type], error_tag: type[ErrorTag]) -> set[str]:
+def _validate_optional(optional: Iterable[str], allowed: dict[str, type], error_tag: type[ErrorTag]) -> set[str]:
     """Validate the optional iterable.
 
     :param optional: The optional iterable to validate.
@@ -89,7 +89,7 @@ def validate_optional(optional: Iterable[str], allowed: dict[str, type], error_t
     return optional_set
 
 
-def validate_default(default: dict[str, Any], optional: set[str], error_tag: type[ErrorTag]) -> dict[str, Any]:
+def _validate_default(default: dict[str, Any], optional: set[str], error_tag: type[ErrorTag]) -> dict[str, Any]:
     """Validate the default dictionary.
 
     :param default: The default dictionary to validate.
@@ -112,7 +112,7 @@ def validate_default(default: dict[str, Any], optional: set[str], error_tag: typ
     return default
 
 
-def validate_match_on(match_on: dict[str, Any], allowed: dict[str, type], error_tag: type[ErrorTag]) -> dict[str, Any]:
+def _validate_match_on(match_on: dict[str, Any], allowed: dict[str, type], error_tag: type[ErrorTag]) -> dict[str, Any]:
     """Validate the match_on dictionary.
 
     :param match_on: The match_on dictionary to validate.
@@ -135,7 +135,7 @@ def validate_match_on(match_on: dict[str, Any], allowed: dict[str, type], error_
     return match_on
 
 
-def validate_process_as(
+def _validate_process_as(
         process_as: dict[str, Callable[[Any], Any]],
         allowed: dict[str, type],
         error_tag: type[ErrorTag]) -> dict[str, Callable[[Any], Any]]:
@@ -185,7 +185,7 @@ def validate_process_as(
     return process_as
 
 
-def is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
+def _is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
     """
     Check if an object is an instance of a generic type hint.
     Handles simple types, lists, sequences, and dictionaries.
@@ -204,15 +204,15 @@ def is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
         if not isinstance(obj, (list, tuple, set)):
             return False
         item_type = args[0]
-        return all(is_instance_of_generic(item, item_type) for item in obj)
+        return all(_is_instance_of_generic(item, item_type) for item in obj)
 
     # Case 3: Dictionary
     if origin is dict:
         if not isinstance(obj, dict):
             return False
         key_type, value_type = args
-        return all(is_instance_of_generic(
-            k, key_type) and is_instance_of_generic(v, value_type) for k, v in obj.items())
+        return all(_is_instance_of_generic(
+            k, key_type) and _is_instance_of_generic(v, value_type) for k, v in obj.items())
 
     # Fallback for other types (like Union, etc., which can be added here)
     return isinstance(obj, origin)
@@ -302,26 +302,26 @@ class Hydrator:
                 "All keys in the data dictionary must be of type 'str'",
                 tag=error_tag.INVALID_DATA_KEY_TYPE)  # type: ignore[reportAttributeAccessIssue]
 
-        allowed_fields: dict[str, type] = validate_allowed(allowed=allowed,
-                                                           error_tag=error_tag)
-
-        skip_fields: set[str] = validate_skip(skip=skip or set(),
-                                              allowed=allowed_fields,
-                                              error_tag=error_tag)
-
-        optional_fields: set[str] = validate_optional(optional=optional or set(),
-                                                      allowed=allowed_fields,
-                                                      error_tag=error_tag)
-
-        default_fields: dict[str, Any] = validate_default(default=default or {},
-                                                          optional=optional_fields,
-                                                          error_tag=error_tag)
-
-        match_on_fields: dict[str, Any] = validate_match_on(match_on=match_on or {},
-                                                            allowed=allowed_fields,
+        allowed_fields: dict[str, type] = _validate_allowed(allowed=allowed,
                                                             error_tag=error_tag)
 
-        process_as_fields: dict[str, Callable[[Any], Any]] = validate_process_as(
+        skip_fields: set[str] = _validate_skip(skip=skip or set(),
+                                               allowed=allowed_fields,
+                                               error_tag=error_tag)
+
+        optional_fields: set[str] = _validate_optional(optional=optional or set(),
+                                                       allowed=allowed_fields,
+                                                       error_tag=error_tag)
+
+        default_fields: dict[str, Any] = _validate_default(default=default or {},
+                                                           optional=optional_fields,
+                                                           error_tag=error_tag)
+
+        match_on_fields: dict[str, Any] = _validate_match_on(match_on=match_on or {},
+                                                             allowed=allowed_fields,
+                                                             error_tag=error_tag)
+
+        process_as_fields: dict[str, Callable[[Any], Any]] = _validate_process_as(
                                                                 process_as=process_as or {},
                                                                 allowed=allowed_fields,
                                                                 error_tag=error_tag)
@@ -369,7 +369,7 @@ class Hydrator:
 
         # Validate the processed output dictionary against the allowed field types
         for field, value in output.items():
-            if not is_instance_of_generic(value, allowed_fields[field]):
+            if not _is_instance_of_generic(value, allowed_fields[field]):
                 raise SimpleBenchTypeError(
                     f"The value of '{field}' does not match the expected type '{allowed_fields[field]}'",
                     tag=error_tag.INVALID_DATA_VALUE_TYPE)  # type: ignore[reportAttributeAccessIssue]

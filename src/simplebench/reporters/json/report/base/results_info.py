@@ -14,7 +14,8 @@ of the JSON report schema and the V1 implementation itself is essentially a froz
 of the results object representation at the time of the V1 schema release."""
 from abc import ABC, abstractmethod
 
-from .hydrator import Hydrator
+from simplebench.base import Hydrator
+
 from .json_schema import JSONSchema
 
 

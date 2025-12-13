@@ -1,7 +1,8 @@
 """Base class for JSON value block representation."""
 from abc import ABC, abstractmethod
 
-from .hydrator import Hydrator
+from simplebench.base import Hydrator
+
 from .json_schema import JSONSchema
 
 

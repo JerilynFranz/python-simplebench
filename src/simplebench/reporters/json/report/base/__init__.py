@@ -2,7 +2,6 @@
 
 from .cpu_info import CPUInfo
 from .execution_environment import ExecutionEnvironment
-from .hydrator import Hydrator
 from .json_schema import JSONSchema
 from .machine_info import MachineInfo
 from .metadata import Metadata
@@ -16,7 +15,6 @@ from .value_block import ValueBlock
 __all__ = [
     "CPUInfo",
     "ExecutionEnvironment",
-    "Hydrator",
     "JSONSchema",
     "MachineInfo",
     "Metadata",
