@@ -276,8 +276,8 @@ class MachineInfo(BaseMachineInfo):
             data=data,
             allowed=allowed_keys,
             skip={'version', 'type'},
-            optional={'hash_id', 'node'},
-            default={'hash_id': '', 'node': ''},
+            optional={'hash_id', 'node', 'version', 'type'},
+            default={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={
                 'execution_environment': ExecutionEnvironmentV1.from_dict,

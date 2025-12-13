@@ -71,6 +71,8 @@ class ResultsInfo(BaseResultsInfo):
             data=data,
             allowed=allowed_keys,
             skip={'version', 'type'},
+            optional={'version', 'type'},
+            default={'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={'metrics': Metrics.from_dict})
         return cls(**kwargs)

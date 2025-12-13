@@ -2,43 +2,90 @@
 import re
 from typing import Any
 
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchValueError
+from simplebench.reporters.json.report.base import JSONSchema
+from simplebench.reporters.json.report.base import ValueBlock as ValueBlockBase
 from simplebench.reporters.json.report.exceptions import _ValueBlockErrorTag
-from simplebench.validators import validate_float, validate_string
+from simplebench.validators import validate_positive_float, validate_string, validate_type
+
+from .value_block_schema import ValueBlockSchema
 
 
-class ValueBlock:
+class ValueBlock(ValueBlockBase):
     """Class representing a value block (V1)."""
 
-    _TYPE_PATTERN = re.compile(r"^[a-zA-Z0-9_]+::[a-zA-Z0-9_]+$")
+    SCHEMA: type[JSONSchema] = ValueBlockSchema
+    """JSON schema class for the value block."""
+
+    VERSION: int = SCHEMA.VERSION
+    """Version of the value block schema."""
+
+    TYPE: str = SCHEMA.TYPE
+    """Type of the value block schema."""
+
+    ID: str = SCHEMA.ID
+    """ID of the value block schema."""
+
+    def __init__(
+            self,
+            *,
+            semantic_type: str,
+            timer: str | None = None,
+            unit: str,
+            scale: float,
+            value: float | int) -> None:
+        """Initialize JSONStatsSummary base class.
+
+        :param semantic_type: The semantic type string for the value block. ('type' field in JSON data)
+        :param timer: The timer string or None.
+        :param unit: The unit of measurement.
+        :param scale: The scale factor.
+        :param value: The value of the block.
+        :raise SimpleBenchTypeError: If any parameter is of incorrect type.
+        :raise SimpleBenchValueError: If any parameter has an invalid value.
+        """
+        self.semantic_type = semantic_type
+        self.timer = timer
+        self.unit = unit
+        self.scale = scale
+        self.value = value
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ValueBlock":
+    def from_dict(cls, data: dict[str, Any]) -> "ValueBlock":
         """Create a ValueBlock instance from a dictionary.
 
         :param data: Dictionary containing the JSON results data.
-        :return: JSONStatsSummary instance.
+        :return: A ValueBlock instance.
         """
-        known_keys: set[str] = {'type', 'timer', 'unit', 'scale', 'value'}
-        extra_keys = set(data.keys()) - known_keys
-        if extra_keys:
-            raise SimpleBenchTypeError(
-                f"Unexpected keys in data dictionary: {extra_keys}",
-                tag=_ValueBlockErrorTag.INVALID_DATA_ARG_EXTRA_KEYS)
-
-        missing_keys = known_keys - data.keys() - {'timer'}
-        if missing_keys:
-            raise SimpleBenchTypeError(
-                f"Missing required keys in data dictionary: {missing_keys}",
-                tag=_ValueBlockErrorTag.INVALID_DATA_ARG_MISSING_KEYS)
-
-        return cls(
-            semantic_type=data.get('type'),  # type: ignore[reportArgumentType]
-            timer=data.get('timer'),  # type: ignore[reportArgumentType]
-            unit=data.get('unit'),  # type: ignore[reportArgumentType]
-            scale=data.get('scale'),  # type: ignore[reportArgumentType]
-            value=data.get('value')  # type: ignore[reportArgumentType]
+        init_params = cls.init_params()
+        init_params['type'] = str
+        init_params['version'] = int
+        kwargs = cls.import_data(
+            data=data,
+            allowed=init_params,
+            skip={'type', 'version'},
+            optional={'timer', 'type', 'version'},
+            default={'type': cls.TYPE, 'version': cls.VERSION},
+            match_on={'type': cls.TYPE, 'version': cls.VERSION},
         )
+        return cls(**kwargs)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert the ValueBlock instance to a dictionary.
+
+        :return: Dictionary representation of the ValueBlock instance.
+        """
+        output: dict[str, Any] = {
+            'type': self.TYPE,
+            'version': self.VERSION,
+            'semantic_type': self.semantic_type,
+            'unit': self.unit,
+            'scale': self.scale,
+            'value': self.value,
+        }
+        if self.timer is not None:
+            output['timer'] = self.timer
+        return output
 
     @classmethod
     def validate_timer(cls, value: Any) -> str | None:
@@ -59,63 +106,47 @@ class ValueBlock:
 
         return timer_name
 
+    _SEMANTIC_TYPE_PATTERN = re.compile(r"^[a-zA-Z0-9_]+::[a-zA-Z0-9_]+$")
+    """Pattern for validating the semantic type string."""
+
     @classmethod
-    def validate_type_pattern(cls, value: Any) -> str:
-        """Validate the type.
-        :param value: The type string to validate.
-        :return: The validated type string.
-        :raise SimpleBenchTypeError: If the type is not a string.
-        :raises SimpleBenchValueError: If the type string is invalid.
+    def validate_semantic_type_pattern(cls, value: Any) -> str:
+        """Validate the semantic type.
+        :param value: The semantic type string to validate.
+        :return: The validated semantic type string.
+        :raise SimpleBenchTypeError: If the semantic type is not a string.
+        :raises SimpleBenchValueError: If the semantic type string is invalid.
         """
         type_name: str = validate_string(
-            value, 'type',
+            value, 'semantic_type',
             _ValueBlockErrorTag.INVALID_VALUE_TYPE,
             _ValueBlockErrorTag.INVALID_VALUE_VALUE,
             allow_blank=False)
 
-        if not cls._TYPE_PATTERN.match(type_name):
+        if not cls._SEMANTIC_TYPE_PATTERN.match(type_name):
             raise SimpleBenchValueError(
                 f"Invalid type format for ValueBlock: {type_name}",
                 tag=_ValueBlockErrorTag.INVALID_VALUE_PATTERN)
 
         return type_name
 
-    def __init__(
-            self,
-            *,
-            semantic_type: str,
-            timer: str | None,
-            unit: str,
-            scale: float,
-            value: float | int) -> None:
-        """Initialize JSONStatsSummary base class.
-
-        :param semantic_type: The semantic type string for the value block. ('type' field in JSON data)
-        :param timer: The timer string or None.
-        :param unit: The unit of measurement.
-        :param scale: The scale factor.
-        :param value: The value of the block.
-        :raise SimpleBenchTypeError: If any parameter is of incorrect type.
-        :raise SimpleBenchValueError: If any parameter has an invalid value.
-        """
-
     @property
-    def type(self) -> str:
+    def semantic_type(self) -> str:
         """Get the semantic type value.
 
         :return: The semantic type value.
         """
-        return self._type
+        return self._semantic_type
 
-    @type.setter
-    def type(self, value: str) -> None:
+    @semantic_type.setter
+    def semantic_type(self, value: str) -> None:
         """Set the semantic type value.
 
         :param value: The semantic type value.
         :raise SimpleBenchTypeError: If type is not a string.
         :raise SimpleBenchValueError: If type is an invalid format.
         """
-        self._type: str = self.validate_type_pattern(value)
+        self._semantic_type: str = self.validate_semantic_type_pattern(value)
 
     @property
     def unit(self) -> str:
@@ -156,13 +187,10 @@ class ValueBlock:
         :raise SimpleBenchTypeError: If scale is not a float.
         :raise SimpleBenchValueError: If scale is not a positive number.
         """
-        self._scale: float = validate_float(
+        self._scale: float = validate_positive_float(
             value, 'scale',
-            _ValueBlockErrorTag.INVALID_SCALE_TYPE)
-        if self._scale <= 0:
-            raise SimpleBenchValueError(
-                "scale must be a positive float",
-                tag=_ValueBlockErrorTag.INVALID_SCALE_VALUE)
+            _ValueBlockErrorTag.INVALID_SCALE_TYPE,
+            _ValueBlockErrorTag.INVALID_SCALE_VALUE)
 
     @property
     def value(self) -> float | int:
@@ -179,8 +207,6 @@ class ValueBlock:
         :param value: The value.
         :raise SimpleBenchTypeError: If value is not a float or int.
         """
-        if not isinstance(value, (float, int)):
-            raise SimpleBenchTypeError(
-                f"value must be a float or int, got {type(value)}",
-                tag=_ValueBlockErrorTag.INVALID_VALUE_TYPE)
-        self._value: float | int = value
+        self._value: float | int = validate_type(
+            value, (float, int), 'value',
+            _ValueBlockErrorTag.INVALID_VALUE_TYPE)

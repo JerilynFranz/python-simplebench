@@ -291,7 +291,6 @@ class Hydrator:
         Raises:
             SimpleBenchValueError: If the data does not match the rules.
         """
-
         error_tag = validate_type(
                         error_tag, type[ErrorTag], 'error_tag',
                         _HydratorErrorTag.INVALID_ERROR_TAG_TYPE)

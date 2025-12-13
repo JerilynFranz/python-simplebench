@@ -109,8 +109,8 @@ class StatsBlock(BaseStatsBlock):
             data=data,
             allowed=allowed_keys,
             skip={'version', 'type'},
-            optional={'description'},
-            default={'description': ''},
+            optional={'description', 'version', 'type'},
+            default={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 

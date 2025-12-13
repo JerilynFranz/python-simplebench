@@ -264,7 +264,8 @@ class PythonInfo(BasePythonInfo):
             data=data,
             allowed=allowed_keys,
             skip={'version', 'type'},
-            optional={'hash_id'},
+            optional={'hash_id', 'version', 'type'},
+            default={'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 

@@ -8,6 +8,7 @@ from .python_info import PythonInfo
 from .report import Report
 from .results_info import ResultsInfo
 from .stats_block import StatsBlock
+from .value_block import ValueBlock
 
 __all__ = [
     "CPUInfo",
@@ -18,4 +19,5 @@ __all__ = [
     "Report",
     "ResultsInfo",
     "StatsBlock",
+    "ValueBlock",
 ]
