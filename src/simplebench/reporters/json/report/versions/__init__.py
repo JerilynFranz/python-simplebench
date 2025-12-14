@@ -24,6 +24,7 @@ from ..base import (
     ResultsInfo,
     StatsBlock,
     ValueBlock,
+    VCSInfo,
 )
 from . import v1
 
@@ -36,7 +37,8 @@ T = TypeVar('T',
             type[Report],
             type[ResultsInfo],
             type[StatsBlock],
-            type[ValueBlock])
+            type[ValueBlock],
+            type[VCSInfo])
 """Type variable for JSON report related class types."""
 
 _known_versions: dict[int, ModuleType] = {

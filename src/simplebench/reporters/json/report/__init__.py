@@ -8,6 +8,7 @@ from .report import report
 from .results import results_info
 from .stats_block import stats_block
 from .value_block import value_block
+from .vcs_info import vcs_info
 from .versions import CURRENT_VERSION
 
 __all__ = [
@@ -20,4 +21,6 @@ __all__ = [
     'report',
     'results_info',
     'stats_block',
-    'value_block']
+    'value_block',
+    'vcs_info',
+]

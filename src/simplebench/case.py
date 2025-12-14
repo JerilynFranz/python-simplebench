@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, get_type_hi
 
 import simplebench.defaults as defaults
 
+from . import vcs
 from .doc_utils import format_docstring
 from .enums import Color
 from .exceptions import (
@@ -20,6 +21,7 @@ from .exceptions import (
     _CaseErrorTag,
 )
 from .protocols import ActionRunner
+from .reporters.json.report.versions import v1 as current_version
 from .reporters.protocols import ReporterCallback
 from .reporters.reporter.options import ReporterOptions
 from .reporters.validators.validators import validate_reporter_callback
@@ -34,10 +36,21 @@ from .validators import (
     validate_string,
     validate_type,
 )
-from .vcs import VCSInfo, get_vcs_info
 
 if TYPE_CHECKING:
     from .session import Session
+
+# Classes needed for report generation
+CPUInfo = current_version.CPUInfo
+ExecutionEnvironment = current_version.ExecutionEnvironment
+MachineInfo = current_version.MachineInfo
+Metrics = current_version.Metrics
+MetricsItem = Metrics.MetricItem
+Report = current_version.Report
+ResultsInfo = current_version.ResultsInfo
+StatsBlock = current_version.StatsBlock
+ValueBlock = current_version.ValueBlock
+VCSInfo = current_version.VCSInfo
 
 
 def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str:
@@ -182,7 +195,7 @@ class Case:
                       DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__,)
     def __init__(self, *,
                  benchmark_id: Optional[str] = None,
-                 vcs_info: Optional[VCSInfo] = None,
+                 vcs_info: Optional[vcs.VCSInfo] = None,
                  action: ActionRunner,
                  group: str = 'default',
                  title: Optional[str] = None,
@@ -212,9 +225,9 @@ class Case:
 
             Benchmark ids must be unique within a benchmarking session and stable across runs
             or they cannot be used for tracking benchmark results over time.
-        :param vcs_info: An optional VCSInfo instance representing the state of the VCS repository.
+        :param vcs_info: An optional vcs.VCSInfo instance representing the state of the VCS repository.
 
-            If not provided, the VCSInfo will be automatically retrieved from the current
+            If not provided, the vcs.VCSInfo will be automatically retrieved from the current
             context of the caller if the code is part of a VCS repository.
         :param action: The function to perform the benchmark.
 
@@ -398,8 +411,8 @@ class Case:
         self._options = Case.validate_options(options)
         self._results: list[Results] = []  # No validation needed here
         self.validate_time_range(self._min_time, self._max_time)
-        self._vcs_info: VCSInfo | None = get_vcs_info() if vcs_info is None else validate_type(
-            vcs_info, VCSInfo, 'vcs_info', _CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE)
+        self._vcs_info: vcs.VCSInfo | None = vcs.get_vcs_info() if vcs_info is None else validate_type(
+            vcs_info, vcs.VCSInfo, 'vcs_info', _CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE)
 
     @staticmethod
     def validate_time_range(min_time: float, max_time: float) -> None:
@@ -417,8 +430,9 @@ class Case:
                 tag=_CaseErrorTag.INVALID_TIME_RANGE)
 
     @staticmethod
-    def validate_action_signature(action: ActionRunner,
-                                  kwargs_variations: dict[str, Any]) -> ActionRunner:
+    def validate_action_signature(  # pylint: disable=too-many-branches  # noqa: C901
+            action: ActionRunner,
+            kwargs_variations: dict[str, Any]) -> ActionRunner:
         """Validate that action has correct signature.
 
         An action function must accept one of the two following formats for its parameters:
@@ -732,7 +746,7 @@ class Case:
         return self._benchmark_id
 
     @property
-    def vcs_info(self) -> VCSInfo | None:
+    def vcs_info(self) -> vcs.VCSInfo | None:
         """VCS information for the benchmark case.
 
         This is a read-only attribute that provides VCS information
@@ -742,7 +756,7 @@ class Case:
         If the benchmark is not in a file managed by a VCS repository,
         a None value is returned.
 
-        :return: A VCSInfo object containing VCS information, or None if not in a VCS repository.
+        :return: A vcs.VCSInfo object containing VCS information, or None if not in a VCS repository.
         """
         return self._vcs_info
 
@@ -1013,3 +1027,17 @@ class Case:
             'variation_cols': self.variation_cols,
             'results': results
         }
+
+    def as_report(self, full_data: bool = False) -> Report:
+        """Returns the benchmark case and results as a Report object.
+
+        The Report format is a JSON serializable object that includes all the necessary
+        information about the benchmark case and its results. This format can be used to
+        exchange data between different systems or to store the data in a structured way.
+
+        It conforms to the JSON Schema defined at
+        https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/report-info.json
+
+        :param full_data: Whether to include full results data. Defaults to False.
+        :return: A JSON serializable representation of the benchmark case and results.
+        """

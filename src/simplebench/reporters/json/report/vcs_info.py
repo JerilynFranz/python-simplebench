@@ -1,10 +1,10 @@
-"""JSON python info classes"""
+"""JSON vcs info classes"""
 from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from .base import JSONSchema, PythonInfo
-from .exceptions import _PythonInfoErrorTag
+from .base import JSONSchema, VCSInfo
+from .exceptions import _VCSInfoErrorTag
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,39 +32,39 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def python_info(version: int) -> type[PythonInfo]:
-    """Retrieve a PythonInfo class for the specified version.
+def vcs_info(version: int) -> type[VCSInfo]:
+    """Retrieve a VCSInfo class for the specified version.
 
     :param version: The JSON report version number.
-    :return: A PythonInfo class for the specified version.
+    :return: A VCSInfo class for the specified version.
     """
     _load_deferred_imports()
 
     return json_class(
         version,
-        PythonInfo,
-        _PythonInfoErrorTag.INVALID_VERSION_TYPE,
-        _PythonInfoErrorTag.UNSUPPORTED_VERSION
+        VCSInfo,
+        _VCSInfoErrorTag.INVALID_VERSION_TYPE,
+        _VCSInfoErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> PythonInfo:
-    """Create a json PythonInfo instance from a dictionary, with validation.
+def from_dict(data: dict) -> VCSInfo:
+    """Create a json VCSInfo instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
 
-    :param data: Dictionary containing the JSON PythonInfo data.
-    :return: PythonInfo sub-class instance.
+    :param data: Dictionary containing the JSON VCSInfo data.
+    :return: VCSInfo sub-class instance.
     """
     _load_deferred_imports()
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[PythonInfo] = json_class(
+    report_class: type[VCSInfo] = json_class(
         version,
-        PythonInfo,
-        _PythonInfoErrorTag.INVALID_VERSION_TYPE,
-        _PythonInfoErrorTag.UNSUPPORTED_VERSION
+        VCSInfo,
+        _VCSInfoErrorTag.INVALID_VERSION_TYPE,
+        _VCSInfoErrorTag.UNSUPPORTED_VERSION
     )
 
     # Only perform JSON Schema validation if the jsonschema package is available
@@ -77,23 +77,23 @@ def from_dict(data: dict) -> PythonInfo:
         except ValidationError as exc:  # type: ignore[reportPossiblyUnboundVariable]
             raise SimpleBenchValueError(
                 f"JSON report data failed validation for version {version}: {exc.message}",
-                tag=_PythonInfoErrorTag.JSON_SCHEMA_VALIDATION_ERROR
+                tag=_VCSInfoErrorTag.JSON_SCHEMA_VALIDATION_ERROR
             ) from exc
 
     return report_class.from_dict(data)
 
 
 def schema(version: int) -> type[JSONSchema]:
-    """Retrieve a PythonInfoSchema instance for the specified version.
+    """Retrieve a VCSInfoSchema instance for the specified version.
 
     :param version: The JSON report version number.
-    :return: A PythonInfoSchema instance for the specified version.
+    :return: A VCSInfoSchema instance for the specified version.
     """
     _load_deferred_imports()
 
     return json_class(
         version,
-        PythonInfo,
-        _PythonInfoErrorTag.INVALID_VERSION_TYPE,
-        _PythonInfoErrorTag.UNSUPPORTED_VERSION
+        VCSInfo,
+        _VCSInfoErrorTag.INVALID_VERSION_TYPE,
+        _VCSInfoErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

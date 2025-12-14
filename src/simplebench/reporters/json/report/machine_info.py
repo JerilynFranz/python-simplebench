@@ -1,4 +1,4 @@
-"""JSON cpu info classes"""
+"""JSON machine info classes"""
 from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError

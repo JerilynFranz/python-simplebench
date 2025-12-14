@@ -9,6 +9,7 @@ from .report import Report
 from .results_info import ResultsInfo
 from .stats_block import StatsBlock
 from .value_block import ValueBlock
+from .vcs_info import VCSInfo
 
 __all__ = [
     "CPUInfo",
@@ -20,4 +21,5 @@ __all__ = [
     "ResultsInfo",
     "StatsBlock",
     "ValueBlock",
+    "VCSInfo",
 ]
