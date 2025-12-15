@@ -11,11 +11,9 @@ Provides
 - :class:`Section`
 - :class:`Target`
 - :class:`Verbosity`
-- :func:`enum_docstrings`
 
 """
 from .color import Color
-from .decorators import enum_docstrings
 from .exit_code import ExitCode
 from .flag_type import FlagType
 from .format import Format
@@ -31,5 +29,4 @@ __all__ = [
     'Section',
     'Target',
     'Verbosity',
-    'enum_docstrings',
 ]

@@ -1,5 +1,5 @@
 """CSV Reporter options package for simplebench."""
-from .exceptions import _CSVOptionsErrorTag
+from ._error_tags import _CSVOptionsErrorTag
 from .fields import CSVField
 from .options import CSVOptions
 

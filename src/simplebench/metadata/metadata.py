@@ -18,7 +18,7 @@ from simplebench.vcs import GitInfo
 
 from ..reporters.log.base.report_log_entry import ReportLogEntry
 from ..reporters.log.versions import json_class
-from .exceptions import _MetadataErrorTag
+from ._error_tags import _MetadataErrorTag
 
 if TYPE_CHECKING:
     from simplebench.case import Case

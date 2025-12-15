@@ -1,7 +1,7 @@
 """VCS Types enumeration."""
 from enum import Enum
 
-from simplebench.enums import enum_docstrings
+from simplebench.doc_utils import enum_docstrings
 
 
 @enum_docstrings

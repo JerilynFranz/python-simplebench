@@ -1,6 +1,6 @@
 """Thread ID type definition."""
 from ..exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from .exceptions import _TimeoutErrorTag
+from ._error_tags import _TimeoutErrorTag
 
 
 class ThreadId(int):

@@ -11,7 +11,7 @@ from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchVa
 from simplebench.validators import validate_int
 
 from ..base import ReportLogEntry, ReportLogEntrySchema
-from ..exceptions import _ReportLogEntryErrorTag, _ReportLogEntrySchemaErrorTag
+from .._error_tags import _ReportLogEntryErrorTag, _ReportLogEntrySchemaErrorTag
 from . import v1
 
 JSONErrorTags: TypeAlias = _ReportLogEntryErrorTag | _ReportLogEntrySchemaErrorTag

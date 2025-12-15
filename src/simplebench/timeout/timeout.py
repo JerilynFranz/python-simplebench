@@ -6,7 +6,7 @@ from typing import Any, Callable, Generic, ParamSpec, TypeVar, cast
 
 from ..exceptions import SimpleBenchTimeoutError, SimpleBenchTypeError, SimpleBenchValueError
 from .enums import TimeoutState
-from .exceptions import _TimeoutErrorTag
+from ._error_tags import _TimeoutErrorTag
 
 # Define a TypeVar for the class instance. This is not used by run.
 _T = TypeVar("_T")

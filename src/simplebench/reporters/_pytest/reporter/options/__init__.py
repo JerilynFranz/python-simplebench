@@ -1,5 +1,5 @@
 """Pytest Options Module public interface."""
-from .exceptions import _PytestOptionsErrorTag
+from ._error_tags import _PytestOptionsErrorTag
 from .fields import PytestField
 from .options import PytestOptions
 

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Iterable
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choices._base import _BaseChoices
-from simplebench.reporters.choices.exceptions import _ChoicesErrorTag
+from simplebench.reporters.choices._error_tags import _ChoicesErrorTag
 
 _CHOICE_IMPORTED: bool = False
 """Indicates whether :class:`~simplebench.reporters.choice.Choice` has been imported yet."""

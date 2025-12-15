@@ -19,7 +19,7 @@ from simplebench.reporters.choices import Choices
 from simplebench.reporters.reporter import Reporter
 
 from .decorators.register_reporter import get_registered_reporters
-from .exceptions import _ReporterManagerErrorTag
+from ._error_tags import _ReporterManagerErrorTag
 
 _PREDEFINED_REPORTERS: list[tuple[str, str]] = [
     ("simplebench.reporters.csv", "CSVReporter"),

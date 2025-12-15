@@ -14,7 +14,7 @@ from simplebench.defaults import (
 )
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
-from simplebench.iteration import Iteration
+from simplebench.results.iteration import Iteration
 from simplebench.results import Results
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
 

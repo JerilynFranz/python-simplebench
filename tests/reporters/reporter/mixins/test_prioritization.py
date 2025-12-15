@@ -9,7 +9,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 
 from ....factories import (

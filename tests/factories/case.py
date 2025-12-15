@@ -1,12 +1,12 @@
-"""Factories for creating Case, Session, and Runner test objects."""
+"""Factories for creating Case, Session, and BenchmarkRunner test objects."""
 # pylint: disable=unused-argument
 from __future__ import annotations
 
 from typing import overload
 
+from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case
 from simplebench.results import Results
-from simplebench.runners import SimpleRunner
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from ..kwargs import CaseKWArgs

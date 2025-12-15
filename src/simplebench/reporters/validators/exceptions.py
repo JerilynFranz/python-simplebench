@@ -1,5 +1,5 @@
 """simplebench.reporters.validators.exceptions package."""
-from simplebench.enums import enum_docstrings
+from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
 

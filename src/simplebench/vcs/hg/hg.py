@@ -15,7 +15,7 @@ from simplebench.exceptions import (
 from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_sequence_of_str, validate_type
 
-from .exceptions import _HgErrorTag
+from ._error_tags import _HgErrorTag
 from .exit_codes import HgExitCode
 from .hg_info import HgInfo
 

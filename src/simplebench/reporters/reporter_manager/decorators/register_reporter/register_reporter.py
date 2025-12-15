@@ -1,7 +1,7 @@
 """``@register_reporter`` decorator and supporting functions."""
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.reporter import Reporter
-from simplebench.reporters.reporter_manager.decorators.register_reporter.exceptions import _RegisterReporterErrorTag
+from simplebench.reporters.reporter_manager.decorators.register_reporter._error_tags import _RegisterReporterErrorTag
 
 # reporters registered by clients via the @register_reporter decorator
 _REGISTERED_REPORTER_TYPES: set[type[Reporter]] = set()

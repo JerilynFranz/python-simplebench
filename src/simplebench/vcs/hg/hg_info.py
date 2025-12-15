@@ -5,7 +5,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 
 from ..vcs_info import VCSInfo
 from ..vcs_type import VCSType
-from .exceptions import _HgErrorTag
+from ._error_tags import _HgErrorTag
 
 
 class HgInfo(VCSInfo):

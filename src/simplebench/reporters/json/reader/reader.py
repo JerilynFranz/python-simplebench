@@ -11,7 +11,7 @@ from simplebench.exceptions import (
     SimpleBenchValueError,
 )
 
-from .exceptions import _JSONReaderErrorTag
+from ._error_tags import _JSONReaderErrorTag
 
 
 class JSONReportReader:

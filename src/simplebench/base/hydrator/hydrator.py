@@ -11,7 +11,7 @@ from typing import Any, Callable, Iterable, Sequence, get_args, get_origin, get_
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_iterable_of_type, validate_type
 
-from .exceptions import _HydratorErrorTag
+from ._error_tags import _HydratorErrorTag
 
 
 def _validate_allowed(

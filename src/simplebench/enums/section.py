@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import Any
 
-from .decorators import enum_docstrings
+from simplebench.doc_utils.enum_docstrings import enum_docstrings
 
 
 @enum_docstrings

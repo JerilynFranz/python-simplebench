@@ -4,7 +4,7 @@ from typing import Any, Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError
 
-from .exceptions import _UtilsErrorTag
+from ._error_tags import _UtilsErrorTag
 
 
 def kwargs_variations(kwargs: dict[str, Sequence[Any]]) -> list[dict[str, Any]]:

@@ -1,5 +1,5 @@
 """ReporterOptions for MatPlotLib reporter specific options."""
-from .exceptions import _MatPlotLibOptionsErrorTag
+from ._error_tags import _MatPlotLibOptionsErrorTag
 from .options import MatPlotLibOptions
 
 __all__ = [

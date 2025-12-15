@@ -4,7 +4,7 @@ import pytest
 import simplebench.defaults as defaults
 from simplebench import utils
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.utils.exceptions import _UtilsErrorTag
+from simplebench.utils._error_tags import _UtilsErrorTag
 
 from .factories import argument_parser_factory, list_of_strings_flag_factory, namespace_factory
 from .testspec import TestAction, idspec

@@ -17,8 +17,8 @@ from simplebench.reporters.choice import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
 from simplebench.reporters.csv import CSVConfig
 from simplebench.reporters.reporter_manager import ReporterManager
-from simplebench.runners import SimpleRunner
-from simplebench.tasks import RichProgressTasks
+from simplebench.benchmark_runner import SimpleRunner
+from simplebench.display.tasks import RichProgressTasks
 from simplebench.utils import collect_arg_list, flag_to_arg
 
 from .factories import session_factory, session_kwargs_factory

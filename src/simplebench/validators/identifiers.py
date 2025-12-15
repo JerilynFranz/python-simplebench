@@ -3,7 +3,7 @@ import re
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 
-from .exceptions import _ValidatorsErrorTag
+from ._error_tags import _ValidatorsErrorTag
 
 _IDENTIFIER_REGEX = re.compile(r"^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$")
 

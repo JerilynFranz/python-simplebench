@@ -5,7 +5,7 @@ from typing import Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 
-from .exceptions import _UtilsErrorTag
+from ._error_tags import _UtilsErrorTag
 
 
 def flag_to_arg(flag: str) -> str:

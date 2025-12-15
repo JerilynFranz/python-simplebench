@@ -4,8 +4,8 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
-from simplebench.validators.exceptions import _ValidatorsErrorTag
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
+from simplebench.validators._error_tags import _ValidatorsErrorTag
 
 from ....factories import reporter_factory
 from ....factories.reporter.reporter_methods import (  # target_callback_kwargs_factory,; target_console_kwargs_factory,

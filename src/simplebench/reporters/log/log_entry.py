@@ -3,7 +3,7 @@
 from simplebench.exceptions import SimpleBenchValueError
 
 from .base import ReportLogEntry, ReportLogEntrySchema
-from .exceptions import _ReportLogEntryErrorTag, _ReportLogEntrySchemaErrorTag
+from ._error_tags import _ReportLogEntryErrorTag, _ReportLogEntrySchemaErrorTag
 from .versions import json_class
 
 _JSON_SCHEMA_AVAILABLE: bool = False

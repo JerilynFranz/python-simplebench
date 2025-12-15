@@ -9,10 +9,10 @@ from simplebench.vcs import VCSInfo
 from .kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
-    from simplebench.protocols import ActionRunner
+    from simplebench.case.function_runner import FunctionRunner
     from simplebench.reporters.protocols import ReporterCallback
     from simplebench.reporters.reporter.options import ReporterOptions
-    from simplebench.runners import SimpleRunner
+    from simplebench.benchmark_runner import SimpleRunner
 
 
 class CaseKWArgs(KWArgs):
@@ -33,7 +33,7 @@ class CaseKWArgs(KWArgs):
             group: str | NoDefaultValue = NoDefaultValue(),
             title: str | NoDefaultValue = NoDefaultValue(),
             description: str | NoDefaultValue = NoDefaultValue(),
-            action: ActionRunner | NoDefaultValue = NoDefaultValue(),
+            action: FunctionRunner | NoDefaultValue = NoDefaultValue(),
             iterations: int | NoDefaultValue = NoDefaultValue(),
             warmup_iterations: int | NoDefaultValue = NoDefaultValue(),
             rounds: int | NoDefaultValue = NoDefaultValue(),

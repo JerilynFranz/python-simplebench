@@ -2,7 +2,7 @@
 from simplebench._meta import __author__, __copyright__, __project__, __release__, __version__  # noqa: F401
 from simplebench.case import Case
 from simplebench.cli import main
-from simplebench.decorators import benchmark
+from simplebench.benchmark import benchmark
 from simplebench.enums import Verbosity
 from simplebench.reporters.csv.reporter.options import CSVOptions
 from simplebench.reporters.json.reporter.options import JSONOptions

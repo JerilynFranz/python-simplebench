@@ -15,7 +15,7 @@ from simplebench.validators import validate_bool, validate_float, validate_int_r
 from ...enums.style import Style
 from ...theme import DefaultTheme, Theme
 # simplebench.reporters.graph.matplotlib.options imports
-from .exceptions import _MatPlotLibOptionsErrorTag
+from ._error_tags import _MatPlotLibOptionsErrorTag
 
 
 class MatPlotLibOptions(GraphOptions):

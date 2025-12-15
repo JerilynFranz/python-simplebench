@@ -4,7 +4,7 @@ from typing import Sequence
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.validators import validate_bool, validate_int_range, validate_sequence_of_type
 
-from .exceptions import _PytestOptionsErrorTag
+from ._error_tags import _PytestOptionsErrorTag
 from .fields import PytestField
 
 _DEFAULT_RICH_TABLE_FIELDS: Sequence[PytestField] = [

@@ -2,7 +2,7 @@
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.log.base import ReportLogEntry as BaseReportLogEntry
 
-from .exceptions import _ReportLogEntryErrorTag
+from ._error_tags import _ReportLogEntryErrorTag
 
 
 class ReportLogEntry(BaseReportLogEntry):

@@ -3,7 +3,7 @@ import re
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 
-from .exceptions import _UtilsErrorTag
+from ._error_tags import _UtilsErrorTag
 
 # Finds all characters that are not a-z, A-Z, 0-9, _ (underline), or - (dash)
 _SANITIZE_FILENAME_RE = re.compile(r'[^-a-zA-Z0-9_]+')

@@ -5,7 +5,7 @@ from dataclasses import asdict, dataclass
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_iso8601_datetime
 
-from .exceptions import _VCSInfoErrorTag
+from ._error_tags import _VCSInfoErrorTag
 from .vcs_type import VCSType
 
 _SUPPORTED_VCS_TYPES: set[VCSType] = {VCSType.GIT, VCSType.HG}

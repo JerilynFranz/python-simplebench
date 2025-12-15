@@ -15,7 +15,7 @@ from simplebench.exceptions import (
 from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_sequence_of_str, validate_type
 
-from .exceptions import _GitErrorTag
+from ._error_tags import _GitErrorTag
 from .exit_codes import CommonCode, GitExitCode
 from .git_info import GitInfo
 

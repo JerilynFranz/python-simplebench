@@ -9,19 +9,19 @@ import csv
 from io import StringIO
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
+from simplebench.case.results import Results
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
+from ._error_tags import _CSVReporterErrorTag
 from .config import CSVConfig
-from .exceptions import _CSVReporterErrorTag
 from .options import CSVField, CSVOptions
 
 Options: TypeAlias = CSVOptions
@@ -93,7 +93,8 @@ class CSVReporter(Reporter):
 
         super().__init__(config)
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+    def render(  # noqa: C901
+            self, *, case: Case, section: Section, options: ReporterOptions) -> str:
         """Renders the benchmark results as tagged CSV data and returns it as a string.
 
         :param case: The :class:`~simplebench.case.Case` instance representing the

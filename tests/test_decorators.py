@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from simplebench.decorators import benchmark, clear_registered_cases, get_registered_cases
+from simplebench.benchmark import benchmark, clear_registered_cases, get_registered_cases
 from simplebench.defaults import (
     DEFAULT_ITERATIONS,
     DEFAULT_MAX_TIME,

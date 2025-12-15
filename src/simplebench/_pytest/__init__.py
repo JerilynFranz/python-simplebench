@@ -12,15 +12,15 @@ import pytest
 from rich.console import Console
 
 from simplebench import defaults
+from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
+from simplebench.case.results import Results
 from simplebench.reporters._pytest import PytestReporter
 from simplebench.reporters.json import JSONReporter
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import ReporterOptions
-from simplebench.results import Results
-from simplebench.runners import SimpleRunner
 from simplebench.session import Session
-from simplebench.vcs import GitInfo
+from simplebench.vcs import VCSInfo
 
 log = logging.getLogger(__name__)
 
@@ -117,10 +117,10 @@ class BenchmarkRegistrar:
 
         Benchmark ids must be unique within a benchmarking session and stable across runs
         or they cannot be used for tracking benchmark results over time.
-    :param git_info: An optional GitInfo instance representing the state of the Git repository.
+    :param vcs_info: An optional VCSInfo instance representing the state of the VCS repository.
 
-        If not provided, the GitInfo will be automatically retrieved from the current
-        context of the caller if the code is part of a Git repository.
+        If not provided, the VCSInfo will be automatically retrieved from the current
+        context of the caller if the code is part of a supported VCS repository.
     :param action: The function to perform the benchmark.
 
         This function must accept a `bench` instance of type SimpleRunner and
@@ -186,10 +186,10 @@ class BenchmarkRegistrar:
         function will be called with a `bench` parameter that is an instance of the runner and the
         keyword arguments for the current variation.
         If None, an empty dict is used.
-    :param runner: A custom runner class for the benchmark.
+    :param runners: A list of custom runner classes for the benchmark.
 
-        Any custom runner classes must be a subclass of SimpleRunner and must have a method
-        named `run` that accepts the same parameters as SimpleRunner.run and returns a Results object.
+        Any custom runner classes must be a subclass of BenchmarkRunner and must have a method
+        named `run` that accepts the same parameters as BenchmarkRunner.run and returns a Results object.
         The action function will be called with a `bench` parameter that is an instance of the
         custom runner.
         It may also accept additional parameters to the run method as needed. If additional
@@ -229,7 +229,7 @@ class BenchmarkRegistrar:
             action: Callable[..., Any],
             *,
             benchmark_id: Optional[str] = None,
-            git_info: Optional[GitInfo] = None,
+            vcs_info: Optional[VCSInfo] = None,
             group: str = 'default',
             title: Optional[str] = None,
             description: Optional[str] = None,
@@ -242,7 +242,7 @@ class BenchmarkRegistrar:
             timeout: float | int | None = None,
             variation_cols: Optional[dict[str, str]] = None,
             kwargs_variations: Optional[dict[str, list[Any]]] = None,
-            runner: Optional[type[SimpleRunner]] = None,
+            runners: Optional[list[type[BenchmarkRunner]]] = None,
             callback: Optional[ReporterCallback] = None,
             options: Optional[Iterable[ReporterOptions]] = None) -> None:
         """
@@ -255,7 +255,7 @@ class BenchmarkRegistrar:
 
         # This is the wrapper that conforms to the ActionRunner protocol.
         # It closes over the user's `action`.
-        def benchmark_action_wrapper(_bench: SimpleRunner, **kwargs: Any) -> Results:
+        def benchmark_action_wrapper(_bench: BenchmarkRunner, **kwargs: Any) -> Results:
             """The benchmark action wrapper."""
             # The `kwargs` here are the per-variation kwargs from the Case.
             return _bench.run(action=action, n=1, kwargs=kwargs)
@@ -267,7 +267,7 @@ class BenchmarkRegistrar:
         case = Case(
             action=benchmark_action_wrapper,
             benchmark_id=benchmark_id,
-            git_info=git_info,
+            vcs_info=vcs_info,
             group=group,
             title=title or default_title,
             description=description,
@@ -280,7 +280,7 @@ class BenchmarkRegistrar:
             timeout=timeout,
             variation_cols=variation_cols,
             kwargs_variations=kwargs_variations,
-            runner=runner,
+            runners=runners,
             callback=callback,
             options=options
         )

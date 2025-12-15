@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from simplebench.vcs.git import Git, GitInfo
-from simplebench.vcs.git.exceptions import _GitErrorTag
+from simplebench.vcs.git._error_tags import _GitErrorTag
 
 from ...factories.path import temp_dir
 from ...testspec import Assert, TestAction, TestGet, TestSpec, idspec

@@ -7243,7 +7243,7 @@ All Rights Reserved., 'credits':     Thanks to CWI, CNRI, BeOpen.com, Zope Corpo
 [autodoc] => <Verbosity.VERBOSE: 2>
 [app] emitting event: 'autodoc-process-signature'('attribute', 'simplebench.enums.Verbosity.VERBOSE', 2, {'members': <sphinx.ext.autodoc._All object at 0x10c046f80>, 'undoc-members': True, 'show-inheritance': True}, '', None)
 [app] emitting event: 'autodoc-process-docstring'('attribute', 'simplebench.enums.Verbosity.VERBOSE', 2, {'members': <sphinx.ext.autodoc._All object at 0x10c046f80>, 'undoc-members': True, 'show-inheritance': True}, ['All messages are shown and status displays during runs.', '', 'This is incompatible with quiet.', ''])
-[autodoc] from simplebench.enums import enum_docstrings
+[autodoc] from simplebench.doc_utils import enum_docstrings
 [autodoc] import simplebench.enums => <module 'simplebench.enums' from '/Users/snowhare/git/python-simplebench/src/simplebench/enums/__init__.py'>
 [autodoc] getattr(_, 'enum_docstrings')
 [autodoc] => <function enum_docstrings at 0x106c5f5b0>

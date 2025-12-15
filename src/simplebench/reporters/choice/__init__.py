@@ -1,7 +1,7 @@
 """simplebench.reporters.choice package."""
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choice.exceptions import _ChoiceConfErrorTag, _ChoiceErrorTag
+from simplebench.reporters.choice._error_tags import _ChoiceConfErrorTag, _ChoiceErrorTag
 
 __all__ = [
     "Choice",

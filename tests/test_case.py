@@ -13,11 +13,11 @@ from simplebench.case import Case
 from simplebench.enums import Format, Section, Verbosity
 from simplebench.exceptions import SimpleBenchBenchmarkError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.exceptions.case import _CaseErrorTag
-from simplebench.iteration import Iteration
+from simplebench.results.iteration import Iteration
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.results import Results
-from simplebench.runners import SimpleRunner
+from simplebench.benchmark_runner import SimpleRunner
 from simplebench.session import Session
 
 from .kwargs import CaseKWArgs

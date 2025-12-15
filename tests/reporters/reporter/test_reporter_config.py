@@ -6,8 +6,8 @@ import pytest
 from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.reporter import ReporterConfig
-from simplebench.reporters.reporter.exceptions import _ReporterConfigErrorTag
-from simplebench.validators.exceptions import _ValidatorsErrorTag
+from simplebench.reporters.reporter._error_tags import _ReporterConfigErrorTag
+from simplebench.validators._error_tags import _ValidatorsErrorTag
 
 from ...factories import reporter_config_kwargs_factory
 from ...testspec import Assert, TestAction, TestSpec, idspec

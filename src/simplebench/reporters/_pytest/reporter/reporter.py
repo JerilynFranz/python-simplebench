@@ -17,7 +17,7 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 from .config import PytestConfig
-from .exceptions import _PytestReporterErrorTag
+from ._error_tags import _PytestReporterErrorTag
 from .options import PytestField, PytestOptions
 
 Options: TypeAlias = PytestOptions

@@ -12,7 +12,7 @@ from simplebench.exceptions import (
     SimpleBenchTypeError,
 )
 
-from .exceptions import _ReportLogEntryErrorTag
+from ._error_tags import _ReportLogEntryErrorTag
 
 if TYPE_CHECKING:
     from io import TextIOWrapper

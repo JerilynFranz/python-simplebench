@@ -1,7 +1,7 @@
 """Mercurial (Hg) exit codes and error tags."""
 from enum import IntEnum
 
-from simplebench.enums import enum_docstrings
+from simplebench.doc_utils import enum_docstrings
 
 
 @enum_docstrings

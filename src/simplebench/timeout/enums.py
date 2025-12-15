@@ -1,7 +1,7 @@
 """Enums for the simplebench.timeout module."""
 from enum import Enum
 
-from ..enums import enum_docstrings
+from simplebench.doc_utils import enum_docstrings
 
 
 @enum_docstrings

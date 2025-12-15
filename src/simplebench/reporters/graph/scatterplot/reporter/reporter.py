@@ -10,17 +10,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
+from simplebench.case.results import Results
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.reporter import ReporterOptions
-from simplebench.results import Results
 from simplebench.si_units import si_scale_for_largest
 from simplebench.type_proxies import is_case
 from simplebench.validators import validate_type
 
 from ...matplotlib import MatPlotLibReporter
+from ._error_tags import _ScatterPlotReporterErrorTag
 from .config import ScatterPlotConfig
-from .exceptions import _ScatterPlotReporterErrorTag
 from .options import ScatterPlotOptions
 
 Options: TypeAlias = ScatterPlotOptions

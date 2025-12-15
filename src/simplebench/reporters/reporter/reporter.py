@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeAlias, TypeVar
 from rich.table import Table
 from rich.text import Text
 
+from simplebench.case.results import Results
 from simplebench.defaults import BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT, BASE_OPS_PER_INTERVAL_UNIT
 from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
@@ -30,9 +31,9 @@ from simplebench.metadata import Metadata
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 # simplebench.reporters.reporter
 from simplebench.reporters.reporter.config import ReporterConfig
-from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
 from simplebench.reporters.reporter.mixins import (
     _ReporterArgparseMixin,
     _ReporterOrchestrationMixin,
@@ -41,7 +42,6 @@ from simplebench.reporters.reporter.mixins import (
 )
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
-from simplebench.results import Results
 from simplebench.type_proxies import is_case, is_choice, is_session
 from simplebench.validators import validate_iterable_of_type, validate_type
 

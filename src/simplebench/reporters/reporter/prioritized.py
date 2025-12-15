@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.reporter.exceptions import _PrioritizedErrorTag
+from simplebench.reporters.reporter._error_tags import _PrioritizedErrorTag
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.type_proxies import is_case, is_choice, is_reporter

@@ -18,7 +18,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice import Choice
 from simplebench.metadata import Metadata
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
-from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.prioritized import Prioritized
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.type_proxies import is_case, is_choice, is_session

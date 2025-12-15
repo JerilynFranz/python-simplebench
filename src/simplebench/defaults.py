@@ -1,9 +1,15 @@
-# -*- coding: utf-8 -*-
-"""constants for simplebenchmark."""
+"""Defaults for SimpleBench."""
 import time
+
+from simplebench.benchmark_runner import BenchmarkRunner, SimpleRunner
 
 # Note: The following constants are defined here for easy access and modification.
 # They are used throughout the SimpleBench framework.
+
+DEFAULT_RUNNERS: list[type[BenchmarkRunner]] = [SimpleRunner]
+"""Default list of runner classes to use for benchmarking.
+
+Currently, the default runners list is `[SimpleRunner]`."""
 
 DEFAULT_TIMEOUT_GRACE_PERIOD: float = 10.0
 """Grace period to wait after timeout before forcefully terminating (in seconds)."""

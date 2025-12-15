@@ -2,7 +2,7 @@
 from typing import Any, Iterable, TypeVar, overload
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.validators.exceptions.validators import _ValidatorsErrorTag
+from simplebench.validators._error_tags.validators import _ValidatorsErrorTag
 
 T = TypeVar("T")
 

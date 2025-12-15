@@ -5,18 +5,18 @@ from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from rich.table import Table
 
+from simplebench.case.results import Results
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.reporter import Reporter, ReporterOptions
-from simplebench.results import Results
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
+from ._error_tags import _RichTableReporterErrorTag
 from .config import RichTableConfig
-from .exceptions import _RichTableReporterErrorTag
 from .options import RichTableField, RichTableOptions
 
 Options: TypeAlias = RichTableOptions
@@ -85,7 +85,8 @@ class RichTableReporter(Reporter):
 
         super().__init__(config)
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> Table:
+    def render(  # pylint: disable=too-many-locals,too-many-statements  # noqa: C901
+            self, *, case: Case, section: Section, options: ReporterOptions) -> Table:
         """Prints the benchmark results in a rich table format if available.
 
         It creates a :class:`~rich.table.Table` instance containing the benchmark results

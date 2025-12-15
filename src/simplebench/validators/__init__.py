@@ -1,5 +1,5 @@
 """Validator functions for SimpleBench."""
-from simplebench.validators.exceptions.validators import _ValidatorsErrorTag
+from simplebench.validators._error_tags.validators import _ValidatorsErrorTag
 
 from .dates_and_times import validate_iso8601_datetime
 from .identifiers import validate_namespaced_identifier

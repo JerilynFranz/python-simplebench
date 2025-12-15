@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from simplebench.case import Case
     from simplebench.enums import Verbosity
-    from simplebench.runners import SimpleRunner
+    from simplebench.benchmark_runner import SimpleRunner
 
 
 class SessionKWArgs(KWArgs):

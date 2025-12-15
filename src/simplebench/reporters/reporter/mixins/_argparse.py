@@ -7,7 +7,7 @@ from typing import Iterable
 from simplebench.enums import FlagType, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice import Choice
-from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.utils import collect_arg_list
 from simplebench.validators import validate_iterable_of_type, validate_type

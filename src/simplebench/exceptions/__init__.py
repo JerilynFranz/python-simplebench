@@ -1,22 +1,11 @@
-# -*- coding: utf-8 -*-
 """Custom exceptions for the simplebench package."""
 import argparse
 import re
-from enum import Enum
 from json import JSONDecodeError
 from textwrap import dedent
-from typing import Any, Generic, TypeVar
 
-from .base import ErrorTag
-from .case import _CaseErrorTag
-from .cli import _CLIErrorTag
-from .decorators import _DecoratorsErrorTag
-from .iteration import _IterationErrorTag
-from .results import _ResultsErrorTag
-from .runners import _RunnersErrorTag
-from .session import _SessionErrorTag
-from .si_units import _SIUnitsErrorTag
-from .tasks import _RichProgressTasksErrorTag, _RichTaskErrorTag
+from .error_tag import ErrorTag
+from .tagged_exception import TaggedException
 
 __all__ = [
     "TaggedException",
@@ -40,20 +29,7 @@ __all__ = [
     "SimpleBenchArgumentError",
     "SimpleBenchImportError",
     "ErrorTag",
-    "_CaseErrorTag",
-    "_CLIErrorTag",
-    "_DecoratorsErrorTag",
-    "_IterationErrorTag",
-    "_RichProgressTasksErrorTag",
-    "_RichTaskErrorTag",
-    "_ResultsErrorTag",
-    "_RunnersErrorTag",
-    "_SessionErrorTag",
-    "_SIUnitsErrorTag",
 ]
-
-
-E = TypeVar('E', bound=Exception)
 
 
 def dedent_and_normalize_whitespace(text: str) -> str:
@@ -90,54 +66,6 @@ def generate_message(msg: str, tag: ErrorTag) -> str:
     else:
         message = f"{msg}: {dedent_and_normalize_whitespace(tag.__doc__)}"
     return message.replace('\n', '')
-
-
-class TaggedException(Exception, Generic[E]):
-    """
-    A generic exception that can be specialized with a base exception type
-    and requires a tag during instantiation.
-
-    This class extends the built-in Exception class and adds a mandatory tag
-    attribute. The tag is intended to provide additional context or categorization
-    for the exception.
-
-    The tag must be an instance of Enum to ensure a controlled set of possible tags and
-    must be the first argument provided during instantiation if passed positionally.
-
-    It is used by other exceptions in the simplebench package to provide
-    standardized error tagging for easier identification and handling of specific error conditions.
-    and is used to create exceptions with specific tags for error handling and identification.
-    with this base class.
-
-    Example:
-
-    class MyTaggedException(TaggedException[ValueError]):
-    '''A tagged exception that is a specialized ValueError.'''
-
-    raise MyTaggedException("An error occurred", tag=MyErrorTags.SOME_ERROR)
-
-
-    Args:
-        tag (Enum, keyword): An Enum member representing the error code.
-        *args: Positional arguments to pass to the base exception's constructor.
-        **kwargs: Keyword arguments to pass to the base exception's constructor.
-
-    Attributes:
-        tag_code: Enum
-    """
-    def __init__(self, *args: Any, tag: Enum, **kwargs: Any) -> None:
-        """
-        Initializes the exception with a mandatory tag.
-
-        Args:
-            *args: Positional arguments to pass to the base exception's constructor.
-            tag (Enum, keyword): An Enum member representing the error code.
-            **kwargs: Keyword arguments to pass to the base exception's constructor.
-        """
-        if not isinstance(tag, Enum):
-            raise TypeError("Missing or wrong type 'tag' argument (must be Enum)")
-        self.tag_code = tag
-        super().__init__(*args, **kwargs)
 
 
 class SimpleBenchTypeError(TaggedException[ValueError]):

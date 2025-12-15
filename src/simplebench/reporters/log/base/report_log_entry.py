@@ -12,7 +12,7 @@ from simplebench.utils import get_machine_info, timestamp_to_iso8601
 from simplebench.validators import validate_type
 from simplebench.vcs import GitInfo
 
-from ..exceptions import _ReportLogEntryErrorTag
+from .._error_tags import _ReportLogEntryErrorTag
 
 if TYPE_CHECKING:
     from simplebench.case import Case

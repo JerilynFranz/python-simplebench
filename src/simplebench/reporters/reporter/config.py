@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.exceptions.config import _ReporterConfigErrorTag
+from simplebench.reporters.reporter._error_tags.config import _ReporterConfigErrorTag
 from simplebench.validators import validate_dirpath, validate_iterable_of_type, validate_string, validate_type
 
 

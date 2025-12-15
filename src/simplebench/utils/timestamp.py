@@ -4,7 +4,7 @@ import time
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.validators.misc import validate_float, validate_string
 
-from .exceptions import _UtilsErrorTag
+from ._error_tags import _UtilsErrorTag
 
 
 def timestamp_to_iso8601(timestamp: float) -> str:

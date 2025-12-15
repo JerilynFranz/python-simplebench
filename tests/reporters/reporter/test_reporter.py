@@ -10,16 +10,16 @@ import pytest
 from simplebench.case import Case
 from simplebench.enums import Format, Section, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.iteration import Iteration
+from simplebench.results.iteration import Iteration
 from simplebench.metadata import Metadata
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
-from simplebench.reporters.reporter.exceptions import _ReporterErrorTag
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.results import Results
-from simplebench.runners import SimpleRunner
+from simplebench.benchmark_runner import SimpleRunner
 from simplebench.session import Session
 
 from ...factories import (

@@ -16,7 +16,7 @@ from simplebench.type_proxies import is_case
 from simplebench.utils import get_machine_info
 from simplebench.validators import validate_type
 
-from ..report import (
+from simplebench.report import (
     CURRENT_VERSION,
     cpu_info,
     machine_info,
@@ -27,7 +27,7 @@ from ..report import (
     value_block,
 )
 from .config import JSONConfig
-from .exceptions import _JSONReporterErrorTag
+from ._error_tags import _JSONReporterErrorTag
 from .options import JSONOptions
 
 Options: TypeAlias = JSONOptions

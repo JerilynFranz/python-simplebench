@@ -21,7 +21,7 @@ from typing import Iterable
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices._base import _BaseChoices
-from simplebench.reporters.choices.exceptions import _ChoicesErrorTag
+from simplebench.reporters.choices._error_tags import _ChoicesErrorTag
 
 
 class ChoicesConf(_BaseChoices[ChoiceConf, _ChoicesErrorTag]):

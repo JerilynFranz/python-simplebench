@@ -3,7 +3,7 @@ import math
 
 from simplebench.defaults import DEFAULT_SIGNIFICANT_FIGURES
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from .exceptions import _UtilsErrorTag
+from ._error_tags import _UtilsErrorTag
 
 
 def sigfigs(number: float, figures: int = DEFAULT_SIGNIFICANT_FIGURES) -> float:

@@ -4,7 +4,7 @@ Colors are primarily used for console output formatting.
 """
 from enum import Enum
 
-from .decorators import enum_docstrings
+from simplebench.doc_utils import enum_docstrings
 
 
 @enum_docstrings

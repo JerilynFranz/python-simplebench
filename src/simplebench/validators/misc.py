@@ -9,7 +9,7 @@ from typing import Any, Sequence, TypeVar, cast, overload
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.type_proxies.lazy_type_proxy import LazyTypeProxy
-from simplebench.validators.exceptions import _ValidatorsErrorTag
+from simplebench.validators._error_tags import _ValidatorsErrorTag
 
 T = TypeVar('T')
 

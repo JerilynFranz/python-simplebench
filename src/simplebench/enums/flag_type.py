@@ -10,7 +10,7 @@ Types of command-line flags for reporters.
 
 from enum import Enum
 
-from .decorators import enum_docstrings
+from simplebench.doc_utils import enum_docstrings
 
 
 @enum_docstrings

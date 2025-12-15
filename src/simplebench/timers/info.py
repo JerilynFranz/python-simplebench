@@ -13,7 +13,7 @@ import numpy as np
 from simplebench.exceptions import SimpleBenchImportError, SimpleBenchRuntimeError, SimpleBenchTypeError
 from simplebench.validators import validate_positive_int
 
-from .exceptions import _TimersErrorTag
+from ._error_tags import _TimersErrorTag
 
 
 def fake_timer() -> int:
