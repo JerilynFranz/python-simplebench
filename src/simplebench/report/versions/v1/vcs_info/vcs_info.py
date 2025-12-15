@@ -18,9 +18,9 @@ import re
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.json.report.base import JSONSchema
-from simplebench.reporters.json.report.base import VCSInfo as BaseVCSInfo
-from simplebench.reporters.json.report.exceptions import _VCSInfoErrorTag
+from simplebench.report._error_tags import _VCSInfoErrorTag
+from simplebench.report.base import JSONSchema
+from simplebench.report.base import VCSInfo as BaseVCSInfo
 from simplebench.validators import validate_string
 
 from .vcs_info_schema import VCSInfoSchema

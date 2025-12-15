@@ -2,10 +2,10 @@
 import hashlib
 from typing import Any
 
-from simplebench.reporters.json.report.base import ExecutionEnvironment as BaseExecutionEnvironment
-from simplebench.reporters.json.report.base import PythonInfo
-from simplebench.reporters.json.report.exceptions import _ExecutionEnvironmentErrorTag
-from simplebench.reporters.json.report.protocols import Environment
+from simplebench.report.base import ExecutionEnvironment as BaseExecutionEnvironment
+from simplebench.report.base import PythonInfo
+from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
+from simplebench.report.protocols import Environment
 from simplebench.validators import validate_type
 
 from ..python_info import PythonInfo as PythonInfoV1

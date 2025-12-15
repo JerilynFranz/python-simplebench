@@ -15,10 +15,10 @@ and the schema set to the ReportSchema class for version 1 reports.
 from typing import Any, Sequence
 
 from simplebench.exceptions import SimpleBenchValueError
-from simplebench.reporters.json.report.base import JSONSchema, MachineInfo
-from simplebench.reporters.json.report.base import Report as BaseReport
-from simplebench.reporters.json.report.base import ResultsInfo
-from simplebench.reporters.json.report.exceptions import _ReportErrorTag
+from simplebench.report.base import JSONSchema, MachineInfo
+from simplebench.report.base import Report as BaseReport
+from simplebench.report.base import ResultsInfo
+from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.validators import (
     validate_iso8601_datetime,
     validate_sequence_of_str,

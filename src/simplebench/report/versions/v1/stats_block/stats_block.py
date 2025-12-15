@@ -17,9 +17,9 @@ of the base CPUInfo representation at the time of the V1 schema release.
 from typing import Any, Sequence
 
 from simplebench.exceptions import SimpleBenchValueError
-from simplebench.reporters.json.report.base import JSONSchema
-from simplebench.reporters.json.report.base import StatsBlock as BaseStatsBlock
-from simplebench.reporters.json.report.exceptions.stats_block import _StatsBlockErrorTag
+from simplebench.report.base import JSONSchema
+from simplebench.report.base import StatsBlock as BaseStatsBlock
+from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.validators import (
     validate_float,
     validate_namespaced_identifier,

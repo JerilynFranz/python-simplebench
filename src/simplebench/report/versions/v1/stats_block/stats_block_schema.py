@@ -1,6 +1,6 @@
 """Schema for JSON StatsBlock v1 validation."""
 # pylint: disable=line-too-long
-from simplebench.reporters.json.report.base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 
 class StatsBlockSchema(JSONSchema):

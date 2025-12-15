@@ -287,7 +287,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
                 return item  # type: ignore
         return None
 
-    def report(self,
+    def report(self,  # pylint: disable=too-many-arguments  # noqa: C901
                *,
                log_metadata: Metadata,
                args: Namespace,

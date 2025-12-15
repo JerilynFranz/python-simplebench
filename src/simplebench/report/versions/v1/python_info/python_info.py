@@ -4,9 +4,9 @@ import re
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.json.report.base import JSONSchema
-from simplebench.reporters.json.report.base import PythonInfo as BasePythonInfo
-from simplebench.reporters.json.report.exceptions import _PythonInfoErrorTag
+from simplebench.report.base import JSONSchema
+from simplebench.report.base import PythonInfo as BasePythonInfo
+from simplebench.report._error_tags import _PythonInfoErrorTag
 from simplebench.validators import validate_string
 
 from .python_info_schema import PythonInfoSchema

@@ -17,9 +17,9 @@ import re
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.json.report.base import CPUInfo as BaseCPUInfo
-from simplebench.reporters.json.report.base import JSONSchema
-from simplebench.reporters.json.report.exceptions import _CPUInfoErrorTag
+from simplebench.report.base import CPUInfo as BaseCPUInfo
+from simplebench.report.base import JSONSchema
+from simplebench.report._error_tags import _CPUInfoErrorTag
 from simplebench.validators import validate_int, validate_string
 
 from .cpu_info_schema import CPUInfoSchema
