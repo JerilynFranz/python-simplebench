@@ -51,9 +51,21 @@ class PythonInfo(ABC, Environment, Hydrator):
         """Convert the PythonInfo object to a dictionary."""
         raise NotImplementedError("This method should be overridden by subclasses")
 
+    @property
     @abstractmethod
     def hash_id(self) -> str:
         """Return a unique hash ID for the PythonInfo object."""
+        raise NotImplementedError("This method should be overridden by subclasses")
+
+    @hash_id.setter
+    @abstractmethod
+    def hash_id(self, value: str) -> None:
+        """Set the hash_id property.
+
+        It is validated to be a valid SHA-256 hexadecimal string or an empty string.
+
+        :param value: The hash_id string to set.
+        """
         raise NotImplementedError("This method should be overridden by subclasses")
 
     def is_execution_environment(self) -> None:
