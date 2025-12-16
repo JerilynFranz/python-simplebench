@@ -22,10 +22,10 @@ class _ChoiceConfErrorTag(ErrorTag):
     DESCRIPTION_INVALID_ARG_VALUE = "DESCRIPTION_INVALID_ARG_VALUE"
     """The description argument is an empty string or blank string."""
     SECTIONS_INVALID_ARG_TYPE = "SECTIONS_INVALID_ARG_TYPE"
-    """The sections argument is not a Sequence of Section enum values."""
+    """The metrics argument is not a Sequence of Metric enum values."""
     SECTIONS_INVALID_ARG_VALUE = "SECTIONS_INVALID_ARG_VALUE"
-    """One or more items in the sections argument is not a Section enum value,
-    or the sections argument is an empty sequence."""
+    """One or more items in the metrics argument is not a Metric enum value,
+    or the metrics argument is an empty sequence."""
     TARGETS_INVALID_ARG_TYPE = "TARGETS_INVALID_ARG_TYPE"
     """The targets argument is not a Sequence of Target enum values."""
     TARGETS_INVALID_ARG_VALUE = "TARGETS_INVALID_ARG_VALUE"

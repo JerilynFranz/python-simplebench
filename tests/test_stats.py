@@ -7,9 +7,9 @@ from typing import Any, Sequence
 
 import pytest
 
-from simplebench.enums import Section
+from simplebench.case.results import Iteration
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.results.iteration import Iteration
+from simplebench.metric import Metric, metric_registry
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats, StatsSummary
 from simplebench.stats.exceptions import (
     _MemoryUsageErrorTag,
@@ -410,30 +410,30 @@ def test_as_dict(stats_data: Sequence[float | int]) -> None:
     assert stats_and_data_dict['data'] == scaled_data, "Data in Stats(..).as_dict does not match scaled data"
 
 
-def supported_stats_sections() -> set[Section]:
-    """Return a list of supported Section enum values for stats classes.
+def supported_stats_sections() -> set[Metric]:
+    """Return a list of supported Metric enum values for stats classes.
 
     :return: Set of supported sections.
-    :rtype: set[Section]
+    :rtype: set[Metric]
     """
-    return {Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY}
+    return {metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY}
 
 
 @pytest.mark.parametrize("section", [
-    pytest.param(section, id=f"Section.{section.name}") for section in supported_stats_sections()
+    pytest.param(section, id=f"Metric.{section.name}") for section in supported_stats_sections()
 ])
-def test_stats_initalization(section: Section) -> None:
+def test_stats_initalization(section: metric_registry) -> None:
     """Test that data is correctly initialized in stats classes.
 
-    :param section: Section to test.
-    :type section: Section
+    :param section: Metric to test.
+    :type section: Metric
     """
     iterations: list[Iteration] = []
     data: dict[str, tuple[int | float, ...]] = {
-        Section.OPS: (1.0, 2.0, 4.0, 5.0, 10.0),
-        Section.TIMING: (1.0, 0.5, 0.25, 0.2, 0.1),
-        Section.MEMORY: (100, 200, 300, 400, 500),
-        Section.PEAK_MEMORY: (150, 250, 350, 450, 550),
+        metric_registry.OPS: (1.0, 2.0, 4.0, 5.0, 10.0),
+        metric_registry.TIMING: (1.0, 0.5, 0.25, 0.2, 0.1),
+        metric_registry.MEMORY: (100, 200, 300, 400, 500),
+        metric_registry.PEAK_MEMORY: (150, 250, 350, 450, 550),
     }
 
     for index in range(len(data[section])):
@@ -441,42 +441,42 @@ def test_stats_initalization(section: Section) -> None:
             Iteration(n=1,
                       unit='s',
                       scale=1.0,
-                      elapsed=data[Section.TIMING][index],
-                      memory=int(data[Section.MEMORY][index]),
-                      peak_memory=int(data[Section.PEAK_MEMORY][index]))
+                      elapsed=data[metric_registry.TIMING][index],
+                      memory=int(data[metric_registry.MEMORY][index]),
+                      peak_memory=int(data[metric_registry.PEAK_MEMORY][index]))
         )
     stats_instance: Stats
     try:
         match section:
-            case Section.OPS:
+            case metric_registry.OPS:
                 stats_instance = OperationsPerInterval(unit='ops/s', scale=1.0, iterations=iterations)
                 ops_data = stats_instance.data
                 assert ops_data == data[section], (
                     f"Ops data does not match expected values: {ops_data} != {data['ops']}")
 
-            case Section.TIMING:
+            case metric_registry.TIMING:
                 stats_instance = OperationTimings(unit='s', scale=1.0, iterations=iterations)
                 timing_data = stats_instance.data
                 assert timing_data == data[section], (
                     f"Timing data does not match expected values: {timing_data} != {data['elapsed']}")
 
-            case Section.MEMORY:
+            case metric_registry.MEMORY:
                 stats_instance = MemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
                 memory_data = stats_instance.data
                 assert memory_data == data[section], (
                     f"Memory data does not match expected values: {memory_data} != {data['memory']}")
 
-            case Section.PEAK_MEMORY:
+            case metric_registry.PEAK_MEMORY:
                 stats_instance = PeakMemoryUsage(unit='bytes', scale=1.0, iterations=iterations)
                 peak_memory_data = stats_instance.data
                 assert peak_memory_data == data[section], (
                     f"Peak memory data does not match expected values: {peak_memory_data} != {data['peak_memory']}")
 
             case _:
-                pytest.skip(f"Section {section} does not correspond to a tested stats class")
+                pytest.skip(f"Metric {section} does not correspond to a tested stats class")
     except Exception as exc:  # pylint: disable=broad-exception-caught
         tag = f', {exc.tag_code.name}' if hasattr(exc, 'tag_code') else ''  # pyright: ignore[reportAttributeAccessIssue]  # pylint: disable=line-too-long  # noqa: E501
-        pytest.fail(f"Unexpected error occurred for Section.{section.name} "
+        pytest.fail(f"Unexpected error occurred for Metric.{section.name} "
                     f"(data = {data[section]}): {exc.__class__.__name__}('{exc}'{tag})")
 
 

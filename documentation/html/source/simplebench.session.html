@@ -4,9 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
+        <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.session module - simplebench 0.8.0-alpha.0 documentation</title>
+        <title>simplebench.session package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,8 +185,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -254,17 +258,17 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-simplebench.session">
-<span id="simplebench-session-module"></span><h1>simplebench.session module<a class="headerlink" href="#module-simplebench.session" title="Link to this heading">🔗</a></h1>
-<p>Session management for SimpleBench.</p>
+<span id="simplebench-session-package"></span><h1>simplebench.session package<a class="headerlink" href="#module-simplebench.session" title="Link to this heading">🔗</a></h1>
+<p>Session module</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.session.Session">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.session.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.verbosity.html#simplebench.enums.verbosity.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Verbosity.NORMAL</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">default_runner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">default_runners</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.benchmark_runner.simplerunner.simplerunner.html#simplebench.benchmark_runner.simplerunner.simplerunner.SimpleRunner" title="simplebench.benchmark_runner.simplerunner.simplerunner.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><span class="pre">ArgumentParser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -272,7 +276,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/session.html#Session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Container for session related information while running benchmarks.</p>
 <p>The session is responsible for managing benchmark cases, command line
@@ -287,9 +291,9 @@ reports.</p>
 If None, an empty list will be created. Defaults to None.</p></li>
 <li><p><strong>verbosity</strong> – The verbosity level for console output.
 Defaults to <code class="xref py py-attr docutils literal notranslate"><span class="pre">Verbosity.NORMAL</span></code>.</p></li>
-<li><p><strong>default_runner</strong> – The default runner class to use
-for Cases that do not specify a runner. If None, the default <a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleRunner</span></code></a> is used.
-Defaults to None.</p></li>
+<li><p><strong>default_runners</strong> – The default runner classes to use
+for Cases that do not specify a runner.
+If None, the session level defaults list is set to []. Defaults to None.</p></li>
 <li><p><strong>args_parser</strong> – The <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> instance for the
 session. If None, a new <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> will be automatically created.
 Defaults to None.</p></li>
@@ -312,24 +316,24 @@ will be used. Defaults to None.</p></li>
 <span class="sig-name descname"><span class="pre">add_case</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><span class="pre">Case</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session.html#Session.add_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.add_case" title="Link to this definition">🔗</a></dt>
-<dd><p>Add a <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> to the Cases for this session.</p>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.add_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.add_case" title="Link to this definition">🔗</a></dt>
+<dd><p>Add a <a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> to the Cases for this session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>case</strong> – benchmark case to add to the Session</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the value is not a <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the value is not a <a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.session.Session.add_reporter_flags">
-<span class="sig-name descname"><span class="pre">add_reporter_flags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session.html#Session.add_reporter_flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.add_reporter_flags" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">add_reporter_flags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.add_reporter_flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.add_reporter_flags" title="Link to this definition">🔗</a></dt>
 <dd><p>Add the command line flags for all registered reporters to the session’s ArgumentParser.</p>
 <p>Any conflicts in flag names with already declared <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a> flags will have to be
 handled by the reporters themselves.</p>
@@ -361,7 +365,7 @@ method has been called.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.session.Session.cases">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cases</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.session.Session.cases" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cases</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.session.Session.cases" title="Link to this definition">🔗</a></dt>
 <dd><p>Tuple of Cases for this session.</p>
 </dd></dl>
 
@@ -372,9 +376,13 @@ method has been called.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="simplebench.session.Session.default_runner">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_runner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.runners.html#simplebench.runners.SimpleRunner" title="simplebench.runners.SimpleRunner"><span class="pre">SimpleRunner</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.session.Session.default_runner" title="Link to this definition">🔗</a></dt>
-<dd><p>The session scoped default runner class to use for Cases that do not specify a runner.</p>
+<dt class="sig sig-object py" id="simplebench.session.Session.default_runners">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_runners</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.benchmark_runner.benchmark_runner.html#simplebench.benchmark_runner.benchmark_runner.BenchmarkRunner" title="simplebench.benchmark_runner.benchmark_runner.BenchmarkRunner"><span class="pre">BenchmarkRunner</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.session.Session.default_runners" title="Link to this definition">🔗</a></dt>
+<dd><p>The session scoped default runner classes to use for Cases that do not specify a runner.</p>
+<p>If not set, returns []. This means that no default runners are set by the session.</p>
+<p>This means that if a Case does not specify a list of runners itself, it will use the
+default runners set by <cite>simplebench.defaults.DEFAULT_RUNNERS</cite> to run
+the benchmarks.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -382,14 +390,14 @@ method has been called.</p>
 <span class="sig-name descname"><span class="pre">extend_cases</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session.html#Session.extend_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.extend_cases" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.extend_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.extend_cases" title="Link to this definition">🔗</a></dt>
 <dd><p>Extend the Cases for this session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cases</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><em>Case</em></a><em>]</em>) – Sequence of Cases to add to the Session</p>
+<dd class="field-odd"><p><strong>cases</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><em>Case</em></a><em>]</em>) – Sequence of Cases to add to the Session</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the value is not a Sequence of Cases.</p>
@@ -411,7 +419,7 @@ method has been called.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session.html#Session.parse_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.parse_args" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.parse_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.parse_args" title="Link to this definition">🔗</a></dt>
 <dd><p>Parse the command line arguments using the session’s <a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>.</p>
 <p>This method parses the command line arguments and stores them in the session’s <a class="reference internal" href="#simplebench.session.Session.args" title="simplebench.session.Session.args"><code class="xref py py-attr docutils literal notranslate"><span class="pre">args</span></code></a> property.
 By default, it parses the arguments from <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.argv" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">sys.argv</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">args</span></code> is provided, it will parse
@@ -440,7 +448,7 @@ the arguments will be taken from <a class="reference external" href="https://doc
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.session.Session.report">
-<span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session.html#Session.report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.report" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.report" title="Link to this definition">🔗</a></dt>
 <dd><p>Generate reports for all benchmark cases in the session.</p>
 <p>If the <a class="reference internal" href="#simplebench.session.Session.run" title="simplebench.session.Session.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method has not been called prior to invoking this method,
 it will be called automatically to ensure that benchmark cases have been executed.</p>
@@ -448,7 +456,7 @@ it will be called automatically to ensure that benchmark cases have been execute
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.session.Session.report_keys">
-<span class="sig-name descname"><span class="pre">report_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/session.html#Session.report_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.report_keys" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">report_keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.report_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.report_keys" title="Link to this definition">🔗</a></dt>
 <dd><p>Get a list of report keys for all reports to be generated in this session.</p>
 <p>This filters the report choices based on the command line arguments
 that were set and parsed when the session was created and returns a list of
@@ -487,10 +495,10 @@ by adding your own reporters or removing default ones.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.session.Session.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session.html#Session.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.run" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.Session.run" title="Link to this definition">🔗</a></dt>
 <dd><p>Run all benchmark cases in the session.</p>
-<p>This method iterates over all <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instances in the session’s
-cases and invokes their <a class="reference internal" href="simplebench.case.html#simplebench.case.Case.run" title="simplebench.case.Case.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method to execute the benchmarks.</p>
+<p>This method iterates over all <a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instances in the session’s
+cases and invokes their <a class="reference internal" href="simplebench.html#simplebench.Case.run" title="simplebench.Case.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method to execute the benchmarks.</p>
 <p>If the <a class="reference internal" href="#simplebench.session.Session.parse_args" title="simplebench.session.Session.parse_args"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse_args()</span></code></a> method has not been called prior to invoking this method,
 it will be called authomatically with no arguments to parse from <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.argv" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">sys.argv</span></code></a>.</p>
 <p>If you wish to customize argument parsing or run the session entirely programmatically
@@ -498,7 +506,7 @@ without command line args, you should call <a class="reference internal" href="#
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>SimpleBenchTimeoutError</strong> – If a benchmark case times out during execution.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTimeoutError" title="simplebench.exceptions.SimpleBenchTimeoutError"><strong>SimpleBenchTimeoutError</strong></a> – If a benchmark case times out during execution.</p></li>
 <li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchBenchmarkError" title="simplebench.exceptions.SimpleBenchBenchmarkError"><strong>SimpleBenchBenchmarkError</strong></a> – If an error occurs during the execution of a benchmark.</p></li>
 </ul>
 </dd>
@@ -513,7 +521,7 @@ without command line args, you should call <a class="reference internal" href="#
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.session.Session.tasks">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tasks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.tasks.html#simplebench.tasks.RichProgressTasks" title="simplebench.tasks.RichProgressTasks"><span class="pre">RichProgressTasks</span></a></em><a class="headerlink" href="#simplebench.session.Session.tasks" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tasks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks" title="simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks"><span class="pre">RichProgressTasks</span></a></em><a class="headerlink" href="#simplebench.session.Session.tasks" title="Link to this definition">🔗</a></dt>
 <dd><p>The RichProgressTasks instance for managing progress tasks.</p>
 </dd></dl>
 
@@ -531,6 +539,38 @@ without command line args, you should call <a class="reference internal" href="#
 
 </dd></dl>
 
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.session.session.html">simplebench.session.session module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.add_case"><code class="docutils literal notranslate"><span class="pre">Session.add_case()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.add_reporter_flags"><code class="docutils literal notranslate"><span class="pre">Session.add_reporter_flags()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.args"><code class="docutils literal notranslate"><span class="pre">Session.args</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.args_parser"><code class="docutils literal notranslate"><span class="pre">Session.args_parser</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.cases"><code class="docutils literal notranslate"><span class="pre">Session.cases</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.console"><code class="docutils literal notranslate"><span class="pre">Session.console</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.default_runners"><code class="docutils literal notranslate"><span class="pre">Session.default_runners</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.extend_cases"><code class="docutils literal notranslate"><span class="pre">Session.extend_cases()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.output_path"><code class="docutils literal notranslate"><span class="pre">Session.output_path</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.parse_args"><code class="docutils literal notranslate"><span class="pre">Session.parse_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.progress"><code class="docutils literal notranslate"><span class="pre">Session.progress</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.report"><code class="docutils literal notranslate"><span class="pre">Session.report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.report_keys"><code class="docutils literal notranslate"><span class="pre">Session.report_keys()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.reporter_manager"><code class="docutils literal notranslate"><span class="pre">Session.reporter_manager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.run"><code class="docutils literal notranslate"><span class="pre">Session.run()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.show_progress"><code class="docutils literal notranslate"><span class="pre">Session.show_progress</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.tasks"><code class="docutils literal notranslate"><span class="pre">Session.tasks</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.timer"><code class="docutils literal notranslate"><span class="pre">Session.timer</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.session.session.html#simplebench.session.session.Session.verbosity"><code class="docutils literal notranslate"><span class="pre">Session.verbosity</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 </section>
 
         </article>
@@ -570,7 +610,7 @@ without command line args, you should call <a class="reference internal" href="#
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">simplebench.session module</a><ul>
+<li><a class="reference internal" href="#">simplebench.session package</a><ul>
 <li><a class="reference internal" href="#simplebench.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.session.Session.add_case"><code class="docutils literal notranslate"><span class="pre">Session.add_case()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.session.Session.add_reporter_flags"><code class="docutils literal notranslate"><span class="pre">Session.add_reporter_flags()</span></code></a></li>
@@ -578,7 +618,7 @@ without command line args, you should call <a class="reference internal" href="#
 <li><a class="reference internal" href="#simplebench.session.Session.args_parser"><code class="docutils literal notranslate"><span class="pre">Session.args_parser</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.session.Session.cases"><code class="docutils literal notranslate"><span class="pre">Session.cases</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.session.Session.console"><code class="docutils literal notranslate"><span class="pre">Session.console</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.session.Session.default_runner"><code class="docutils literal notranslate"><span class="pre">Session.default_runner</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.session.Session.default_runners"><code class="docutils literal notranslate"><span class="pre">Session.default_runners</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.session.Session.extend_cases"><code class="docutils literal notranslate"><span class="pre">Session.extend_cases()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.session.Session.output_path"><code class="docutils literal notranslate"><span class="pre">Session.output_path</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.session.Session.parse_args"><code class="docutils literal notranslate"><span class="pre">Session.parse_args()</span></code></a></li>
@@ -593,6 +633,7 @@ without command line args, you should call <a class="reference internal" href="#
 <li><a class="reference internal" href="#simplebench.session.Session.verbosity"><code class="docutils literal notranslate"><span class="pre">Session.verbosity</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
@@ -604,7 +645,7 @@ without command line args, you should call <a class="reference internal" href="#
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a100ed86"></script>
+</div><script src="../_static/documentation_options.js?v=ae742066"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

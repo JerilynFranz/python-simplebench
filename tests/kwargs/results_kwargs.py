@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from typing import Any, Sequence
 
+from simplebench.case import Results
 from simplebench.results.iteration import Iteration
-from simplebench.results import Results
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage
 
 from .kwargs import KWArgs, NoDefaultValue

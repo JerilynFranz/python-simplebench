@@ -4,9 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="CSV Report" href="csv_report.html"><link rel="prev" title="Reports" href="../reports.html">
+        <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>Rich Table Report - simplebench 0.8.0-alpha.0 documentation</title>
+        <title>Rich Table Report - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,8 +185,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -263,7 +267,7 @@ library to generate these tables, providing visually appealing and easy-to-read 
 <p>Rich Table reports are just one of several reporting options available in SimpleBench.
 You can also generate CSV reports, graph reports, and JSON reports, each providing
 different perspectives on your benchmark results.</p>
-<p>Refer to the <span class="xref std std-doc">command_line_options</span> section for more details on how to
+<p>Refer to the <span class="xref std std-doc">command_line_options</span> metric for more details on how to
 generate and customize these reports.</p>
 </div>
 <p>To generate a Rich Table report, you can use an option like <cite>–rich-table.ops</cite>
@@ -332,23 +336,23 @@ honest picture of your code’s performance, including its variability.</p>
 <span class="sd-summary-text">Common Header Fields</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <dl>
 <dt>Title</dt><dd><p class="sd-card-text">The title of the benchmark function. It can be set via the <cite>title</cite> parameter of
-the <a class="reference internal" href="../source/simplebench.decorators.html#simplebench.decorators.benchmark" title="simplebench.decorators.benchmark"><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code></a> decorator or defaults to
+the <code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code> decorator or defaults to
 the name of the benchmark function if not set. In this case, it is the name of the
 function: <cite>addition_benchmark</cite>.</p>
 </dd>
-<dt>Report Section</dt><dd><p class="sd-card-text">The section of benchmark statistics being reported. In this case, we are reporting
+<dt>Report Metric</dt><dd><p class="sd-card-text">The metric of benchmark statistics being reported. In this case, we are reporting
 the operations-per-second statistics (OPS) as requested via the <cite>–rich-table.ops</cite> command-line
-option. Other available report sections include timing statistics (how long one execution
+option. Other available report metrics include timing statistics (how long one execution
 of the function takes) (<cite>–rich-table.timing</cite>), and memory usage statistics
 (<cite>–rich-table.memory</cite>) which reports the net and peak memory usage of the benchmarked function
 as two separate tables.</p>
-<p class="sd-card-text">If run as <cite>python basic_benchmark.py –rich-table</cite> (without specifying a report section),
-all available report sections will be included in the output.</p>
-<p class="sd-card-text">Multiple options can be individually specified to include multiple report sections,
+<p class="sd-card-text">If run as <cite>python basic_benchmark.py –rich-table</cite> (without specifying a report metric),
+all available report metrics will be included in the output.</p>
+<p class="sd-card-text">Multiple options can be individually specified to include multiple report metrics,
 for example: <cite>–rich-table.ops –rich-table.timing</cite>.</p>
 </dd>
 <dt>Description</dt><dd><p class="sd-card-text">A description of the benchmark function. This can be set via the <cite>description</cite> parameter
-to the <a class="reference internal" href="../source/simplebench.decorators.html#simplebench.decorators.benchmark" title="simplebench.decorators.benchmark"><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code></a> decorator, or defaults to
+to the <code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code> decorator, or defaults to
 the first line of the function’s docstring if not set there.</p>
 <p class="sd-card-text">If not set in either location, it defaults to ‘(no description)’.</p>
 <p class="sd-card-text">In this case, it is the docstring of the <cite>addition_benchmark</cite> function.</p>
@@ -596,7 +600,7 @@ report for each parameter value requested for generation.</p>
 <p>This allows you to easily compare performance across different configurations.
 For example, if you have a benchmark that takes an input size
 parameter, the report can include how performance varies with different input sizes.</p>
-<p>See the <span class="xref std std-doc">defining_benchmarks</span> section for more details on defining and using
+<p>See the <span class="xref std std-doc">defining_benchmarks</span> metric for more details on defining and using
 parameterized benchmarks.</p>
 </section>
 <section id="custom-complexity-weightings">
@@ -699,7 +703,7 @@ of your code.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a100ed86"></script>
+</div><script src="../_static/documentation_options.js?v=ae742066"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

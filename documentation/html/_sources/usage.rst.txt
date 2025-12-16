@@ -85,7 +85,7 @@ Using SimpleBench
   your own custom reporters. The library is designed to handle the boilerplate,
   so you can focus on writing and using your benchmarks.
 
-  The sections below provide more examples of some of these advanced features.
+  The metrics below provide more examples of some of these advanced features.
 
 Examples
 --------

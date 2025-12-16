@@ -31,7 +31,7 @@ class _IterationErrorTag(ErrorTag):
     SCALE_ARG_VALUE = "SCALE_ARG_VALUE"
     """Invalid scale argument passed to the Iteration() constructor - must be greater than zero"""
     ITERATION_SECTION_INVALID_SECTION_ARG_TYPE = "ITERATION_SECTION_INVALID_SECTION_ARG_TYPE"
-    """Something other than a Section enum was passed as the iteration_sections arg"""
+    """Something other than a Metric enum was passed as the iteration_metrics arg"""
     ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE = (
             "ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE")
-    """Something other than a Section.OPS or Section.TIMING was passed to the Iteration.iteration_section() method"""
+    """Something other than a Metric.OPS or Metric.TIMING was passed to the Iteration.iteration_metric() method"""

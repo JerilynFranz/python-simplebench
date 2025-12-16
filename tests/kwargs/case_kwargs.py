@@ -91,7 +91,7 @@ class CaseKWArgs(KWArgs):
                        If None, the default SimpleRunner is used. (default: None)
         :type runner: type[SimpleRunner] | None
         :param callback: A callback function for additional processing of the report. The function should accept
-                         four arguments: the Case instance, the Section, the Format, and the generated report data.
+                         four arguments: the Case instance, the Metric, the Format, and the generated report data.
                          Leave as None if no callback is needed. (default: None)
         :type callback: ReporterCallback | None
         :param options: An iterable of additional options for the benchmark case.

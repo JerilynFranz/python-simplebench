@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.case import Case
-from simplebench.enums import Section
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter import Reporter, ReporterConfig, ReporterOptions
@@ -22,9 +22,9 @@ from .._primitives import (
     default_file_suffix,
     default_file_unique,
     default_flag_type,
+    default_metrics,
     default_output_format,
     default_report_output,
-    default_sections,
     default_subdir,
     default_targets,
 )
@@ -95,13 +95,13 @@ class FactoryReporter(Reporter):
         super().__init__(config)
 
     def render(
-            self, *, case: Case, section: Section, options: ReporterOptions) -> str | bytes | Text | Table:
+            self, *, case: Case, metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
         """Render the report for the given case, section, and options.
 
         :param case: The case to render.
         :type case: Case
         :param section: The section to render.
-        :type section: Section
+        :type section: Metric
         :param options: The options for rendering.
         :type options: ReporterOptions
         :return: The rendered report.
@@ -223,7 +223,7 @@ def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceCo
         name=default_choice_name(),
         description=default_description(),
         subdir=default_subdir(),
-        sections=default_sections(),
+        sections=default_metrics(),
         targets=default_targets(),
         default_targets=default_default_targets(),
         output_format=default_output_format(),
@@ -408,7 +408,7 @@ def choice_conf_factory(*,
         flag_type=default_flag_type(),
         name=default_choice_name() if name is None else name,
         description=default_description(),
-        sections=default_sections(),
+        sections=default_metrics(),
         targets=default_targets(),
         output_format=default_output_format(),
         file_suffix=default_file_suffix(),

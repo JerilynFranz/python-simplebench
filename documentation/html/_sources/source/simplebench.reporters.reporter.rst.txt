@@ -12,7 +12,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   simplebench.reporters.reporter.exceptions
    simplebench.reporters.reporter.mixins
 
 Submodules

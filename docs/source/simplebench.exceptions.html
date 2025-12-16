@@ -4,9 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
+        <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.exceptions package - simplebench 0.8.0-alpha.0 documentation</title>
+        <title>simplebench.exceptions package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,8 +185,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -258,11 +262,12 @@
 <p>Custom exceptions for the simplebench package.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.exceptions.ErrorTag">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">ErrorTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions/base.html#ErrorTag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.ErrorTag" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">ErrorTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions/error_tag.html#ErrorTag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.ErrorTag" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Base class for error tag enums.</p>
 <p>ErrorTags are used to identify specific error condition sources in the simplebench package.</p>
-<p>Tests use these tags to assert specific error condition paths.</p>
+<p>Tests use these tags to assert specific error condition paths at a much more granular level than
+just checking the exception type or message.</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -273,11 +278,11 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">argument_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchArgumentError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchArgumentError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentError</span></code></a>]</p>
 <p>Base class for re-raising all SimpleBench ArgumentError errors.</p>
 <p>It is designed to be used in places where an argparse.ArgumentError
 would be appropriate and for re-raising ArgumentErrors
@@ -327,13 +332,13 @@ tag=MyErrorTags.SOME_ERROR)</p>
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Ellipsis</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchAttributeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchAttributeError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeError</span></code></a>]</p>
 <p>Base class for all SimpleBench attribute errors.</p>
 <p>It differs from a standard AttributeError by the addition of a
 tag code used to very specifically identify where the error
@@ -374,11 +379,11 @@ the specific code throwing the exception for tests.</p>
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchBenchmarkError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchBenchmarkError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a>]</p>
 <p>Exceptions raised for benchmark execution errors.</p>
 <p>If an exception occurs during the execution of a benchmark,
 it can be wrapped in a SimpleBenchBenchmarkError to provide
@@ -410,17 +415,95 @@ additional context and tagging.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchDuplicateKeyError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchDuplicateKeyError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchDuplicateKeyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchDuplicateKeyError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a>]</p>
+<p>Exception raised when a duplicate key is encountered in simplebench.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchDuplicateKeyError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchDuplicateKeyError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchFileNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchFileNotFoundError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchFileNotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchFileNotFoundError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a>]</p>
+<p>Exceptions raised for file not found errors in simplebench.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchFileNotFoundError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchFileNotFoundError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchImportError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchImportError</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchImportError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchImportError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImportError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImportError</span></code></a>]</p>
 <p>Base class for all SimpleBench import errors.</p>
 <p>It differs from a standard ImportError by the addition of a
 tag code used to very specifically identify where the error
@@ -451,17 +534,56 @@ the specific code throwing the exception for tests.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchJSONDecodeError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchJSONDecodeError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchJSONDecodeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchJSONDecodeError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">JSONDecodeError</span></code>]</p>
+<p>Exceptions raised for JSON decode errors in simplebench.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchJSONDecodeError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchJSONDecodeError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchKeyError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchKeyError</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchKeyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchKeyError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a>]</p>
 <p>Base class for all SimpleBench key errors.</p>
 <p>It differs from a standard KeyError by the addition of a
 tag code used to very specifically identify where the error
@@ -492,17 +614,104 @@ the specific code throwing the exception for tests.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchNotAFileError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchNotAFileError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchNotAFileError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchNotAFileError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#OSError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">OSError</span></code></a>]</p>
+<p>Exceptions raised when a given path is not a file in simplebench.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchNotAFileError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchNotAFileError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchNotARepositoryError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchNotARepositoryError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchNotARepositoryError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchNotARepositoryError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a>]</p>
+<p>Exception raised when a directory is not a VCS repository in simplebench.</p>
+<p>This exception is raised when an operation expects to be performed
+within a version control system (VCS) repository (e.g., Git, Mercurial)
+but the current directory or specified path is not part of such a repository
+or the repository cannot be found.</p>
+<p>It indicates that the required VCS context is missing for the operation to proceed.</p>
+<p>It also probably indicates that the code throwing the exception either
+did not properly check for repository presence before attempting
+VCS-specific operations or that the user expected to be in a repository
+but is not, or both.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchNotARepositoryError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchNotARepositoryError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchNotImplementedError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchNotImplementedError</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchNotImplementedError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchNotImplementedError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a>]</p>
 <p>Base class for all SimpleBench not implemented errors.</p>
 <p>It differs from a standard NotImplementedError by the addition of a
 tag code used to very specifically identify where the error
@@ -533,17 +742,141 @@ the specific code throwing the exception for tests.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchOSError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchOSError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchOSError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchOSError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#OSError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">OSError</span></code></a>]</p>
+<p>Exceptions raised for OS errors in simplebench.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchOSError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchOSError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchPermissionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchPermissionError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchPermissionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchPermissionError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#PermissionError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PermissionError</span></code></a>]</p>
+<p>Exceptions raised for permission errors in simplebench.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchPermissionError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchPermissionError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchRepositoryActionFailedError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchRepositoryActionFailedError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchRepositoryActionFailedError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchRepositoryActionFailedError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a>]</p>
+<p>Exception raised when a VCS repository action fails in simplebench.</p>
+<p>This exception is raised when an operation intended to interact
+with a version control system (VCS) repository (e.g., Git, Mercurial)
+fails to complete successfully. This could be due to various reasons,
+such as permission issues, repository corruption, or unexpected
+conditions within the repository.</p>
+<p>It indicates that while the code was able to locate and identify
+the repository, the specific action attempted could not be completed.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchRepositoryActionFailedError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchRepositoryActionFailedError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchRuntimeError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchRuntimeError</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchRuntimeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchRuntimeError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a>]</p>
 <p>Base class for all SimpleBench runtime errors.</p>
 <p>It differs from a standard RuntimeError by the addition of a
 tag code used to very specifically identify where the error
@@ -574,17 +907,99 @@ the specific code throwing the exception for tests.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchSubprocessExecutableNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchSubprocessExecutableNotFoundError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchSubprocessExecutableNotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchSubprocessExecutableNotFoundError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a>]</p>
+<p>Exceptions raised when a required executable is not found in simplebench.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchExecutableNotFoundError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchExecutableNotFoundError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchTimeoutError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchTimeoutError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchTimeoutError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchTimeoutError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a>]</p>
+<p>Exceptions raised for timeout implementations.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchTimeoutError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR,
+func_name=”my_function”)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>func_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>) – The name of the function that timed out.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchTimeoutError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>func_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>) – The name of the function that timed out.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchTypeError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchTypeError</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchTypeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchTypeError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>]</p>
 <p>Base class for all SimpleBench type errors.</p>
 <p>It differs from a standard TypeError by the addition of a
 tag code used to very specifically identify where the error
@@ -615,17 +1030,57 @@ the specific code throwing the exception for tests.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchUsageError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchUsageError</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchUsageError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchUsageError" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a>]</p>
+<p>Exceptions raised for CLI usage errors.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>raise SimpleBenchUsageError(“An error occurred”,</dt><dd><p>tag=MyErrorTags.SOME_ERROR)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Raises a SimpleBenchTimeoutError with the given message and tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message.</p></li>
+<li><p><strong>func_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>) – The name of the function that timed out.</p></li>
+<li><p><strong>tag</strong> (<a class="reference internal" href="#simplebench.exceptions.ErrorTag" title="simplebench.exceptions.ErrorTag"><em>ErrorTag</em></a>) – The tag code.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="simplebench.exceptions.SimpleBenchValueError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimpleBenchValueError</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag" title="simplebench.exceptions.base.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag" title="simplebench.exceptions.error_tag.ErrorTag"><span class="pre">ErrorTag</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#SimpleBenchValueError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.SimpleBenchValueError" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.exceptions.TaggedException" title="simplebench.exceptions.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>]</p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException" title="simplebench.exceptions.tagged_exception.TaggedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaggedException</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>]</p>
 <p>Base class for all SimpleBench value errors.</p>
 <p>It differs from a standard ValueError by the addition of a
 tag code used to very specifically identify where the error
@@ -665,7 +1120,7 @@ the specific code throwing the exception for tests.</p>
 <dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions.html#TaggedException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.TaggedException" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/exceptions/tagged_exception.html#TaggedException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.exceptions.TaggedException" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">E</span></code>]</p>
 <p>A generic exception that can be specialized with a base exception type
 and requires a tag during instantiation.</p>
@@ -713,20 +1168,17 @@ with this base class.</p>
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.base.html">simplebench.exceptions.base module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.exceptions.base.html#simplebench.exceptions.base.ErrorTag"><code class="docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.error_tag.html">simplebench.exceptions.error_tag module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.exceptions.error_tag.html#simplebench.exceptions.error_tag.ErrorTag"><code class="docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.case.html">simplebench.exceptions.case module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.choices.html">simplebench.exceptions.choices module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.cli.html">simplebench.exceptions.cli module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.decorators.html">simplebench.exceptions.decorators module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.iteration.html">simplebench.exceptions.iteration module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.results.html">simplebench.exceptions.results module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.runners.html">simplebench.exceptions.runners module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.session.html">simplebench.exceptions.session module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.si_units.html">simplebench.exceptions.si_units module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.tasks.html">simplebench.exceptions.tasks module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.tagged_exception.html">simplebench.exceptions.tagged_exception module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException"><code class="docutils literal notranslate"><span class="pre">TaggedException</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.exceptions.tagged_exception.html#simplebench.exceptions.tagged_exception.TaggedException.tag_code"><code class="docutils literal notranslate"><span class="pre">TaggedException.tag_code</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -774,11 +1226,22 @@ with this base class.</p>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchArgumentError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchArgumentError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchAttributeError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchAttributeError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchBenchmarkError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchBenchmarkError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchDuplicateKeyError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchDuplicateKeyError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchFileNotFoundError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchFileNotFoundError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchImportError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchImportError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchJSONDecodeError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchJSONDecodeError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchKeyError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchKeyError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchNotAFileError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchNotAFileError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchNotARepositoryError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchNotARepositoryError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchNotImplementedError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchNotImplementedError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchOSError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchOSError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchPermissionError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchPermissionError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchRepositoryActionFailedError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchRepositoryActionFailedError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchRuntimeError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchRuntimeError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchSubprocessExecutableNotFoundError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchSubprocessExecutableNotFoundError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchTimeoutError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchTimeoutError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchTypeError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchTypeError</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchUsageError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchUsageError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.SimpleBenchValueError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchValueError</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.exceptions.TaggedException"><code class="docutils literal notranslate"><span class="pre">TaggedException</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.exceptions.TaggedException.tag_code"><code class="docutils literal notranslate"><span class="pre">TaggedException.tag_code</span></code></a></li>
@@ -796,7 +1259,7 @@ with this base class.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a100ed86"></script>
+</div><script src="../_static/documentation_options.js?v=ae742066"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

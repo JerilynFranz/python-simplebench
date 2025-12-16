@@ -4,9 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
+        <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.doc_utils module - simplebench 0.8.0-alpha.0 documentation</title>
+        <title>simplebench.doc_utils package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,8 +185,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -254,28 +258,60 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-simplebench.doc_utils">
-<span id="simplebench-doc-utils-module"></span><h1>simplebench.doc_utils module<a class="headerlink" href="#module-simplebench.doc_utils" title="Link to this heading">🔗</a></h1>
+<span id="simplebench-doc-utils-package"></span><h1>simplebench.doc_utils package<a class="headerlink" href="#module-simplebench.doc_utils" title="Link to this heading">🔗</a></h1>
 <p>Documentation utilities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.doc_utils.enum_docstrings">
+<span class="sig-prename descclassname"><span class="pre">simplebench.doc_utils.</span></span><span class="sig-name descname"><span class="pre">enum_docstrings</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">enum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">E</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">E</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/doc_utils/enum_docstrings.html#enum_docstrings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.doc_utils.enum_docstrings" title="Link to this definition">🔗</a></dt>
+<dd><p>Attach docstrings to enum members.</p>
+<p>Docstrings are string literals that appear directly below the enum member
+assignment expression within triple-quotes.</p>
+<p>This decorator parses the source code of the enum class to find
+docstrings for each member and attaches them to the respective enum members.</p>
+<p>This allows for more detailed documentation of enum members and in tools
+that can extract and display these docstrings.</p>
+<p>This code is adapted from:
+<a class="reference external" href="https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums">https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums</a></p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Example usage of enum_docstrings decorator</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nd">@enum_docstrings</span>
+<span class="linenos">2</span><span class="k">class</span><span class="w"> </span><span class="nc">SomeEnum</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="linenos">3</span><span class="w">    </span><span class="sd">&#39;&#39;&#39;Docstring for the SomeEnum enum&#39;&#39;&#39;</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span>    <span class="n">foo_member</span> <span class="o">=</span> <span class="s2">&quot;foo_value&quot;</span>
+<span class="linenos">6</span><span class="w">    </span><span class="sd">&#39;&#39;&#39;Docstring for the foo_member enum member&#39;&#39;&#39;</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span><span class="n">SomeEnum</span><span class="o">.</span><span class="n">foo_member</span><span class="o">.</span><span class="vm">__doc__</span>  <span class="c1"># &#39;Docstring for the foo_member enum member&#39;</span>
+</pre></div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enum</strong> – The enum class to process.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The same enum class with member docstrings attached.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.doc_utils.format_docstring">
 <span class="sig-prename descclassname"><span class="pre">simplebench.doc_utils.</span></span><span class="sig-name descname"><span class="pre">format_docstring</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">cls_or_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">cls_or_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">/</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/doc_utils.html#format_docstring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.doc_utils.format_docstring" title="Link to this definition">🔗</a></dt>
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">simplebench.doc_utils.</span></span><span class="sig-name descname"><span class="pre">format_docstring</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">cls_or_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="o"><span class="pre">/</span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/doc_utils/format_docstring.html#format_docstring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.doc_utils.format_docstring" title="Link to this definition">🔗</a></dt>
 <dd><p>A decorator to format the docstring of a class or function.</p>
 <p>Can be used with or without arguments on both classes and functions.
 It closely scopes the formatting to only the decorated object and to only
@@ -330,6 +366,21 @@ returns a decorator function that is then applied to the target object.</p>
 </dl>
 </dd></dl>
 
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.doc_utils.enum_docstrings.html">simplebench.doc_utils.enum_docstrings module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.doc_utils.enum_docstrings.html#simplebench.doc_utils.enum_docstrings.enum_docstrings"><code class="docutils literal notranslate"><span class="pre">enum_docstrings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.doc_utils.format_docstring.html">simplebench.doc_utils.format_docstring module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.doc_utils.format_docstring.html#simplebench.doc_utils.format_docstring.format_docstring"><code class="docutils literal notranslate"><span class="pre">format_docstring()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 </section>
 
         </article>
@@ -369,8 +420,10 @@ returns a decorator function that is then applied to the target object.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">simplebench.doc_utils module</a><ul>
+<li><a class="reference internal" href="#">simplebench.doc_utils package</a><ul>
+<li><a class="reference internal" href="#simplebench.doc_utils.enum_docstrings"><code class="docutils literal notranslate"><span class="pre">enum_docstrings()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.doc_utils.format_docstring"><code class="docutils literal notranslate"><span class="pre">format_docstring()</span></code></a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
@@ -382,7 +435,7 @@ returns a decorator function that is then applied to the target object.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a100ed86"></script>
+</div><script src="../_static/documentation_options.js?v=ae742066"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

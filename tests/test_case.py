@@ -9,15 +9,15 @@ from typing import Any
 import pytest
 from rich.console import Console
 
-from simplebench.case import Case
-from simplebench.enums import Format, Section, Verbosity
+from simplebench.benchmark_runner import SimpleRunner
+from simplebench.case import Case, Results
+from simplebench.case._error_tags import _CaseErrorTag
+from simplebench.enums import Format, Verbosity
 from simplebench.exceptions import SimpleBenchBenchmarkError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.exceptions.case import _CaseErrorTag
-from simplebench.results.iteration import Iteration
+from simplebench.metric import Metric
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
-from simplebench.results import Results
-from simplebench.benchmark_runner import SimpleRunner
+from simplebench.case.results import Iteration
 from simplebench.session import Session
 
 from .kwargs import CaseKWArgs
@@ -217,104 +217,104 @@ def postrun_benchmark_case() -> Case:
 
 
 def broken_callback_missing_case(  # pragma: no cover  # pylint: disable=unused-argument
-        *, section: Section, output_format: Format, output: Any) -> None:
+        *, metric: Metric, output_format: Format, output: Any) -> None:
     """A broken callback function that is missing the required 'case' parameter."""
 
 
-def broken_callback_missing_section(  # pragma: no cover  # pylint: disable=unused-argument
+def broken_callback_missing_metric(  # pragma: no cover  # pylint: disable=unused-argument
         *, case: Case,  output_format: Format, output: Any) -> None:
-    """A broken callback function that is missing the required 'section' parameter."""
+    """A broken callback function that is missing the required 'metric' parameter."""
 
 
 def broken_callback_missing_format(  # pragma: no cover  # pylint: disable=unused-argument
-        *, section: Section, case: Case, output: Any) -> None:
+        *, metric: Metric, case: Case, output: Any) -> None:
     """A broken callback function that is missing the required 'output_format' parameter."""
 
 
 def broken_callback_missing_output(  # pragma: no cover  # pylint: disable=unused-argument
-        *, section: Section, output_format: Format, case: Case) -> None:
+        *, metric: Metric, output_format: Format, case: Case) -> None:
     """A broken callback function that is missing the required 'output' parameter."""
 
 
 def broken_callback_wrong_case_type(  # pylint: disable=unused-argument  # pragma: no cover
-        *, case: str, section: Section, output_format: Format, output: Any) -> None:
+        *, case: str, metric: Metric, output_format: Format, output: Any) -> None:
     """A broken callback function that has the wrong type of 'case' parameter (should be 'case: Case')."""
 
 
-def broken_callback_wrong_section_type(  # pylint: disable=unused-argument  # pragma: no cover
-        *, case: Case, section: str, output_format: Format, output: Any) -> None:
-    """A broken callback function that has the wrong type of 'section' parameter (should be 'section: Section')."""
+def broken_callback_wrong_metric_type(  # pylint: disable=unused-argument  # pragma: no cover
+        *, case: Case, metric: str, output_format: Format, output: Any) -> None:
+    """A broken callback function that has the wrong type of 'metric' parameter (should be 'metric: Metric')."""
 
 
 def broken_callback_wrong_format_type(    # pylint: disable=unused-argument  # pragma: no cover
-        *, case: Case, section: Section, output_format: str, output: Any) -> None:
+        *, case: Case, metric: Metric, output_format: str, output: Any) -> None:
     """A broken callback function that has the wrong type of 'output_format' parameter
     (should be 'output_format: Format')."""
 
 
 def broken_callback_wrong_output_type(  # pylint: disable=unused-argument  # pragma: no cover
-        *, case: Case, section: Section, output_format: Format, output: str) -> None:
+        *, case: Case, metric: Metric, output_format: Format, output: str) -> None:
     """A broken callback function that has the wrong type of 'output' parameter (should be 'output: Any')."""
 
 
 def broken_callback_extra_param(  # pylint: disable=unused-argument  # pragma: no cover
-        *, case: Case, section: Section, output_format: Format, output: Any, extra_param: Any) -> None:
+        *, case: Case, metric: Metric, output_format: Format, output: Any, extra_param: Any) -> None:
     """A broken callback function that has an extra parameter
-    (should only have 'case', 'section', 'output_format', and 'output')."""
+    (should only have 'case', 'metric', 'output_format', and 'output')."""
 
 
 def broken_callback_no_type_hints(  # pylint: disable=unused-argument  # pragma: no cover
-        case, section, output_format, output):  # type: ignore[no-untyped-def]
+        case, metric, output_format, output):  # type: ignore[no-untyped-def]
     """A broken callback function that has no type hints."""
 
 
 def broken_callback_case_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
-        case: Case, *, section: Section, output_format: Format, output: Any) -> None:
+        case: Case, *, metric: Metric, output_format: Format, output: Any) -> None:
     """A broken callback function that allows case to be positional."""
 
 
-def broken_callback_section_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
-        section: Section, *, case: Case, output_format: Format, output: Any) -> None:
-    """A broken callback function that allows section to be positional."""
+def broken_callback_metric_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
+        metric: Metric, *, case: Case, output_format: Format, output: Any) -> None:
+    """A broken callback function that allows metric to be positional."""
 
 
 def broken_callback_output_format_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
-        output_format: Format, *, case: Case, section: Section, output: Any) -> None:
+        output_format: Format, *, case: Case, metric: Metric, output: Any) -> None:
     """A broken callback function that allows output_format to be positional."""
 
 
 def broken_callback_output_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
-        output: Any, *, case: Case, section: Section, output_format: Format) -> None:
+        output: Any, *, case: Case, metric: Metric, output_format: Format) -> None:
     """A broken callback function that allows output to be positional."""
 
 
 def broken_callback_not_keyword_only(  # pylint: disable=unused-argument  # pragma: no cover
-        case: Case, section: Section, output_format: Format, output: Any) -> None:
+        case: Case, metric: Metric, output_format: Format, output: Any) -> None:
     """A broken callback function that is not keyword-only."""
 
 
 def broken_callback_invalid_case_type_hint(  # pylint: disable=unused-argument,undefined-variable  # pragma: no cover
         *,
         case: 'ThisClassDoesNotExist',  # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]  # pylint: disable=line-too-long  # noqa: F821,E501
-        section: str,
+        metric: str,
         output_format: float,
         output: list) -> None:
     """A broken callback function that has a type hint for case that points to a non-existent class."""
 
 
-def broken_callback_invalid_section_type_hint(  # pylint: disable=unused-argument,undefined-variable  # pragma: no cover
+def broken_callback_invalid_metric_type_hint(  # pylint: disable=unused-argument,undefined-variable  # pragma: no cover
         *,
         case: Case,
-        section: 'ThisClassDoesNotExist',  # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]  # pylint: disable=line-too-long  # noqa: F821,E501
+        metric: 'ThisClassDoesNotExist',  # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]  # pylint: disable=line-too-long  # noqa: F821,E501
         output_format: float,
         output: list) -> None:
-    """A broken callback function that has a type hint for section that points to a non-existent class."""
+    """A broken callback function that has a type hint for metric that points to a non-existent class."""
 
 
 def broken_callback_invalid_format_type_hint(  # pylint: disable=unused-argument,undefined-variable  # pragma: no cover
         *,
         case: Case,
-        section: Section,
+        metric: Metric,
         output_format: 'ThisClassDoesNotExist',  # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]  # pylint: disable=line-too-long  # noqa: F821,E501
         output: list) -> None:
     """A broken callback function that has a type hint for output_format that points to a non-existent class."""
@@ -323,7 +323,7 @@ def broken_callback_invalid_format_type_hint(  # pylint: disable=unused-argument
 def broken_callback_invalid_output_type_hint(  # pylint: disable=unused-argument,undefined-variable  # pragma: no cover
         *,
         case: Case,
-        section: Section,
+        metric: Metric,
         output_format: Format,
         output: 'ThisClassDoesNotExist'   # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]  # pylint: disable=line-too-long  # noqa: F821,E501
         ) -> None:
@@ -331,7 +331,7 @@ def broken_callback_invalid_output_type_hint(  # pylint: disable=unused-argument
 
 
 def good_callback(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: Format, output: Any) -> None:
+        *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
     """A good callback function that has the correct parameters and types."""
 
 
@@ -710,10 +710,10 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_045", TestAction(
-        name="Callback function missing required 'section' parameter",
+        name="Callback function missing required 'metric' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          callback=broken_callback_missing_section),  # type: ignore[arg-type]
+                          callback=broken_callback_missing_metric),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)),
     idspec("INIT_046", TestAction(
@@ -738,10 +738,10 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_049", TestAction(
-        name="Callback function has wrong type for 'section' parameter",
+        name="Callback function has wrong type for 'metric' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          callback=broken_callback_wrong_section_type),  # type: ignore[arg-type]
+                          callback=broken_callback_wrong_metric_type),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)),
     idspec("INIT_050", TestAction(
@@ -773,10 +773,10 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_054", TestAction(
-        name="Callback function has unresolvable type hint for section parameter",
+        name="Callback function has unresolvable type hint for metric parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          callback=broken_callback_invalid_section_type_hint),  # type: ignore[arg-type]
+                          callback=broken_callback_invalid_metric_type_hint),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS)),
     idspec("INIT_055", TestAction(
@@ -808,10 +808,10 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_059", TestAction(
-        name="Callback function allows section parameter to be positional (should be keyword-only)",
+        name="Callback function allows metric parameter to be positional (should be keyword-only)",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          callback=broken_callback_section_allowed_to_be_positional),  # type: ignore[arg-type]
+                          callback=broken_callback_metric_allowed_to_be_positional),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)),
     idspec("INIT_060", TestAction(
@@ -923,7 +923,7 @@ def test_case_init(testspec: TestAction) -> None:
         exception=AttributeError)),
     idspec("ATTR_012", TestSet(
         name="Test setting read-only attribute 'callback'",
-        obj=base_case(), attribute='callback', value=lambda case, section, fmt, output: None,
+        obj=base_case(), attribute='callback', value=lambda case, metric, fmt, output: None,
         exception=AttributeError)),
     idspec("ATTR_013", TestSet(
         name="Test setting read-only attribute 'results'",

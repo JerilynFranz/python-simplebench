@@ -3,9 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
+        <link rel="prefetch" href="../../../../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.reporter.config - simplebench 0.6.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.reporter.config - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">simplebench 0.6.1-alpha.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,8 +184,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.6.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -252,10 +256,11 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Target</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoicesConf</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.exceptions.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReporterConfigErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter._error_tags.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReporterConfigErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_dirpath</span><span class="p">,</span> <span class="n">validate_iterable_of_type</span><span class="p">,</span> <span class="n">validate_string</span><span class="p">,</span> <span class="n">validate_type</span>
 
 
@@ -270,7 +275,7 @@
 <span class="sd">    It defines the common data structure and centralizes the validation of all parameters required</span>
 <span class="sd">    by reporters.</span>
 
-<span class="sd">    The ``sections``, ``targets``, and ``formats`` parameters act as master lists,</span>
+<span class="sd">    The ``metrics``, ``targets``, and ``formats`` parameters act as master lists,</span>
 <span class="sd">    constraining the values that can be used within the ``choices`` and</span>
 <span class="sd">    ``default_targets`` parameters.</span>
 
@@ -281,7 +286,7 @@
 <span class="sd">    Attributes:</span>
 <span class="sd">        name (str): The unique name for the reporter (e.g., &#39;rich-table&#39;).</span>
 <span class="sd">        description (str): A short description of what the reporter does.</span>
-<span class="sd">        sections (frozenset[Section]): The master set of sections this reporter can handle.</span>
+<span class="sd">        metrics (frozenset[Metric]): The master set of metrics this reporter can handle.</span>
 <span class="sd">        targets (frozenset[Target]): The master set of targets this reporter can output to.</span>
 <span class="sd">        default_targets (frozenset[Target]): The default subset of ``targets`` to use.</span>
 <span class="sd">        formats (frozenset[Format]): The master set of formats this reporter can produce.</span>
@@ -297,9 +302,9 @@
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A short description of what the reporter does. Cannot be empty or blank.&quot;&quot;&quot;</span>
 
-    <span class="n">sections</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Section</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The master set of :class:`~.Section` enums this reporter can handle. This constrains</span>
-<span class="sd">    the sections that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The master set of :class:`~.Metric` enums this reporter can handle. This constrains</span>
+<span class="sd">    the metrics that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">targets</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span>
@@ -321,7 +326,7 @@
     <span class="n">choices</span><span class="p">:</span> <span class="n">ChoicesConf</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A :class:`~.ChoicesConf` object defining the reporter&#39;s command-line interface</span>
 <span class="sd">    flags. These flags allow end-users to precisely control report generation by</span>
-<span class="sd">    specifying which sections to include, what output format to use, and where to</span>
+<span class="sd">    specifying which metrics to include, what output format to use, and where to</span>
 <span class="sd">    send the report (targets). They can also control other reporter-specific options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -369,7 +374,7 @@
             <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
         <span class="n">validate_iterable_of_type</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sections</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">,</span> <span class="n">Metric</span><span class="p">,</span> <span class="s1">&#39;metrics&#39;</span><span class="p">,</span>
             <span class="n">type_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_SECTIONS_TYPE</span><span class="p">,</span>
             <span class="n">value_tag</span><span class="o">=</span><span class="n">_ReporterConfigErrorTag</span><span class="o">.</span><span class="n">INVALID_SECTIONS_VALUE</span><span class="p">,</span>
             <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span>
@@ -434,7 +439,7 @@
         <span class="c1"># and replace subdir with the validated version</span>
         <span class="c1"># This uses object.__setattr__ to bypass the frozen=True restriction.</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;subdir&#39;</span><span class="p">,</span> <span class="n">subdir</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;sections&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sections</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;metrics&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">))</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">))</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;default_targets&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span><span class="p">))</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;formats&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formats</span><span class="p">))</span>
@@ -478,7 +483,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=8c7f9c82"></script>
+</div><script src="../../../../_static/documentation_options.js?v=ae742066"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

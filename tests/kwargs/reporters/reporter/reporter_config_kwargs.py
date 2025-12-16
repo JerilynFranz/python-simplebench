@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from simplebench.enums import Format, Section, Target
+from simplebench.enums import Format, Target
+from simplebench.metric import Metric
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -27,7 +28,7 @@ class ReporterConfigKWArgs(KWArgs):
             *,
             name: str | NoDefaultValue = NoDefaultValue(),
             description: str | NoDefaultValue = NoDefaultValue(),
-            sections: Iterable[Section] | NoDefaultValue = NoDefaultValue(),
+            metrics: Iterable[Metric] | NoDefaultValue = NoDefaultValue(),
             targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
             default_targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
             subdir: str | NoDefaultValue = NoDefaultValue(),
@@ -44,8 +45,8 @@ class ReporterConfigKWArgs(KWArgs):
         :param description: A brief description of the reporter. Must be a non-empty string.
                             or None if no specific options are defined.
         :type description: str
-        :param sections: The set of all Sections supported by the reporter.
-        :type sections: set[Section]
+        :param sections: The set of all Metrics supported by the reporter.
+        :type sections: set[Metric]
         :param targets: The set of all Targets supported by the reporter.
         :type targets: set[Target]
         :param default_targets: The default set of Targets for the reporter.

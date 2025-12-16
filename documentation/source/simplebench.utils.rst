@@ -12,7 +12,6 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.utils.exceptions
    simplebench.utils.filenames
    simplebench.utils.flags_and_args
    simplebench.utils.kwargs_variations

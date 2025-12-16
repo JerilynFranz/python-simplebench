@@ -17,9 +17,9 @@ class _ReporterConfigErrorTag(ErrorTag):
     """The 'description' argument is an empty string."""
 
     INVALID_SECTIONS_TYPE = "INVALID_SECTIONS_TYPE"
-    """The 'sections' argument is not an iterable of Section enums."""
+    """The 'metrics' argument is not an iterable of Metric enums."""
     INVALID_SECTIONS_VALUE = "INVALID_SECTIONS_VALUE"
-    """The 'sections' argument is an empty iterable when not allowed."""
+    """The 'metrics' argument is an empty iterable when not allowed."""
 
     INVALID_TARGETS_TYPE = "INVALID_TARGETS_TYPE"
     """The 'targets' argument is not an iterable of Target enums."""

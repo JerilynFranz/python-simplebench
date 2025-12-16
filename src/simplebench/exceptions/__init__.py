@@ -10,6 +10,7 @@ from .tagged_exception import TaggedException
 __all__ = [
     "TaggedException",
     "SimpleBenchBenchmarkError",
+    "SimpleBenchDuplicateKeyError",
     "SimpleBenchTypeError",
     "SimpleBenchValueError",
     "SimpleBenchKeyError",
@@ -558,6 +559,27 @@ class SimpleBenchSubprocessExecutableNotFoundError(TaggedException[FileNotFoundE
     """
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
         """Raises a SimpleBenchExecutableNotFoundError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchDuplicateKeyError(TaggedException[Exception]):
+    """Exception raised when a duplicate key is encountered in simplebench.
+
+    Usage:
+        raise SimpleBenchDuplicateKeyError("An error occurred",
+                                            tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchDuplicateKeyError with the given message and tag.
 
         Args:
             msg (str): The error message.

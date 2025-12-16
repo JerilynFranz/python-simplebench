@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import pytest
 
-from simplebench.enums import Format, Section, Target
+from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metric import metric_registry
 from simplebench.reporters.reporter import ReporterConfig
 from simplebench.reporters.reporter._error_tags import _ReporterConfigErrorTag
 from simplebench.validators._error_tags import _ValidatorsErrorTag
@@ -57,11 +58,11 @@ from ...testspec import Assert, TestAction, TestSpec, idspec
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterConfigErrorTag.INVALID_CHOICES_TYPE)),
     idspec('INIT_008', TestAction(
-        name=("Init of ReporterConfig with sections containing a non-Section enum raises "
+        name=("Init of ReporterConfig with sections containing a non-Metric enum raises "
               "SimpleBenchTypeError/SECTION_INVALID_ENTRY_TYPE"),
         action=ReporterConfig,
         kwargs=reporter_config_kwargs_factory(sections={
-            Section.OPS, "not_a_section_enum"}),  # type: ignore[arg-type]
+            metric_registry.OPS, "not_a_section_enum"}),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_TYPE)),
     idspec('INIT_009', TestAction(

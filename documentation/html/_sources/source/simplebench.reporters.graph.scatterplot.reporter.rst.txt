@@ -21,5 +21,4 @@ Submodules
    :maxdepth: 4
 
    simplebench.reporters.graph.scatterplot.reporter.config
-   simplebench.reporters.graph.scatterplot.reporter.exceptions
    simplebench.reporters.graph.scatterplot.reporter.reporter

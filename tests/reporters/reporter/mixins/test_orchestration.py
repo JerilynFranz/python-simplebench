@@ -6,8 +6,9 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.case import Case
-from simplebench.enums import Section, Target
+from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
@@ -35,7 +36,7 @@ from ....factories.reporter.reporter_methods import (
     render_by_case_kwargs_factory,
     render_by_section_kwargs_factory,
 )
-from ....kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderBySectionMethodKWArgs
+from ....kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderByMetricMethodKWArgs
 from ....testspec import Assert, TestAction, TestGet, TestSpec, idspec
 
 Output: TypeAlias = str | bytes | Text | Table
@@ -75,7 +76,7 @@ class FactoryReporterForOrchestration(FactoryReporter):
         self.target_filesystem = FileSystemSpy()  # type: ignore[method-assign,assignment,reporterAttributeAccessIssue]
         """Spy for filesystem target method calls."""
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> Output:
+    def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> Output:
         """Render the report for the given case, section, and options.
 
         Unlike the base FactoryReporter, this method uses a RenderSpy
@@ -84,7 +85,7 @@ class FactoryReporterForOrchestration(FactoryReporter):
         :param case: The benchmark case.
         :type case: Case
         :param section: The report section.
-        :type section: Section
+        :type section: Metric
         :param options: The reporter options.
         :type options: ReporterOptions
         :return: The rendered output.
@@ -94,7 +95,7 @@ class FactoryReporterForOrchestration(FactoryReporter):
 
 
 def _orchestration_reporter_factory(choice_name: str,
-                                    sections: set[Section] | None = None,
+                                    sections: set[metric_registry] | None = None,
                                     targets: set[Target] | None = None,
                                     default_targets: set[Target] | None = None) -> FactoryReporterForOrchestration:
     """Generate a FactoryReporterForOrchestration testing instance.
@@ -102,7 +103,7 @@ def _orchestration_reporter_factory(choice_name: str,
     :param choice_name: The name of the choice.
     :type choice_name: str
     :param sections: The sections to include.
-    :type sections: set[Section] | None
+    :type sections: set[Metric] | None
     :param targets: The targets to include.
     :type targets: set[Target] | None
     :param default_targets: The default targets.
@@ -110,7 +111,7 @@ def _orchestration_reporter_factory(choice_name: str,
     :return: A factory reporter for orchestration.
     :rtype: FactoryReporterForOrchestration
     """
-    sections = sections or {Section.MEMORY, Section.OPS, Section.TIMING, Section.PEAK_MEMORY}
+    sections = sections or {metric_registry.MEMORY, metric_registry.OPS, metric_registry.TIMING, metric_registry.PEAK_MEMORY}
     default_targets = default_targets or {Target.CONSOLE}
     targets = targets or {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
     choice_conf_kwargs = choice_conf_kwargs_factory(cache_id=None).replace(
@@ -125,13 +126,13 @@ def _orchestration_reporter_factory(choice_name: str,
     return reporter
 
 
-T = TypeVar("T", RenderByCaseMethodKWArgs, RenderBySectionMethodKWArgs)
+T = TypeVar("T", RenderByCaseMethodKWArgs, RenderByMetricMethodKWArgs)
 
 
 def _setup_good_path(
     kwargs_class: type[T],
     choice_name: str,
-    sections: set[Section] | None = None
+    sections: set[metric_registry] | None = None
 ) -> tuple[FactoryReporterForOrchestration, T]:
     """Generic helper to arrange a 'good path' test scenario.
 
@@ -140,7 +141,7 @@ def _setup_good_path(
     :param choice_name: The name of the choice.
     :type choice_name: str
     :param sections: The sections to include.
-    :type sections: set[Section] | None
+    :type sections: set[Metric] | None
     :return: A tuple containing the reporter and the kwargs.
     :rtype: tuple[FactoryReporterForOrchestration, T]
     """
@@ -167,7 +168,7 @@ def _setup_good_path(
 def _setup_bad_target_path(
     kwargs_class: type[T],
     choice_name: str,
-    sections: set[Section] | None = None
+    sections: set[metric_registry] | None = None
 ) -> tuple[FactoryReporterForOrchestration, T]:
     """Generic helper to arrange a 'bad target' test scenario.
 
@@ -176,7 +177,7 @@ def _setup_bad_target_path(
     :param choice_name: The name of the choice.
     :type choice_name: str
     :param sections: The sections to include.
-    :type sections: set[Section] | None
+    :type sections: set[Metric] | None
     :return: A tuple containing the reporter and the kwargs.
     :rtype: tuple[FactoryReporterForOrchestration, T]
     """
@@ -217,16 +218,16 @@ def _setup_render_by_case_good_path() -> tuple[FactoryReporterForOrchestration, 
     )
 
 
-def _setup_render_by_section_good_path() -> tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]:
+def _setup_render_by_section_good_path() -> tuple[FactoryReporterForOrchestration, RenderByMetricMethodKWArgs]:
     """Helper to arrange the 'good path' test scenario for render_by_section.
 
     :return: A tuple containing the reporter and the kwargs.
-    :rtype: tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]
+    :rtype: tuple[FactoryReporterForOrchestration, RenderByMetricMethodKWArgs]
     """
     return _setup_good_path(  # type: ignore[return-value]
-        kwargs_class=RenderBySectionMethodKWArgs,
+        kwargs_class=RenderByMetricMethodKWArgs,
         choice_name="test_choice_by_section",
-        sections={Section.MEMORY, Section.OPS, Section.TIMING}
+        sections={metric_registry.MEMORY, metric_registry.OPS, metric_registry.TIMING}
     )
 
 
@@ -242,14 +243,14 @@ def _setup_render_by_case_bad_target_path() -> tuple[FactoryReporterForOrchestra
     )
 
 
-def _setup_render_by_section_bad_target_path() -> tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]:
+def _setup_render_by_section_bad_target_path() -> tuple[FactoryReporterForOrchestration, RenderByMetricMethodKWArgs]:
     """Helper to arrange the 'bad target' test scenario for render_by_section.
 
     :return: A tuple containing the reporter and the kwargs.
-    :rtype: tuple[FactoryReporterForOrchestration, RenderBySectionMethodKWArgs]
+    :rtype: tuple[FactoryReporterForOrchestration, RenderByMetricMethodKWArgs]
     """
     return _setup_bad_target_path(  # type: ignore[return-value]
-        kwargs_class=RenderBySectionMethodKWArgs,
+        kwargs_class=RenderByMetricMethodKWArgs,
         choice_name="bad_target_choice_by_section"
     )
 

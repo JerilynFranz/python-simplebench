@@ -15,8 +15,8 @@ class _RichTableReporterErrorTag(ErrorTag):
     :class:`~.RichTableOptions` instance.
     """
     RENDER_INVALID_SECTION = "RENDER_INVALID_SECTION"
-    """The ``section`` argument passed to :meth:`~.RichTableReporter.render` is not a
-    :class:`~simplebench.enums.Section` enum member.
+    """The ``metric`` argument passed to :meth:`~.RichTableReporter.render` is not a
+    :class:`~simplebench.metric.Metric` enum member.
     """
     CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE = (
         "CHOICE_OPTIONS_INVALID_DEFAULT_TARGETS_TYPE")

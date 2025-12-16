@@ -12,7 +12,8 @@ from typing import TypeAlias, overload
 from rich.table import Table
 from rich.text import Text
 
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import FlagType, Format, Target
+from simplebench.metric import Metric, metric_registry
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
 from .path import path_factory
@@ -56,13 +57,13 @@ def default_format_plain() -> Format:
     return Format.PLAIN_TEXT
 
 
-def default_section() -> Section:
-    """Return a single default Section for testing purposes.
+def default_section() -> Metric:
+    """Return a single default Metric for testing purposes.
 
-    :return: Section.OPS
-    :rtype: Section
+    :return: Metric.OPS
+    :rtype: Metric
     """
-    return Section.OPS
+    return metric_registry.OPS
 
 
 def default_filename_base() -> str:
@@ -214,27 +215,27 @@ def default_subdir() -> str:
 
 
 @cached_factory
-def sections_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Section, ...]:
-    """Return a default tuple of Sections for testing purposes.
+def metrics_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Metric, ...]:
+    """Return a default tuple of Metrics for testing purposes.
 
     :param cache_id: An optional identifier to distinguish different cached instances.
                      If None, caching is disabled for this call.
     :type cache_id: CacheId, optional
-    :return: `(Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY)`
-    :rtype: tuple[Section]
+    :return: `(metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY)`
+    :rtype: tuple[Metric]
     """
-    return (Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY)
+    return (metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY)
 
 
-def default_sections() -> tuple[Section, ...]:
-    """Return a default tuple of Sections for testing purposes.
+def default_metrics() -> tuple[Metric, ...]:
+    """Return a default tuple of Metrics for testing purposes.
 
-    It always returns the same tuple instance of Sections created by sections_factory().
+    It always returns the same tuple instance of Metrics created by sections_factory().
 
-    :return: `(Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY)`
-    :rtype: tuple[Section]
+    :return: `(metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY)`
+    :rtype: tuple[Metric]
     """
-    return sections_factory(cache_id=f'{__name__}.default_sections:singleton')
+    return metrics_factory(cache_id=f'{__name__}.default_sections:singleton')
 
 
 @cached_factory

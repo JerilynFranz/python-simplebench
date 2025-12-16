@@ -12,5 +12,4 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.reporters.reporter_manager.decorators.register_reporter.exceptions
    simplebench.reporters.reporter_manager.decorators.register_reporter.register_reporter

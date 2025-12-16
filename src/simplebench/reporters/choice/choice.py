@@ -4,9 +4,10 @@ from __future__ import annotations
 from collections.abc import Hashable
 from typing import TYPE_CHECKING, Any
 
-from simplebench.enums import FlagType, Format, Section, Target
-from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.enums import FlagType, Format, Target
+from simplebench.metric import Metric
 from simplebench.reporters.choice._error_tags import _ChoiceErrorTag
+from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.validators import validate_type
@@ -35,7 +36,7 @@ class Choice(Hashable, ChoiceProtocol):
 
     A :class:`~.Choice` represents a specific configuration of a
     :class:`~simplebench.reporters.reporter.Reporter` subclass,
-    including the sections to include in the report,
+    including the metrics to include in the report,
     the output targets, and the output formats.
 
     The :class:`~.Choice` class provides a structured way to define and manage
@@ -46,17 +47,17 @@ class Choice(Hashable, ChoiceProtocol):
     A :class:`~.Choice` instance is immutable after creation to ensure consistency
     in reporting configurations.
 
-    The sections, targets, and formats are descriptive only; they do not
+    The metrics, targets, and formats are descriptive only; they do not
     enforce any behavior on the associated :class:`~simplebench.reporters.reporter.Reporter`
     subclass. It is the responsibility of the :class:`~simplebench.reporters.reporter.Reporter`
-    subclass to implement the behavior corresponding to the specified sections, targets,
+    subclass to implement the behavior corresponding to the specified metrics, targets,
     and formats.
 
     It is intended that multiple :class:`~.Choice` instances can be created
     for a single :class:`~simplebench.reporters.reporter.Reporter` subclass to represent
     different configurations of that reporter. For example, a JSON reporter might have one
-    :class:`~.Choice` that includes all sections and outputs to the filesystem,
-    and another :class:`~.Choice` that includes only the OPS section and outputs
+    :class:`~.Choice` that includes all metrics and outputs to the filesystem,
+    and another :class:`~.Choice` that includes only the OPS metric and outputs
     to the console. This allows users to select from a variety of
     predefined reporting configurations without needing to create
     multiple :class:`~simplebench.reporters.reporter.Reporter` subclasses.
@@ -83,8 +84,8 @@ class Choice(Hashable, ChoiceProtocol):
     :type name: str
     :param description: A brief description of the choice.
     :type description: str
-    :param sections: A set of :class:`~simplebench.enums.Section` enums to include in the report.
-    :type sections: set[:class:`~simplebench.enums.Section`]
+    :param metrics: A set of :class:`~simplebench.metric.Metric` enums to include in the report.
+    :type metrics: set[:class:`~simplebench.metric.Metric`]
     :param targets: A set of :class:`~simplebench.enums.Target` enums for output.
     :type targets: set[:class:`~simplebench.enums.Target`]
     :param default_targets: A set of :class:`~simplebench.enums.Target` enums representing the
@@ -203,13 +204,13 @@ class Choice(Hashable, ChoiceProtocol):
         return self._choice_conf.description
 
     @property
-    def sections(self) -> frozenset[Section]:
-        """Sections included in the choice.
+    def metrics(self) -> frozenset[Metric]:
+        """Metrics included in the choice.
 
-        These are the sections that the associated
+        These are the metrics that the associated
         :class:`~simplebench.reporters.reporter.Reporter` subclass
         is expected to include in its report when this choice is selected."""
-        return self._choice_conf.sections
+        return self._choice_conf.metrics
 
     @property
     def targets(self) -> frozenset[Target]:
@@ -306,7 +307,7 @@ class Choice(Hashable, ChoiceProtocol):
             self.flag_type,
             self.name,
             self.description,
-            self.sections,
+            self.metrics,
             self.targets,
             self.default_targets,
             self.subdir,
@@ -334,7 +335,7 @@ class Choice(Hashable, ChoiceProtocol):
                 self.flag_type == other.flag_type and
                 self.name == other.name and
                 self.description == other.description and
-                self.sections == other.sections and
+                self.metrics == other.metrics and
                 self.targets == other.targets and
                 self.default_targets == other.default_targets and
                 self.subdir == other.subdir and

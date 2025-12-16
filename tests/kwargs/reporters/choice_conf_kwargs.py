@@ -8,7 +8,8 @@ from simplebench.reporters.choice.choice_conf import ChoiceConf
 from ..kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
-    from simplebench.enums import FlagType, Format, Section, Target
+    from simplebench.enums import FlagType, Format, Target
+    from simplebench.metric import Metric
     from simplebench.reporters.reporter import ReporterOptions
 
 
@@ -30,7 +31,7 @@ class ChoiceConfKWArgs(KWArgs):
             name: str | NoDefaultValue = NoDefaultValue(),
             description: str | NoDefaultValue = NoDefaultValue(),
             subdir: str | NoDefaultValue = NoDefaultValue(),
-            sections: Sequence[Section] | NoDefaultValue = NoDefaultValue(),
+            metrics: Sequence[Metric] | NoDefaultValue = NoDefaultValue(),
             targets: Sequence[Target] | NoDefaultValue = NoDefaultValue(),
             default_targets: Sequence[Target] | NoDefaultValue = NoDefaultValue(),
             output_format: Format | NoDefaultValue = NoDefaultValue(),
@@ -52,8 +53,8 @@ class ChoiceConfKWArgs(KWArgs):
         :type description: str | NoDefaultValue
         :param subdir: The subdirectory for output files.
         :type subdir: str | NoDefaultValue
-        :param sections: A sequence of Section enums to include in the report.
-        :type sections: Sequence[Section] | NoDefaultValue
+        :param sections: A sequence of Metric enums to include in the report.
+        :type sections: Sequence[Metric] | NoDefaultValue
         :param targets: A sequence of Target enums for output.
         :type targets: Sequence[Target] | NoDefaultValue
         :param default_targets: A sequence of default Target enums for output.

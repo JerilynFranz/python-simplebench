@@ -13,7 +13,6 @@ Subpackages
    :maxdepth: 4
 
    simplebench.reporters.reporter_manager.decorators
-   simplebench.reporters.reporter_manager.exceptions
 
 Submodules
 ----------

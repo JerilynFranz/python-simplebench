@@ -13,8 +13,6 @@ Subpackages
    :maxdepth: 4
 
    simplebench.reporters.log.base
-   simplebench.reporters.log.exceptions
-   simplebench.reporters.log.schemas
    simplebench.reporters.log.versions
 
 Submodules

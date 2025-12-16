@@ -6,14 +6,6 @@ simplebench.timeout package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.timeout.exceptions
-
 Submodules
 ----------
 

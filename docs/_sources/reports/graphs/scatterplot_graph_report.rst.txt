@@ -17,7 +17,7 @@ benchmark results in a clear and informative manner.
     each providing different perspectives on your benchmark results. See :doc:`../../reports/`
     for an overview of all available report types.
 
-    Refer to the :doc:`../../command_line_options` section for more details on how to
+    Refer to the :doc:`../../command_line_options` metric for more details on how to
     generate and customize these reports from the command line.
 
 
@@ -111,7 +111,7 @@ This allows you to easily compare performance across different configurations.
 For example, if you have a benchmark that takes an input size
 parameter, the report can visualize how performance varies with different input sizes.
 
-See the :doc:`../../defining_benchmarks` section for more details on defining and using
+See the :doc:`../../defining_benchmarks` metric for more details on defining and using
 parameterized benchmarks.
 
 Custom Complexity Weightings

@@ -1,8 +1,9 @@
 """Iteration class"""
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from simplebench.doc_utils import format_docstring
-from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metric.metric import Metric
+from simplebench.metric.metric_registry import registry as metric_registry
 from simplebench.validators import (
     validate_int,
     validate_non_blank_string,
@@ -209,31 +210,31 @@ class Iteration:
             return 0.0
         return self._rounds / (self._elapsed * self._scale)
 
-    def iteration_section(self, section: Section) -> int | float:
-        """Returns the requested section of the benchmark results.
+    def iteration_metric(self, metric: Metric) -> int | float:
+        """Returns the requested metric of the benchmark results.
 
-        :param section: The section of the results to return. Must be Section.OPS or Section.TIMING.
-        :type section: Section
-        :return: The requested section of the benchmark results.
+        :param metric: The metric of the results to return. Must be Metric.OPS or Metric.TIMING.
+        :type metric: Metric
+        :return: The requested metric of the benchmark results.
         :rtype: Stats
         """
-        if not isinstance(section, Section):
+        if not isinstance(metric, Metric):
             raise SimpleBenchTypeError(
-                f'Invalid section type: {type(section)}. Must be of type Section.',
+                f'Invalid metric type: {type(metric)}. Must be of type Metric.',
                 tag=_IterationErrorTag.ITERATION_SECTION_INVALID_SECTION_ARG_TYPE
             )
-        match section:
-            case Section.OPS:
+        match metric:
+            case metric_registry.OPS:
                 return self.ops_per_second
-            case Section.TIMING:
+            case metric_registry.TIMING:
                 return self.per_round_elapsed
-            case Section.MEMORY:
+            case metric_registry.MEMORY:
                 return self.memory
-            case Section.PEAK_MEMORY:
+            case metric_registry.PEAK_MEMORY:
                 return self.peak_memory
             case _:  # needed for mypy
                 raise SimpleBenchValueError(
-                    f'Invalid section: {section}. Must be Section.OPS or Section.TIMING.',
+                    f'Invalid metric: {metric}. Must be Metric.OPS or Metric.TIMING.',
                     tag=_IterationErrorTag.ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
                 )
 

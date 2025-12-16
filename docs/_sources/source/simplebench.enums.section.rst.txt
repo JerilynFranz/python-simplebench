@@ -1,7 +1,7 @@
-simplebench.enums.section module
+simplebench.enums.metric module
 ================================
 
-.. automodule:: simplebench.enums.section
+.. automodule:: simplebench.enums.metric
    :members:
    :undoc-members:
    :show-inheritance:

@@ -20,5 +20,4 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.reporters.graph.matplotlib.reporter.exceptions
    simplebench.reporters.graph.matplotlib.reporter.reporter

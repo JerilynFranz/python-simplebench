@@ -1,6 +1,7 @@
 """KWArgs for Reporter.target_callback() method."""
 from simplebench.case import Case
-from simplebench.enums import Format, Section
+from simplebench.enums import Format
+from simplebench.metric import Metric
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 
@@ -22,8 +23,8 @@ class TargetCallbackMethodKWArgs(KWArgs):
     :type callback: ReporterCallback | None
     :param case: The Case instance representing the benchmarked code.
     :type case: Case
-    :param section: The Section of the report.
-    :type section: Section
+    :param section: The Metric of the report.
+    :type section: Metric
     :param output_format: The Format of the report.
     :type output_format: Format
     :param output: The report data to pass to the callback function.
@@ -34,7 +35,7 @@ class TargetCallbackMethodKWArgs(KWArgs):
             *,
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),
             case: Case | NoDefaultValue = NoDefaultValue(),
-            section: Section | NoDefaultValue = NoDefaultValue(),
+            metric: Metric | NoDefaultValue = NoDefaultValue(),
             output_format: Format | NoDefaultValue = NoDefaultValue(),
             output: str | bytes | NoDefaultValue = NoDefaultValue(),
     ) -> None:
@@ -47,8 +48,8 @@ class TargetCallbackMethodKWArgs(KWArgs):
         :type callback: ReporterCallback | None
         :param case: The Case instance representing the benchmarked code.
         :type case: Case
-        :param section: The Section of the report.
-        :type section: Section
+        :param section: The Metric of the report.
+        :type section: Metric
         :param output_format: The Format of the report.
         :type output_format: Format
         :param output: The report data to pass to the callback function.

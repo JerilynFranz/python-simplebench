@@ -8,7 +8,7 @@ Tutorials
 
 .. container:: textblock
 
-    This section provides step-by-step tutorials to help you get started with
+    This metric provides step-by-step tutorials to help you get started with
     SimpleBench. Whether you're new to benchmarking or looking to deepen your
     understanding of SimpleBench's features, these tutorials will guide you
     through practical examples and use cases.

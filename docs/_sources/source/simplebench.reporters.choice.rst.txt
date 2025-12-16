@@ -6,14 +6,6 @@ simplebench.reporters.choice package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.reporters.choice.exceptions
-
 Submodules
 ----------
 

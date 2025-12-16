@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from simplebench.enums import Color, Verbosity
 
 if TYPE_CHECKING:
-    from simplebench.display import RichTask
+    from simplebench.display.rich_task import RichTask
     from simplebench.session import Session
 
 

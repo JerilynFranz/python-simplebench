@@ -12,5 +12,4 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.reporters.graph.scatterplot.reporter.options.exceptions
    simplebench.reporters.graph.scatterplot.reporter.options.options

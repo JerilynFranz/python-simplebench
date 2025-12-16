@@ -105,7 +105,7 @@ All notable changes to this project will be documented in this file.
   * The `enums` module was split into separate files for each enumeration (e.g., `ExitCode`, `Verbosity`), improving code organization.
   * The `add_reporter_flags()` method in `Session` is now called automatically by `parse_args()`, simplifying the API for programmatic use.
   * Removed the unused `group` argument from the internal `generate_benchmark_id()` function.
-  * Removed the `section_mean()` method from `Case` and the `mean_change()` method from `JSONReporter` as being garbage metrics that should not exist.
+  * Removed the `metric_mean()` method from `Case` and the `mean_change()` method from `JSONReporter` as being garbage metrics that should not exist.
 * **Documentation**:
   * Improved the visual styling of parameter lists in the Sphinx documentation for better readability.
   * Customized 'furo' theme for improved UX.

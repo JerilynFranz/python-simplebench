@@ -190,7 +190,7 @@ latex_documents = [
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
+# (source start file, name, description, authors, manual metric).
 man_pages = [
     (master_doc, 'simplebench', 'simplebench Documentation',
      [author], 1)

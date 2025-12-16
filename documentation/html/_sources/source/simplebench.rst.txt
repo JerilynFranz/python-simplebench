@@ -12,14 +12,27 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   simplebench.base
+   simplebench.benchmark
+   simplebench.benchmark_runner
+   simplebench.case
+   simplebench.cli
+   simplebench.display
+   simplebench.doc_utils
    simplebench.enums
    simplebench.exceptions
+   simplebench.metadata
+   simplebench.metric
+   simplebench.report
    simplebench.reporters
-   simplebench.stats
+   simplebench.session
+   simplebench.si_units
    simplebench.timeout
+   simplebench.timers
    simplebench.type_proxies
    simplebench.utils
    simplebench.validators
+   simplebench.vcs
 
 Submodules
 ----------
@@ -27,16 +40,4 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.case
-   simplebench.cli
-   simplebench.decorators
    simplebench.defaults
-   simplebench.doc_utils
-   simplebench.iteration
-   simplebench.protocols
-   simplebench.results
-   simplebench.runners
-   simplebench.session
-   simplebench.si_units
-   simplebench.tasks
-   simplebench.vcs

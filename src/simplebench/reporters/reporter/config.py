@@ -3,8 +3,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simplebench.enums import Format, Section, Target
+from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchValueError
+from simplebench.metric import Metric
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter._error_tags.config import _ReporterConfigErrorTag
 from simplebench.validators import validate_dirpath, validate_iterable_of_type, validate_string, validate_type
@@ -19,7 +20,7 @@ class ReporterConfig:
     It defines the common data structure and centralizes the validation of all parameters required
     by reporters.
 
-    The ``sections``, ``targets``, and ``formats`` parameters act as master lists,
+    The ``metrics``, ``targets``, and ``formats`` parameters act as master lists,
     constraining the values that can be used within the ``choices`` and
     ``default_targets`` parameters.
 
@@ -30,7 +31,7 @@ class ReporterConfig:
     Attributes:
         name (str): The unique name for the reporter (e.g., 'rich-table').
         description (str): A short description of what the reporter does.
-        sections (frozenset[Section]): The master set of sections this reporter can handle.
+        metrics (frozenset[Metric]): The master set of metrics this reporter can handle.
         targets (frozenset[Target]): The master set of targets this reporter can output to.
         default_targets (frozenset[Target]): The default subset of ``targets`` to use.
         formats (frozenset[Format]): The master set of formats this reporter can produce.
@@ -46,9 +47,9 @@ class ReporterConfig:
     description: str
     """A short description of what the reporter does. Cannot be empty or blank."""
 
-    sections: frozenset[Section]
-    """The master set of :class:`~.Section` enums this reporter can handle. This constrains
-    the sections that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.
+    metrics: frozenset[Metric]
+    """The master set of :class:`~.Metric` enums this reporter can handle. This constrains
+    the metrics that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.
     """
 
     targets: frozenset[Target]
@@ -70,7 +71,7 @@ class ReporterConfig:
     choices: ChoicesConf
     """A :class:`~.ChoicesConf` object defining the reporter's command-line interface
     flags. These flags allow end-users to precisely control report generation by
-    specifying which sections to include, what output format to use, and where to
+    specifying which metrics to include, what output format to use, and where to
     send the report (targets). They can also control other reporter-specific options.
     """
 
@@ -118,7 +119,7 @@ class ReporterConfig:
             allow_empty=False, allow_blank=False
         )
         validate_iterable_of_type(
-            self.sections, Section, 'sections',
+            self.metrics, Metric, 'metrics',
             type_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_TYPE,
             value_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_VALUE,
             allow_empty=True
@@ -183,7 +184,7 @@ class ReporterConfig:
         # and replace subdir with the validated version
         # This uses object.__setattr__ to bypass the frozen=True restriction.
         object.__setattr__(self, 'subdir', subdir)
-        object.__setattr__(self, 'sections', frozenset(self.sections))
+        object.__setattr__(self, 'metrics', frozenset(self.metrics))
         object.__setattr__(self, 'targets', frozenset(self.targets))
         object.__setattr__(self, 'default_targets', frozenset(self.default_targets))
         object.__setattr__(self, 'formats', frozenset(self.formats))

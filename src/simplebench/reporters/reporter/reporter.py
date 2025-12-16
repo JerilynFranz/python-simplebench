@@ -8,7 +8,7 @@ managing default options, sending reports to various targets, and orchestrating 
 
 To create a new reporter, a developer must subclass `Reporter` and implement the abstract
 `render()` method. For most reporters, the default `run_report()` implementation, which
-renders a report for each section, is sufficient.
+renders a report for each metric, is sufficient.
 
 A `Reporter` is responsible for generating reports based on benchmark results from a `Session` and `Case`.
 Reporters can produce reports in various formats and output them to different targets.
@@ -25,9 +25,10 @@ from rich.text import Text
 
 from simplebench.case.results import Results
 from simplebench.defaults import BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT, BASE_OPS_PER_INTERVAL_UNIT
-from simplebench.enums import Format, Section, Target
+from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
+from simplebench.metric.metric import Metric
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
@@ -339,11 +340,11 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
                 "session must be a Session instance if provided",
                 tag=_ReporterErrorTag.REPORT_INVALID_SESSION_ARG)
 
-        unsupported_sections = choice.sections - self.supported_sections()
-        if unsupported_sections:
-            sections_error = f"Unsupported Section(s) in Choice().sections: {unsupported_sections}"
+        unsupported_metrics = choice.metrics - self.supported_metrics()
+        if unsupported_metrics:
+            metrics_error = f"Unsupported Metric(s) in Choice().metrics: {unsupported_metrics}"
             raise SimpleBenchValueError(
-                sections_error,
+                metrics_error,
                 tag=_ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)
 
         unsupported_targets = choice.targets - self.supported_targets()
@@ -390,11 +391,11 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
                         callback=callback)
 
     @abstractmethod
-    def render(self, *, case: "Case", section: "Section", options: "ReporterOptions") -> str | bytes | Text | Table:
-        """Render the report for a specific case and section.
+    def render(self, *, case: "Case", metric: "Metric", options: "ReporterOptions") -> str | bytes | Text | Table:
+        """Render the report for a specific case and metric.
 
         This abstract method must be implemented by all :class:`~.Reporter` subclasses.
-        It is responsible for generating the actual report content for a given case and section,
+        It is responsible for generating the actual report content for a given case and metric,
         based on the provided options.
 
         The output can be a string, bytes, or a Rich object (:class:`~rich.text.Text` or
@@ -402,8 +403,8 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
 
         :param case: The :class:`~simplebench.case.Case` instance containing the benchmark results.
         :type case: :class:`~simplebench.case.Case`
-        :param section: The specific :class:`~simplebench.enums.Section` of the results to render.
-        :type section: :class:`~simplebench.enums.Section`
+        :param metric: The specific :class:`~simplebench.metric.Metric` of the results to render.
+        :type metric: :class:`~simplebench.metric.Metric`
         :param options: The reporter-specific :class:`~.ReporterOptions` for rendering.
         :type options: :class:`~.ReporterOptions`
         :return: The rendered report content.
@@ -428,7 +429,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         This method is the primary customization point for controlling how a report is generated.
         It is called by the public :meth:`~.report` method after all inputs have been validated.
 
-        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_section`,
+        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_metric`,
         which is suitable for most reporters. Subclasses can override this method to provide
         alternative orchestration, such as calling
         :meth:`~._ReporterOrchestrationMixin.render_by_case` for reports that are generated
@@ -455,7 +456,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :param callback: A callback function for additional processing. Defaults to ``None``.
         :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
-        self.render_by_section(
+        self.render_by_metric(
             log_metadata=log_metadata,
             case=case,
             choice=choice,
@@ -472,7 +473,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
         :raises SimpleBenchTypeError: If the provided choice is not a
             :class:`~simplebench.reporters.choice.choice.Choice` instance.
-        :raises SimpleBenchValueError: If the choice's sections, targets, or formats
+        :raises SimpleBenchValueError: If the choice's metrics, targets, or formats
             are not supported by the reporter.
         """
         # is_choice check handles deferred import runtime type checking for Choice
@@ -481,10 +482,10 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
                 "Expected a Choice instance",
                 tag=_ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
 
-        unsupported_sections = choice.sections - self.supported_sections()
-        if unsupported_sections:
+        unsupported_metrics = choice.metrics - self.supported_metrics()
+        if unsupported_metrics:
             raise SimpleBenchValueError(
-                f"Unsupported Section(s) in Choice().sections: {unsupported_sections}",
+                f"Unsupported Metric(s) in Choice().metrics: {unsupported_metrics}",
                 tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)
 
         unsupported_targets = choice.targets - self.supported_targets()
@@ -511,7 +512,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
 
         The :class:`~simplebench.reporters.choices.choices.Choices` instance contains one or more
         :class:`~simplebench.reporters.choice.choice.Choice` instances, each representing a
-        specific combination of sections, targets, and formats, command line flags,
+        specific combination of metrics, targets, and formats, command line flags,
         and descriptions.
 
         This property allows access to the reporter's choices for generating reports
@@ -562,16 +563,16 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         """Whether output files should be appended to."""
         return self.config.file_append
 
-    def supported_sections(self) -> frozenset[Section]:
-        """The set of supported :class:`~simplebench.enums.Section` for the reporter.
+    def supported_metrics(self) -> frozenset[Metric]:
+        """The set of supported :class:`~simplebench.metric.Metric` for the reporter.
 
-        This is the set of :class:`~simplebench.enums.Section` that the reporter can include
+        This is the set of :class:`~simplebench.metric.Metric` that the reporter can include
         in its reports.
 
         Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include
-        :class:`~simplebench.enums.Section` that are declared in this set.
+        :class:`~simplebench.metric.Metric` that are declared in this set.
         """
-        return self.config.sections
+        return self.config.metrics
 
     def supported_targets(self) -> frozenset[Target]:
         """The set of supported :class:`~simplebench.enums.Target` for the reporter.
@@ -593,33 +594,33 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         """
         return self.config.formats
 
-    def get_base_unit_for_section(self, section: Section) -> str:
-        """Return the base unit for the specified section.
+    def get_base_unit_for_metric(self, metric: Metric) -> str:
+        """Return the base unit for the specified metric.
 
-        :param section: The section to get the base unit for.
-        :type section: :class:`~simplebench.enums.Section`
-        :return: The base unit for the section.
+        :param metric: The metric to get the base unit for.
+        :type metric: :class:`~simplebench.metric.Metric`
+        :return: The base unit for the metric.
         :rtype: str
         """
-        match section:
-            case Section.OPS:
+        match metric:
+            case metric_registry.OPS:
                 return BASE_OPS_PER_INTERVAL_UNIT
-            case Section.TIMING:
+            case metric_registry.TIMING:
                 return BASE_INTERVAL_UNIT
-            case Section.MEMORY:
+            case metric_registry.MEMORY:
                 return BASE_MEMORY_UNIT
-            case Section.PEAK_MEMORY:
+            case metric_registry.PEAK_MEMORY:
                 return BASE_MEMORY_UNIT
             case _:
                 raise SimpleBenchValueError(
-                    f"Unsupported section: {section} (this should never happen)",
+                    f"Unsupported metric: {metric} (this should never happen)",
                     tag=_ReporterErrorTag.RUN_REPORT_UNSUPPORTED_SECTION)
 
-    def get_all_stats_values(self, results: list[Results], section: Section) -> list[float]:
-        """Gathers all primary statistical values for a given section across multiple results.
+    def get_all_stats_values(self, results: list[Results], metric: Metric) -> list[float]:
+        """Gathers all primary statistical values for a given metric across multiple results.
 
         It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,
-        from each :class:`~simplebench.results.Results` instance for the specified section.
+        from each :class:`~simplebench.case.Results` instance for the specified metric.
 
         This method is useful in determining appropriate scaling factors or units
         for reporting by analyzing the range of values across all results.
@@ -628,17 +629,17 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         be ``NaN`` for results with insufficient data points, or orders of magnitude different
         from the other statistics, which can skew scaling calculations.
 
-        :param results: A list of :class:`~simplebench.results.Results` instances to gather
+        :param results: A list of :class:`~simplebench.case.Results` instances to gather
                         statistics from.
-        :type results: list[:class:`~simplebench.results.Results`]
-        :param section: The section to gather statistics for.
-        :type section: :class:`~simplebench.enums.Section`
+        :type results: list[:class:`~simplebench.case.Results`]
+        :param metric: The metric to gather statistics for.
+        :type metric: :class:`~simplebench.metric.Metric`
         :return: A list of all gathered statistical values.
         :rtype: list[float]
         """
         all_numbers = []
         for result in results:
-            stats = result.results_section(section)
+            stats = result.results_metric(metric)
             all_numbers.extend([
                 stats.mean, stats.median, stats.minimum, stats.maximum,
                 stats.percentiles[5], stats.percentiles[95]

@@ -13,7 +13,7 @@ by other tools or scripts.
    You can also generate Rich Table reports, CSV reports, and graph reports, each providing
    different perspectives on your benchmark results.
 
-   Refer to the :doc:`../../command_line_options` section for more details on how to
+   Refer to the :doc:`../../command_line_options` metric for more details on how to
    generate and customize these reports.
 
 To generate a JSON report, you can use an option like `--json`
@@ -115,7 +115,7 @@ This allows you to easily compare performance across different configurations.
 For example, if you have a benchmark that takes an input size
 parameter, the report can include how performance varies with different input sizes.
 
-See the :doc:`defining_benchmarks` section for more details on defining and using
+See the :doc:`defining_benchmarks` metric for more details on defining and using
 parameterized benchmarks.
 
 Custom Complexity Weightings

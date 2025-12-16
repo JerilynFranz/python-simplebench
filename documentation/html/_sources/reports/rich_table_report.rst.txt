@@ -13,7 +13,7 @@ library to generate these tables, providing visually appealing and easy-to-read 
    You can also generate CSV reports, graph reports, and JSON reports, each providing
    different perspectives on your benchmark results.
 
-   Refer to the :doc:`command_line_options` section for more details on how to
+   Refer to the :doc:`command_line_options` metric for more details on how to
    generate and customize these reports.
 
 To generate a Rich Table report, you can use an option like `--rich-table.ops`
@@ -90,18 +90,18 @@ The report header provides context about the benchmark being reported:
       the name of the benchmark function if not set. In this case, it is the name of the
       function: `addition_benchmark`.
 
-    Report Section
-      The section of benchmark statistics being reported. In this case, we are reporting
+    Report Metric
+      The metric of benchmark statistics being reported. In this case, we are reporting
       the operations-per-second statistics (OPS) as requested via the `--rich-table.ops` command-line
-      option. Other available report sections include timing statistics (how long one execution
+      option. Other available report metrics include timing statistics (how long one execution
       of the function takes) (`--rich-table.timing`), and memory usage statistics
       (`--rich-table.memory`) which reports the net and peak memory usage of the benchmarked function
       as two separate tables.
 
-      If run as `python basic_benchmark.py --rich-table` (without specifying a report section),
-      all available report sections will be included in the output.
+      If run as `python basic_benchmark.py --rich-table` (without specifying a report metric),
+      all available report metrics will be included in the output.
 
-      Multiple options can be individually specified to include multiple report sections,
+      Multiple options can be individually specified to include multiple report metrics,
       for example: `--rich-table.ops --rich-table.timing`.
 
     Description
@@ -163,7 +163,7 @@ This allows you to easily compare performance across different configurations.
 For example, if you have a benchmark that takes an input size
 parameter, the report can include how performance varies with different input sizes.
 
-See the :doc:`defining_benchmarks` section for more details on defining and using
+See the :doc:`defining_benchmarks` metric for more details on defining and using
 parameterized benchmarks.
 
 Custom Complexity Weightings

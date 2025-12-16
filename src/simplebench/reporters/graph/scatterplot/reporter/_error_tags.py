@@ -12,8 +12,8 @@ class _ScatterPlotReporterErrorTag(ErrorTag):
     a :class:`~simplebench.case.Case` instance.
     """
     RENDER_INVALID_SECTION = "SCATTERPLOT_REPORTER_RENDER_INVALID_SECTION"
-    """The ``section`` argument passed to the :meth:`~.ScatterPlotReporter.render` method is
-    not a :class:`~simplebench.enums.Section` enum member.
+    """The ``metric`` argument passed to the :meth:`~.ScatterPlotReporter.render` method is
+    not a :class:`~simplebench.metric.Metric` enum member.
     """
     RENDER_INVALID_OPTIONS = "SCATTERPLOT_REPORTER_RENDER_INVALID_OPTIONS"
     """The ``options`` argument passed to the :meth:`~.ScatterPlotReporter.render` method is

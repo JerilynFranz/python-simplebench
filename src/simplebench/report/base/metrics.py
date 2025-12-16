@@ -33,8 +33,8 @@ class Metrics(ABC):
         """Initialize Metrics."""
         raise NotImplementedError("This method must be overridden by subclasses")
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_dict(cls, data: dict[str, Any]) -> 'Metrics':
         """Create a Metrics instance from a dictionary.
 

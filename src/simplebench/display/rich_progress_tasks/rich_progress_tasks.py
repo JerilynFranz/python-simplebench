@@ -4,7 +4,7 @@ from __future__ import annotations
 from rich.console import Console
 from rich.progress import Progress
 
-from simplebench.display import RichTask
+from simplebench.display.rich_task import RichTask
 from simplebench.enums import Verbosity
 from simplebench.exceptions import (
     SimpleBenchKeyError,

@@ -21,5 +21,4 @@ Submodules
    :maxdepth: 4
 
    simplebench.reporters.json.reporter.config
-   simplebench.reporters.json.reporter.exceptions
    simplebench.reporters.json.reporter.reporter

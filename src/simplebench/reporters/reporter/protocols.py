@@ -10,8 +10,9 @@ from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Protocol, TypeVar, ru
 from rich.table import Table
 from rich.text import Text
 
-from simplebench.enums import Format, Section, Target
+from simplebench.enums import Format, Target
 from simplebench.metadata import Metadata
+from simplebench.metric import Metric
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.config import ReporterConfig
 
@@ -41,14 +42,14 @@ class ReporterProtocol(Protocol):
         """A brief description of the reporter."""
         ...
 
-    def supported_sections(self) -> frozenset[Section]:
-        """The set of supported :class:`~simplebench.enums.Section` for the reporter.
+    def supported_metrics(self) -> frozenset[Metric]:
+        """The set of supported :class:`~simplebench.metric.Metric` for the reporter.
 
-        This is the set of :class:`~simplebench.enums.Section` that the reporter can include
+        This is the set of :class:`~simplebench.metric.Metric` that the reporter can include
         in its reports.
 
         Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include
-        :class:`~simplebench.enums.Section` that are declared in this set.
+        :class:`~simplebench.metric.Metric` that are declared in this set.
         """
         ...
 
@@ -90,7 +91,7 @@ class ReporterProtocol(Protocol):
 
         The :class:`~simplebench.reporters.choices.choices.Choices` instance contains one or more
         :class:`~simplebench.reporters.choice.choice.Choice` instances, each representing a
-        specific combination of sections, targets, and formats, command line flags,
+        specific combination of metrics, targets, and formats, command line flags,
         and descriptions.
 
         This property allows access to the reporter's choices for generating reports
@@ -202,7 +203,7 @@ class ReporterProtocol(Protocol):
         :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
         :raises SimpleBenchTypeError: If the provided choice is not a
             :class:`~simplebench.reporters.choice.choice.Choice` instance.
-        :raises SimpleBenchValueError: If the choice's sections, targets, or formats
+        :raises SimpleBenchValueError: If the choice's metrics, targets, or formats
             are not supported by the reporter.
         """
         ...
@@ -363,11 +364,11 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def render(self, *, case: "Case", section: "Section", options: "ReporterOptions") -> str | bytes | Text | Table:
-        """Render the report for a specific case and section.
+    def render(self, *, case: "Case", metric: "Metric", options: "ReporterOptions") -> str | bytes | Text | Table:
+        """Render the report for a specific case and metric.
 
         This abstract method must be implemented by all :class:`~.Reporter` subclasses.
-        It is responsible for generating the actual report content for a given case and section,
+        It is responsible for generating the actual report content for a given case and metric,
         based on the provided options.
 
         The output can be a string, bytes, or a Rich object (:class:`~rich.text.Text` or
@@ -375,8 +376,8 @@ class ReporterProtocol(Protocol):
 
         :param case: The :class:`~simplebench.case.Case` instance containing the benchmark results.
         :type case: :class:`~simplebench.case.Case`
-        :param section: The specific :class:`~simplebench.enums.Section` of the results to render.
-        :type section: :class:`~simplebench.enums.Section`
+        :param metric: The specific :class:`~simplebench.metric.Metric` of the results to render.
+        :type metric: :class:`~simplebench.metric.Metric`
         :param options: The reporter-specific :class:`~.ReporterOptions` for rendering.
         :type options: :class:`~.ReporterOptions`
         :return: The rendered report content.
@@ -401,7 +402,7 @@ class ReporterProtocol(Protocol):
         This method is the primary customization point for controlling how a report is generated.
         It is called by the public :meth:`~.report` method after all inputs have been validated.
 
-        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_section`,
+        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_metric`,
         which is suitable for most reporters. Subclasses can override this method to provide
         alternative orchestration, such as calling
         :meth:`~._ReporterOrchestrationMixin.render_by_case` for reports that are generated
@@ -430,21 +431,22 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def render_by_section(self, *,
-                          renderer: ReportRenderer,
-                          log_metadata: Metadata,
-                          args: Namespace,
-                          case: Case,
-                          choice: Choice,
-                          path: Path | None = None,
-                          session: Session | None = None,
-                          callback: ReporterCallback | None = None) -> None:
-        """Render a report by iterating through each section specified in the choice.
+    def render_by_metric(
+            self, *,
+            renderer: ReportRenderer,
+            log_metadata: Metadata,
+            args: Namespace,
+            case: Case,
+            choice: Choice,
+            path: Path | None = None,
+            session: Session | None = None,
+            callback: ReporterCallback | None = None) -> None:
+        """Render a report by iterating through each metric specified in the choice.
 
         This method is suitable for reporters that generate a separate output for each
-        section of the benchmark results (e.g., OPS, TIMING, MEMORY).
+        metric of the benchmark results (e.g., OPS, TIMING, MEMORY).
 
-        :param renderer: A callable that takes a case, section, and options, and returns the rendered output.
+        :param renderer: A callable that takes a case, metric, and options, and returns the rendered output.
         :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`
         :param log_metadata: The metadata for the report log.
         :type log_metadata: ReportLogMetadata
@@ -475,9 +477,9 @@ class ReporterProtocol(Protocol):
         """Render a single report for the entire case.
 
         This method is suitable for reporters that generate a single, consolidated output
-        for all sections of the benchmark results.
+        for all metrics of the benchmark results.
 
-        :param renderer: A callable that takes a case, section (which will be ``None``), and options,
+        :param renderer: A callable that takes a case, metric (which will be ``None``), and options,
                          and returns the rendered output.
         :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`
         :param log_metadata: The metadata for the report log.
@@ -534,7 +536,7 @@ class ReporterProtocol(Protocol):
         self,
         callback: ReporterCallback | None,
         case: Case,
-        section: Section,
+        metric: Metric,
         output_format: Format,
         output: str | bytes | Text | Table,
     ) -> None:
@@ -544,8 +546,8 @@ class ReporterProtocol(Protocol):
         :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None
         :param case: The :class:`~simplebench.case.Case` instance for the report.
         :type case: :class:`~simplebench.case.Case`
-        :param section: The :class:`~simplebench.enums.Section` of the report.
-        :type section: :class:`~simplebench.enums.Section`
+        :param metric: The :class:`~simplebench.metric.Metric` of the report.
+        :type metric: :class:`~simplebench.metric.Metric`
         :param output_format: The :class:`~simplebench.enums.Format` of the output.
         :type output_format: :class:`~simplebench.enums.Format`
         :param output: The report content to send.
@@ -576,21 +578,21 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def get_base_unit_for_section(self, section: Section) -> str:
-        """Return the base unit for the specified section.
+    def get_base_unit_for_metric(self, metric: Metric) -> str:
+        """Return the base unit for the specified metric.
 
-        :param section: The section to get the base unit for.
-        :type section: :class:`~simplebench.enums.Section`
-        :return: The base unit for the section.
+        :param metric: The metric to get the base unit for.
+        :type metric: :class:`~simplebench.metric.Metric`
+        :return: The base unit for the metric.
         :rtype: str
         """
         ...
 
-    def get_all_stats_values(self, results: list, section: Section) -> list[float]:
-        """Gathers all primary statistical values for a given section across multiple results.
+    def get_all_stats_values(self, results: list, metric: Metric) -> list[float]:
+        """Gathers all primary statistical values for a given metric across multiple results.
 
         It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,
-        from each :class:`~simplebench.results.Results` instance for the specified section.
+        from each :class:`~simplebench.case.Results` instance for the specified metric.
 
         This method is useful in determining appropriate scaling factors or units
         for reporting by analyzing the range of values across all results.
@@ -599,11 +601,11 @@ class ReporterProtocol(Protocol):
         be ``NaN`` for results with insufficient data points, or orders of magnitude different
         from the other statistics, which can skew scaling calculations.
 
-        :param results: A list of :class:`~simplebench.results.Results` instances to gather
+        :param results: A list of :class:`~simplebench.case.Results` instances to gather
                         statistics from.
-        :type results: list[:class:`~simplebench.results.Results`]
-        :param section: The section to gather statistics for.
-        :type section: :class:`~simplebench.enums.Section`
+        :type results: list[:class:`~simplebench.case.Results`]
+        :param metric: The metric to gather statistics for.
+        :type metric: :class:`~simplebench.metric.Metric`
         :return: A list of all gathered statistical values.
         :rtype: list[float]
         """
@@ -620,7 +622,7 @@ class ReporterProtocol(Protocol):
         session: Session | None = None,
         callback: ReporterCallback | None = None
     ) -> None:
-        """Validate common arguments for render_by_case and render_by_section methods.
+        """Validate common arguments for render_by_case and render_by_metric methods.
 
         :param renderer: The renderer callable to validate.
         :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`
@@ -649,7 +651,7 @@ class ReporterProtocol(Protocol):
             args: Namespace,
             choice: Choice,
             case: Case,
-            section: Section,
+            metric: Metric,
             path: Path | None = None,
             session: Session | None = None,
             callback: ReporterCallback | None = None) -> None:
@@ -670,8 +672,8 @@ class ReporterProtocol(Protocol):
         :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
         :param case: The :class:`~simplebench.case.Case` instance for the report.
         :type case: :class:`~simplebench.case.Case`
-        :param section: The :class:`~simplebench.enums.Section` of the report.
-        :type section: :class:`~simplebench.enums.Section`
+        :param metric: The :class:`~simplebench.metric.Metric` of the report.
+        :type metric: :class:`~simplebench.metric.Metric`
         :param path: The output path for filesystem targets. Defaults to ``None``.
         :type path: :class:`~pathlib.Path` | None, optional
         :param session: The :class:`~simplebench.session.Session` instance for the report. Defaults to ``None``.

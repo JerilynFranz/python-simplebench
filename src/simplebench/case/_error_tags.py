@@ -96,9 +96,9 @@ class _CaseErrorTag(ErrorTag):
     """Something other than a callable (function or method) or None was passed to the Case() constructor as
     the callback arg"""
     SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT = "SECTION_MEAN_INVALID_SECTION_TYPE_ARGUMENT"
-    """Something other than a Section instance was passed to the Case() constructor as the section arg"""
+    """Something other than a Metric instance was passed to the Case() constructor as the metric arg"""
     SECTION_MEAN_INVALID_SECTION_ARGUMENT = "SECTION_MEAN_INVALID_SECTION_ARGUMENT"
-    """Something other than Section.OPS or Section.TIMING was passed to the Case.section_mean() method"""
+    """Something other than Metric.OPS or Metric.TIMING was passed to the Case.metric_mean() method"""
     INVALID_RUNNER_NOT_SUBCLASS_OF_RUNNER = "INVALID_RUNNER_NOT_SUBCLASS_OF_RUNNER"
     """Attempted to set a runner for Case that is not a subclass of BenchmarkRunner."""
     INVALID_ACTION_MISSING_BENCH_PARAMETER = "INVALID_ACTION_MISSING_BENCH_PARAMETER"
@@ -122,7 +122,7 @@ class _CaseErrorTag(ErrorTag):
     INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST = "INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST"
     """The kwargs_variations dictionary contains a value that is an empty list."""
     INVALID_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS = "INVALID_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS"
-    """The callback function must accept exactly four parameters: the Case instance, a Section instance,
+    """The callback function must accept exactly four parameters: the Case instance, a Metric instance,
     a Format instance, and a value (which may be of any type.)"""
     INVALID_ACTION_INCORRECT_SIGNATURE = "INVALID_ACTION_INCORRECT_SIGNATURE"
     """The action function must accept two parameters: a 'bench' parameter and a '**kwargs' parameter."""
@@ -139,16 +139,16 @@ class _CaseErrorTag(ErrorTag):
     """The callback function's 'case' parameter must be a keyword-only parameter."""
     INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_SECTION_PARAMETER = (
         "INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_SECTION_PARAMETER")
-    """The callback function is missing the required 'section' parameter."""
+    """The callback function is missing the required 'metric' parameter."""
     INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_TYPE = (
         "INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_TYPE")
-    """The callback function's 'section' parameter must be type Section."""
+    """The callback function's 'metric' parameter must be type Metric."""
     INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY = (
         "INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY")
-    """The callback function's 'section' parameter must be a keyword-only parameter."""
+    """The callback function's 'metric' parameter must be a keyword-only parameter."""
     SECTION_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY = (
         "SECTION_INVALID_CALLBACK_INCORRECT_SIGNATURE_SECTION_PARAMETER_NOT_KEYWORD_ONLY")
-    """The callback function's 'section' parameter must be a keyword-only parameter."""
+    """The callback function's 'metric' parameter must be a keyword-only parameter."""
     INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_FORMAT_PARAMETER = (
         "INVALID_CALLBACK_INCORRECT_SIGNATURE_MISSING_OUTPUT_FORMAT_PARAMETER")
     """The callback function is missing the required 'output_format' parameter."""

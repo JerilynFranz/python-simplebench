@@ -21,5 +21,4 @@ Submodules
    :maxdepth: 4
 
    simplebench.reporters.rich_table.reporter.config
-   simplebench.reporters.rich_table.reporter.exceptions
    simplebench.reporters.rich_table.reporter.reporter

@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Protocol
 
 from simplebench.benchmark_runner import BenchmarkRunner
-from simplebench.case import Results
+from simplebench.case.results import Results
 
 
 class FunctionRunner(Protocol):

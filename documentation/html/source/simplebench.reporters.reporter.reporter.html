@@ -4,9 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
+        <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.reporter.reporter module - simplebench 0.8.0-alpha.0 documentation</title>
+        <title>simplebench.reporters.reporter.reporter module - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,8 +185,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -262,7 +266,7 @@ for all reporter implementations in the SimpleBench benchmarking framework.</p>
 managing default options, sending reports to various targets, and orchestrating report generation.</p>
 <p>To create a new reporter, a developer must subclass <cite>Reporter</cite> and implement the abstract
 <cite>render()</cite> method. For most reporters, the default <cite>run_report()</cite> implementation, which
-renders a report for each section, is sufficient.</p>
+renders a report for each metric, is sufficient.</p>
 <p>A <cite>Reporter</cite> is responsible for generating reports based on benchmark results from a <cite>Session</cite> and <cite>Case</cite>.
 Reporters can produce reports in various formats and output them to different targets.</p>
 <dl class="py class">
@@ -306,7 +310,7 @@ set of functionalities, making it easier to manage and utilize different</p>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided choice is not a
 <a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance.</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the choice’s sections, targets, or formats
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the choice’s metrics, targets, or formats
 are not supported by the reporter.</p></li>
 </ul>
 </dd>
@@ -319,7 +323,7 @@ are not supported by the reporter.</p></li>
 <dd><p>The <a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> for the reporter.</p>
 <p>The <a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices" title="simplebench.reporters.choices.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> instance contains one or more
 <a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instances, each representing a
-specific combination of sections, targets, and formats, command line flags,
+specific combination of metrics, targets, and formats, command line flags,
 and descriptions.</p>
 <p>This property allows access to the reporter’s choices for generating reports
 and customizing report output and available options.</p>
@@ -410,14 +414,14 @@ from the options iterable:</p>
 <span class="sig-name descname"><span class="pre">get_all_stats_values</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.results.html#simplebench.results.Results" title="simplebench.results.Results"><span class="pre">Results</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section" title="simplebench.enums.section.Section"><span class="pre">Section</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.results.results.html#simplebench.case.results.results.Results" title="simplebench.case.results.results.Results"><span class="pre">Results</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metric.metric.html#simplebench.metric.metric.Metric" title="simplebench.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/reporters/reporter/reporter.html#Reporter.get_all_stats_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.reporter.reporter.Reporter.get_all_stats_values" title="Link to this definition">🔗</a></dt>
-<dd><p>Gathers all primary statistical values for a given section across multiple results.</p>
+<dd><p>Gathers all primary statistical values for a given metric across multiple results.</p>
 <p>It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,
-from each <a class="reference internal" href="simplebench.results.html#simplebench.results.Results" title="simplebench.results.Results"><code class="xref py py-class docutils literal notranslate"><span class="pre">Results</span></code></a> instance for the specified section.</p>
+from each <a class="reference internal" href="simplebench.case.html#simplebench.case.Results" title="simplebench.case.Results"><code class="xref py py-class docutils literal notranslate"><span class="pre">Results</span></code></a> instance for the specified metric.</p>
 <p>This method is useful in determining appropriate scaling factors or units
 for reporting by analyzing the range of values across all results.</p>
 <p>Adjusted standard deviation is not included in this collection because it can
@@ -426,9 +430,9 @@ from the other statistics, which can skew scaling calculations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>results</strong> (list[<a class="reference internal" href="simplebench.results.html#simplebench.results.Results" title="simplebench.results.Results"><code class="xref py py-class docutils literal notranslate"><span class="pre">Results</span></code></a>]) – A list of <a class="reference internal" href="simplebench.results.html#simplebench.results.Results" title="simplebench.results.Results"><code class="xref py py-class docutils literal notranslate"><span class="pre">Results</span></code></a> instances to gather
+<li><p><strong>results</strong> (list[<a class="reference internal" href="simplebench.case.html#simplebench.case.Results" title="simplebench.case.Results"><code class="xref py py-class docutils literal notranslate"><span class="pre">Results</span></code></a>]) – A list of <a class="reference internal" href="simplebench.case.html#simplebench.case.Results" title="simplebench.case.Results"><code class="xref py py-class docutils literal notranslate"><span class="pre">Results</span></code></a> instances to gather
 statistics from.</p></li>
-<li><p><strong>section</strong> (<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – The section to gather statistics for.</p></li>
+<li><p><strong>metric</strong> (<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a>) – The metric to gather statistics for.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -441,21 +445,21 @@ statistics from.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.reporter.Reporter.get_base_unit_for_section">
-<span class="sig-name descname"><span class="pre">get_base_unit_for_section</span></span><span class="sig-paren">(</span>
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.reporter.Reporter.get_base_unit_for_metric">
+<span class="sig-name descname"><span class="pre">get_base_unit_for_metric</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section" title="simplebench.enums.section.Section"><span class="pre">Section</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metric.metric.html#simplebench.metric.metric.Metric" title="simplebench.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/reporter/reporter.html#Reporter.get_base_unit_for_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.reporter.reporter.Reporter.get_base_unit_for_section" title="Link to this definition">🔗</a></dt>
-<dd><p>Return the base unit for the specified section.</p>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/reporter/reporter.html#Reporter.get_base_unit_for_metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.reporter.reporter.Reporter.get_base_unit_for_metric" title="Link to this definition">🔗</a></dt>
+<dd><p>Return the base unit for the specified metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>section</strong> (<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – The section to get the base unit for.</p>
+<dd class="field-odd"><p><strong>metric</strong> (<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a>) – The metric to get the base unit for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The base unit for the section.</p>
+<dd class="field-even"><p>The base unit for the metric.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
@@ -525,14 +529,14 @@ or are of incorrect types.</p>
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><span class="pre">Section</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.results.metrics.metric.html#simplebench.case.results.metrics.metric.Metric" title="simplebench.case.results.metrics.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Text</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Table</span></span></span><a class="reference internal" href="../_modules/simplebench/reporters/reporter/reporter.html#Reporter.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.reporter.reporter.Reporter.render" title="Link to this definition">🔗</a></dt>
-<dd><p>Render the report for a specific case and section.</p>
+<dd><p>Render the report for a specific case and metric.</p>
 <p>This abstract method must be implemented by all <a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a> subclasses.
-It is responsible for generating the actual report content for a given case and section,
+It is responsible for generating the actual report content for a given case and metric,
 based on the provided options.</p>
 <p>The output can be a string, bytes, or a Rich object (<a class="reference external" href="https://rich.readthedocs.io/en/latest/reference/text.html#rich.text.Text" title="(in Rich)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Text</span></code></a> or
 <a class="reference external" href="https://rich.readthedocs.io/en/latest/reference/table.html#rich.table.Table" title="(in Rich)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>).</p>
@@ -540,7 +544,7 @@ based on the provided options.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>case</strong> (<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>) – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance containing the benchmark results.</p></li>
-<li><p><strong>section</strong> (<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a>) – The specific <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> of the results to render.</p></li>
+<li><p><strong>metric</strong> (<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a>) – The specific <a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a> of the results to render.</p></li>
 <li><p><strong>options</strong> (<a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a>) – The reporter-specific <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a> for rendering.</p></li>
 </ul>
 </dd>
@@ -562,7 +566,7 @@ based on the provided options.</p>
 
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">log_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata" title="simplebench.reporters.log.ReportLogMetadata"><span class="pre">ReportLogMetadata</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">log_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metadata.html#simplebench.metadata.Metadata" title="simplebench.metadata.Metadata"><span class="pre">Metadata</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></span></em>,</dd>
@@ -577,7 +581,7 @@ based on the provided options.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>log_metadata</strong> (<a class="reference internal" href="simplebench.reporters.log.report_log_metadata.html#simplebench.reporters.log.report_log_metadata.ReportLogMetadata" title="simplebench.reporters.log.report_log_metadata.ReportLogMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReportLogMetadata</span></code></a>) – The metadata for the report log.</p></li>
+<li><p><strong>log_metadata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ReportLogMetadata</span></code>) – The metadata for the report log.</p></li>
 <li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The parsed command-line arguments.</p></li>
 <li><p><strong>case</strong> (<a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>) – The <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance containing benchmark results.</p></li>
 <li><p><strong>choice</strong> (<a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a>) – The <a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> instance specifying
@@ -599,7 +603,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">None</s
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">log_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.log.html#simplebench.reporters.log.ReportLogMetadata" title="simplebench.reporters.log.ReportLogMetadata"><span class="pre">ReportLogMetadata</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">log_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metadata.html#simplebench.metadata.Metadata" title="simplebench.metadata.Metadata"><span class="pre">Metadata</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -611,7 +615,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">None</s
 <dd><p>Orchestration hook for report generation.</p>
 <p>This method is the primary customization point for controlling how a report is generated.
 It is called by the public <a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.report" title="simplebench.reporters.reporter.reporter.Reporter.report"><code class="xref py py-meth docutils literal notranslate"><span class="pre">report()</span></code></a> method after all inputs have been validated.</p>
-<p>The default implementation calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">render_by_section()</span></code>,
+<p>The default implementation calls <code class="xref py py-meth docutils literal notranslate"><span class="pre">render_by_metric()</span></code>,
 which is suitable for most reporters. Subclasses can override this method to provide
 alternative orchestration, such as calling
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">render_by_case()</span></code> for reports that are generated
@@ -634,6 +638,21 @@ the report configuration.</p></li>
 Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>callback</strong> (<a class="reference internal" href="simplebench.reporters.protocols.reporter_callback.html#simplebench.reporters.protocols.reporter_callback.ReporterCallback" title="simplebench.reporters.protocols.reporter_callback.ReporterCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterCallback</span></code></a> | None, optional) – A callback function for additional processing. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.reporter.Reporter.schema_version">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">schema_version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.reporters.reporter.reporter.Reporter.schema_version" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the schema version number for the reporter.</p>
+<p>This method returns the schema version number that indicates
+the version of the report schema used by the reporter.</p>
+<p>This defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code> and can be overridden by subclasses
+if they implement a different schema version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The schema version number.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -671,13 +690,13 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">None</s
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.reporters.reporter.reporter.Reporter.supported_sections">
-<span class="sig-name descname"><span class="pre">supported_sections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.section.html#simplebench.enums.section.Section" title="simplebench.enums.section.Section"><span class="pre">Section</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/reporters/reporter/reporter.html#Reporter.supported_sections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.reporter.reporter.Reporter.supported_sections" title="Link to this definition">🔗</a></dt>
-<dd><p>The set of supported <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> for the reporter.</p>
-<p>This is the set of <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> that the reporter can include
+<dt class="sig sig-object py" id="simplebench.reporters.reporter.reporter.Reporter.supported_metrics">
+<span class="sig-name descname"><span class="pre">supported_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric.html#simplebench.metric.metric.Metric" title="simplebench.metric.metric.Metric"><span class="pre">Metric</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/reporters/reporter/reporter.html#Reporter.supported_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.reporter.reporter.Reporter.supported_metrics" title="Link to this definition">🔗</a></dt>
+<dd><p>The set of supported <a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a> for the reporter.</p>
+<p>This is the set of <a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a> that the reporter can include
 in its reports.</p>
 <p>Defined <a class="reference internal" href="simplebench.reporters.choice.choice.html#simplebench.reporters.choice.choice.Choice" title="simplebench.reporters.choice.choice.Choice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choice</span></code></a> can only include
-<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Section" title="simplebench.enums.Section"><code class="xref py py-class docutils literal notranslate"><span class="pre">Section</span></code></a> that are declared in this set.</p>
+<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a> that are declared in this set.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -752,7 +771,7 @@ in creating <a class="reference internal" href="simplebench.reporters.choice.cho
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.file_unique"><code class="docutils literal notranslate"><span class="pre">Reporter.file_unique</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.find_options_by_type"><code class="docutils literal notranslate"><span class="pre">Reporter.find_options_by_type()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.get_all_stats_values"><code class="docutils literal notranslate"><span class="pre">Reporter.get_all_stats_values()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.get_base_unit_for_section"><code class="docutils literal notranslate"><span class="pre">Reporter.get_base_unit_for_section()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.get_base_unit_for_metric"><code class="docutils literal notranslate"><span class="pre">Reporter.get_base_unit_for_metric()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.get_default_options"><code class="docutils literal notranslate"><span class="pre">Reporter.get_default_options()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.get_hardcoded_default_options"><code class="docutils literal notranslate"><span class="pre">Reporter.get_hardcoded_default_options()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.name"><code class="docutils literal notranslate"><span class="pre">Reporter.name</span></code></a></li>
@@ -760,10 +779,11 @@ in creating <a class="reference internal" href="simplebench.reporters.choice.cho
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.render"><code class="docutils literal notranslate"><span class="pre">Reporter.render()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.report"><code class="docutils literal notranslate"><span class="pre">Reporter.report()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.run_report"><code class="docutils literal notranslate"><span class="pre">Reporter.run_report()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.schema_version"><code class="docutils literal notranslate"><span class="pre">Reporter.schema_version</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.set_default_options"><code class="docutils literal notranslate"><span class="pre">Reporter.set_default_options()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.subdir"><code class="docutils literal notranslate"><span class="pre">Reporter.subdir</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.supported_formats"><code class="docutils literal notranslate"><span class="pre">Reporter.supported_formats()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.supported_sections"><code class="docutils literal notranslate"><span class="pre">Reporter.supported_sections()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.supported_metrics"><code class="docutils literal notranslate"><span class="pre">Reporter.supported_metrics()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.reporter.reporter.Reporter.supported_targets"><code class="docutils literal notranslate"><span class="pre">Reporter.supported_targets()</span></code></a></li>
 </ul>
 </li>
@@ -779,7 +799,7 @@ in creating <a class="reference internal" href="simplebench.reporters.choice.cho
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a100ed86"></script>
+</div><script src="../_static/documentation_options.js?v=ae742066"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

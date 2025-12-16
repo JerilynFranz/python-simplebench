@@ -2,7 +2,7 @@
 from .methods import (
     DispatchToTargetsMethodKWArgs,
     RenderByCaseMethodKWArgs,
-    RenderBySectionMethodKWArgs,
+    RenderByMetricMethodKWArgs,
     TargetCallbackMethodKWArgs,
     TargetConsoleMethodKWArgs,
     TargetFilesystemMethodKWArgs,
@@ -13,7 +13,7 @@ __all__ = [
     "DispatchToTargetsMethodKWArgs",
     "ReporterConfigKWArgs",
     "RenderByCaseMethodKWArgs",
-    "RenderBySectionMethodKWArgs",
+    "RenderByMetricMethodKWArgs",
     "TargetCallbackMethodKWArgs",
     "TargetConsoleMethodKWArgs",
     "TargetFilesystemMethodKWArgs",

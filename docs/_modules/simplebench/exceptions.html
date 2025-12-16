@@ -3,9 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
+        <link rel="prefetch" href="../../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.exceptions - simplebench 0.7.0-alpha.0 documentation</title>
+        <title>simplebench.exceptions - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">simplebench 0.7.0-alpha.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,8 +184,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.7.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -247,51 +251,39 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.exceptions</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Custom exceptions for the simplebench package.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Custom exceptions for the simplebench package.&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">json</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONDecodeError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">textwrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">dedent</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CaseErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CLIErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">_DecoratorsErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.iteration</span><span class="w"> </span><span class="kn">import</span> <span class="n">_IterationErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultsErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RunnersErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SessionErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.si_units</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SIUnitsErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RichProgressTasksErrorTag</span><span class="p">,</span> <span class="n">_RichTaskErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.error_tag</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.tagged_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaggedException</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;TaggedException&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchBenchmarkError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchDuplicateKeyError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchTypeError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchValueError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchKeyError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchRuntimeError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchSubprocessExecutableNotFoundError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchNotARepositoryError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchRepositoryActionFailedError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchTimeoutError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchUsageError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchFileNotFoundError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchPermissionError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchOSError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchJSONDecodeError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SimpleBenchNotAFileError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchNotImplementedError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchAttributeError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchArgumentError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SimpleBenchImportError&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_CaseErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_CLIErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_DecoratorsErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_IterationErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_RichProgressTasksErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_RichTaskErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_ResultsErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_RunnersErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_SessionErrorTag&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_SIUnitsErrorTag&quot;</span><span class="p">,</span>
 <span class="p">]</span>
-
-
-<span class="n">E</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="ne">Exception</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">dedent_and_normalize_whitespace</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -328,57 +320,6 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">dedent_and_normalize_whitespace</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="TaggedException">
-<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.TaggedException">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TaggedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">E</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A generic exception that can be specialized with a base exception type</span>
-<span class="sd">    and requires a tag during instantiation.</span>
-
-<span class="sd">    This class extends the built-in Exception class and adds a mandatory tag</span>
-<span class="sd">    attribute. The tag is intended to provide additional context or categorization</span>
-<span class="sd">    for the exception.</span>
-
-<span class="sd">    The tag must be an instance of Enum to ensure a controlled set of possible tags and</span>
-<span class="sd">    must be the first argument provided during instantiation if passed positionally.</span>
-
-<span class="sd">    It is used by other exceptions in the simplebench package to provide</span>
-<span class="sd">    standardized error tagging for easier identification and handling of specific error conditions.</span>
-<span class="sd">    and is used to create exceptions with specific tags for error handling and identification.</span>
-<span class="sd">    with this base class.</span>
-
-<span class="sd">    Example:</span>
-
-<span class="sd">    class MyTaggedException(TaggedException[ValueError]):</span>
-<span class="sd">    &#39;&#39;&#39;A tagged exception that is a specialized ValueError.&#39;&#39;&#39;</span>
-
-<span class="sd">    raise MyTaggedException(&quot;An error occurred&quot;, tag=MyErrorTags.SOME_ERROR)</span>
-
-
-<span class="sd">    Args:</span>
-<span class="sd">        tag (Enum, keyword): An Enum member representing the error code.</span>
-<span class="sd">        *args: Positional arguments to pass to the base exception&#39;s constructor.</span>
-<span class="sd">        **kwargs: Keyword arguments to pass to the base exception&#39;s constructor.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        tag_code: Enum</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">Enum</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initializes the exception with a mandatory tag.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            *args: Positional arguments to pass to the base exception&#39;s constructor.</span>
-<span class="sd">            tag (Enum, keyword): An Enum member representing the error code.</span>
-<span class="sd">            **kwargs: Keyword arguments to pass to the base exception&#39;s constructor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Missing or wrong type &#39;tag&#39; argument (must be Enum)&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_code</span> <span class="o">=</span> <span class="n">tag</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="SimpleBenchTypeError">
@@ -643,6 +584,8 @@
 
 
 
+<div class="viewcode-block" id="SimpleBenchTimeoutError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTimeoutError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchTimeoutError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">TimeoutError</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised for timeout implementations.</span>
 
@@ -665,9 +608,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">func_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">func_name</span></div>
 
 
+
+<div class="viewcode-block" id="SimpleBenchUsageError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchUsageError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchUsageError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">RuntimeError</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised for CLI usage errors.</span>
 
@@ -687,7 +633,8 @@
 <span class="sd">            tag (ErrorTag): The tag code.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="SimpleBenchBenchmarkError">
@@ -708,6 +655,243 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchBenchmarkError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchFileNotFoundError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchFileNotFoundError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchFileNotFoundError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">FileNotFoundError</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised for file not found errors in simplebench.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchFileNotFoundError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                           tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchFileNotFoundError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchPermissionError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchPermissionError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchPermissionError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">PermissionError</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised for permission errors in simplebench.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchPermissionError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                         tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchPermissionError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchOSError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchOSError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchOSError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">OSError</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised for OS errors in simplebench.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchOSError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                 tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchOSError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchJSONDecodeError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchJSONDecodeError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchJSONDecodeError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="n">JSONDecodeError</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised for JSON decode errors in simplebench.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchJSONDecodeError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                         tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchJSONDecodeError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchNotAFileError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchNotAFileError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchNotAFileError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">OSError</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised when a given path is not a file in simplebench.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchNotAFileError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                       tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchNotAFileError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchNotARepositoryError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchNotARepositoryError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchNotARepositoryError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when a directory is not a VCS repository in simplebench.</span>
+
+<span class="sd">    This exception is raised when an operation expects to be performed</span>
+<span class="sd">    within a version control system (VCS) repository (e.g., Git, Mercurial)</span>
+<span class="sd">    but the current directory or specified path is not part of such a repository</span>
+<span class="sd">    or the repository cannot be found.</span>
+
+<span class="sd">    It indicates that the required VCS context is missing for the operation to proceed.</span>
+
+<span class="sd">    It also probably indicates that the code throwing the exception either</span>
+<span class="sd">    did not properly check for repository presence before attempting</span>
+<span class="sd">    VCS-specific operations or that the user expected to be in a repository</span>
+<span class="sd">    but is not, or both.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchNotARepositoryError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                            tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchNotARepositoryError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchRepositoryActionFailedError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchRepositoryActionFailedError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchRepositoryActionFailedError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when a VCS repository action fails in simplebench.</span>
+
+<span class="sd">    This exception is raised when an operation intended to interact</span>
+<span class="sd">    with a version control system (VCS) repository (e.g., Git, Mercurial)</span>
+<span class="sd">    fails to complete successfully. This could be due to various reasons,</span>
+<span class="sd">    such as permission issues, repository corruption, or unexpected</span>
+<span class="sd">    conditions within the repository.</span>
+
+<span class="sd">    It indicates that while the code was able to locate and identify</span>
+<span class="sd">    the repository, the specific action attempted could not be completed.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchRepositoryActionFailedError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                                     tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchRepositoryActionFailedError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchSubprocessExecutableNotFoundError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchSubprocessExecutableNotFoundError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchSubprocessExecutableNotFoundError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">FileNotFoundError</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised when a required executable is not found in simplebench.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchExecutableNotFoundError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                                 tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchExecutableNotFoundError with the given message and tag.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg (str): The error message.</span>
+<span class="sd">            tag (ErrorTag): The tag code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">generate_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SimpleBenchDuplicateKeyError">
+<a class="viewcode-back" href="../../source/simplebench.exceptions.html#simplebench.exceptions.SimpleBenchDuplicateKeyError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleBenchDuplicateKeyError</span><span class="p">(</span><span class="n">TaggedException</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised when a duplicate key is encountered in simplebench.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        raise SimpleBenchDuplicateKeyError(&quot;An error occurred&quot;,</span>
+<span class="sd">                                            tag=MyErrorTags.SOME_ERROR)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): The error message.</span>
+<span class="sd">        tag (ErrorTag): The tag code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">ErrorTag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raises a SimpleBenchDuplicateKeyError with the given message and tag.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            msg (str): The error message.</span>
@@ -748,7 +932,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=dd5748a0"></script>
+</div><script src="../../_static/documentation_options.js?v=ae742066"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

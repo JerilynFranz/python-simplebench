@@ -6,7 +6,7 @@ from .choices_kwargs import ChoicesKWArgs
 from .reporter import (
     DispatchToTargetsMethodKWArgs,
     RenderByCaseMethodKWArgs,
-    RenderBySectionMethodKWArgs,
+    RenderByMetricMethodKWArgs,
     ReporterConfigKWArgs,
 )
 
@@ -17,6 +17,6 @@ __all__ = [
     'ChoicesConfKWArgs',
     'DispatchToTargetsMethodKWArgs',
     'RenderByCaseMethodKWArgs',
-    'RenderBySectionMethodKWArgs',
+    'RenderByMetricMethodKWArgs',
     'ReporterConfigKWArgs',
 ]

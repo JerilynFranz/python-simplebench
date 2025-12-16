@@ -8,9 +8,9 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.case import Case
-from simplebench.enums import Section
-from simplebench.reporters.choice.choice import Choice
 from simplebench.metadata import Metadata
+from simplebench.metric import Metric
+from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
@@ -38,7 +38,7 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
             args: Namespace | NoDefaultValue = NoDefaultValue(),
             choice: Choice | NoDefaultValue = NoDefaultValue(),
             case: Case | NoDefaultValue = NoDefaultValue(),
-            section: Section | NoDefaultValue = NoDefaultValue(),
+            metric: Metric | NoDefaultValue = NoDefaultValue(),
             path: Path | NoDefaultValue = NoDefaultValue(),
             session: Session | NoDefaultValue = NoDefaultValue(),
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),
@@ -61,8 +61,8 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
         :type choice: Choice
         :param case: The Case instance representing the benchmarked code.
         :type case: Case
-        :param section: The Section instance specifying the report section.
-        :type section: Section
+        :param section: The Metric instance specifying the report section.
+        :type section: Metric
         :param path: The path to the directory where the CSV file(s) will be saved.
         :type path: Path | None
         :param session: The Session instance containing benchmark results.

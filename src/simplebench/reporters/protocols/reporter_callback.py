@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 # Disconnects any possible circular imports
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.enums import Format, Section
+    from simplebench.enums import Format
+    from simplebench.metric import Metric
 
 
 @runtime_checkable
@@ -19,9 +20,9 @@ class ReporterCallback(Protocol):
 
     .. code-block:: python
 
-        def method_name(self, *, case: Case, section: Section, output_format: Format, output: Any) -> None:
+        def method_name(self, *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
     """
-    def __call__(self, *, case: Case, section: Section, output_format: Format, output: Any) -> None:
+    def __call__(self, *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
         """A callback function to handle benchmark results from a Reporter.
 
         This function is called with the results of a benchmark run, and is responsible for
@@ -39,7 +40,7 @@ class ReporterCallback(Protocol):
 
             def my_callback(*,
                             case: Case,
-                            section: Section,
+                            metric: Metric,
                             output_format: Format,
                             output: Any) -> None:
                 # Handle the output based on its type and format
@@ -62,9 +63,9 @@ class ReporterCallback(Protocol):
                         print(f"Unknown output type: {type(output)}")
 
         :param case: The :class:`~simplebench.case.Case` instance.
-        :param section: The section of the report (e.g.,
-            :attr:`~simplebench.enums.Section.OPS`,
-            :attr:`~simplebench.enums.Section.TIMING`, etc).
+        :param metric: The metric of the report (e.g.,
+            :attr:`~simplebench.metric.Metric.OPS`,
+            :attr:`~simplebench.metric.Metric.TIMING`, etc).
         :param output_format: The format of the output (e.g.,
             :attr:`~simplebench.enums.Format.TEXT`,
             :attr:`~simplebench.enums.Format.RICH_TEXT`, etc).

@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from simplebench.case.results import Results
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
-from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.metric import Metric
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.si_units import si_scale_for_smallest
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 class CSVReporter(Reporter):
     """Class for outputting benchmark results to CSV files.
 
-    It supports reporting statistics for various sections,
+    It supports reporting statistics for various metrics,
     either separately or together, to the filesystem, via a callback function,
     or to the console in CSV format.
 
@@ -57,7 +57,7 @@ class CSVReporter(Reporter):
     :vartype description: str
     :ivar choices: Iterable of :class:`~.ChoicesConf` instances defining
         the reporter instance, CLI flags, :class:`~.ChoiceConf` name, supported
-        :class:`~simplebench.enums.Section` objects, supported output
+        :class:`~simplebench.metric.Metric` objects, supported output
         :class:`~simplebench.enums.Target` objects, and supported output
         :class:`~simplebench.enums.Format` for the reporter.
     :vartype choices: Iterable[:class:`~.ChoicesConf`]
@@ -94,33 +94,33 @@ class CSVReporter(Reporter):
         super().__init__(config)
 
     def render(  # noqa: C901
-            self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+            self, *, case: Case, metric: Metric, options: ReporterOptions) -> str:
         """Renders the benchmark results as tagged CSV data and returns it as a string.
 
         :param case: The :class:`~simplebench.case.Case` instance representing the
                      benchmarked code.
-        :param section: The section to output (eg. :attr:`~simplebench.enums.Section.OPS` or
-                        :attr:`~simplebench.enums.Section.TIMING`).
+        :param metric: The metric to output (eg. :attr:`~simplebench.metric.metric_registry.OPS` or
+                        :attr:`~simplebench.metric.metric_registry.TIMING`).
         :param options: The options for the CSV report.
         :return: The benchmark results formatted as tagged CSV data.
-        :raises SimpleBenchValueError: If the specified section is unsupported.
+        :raises SimpleBenchValueError: If the specified metric is unsupported.
         """
         if not is_case(case):  # Handle deferred import type checking
             raise SimpleBenchTypeError(
                 f"Invalid case argument: expected Case instance, got {type(case).__name__}",
                 tag=_CSVReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(section, Section, 'section',
-                                _CSVReporterErrorTag.RENDER_INVALID_SECTION)
+        metric = validate_type(metric, Metric, 'metric',
+                               _CSVReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options',
                                 _CSVReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         included_fields = options.fields
 
-        base_unit: str = self.get_base_unit_for_section(section=section)
+        base_unit: str = self.get_base_unit_for_metric(metric=metric)
         results: list[Results] = case.results
 
         # Determine a common SI scale for the output values to improve readability
-        all_numbers: list[float] = self.get_all_stats_values(results=results, section=section)
+        all_numbers: list[float] = self.get_all_stats_values(results=results, metric=metric)
         common_unit, common_scale = si_scale_for_smallest(numbers=all_numbers, base_unit=base_unit)
 
         with StringIO() as csvfile:
@@ -169,7 +169,7 @@ class CSVReporter(Reporter):
 
             writer.writerow(header)
             for result in results:
-                stats_target = result.results_section(section)
+                stats_target = result.results_metric(metric)
                 row: list[str | float | int] = []
 
                 if not options.variation_cols_last:

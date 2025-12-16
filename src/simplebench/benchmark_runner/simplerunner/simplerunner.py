@@ -36,9 +36,10 @@ from simplebench.defaults import (
     DEFAULT_TIMER,
     MIN_MEASURED_ITERATIONS,
 )
-from simplebench.display import ProgressTracker
+from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
 from simplebench.exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError
+from simplebench.metric import Metric
 from simplebench.timeout import Timeout
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
 from simplebench.validators import validate_positive_int
@@ -278,10 +279,10 @@ class SimpleRunner(BenchmarkRunner):
         :return: The elapsed time for the iteration in seconds.
         """
         kiloround_timer = self._timer_function(1000)
-        timer_sections: int
+        timer_metrics: int
         if rounds < 1000:
             # for less than 1000 rounds, we can use the generated timer function directly
-            timer_sections = 1
+            timer_metrics = 1
             if callable(setup):
                 setup()
             elapsed = self._timer_function(rounds)(timer, action, kwargs)
@@ -292,21 +293,21 @@ class SimpleRunner(BenchmarkRunner):
             # to reduce the footprint of the generated timer functions and avoid hitting
             # Python's function size limits.
             elapsed = 0.0
-            timer_sections = 0
+            timer_metrics = 0
             kiloround_chunks, remaining_rounds = divmod(rounds, 1000)
             if callable(setup):
                 setup()
             while kiloround_chunks:
                 elapsed += kiloround_timer(timer, action, kwargs)
                 kiloround_chunks -= 1
-                timer_sections += 1
+                timer_metrics += 1
             if remaining_rounds:
                 partial_timer = self._timer_function(remaining_rounds)
                 elapsed += partial_timer(timer, action, kwargs)
-                timer_sections += 1
+                timer_metrics += 1
             if callable(teardown):
                 teardown()
-        return elapsed - timer_overhead_ns(timer) * timer_sections
+        return elapsed - timer_overhead_ns(timer) * timer_metrics
 
     def default_runner(
             self,
@@ -518,26 +519,26 @@ class SimpleRunner(BenchmarkRunner):
         while True:  # Loop until we find an adequate rounds estimate
             # Use kiloround chunking to avoid generating excessively large timer functions
             total_action_time_ns: float
-            timer_sections: int
+            timer_metrics: int
             if estimate_rounds < 1000:
                 estimate_timer = self._timer_function(estimate_rounds)
                 total_action_time_ns = estimate_timer(timer, action, kwargs)
-                timer_sections = 1
+                timer_metrics = 1
             else:
                 total_action_time_ns = 0.0
-                timer_sections = 0
+                timer_metrics = 0
                 kiloround_chunks, remaining_rounds = divmod(estimate_rounds, 1000)
                 while kiloround_chunks:
                     total_action_time_ns += kiloround_timer(timer, action, kwargs)
                     kiloround_chunks -= 1
-                    timer_sections += 1
+                    timer_metrics += 1
                 if remaining_rounds:
                     partial_timer = self._timer_function(remaining_rounds)
                     total_action_time_ns += partial_timer(timer, action, kwargs)
-                    timer_sections += 1
+                    timer_metrics += 1
 
-            # Subtract the cumulative overhead from all timed sections.
-            total_measured_time_ns = total_action_time_ns - (timer_overhead * timer_sections)
+            # Subtract the cumulative overhead from all timed metrics.
+            total_measured_time_ns = total_action_time_ns - (timer_overhead * timer_metrics)
 
             # loop exit condition
             if total_measured_time_ns >= target_time_ns:

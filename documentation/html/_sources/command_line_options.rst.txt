@@ -65,7 +65,7 @@ These options control which benchmarks are run and where results are saved.
 Report Types
 ============
 
-The following sections detail the options for each report type. Most reports can
+The following metrics detail the options for each report type. Most reports can
 be sent to one or more destinations using space separated values from the following list:
 
 - ``console``: Print the report to the terminal.

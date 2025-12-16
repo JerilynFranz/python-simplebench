@@ -14,4 +14,3 @@ Submodules
 
    simplebench.reporters.choices.choices
    simplebench.reporters.choices.choices_conf
-   simplebench.reporters.choices.exceptions

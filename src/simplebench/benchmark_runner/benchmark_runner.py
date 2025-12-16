@@ -12,6 +12,7 @@ from ._error_tags import _RunnerErrorTag
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.case.results import Results
+    from simplebench.metric import Metric
     from simplebench.session import Session
 
 

@@ -7,19 +7,19 @@ from typing import Any, ClassVar, Optional
 
 import pytest
 
-from simplebench.case import Case
-from simplebench.enums import Format, Section, Target
+from simplebench.benchmark_runner import SimpleRunner
+from simplebench.case import Case, Results
+from simplebench.case.results import Iteration
+from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.results.iteration import Iteration
 from simplebench.metadata import Metadata
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
-from simplebench.results import Results
-from simplebench.benchmark_runner import SimpleRunner
 from simplebench.session import Session
 
 from ...factories import (
@@ -110,13 +110,13 @@ class GoodReporter(Reporter):
                    callback: Optional[ReporterCallback] = None) -> None:
         return
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
+    def render(self, *, case: Case, section: metric_registry, options: ReporterOptions) -> str:
         """Dummy render method for testing.
 
         :param case: The benchmark case.
         :type case: Case
         :param section: The report section.
-        :type section: Section
+        :type section: Metric
         :param options: The reporter options.
         :type options: ReporterOptions
         :return: An empty string.
@@ -231,7 +231,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_004', TestAction(
-        name=("report() with Section not in Reporter's sections raises "
+        name=("report() with Metric not in Reporter's sections raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_SECTION"),
         action=reporter_factory().report,
         kwargs={'args': namespace_factory(),
@@ -240,7 +240,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'choice': Choice(
                     reporter=reporter_factory(),
                     choice_conf=ChoiceConf(
-                        **choice_conf_kwargs_factory().replace(sections=[Section.NULL])))},
+                        **choice_conf_kwargs_factory().replace(sections=[metric_registry.NULL])))},
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)),
     idspec('REPORT_005', TestAction(
@@ -417,7 +417,7 @@ def test_report(testspec: TestSpec) -> None:
         args=[Choice(
                 reporter=reporter_factory(),
                 choice_conf=ChoiceConf(
-                    **choice_conf_kwargs_factory().replace(sections=[Section.NULL])))],
+                    **choice_conf_kwargs_factory().replace(sections=[metric_registry.NULL])))],
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)),
     idspec('REPORTER_ADD_CHOICE_004', TestAction(

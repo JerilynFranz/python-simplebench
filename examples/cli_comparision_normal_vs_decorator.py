@@ -3,10 +3,9 @@
 from typing import Any
 
 import simplebench
-from simplebench.case import Case
+from simplebench.case import Case, Results
 from simplebench.reporters.graph.enums import ImageType
 from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
-from simplebench.results import Results
 from simplebench.runners import SimpleRunner
 
 

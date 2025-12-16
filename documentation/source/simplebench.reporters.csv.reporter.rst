@@ -21,5 +21,4 @@ Submodules
    :maxdepth: 4
 
    simplebench.reporters.csv.reporter.config
-   simplebench.reporters.csv.reporter.exceptions
    simplebench.reporters.csv.reporter.reporter

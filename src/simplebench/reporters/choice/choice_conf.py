@@ -2,8 +2,9 @@
 from collections.abc import Hashable
 from typing import Any, Iterable, Sequence
 
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.metric import Metric
 from simplebench.reporters.choice._error_tags import _ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -21,7 +22,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
 
     A :class:`~.ChoiceConf` represents a specific configuration of an implied :class:`~.Choice`
     that can be registered with a :class:`~simplebench.reporters.reporter.Reporter` subclass.
-    It defines the sections to include in the report, the output targets, the output format,
+    It defines the metrics to include in the report, the output targets, the output format,
     and various other options related to reporting.
 
     The :class:`~.ChoiceConf` class provides a structured way to define different
@@ -32,10 +33,10 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     A :class:`~.ChoiceConf` instance is immutable after creation to ensure consistency
     in reporting configurations.
 
-    The sections, targets, and formats are descriptive only; they do not
+    The metrics, targets, and formats are descriptive only; they do not
     enforce any behavior on the associated :class:`~simplebench.reporters.reporter.Reporter`
     subclass. It is the responsibility of the :class:`~simplebench.reporters.reporter.Reporter`
-    subclass to implement the behavior corresponding to the specified sections, targets,
+    subclass to implement the behavior corresponding to the specified metrics, targets,
     and formats.
 
     The :class:`~.ChoiceConf` is intended to be used in defining configurations for
@@ -55,8 +56,8 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     :type name: str
     :param description: A brief description of the choice.
     :type description: str
-    :param sections: A set of :class:`~simplebench.enums.Section` enums to include in the report.
-    :type sections: set[:class:`~simplebench.enums.Section`]
+    :param metrics: A set of :class:`~simplebench.metric.Metric` enums to include in the report.
+    :type metrics: set[:class:`~simplebench.metric.Metric`]
     :param targets: A set of :class:`~simplebench.enums.Target` enums for output.
     :type targets: set[:class:`~simplebench.enums.Target`]
     :param default_targets: A set of :class:`~simplebench.enums.Target` enums representing the
@@ -92,7 +93,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
                  flag_type: FlagType,
                  name: str,
                  description: str,
-                 sections: Iterable[Section],
+                 metrics: Iterable[Metric],
                  output_format: Format,
                  targets: Iterable[Target],
                  default_targets: Iterable[Target] | None = None,
@@ -112,12 +113,12 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         :type name: str
         :param description: A brief description of the choice.
         :type description: str
-        :param sections: An iterable of :class:`~simplebench.enums.Section` enums to include
+        :param metrics: An iterable of :class:`~simplebench.metric.Metric` enums to include
                          in the report. It must be non-empty, but
-                         :attr:`~simplebench.enums.Section.NULL` may be included to indicate
-                         no sections are specifically selected. The reporter is expected to
-                         include listed sections in its report.
-        :type sections: Iterable[:class:`~simplebench.enums.Section`]
+                         :attr:`~simplebench.metric.Metric.NULL` may be included to indicate
+                         no metrics are specifically selected. The reporter is expected to
+                         include listed metrics in its report.
+        :type metrics: Iterable[:class:`~simplebench.metric.Metric`]
         :param output_format: A :class:`~simplebench.enums.Format` instance describing the
                               output format.
         :type output_format: :class:`~simplebench.enums.Format`
@@ -208,12 +209,12 @@ class ChoiceConf(Hashable, ChoiceProtocol):
             allow_empty=False, allow_blank=False)
         """Description of the choice (private backing field for attribute)"""
 
-        self._sections: frozenset[Section] = frozenset(validate_iterable_of_type(
-            sections, Section, "sections",
+        self._metrics: frozenset[Metric] = frozenset(validate_iterable_of_type(
+            metrics, Metric, "metrics",
             _ChoiceConfErrorTag.SECTIONS_INVALID_ARG_TYPE,
             _ChoiceConfErrorTag.SECTIONS_INVALID_ARG_VALUE,
             allow_empty=False))
-        """Sections included in the choice (private backing field for attribute)"""
+        """Metrics included in the choice (private backing field for attribute)"""
 
         self._targets: frozenset[Target] = frozenset(validate_iterable_of_type(
             targets, Target, "targets",
@@ -342,13 +343,13 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         return self._description
 
     @property
-    def sections(self) -> frozenset[Section]:
-        """Sections included in the choice.
+    def metrics(self) -> frozenset[Metric]:
+        """Metrics included in the choice.
 
-        These are the sections that the associated
+        These are the metrics that the associated
         :class:`~simplebench.reporters.reporter.Reporter` subclass
         is expected to include in its report when this choice is selected."""
-        return self._sections
+        return self._metrics
 
     @property
     def targets(self) -> frozenset[Target]:
@@ -445,7 +446,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
             self.flag_type,
             self.name,
             self.description,
-            self.sections,
+            self.metrics,
             self.targets,
             self.default_targets,
             self.subdir,
@@ -472,7 +473,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
                 self.flag_type == other.flag_type and
                 self.name == other.name and
                 self.description == other.description and
-                self.sections == other.sections and
+                self.metrics == other.metrics and
                 self.targets == other.targets and
                 self.default_targets == other.default_targets and
                 self.subdir == other.subdir and

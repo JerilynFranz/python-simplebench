@@ -3,9 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
+        <link rel="prefetch" href="../../../../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.choice.choice - simplebench 0.6.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.choice.choice - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">simplebench 0.6.1-alpha.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,8 +184,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.6.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -253,9 +257,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hashable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlagType</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlagType</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ChoiceErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoiceConf</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ChoiceErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoiceProtocol</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_type</span>
@@ -289,7 +294,7 @@
 
 <span class="sd">    A :class:`~.Choice` represents a specific configuration of a</span>
 <span class="sd">    :class:`~simplebench.reporters.reporter.Reporter` subclass,</span>
-<span class="sd">    including the sections to include in the report,</span>
+<span class="sd">    including the metrics to include in the report,</span>
 <span class="sd">    the output targets, and the output formats.</span>
 
 <span class="sd">    The :class:`~.Choice` class provides a structured way to define and manage</span>
@@ -300,17 +305,17 @@
 <span class="sd">    A :class:`~.Choice` instance is immutable after creation to ensure consistency</span>
 <span class="sd">    in reporting configurations.</span>
 
-<span class="sd">    The sections, targets, and formats are descriptive only; they do not</span>
+<span class="sd">    The metrics, targets, and formats are descriptive only; they do not</span>
 <span class="sd">    enforce any behavior on the associated :class:`~simplebench.reporters.reporter.Reporter`</span>
 <span class="sd">    subclass. It is the responsibility of the :class:`~simplebench.reporters.reporter.Reporter`</span>
-<span class="sd">    subclass to implement the behavior corresponding to the specified sections, targets,</span>
+<span class="sd">    subclass to implement the behavior corresponding to the specified metrics, targets,</span>
 <span class="sd">    and formats.</span>
 
 <span class="sd">    It is intended that multiple :class:`~.Choice` instances can be created</span>
 <span class="sd">    for a single :class:`~simplebench.reporters.reporter.Reporter` subclass to represent</span>
 <span class="sd">    different configurations of that reporter. For example, a JSON reporter might have one</span>
-<span class="sd">    :class:`~.Choice` that includes all sections and outputs to the filesystem,</span>
-<span class="sd">    and another :class:`~.Choice` that includes only the OPS section and outputs</span>
+<span class="sd">    :class:`~.Choice` that includes all metrics and outputs to the filesystem,</span>
+<span class="sd">    and another :class:`~.Choice` that includes only the OPS metric and outputs</span>
 <span class="sd">    to the console. This allows users to select from a variety of</span>
 <span class="sd">    predefined reporting configurations without needing to create</span>
 <span class="sd">    multiple :class:`~simplebench.reporters.reporter.Reporter` subclasses.</span>
@@ -337,8 +342,8 @@
 <span class="sd">    :type name: str</span>
 <span class="sd">    :param description: A brief description of the choice.</span>
 <span class="sd">    :type description: str</span>
-<span class="sd">    :param sections: A set of :class:`~simplebench.enums.Section` enums to include in the report.</span>
-<span class="sd">    :type sections: set[:class:`~simplebench.enums.Section`]</span>
+<span class="sd">    :param metrics: A set of :class:`~simplebench.metric.Metric` enums to include in the report.</span>
+<span class="sd">    :type metrics: set[:class:`~simplebench.metric.Metric`]</span>
 <span class="sd">    :param targets: A set of :class:`~simplebench.enums.Target` enums for output.</span>
 <span class="sd">    :type targets: set[:class:`~simplebench.enums.Target`]</span>
 <span class="sd">    :param default_targets: A set of :class:`~simplebench.enums.Target` enums representing the</span>
@@ -457,13 +462,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choice_conf</span><span class="o">.</span><span class="n">description</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Section</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sections included in the choice.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Metric</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Metrics included in the choice.</span>
 
-<span class="sd">        These are the sections that the associated</span>
+<span class="sd">        These are the metrics that the associated</span>
 <span class="sd">        :class:`~simplebench.reporters.reporter.Reporter` subclass</span>
 <span class="sd">        is expected to include in its report when this choice is selected.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choice_conf</span><span class="o">.</span><span class="n">sections</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choice_conf</span><span class="o">.</span><span class="n">metrics</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]:</span>
@@ -560,7 +565,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">flag_type</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sections</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">subdir</span><span class="p">,</span>
@@ -588,7 +593,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">flag_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">flag_type</span> <span class="ow">and</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">description</span> <span class="ow">and</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sections</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">sections</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">metrics</span> <span class="ow">and</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">targets</span> <span class="ow">and</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">default_targets</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">default_targets</span> <span class="ow">and</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">subdir</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">subdir</span> <span class="ow">and</span>
@@ -632,7 +637,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=8c7f9c82"></script>
+</div><script src="../../../../_static/documentation_options.js?v=ae742066"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

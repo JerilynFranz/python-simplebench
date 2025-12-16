@@ -6,9 +6,9 @@ from typing import Any, ClassVar
 import pytest
 
 from simplebench.case import Case
-from simplebench.enums import Section
-from simplebench.reporters.choice import Choice
 from simplebench.metadata import Metadata
+from simplebench.metric import Metric, metric_registry
+from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -76,13 +76,13 @@ class MockReporter(Reporter):
             session=session,
             callback=callback)
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def render(self, *, case: Case, section: metric_registry, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """A mock render method.
 
         :param case: The benchmark case.
         :type case: Case
         :param section: The report section.
-        :type section: Section
+        :type section: Metric
         :param options: The reporter options.
         :type options: ReporterOptions
         :return: A mock report.
@@ -142,13 +142,13 @@ def test_register_reporter() -> None:
                 session=session,
                 callback=callback)
 
-        def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+        def render(self, *, case: Case, section: metric_registry, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
             """A mock render method.
 
             :param case: The benchmark case.
             :type case: Case
             :param section: The report section.
-            :type section: Section
+            :type section: Metric
             :param options: The reporter options.
             :type options: ReporterOptions
             :return: A mock report.

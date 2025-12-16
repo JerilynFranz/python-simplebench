@@ -7,15 +7,9 @@ from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
-from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metadata import Metadata
-from simplebench.reporters.protocols.reporter_callback import ReporterCallback
-from simplebench.reporters.reporter import Reporter, ReporterOptions
-from simplebench.type_proxies import is_case
-from simplebench.utils import get_machine_info
-from simplebench.validators import validate_type
-
+from simplebench.metric import Metric
 from simplebench.report import (
     CURRENT_VERSION,
     cpu_info,
@@ -26,8 +20,14 @@ from simplebench.report import (
     stats_block,
     value_block,
 )
-from .config import JSONConfig
+from simplebench.reporters.protocols.reporter_callback import ReporterCallback
+from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.type_proxies import is_case
+from simplebench.utils import get_machine_info
+from simplebench.validators import validate_type
+
 from ._error_tags import _JSONReporterErrorTag
+from .config import JSONConfig
 from .options import JSONOptions
 
 Options: TypeAlias = JSONOptions
@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 class JSONReporter(Reporter):
     """Class for outputting benchmark results to JSON files.
 
-    It supports reporting statistics for various sections,
+    It supports reporting statistics for various metrics,
     either separately or together, to the filesystem, via a callback function,
     or to the console in JSON format.
 
@@ -72,7 +72,7 @@ class JSONReporter(Reporter):
     :vartype description: str
     :ivar choices: A collection of :class:`~simplebench.reporters.choices.Choices` instances
         defining the reporter instance, CLI flags, :class:`~simplebench.reporters.choice.Choice`
-        name, supported :class:`~simplebench.enums.Section` objects, supported output
+        name, supported :class:`~simplebench.metric.Metric` objects, supported output
         :class:`~simplebench.enums.Target` objects, and supported output
         :class:`~simplebench.enums.Format` objects for the reporter.
     :vartype choices: ~simplebench.reporters.choices.Choices
@@ -168,15 +168,15 @@ class JSONReporter(Reporter):
             session=session,
             callback=callback)
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
-        """Convert the Case data for all sections to a JSON string.
+    def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str:
+        """Convert the Case data for all metrics to a JSON string.
 
         Machine info is included in the JSON output under the 'metadata' key.
 
         :param case: The :class:`~simplebench.case.Case` instance holding the benchmarked
             code statistics.
-        :param section: The :class:`~simplebench.enums.Section` to render (ignored, all
-            sections are included).
+        :param metric: The :class:`~simplebench.metric.Metric` to render (ignored, all
+            metrics are included).
         :param options: The :class:`~.JSONOptions` instance specifying rendering options
             or ``None`` if not provided. (:class:`~.JSONOptions` is a subclass of
             :class:`~.ReporterOptions`.)
@@ -187,8 +187,8 @@ class JSONReporter(Reporter):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
                 tag=_JSONReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(section, Section, 'section',
-                                _JSONReporterErrorTag.RENDER_INVALID_SECTION)
+        metric = validate_type(metric, Metric, 'metric',
+                               _JSONReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options',
                                 _JSONReporterErrorTag.RENDER_INVALID_OPTIONS)
 

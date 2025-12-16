@@ -15,15 +15,16 @@ from typing import TYPE_CHECKING, Any, TypeAlias, overload
 from rich.table import Table
 from rich.text import Text
 
-from simplebench.enums import Format, Section
+from simplebench.enums import Format
 from simplebench.metadata import Metadata
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 
 from ...cache_factory import CacheId, cached_factory
 from ...kwargs.reporters.reporter import (
     DispatchToTargetsMethodKWArgs,
     RenderByCaseMethodKWArgs,
-    RenderBySectionMethodKWArgs,
+    RenderByMetricMethodKWArgs,
     TargetCallbackMethodKWArgs,
     TargetConsoleMethodKWArgs,
     TargetFilesystemMethodKWArgs,
@@ -67,7 +68,7 @@ def target_callback_kwargs_factory(
     Defaults:
         - callback (ReporterCallback): `default_reporter_callback()`
         - case (Case): `case_factory(cache_id=cache_id)`
-        - section (Section): `default_section()`
+        - section (Metric): `default_section()`
         - output_format (Format): `default_format_plain()`
         - output (Output): `default_output_str()`
 
@@ -176,7 +177,7 @@ def dispatch_to_targets_kwargs_factory(
         - choice (Choice): `choice_factory(cache_id=cache_id)`
         - path (Path): `path_factory(cache_id=cache_id)`
         - session (Session): `session_factory(cache_id=cache_id)`
-        - section (Section): `default_section()`
+        - section (Metric): `default_section()`
         - callback (ReporterCallback): `default_reporter_callback()`
         - output (Output): `default_output()`
         - filename_base (str): `default_filename_base()`
@@ -308,12 +309,12 @@ def render_by_case_kwargs_factory(
 @cached_factory
 def render_by_section_kwargs_factory(
     *,
-    kwargs: RenderBySectionMethodKWArgs | None = None,
+    kwargs: RenderByMetricMethodKWArgs | None = None,
     cache_id: CacheId = None,
-) -> RenderBySectionMethodKWArgs:
-    """Factory to create RenderBySectionMethodKWArgs with default values.
+) -> RenderByMetricMethodKWArgs:
+    """Factory to create RenderByMetricMethodKWArgs with default values.
 
-    This factory constructs a RenderBySectionMethodKWArgs instance populated with
+    This factory constructs a RenderByMetricMethodKWArgs instance populated with
     default values for testing the Reporter.render_by_section() method.
 
     Defaults can be overridden by providing specific arguments in the kwargs parameter.
@@ -330,13 +331,13 @@ def render_by_section_kwargs_factory(
         - callback (ReporterCallback): `default_reporter_callback`
 
     :param kwargs: Specific keyword arguments to override defaults.
-    :type kwargs: RenderBySectionMethodKWArgs | None
+    :type kwargs: RenderByMetricMethodKWArgs | None
     :param cache_id: The cache identifier.
     :type cache_id: CacheId, optional
     :return: The constructed keyword arguments dataclass.
-    :rtype: RenderBySectionMethodKWArgs
+    :rtype: RenderByMetricMethodKWArgs
     """
-    defaults = RenderBySectionMethodKWArgs(
+    defaults = RenderByMetricMethodKWArgs(
         renderer=RenderSpy(),
         log_metadata=report_log_metadata_factory(),
         args=namespace_factory(),
@@ -346,7 +347,7 @@ def render_by_section_kwargs_factory(
         session=session_factory(cache_id=cache_id),
         callback=default_reporter_callback,
     )
-    return defaults if kwargs is None else RenderBySectionMethodKWArgs(**(defaults | kwargs))
+    return defaults if kwargs is None else RenderByMetricMethodKWArgs(**(defaults | kwargs))
 
 
 @dataclass
@@ -472,8 +473,8 @@ class CallbackCall:
     :vartype callback: ReporterCallback
     :ivar case: The Case instance.
     :vartype case: Case
-    :ivar section: The Section of the report.
-    :vartype section: Section
+    :ivar section: The Metric of the report.
+    :vartype section: Metric
     :ivar output_format: The Format of the report.
     :vartype output_format: Format
     :ivar output: The report data sent to the callback.
@@ -481,7 +482,7 @@ class CallbackCall:
     """
     callback: ReporterCallback
     case: Case
-    section: Section
+    metric: Metric
     output_format: Format
     output: Any
 
@@ -502,7 +503,7 @@ class CallbackSpy():
     def __call__(self, *,
                  callback: ReporterCallback,
                  case: Case,
-                 section: Section,
+                 metric: Metric,
                  output_format: Format,
                  output: Any) -> None:
         self.calls.append(
@@ -530,13 +531,13 @@ class RenderCall:
 
     :ivar case: The Case instance.
     :vartype case: Case
-    :ivar section: The Section of the report.
-    :vartype section: Section
+    :ivar section: The Metric of the report.
+    :vartype section: Metric
     :ivar options: The ReporterOptions used for rendering.
     :vartype options: ReporterOptions
     """
     case: Case
-    section: Section
+    metric: Metric
     options: ReporterOptions
 
 
@@ -551,7 +552,7 @@ class RenderSpy(ReportRenderer):
 
     def __call__(self, *,
                  case: Case,
-                 section: Section,
+                 metric: Metric,
                  options: ReporterOptions) -> Output:
         self.calls.append(
             RenderCall(

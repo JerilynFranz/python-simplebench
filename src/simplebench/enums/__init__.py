@@ -8,7 +8,6 @@ Provides
 - :class:`ExitCode`
 - :class:`FlagType`
 - :class:`Format`
-- :class:`Section`
 - :class:`Target`
 - :class:`Verbosity`
 
@@ -17,7 +16,6 @@ from .color import Color
 from .exit_code import ExitCode
 from .flag_type import FlagType
 from .format import Format
-from .section import Section
 from .target import Target
 from .verbosity import Verbosity
 
@@ -26,7 +24,6 @@ __all__ = [
     'ExitCode',
     'FlagType',
     'Format',
-    'Section',
     'Target',
     'Verbosity',
 ]

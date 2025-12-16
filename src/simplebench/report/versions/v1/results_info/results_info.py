@@ -1,6 +1,6 @@
 """V1 Results object class
 
-The V1 Results object represents the results section of a version 1 JSON report.
+The V1 Results object represents the results metric of a version 1 JSON report.
 
 """
 from typing import Any

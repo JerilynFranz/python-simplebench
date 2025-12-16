@@ -201,7 +201,7 @@ class KWArgs(dict[str, Any], Hashable):
             kwargs = KWArgs(
                 name='example_reporter',
                 description='An example reporter for testing.',
-                sections={Section.OPS, Section.LATENCY},
+                sections={Metric.OPS, Metric.LATENCY},
                 targets={Target.CONSOLE, Target.FILE},
                 formats={Format.PLAIN_TEXT, Format.RICH_TEXT},
                 choices=ExampleChoices()
@@ -243,7 +243,7 @@ class KWArgs(dict[str, Any], Hashable):
             kwargs = KWArgs(
                 name='example_reporter',
                 description='An example reporter for testing.',
-                sections={Section.OPS, Section.LATENCY},
+                sections={Metric.OPS, Metric.LATENCY},
                 targets={Target.CONSOLE, Target.FILE},
                 formats={Format.PLAIN_TEXT, Format.RICH_TEXT},
                 choices=ExampleChoices()

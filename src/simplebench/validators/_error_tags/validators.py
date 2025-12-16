@@ -6,11 +6,17 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ValidatorsErrorTag(ErrorTag):
     """ErrorTags for validator-related exceptions."""
-    # validate_dirpath() tags
+    # validate_namespaced_identifier() tags
+    INVALID_TYPE_ERROR_TAG_TYPE = "INVALID_TYPERROR_TAG_TYPE"
+    """The type_error_tag is not of type ErrorTag."""
+    INVALID_VALUE_ERROR_TAG_TYPE = "INVALID_VALUE_ERROR_TAG_TYPE"
+    """The value_error_tag is not of type ErrorTag."""
     INVALID_NAMESPACED_IDENTIFIER_TYPE = "INVALID_NAMESPACED_IDENTIFIER_TYPE"
     """The namespaced identifier is not of type string."""
     INVALID_NAMESPACED_IDENTIFIER = "INVALID_NAMESPACED_IDENTIFIER"
     """The namespaced identifier is not valid."""
+
+    # validate_dirpath() tags
     VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE = "VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE"
     """The 'dirpath' argument must be a str."""
     VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE = "VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE"

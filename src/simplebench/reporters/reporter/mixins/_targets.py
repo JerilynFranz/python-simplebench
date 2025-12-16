@@ -9,9 +9,10 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from simplebench.enums import Format, Section
+from simplebench.enums import Format
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
+from simplebench.metric import Metric
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
@@ -123,7 +124,7 @@ class _ReporterTargetMixin:
     def target_callback(self: ReporterProtocol,
                         callback: ReporterCallback | None,
                         case: Case,
-                        section: Section,
+                        metric: Metric,
                         output_format: Format,
                         output: str | bytes | Text | Table) -> None:
         """Helper method to send report data to a callback function.
@@ -132,8 +133,8 @@ class _ReporterTargetMixin:
         :type callback: ReporterCallback | None
         :param case: The Case instance representing the benchmarked code.
         :type case: Case
-        :param section: The Section of the report.
-        :type section: Section
+        :param metric: The Metric of the report.
+        :type metric: Metric
         :param output_format: The Format of the report.
         :type output_format: Format
         :param output: The report data to send to the callback.
@@ -157,7 +158,7 @@ class _ReporterTargetMixin:
         #
         # It is different, but intentional.
         if callback is not None:
-            callback(case=case, section=section, output_format=output_format, output=output)
+            callback(case=case, metric=metric, output_format=output_format, output=output)
 
     def target_console(self: ReporterProtocol, session: Session | None, output: str | bytes | Text | Table) -> None:
         """Helper method to output report data to the console.

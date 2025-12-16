@@ -4,10 +4,10 @@ from typing import Any
 
 import simplebench
 from simplebench import Case
+from simplebench.case import Results
 from simplebench.reporters.graph import ImageType
 from simplebench.reporters.graph.matplotlib import Style
 from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
-from simplebench.results import Results
 from simplebench.runners import SimpleRunner
 
 

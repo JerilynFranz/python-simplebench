@@ -3,9 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
+        <link rel="prefetch" href="../../../../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.reporters.reporter.protocols - simplebench 0.6.1-alpha.0 documentation</title>
+        <title>simplebench.reporters.reporter.protocols - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -163,7 +164,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">simplebench 0.6.1-alpha.0 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -183,8 +184,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.6.1-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -259,8 +263,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Section</span><span class="p">,</span> <span class="n">Target</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.log.report_log_metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportLogMetadata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metadata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span><span class="p">,</span> <span class="n">ReportRenderer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
 
@@ -292,16 +297,16 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A brief description of the reporter.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="ReporterProtocol.supported_sections">
-<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.supported_sections">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">supported_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Section</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.enums.Section` for the reporter.</span>
+<div class="viewcode-block" id="ReporterProtocol.supported_metrics">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.supported_metrics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">supported_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Metric</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of supported :class:`~simplebench.metric.Metric` for the reporter.</span>
 
-<span class="sd">        This is the set of :class:`~simplebench.enums.Section` that the reporter can include</span>
+<span class="sd">        This is the set of :class:`~simplebench.metric.Metric` that the reporter can include</span>
 <span class="sd">        in its reports.</span>
 
 <span class="sd">        Defined :class:`~simplebench.reporters.choice.choice.Choice` can only include</span>
-<span class="sd">        :class:`~simplebench.enums.Section` that are declared in this set.</span>
+<span class="sd">        :class:`~simplebench.metric.Metric` that are declared in this set.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
@@ -350,7 +355,7 @@
 
 <span class="sd">        The :class:`~simplebench.reporters.choices.choices.Choices` instance contains one or more</span>
 <span class="sd">        :class:`~simplebench.reporters.choice.choice.Choice` instances, each representing a</span>
-<span class="sd">        specific combination of sections, targets, and formats, command line flags,</span>
+<span class="sd">        specific combination of metrics, targets, and formats, command line flags,</span>
 <span class="sd">        and descriptions.</span>
 
 <span class="sd">        This property allows access to the reporter&#39;s choices for generating reports</span>
@@ -476,7 +481,7 @@
 <span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
 <span class="sd">        :raises SimpleBenchTypeError: If the provided choice is not a</span>
 <span class="sd">            :class:`~simplebench.reporters.choice.choice.Choice` instance.</span>
-<span class="sd">        :raises SimpleBenchValueError: If the choice&#39;s sections, targets, or formats</span>
+<span class="sd">        :raises SimpleBenchValueError: If the choice&#39;s metrics, targets, or formats</span>
 <span class="sd">            are not supported by the reporter.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
@@ -639,7 +644,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
-        <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+        <span class="n">log_metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">,</span>
         <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
         <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -673,11 +678,11 @@
 
 <div class="viewcode-block" id="ReporterProtocol.render">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="s2">&quot;Section&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;ReporterOptions&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the report for a specific case and section.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="s2">&quot;Metric&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;ReporterOptions&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the report for a specific case and metric.</span>
 
 <span class="sd">        This abstract method must be implemented by all :class:`~.Reporter` subclasses.</span>
-<span class="sd">        It is responsible for generating the actual report content for a given case and section,</span>
+<span class="sd">        It is responsible for generating the actual report content for a given case and metric,</span>
 <span class="sd">        based on the provided options.</span>
 
 <span class="sd">        The output can be a string, bytes, or a Rich object (:class:`~rich.text.Text` or</span>
@@ -685,8 +690,8 @@
 
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance containing the benchmark results.</span>
 <span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
-<span class="sd">        :param section: The specific :class:`~simplebench.enums.Section` of the results to render.</span>
-<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :param metric: The specific :class:`~simplebench.metric.Metric` of the results to render.</span>
+<span class="sd">        :type metric: :class:`~simplebench.metric.Metric`</span>
 <span class="sd">        :param options: The reporter-specific :class:`~.ReporterOptions` for rendering.</span>
 <span class="sd">        :type options: :class:`~.ReporterOptions`</span>
 <span class="sd">        :return: The rendered report content.</span>
@@ -702,7 +707,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
-        <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+        <span class="n">log_metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">,</span>
         <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
         <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -714,7 +719,7 @@
 <span class="sd">        This method is the primary customization point for controlling how a report is generated.</span>
 <span class="sd">        It is called by the public :meth:`~.report` method after all inputs have been validated.</span>
 
-<span class="sd">        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_section`,</span>
+<span class="sd">        The default implementation calls :meth:`~._ReporterOrchestrationMixin.render_by_metric`,</span>
 <span class="sd">        which is suitable for most reporters. Subclasses can override this method to provide</span>
 <span class="sd">        alternative orchestration, such as calling</span>
 <span class="sd">        :meth:`~._ReporterOrchestrationMixin.render_by_case` for reports that are generated</span>
@@ -744,23 +749,24 @@
         <span class="o">...</span></div>
 
 
-<div class="viewcode-block" id="ReporterProtocol.render_by_section">
-<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render_by_section">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">render_by_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                          <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
-                          <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
-                          <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
-                          <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
-                          <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
-                          <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                          <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                          <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render a report by iterating through each section specified in the choice.</span>
+<div class="viewcode-block" id="ReporterProtocol.render_by_metric">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render_by_metric">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_by_metric</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
+            <span class="n">log_metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">,</span>
+            <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+            <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
+            <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
+            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render a report by iterating through each metric specified in the choice.</span>
 
 <span class="sd">        This method is suitable for reporters that generate a separate output for each</span>
-<span class="sd">        section of the benchmark results (e.g., OPS, TIMING, MEMORY).</span>
+<span class="sd">        metric of the benchmark results (e.g., OPS, TIMING, MEMORY).</span>
 
-<span class="sd">        :param renderer: A callable that takes a case, section, and options, and returns the rendered output.</span>
+<span class="sd">        :param renderer: A callable that takes a case, metric, and options, and returns the rendered output.</span>
 <span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
 <span class="sd">        :param log_metadata: The metadata for the report log.</span>
 <span class="sd">        :type log_metadata: ReportLogMetadata</span>
@@ -784,7 +790,7 @@
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.render_by_case">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_by_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                        <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
-                       <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+                       <span class="n">log_metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">,</span>
                        <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
                        <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
                        <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
@@ -794,9 +800,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Render a single report for the entire case.</span>
 
 <span class="sd">        This method is suitable for reporters that generate a single, consolidated output</span>
-<span class="sd">        for all sections of the benchmark results.</span>
+<span class="sd">        for all metrics of the benchmark results.</span>
 
-<span class="sd">        :param renderer: A callable that takes a case, section (which will be ``None``), and options,</span>
+<span class="sd">        :param renderer: A callable that takes a case, metric (which will be ``None``), and options,</span>
 <span class="sd">                         and returns the rendered output.</span>
 <span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
 <span class="sd">        :param log_metadata: The metadata for the report log.</span>
@@ -822,7 +828,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">target_filesystem</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+        <span class="n">log_metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -859,7 +865,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
-        <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">,</span>
         <span class="n">output_format</span><span class="p">:</span> <span class="n">Format</span><span class="p">,</span>
         <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -869,8 +875,8 @@
 <span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
 <span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
-<span class="sd">        :param section: The :class:`~simplebench.enums.Section` of the report.</span>
-<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :param metric: The :class:`~simplebench.metric.Metric` of the report.</span>
+<span class="sd">        :type metric: :class:`~simplebench.metric.Metric`</span>
 <span class="sd">        :param output_format: The :class:`~simplebench.enums.Format` of the output.</span>
 <span class="sd">        :type output_format: :class:`~simplebench.enums.Format`</span>
 <span class="sd">        :param output: The report content to send.</span>
@@ -908,14 +914,14 @@
         <span class="o">...</span></div>
 
 
-<div class="viewcode-block" id="ReporterProtocol.get_base_unit_for_section">
-<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_base_unit_for_section">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_base_unit_for_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the base unit for the specified section.</span>
+<div class="viewcode-block" id="ReporterProtocol.get_base_unit_for_metric">
+<a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_base_unit_for_metric">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_base_unit_for_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the base unit for the specified metric.</span>
 
-<span class="sd">        :param section: The section to get the base unit for.</span>
-<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
-<span class="sd">        :return: The base unit for the section.</span>
+<span class="sd">        :param metric: The metric to get the base unit for.</span>
+<span class="sd">        :type metric: :class:`~simplebench.metric.Metric`</span>
+<span class="sd">        :return: The base unit for the metric.</span>
 <span class="sd">        :rtype: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
@@ -923,11 +929,11 @@
 
 <div class="viewcode-block" id="ReporterProtocol.get_all_stats_values">
 <a class="viewcode-back" href="../../../../source/simplebench.reporters.reporter.protocols.html#simplebench.reporters.reporter.protocols.ReporterProtocol.get_all_stats_values">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_stats_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gathers all primary statistical values for a given section across multiple results.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_stats_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gathers all primary statistical values for a given metric across multiple results.</span>
 
 <span class="sd">        It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,</span>
-<span class="sd">        from each :class:`~simplebench.results.Results` instance for the specified section.</span>
+<span class="sd">        from each :class:`~simplebench.case.Results` instance for the specified metric.</span>
 
 <span class="sd">        This method is useful in determining appropriate scaling factors or units</span>
 <span class="sd">        for reporting by analyzing the range of values across all results.</span>
@@ -936,11 +942,11 @@
 <span class="sd">        be ``NaN`` for results with insufficient data points, or orders of magnitude different</span>
 <span class="sd">        from the other statistics, which can skew scaling calculations.</span>
 
-<span class="sd">        :param results: A list of :class:`~simplebench.results.Results` instances to gather</span>
+<span class="sd">        :param results: A list of :class:`~simplebench.case.Results` instances to gather</span>
 <span class="sd">                        statistics from.</span>
-<span class="sd">        :type results: list[:class:`~simplebench.results.Results`]</span>
-<span class="sd">        :param section: The section to gather statistics for.</span>
-<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :type results: list[:class:`~simplebench.case.Results`]</span>
+<span class="sd">        :param metric: The metric to gather statistics for.</span>
+<span class="sd">        :type metric: :class:`~simplebench.metric.Metric`</span>
 <span class="sd">        :return: A list of all gathered statistical values.</span>
 <span class="sd">        :rtype: list[float]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -950,7 +956,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_render_by_args</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
         <span class="n">renderer</span><span class="p">:</span> <span class="n">ReportRenderer</span><span class="p">,</span>
-        <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+        <span class="n">log_metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">,</span>
         <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
         <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
         <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
@@ -958,7 +964,7 @@
         <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate common arguments for render_by_case and render_by_section methods.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate common arguments for render_by_case and render_by_metric methods.</span>
 
 <span class="sd">        :param renderer: The renderer callable to validate.</span>
 <span class="sd">        :type renderer: :class:`~simplebench.reporters.protocols.report_renderer.ReportRenderer`</span>
@@ -984,12 +990,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">dispatch_to_targets</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
             <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Table</span><span class="p">,</span>
-            <span class="n">log_metadata</span><span class="p">:</span> <span class="n">ReportLogMetadata</span><span class="p">,</span>
+            <span class="n">log_metadata</span><span class="p">:</span> <span class="n">Metadata</span><span class="p">,</span>
             <span class="n">filename_base</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
             <span class="n">choice</span><span class="p">:</span> <span class="n">Choice</span><span class="p">,</span>
             <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span>
-            <span class="n">section</span><span class="p">:</span> <span class="n">Section</span><span class="p">,</span>
+            <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">,</span>
             <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">callback</span><span class="p">:</span> <span class="n">ReporterCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1010,8 +1016,8 @@
 <span class="sd">        :type choice: :class:`~simplebench.reporters.choice.choice.Choice`</span>
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance for the report.</span>
 <span class="sd">        :type case: :class:`~simplebench.case.Case`</span>
-<span class="sd">        :param section: The :class:`~simplebench.enums.Section` of the report.</span>
-<span class="sd">        :type section: :class:`~simplebench.enums.Section`</span>
+<span class="sd">        :param metric: The :class:`~simplebench.metric.Metric` of the report.</span>
+<span class="sd">        :type metric: :class:`~simplebench.metric.Metric`</span>
 <span class="sd">        :param path: The output path for filesystem targets. Defaults to ``None``.</span>
 <span class="sd">        :type path: :class:`~pathlib.Path` | None, optional</span>
 <span class="sd">        :param session: The :class:`~simplebench.session.Session` instance for the report. Defaults to ``None``.</span>
@@ -1020,7 +1026,18 @@
 <span class="sd">        :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
-</div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">schema_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the schema version for the reporter.</span>
+
+<span class="sd">        This method returns a number representing the schema version used by the reporter.</span>
+<span class="sd">        It is useful for ensuring compatibility and versioning of report formats.</span>
+
+<span class="sd">        :return: The schema version number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
 
 </pre></div>
         </article>
@@ -1054,7 +1071,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=8c7f9c82"></script>
+</div><script src="../../../../_static/documentation_options.js?v=ae742066"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

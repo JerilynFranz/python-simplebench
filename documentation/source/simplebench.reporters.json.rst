@@ -13,5 +13,4 @@ Subpackages
    :maxdepth: 4
 
    simplebench.reporters.json.reader
-   simplebench.reporters.json.report
    simplebench.reporters.json.reporter

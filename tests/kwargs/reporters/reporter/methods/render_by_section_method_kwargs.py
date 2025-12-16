@@ -14,7 +14,7 @@ from simplebench.session import Session
 from ....kwargs import KWArgs, NoDefaultValue
 
 
-class RenderBySectionMethodKWArgs(KWArgs):
+class RenderByMetricMethodKWArgs(KWArgs):
     """A class to hold keyword arguments for calling the Reporter().render_by_section() method.
 
     This class is primarily used to facilitate testing of the Reporter render_by_section()
@@ -31,7 +31,7 @@ class RenderBySectionMethodKWArgs(KWArgs):
             path: Path | NoDefaultValue = NoDefaultValue(),
             session: Session | NoDefaultValue = NoDefaultValue(),
             callback: ReporterCallback | NoDefaultValue = NoDefaultValue()) -> None:
-        """Constructs a RenderBySectionMethodKWArgs instance.
+        """Constructs a RenderByMetricMethodKWArgs instance.
 
         This class is used to hold keyword arguments for calling the Reporter().render_by_section()
         instance method in tests.

@@ -13,7 +13,8 @@ from rich.progress import Progress
 from simplebench import defaults
 from simplebench.benchmark_runner import BenchmarkRunner, SimpleRunner
 from simplebench.case import Case
-from simplebench.display import ProgressTracker, RichProgressTasks
+from simplebench.display.progress_tracker import ProgressTracker
+from simplebench.display.rich_progress_tasks import RichProgressTasks
 from simplebench.doc_utils import format_docstring
 from simplebench.enums import Color, Target, Verbosity
 from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError

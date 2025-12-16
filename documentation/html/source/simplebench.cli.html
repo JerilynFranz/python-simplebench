@@ -4,9 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
+        <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.cli module - simplebench 0.8.0-alpha.0 documentation</title>
+        <title>simplebench.cli package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -184,8 +185,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -254,36 +258,30 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-simplebench.cli">
-<span id="simplebench-cli-module"></span><h1>simplebench.cli module<a class="headerlink" href="#module-simplebench.cli" title="Link to this heading">🔗</a></h1>
-<p>CLI script support for SimpleBench.</p>
-<p>This module provides the main entry point for running benchmarks via a command-line
-interface (CLI).</p>
-<p>It defines the <cite>main</cite> function, which sets up argument parsing, configures the benchmarking
-session, and executes the benchmarks based on user-specified options.</p>
-<p>It provides functionality to list available benchmarks, select specific benchmarks to run,
-configure output verbosity, and specify output paths.</p>
+<span id="simplebench-cli-package"></span><h1>simplebench.cli package<a class="headerlink" href="#module-simplebench.cli" title="Link to this heading">🔗</a></h1>
+<p>CLI entry point.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.cli.main">
 <span class="sig-prename descclassname"><span class="pre">simplebench.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">benchmark_cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">benchmark_cases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">extra_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">no_exit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.ExitCode" title="simplebench.enums.ExitCode"><span class="pre">ExitCode</span></a></span></span><a class="reference internal" href="../_modules/simplebench/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.cli.main" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.ExitCode" title="simplebench.enums.ExitCode"><span class="pre">ExitCode</span></a></span></span><a class="reference internal" href="../_modules/simplebench/cli/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.cli.main" title="Link to this definition">🔗</a></dt>
 <dd><p>Main entry point for running benchmarks via a command-line interface.</p>
 <p>This function is responsible for setting up the command-line interface,
 parsing arguments, and executing the benchmark cases.</p>
-<p><a class="reference internal" href="simplebench.decorators.html#simplebench.decorators.benchmark" title="simplebench.decorators.benchmark"><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code></a> decorated benchmark cases
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code> decorated benchmark cases
 are automatically included and added to the list of benchmark cases passed to this function.</p>
 <p>Call this function from a script or the command line to execute benchmarks.</p>
 <p>If passed a list of <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instances via the
 <code class="docutils literal notranslate"><span class="pre">benchmark_cases</span></code> argument, those cases will be benchmarked in addition to any
-cases registered via the <a class="reference internal" href="simplebench.decorators.html#simplebench.decorators.benchmark" title="simplebench.decorators.benchmark"><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code></a> decorator.</p>
+cases registered via the <code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;benchmark</span></code> decorator.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">argv</span></code> is provided, it will be used as the list of command-line arguments
 instead of <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code>.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">extra_args</span></code> is provided, those arguments will be appended to the command-line
@@ -318,6 +316,17 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 </dl>
 </dd></dl>
 
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.cli.cli.html">simplebench.cli.cli module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.cli.cli.html#simplebench.cli.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 </section>
 
         </article>
@@ -357,8 +366,9 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">simplebench.cli module</a><ul>
+<li><a class="reference internal" href="#">simplebench.cli package</a><ul>
 <li><a class="reference internal" href="#simplebench.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>
@@ -370,7 +380,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a100ed86"></script>
+</div><script src="../_static/documentation_options.js?v=ae742066"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

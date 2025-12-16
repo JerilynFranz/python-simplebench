@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import FlagType, Format, Target
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -18,7 +19,7 @@ class CSVConfig(ReporterConfig):
 
     By default, the CSVReporter is configured to output benchmark results
     to CSV files in the filesystem, with options to also output to console
-    and via callback. The default sections included are OPS, TIMING, MEMORY,
+    and via callback. The default metrics included are OPS, TIMING, MEMORY,
     and PEAK_MEMORY.
 
     Attributes
@@ -26,7 +27,7 @@ class CSVConfig(ReporterConfig):
     :ivar name: The name of the reporter. Default is 'csv'.
     :ivar description: A brief description of the reporter. Default is
         'Outputs benchmark results to CSV files.'.
-    :ivar sections: The sections to include in the report. Default includes
+    :ivar metrics: The metrics to include in the report. Default includes
         OPS, TIMING, MEMORY, and PEAK_MEMORY.
     :ivar targets: The output targets for the report. Default includes
         FILESYSTEM, CONSOLE, and CALLBACK.
@@ -37,7 +38,7 @@ class CSVConfig(ReporterConfig):
     :ivar file_append: Whether to append to existing files. Default is False.
     :ivar subdir: The subdirectory to place output files in. Default is '' (current directory).
     :ivar choices: The choice configurations available for this reporter. Default includes
-        several pre-defined choices for different sections of the report.
+        several pre-defined choices for different metrics of the report.
     """
 
     def __init__(
@@ -45,7 +46,7 @@ class CSVConfig(ReporterConfig):
         *,
         name: str | None = None,
         description: str | None = None,
-        sections: Iterable[Section] | None = None,
+        metrics: Iterable[Metric] | None = None,
         targets: Iterable[Target] | None = None,
         default_targets: Iterable[Target] | None = None,
         formats: Iterable[Format] | None = None,
@@ -64,7 +65,7 @@ class CSVConfig(ReporterConfig):
         defaults: dict[str, Any] = {
             'name': 'csv',
             'description': 'Outputs benchmark results to CSV files.',
-            'sections': {Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
+            'metrics': {metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY},
             'targets': {Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE},
             'default_targets': {Target.FILESYSTEM},
             'formats': {Format.CSV},
@@ -76,25 +77,25 @@ class CSVConfig(ReporterConfig):
                 ChoiceConf(
                     flags=['--csv'], flag_type=FlagType.TARGET_LIST, name='csv',
                     description='Output all results to CSV (filesystem, console, callback, default=filesystem)',
-                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    metrics=[metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV),
                 ChoiceConf(
                     flags=['--csv.ops'], flag_type=FlagType.TARGET_LIST, name='csv-ops',
                     description='Output ops/second results to CSV (filesystem, console, callback, default=filesystem)',
-                    sections=[Section.OPS],
+                    metrics=[metric_registry.OPS],
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV),
                 ChoiceConf(
                     flags=['--csv.timing'], flag_type=FlagType.TARGET_LIST, name='csv-timing',
                     description='Output timing results to CSV (filesystem, console, callback, default=filesystem)',
-                    sections=[Section.TIMING],
+                    metrics=[metric_registry.TIMING],
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV),
                 ChoiceConf(
                     flags=['--csv.memory'], flag_type=FlagType.TARGET_LIST, name='csv-memory',
                     description='Output memory results to CSV (filesystem, console, callback, default=filesystem)',
-                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    metrics=[metric_registry.MEMORY, metric_registry.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK],
                     output_format=Format.CSV),
             ])

@@ -6,8 +6,9 @@ from typing import Any
 import pytest
 
 from simplebench.case import Case
-from simplebench.enums import Format, Section
+from simplebench.enums import Format
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.validators import validate_reporter_callback
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
@@ -16,42 +17,42 @@ from ...testspec import Assert, TestAction, TestSpec, idspec
 
 
 def mock_callback_valid(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: Format, output: Any) -> None:
+        *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
     """A valid mock callback function."""
 
 
 def mock_callback_not_keyword_only(   # pylint: disable=unused-argument
-        case: Case, *, section: Section, output_format: Format, output: Any) -> None:
+        case: Case, *, metric: Metric, output_format: Format, output: Any) -> None:
     """A mock callback function with a non-keyword-only parameter."""
 
 
 def mock_callback_missing_output(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: Format) -> None:
+        *, case: Case, metric: Metric, output_format: Format) -> None:
     """A mock callback function missing the 'output' parameter."""
 
 
 def mock_callback_wrong_type_output(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: Format, output: str) -> None:
+        *, case: Case, metric: Metric, output_format: Format, output: str) -> None:
     """A mock callback function with wrong type for 'output' parameter (str instead of Any)."""
 
 
 def mock_callback_missing_output_type_hint(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format, output) -> None:
+        *, case: Case, metric: Metric, output_format, output) -> None:
     """A mock callback function missing the type hint for 'output_format' parameter."""
 
 
 def mock_callback_missing_output_format(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output: Any) -> None:
+        *, case: Case, metric: Metric, output: Any) -> None:
     """A mock callback function missing the 'output_format' parameter."""
 
 
 def mock_callback_wrong_type_output_format(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: str, output: Any) -> None:
+        *, case: Case, metric: Metric, output_format: str, output: Any) -> None:
     """A mock callback function with wrong type for 'output_format' parameter (str instead of Format)."""
 
 
 def mock_callback_missing_output_format_type_hint(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format, output: Any) -> None:
+        *, case: Case, metric: Metric, output_format, output: Any) -> None:
     """A mock callback function missing the type hint for 'output_format' parameter."""
 
 
@@ -62,7 +63,7 @@ def mock_callback_missing_section(  # pylint: disable=unused-argument
 
 def mock_callback_wrong_type_section(  # pylint: disable=unused-argument
         *, case: Case, section: str, output_format: Format, output: Any) -> None:
-    """A mock callback function with wrong type for 'section' parameter (str instead of Section)."""
+    """A mock callback function with wrong type for 'section' parameter (str instead of Metric)."""
 
 
 def mock_callback_missing_section_type_hint(  # pylint: disable=unused-argument
@@ -71,33 +72,33 @@ def mock_callback_missing_section_type_hint(  # pylint: disable=unused-argument
 
 
 def mock_callback_missing_case(  # pylint: disable=unused-argument
-        *, section: Section, output_format: Format, output: Any) -> None:
+        *, metric: Metric, output_format: Format, output: Any) -> None:
     """A mock callback function missing the 'case' parameter."""
 
 
 def mock_callback_wrong_type_case(  # pylint: disable=unused-argument
-        *, case: str, section: Section, output_format: Format, output: Any) -> None:
+        *, case: str, metric: Metric, output_format: Format, output: Any) -> None:
     """A mock callback function with wrong type for 'case' parameter (str instead of Case)."""
 
 
 def mock_callback_missing_case_type_hint(  # pylint: disable=unused-argument
-        *, case, section: Section, output_format: Format, output: Any) -> None:
+        *, case, metric: Metric, output_format: Format, output: Any) -> None:
     """A mock callback function missing the type hint for 'case' parameter."""
 
 
 def mock_callback_not_none(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: Format, output: Any) -> str:
+        *, case: Case, metric: Metric, output_format: Format, output: Any) -> str:
     """A mock callback function that returns something other than None."""
     return "I should have returned None at Albuquerque!"  # pragma: no cover
 
 
 def mock_callback_missing_return_type(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: Format, output: Any):
+        *, case: Case, metric: Metric, output_format: Format, output: Any):
     """A mock callback function that is missing a return type annotation."""
 
 
 def mock_callback_extra_param(  # pylint: disable=unused-argument
-        *, case: Case, section: Section, output_format: Format, output: Any, extra: Any) -> None:
+        *, case: Case, metric: Metric, output_format: Format, output: Any, extra: Any) -> None:
     """A mock callback function that correctly returns None."""
 
 

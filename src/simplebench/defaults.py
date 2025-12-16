@@ -1,15 +1,63 @@
 """Defaults for SimpleBench."""
 import time
+from typing import TYPE_CHECKING
 
-from simplebench.benchmark_runner import BenchmarkRunner, SimpleRunner
+if TYPE_CHECKING:
+    from simplebench.benchmark_runner import BenchmarkRunner
 
 # Note: The following constants are defined here for easy access and modification.
 # They are used throughout the SimpleBench framework.
 
-DEFAULT_RUNNERS: list[type[BenchmarkRunner]] = [SimpleRunner]
-"""Default list of runner classes to use for benchmarking.
+_DEFAULT_RUNNERS: list[type["BenchmarkRunner"]] = []
 
-Currently, the default runners list is `[SimpleRunner]`."""
+
+class _NoDefault:
+    """A class to represent a no default value."""
+
+
+_NO_DEFAULT = _NoDefault()
+
+
+def default_runners(
+        runners: list[type["BenchmarkRunner"]] | _NoDefault | None = _NO_DEFAULT) -> list[type["BenchmarkRunner"]]:
+    """Default list of runner classes to use for benchmarking.
+
+    This function allows you to set or get the default list of runner classes
+    used for benchmarking.
+
+    - If no argument is provided, the function returns the current default list of runners.
+    - If a list of runner classes is provided, the function sets the default list of runners
+        and returns the updated list.
+    - If `None` is provided, the function resets the default list of runners
+        to the default value and returns the updated list.
+
+    :param runners: List of runner classes to use for benchmarking.
+    :return: List of runner classes to use for benchmarking.
+
+    Currently, the default runners list is `[SimpleRunner]`."""
+    is_first_call = not _DEFAULT_RUNNERS and runners is _NO_DEFAULT
+    is_reset_call = runners is None
+
+    # THIS IS WHERE THE BASE DEFAULT RUNNERS ARE SET
+    if is_first_call or is_reset_call:
+        from simplebench.benchmark_runner import SimpleRunner  # pylint: disable=import-outside-toplevel
+        _DEFAULT_RUNNERS.clear()
+        _DEFAULT_RUNNERS.append(SimpleRunner)
+        return _DEFAULT_RUNNERS
+
+    if isinstance(runners, list):
+        if not all(issubclass(runner, BenchmarkRunner) for runner in runners):
+            raise TypeError("All items in runners must be subclasses of BenchmarkRunner")
+        _DEFAULT_RUNNERS.clear()
+        _DEFAULT_RUNNERS.extend(runners)  # Mutate in-place
+        return _DEFAULT_RUNNERS
+
+    if runners is _NO_DEFAULT:
+        return _DEFAULT_RUNNERS
+
+    # If we get here, the input was invalid
+    raise TypeError(f"runners must be a list of BenchmarkRunner subclasses or None, not {type(runners)}")
+
 
 DEFAULT_TIMEOUT_GRACE_PERIOD: float = 10.0
 """Grace period to wait after timeout before forcefully terminating (in seconds)."""

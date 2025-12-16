@@ -11,8 +11,8 @@ import pandas as pd
 import seaborn as sns
 
 from simplebench.case.results import Results
-from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.si_units import si_scale_for_largest
 from simplebench.type_proxies import is_case
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 class ScatterPlotReporter(MatPlotLibReporter):
     """Class for outputting benchmark results as scatter plot graphs.
 
-    This reporter generates scatter plot visualizations for various result sections,
+    This reporter generates scatter plot visualizations for various result metrics,
     saving them to the filesystem or passing them to a callback function. It provides
     a visual way to compare the performance of different benchmark variations.
 
@@ -85,12 +85,12 @@ class ScatterPlotReporter(MatPlotLibReporter):
 
         super().__init__(config)
 
-    def render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
+    def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> bytes:
         """Render the scatter plot graph and return it as bytes.
 
         :param case: The :class:`~simplebench.case.Case` instance representing the
             benchmarked code.
-        :param section: The section of the results to plot.
+        :param metric: The metric of the results to plot.
         :param options: The options for rendering the scatter plot.
         :return: The rendered graph as bytes. The format is determined by the options.
             The defaults are defined in :class:`~.ScatterPlotOptions`.
@@ -104,18 +104,18 @@ class ScatterPlotReporter(MatPlotLibReporter):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
                 tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(section, Section, 'section',
+        metric = validate_type(metric, Metric, 'metric',
                                 _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(
                 options, Options, 'options',
                 _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
 
-        base_unit = self.get_base_unit_for_section(section=section)
+        base_unit = self.get_base_unit_for_metric(metric=metric)
         results: list[Results] = case.results
 
-        all_numbers = self.get_all_stats_values(results=results, section=section)
+        all_numbers = self.get_all_stats_values(results=results, metric=metric)
         common_unit, common_scale = si_scale_for_largest(numbers=all_numbers, base_unit=base_unit)
-        target_name = f'{section.value} ({common_unit})'
+        target_name = f'{metric.value} ({common_unit})'
 
         with BytesIO() as graphfile:
             with mpl.rc_context():
@@ -123,7 +123,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                 x_axis_legend = 'N'
                 for result in results:
                     x = result.n
-                    target_stats = result.results_section(section)
+                    target_stats = result.results_metric(metric)
                     value = target_stats.mean * common_scale
                     plot_data.append((x, value))
                 df = pd.DataFrame(plot_data, columns=[x_axis_legend, target_name])
@@ -151,12 +151,12 @@ class ScatterPlotReporter(MatPlotLibReporter):
                     graphfile.flush()
             return graphfile.getvalue()
 
-    def _old_render(self, *, case: Case, section: Section, options: ReporterOptions) -> bytes:
+    def _old_render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> bytes:
         """Render the scatter plot graph and return it as bytes.
 
         :param case: The :class:`~simplebench.case.Case` instance representing the
             benchmarked code.
-        :param section: The section of the results to plot.
+        :param metric: The metric of the results to plot.
         :param options: The options for rendering the scatter plot.
         :return: The rendered graph as bytes. The format is determined by the options.
             The defaults are defined in :class:`~.ScatterPlotOptions`.
@@ -170,18 +170,18 @@ class ScatterPlotReporter(MatPlotLibReporter):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
                 tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(section, Section, 'section',
+        metric = validate_type(metric, Metric, 'metric',
                                 _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(
                 options, Options, 'options',
                 _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
 
-        base_unit = self.get_base_unit_for_section(section=section)
+        base_unit = self.get_base_unit_for_metric(metric=metric)
         results: list[Results] = case.results
 
-        all_numbers = self.get_all_stats_values(results=results, section=section)
+        all_numbers = self.get_all_stats_values(results=results, metric=metric)
         common_unit, common_scale = si_scale_for_largest(numbers=all_numbers, base_unit=base_unit)
-        target_name = f'{section.value} ({base_unit})'
+        target_name = f'{metric.value} ({base_unit})'
 
         with BytesIO() as graphfile:
             with mpl.rc_context():
@@ -189,7 +189,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                 x_axis_legend = '\n'.join([
                     f"{case.variation_cols.get(k, k)}" for k in case.variation_cols.keys()])
                 for result in results:
-                    target_stats = result.results_section(section)
+                    target_stats = result.results_metric(metric)
                     variation_label = '\n'.join([f"{v}" for v in result.variation_marks.values()])
                     plot_data.append({
                         x_axis_legend: variation_label,

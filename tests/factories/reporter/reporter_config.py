@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable
 
-from simplebench.enums import Format, Section, Target
+from simplebench.enums import Format, Target
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 
 from ...factories import (
@@ -47,7 +48,7 @@ def reporter_config_kwargs_factory(  # pylint: disable=unused-argument
         *,
         name: str | NoDefaultValue = NoDefaultValue(),
         description: str | NoDefaultValue = NoDefaultValue(),
-        sections: Iterable[Section] | NoDefaultValue = NoDefaultValue(),
+        metrics: Iterable[Metric] | NoDefaultValue = NoDefaultValue(),
         targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
         default_targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
         subdir: str | NoDefaultValue = NoDefaultValue(),
@@ -61,8 +62,8 @@ def reporter_config_kwargs_factory(  # pylint: disable=unused-argument
     :type name: str
     :param description: A brief description of the reporter. Must be a non-empty string.
     :type description: str
-    :param sections: The set of all Sections supported by the reporter.
-    :type sections: Iterable[Section]
+    :param sections: The set of all Metrics supported by the reporter.
+    :type sections: Iterable[Metric]
     :param targets: The set of all Targets supported by the reporter.
     :type targets: Iterable[Target]
     :param default_targets: The default set of Targets for the reporter.
@@ -101,7 +102,7 @@ def reporter_config_factory(
         *,
         name: str | NoDefaultValue = NoDefaultValue(),
         description: str | NoDefaultValue = NoDefaultValue(),
-        sections: Iterable[Section] | NoDefaultValue = NoDefaultValue(),
+        metrics: Iterable[Metric] | NoDefaultValue = NoDefaultValue(),
         targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
         default_targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
         subdir: str | NoDefaultValue = NoDefaultValue(),
@@ -116,8 +117,8 @@ def reporter_config_factory(
     :type name: str
     :param description: A brief description of the reporter. Must be a non-empty string.
     :type description: str
-    :param sections: The set of all Sections supported by the reporter.
-    :type sections: Iterable[Section]
+    :param sections: The set of all Metrics supported by the reporter.
+    :type sections: Iterable[Metric]
     :param targets: The set of all Targets supported by the reporter.
     :type targets: Iterable[Target]
     :param default_targets: The default set of Targets for the reporter.

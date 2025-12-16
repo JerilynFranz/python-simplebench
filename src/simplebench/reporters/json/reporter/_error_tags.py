@@ -11,7 +11,7 @@ class _JSONReporterErrorTag(ErrorTag):
     :meth:`~.JSONReporter.render` method.
     """
     RENDER_INVALID_SECTION = "RENDER_INVALID_SECTION"
-    """An invalid :class:`~simplebench.enums.Section` enum member was passed to the
+    """An invalid :class:`~simplebench.metric.Metric` enum member was passed to the
     :meth:`~.JSONReporter.render` method.
     """
     RENDER_INVALID_OPTIONS = "RENDER_INVALID_OPTIONS"

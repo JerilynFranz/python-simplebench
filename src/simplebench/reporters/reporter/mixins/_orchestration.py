@@ -1,6 +1,6 @@
 """Mixin for orchestration-related functionality for the Reporter class.
 
-It provides methods to orchestrate the rendering of reports by case or by section,
+It provides methods to orchestrate the rendering of reports by case or by metric,
 handling the dispatching of outputs to various targets such as filesystem, console,
 or callback functions.
 """
@@ -13,10 +13,11 @@ from typing import TYPE_CHECKING
 from rich.table import Table
 from rich.text import Text
 
-from simplebench.enums import Section, Target
+from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.choice.choice import Choice
 from simplebench.metadata import Metadata
+from simplebench.metric import Metric, metric_registry
+from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.prioritized import Prioritized
@@ -33,17 +34,17 @@ if TYPE_CHECKING:
 class _ReporterOrchestrationMixin:
     """Mixin for orchestration-related functionality for the Reporter class.
 
-    It provides methods to orchestrate the rendering of reports by case or by section,
+    It provides methods to orchestrate the rendering of reports by case or by metric,
     handling the dispatching of outputs to various targets such as filesystem, console,
     or callback functions.
 
     This makes writing reporters easier by providing common orchestration logic that
     can be reused across different reporter implementations.
 
-    :ivar render_by_case: Render the report for an entire case at once across all applicable sections.
+    :ivar render_by_case: Render the report for an entire case at once across all applicable metrics.
     :vartype render_by_case: meth
-    :ivar render_by_section: Render a report for each section and case individually and dispatch to targets.
-    :vartype render_by_section: meth
+    :ivar render_by_metric: Render a report for each metric and case individually and dispatch to targets.
+    :vartype render_by_metric: meth
     """
 
     def _validate_render_by_args(
@@ -57,7 +58,7 @@ class _ReporterOrchestrationMixin:
         session: Session | None = None,
         callback: ReporterCallback | None = None
     ) -> None:
-        """Validate common arguments for render_by_case and render_by_section methods.
+        """Validate common arguments for render_by_case and render_by_metric methods.
 
         Checks that the provided arguments are of the expected types. Raises exceptions
         if any argument is of an incorrect type.
@@ -112,12 +113,12 @@ class _ReporterOrchestrationMixin:
         if Target.FILESYSTEM in choice.targets:
             if not isinstance(path, Path):
                 raise SimpleBenchTypeError(
-                    f'Path must be provided for FILESYSTEM target in {type(self)} when rendering by section/case',
+                    f'Path must be provided for FILESYSTEM target in {type(self)} when rendering by metric/case',
                     tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_MISSING_PATH_FOR_FILESYSTEM_TARGET)
             if not isinstance(log_metadata.reports_log_path, Path):
                 raise SimpleBenchTypeError(
                     f'log_metadata.reports_log_path must be provided for FILESYSTEM target in {type(self)}'
-                    'when rendering by section/case',
+                    'when rendering by metric/case',
                     tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_MISSING_REPORTS_LOG_PATH_FOR_FILESYSTEM_TARGET)
 
         if not is_session(session) and session is not None:
@@ -139,7 +140,7 @@ class _ReporterOrchestrationMixin:
                        path: Path | None = None,
                        session: Session | None = None,
                        callback: ReporterCallback | None = None) -> None:
-        """Render the report for an entire case at once across all applicable sections.
+        """Render the report for an entire case at once across all applicable metrics.
 
         This method is called by the subclass's run_report() method to run one report per case
         that is then processed according to the specified targets.
@@ -147,7 +148,7 @@ class _ReporterOrchestrationMixin:
         It calls the subclass's render() method to actually generate the report output.
 
         Usage of this method is appropriate when the report output encompasses
-        all sections in a single output, such as a summary table or comprehensive report.
+        all metrics in a single output, such as a summary table or comprehensive report.
 
         Usage:
 
@@ -176,8 +177,8 @@ class _ReporterOrchestrationMixin:
                                         session=session,
                                         callback=self._callback)
 
-                def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
-                    '''Render the report output for the entire case across all sections.'''
+                def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str:
+                    '''Render the report output for the entire case across all metrics.'''
                     ...
 
         :param renderer: The rendering function to use. If not provided,
@@ -204,7 +205,7 @@ class _ReporterOrchestrationMixin:
             required arguments are missing. Also raised if the callback is not callable when
             provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
             target is specified.
-        :raises SimpleBenchValueError: If an unsupported section or target is specified in the choice.
+        :raises SimpleBenchValueError: If an unsupported metric or target is specified in the choice.
         """
         log_metadata.case = case
         log_metadata.choice = choice
@@ -221,18 +222,18 @@ class _ReporterOrchestrationMixin:
 
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         self.dispatch_to_targets(
-            output=actual_renderer(case=case, section=Section.NULL, options=prioritized.options),
+            output=actual_renderer(case=case, metric=metric_registry.NULL, options=prioritized.options),
             filename_base=case.title,
             log_metadata=log_metadata,
             args=args,
             choice=choice,
             case=case,
-            section=Section.NULL,
+            metric=metric_registry.NULL,
             path=path,
             session=session,
             callback=callback)
 
-    def render_by_section(
+    def render_by_metric(
             self: ReporterProtocol,
             *,
             renderer: ReportRenderer | None = None,
@@ -243,15 +244,15 @@ class _ReporterOrchestrationMixin:
             path: Path | None = None,
             session: Session | None = None,
             callback: ReporterCallback | None = None) -> None:
-        """Render a report for each section and dispatch to targets.
+        """Render a report for each metric and dispatch to targets.
 
-        This method is called by the subclass's run_report() method to run one report per section
+        This method is called by the subclass's run_report() method to run one report per metric
         that is then processed according to the specified targets.
 
         It calls the subclass's render() method to actually generate the report output.
 
         Usage of this method is appropriate when the report output divides each case by
-        section, such as separate files or outputs for each section of the report.
+        metric, such as separate files or outputs for each metric of the report.
 
         Usage:
 
@@ -270,7 +271,7 @@ class _ReporterOrchestrationMixin:
                     ...
 
                 def run_report(self, case: Case, choice: Choice, session: Session | None = None) -> None:
-                    self.render_by_section(
+                    self.render_by_metric(
                                         renderer=self.render,
                                         args=self._args,
                                         case=case,
@@ -279,8 +280,8 @@ class _ReporterOrchestrationMixin:
                                         session=session,
                                         callback=self._callback)
 
-                def render(self, *, case: Case, section: Section, options: ReporterOptions) -> str:
-                    '''Render the report output for the entire case across all sections.'''
+                def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str:
+                    '''Render the report output for the entire case across all metrics.'''
                     ...
 
         :param renderer: The rendering function to use. If not provided,
@@ -307,7 +308,7 @@ class _ReporterOrchestrationMixin:
             required arguments are missing. Also raised if the callback is not callable when
             provided for a CALLBACK target or if the path is not a Path instance when a FILESYSTEM
             target is specified.
-        :raises SimpleBenchValueError: If an unsupported section or target is specified in the choice.
+        :raises SimpleBenchValueError: If an unsupported metric or target is specified in the choice.
         """
         actual_renderer = renderer if renderer is not None else self.render
         self._validate_render_by_args(
@@ -322,21 +323,21 @@ class _ReporterOrchestrationMixin:
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         log_metadata.case = case
         log_metadata.choice = choice
-        for section in choice.sections:
-            output = actual_renderer(case=case, section=section, options=prioritized.options)
+        for metric in choice.metrics:
+            output = actual_renderer(case=case, metric=metric, options=prioritized.options)
             self.dispatch_to_targets(
                 output=output,
                 log_metadata=log_metadata,
-                filename_base=f"{case.title}-{section.value}",
+                filename_base=f"{case.title}-{metric.value}",
                 args=args,
                 choice=choice,
                 case=case,
-                section=section,
+                metric=metric,
                 path=path,
                 session=session,
                 callback=callback)
 
-    def dispatch_to_targets(
+    def dispatch_to_targets(  # pylint: too-many-arguments,too-many-locals
             self: ReporterProtocol, *,
             output: str | bytes | Text | Table,
             log_metadata: Metadata,
@@ -344,7 +345,7 @@ class _ReporterOrchestrationMixin:
             args: Namespace,
             choice: Choice,
             case: Case,
-            section: Section,
+            metric: Metric,
             path: Path | None = None,
             session: Session | None = None,
             callback: ReporterCallback | None = None) -> None:
@@ -365,7 +366,7 @@ class _ReporterOrchestrationMixin:
         :param args: The parsed command-line arguments.
         :param choice: The Choice instance specifying the report configuration.
         :param case: The Case instance representing the benchmarked code.
-        :param section: The Section of the report.
+        :param metric: The Metric of the report.
         :param path: The path to the directory where the CSV file(s) will be saved.
         :param session: The Session instance containing benchmark results.
         :param callback: A callback function for additional processing of the report.
@@ -403,8 +404,8 @@ class _ReporterOrchestrationMixin:
             raise SimpleBenchTypeError(
                 "session must be a Session instance if provided",
                 tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE)
-        section = validate_type(
-            section, Section, 'section',
+        metric = validate_type(
+            metric, Metric, 'metric',
             _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE)
         if callback is not None and not isinstance(callback, ReporterCallback):
             raise SimpleBenchTypeError(
@@ -453,7 +454,7 @@ class _ReporterOrchestrationMixin:
                     self.target_callback(
                         callback=callback,
                         case=case,
-                        section=section,
+                        metric=metric,
                         output_format=choice.output_format,
                         output=output_as_text)
 

@@ -12,6 +12,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.reporters.csv.reporter.options.exceptions
    simplebench.reporters.csv.reporter.options.fields
    simplebench.reporters.csv.reporter.options.options

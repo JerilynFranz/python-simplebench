@@ -12,14 +12,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.exceptions.base
-   simplebench.exceptions.case
-   simplebench.exceptions.choices
-   simplebench.exceptions.cli
-   simplebench.exceptions.decorators
-   simplebench.exceptions.iteration
-   simplebench.exceptions.results
-   simplebench.exceptions.runners
-   simplebench.exceptions.session
-   simplebench.exceptions.si_units
-   simplebench.exceptions.tasks
+   simplebench.exceptions.error_tag
+   simplebench.exceptions.tagged_exception

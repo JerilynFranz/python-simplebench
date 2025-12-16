@@ -6,16 +6,16 @@ from functools import cache
 
 import pytest
 
+from simplebench.case import Results
+from simplebench.case.results import Iteration
 from simplebench.defaults import (
     DEFAULT_INTERVAL_SCALE,
     DEFAULT_INTERVAL_UNIT,
     DEFAULT_MEMORY_SCALE,
     DEFAULT_MEMORY_UNIT,
 )
-from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
-from simplebench.results.iteration import Iteration
-from simplebench.results import Results
+from simplebench.metric import Metric, metric_registry
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
 
 from .kwargs import ResultsKWArgs
@@ -755,35 +755,35 @@ def base_per_round_timings() -> OperationTimings:
     )
 
 
-@pytest.mark.parametrize("section", [
-    pytest.param(Section.OPS, id="Section.OPS"),
-    pytest.param(Section.TIMING, id="Section.TIMING"),
-    pytest.param(Section.MEMORY, id="Section.MEMORY"),
-    pytest.param(Section.PEAK_MEMORY, id="Section.PEAK_MEMORY"),
+@pytest.mark.parametrize("metric", [
+    pytest.param(metric_registry.OPS, id="Metric.OPS"),
+    pytest.param(metric_registry.TIMING, id="Metric.TIMING"),
+    pytest.param(metric_registry.MEMORY, id="Metric.MEMORY"),
+    pytest.param(metric_registry.PEAK_MEMORY, id="Metric.PEAK_MEMORY"),
 ])
-def test_results_sections(section: Section) -> None:
-    """Test Results sections property.
+def test_results_metrics(metric: Metric) -> None:
+    """Test Results metrics property.
 
-    :param section: The section to test.
-    :type section: Section
+    :param metric: The metric to test.
+    :type metric: Metric
     """
     results = base_results()
-    section_value = results.results_section(section)
-    assert isinstance(section_value, Stats), (
-        f"results_section({section}) should be type Stats not {type(section_value)}")
+    metric_value = results.results_metric(metric)
+    assert isinstance(metric_value, Stats), (
+        f"results_metric({metric}) should be type Stats not {type(metric_value)}")
 
 
-def test_results_sections_invalid() -> None:
-    """Test Results sections property with unsupported or invalid sections."""
+def test_results_metrics_invalid() -> None:
+    """Test Results metrics property with unsupported or invalid metrics."""
     results = base_results()
     with pytest.raises(SimpleBenchValueError) as excinfo:
-        results.results_section(Section.NULL)
+        results.results_metric(metric_registry.NULL)
     assert excinfo.value.tag_code == _ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE, (
-        f"Expected SimpleBenchValueError for unsupported section {Section.NULL}"
+        f"Expected SimpleBenchValueError for unsupported metric {metric_registry.NULL}"
     )
 
     with pytest.raises(SimpleBenchTypeError) as excinfo1:
-        results.results_section(Nonsense.NONSENSE)  # type: ignore[arg-type]
+        results.results_metric(Nonsense.NONSENSE)  # type: ignore[arg-type]
     assert excinfo1.value.tag_code == _ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE, (
-        f"Expected SimpleBenchTypeError for invalid section type {type(Nonsense.NONSENSE)}"
+        f"Expected SimpleBenchTypeError for invalid metric type {type(Nonsense.NONSENSE)}"
     )

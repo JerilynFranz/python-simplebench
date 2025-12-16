@@ -7,8 +7,8 @@ from rich.table import Table
 
 from simplebench.case.results import Results
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
-from simplebench.enums import Section
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.metric import Metric
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case
@@ -49,7 +49,7 @@ class RichTableReporter(Reporter):
     :ivar choices: A collection of :class:`~simplebench.reporters.choices.Choices` instances
         defining the reporter instance, CLI flags,
         :class:`~simplebench.reporters.choice.Choice` name, supported
-        :class:`~simplebench.enums.Section` objects, supported output
+        :class:`~simplebench.metric.Metric` objects, supported output
         :class:`~simplebench.enums.Target` objects, and supported output
         :class:`~simplebench.enums.Format` objects for the reporter.
     :vartype choices: ~simplebench.reporters.choices.Choices
@@ -86,11 +86,11 @@ class RichTableReporter(Reporter):
         super().__init__(config)
 
     def render(  # pylint: disable=too-many-locals,too-many-statements  # noqa: C901
-            self, *, case: Case, section: Section, options: ReporterOptions) -> Table:
+            self, *, case: Case, metric: Metric, options: ReporterOptions) -> Table:
         """Prints the benchmark results in a rich table format if available.
 
         It creates a :class:`~rich.table.Table` instance containing the benchmark results
-        for the specified section.
+        for the specified metric.
 
         The table includes the fields specified in the `options` argument, formatted
         appropriately based on the results data.
@@ -101,7 +101,7 @@ class RichTableReporter(Reporter):
             benchmarked code.
         :param options: The options specifying the report configuration.
             (:class:`~.RichTableOptions` is a subclass of :class:`~.ReporterOptions`.)
-        :param section: The :class:`~simplebench.enums.Section` enum value specifying the
+        :param metric: The :class:`~simplebench.metric.Metric` enum value specifying the
             type of results to display.
         :return: The :class:`~rich.table.Table` instance.
         """
@@ -110,38 +110,38 @@ class RichTableReporter(Reporter):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
                 tag=_RichTableReporterErrorTag.RENDER_INVALID_CASE)
-        section = validate_type(section, Section, 'section',
-                                _RichTableReporterErrorTag.RENDER_INVALID_SECTION)
+        metric = validate_type(metric, Metric, 'metric',
+                               _RichTableReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options',
                                 _RichTableReporterErrorTag.RENDER_INVALID_OPTIONS)
         included_fields = options.fields
 
-        base_unit: str = self.get_base_unit_for_section(section=section)
+        base_unit: str = self.get_base_unit_for_metric(metric=metric)
         results: list[Results] = case.results
 
         mean_unit, mean_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).mean for result in results],
+            numbers=[result.results_metric(metric).mean for result in results],
             base_unit=base_unit)
         median_unit, median_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).median for result in results],
+            numbers=[result.results_metric(metric).median for result in results],
             base_unit=base_unit)
         min_unit, min_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).minimum for result in results],
+            numbers=[result.results_metric(metric).minimum for result in results],
             base_unit=base_unit)
         max_unit, max_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).maximum for result in results],
+            numbers=[result.results_metric(metric).maximum for result in results],
             base_unit=base_unit)
         p5_unit, p5_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).percentiles[5] for result in results],
+            numbers=[result.results_metric(metric).percentiles[5] for result in results],
             base_unit=base_unit)
         p95_unit, p95_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).percentiles[95] for result in results],
+            numbers=[result.results_metric(metric).percentiles[95] for result in results],
             base_unit=base_unit)
         stddev_unit, stddev_scale = si_scale_for_smallest(
-            numbers=[result.results_section(section).standard_deviation for result in results],
+            numbers=[result.results_metric(metric).standard_deviation for result in results],
             base_unit=base_unit)
 
-        table = Table(title=(case.title + f'\n{section.value}\n\n' + case.description),
+        table = Table(title=(case.title + f'\n{metric.value}\n\n' + case.description),
                       show_header=True,
                       title_style='bold green1',
                       header_style='bold magenta')
@@ -182,7 +182,7 @@ class RichTableReporter(Reporter):
                 table.add_column(value, justify='center', vertical='bottom', overflow='fold')
 
         for result in results:
-            stats_target = result.results_section(section)
+            stats_target = result.results_metric(metric)
             row: list[str] = []
 
             if not options.variation_cols_last:

@@ -9,7 +9,7 @@ from simplebench.exceptions import ErrorTag
 class _MatPlotLibReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :class:`~.MatPlotLibReporter` class."""
     RUN_REPORT_UNSUPPORTED_SECTION = "RUN_REPORT_UNSUPPORTED_SECTION"
-    """The section specified in the MatPlotLibReporter.run_report method is not supported."""
+    """The metric specified in the MatPlotLibReporter.run_report method is not supported."""
     IMAGE_TYPE_INVALID_CASE_ARG_TYPE = "IMAGE_TYPE_INVALID_CASE_ARG_TYPE"
     """The case argument passed to the MatPlotLibReporter.image_type method is not an ICase instance."""
     IMAGE_TYPE_INVALID_CHOICE_ARGTYPE = "IMAGE_TYPE_INVALID_CHOICE_ARGTYPE"

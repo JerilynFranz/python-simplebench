@@ -87,7 +87,7 @@ class _ReporterErrorTag(ErrorTag):
     :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
     DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE = (
         "DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE")
-    """Invalid type for ``section`` argument in
+    """Invalid type for ``metric`` argument in
     :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
     DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE = (
         "DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE")
@@ -251,7 +251,7 @@ class _ReporterErrorTag(ErrorTag):
     REPORTER_ABSTRACT_BASE_CLASS_INSTANTIATION = "REPORTER_ABSTRACT_BASE_CLASS_INSTANTIATION"
     """The Reporter class is an abstract base class and cannot be instantiated directly"""
     SECTIONS_ITEMS_ARG_VALUE = "SECTIONS_ITEMS_ARG_VALUE"
-    """``sections`` is an empty iterable"""
+    """``metrics`` is an empty iterable"""
     TARGETS_INVALID_ARG_TYPE = "INVALID_TARGETS_ARG_TYPE"
     """Something other than an iterable of Target enums was passed as the ``targets`` arg"""
     TARGETS_ITEMS_ARG_VALUE = "TARGETS_ITEMS_ARG_VALUE"
@@ -289,9 +289,9 @@ class _ReporterErrorTag(ErrorTag):
     DESCRIPTION_INVALID_ARG_VALUE = "DESCRIPTION_INVALID_ARG_VALUE"
     """The ``description`` arg cannot be an empty string"""
     SECTIONS_INVALID_ARG_TYPE = "SECTIONS_INVALID_ARG_TYPE"
-    """Something other than a sequence of Section enums was passed as the ``sections`` arg"""
+    """Something other than a sequence of Metric enums was passed as the ``metrics`` arg"""
     EMPTY_SECTIONS_ARG_VALUE = "EMPTY_SECTIONS_ARG_VALUE"
-    """The ``sections`` arg cannot be an empty sequence (can be Section.NULL if needed)"""
+    """The ``metrics`` arg cannot be an empty sequence (can be Metric.NULL if needed)"""
 
     REPORTER_OPTIONS_NOT_IMPLEMENTED = "REPORTER_OPTIONS_NOT_IMPLEMENTED"
     """The ReporterOptions could not be found in the Case, Choice, or default options."""
@@ -339,9 +339,9 @@ class _ReporterErrorTag(ErrorTag):
     INVALID_FORMATS_ENTRY_TYPE = "INVALID_FORMATS_ENTRY_TYPE"
     """Something other than a Format enum was found in the ``formats`` argument."""
     SECTIONS_NOT_IMPLEMENTED = "SECTIONS_NOT_IMPLEMENTED"
-    """The Reporter.sections property must be implemented in subclasses"""
+    """The Reporter.metrics property must be implemented in subclasses"""
     INVALID_SECTIONS_ENTRY_TYPE = "INVALID_SECTIONS_ENTRY_TYPE"
-    """Something other than a Section enum was found in the ``sections`` argument."""
+    """Something other than a Metric enum was found in the ``metrics`` argument."""
     TARGETS_NOT_IMPLEMENTED = "TARGETS_NOT_IMPLEMENTED"
     """The Reporter.targets property must be implemented in subclasses"""
     INVALID_TARGETS_ENTRY_TYPE = "INVALID_TARGETS_ENTRY_TYPE"
@@ -365,8 +365,8 @@ class _ReporterErrorTag(ErrorTag):
     """Something other than a callable was passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.report` method as the ``callback`` argument"""
     REPORT_UNSUPPORTED_SECTION = "REPORT_UNSUPPORTED_SECTION"
-    """An unsupported Section was passed to the
-    :meth:`~simplebench.reporters.reporter.reporter.Reporter.report` method in the Choice.sections"""
+    """An unsupported Metric was passed to the
+    :meth:`~simplebench.reporters.reporter.reporter.Reporter.report` method in the Choice.metrics"""
     REPORT_UNSUPPORTED_TARGET = "REPORT_UNSUPPORTED_TARGET"
     """An unsupported Target was passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.report` method in the Choice.targets"""
@@ -381,7 +381,7 @@ class _ReporterErrorTag(ErrorTag):
     CHOICES_INVALID_ARG_VALUE = "INVALID_CHOICES_ARG_VALUE"
     """The ``choices`` argument passed to the Reporter constructor must contain at least one ChoiceConf"""
     ADD_CHOICE_UNSUPPORTED_SECTION = "ADD_CHOICE_UNSUPPORTED_SECTION"
-    """A Section in the Choice instance passed to the
+    """A Metric in the Choice instance passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.add_choice` method is not supported by the Reporter"""
     ADD_CHOICE_INVALID_ARG_TYPE = "ADD_CHOICE_INVALID_ARG_TYPE"
     """Something other than a Choice instance was passed to the
@@ -437,7 +437,7 @@ class _ReporterErrorTag(ErrorTag):
     TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS = "TARGET_FILESYSTEM_OUTPUT_FILE_EXISTS"
     """The output file already exists and the ``append`` or ``unique`` options were not specified"""
     RUN_REPORT_UNSUPPORTED_SECTION = "RUN_REPORT_UNSUPPORTED_SECTION"
-    """An unsupported Section was passed to the reporter's
+    """An unsupported Metric was passed to the reporter's
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.run_report` method"""
     RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE = "RUN_REPORT_INVALID_CHOICE_OPTIONS_TYPE"
     """Something other than a RichTableChoiceOptions instance was set for a choice option"""

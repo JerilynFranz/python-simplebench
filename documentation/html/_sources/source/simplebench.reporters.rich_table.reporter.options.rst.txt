@@ -12,6 +12,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.reporters.rich_table.reporter.options.exceptions
    simplebench.reporters.rich_table.reporter.options.fields
    simplebench.reporters.rich_table.reporter.options.options

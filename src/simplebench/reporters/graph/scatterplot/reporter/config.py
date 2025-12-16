@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import FlagType, Format, Target
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -22,7 +23,7 @@ class ScatterPlotConfig(ReporterConfig):
         *,
         name: str | None = None,
         description: str | None = None,
-        sections: Iterable[Section] | None = None,
+        metrics: Iterable[Metric] | None = None,
         targets: Iterable[Target] | None = None,
         default_targets: Iterable[Target] | None = None,
         formats: Iterable[Format] | None = None,
@@ -41,7 +42,7 @@ class ScatterPlotConfig(ReporterConfig):
         defaults: dict[str, Any] = {
             'name': 'scatter-plot',
             'description': 'Outputs benchmark results as scatter plot graphs.',
-            'sections': {Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY},
+            'metrics': {metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY},
             'targets': {Target.FILESYSTEM, Target.CALLBACK},
             'default_targets': {Target.FILESYSTEM},
             'formats': {Format.GRAPH},
@@ -53,25 +54,25 @@ class ScatterPlotConfig(ReporterConfig):
                 ChoiceConf(
                     flags=['--scatter-plot'], flag_type=FlagType.TARGET_LIST, name='scatter-plot',
                     description='Output scatter plot graphs of benchmark results',
-                    sections=[Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY],
+                    metrics=[metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.GRAPH),
                 ChoiceConf(
                     flags=['--scatter-plot.ops'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-ops',
                     description='Create scatter plots of operations per second results.',
-                    sections=[Section.OPS],
+                    metrics=[metric_registry.OPS],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.GRAPH),
                 ChoiceConf(
                     flags=['--scatter-plot.timings'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-timings',
                     description='Create scatter plots of timing results.',
-                    sections=[Section.TIMING],
+                    metrics=[metric_registry.TIMING],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.GRAPH),
                 ChoiceConf(
                     flags=['--scatter-plot.memory'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-memory',
                     description='Create scatter plots of memory usage results.',
-                    sections=[Section.MEMORY, Section.PEAK_MEMORY],
+                    metrics=[metric_registry.MEMORY, metric_registry.PEAK_MEMORY],
                     targets=[Target.FILESYSTEM, Target.CALLBACK],
                     output_format=Format.GRAPH),
             ])

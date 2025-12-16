@@ -4,9 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
+        <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.enums.section module - simplebench 0.8.0-alpha.0 documentation</title>
+        <title>simplebench.enums.metric module - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -164,7 +165,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">simplebench 0.8.0-alpha.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">simplebench 0.9.0-alpha documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -175,7 +176,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -184,8 +185,11 @@
     <div class="sidebar-container">
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/simplebench-logo.svg" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">simplebench 0.8.0-alpha.0 documentation</span>
+  <span class="sidebar-brand-text">simplebench 0.9.0-alpha documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -248,63 +252,13 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.enums.section">
-<span id="simplebench-enums-section-module"></span><h1>simplebench.enums.section module<a class="headerlink" href="#module-simplebench.enums.section" title="Link to this heading">🔗</a></h1>
-<p>Section enums for SimpleBench.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.enums.section.Section">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.enums.section.</span></span><span class="sig-name descname"><span class="pre">Section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/enums/section.html#Section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.enums.section.Section" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
-<p>Categories for case results sections in reporters.</p>
-<p>This is used by reporters to specify which sections of benchmark results to include
-in their output.</p>
-<dl class="simple">
-<dt>Defined Sections are:</dt><dd><ul class="simple">
-<li><p>OPS: Operations per second section.</p></li>
-<li><p>TIMING: Time per round section.</p></li>
-<li><p>MEMORY: Memory usage section.</p></li>
-<li><p>PEAK_MEMORY: Peak memory usage section.</p></li>
-<li><p>NULL: No section. This is used when a reporter does not specify a section.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.enums.section.Section.MEMORY">
-<span class="sig-name descname"><span class="pre">MEMORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'memory</span> <span class="pre">usage'</span></em><a class="headerlink" href="#simplebench.enums.section.Section.MEMORY" title="Link to this definition">🔗</a></dt>
-<dd><p>Memory usage section.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.enums.section.Section.NULL">
-<span class="sig-name descname"><span class="pre">NULL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'null</span> <span class="pre">section'</span></em><a class="headerlink" href="#simplebench.enums.section.Section.NULL" title="Link to this definition">🔗</a></dt>
-<dd><p>No section. This is used when a reporter does not specify a section.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.enums.section.Section.OPS">
-<span class="sig-name descname"><span class="pre">OPS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'operations</span> <span class="pre">per</span> <span class="pre">second'</span></em><a class="headerlink" href="#simplebench.enums.section.Section.OPS" title="Link to this definition">🔗</a></dt>
-<dd><p>Operations per second section.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.enums.section.Section.PEAK_MEMORY">
-<span class="sig-name descname"><span class="pre">PEAK_MEMORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'peak</span> <span class="pre">memory</span> <span class="pre">usage'</span></em><a class="headerlink" href="#simplebench.enums.section.Section.PEAK_MEMORY" title="Link to this definition">🔗</a></dt>
-<dd><p>Peak memory usage section.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.enums.section.Section.TIMING">
-<span class="sig-name descname"><span class="pre">TIMING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'per</span> <span class="pre">round</span> <span class="pre">timings'</span></em><a class="headerlink" href="#simplebench.enums.section.Section.TIMING" title="Link to this definition">🔗</a></dt>
-<dd><p>Time per round section.</p>
-</dd></dl>
-
-</dd></dl>
-
+          <section id="simplebench-enums-metric-module">
+<h1>simplebench.enums.metric module<a class="headerlink" href="#simplebench-enums-metric-module" title="Link to this heading">🔗</a></h1>
 </section>
 
         </article>
@@ -332,39 +286,13 @@ in their output.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">simplebench.enums.section module</a><ul>
-<li><a class="reference internal" href="#simplebench.enums.section.Section"><code class="docutils literal notranslate"><span class="pre">Section</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.enums.section.Section.MEMORY"><code class="docutils literal notranslate"><span class="pre">Section.MEMORY</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.enums.section.Section.NULL"><code class="docutils literal notranslate"><span class="pre">Section.NULL</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.enums.section.Section.OPS"><code class="docutils literal notranslate"><span class="pre">Section.OPS</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.enums.section.Section.PEAK_MEMORY"><code class="docutils literal notranslate"><span class="pre">Section.PEAK_MEMORY</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.enums.section.Section.TIMING"><code class="docutils literal notranslate"><span class="pre">Section.TIMING</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a100ed86"></script>
+</div><script src="../_static/documentation_options.js?v=ae742066"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

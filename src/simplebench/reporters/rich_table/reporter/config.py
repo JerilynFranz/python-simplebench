@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from simplebench.enums import FlagType, Format, Section, Target
+from simplebench.enums import FlagType, Format, Target
+from simplebench.metric import Metric, metric_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -22,7 +23,7 @@ class RichTableConfig(ReporterConfig):
         *,
         name: str | None = None,
         description: str | None = None,
-        sections: set[Section] | None = None,
+        metrics: set[Metric] | None = None,
         targets: set[Target] | None = None,
         default_targets: set[Target] | None = None,
         formats: set[Format] | None = None,
@@ -53,7 +54,7 @@ class RichTableConfig(ReporterConfig):
 
         *   **name**: ``'rich-table'``
         *   **description**: ``'Displays benchmark results as a rich text table on the console.'``
-        *   **sections**: ``{Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY}``
+        *   **metrics**: ``{Metric.OPS, Metric.TIMING, Metric.MEMORY, Metric.PEAK_MEMORY}``
         *   **targets**: ``{Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}``
         *   **default_targets**: ``{Target.CONSOLE}``
         *   **formats**: ``{Format.RICH_TEXT}``
@@ -65,7 +66,7 @@ class RichTableConfig(ReporterConfig):
 
         :param name: The name of the reporter.
         :param description: A brief description of the reporter.
-        :param sections: The sections to include in the report.
+        :param metrics: The metrics to include in the report.
         :param targets: The output targets for the report.
         :param default_targets: The default output targets if none are specified.
         :param formats: The output formats for the report.
@@ -77,13 +78,13 @@ class RichTableConfig(ReporterConfig):
         :raises SimpleBenchTypeError: If any provided argument has an invalid type.
         :raises SimpleBenchValueError: If any provided argument has an invalid value or combination of values.
         """
-        init_sections = {Section.OPS, Section.TIMING, Section.MEMORY, Section.PEAK_MEMORY}
+        init_metrics = {metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY}
         init_targets = {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
 
         defaults: dict[str, Any] = {
             'name': 'rich-table',
             'description': 'Displays benchmark results as a rich text table on the console.',
-            'sections': init_sections,
+            'metrics': init_metrics,
             'targets': init_targets,
             'default_targets': {Target.CONSOLE},
             'formats': {Format.RICH_TEXT},
@@ -95,26 +96,26 @@ class RichTableConfig(ReporterConfig):
                 ChoiceConf(
                     flags=['--rich-table'], flag_type=FlagType.TARGET_LIST, name='rich-table',
                     description='All results as rich text tables (filesystem, console, callback, default=console)',
-                    sections=init_sections,
+                    metrics=init_metrics,
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
                     flags=['--rich-table.ops'], flag_type=FlagType.TARGET_LIST, name='rich-table-ops',
                     description=(
                         'Ops/second results as rich text tables (filesystem, console, callback, default=console)'),
-                    sections={Section.OPS},
+                    metrics={metric_registry.OPS},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
                     flags=['--rich-table.timing'], flag_type=FlagType.TARGET_LIST, name='rich-table-timing',
                     description='Timing results as rich text tables (filesystem, console, callback, default=console)',
-                    sections={Section.TIMING},
+                    metrics={metric_registry.TIMING},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
                     flags=['--rich-table.memory'], flag_type=FlagType.TARGET_LIST, name='rich-table-memory',
                     description='Memory results as rich text tables (filesystem, console, callback, default=console)',
-                    sections={Section.MEMORY, Section.PEAK_MEMORY},
+                    metrics={metric_registry.MEMORY, metric_registry.PEAK_MEMORY},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
             ])

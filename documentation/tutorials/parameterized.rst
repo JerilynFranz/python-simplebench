@@ -97,7 +97,7 @@ This will produce output similar to the following:
    :language: text
 
 A detailed explanation of the output format and displayed statistics shown in this
-example report can be found in the :doc:`/reports/rich_table_report` section
+example report can be found in the :doc:`/reports/rich_table_report` metric
 of the documentation.
 
 .. note:: The command shown above includes the ``--progress`` option to
