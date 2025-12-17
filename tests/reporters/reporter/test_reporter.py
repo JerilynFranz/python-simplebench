@@ -13,7 +13,7 @@ from simplebench.case.results import Iteration
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
@@ -110,7 +110,7 @@ class GoodReporter(Reporter):
                    callback: Optional[ReporterCallback] = None) -> None:
         return
 
-    def render(self, *, case: Case, section: metric_registry, options: ReporterOptions) -> str:
+    def render(self, *, case: Case, section: metric_types_registry, options: ReporterOptions) -> str:
         """Dummy render method for testing.
 
         :param case: The benchmark case.
@@ -240,7 +240,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'choice': Choice(
                     reporter=reporter_factory(),
                     choice_conf=ChoiceConf(
-                        **choice_conf_kwargs_factory().replace(sections=[metric_registry.NULL])))},
+                        **choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))},
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)),
     idspec('REPORT_005', TestAction(
@@ -417,7 +417,7 @@ def test_report(testspec: TestSpec) -> None:
         args=[Choice(
                 reporter=reporter_factory(),
                 choice_conf=ChoiceConf(
-                    **choice_conf_kwargs_factory().replace(sections=[metric_registry.NULL])))],
+                    **choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))],
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)),
     idspec('REPORTER_ADD_CHOICE_004', TestAction(

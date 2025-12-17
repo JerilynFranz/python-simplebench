@@ -15,7 +15,7 @@ from simplebench.defaults import (
     DEFAULT_MEMORY_UNIT,
 )
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
 
 from .kwargs import ResultsKWArgs
@@ -756,10 +756,10 @@ def base_per_round_timings() -> OperationTimings:
 
 
 @pytest.mark.parametrize("metric", [
-    pytest.param(metric_registry.OPS, id="Metric.OPS"),
-    pytest.param(metric_registry.TIMING, id="Metric.TIMING"),
-    pytest.param(metric_registry.MEMORY, id="Metric.MEMORY"),
-    pytest.param(metric_registry.PEAK_MEMORY, id="Metric.PEAK_MEMORY"),
+    pytest.param(metric_types_registry.OPS, id="Metric.OPS"),
+    pytest.param(metric_types_registry.TIMING, id="Metric.TIMING"),
+    pytest.param(metric_types_registry.MEMORY, id="Metric.MEMORY"),
+    pytest.param(metric_types_registry.PEAK_MEMORY, id="Metric.PEAK_MEMORY"),
 ])
 def test_results_metrics(metric: Metric) -> None:
     """Test Results metrics property.
@@ -777,9 +777,9 @@ def test_results_metrics_invalid() -> None:
     """Test Results metrics property with unsupported or invalid metrics."""
     results = base_results()
     with pytest.raises(SimpleBenchValueError) as excinfo:
-        results.results_metric(metric_registry.NULL)
+        results.results_metric(metric_types_registry.NULL)
     assert excinfo.value.tag_code == _ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE, (
-        f"Expected SimpleBenchValueError for unsupported metric {metric_registry.NULL}"
+        f"Expected SimpleBenchValueError for unsupported metric {metric_types_registry.NULL}"
     )
 
     with pytest.raises(SimpleBenchTypeError) as excinfo1:

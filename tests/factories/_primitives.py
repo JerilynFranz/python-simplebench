@@ -13,7 +13,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
 from .path import path_factory
@@ -63,7 +63,7 @@ def default_section() -> Metric:
     :return: Metric.OPS
     :rtype: Metric
     """
-    return metric_registry.OPS
+    return metric_types_registry.OPS
 
 
 def default_filename_base() -> str:
@@ -224,7 +224,7 @@ def metrics_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> tuple[Metric, ...]:
     :return: `(metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY)`
     :rtype: tuple[Metric]
     """
-    return (metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY)
+    return (metric_types_registry.OPS, metric_types_registry.TIMING, metric_types_registry.MEMORY, metric_types_registry.PEAK_MEMORY)
 
 
 def default_metrics() -> tuple[Metric, ...]:

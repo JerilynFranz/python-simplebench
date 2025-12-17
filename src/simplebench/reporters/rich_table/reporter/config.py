@@ -4,7 +4,11 @@ from __future__ import annotations
 from typing import Any
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metrics
+from simplebench.metric.metric_type import MetricCategory
+from simplebench.metric.metrics_registry import filtered_metrics
+from simplebench.metric.metrics_registry import metrics_type_registry as metrics_registry
+from simplebench.metric.metrics_selection import MetricsCollection, MetricsSelection
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -23,7 +27,7 @@ class RichTableConfig(ReporterConfig):
         *,
         name: str | None = None,
         description: str | None = None,
-        metrics: set[Metric] | None = None,
+        metrics: MetricsSelection | None = None,
         targets: set[Target] | None = None,
         default_targets: set[Target] | None = None,
         formats: set[Format] | None = None,
@@ -78,14 +82,16 @@ class RichTableConfig(ReporterConfig):
         :raises SimpleBenchTypeError: If any provided argument has an invalid type.
         :raises SimpleBenchValueError: If any provided argument has an invalid value or combination of values.
         """
-        init_metrics = {metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY}
-        init_targets = {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
+        all_processable_metrics: Metrics = filtered_metrics(
+            metric_categories=MetricCategory.STATISTICAL)
+        all_processable_metrics += metrics_registry['STD_TOTAL_ELAPSED_TIME']
+        allowed_targets = {Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK}
 
         defaults: dict[str, Any] = {
             'name': 'rich-table',
             'description': 'Displays benchmark results as a rich text table on the console.',
-            'metrics': init_metrics,
-            'targets': init_targets,
+            'metrics': MetricsCollection(metrics=all_processable_metrics),
+            'targets': allowed_targets,
             'default_targets': {Target.CONSOLE},
             'formats': {Format.RICH_TEXT},
             'file_suffix': 'txt',
@@ -96,27 +102,31 @@ class RichTableConfig(ReporterConfig):
                 ChoiceConf(
                     flags=['--rich-table'], flag_type=FlagType.TARGET_LIST, name='rich-table',
                     description='All results as rich text tables (filesystem, console, callback, default=console)',
-                    metrics=init_metrics,
-                    targets=init_targets,
+                    metrics=MetricsCollection(metrics=all_processable_metrics),
+                    targets=allowed_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
                     flags=['--rich-table.ops'], flag_type=FlagType.TARGET_LIST, name='rich-table-ops',
                     description=(
                         'Ops/second results as rich text tables (filesystem, console, callback, default=console)'),
-                    metrics={metric_registry.OPS},
-                    targets=init_targets,
+                    metrics=MetricsCollection(metrics_registry['STD_OPS'],
+                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
+                    targets=allowed_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
                     flags=['--rich-table.timing'], flag_type=FlagType.TARGET_LIST, name='rich-table-timing',
                     description='Timing results as rich text tables (filesystem, console, callback, default=console)',
-                    metrics={metric_registry.TIMING},
-                    targets=init_targets,
+                    metrics=MetricsCollection(metrics_registry['STD_TIMING'],
+                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
+                    targets=allowed_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
                     flags=['--rich-table.memory'], flag_type=FlagType.TARGET_LIST, name='rich-table-memory',
                     description='Memory results as rich text tables (filesystem, console, callback, default=console)',
-                    metrics={metric_registry.MEMORY, metric_registry.PEAK_MEMORY},
-                    targets=init_targets,
+                    metrics=MetricsCollection(metrics_registry['STD_MEMORY'],
+                                              metrics_registry['STD_PEAK_MEMORY'],
+                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
+                    targets=allowed_targets,
                     output_format=Format.RICH_TEXT),
             ])
         }

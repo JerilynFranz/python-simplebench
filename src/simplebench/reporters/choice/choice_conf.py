@@ -4,7 +4,7 @@ from typing import Any, Iterable, Sequence
 
 from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.metric import Metric
+from simplebench.metric.metrics_selection import MetricsSelection
 from simplebench.reporters.choice._error_tags import _ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -56,8 +56,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     :type name: str
     :param description: A brief description of the choice.
     :type description: str
-    :param metrics: A set of :class:`~simplebench.metric.Metric` enums to include in the report.
-    :type metrics: set[:class:`~simplebench.metric.Metric`]
+    :param metrics: A :class:`~simplebench.metric.MetricsSelection`.
     :param targets: A set of :class:`~simplebench.enums.Target` enums for output.
     :type targets: set[:class:`~simplebench.enums.Target`]
     :param default_targets: A set of :class:`~simplebench.enums.Target` enums representing the
@@ -93,7 +92,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
                  flag_type: FlagType,
                  name: str,
                  description: str,
-                 metrics: Iterable[Metric],
+                 metrics: MetricsSelection,
                  output_format: Format,
                  targets: Iterable[Target],
                  default_targets: Iterable[Target] | None = None,
@@ -209,11 +208,9 @@ class ChoiceConf(Hashable, ChoiceProtocol):
             allow_empty=False, allow_blank=False)
         """Description of the choice (private backing field for attribute)"""
 
-        self._metrics: frozenset[Metric] = frozenset(validate_iterable_of_type(
-            metrics, Metric, "metrics",
-            _ChoiceConfErrorTag.SECTIONS_INVALID_ARG_TYPE,
-            _ChoiceConfErrorTag.SECTIONS_INVALID_ARG_VALUE,
-            allow_empty=False))
+        self._metrics: MetricsSelection = validate_type(
+            metrics, MetricsSelection, "metrics",
+            _ChoiceConfErrorTag.SECTIONS_INVALID_ARG_TYPE)
         """Metrics included in the choice (private backing field for attribute)"""
 
         self._targets: frozenset[Target] = frozenset(validate_iterable_of_type(
@@ -343,7 +340,7 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         return self._description
 
     @property
-    def metrics(self) -> frozenset[Metric]:
+    def metrics(self) -> MetricsSelection:
         """Metrics included in the choice.
 
         These are the metrics that the associated

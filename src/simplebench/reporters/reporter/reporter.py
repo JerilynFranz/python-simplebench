@@ -29,6 +29,7 @@ from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
 from simplebench.metric.metric import Metric
+from simplebench.metric.metric_types_registry import metric_types_registry as metric_registry
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback

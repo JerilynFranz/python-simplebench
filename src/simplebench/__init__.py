@@ -1,7 +1,7 @@
 """Simple benchmarking framework."""
 from simplebench._meta import __author__, __copyright__, __project__, __release__, __version__  # noqa: F401
 from simplebench.benchmark import benchmark
-from simplebench.case import Case, Results
+from simplebench.case import Case, Mark, Results
 from simplebench.cli import main
 from simplebench.enums import Verbosity
 from simplebench.reporters.csv.reporter.options import CSVOptions
@@ -15,6 +15,7 @@ __all__ = [
     "benchmark",
     "register_reporter",
     "Case",
+    "Mark",
     "Results",
     "CSVOptions",
     "JSONOptions",

@@ -1,4 +1,4 @@
-"""Error tags for the Metrics class"""
+"""Error tags for the MetricTypes class"""
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -6,8 +6,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _MetricsErrorTag(ErrorTag):
     """Error tags for the Metrics class"""
-    NOT_A_METRIC_DEFINITION = "NOT_A_METRIC_DEFINITION"
-    """Value is not a MetricDefinition object"""
+    NOT_A_METRIC = "NOT_A_METRIC"
+    """Value is not a Metric object"""
     INVALID_KEY_FORMAT = "INVALID_KEY_FORMAT"
     """Invalid key format for a metric key"""
     NOT_ITERABLE_ERROR = "NOT_ITERABLE_ERROR"
@@ -21,4 +21,4 @@ class _MetricsErrorTag(ErrorTag):
     INVALID_METRICS_LIST_TYPE = "INVALID_METRICS_LIST_TYPE"
     """metrics parameter is not a list"""
     INVALID_METRICS_LIST_ITEM_TYPE = "INVALID_METRICS_LIST_ITEM_TYPE"
-    """An item in the metrics parameter is not a MetricDefinition object"""
+    """An item in the metrics parameter is not a Metric object"""

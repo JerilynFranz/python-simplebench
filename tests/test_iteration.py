@@ -4,7 +4,7 @@ import pytest
 from simplebench.case.results import Iteration
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _IterationErrorTag
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 
 from .testspec import TestAction, idspec
 
@@ -142,27 +142,27 @@ def test_iteration_init(testspec: TestAction) -> None:
     idspec("ITERATION_016", TestAction(
         name="Iteration Metric - Metric.OPS",
         action=Iteration(elapsed=4.0, scale=1.0).iteration_metric,
-        args=[metric_registry.OPS],
+        args=[metric_types_registry.OPS],
         validate_result=lambda result: (result == 0.25))),
     idspec("ITERATION_017", TestAction(
         name="Iteration Metric - Metric.TIMING",
         action=Iteration(elapsed=4.0, scale=1.0).iteration_metric,
-        args=[metric_registry.TIMING],
+        args=[metric_types_registry.TIMING],
         validate_result=lambda result: (result == 4.0))),
     idspec("ITERATION_018", TestAction(
         name="Iteration Metric - Metric.MEMORY",
         action=Iteration(memory=1024).iteration_metric,
-        args=[metric_registry.MEMORY],
+        args=[metric_types_registry.MEMORY],
         validate_result=lambda result: (result == 1024))),
     idspec("ITERATION_019", TestAction(
         name="Iteration Metric - Metric.PEAK_MEMORY",
         action=Iteration(peak_memory=2048).iteration_metric,
-        args=[metric_registry.PEAK_MEMORY],
+        args=[metric_types_registry.PEAK_MEMORY],
         validate_result=lambda result: (result == 2048))),
     idspec("ITERATION_020", TestAction(
         name="Iteration Metric - Metric.NULL",
         action=Iteration().iteration_metric,
-        args=[metric_registry.NULL],
+        args=[metric_types_registry.NULL],
         exception=SimpleBenchValueError,
         exception_tag=_IterationErrorTag.ITERATION_SECTION_UNSUPPORTED_SECTION_ARG_VALUE)),
     idspec("ITERATION_021", TestAction(

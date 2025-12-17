@@ -29,7 +29,8 @@ from types import ModuleType
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from simplebench.benchmark_runner import BenchmarkRunner
-from simplebench.case.results import Iteration, Results
+from simplebench.case.results import Results
+from simplebench.case.results.metrics import Iteration, Value
 from simplebench.defaults import (
     DEFAULT_INTERVAL_SCALE,
     DEFAULT_SIGNIFICANT_FIGURES,
@@ -39,7 +40,7 @@ from simplebench.defaults import (
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
 from simplebench.exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError
-from simplebench.metric import Metric
+from simplebench.metric import metrics_registry
 from simplebench.timeout import Timeout
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
 from simplebench.validators import validate_positive_int
@@ -319,6 +320,16 @@ class SimpleRunner(BenchmarkRunner):
             kwargs: Optional[dict[str, Any]] = None) -> Results:
         """Run a generic benchmark using the specified action and test case.
 
+        It runs a complete benchmark for a specific combination of kwarg variations
+        according to the parameters defined in the benchmark case, including the
+        number of iterations, minimum and maximum time limits, and warmup iterations.
+
+        All measurements are collected into :class:`~.simplebench.case.results.Results`
+        which is returned at the end of the benchmark.
+
+        The same number of rounds is used for every iteration in a single Results,
+        which is either auto-calibrated or specified in the benchmark case.
+
         :param n: The **O()** 'n' weight of the benchmark. This is used to calculate
             a weight for the purpose of **O()** analysis.
 
@@ -381,8 +392,10 @@ class SimpleRunner(BenchmarkRunner):
             description=f'Benchmarking {group} (iteration {0:<6d}; time {0.00:<3.2f}s)',
             color=Color.GREEN)
 
-        total_elapsed: float = 0.0
         iterations_list: list[Iteration] = []
+        elapsed_metric = metrics_registry['STD_TIMING']
+        memory_metric = metrics_registry['STD_MEMORY']
+        peak_memory_metric = metrics_registry['STD_PEAK_MEMORY']
 
         while ((iteration_pass <= iterations_min or wall_time < min_stop_at)
                 and wall_time < max_stop_at):
@@ -419,15 +432,19 @@ class SimpleRunner(BenchmarkRunner):
                 teardown()
 
             if iteration_pass < 1:
-                # Warmup iterations not included in final stats
+                # Warmup iterations not included in results
                 continue
 
             memory = end_memory_current - start_memory_current
             peak_memory = end_memory_peak - start_memory_peak
-            iteration_result = Iteration(
-                n=n, rounds=rounds, elapsed=elapsed, memory=memory, peak_memory=peak_memory)
+
+            iteration_result = Iteration((
+                Value(elapsed_metric, float(elapsed)),
+                Value(memory_metric, float(memory)),
+                Value(peak_memory_metric, float(peak_memory))
+            ))
+
             iterations_list.append(iteration_result)
-            total_elapsed += iteration_result.elapsed
             wall_time = float(timer())
 
             # Update progress display if showing progress
@@ -445,11 +462,9 @@ class SimpleRunner(BenchmarkRunner):
             group=group,
             title=title,
             description=description,
-            variation_marks=self.variation_marks,
             n=n,
             rounds=rounds,
             iterations=iterations_list,
-            total_elapsed=total_elapsed,
             extra_info={})
         progress_tracker.stop()
 

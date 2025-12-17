@@ -5,7 +5,7 @@ import pytest
 
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import metric_registry
+from simplebench.metric import metric_types_registry
 from simplebench.reporters.reporter import ReporterConfig
 from simplebench.reporters.reporter._error_tags import _ReporterConfigErrorTag
 from simplebench.validators._error_tags import _ValidatorsErrorTag
@@ -62,7 +62,7 @@ from ...testspec import Assert, TestAction, TestSpec, idspec
               "SimpleBenchTypeError/SECTION_INVALID_ENTRY_TYPE"),
         action=ReporterConfig,
         kwargs=reporter_config_kwargs_factory(sections={
-            metric_registry.OPS, "not_a_section_enum"}),  # type: ignore[arg-type]
+            metric_types_registry.OPS, "not_a_section_enum"}),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_TYPE)),
     idspec('INIT_009', TestAction(

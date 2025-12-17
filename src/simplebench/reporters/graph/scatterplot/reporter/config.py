@@ -4,7 +4,11 @@ from __future__ import annotations
 from typing import Any, Iterable
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metrics
+from simplebench.metric.metric_type import MetricCategory
+from simplebench.metric.metrics_registry import filtered_metrics
+from simplebench.metric.metrics_registry import metrics_type_registry as metrics_registry
+from simplebench.metric.metrics_selection import MetricsCollection, MetricsSelection
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -23,7 +27,7 @@ class ScatterPlotConfig(ReporterConfig):
         *,
         name: str | None = None,
         description: str | None = None,
-        metrics: Iterable[Metric] | None = None,
+        metrics: MetricsSelection | None = None,
         targets: Iterable[Target] | None = None,
         default_targets: Iterable[Target] | None = None,
         formats: Iterable[Format] | None = None,
@@ -39,11 +43,15 @@ class ScatterPlotConfig(ReporterConfig):
         All arguments are optional. If not provided, the default value for
         ScatterPlotReporter will be used.
         """
+        all_processable_metrics: Metrics = filtered_metrics(
+            metric_categories=MetricCategory.STATISTICAL)
+        all_processable_metrics += metrics_registry['STD_TOTAL_ELAPSED_TIME']
+        allowed_targets = {Target.FILESYSTEM, Target.CALLBACK}
         defaults: dict[str, Any] = {
             'name': 'scatter-plot',
             'description': 'Outputs benchmark results as scatter plot graphs.',
-            'metrics': {metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY},
-            'targets': {Target.FILESYSTEM, Target.CALLBACK},
+            'metrics': MetricsCollection(metrics=all_processable_metrics),
+            'targets': allowed_targets,
             'default_targets': {Target.FILESYSTEM},
             'formats': {Format.GRAPH},
             'file_suffix': 'svg',
@@ -53,27 +61,34 @@ class ScatterPlotConfig(ReporterConfig):
             'choices': ChoicesConf([
                 ChoiceConf(
                     flags=['--scatter-plot'], flag_type=FlagType.TARGET_LIST, name='scatter-plot',
-                    description='Output scatter plot graphs of benchmark results',
-                    metrics=[metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    description='Output scatter plot graphs of all available benchmark results',
+                    metrics=MetricsCollection(metrics=all_processable_metrics),
+                    targets=allowed_targets,
                     output_format=Format.GRAPH),
                 ChoiceConf(
                     flags=['--scatter-plot.ops'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-ops',
                     description='Create scatter plots of operations per second results.',
-                    metrics=[metric_registry.OPS],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    metrics=MetricsCollection(metrics=[
+                        metrics_registry['STD_OPS'],
+                        metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
+                    targets=allowed_targets,
                     output_format=Format.GRAPH),
                 ChoiceConf(
                     flags=['--scatter-plot.timings'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-timings',
                     description='Create scatter plots of timing results.',
-                    metrics=[metric_registry.TIMING],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    metrics=MetricsCollection(metrics=[
+                        metrics_registry['STD_TIMING'],
+                        metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
+                    targets=allowed_targets,
                     output_format=Format.GRAPH),
                 ChoiceConf(
                     flags=['--scatter-plot.memory'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-memory',
                     description='Create scatter plots of memory usage results.',
-                    metrics=[metric_registry.MEMORY, metric_registry.PEAK_MEMORY],
-                    targets=[Target.FILESYSTEM, Target.CALLBACK],
+                    metrics=MetricsCollection(metrics=[
+                        metrics_registry['STD_MEMORY'],
+                        metrics_registry['STD_PEAK_MEMORY'],
+                        metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
+                    targets=allowed_targets,
                     output_format=Format.GRAPH),
             ])
         }

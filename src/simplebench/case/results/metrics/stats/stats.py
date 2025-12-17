@@ -5,27 +5,22 @@ import statistics
 from math import isclose, sqrt
 from typing import Any, Sequence
 
-from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
+from simplebench.case.results.metrics import Iteration
+from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metric import Metric, metrics_registry
 from simplebench.report.versions import v1
 from simplebench.si_units import si_scale_to_unit, si_unit_base
-from simplebench.validators import (
-    validate_non_blank_string,
-    validate_positive_float,
-    validate_positive_int,
-    validate_sequence_of_numbers,
-)
+from simplebench.validators import validate_positive_int
 
-from .. import Metric
-from ._error_tags.stats import _StatsErrorTag
+from ._error_tags import _StatsErrorTag
 
 StatsBlock = v1.StatsBlock
 
 
-class Stats(Metric):
+class Stats:
     '''Generic container for statistics on a benchmark.
 
-    :ivar str unit: The unit of measurement for the benchmark (e.g., "ops/s"). (read only)
-    :ivar float scale: The scale factor for the measurements (e.g. 1 for seconds). (read only)
+    :ivar Metric metric: The metric definition for the benchmark. (read only)
     :ivar int iterations: The total number of iterations represented by the data points. (read only)
     :ivar int rounds: The number of rounds each data point represents. (read only)
     :ivar tuple[int | float, ...] data: Sequence of data points. (read only)
@@ -34,47 +29,34 @@ class Stats(Metric):
     :ivar float minimum: The minimum of the data. (read only)
     :ivar float maximum: The maximum of the data. (read only)
     :ivar float standard_deviation: The estimated population standard deviation of the data. (read only)
-    :ivar float relative_standard_deviation: The relative standard deviation of the data. (read only)
+    :ivar float relative_standard_deviation: The estimated population relative standard
+        deviation of the data. (read only)
     :ivar tuple[float, ...] percentiles: Percentiles of the data. (read only)
 
     '''
-    __slots__ = ('_unit', '_scale', '_rounds', '_data', '_percentiles', '_mean', '_median',
+    __slots__ = ('_metric', '_rounds', '_data', '_percentiles', '_mean', '_median',
                  '_minimum', '_maximum', '_standard_deviation', '_relative_standard_deviation',
-                 '_statistics_as_dict', '_statistics_and_data_as_dict')
+                 '_report', '_report_with_data')
 
     def __init__(self, *,
-                 unit: str,
-                 scale: float,
-                 data: Sequence[int | float],
-                 rounds: int = 1) -> None:
+                 metric: Metric,
+                 data: Sequence[int | float | Iteration],
+                 rounds: int) -> None:
         """Initialize the Stats object.
 
-        :param str unit: The unit of measurement for the benchmark (e.g., "ops/s").
-        :param float scale: The scale factor for the measurements (e.g. 1 for seconds).
-        :param Sequence[int | float] data: Sequence of data points.
+        :param Metric metric: The metric definition for the benchmark.
+        :param Sequence[int | float | Iteration] data: Sequence of data points.
         :param int rounds: The number of rounds each data point represents.
         :raises SimpleBenchTypeError: If any of the arguments are of the wrong type.
         :raises SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        self._unit: str = validate_non_blank_string(
-                                unit, 'unit',
-                                _StatsErrorTag.INVALID_UNIT_ARG_TYPE,
-                                _StatsErrorTag.INVALID_UNIT_ARG_VALUE)
-        self._scale: float = validate_positive_float(
-                                scale, 'scale',
-                                _StatsErrorTag.INVALID_SCALE_ARG_TYPE,
-                                _StatsErrorTag.INVALID_SCALE_ARG_VALUE)
+        self._metric: Metric = self._validate_metric(metric)
         self._rounds: int = validate_positive_int(
                                 rounds, 'rounds',
                                 _StatsErrorTag.INVALID_ROUNDS_ARG_TYPE,
                                 _StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)
         # data is left unsorted to allow for time series data to be preserved
-        self._data: tuple[int | float, ...] = tuple(validate_sequence_of_numbers(
-                                            value=data,
-                                            field_name='data',
-                                            allow_empty=False,
-                                            type_tag=_StatsErrorTag.INVALID_DATA_ARG_TYPE,
-                                            value_tag=_StatsErrorTag.INVALID_DATA_ARG_ITEM_TYPE))
+        self._data: tuple[float, ...] = self._validate_data(metric=metric, data=data)
         self._percentiles: tuple[float, ...] | None = None
         self._mean: float | None = None
         self._median: float | None = None
@@ -82,18 +64,44 @@ class Stats(Metric):
         self._maximum: float | None = None
         self._standard_deviation: float | None = None
         self._relative_standard_deviation: float | None = None
-        self._statistics_as_dict: dict[str, str | float | dict[int, float] | list[int | float]] | None = None
-        self._statistics_and_data_as_dict: dict[str, str | float | dict[int, float] | list[int | float]] | None = None
+
+    def _validate_data(self, *, metric: Metric, data: Sequence[int | float | Iteration]) -> tuple[float, ...]:
+        """Validate the data argument.
+
+        :param Metric metric: The metric definition for the benchmark.
+        :param Sequence[int | float | Iteration] data: Sequence of data points.
+        :raises SimpleBenchTypeError: If the data argument is of the wrong type.
+        :raises SimpleBenchValueError: If the data argument has invalid values.
+        :return: A tuple of validated data points as floats.
+        """
+        if not isinstance(data, Sequence):
+            raise SimpleBenchTypeError(
+                'The data argument must be a sequence of numbers or Iteration objects.',
+                tag=_StatsErrorTag.INVALID_DATA_ARG_TYPE)
+
+        validated_data: list[float] = []
+        for index, item in enumerate(data):
+            if isinstance(item, Iteration):
+                validated_data.append(item.metric(metric))
+            elif isinstance(item, (int, float)):
+                validated_data.append(float(item))
+            else:
+                raise SimpleBenchTypeError(
+                    f'The data argument contains an invalid item at index {index}. '
+                    'Each item must be an integer, float, or Iteration object.',
+                    tag=_StatsErrorTag.INVALID_DATA_ARG_ITEM_TYPE)
+
+        return tuple(validated_data)
 
     @property
     def unit(self) -> str:
         '''The unit of the data.'''
-        return self._unit
+        return self._metric.metric_type.unit
 
     @property
     def scale(self) -> float:
         '''The scale of the data.'''
-        return self._scale
+        return self._metric.metric_type.scale
 
     @property
     def rounds(self) -> int:
@@ -120,7 +128,7 @@ class Stats(Metric):
         return len(self.data)
 
     @property
-    def data(self) -> tuple[int | float, ...]:
+    def data(self) -> tuple[float, ...]:
         '''The data points.'''
         return self._data
 
@@ -345,3 +353,14 @@ class Stats(Metric):
     def __repr__(self) -> str:
         return (f"{self.__class__.__name__}(unit='{self.unit}', scale={self.scale}, rounds={self.rounds}, "
                 f"data=[{', '.join(str(d) for d in self.data)}])")
+
+    def _validate_metric(self, metric: Metric) -> Metric:
+        if not isinstance(metric, Metric):
+            raise SimpleBenchTypeError(
+                'The metric argument must be a Metric object.',
+                tag=_StatsErrorTag.INVALID_METRIC_ARG_TYPE)
+        if metric not in metrics_registry:
+            raise SimpleBenchValueError(
+                'The metric argument is not a registered metric definition.',
+                tag=_StatsErrorTag.UNREGISTERED_METRIC)
+        return metric

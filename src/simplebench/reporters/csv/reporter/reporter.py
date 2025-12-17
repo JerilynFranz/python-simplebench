@@ -95,7 +95,7 @@ class CSVReporter(Reporter):
 
     def render(  # noqa: C901
             self, *, case: Case, metric: Metric, options: ReporterOptions) -> str:
-        """Renders the benchmark results as tagged CSV data and returns it as a string.
+        """Renders the benchmark results for the specified metric as tagged CSV data and returns it as a string.
 
         :param case: The :class:`~simplebench.case.Case` instance representing the
                      benchmarked code.
@@ -169,12 +169,16 @@ class CSVReporter(Reporter):
 
             writer.writerow(header)
             for result in results:
+                elapsed_seconds: float = result.results_metric['STD_ELAPSED_SECONDS']
                 stats_target = result.results_metric(metric)
                 row: list[str | float | int] = []
 
                 if not options.variation_cols_last:
-                    for value in result.variation_marks.values():
-                        row.append(value)
+                    # Add variation marks in the order defined by the case
+                    # and only those that are defined in the variation columns
+                    for value in result.marks.values():
+                        if value in case.variation_cols:
+                            row.append(value)
 
                     for field in included_fields:
                         match field:
@@ -204,8 +208,9 @@ class CSVReporter(Reporter):
                                 row.append(sigfigs(stats_target.relative_standard_deviation))
 
                 if options.variation_cols_last:
-                    for value in result.variation_marks.values():
-                        row.append(value)
+                    for value in result.marks.values():
+                        if value in case.variation_cols:
+                            row.append(value)
 
                 writer.writerow(row)
 

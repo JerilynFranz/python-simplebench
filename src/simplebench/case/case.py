@@ -34,6 +34,7 @@ from simplebench.validators import (
 
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
+from .mark import Mark
 
 if TYPE_CHECKING:
     from simplebench.session import Session
@@ -187,7 +188,7 @@ class Case:
     '''
     __slots__ = ('_group', '_title', '_description', '_action',
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
-                 '_variation_cols', '_kwargs_variations', '_runners',
+                 '_variation_cols', '_kwargs_variations', '_variation_marks', '_runners',
                  '_callback', '_results', '_options', '_rounds',
                  '_benchmark_id', '_vcs_info', '_timeout', '_timer')
 
@@ -294,6 +295,28 @@ class Case:
             function will be called with a `bench` parameter that is an instance of the runner and the
             keyword arguments for the current variation.
             If None, an empty dict is used.
+
+            kwargs_variation values can be of any type, including types that are not easily serializable.
+            To handle this situation, the `Mark` class can be used to create standardized marks that
+            can be used to represent these variations in results and reports.
+
+            .. code-block:: python3
+              :caption: Using Marks for Variation Representation
+
+                from simplebench.case import Case, Mark, Results
+                from simplebench.benchmark_runner import SimpleRunner
+
+                def my_benchmark_action(_bench: SimpleRunner, mode: str) -> Results:
+                    # Benchmark action implementation
+                    pass
+
+                case = Case(
+                    action=my_benchmark_action,
+                    kwargs_variations={
+                        'mode': [Mark('ModeA', 1), Mark('ModeB', 2)]
+                    }
+                )
+
         :param runners: A list of runners for the benchmark.
 
             Any runner classes must be a subclass of BenchmarkRunner and must have a method
@@ -418,6 +441,7 @@ class Case:
                 _CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
                 strip=True, allow_blank=False, allow_empty=False)
         self._variation_cols: dict[str, str] = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
+        self._variation_marks: dict[str, tuple[str, ...]] = self._generate_variation_marks()
         self._runners: list[type[BenchmarkRunner]] = Case.validate_runners(runners)
         self._callback: ReporterCallback | None = validate_reporter_callback(callback, allow_none=True)
         self._options : list[ReporterOptions] = Case.validate_options(options)
@@ -679,6 +703,35 @@ class Case:
                     )
         return options_list
 
+    def _generate_variation_marks(self) -> dict[str, tuple[str, ...]]:
+        """Generate variation marks for the kwarg variations.
+
+        Each variation value is converted to a string representation suitable for use as a mark value.
+        The variation marks are sorted for consistent ordering in reports.
+
+        :return: A dictionary mapping variation column names to mark representation tuples.
+        """
+        variation_marks: dict[str, tuple[str, ...]] = {}
+        for key, values in self.kwargs_variations.items():
+            # Defer sorting until after all values are converted to a consistent type.
+            # This simplifies the logic and avoids type-hinting issues.
+            if all(isinstance(value, (int, float)) for value in values):
+                # For numeric types, sort them numerically before converting to strings
+                # to ensure a natural sort order (e.g., 1, 2, 10 instead of 1, 10, 2).
+                value_marks = [str(v) for v in sorted(values)]
+            else:
+                # For mixed or non-numeric types, convert all to strings first, then sort.
+                processed_values: list[str] = []
+                for value in values:
+                    if isinstance(value, Mark):
+                        processed_values.append(value.name)
+                    else:
+                        processed_values.append(str(value))
+                processed_values.sort()
+                value_marks = processed_values
+            variation_marks[key] = tuple(value_marks)
+        return variation_marks
+
     @property
     def group(self) -> str:
         """The benchmark reporting group to which the benchmark case belongs for selection
@@ -878,6 +931,15 @@ class Case:
         return {key: list(value) for key, value in self._kwargs_variations.items()}
 
     @property
+    def variation_marks(self) -> dict[str, tuple[str, ...]]:
+        """Return marks for the kwarg variations.
+
+        :return: A dictionary mapping 'kwarg_name=kwarg_value' to Mark objects.
+        """
+        # shallow copy to prevent external modification of internal dict
+        return copy(self._variation_marks) if self._variation_marks is not None else {}
+
+    @property
     def runners(self) -> list[type[BenchmarkRunner]]:
         """A list of runners for the benchmark.
 
@@ -1045,7 +1107,8 @@ class Case:
             'title': self.title,
             'description': self.description,
             'variation_cols': self.variation_cols,
-            'results': results
+            'variation_marks': self.variation_marks,
+            'results': results.as_dict(full_data=full_data)
         }
 
     def report(self, full_data: bool = False) -> Report:

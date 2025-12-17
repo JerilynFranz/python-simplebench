@@ -8,7 +8,7 @@ import pytest
 from simplebench.case import Case
 from simplebench.enums import Format
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.validators import validate_reporter_callback
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag

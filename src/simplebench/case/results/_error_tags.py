@@ -6,6 +6,9 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ResultsErrorTag(ErrorTag):
     """ErrorTags for exceptions in the Results module."""
+    VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE = "VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE"
+    """Something other than a str was found as a value in the variation_marks dict
+    in the Results constructor"""
     GROUP_INVALID_ARG_TYPE = "GROUP_INVALID_ARG_TYPE"
     """Something other than a str was passed as the group"""
     GROUP_INVALID_ARG_VALUE = "GROUP_INVALID_ARG_VALUE"

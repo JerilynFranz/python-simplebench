@@ -8,7 +8,7 @@ from rich.text import Text
 from simplebench.case import Case
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
@@ -95,7 +95,7 @@ class FactoryReporterForOrchestration(FactoryReporter):
 
 
 def _orchestration_reporter_factory(choice_name: str,
-                                    sections: set[metric_registry] | None = None,
+                                    sections: set[metric_types_registry] | None = None,
                                     targets: set[Target] | None = None,
                                     default_targets: set[Target] | None = None) -> FactoryReporterForOrchestration:
     """Generate a FactoryReporterForOrchestration testing instance.
@@ -111,7 +111,7 @@ def _orchestration_reporter_factory(choice_name: str,
     :return: A factory reporter for orchestration.
     :rtype: FactoryReporterForOrchestration
     """
-    sections = sections or {metric_registry.MEMORY, metric_registry.OPS, metric_registry.TIMING, metric_registry.PEAK_MEMORY}
+    sections = sections or {metric_types_registry.MEMORY, metric_types_registry.OPS, metric_types_registry.TIMING, metric_types_registry.PEAK_MEMORY}
     default_targets = default_targets or {Target.CONSOLE}
     targets = targets or {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
     choice_conf_kwargs = choice_conf_kwargs_factory(cache_id=None).replace(
@@ -132,7 +132,7 @@ T = TypeVar("T", RenderByCaseMethodKWArgs, RenderByMetricMethodKWArgs)
 def _setup_good_path(
     kwargs_class: type[T],
     choice_name: str,
-    sections: set[metric_registry] | None = None
+    sections: set[metric_types_registry] | None = None
 ) -> tuple[FactoryReporterForOrchestration, T]:
     """Generic helper to arrange a 'good path' test scenario.
 
@@ -168,7 +168,7 @@ def _setup_good_path(
 def _setup_bad_target_path(
     kwargs_class: type[T],
     choice_name: str,
-    sections: set[metric_registry] | None = None
+    sections: set[metric_types_registry] | None = None
 ) -> tuple[FactoryReporterForOrchestration, T]:
     """Generic helper to arrange a 'bad target' test scenario.
 
@@ -227,7 +227,7 @@ def _setup_render_by_section_good_path() -> tuple[FactoryReporterForOrchestratio
     return _setup_good_path(  # type: ignore[return-value]
         kwargs_class=RenderByMetricMethodKWArgs,
         choice_name="test_choice_by_section",
-        sections={metric_registry.MEMORY, metric_registry.OPS, metric_registry.TIMING}
+        sections={metric_types_registry.MEMORY, metric_types_registry.OPS, metric_types_registry.TIMING}
     )
 
 

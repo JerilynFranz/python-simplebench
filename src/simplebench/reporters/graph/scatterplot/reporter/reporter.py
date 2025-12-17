@@ -12,7 +12,7 @@ import seaborn as sns
 
 from simplebench.case.results import Results
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.si_units import si_scale_for_largest
 from simplebench.type_proxies import is_case
@@ -105,7 +105,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
                 f"'case' argument must be a Case instance, got {type(case)}",
                 tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
         metric = validate_type(metric, Metric, 'metric',
-                                _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
+                               _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(
                 options, Options, 'options',
                 _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)

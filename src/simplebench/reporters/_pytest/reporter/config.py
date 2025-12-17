@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -78,7 +78,7 @@ class PytestConfig(ReporterConfig):
         :raises SimpleBenchTypeError: If any provided argument has an invalid type.
         :raises SimpleBenchValueError: If any provided argument has an invalid value or combination of values.
         """
-        init_metrics = {metric_registry.OPS, metric_registry.TIMING, metric_registry.MEMORY, metric_registry.PEAK_MEMORY}
+        init_metrics = {metric_types_registry.OPS, metric_types_registry.TIMING, metric_types_registry.MEMORY, metric_types_registry.PEAK_MEMORY}
         init_targets = {Target.CUSTOM}
 
         defaults: dict[str, Any] = {
@@ -103,19 +103,19 @@ class PytestConfig(ReporterConfig):
                     flags=['--pytest.ops'], flag_type=FlagType.TARGET_LIST, name='pytest-ops',
                     description=(
                         'Ops/second results as rich text tables'),
-                    metrics={metric_registry.OPS},
+                    metrics={metric_types_registry.OPS},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
                     flags=['--pytest.timing'], flag_type=FlagType.TARGET_LIST, name='pytest-timing',
                     description='Timing results as rich text tables',
-                    metrics={metric_registry.TIMING},
+                    metrics={metric_types_registry.TIMING},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
                 ChoiceConf(
                     flags=['--pytest.memory'], flag_type=FlagType.TARGET_LIST, name='pytest-memory',
                     description='Memory results as rich text tables',
-                    metrics={metric_registry.MEMORY, metric_registry.PEAK_MEMORY},
+                    metrics={metric_types_registry.MEMORY, metric_types_registry.PEAK_MEMORY},
                     targets=init_targets,
                     output_format=Format.RICH_TEXT),
             ])

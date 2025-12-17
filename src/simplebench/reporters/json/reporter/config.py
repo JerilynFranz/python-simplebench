@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any, Iterable
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric.metrics_selection import MetricsSelection, MetricsUnspecified
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.json.reporter.options import JSONOptions
@@ -24,7 +24,7 @@ class JSONConfig(ReporterConfig):
         *,
         name: str | None = None,
         description: str | None = None,
-        metrics: Iterable[Metric] | None = None,
+        metrics: MetricsSelection | None = None,
         targets: Iterable[Target] | None = None,
         default_targets: Iterable[Target] | None = None,
         formats: Iterable[Format] | None = None,
@@ -40,13 +40,13 @@ class JSONConfig(ReporterConfig):
         All arguments are optional. If not provided, the default value for
         JSONReporter will be used.
         """
-        init_metrics = {metric_registry.NULL}  # JSON reporter only supports NULL metric
-        init_targets = {Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE}
+        init_metrics = MetricsUnspecified()
+        allowed_targets = {Target.FILESYSTEM, Target.CALLBACK, Target.CONSOLE}
         defaults: dict[str, Any] = {
             'name': 'json',
             'description': 'Outputs benchmark results to JSON files.',
             'metrics': init_metrics,
-            'targets': init_targets,
+            'targets': allowed_targets,
             'default_targets': {Target.FILESYSTEM},
             'formats': {Format.JSON},
             'file_suffix': 'json',
@@ -58,7 +58,7 @@ class JSONConfig(ReporterConfig):
                     flags=['--json'], flag_type=FlagType.TARGET_LIST, name='json',
                     description='statistical results to JSON (filesystem, console, callback, default=filesystem)',
                     metrics=init_metrics,
-                    targets=init_targets,
+                    targets=allowed_targets,
                     output_format=Format.JSON,
                     options=JSONOptions(full_data=False)),
                 ChoiceConf(
@@ -66,7 +66,7 @@ class JSONConfig(ReporterConfig):
                     description=(
                         'statistical results + full data to JSON (filesystem, console, callback, default=filesystem)'),
                     metrics=init_metrics,
-                    targets=init_targets,
+                    targets=allowed_targets,
                     output_format=Format.JSON,
                     options=JSONOptions(full_data=True)),
             ])

@@ -13,12 +13,12 @@ from collections.abc import MutableMapping
 from typing import Any, Iterable, Iterator
 
 from simplebench.exceptions import SimpleBenchDuplicateKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric.metric_definition import MetricDefinition
+from simplebench.metric.metric.metric import Metric
 
 from ._error_tags import _MetricsErrorTag
 
 
-class Metrics(MutableMapping):
+class Metrics(MutableMapping[str, Metric]):
     """
     A namespace class for metrics that behaves like a read-only dictionary.
     This class can be used to store and manage metrics in a structured way.
@@ -40,22 +40,26 @@ class Metrics(MutableMapping):
     start or end with an underscore or digit.
     """
 
-    def __init__(self, metrics: Iterable[MetricDefinition] | 'Metrics' | None = None) -> None:
-        """Initialize the Metrics object with an optional list of metrics.
+    def __init__(self, metrics: Iterable[Metric] | 'Metrics' | Metric | None = None) -> None:
+        """Initialize the Metrics object with Metric objects.
 
-        :param metrics: An Iterable of MetricDefinition objects to initialize the Metrics object.
-        :raises SimpleBenchTypeError: If the input is not an Iterable of MetricDefinition.
+        :param metrics: A Metric, an Iterable of Metric objects, or a Metrics instance to initialize the Metrics object.
+        :raises SimpleBenchTypeError: If the input is not a Metric, an Iterable of Metric
+            objects, or a Metrics instance.
+        :raises SimpleBenchDuplicateKeyError: If a duplicate key is found.
         """
         super().__init__()
         if metrics is None:
             return
+        if isinstance(metrics, Metric):
+            metrics = [metrics]
         self.extend(metrics)
 
-    def extend(self, metrics: Iterable[MetricDefinition] | 'Metrics') -> None:
+    def extend(self, metrics: Iterable[Metric] | 'Metrics') -> None:
         """Add multiple metrics to the Metrics object.
 
-        :param metrics: An Iterable of MetricDefinition objects or another Metrics object.
-        :raises SimpleBenchTypeError: If the input is not an Iterable of MetricDefinition
+        :param metrics: An Iterable of Metric objects or another Metrics object.
+        :raises SimpleBenchTypeError: If the input is not an Iterable of Metric
         :raises SimpleBenchDuplicateKeyError: If a duplicate key is found.
         """
         if isinstance(metrics, Metrics):
@@ -65,6 +69,14 @@ class Metrics(MutableMapping):
 
         for metric in validated_metrics:
             self[metric.label] = metric
+
+    def add(self, metric: Metric) -> None:
+        """Add a single Metric to the Metrics object.
+
+        :param metric: A Metric object to add.
+        :raises SimpleBenchDuplicateKeyError: If a duplicate key is found.
+        """
+        self[metric.label] = metric
 
     def _is_valid_key_name(self, key: str) -> bool:
         """Check if the key is formatted as a valid metric key .
@@ -76,24 +88,24 @@ class Metrics(MutableMapping):
 
     def _validate_metrics_iterable(
             self,
-            metrics: Iterable[MetricDefinition]) -> list[MetricDefinition]:
-        """Validate that the input is an Iterable of MetricDefinition objects.
+            metrics: Iterable[Metric]) -> list[Metric]:
+        """Validate that the input is an Iterable of Metric objects.
 
-        :param metrics: An Iterable of MetricDefinition objects.
-        :return: A list of MetricDefinition objects.
-        :raises SimpleBenchTypeError: If the input is not an Iterable of MetricDefinition.
+        :param metrics: An Iterable of Metric objects.
+        :return: A list of Metric objects.
+        :raises SimpleBenchTypeError: If the input is not an Iterable of Metric.
         """
         if not isinstance(metrics, Iterable):
             raise SimpleBenchTypeError(
-                "Not an Iterable of MetricDefinition",
+                "Not an Iterable of Metric",
                 tag=_MetricsErrorTag.NOT_ITERABLE_ERROR)
 
         # Convert to a list *once* to avoid exhausting the iterator.
         metrics_list = list(metrics)
 
-        if not all(isinstance(metric, MetricDefinition) for metric in metrics_list):
+        if not all(isinstance(metric, Metric) for metric in metrics_list):
             raise SimpleBenchTypeError(
-                "Not an Iterable of MetricDefinition",
+                "Not an Iterable of Metric",
                 tag=_MetricsErrorTag.INVALID_METRICS_LIST_ITEM_TYPE)
 
         return metrics_list
@@ -132,7 +144,7 @@ class Metrics(MutableMapping):
 
         super().__setattr__(name, value)
 
-    def __getitem__(self, name: str) -> MetricDefinition:
+    def __getitem__(self, name: str) -> Metric:
         """Get a mapping value from the Metrics object.
 
         If the key is not a string, a SimpleBenchTypeError is raised.
@@ -150,7 +162,7 @@ class Metrics(MutableMapping):
             raise KeyError(name)
         return getattr(self, name)
 
-    def __setitem__(self, name: str, value: MetricDefinition) -> None:
+    def __setitem__(self, name: str, value: Metric) -> None:
         """Set a mapping value in the Metrics object.
 
         - If the key is not a string, a SimpleBenchTypeError is raised.
@@ -167,13 +179,13 @@ class Metrics(MutableMapping):
         :raises SimpleBenchDuplicateKeyError: If the key already exists in the Metrics object
         """
         name = self._validate_key_name(name)
-        if not isinstance(value, MetricDefinition):
+        if not isinstance(value, Metric):
             raise SimpleBenchTypeError(
-                "value must be an instance of MetricDefinition",
+                "value must be an instance of Metric",
                 tag=_MetricsErrorTag.TYPE_ERROR)
         if name != value.label:
             raise SimpleBenchValueError(
-                "Key must match the label of the MetricDefinition object",
+                "Key must match the label of the Metric object",
                 tag=_MetricsErrorTag.MISMATCHED_KEY)
         if hasattr(self, name):
             # If the exact same object is already registered, it's a no-op.
@@ -189,37 +201,41 @@ class Metrics(MutableMapping):
         # Use object.__setattr__ to bypass our custom __setattr__ method.
         object.__setattr__(self, name, value)
 
-    def __add__(self, other: 'Metrics') -> 'Metrics':
-        """Create a new Metrics object by combining two Metrics objects.
+    def __add__(self, other: 'Metrics | Metric') -> 'Metrics':
+        """Create a new Metrics object by combining two Metrics objects
+        or adding a single Metric object.
 
-        :param other: The Metrics object to add.
+        :param other: The Metrics or Metric object to add.
         :return: A new Metrics object containing the combined metrics.
         :raises TypeError: If the other object is not a Metrics instance.
         """
-        if not isinstance(other, Metrics):
+        if not isinstance(other, (Metrics, Metric)):
             return NotImplemented
 
         # Create a new Metrics object from the first one.
         new_metrics = Metrics(self)
         # Extend it with metrics from the second one.
-        new_metrics.extend(other)
+        new_metrics.extend(other if isinstance(other, Metrics) else [other])
         return new_metrics
 
-    def __sub__(self, other: 'Metrics') -> 'Metrics':
-        """Create a new Metrics object by subtracting another Metrics object's keys.
+    def __sub__(self, other: 'Metrics | Metric') -> 'Metrics':
+        """Create a new Metrics object by subtracting another Metrics or Metric object's keys.
 
         The new object will contain all metrics from this object, except for those
         whose keys are also present in the `other` object.
 
-        :param other: The Metrics object whose keys will be subtracted.
+        :param other: The Metrics or Metric object whose keys will be subtracted.
         :return: A new Metrics object with the subtracted metrics.
         :raises TypeError: If the other object is not a Metrics instance.
         """
-        if not isinstance(other, Metrics):
+        if not isinstance(other, (Metrics, Metric)):
             return NotImplemented
 
         # Create an iterable of metrics from `self` that are not in `other`.
-        metrics_to_keep = (value for key, value in self.items() if key not in other)
+        if isinstance(other, Metric):
+            metrics_to_keep = (value for key, value in self.items() if key != other.label)
+        else:  # Metrics
+            metrics_to_keep = (value for key, value in self.items() if key not in other)
 
         # Return a new Metrics object initialized with the filtered metrics.
         return Metrics(metrics_to_keep)
@@ -241,23 +257,29 @@ class Metrics(MutableMapping):
         :param other: The Metrics object to intersect with.
         :return: A new Metrics object representing the intersection.
         """
-        if not isinstance(other, Metrics):
+        if not isinstance(other, (Metric | Metrics)):
             return NotImplemented
 
-        intersecting_metrics = (value for key, value in self.items() if key in other)
+        if isinstance(other, Metric):
+            intersecting_metrics = (value for key, value in self.items() if key == other.label)
+        else:
+            intersecting_metrics = (value for key, value in self.items() if key in other)
         return Metrics(intersecting_metrics)
 
-    def __xor__(self, other: 'Metrics') -> 'Metrics':
+    def __xor__(self, other: 'Metrics | Metric') -> 'Metrics':
         """Create a new Metrics object representing the symmetric difference.
 
         The new object will contain metrics that are in either this object or
         the `other` object, but not in both.
 
-        :param other: The Metrics object to perform the symmetric difference with.
+        :param other: The Metrics or Metric object to perform the symmetric difference with.
         :return: A new Metrics object representing the symmetric difference.
         """
-        if not isinstance(other, Metrics):
+        if not isinstance(other, (Metrics, Metric)):
             return NotImplemented
+
+        if isinstance(other, Metric):
+            other = Metrics([other])
 
         sym_diff_keys = set(self.keys()) ^ set(other.keys())
         sym_diff_metrics = []
@@ -269,25 +291,27 @@ class Metrics(MutableMapping):
 
         return Metrics(sym_diff_metrics)
 
-    def __iadd__(self, other: 'Metrics') -> 'Metrics':
+    def __iadd__(self, other: 'Metrics | Metric') -> 'Metrics':
         """Perform in-place addition (extend).
 
         :param other: The Metrics object to add.
         :return: The modified Metrics object.
         """
-        if not isinstance(other, Metrics):
+        if not isinstance(other, (Metrics, Metric)):
             return NotImplemented
-        self.extend(other)
+        self.extend(other if isinstance(other, Metrics) else [other])
         return self
 
-    def __isub__(self, other: 'Metrics') -> 'Metrics':
+    def __isub__(self, other: 'Metrics | Metric') -> 'Metrics':
         """Perform in-place subtraction.
 
         :param other: The Metrics object whose keys will be removed.
         :return: The modified Metrics object.
         """
-        if not isinstance(other, Metrics):
+        if not isinstance(other, (Metrics, Metric)):
             return NotImplemented
+        if isinstance(other, Metric):
+            other = Metrics([other])
         for key in other:
             if key in self:
                 del self[key]
@@ -321,11 +345,11 @@ class Metrics(MutableMapping):
             return False
         if not hasattr(self, name):
             return False
-        return isinstance(getattr(self, name), MetricDefinition)
+        return isinstance(getattr(self, name), Metric)
 
     def __iter__(self) -> Iterator[str]:
         for key, value in self.__dict__.items():
-            if self._is_valid_key_name(key) and isinstance(value, MetricDefinition):
+            if self._is_valid_key_name(key) and isinstance(value, Metric):
                 yield key
 
     def __len__(self) -> int:

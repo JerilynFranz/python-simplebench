@@ -7,7 +7,7 @@ import pytest
 
 from simplebench.case import Case
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
@@ -76,7 +76,7 @@ class MockReporter(Reporter):
             session=session,
             callback=callback)
 
-    def render(self, *, case: Case, section: metric_registry, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def render(self, *, case: Case, section: metric_types_registry, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """A mock render method.
 
         :param case: The benchmark case.
@@ -142,7 +142,7 @@ def test_register_reporter() -> None:
                 session=session,
                 callback=callback)
 
-        def render(self, *, case: Case, section: metric_registry, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+        def render(self, *, case: Case, section: metric_types_registry, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
             """A mock render method.
 
             :param case: The benchmark case.

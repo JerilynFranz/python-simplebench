@@ -16,7 +16,7 @@ from rich.text import Text
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric, metric_registry
+from simplebench.metric import Metric, metric_types_registry
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
@@ -222,13 +222,15 @@ class _ReporterOrchestrationMixin:
 
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         self.dispatch_to_targets(
-            output=actual_renderer(case=case, metric=metric_registry.NULL, options=prioritized.options),
+            output=actual_renderer(case=case,
+                                   metric=metric_types_registry.NULL,
+                                   options=prioritized.options),
             filename_base=case.title,
             log_metadata=log_metadata,
             args=args,
             choice=choice,
             case=case,
-            metric=metric_registry.NULL,
+            metric=metric_types_registry.NULL,
             path=path,
             session=session,
             callback=callback)
@@ -324,7 +326,9 @@ class _ReporterOrchestrationMixin:
         log_metadata.case = case
         log_metadata.choice = choice
         for metric in choice.metrics:
-            output = actual_renderer(case=case, metric=metric, options=prioritized.options)
+            output = actual_renderer(case=case,
+                                     metric=metric,
+                                     options=prioritized.options)
             self.dispatch_to_targets(
                 output=output,
                 log_metadata=log_metadata,
@@ -337,7 +341,7 @@ class _ReporterOrchestrationMixin:
                 session=session,
                 callback=callback)
 
-    def dispatch_to_targets(  # pylint: too-many-arguments,too-many-locals
+    def dispatch_to_targets(  # pylint: disable=too-many-arguments,too-many-locals
             self: ReporterProtocol, *,
             output: str | bytes | Text | Table,
             log_metadata: Metadata,
