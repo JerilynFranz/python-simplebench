@@ -17,9 +17,9 @@ of the base CPUInfo representation at the time of the V1 schema release.
 from typing import Any, Sequence
 
 from simplebench.exceptions import SimpleBenchValueError
+from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.report.base import JSONSchema
 from simplebench.report.base import StatsBlock as BaseStatsBlock
-from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.validators import (
     validate_float,
     validate_namespaced_identifier,
@@ -33,7 +33,32 @@ from .stats_block_schema import StatsBlockSchema
 
 
 class StatsBlock(BaseStatsBlock):
-    """Class representing JSON stats summary for V1 reports."""
+    """Class representing JSON stats summary for V1 reports.
+
+    This class represents a stats block information in a JSON report.
+    It implements validation and serialization/deserialization methods to and from dictionaries
+    for the following JSON Schema version:
+
+    https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/stats-block.json
+
+    :param name: The name of the stats block.
+    :param description: The description of the stats block.
+    :param semantic_type: The semantic type of the stats block.
+    :param unit: The unit of measurement for the stats block.
+    :param scale: The scale factor for the stats block.
+    :param iterations: The number of iterations measured for the stats block.
+    :param rounds: The number of rounds in each iteration measured.
+    :param mean: The mean value of the stats block.
+    :param median: The median value of the stats block.
+    :param minimum: The minimum value of the stats block.
+    :param maximum: The maximum value of the stats block.
+    :param standard_deviation: The standard deviation of the stats block.
+    :param relative_standard_deviation: The relative standard deviation of the stats block.
+    :param percentiles: The list of percentiles for the stats block.
+    :param measurements: The list of raw measurements for the stats block.
+    :raise SimpleBenchTypeError: If any parameter is of an invalid type.
+    :raise SimpleBenchValueError: If any parameter has an invalid value.
+    """
     SCHEMA: type[JSONSchema] = StatsBlockSchema
     """The JSON schema class for the stats summary block in version 1 reports."""
 
@@ -60,7 +85,8 @@ class StatsBlock(BaseStatsBlock):
                  maximum: float,
                  standard_deviation: float,
                  relative_standard_deviation: float,
-                 percentiles: Sequence[float]) -> None:
+                 percentiles: Sequence[float],
+                 measurements: Sequence[float] | None = None) -> None:
         """Initialize a StatsBlock object with the given parameters.
 
         The parameters are validated to ensure they meet the required types and constraints
@@ -80,6 +106,7 @@ class StatsBlock(BaseStatsBlock):
         :param standard_deviation: The standard deviation of the stats block.
         :param relative_standard_deviation: The relative standard deviation of the stats block.
         :param percentiles: The list of percentiles for the stats block.
+        :param measurements: The list of raw measurements for the stats block.
         :raise SimpleBenchTypeError: If any parameter is of an invalid type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
@@ -97,6 +124,7 @@ class StatsBlock(BaseStatsBlock):
         self.standard_deviation = standard_deviation
         self.relative_standard_deviation = relative_standard_deviation
         self.percentiles = percentiles
+        self.measurements = measurements
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "StatsBlock":
@@ -118,6 +146,8 @@ class StatsBlock(BaseStatsBlock):
         """Convert the StatsBlock object to a dictionary."""
         property_keys = self.init_params().keys()
         data = {key: getattr(self, key) for key in property_keys}
+        if self.measurements is None:
+            del data['measurements']
         data['type'] = self.TYPE
         data['version'] = self.VERSION
 
@@ -439,3 +469,36 @@ class StatsBlock(BaseStatsBlock):
                 tag=_StatsBlockErrorTag.INVALID_PERCENTILES_LENGTH)
 
         self._percentiles: list[float] = [float(v) for v in validated_sequence]
+
+    @property
+    def measurements(self) -> tuple[float, ...] | None:
+        """Get the list of raw measurements.
+
+        :return: The list of raw measurements, or None if not set.
+        """
+        return self._measurements
+
+    @measurements.setter
+    def measurements(self, value: Sequence[float] | None) -> None:
+        """Set the list of raw measurements.
+
+        :param value: The list of raw measurements.
+        :raise SimpleBenchTypeError: If measurements is not a sequence of float or int, or None.
+        """
+        self._measurements: tuple[float, ...] | None
+        if value is None:
+            self._measurements = None
+            return
+
+        if not isinstance(value, Sequence):
+            raise SimpleBenchValueError(
+                f"measurements must be a Sequence or None, got {type(value)}",
+                tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_TYPE)
+        if not all(isinstance(v, float) for v in value):
+            raise SimpleBenchValueError(
+                "All items in measurements must be of type float",
+                tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_CONTENT_TYPE)
+        if isinstance(value, tuple):  # optimization for common case
+            self._measurements = value
+            return
+        self._measurements = tuple(value)

@@ -3,19 +3,31 @@
 The V1 Results object represents the results metric of a version 1 JSON report.
 
 """
+from collections.abc import Hashable, Mapping
+from types import MappingProxyType
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.report.base import ResultsInfo as BaseResultsInfo
 from simplebench.report._error_tags import _ResultsInfoErrorTag
+from simplebench.report.base import ResultsInfo as BaseResultsInfo
 from simplebench.validators import validate_float, validate_string
 
-from .. import Metrics
+from .. import MetricsObject
 from .results_info_schema import ResultsInfoSchema
 
 
 class ResultsInfo(BaseResultsInfo):
-    """Class representing JSON results object for V1 reports."""
+    """Class representing JSON results object for V1 reports.
+
+    :param group: The group name of the results.
+    :param title: The title of the results.
+    :param description: The description of the results.
+    :param n: The number of iterations.
+    :param variation_cols: The variation columns.
+    :param marks: The variation marks.
+    :param metrics: The list of metrics.
+    :param extra_info: Additional information.
+    """
     SCHEMA = ResultsInfoSchema
     """The JSON report schema for version 1 reports."""
 
@@ -34,9 +46,9 @@ class ResultsInfo(BaseResultsInfo):
                  title: str,
                  description: str,
                  n: float,
-                 variation_cols: dict[str, Any],
-                 metrics: Metrics,
-                 extra_info: dict[str, Any]
+                 variation_cols: Mapping[str, str],
+                 metrics: MetricsObject,
+                 extra_info: Mapping[str, Hashable],
                  ):  # pylint: disable=super-init-not-called
         """Initialize a Results v1 instance.
 
@@ -57,10 +69,10 @@ class ResultsInfo(BaseResultsInfo):
         self.extra_info = extra_info
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'ResultsInfo':
-        """Create a JSON Results object instance from a dictionary.
+    def from_dict(cls, data: Mapping) -> 'ResultsInfo':
+        """Create a JSON Results object instance from a mapping.
 
-        :param data: Dictionary containing the JSON results object data.
+        :param data: Mapping containing the JSON results object data.
         :return: JSON Results object instance.
         """
         allowed_keys = cls.init_params()
@@ -74,7 +86,7 @@ class ResultsInfo(BaseResultsInfo):
             optional={'version', 'type'},
             default={'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={'metrics': Metrics.from_dict})
+            process_as={'metrics': MetricsObject.from_dict})
         return cls(**kwargs)
 
     def to_dict(self) -> dict[str, Any]:
@@ -152,22 +164,22 @@ class ResultsInfo(BaseResultsInfo):
                 tag=_ResultsInfoErrorTag.INVALID_N_VALUE)
 
     @property
-    def variation_cols(self) -> dict[str, str]:
+    def variation_cols(self) -> Mapping[str, str]:
         """Get the variation columns.
 
-        :return: A dictionary of variation columns.
+        :return: A mapping of variation columns.
         """
         return self._variation_cols
 
     @variation_cols.setter
-    def variation_cols(self, value: dict[str, str]) -> None:
+    def variation_cols(self, value: Mapping[str, str]) -> None:
         """Set the variation columns.
 
-        :param value: A dictionary of variation columns.
+        :param value: A mapping of variation columns.
         """
-        if not isinstance(value, dict):
+        if not isinstance(value, Mapping):
             raise SimpleBenchTypeError(
-                f"variation_cols must be a dictionary, got {type(value)}",
+                f"variation_cols must be a Mapping[str, str], got {type(value)}",
                 tag=_ResultsInfoErrorTag.INVALID_VARIATION_COLS_TYPE)
 
         if not all(isinstance(k, str) and isinstance(v, str) for k, v in value.items()):
@@ -175,10 +187,10 @@ class ResultsInfo(BaseResultsInfo):
                 "All keys and values in variation_cols must be strings",
                 tag=_ResultsInfoErrorTag.INVALID_VARIATION_COLS_CONTENT)
 
-        self._variation_cols: dict[str, str] = value
+        self._variation_cols: Mapping[str, str] = value
 
     @property
-    def metrics(self) -> Metrics:
+    def metrics(self) -> MetricsObject:
         """Get the metrics.
 
         :return: The metrics dictionary.
@@ -186,34 +198,38 @@ class ResultsInfo(BaseResultsInfo):
         return self._metrics
 
     @metrics.setter
-    def metrics(self, value: Metrics) -> None:
+    def metrics(self, value: MetricsObject) -> None:
         """Set the metrics.
 
         :param value: The metrics.
         """
-        if not isinstance(value, Metrics):
+        if not isinstance(value, MetricsObject):
             raise SimpleBenchTypeError(
                 f"metrics must be a Metrics instance, got {type(value)}",
                 tag=_ResultsInfoErrorTag.INVALID_TYPE_TYPE)
 
-        self._metrics: Metrics = value
+        self._metrics: MetricsObject = value
 
     @property
-    def extra_info(self) -> dict[str, Any]:
+    def extra_info(self) -> Mapping[str, Hashable]:
         """Get the extra info.
 
-        :return: The extra info dictionary.
+        :return: The extra info mapping.
         """
         return self._extra_info
 
     @extra_info.setter
-    def extra_info(self, value: dict[str, Any]) -> None:
+    def extra_info(self, value: Mapping[str, Hashable]) -> None:
         """Set the extra info.
 
-        :param value: The extra info dictionary.
+        :param value: The extra info mapping.
         """
-        if not isinstance(value, dict):
+        if not isinstance(value, Mapping):
             raise SimpleBenchTypeError(
-                f"extra_info must be a dictionary, got {type(value)}",
+                f"extra_info must be a Mapping[str, Hashable], got {type(value)}",
                 tag=_ResultsInfoErrorTag.INVALID_TYPE_TYPE)
-        self._extra_info: dict[str, Any] = value
+        if not all(isinstance(k, str) and isinstance(v, Hashable) for k, v in value.items()):
+            raise SimpleBenchTypeError(
+                "All keys in extra_info must be strings and all values must be hashable",
+                tag=_ResultsInfoErrorTag.INVALID_TYPE_TYPE)
+        self._extra_info: Mapping[str, Hashable] = value

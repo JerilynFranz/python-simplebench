@@ -6,6 +6,8 @@ from simplebench.exceptions.error_tag import ErrorTag
 @enum_docstrings
 class _StatsErrorTag(ErrorTag):
     """ErrorTags for the Stats class."""
+    INVALID_FULL_DATA_ARG_TYPE = "INVALID_FULL_DATA_ARG_TYPE"
+    """Invalid full_data argument passed - must be a bool"""
     EMPTY_DATA_ARG = "EMPTY_DATA_ARG"
     """Empty data argument passed to the Stats() constructor"""
     INVALID_METRIC_ARG_TYPE = "INVALID_METRIC_ARG_TYPE"
@@ -25,7 +27,7 @@ class _StatsErrorTag(ErrorTag):
     INVALID_ROUNDS_ARG_VALUE = "INVALID_ROUNDS_ARG_VALUE"
     """Invalid rounds argument passed to the Stats() constructor - must be greater than zero"""
     INVALID_DATA_ARG_TYPE = "INVALID_DATA_ARG_TYPE"
-    """Invalid data argument passed to the Stats() constructor - must be a list of numbers (int or float) or None"""
+    """Invalid data argument passed to the Stats() constructor - must be a Values instance"""
     INVALID_DATA_ARG_ITEM_TYPE = "INVALID_DATA_ARG_ITEM_TYPE"
     """Invalid data argument item passed to the Stats() constructor - must be a number (int or float)"""
     COMPARISON_INCOMPATIBLE_SCALES = "COMPARISON_INCOMPATIBLE_SCALES"

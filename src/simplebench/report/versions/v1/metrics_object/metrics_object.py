@@ -15,6 +15,7 @@ This makes the implementations of Metrics backwards compatible with future versi
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the results object representation at the time of the V1 schema release."""
 from collections import UserDict
+from collections.abc import Mapping
 from copy import copy
 from typing import Any, TypeAlias
 
@@ -26,11 +27,16 @@ from ..stats_block import StatsBlock
 from ..value_block import ValueBlock
 
 
-class Metrics(UserDict):
-    """Base class representing the 'metrics' object in a JSON report results object.
+class MetricsObject(UserDict):
+    """Base class representing the 'metrics' object in a JSON report ResultsInfo object.
 
     This is a dictionary where the keys are metric names (strings) and the values
     are MetricItem objects (either a StatsBlock or a ValueBlock).
+
+    It is not a standalone JSON schema object, but rather a subcomponent
+    of the results-info JSON schema object.
+
+    See :class:`~simplebench.report.versions.v1.results_info.ResultsInfo` for more details.
 
     The typing enforcement is done in the __setitem__ method.
     """
@@ -42,7 +48,7 @@ class Metrics(UserDict):
     """
 
     @classmethod
-    def from_dict(cls, data: dict[str, dict[str, Any]]) -> "Metrics":
+    def from_dict(cls, data: Mapping[str, Mapping[str, Any]]) -> "MetricsObject":
         """Create a Metrics object instance from a dictionary.
 
         :param data: Dictionary containing the JSON results object data.
@@ -51,7 +57,7 @@ class Metrics(UserDict):
         value_block: str = ValueBlock.TYPE
         stats_block: str = StatsBlock.TYPE
 
-        metrics: dict[str, Metrics.MetricItem] = {}
+        metrics: dict[str, MetricsObject.MetricItem] = {}
         for metric_name, metric_data in data.get('metrics', {}).items():
             validated_metric_name: str = validate_string(
                 metric_name, 'metric name',
@@ -77,9 +83,10 @@ class Metrics(UserDict):
 
         return cls(metrics=metrics)
 
-    def __init__(self, metrics: dict[str, 'Metrics.MetricItem']):
+    def __init__(self, metrics: Mapping[str, 'MetricsObject.MetricItem']):
         """Initialize a Metrics v1 instance.
-        :param metrics: The metrics dictionary. The keys are metric names
+
+        :param Mapping[str, MetricsObject.MetricItem] metrics: The metrics dictionary. The keys are metric names
             and the values are Metrics.MetricItem objects (either a StatsBlock or a ValueBlock).
 
             The keys must must be in the format 'namespace::type_name'
@@ -88,7 +95,7 @@ class Metrics(UserDict):
         """
         for metric_name, metric_object in metrics.items():
             validate_namespaced_identifier(metric_name)
-            if not isinstance(metric_object, Metrics.MetricItem):
+            if not isinstance(metric_object, MetricsObject.MetricItem):
                 raise SimpleBenchTypeError(
                     f"Metric item must be a StatsBlock or ValueBlock, got {type(metric_object)}",
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
@@ -116,7 +123,7 @@ class Metrics(UserDict):
             raise SimpleBenchKeyError(
                 f"Invalid metric name '{key}': {e}",
                 tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE) from e
-        if not isinstance(value, Metrics.MetricItem):
+        if not isinstance(value, MetricsObject.MetricItem):
             raise SimpleBenchTypeError(
                 f"Metric item must be a StatsBlock or ValueBlock, got {type(value)}",
                 tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
@@ -126,7 +133,7 @@ class Metrics(UserDict):
                 tag=_MetricsErrorTag.INVALID_METRIC_ITEM_SEMANTIC_TYPE)
         super().__setitem__(key, value)
 
-    def __getitem__(self, key: str) -> 'Metrics.MetricItem':
+    def __getitem__(self, key: str) -> 'MetricsObject.MetricItem':
         """Get a metric item from the metrics dictionary.
 
         :param key: The metric name.

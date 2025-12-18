@@ -4,13 +4,7 @@ from dataclasses import dataclass
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metric import MetricCategory
-from simplebench.validators import (
-    validate_bool,
-    validate_float,
-    validate_namespaced_identifier,
-    validate_string,
-    validate_type,
-)
+from simplebench.validators import validate_float, validate_namespaced_identifier, validate_string, validate_type
 
 from ._error_tags import _MetricTypeErrorTag
 
@@ -30,8 +24,10 @@ class MetricType:
     :param description: The description of the metric, e.g. 'Operations per second'
     :param unit: The unit of the metric, e.g. 'ops/s'
     :param scale: The scale of the metric, e.g. 1.0. Accepts an int and converts it to a float.
-    :param meta_metric: A boolean indicating whether the metric is a meta-metric (default: False)
-    :param category: The type of the metric, e.g. `MetricType.CUMULATIVE` or `MetricType.STATISTICAL`
+    :param category: The type of the metric
+        - `MetricCategory.CUMULATIVE`
+        - `MetricCategory.STATISTICAL`
+        - `MetricCategory.RAW`
     """
     semantic_type: str
     """The semantic type of the metric, e.g. 'simplebench_std::operations_per_second'"""
@@ -43,8 +39,6 @@ class MetricType:
     """The unit of the metric, e.g. 'ops/s'"""
     scale: float
     """The scale of the metric, e.g. 1.0"""
-    meta_metric: bool = False
-    """A boolean indicating whether the metric is a meta-metric (default: False)"""
     category: MetricCategory
     """The type of the metric, e.g. `MetricCategory.CUMULATIVE`, `MetricCategory.STATISTICAL` or `MetricCategory.RAW`"""
 
@@ -61,7 +55,6 @@ class MetricType:
         self._validate_unit()
         self._validate_scale()
         self._validate_semantic_type()
-        self._validate_meta_metric()
         self._validate_category()
 
     def _validate_label(self) -> None:
@@ -141,16 +134,6 @@ class MetricType:
             self.semantic_type, 'semantic_type',
             _MetricTypeErrorTag.INVALID_SEMANTIC_TYPE_FIELD_TYPE,
             _MetricTypeErrorTag.INVALID_SEMANTIC_TYPE_FIELD_VALUE)
-
-    def _validate_meta_metric(self) -> None:
-        """Validate the meta-metric flag of the metric
-
-        The meta_metric flag must be a boolean.
-
-        :raises SimpleBenchTypeError: If the meta_metric flag is not a boolean
-        """
-        validate_bool(self.meta_metric, 'meta_metric',
-                      _MetricTypeErrorTag.INVALID_META_METRIC_FIELD_TYPE)
 
     def _validate_category(self) -> None:
         """Validate the category of the metric

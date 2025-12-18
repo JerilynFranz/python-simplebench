@@ -3,7 +3,7 @@
 from .cpu_info import CPUInfo
 from .execution_environment import ExecutionEnvironment
 from .machine_info import MachineInfo
-from .metrics import Metrics
+from .metrics_object import MetricsObject
 from .python_info import PythonInfo
 from .report import Report
 from .results_info import ResultsInfo
@@ -15,7 +15,7 @@ __all__ = [
     "CPUInfo",
     "ExecutionEnvironment",
     "MachineInfo",
-    "Metrics",
+    "MetricsObject",
     "PythonInfo",
     "Report",
     "ResultsInfo",

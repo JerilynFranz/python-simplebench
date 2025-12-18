@@ -3,18 +3,18 @@ from __future__ import annotations
 
 import statistics
 from math import isclose, sqrt
-from typing import Any, Sequence
+from typing import TypeAlias
 
-from simplebench.case.results.metrics import Iteration
-from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metric import Metric, metrics_registry
 from simplebench.report.versions import v1
 from simplebench.si_units import si_scale_to_unit, si_unit_base
-from simplebench.validators import validate_positive_int
+from simplebench.types import Values
+from simplebench.validators import validate_bool, validate_positive_int, validate_type
 
 from ._error_tags import _StatsErrorTag
 
-StatsBlock = v1.StatsBlock
+StatsBlock: TypeAlias = v1.StatsBlock
 
 
 class Stats:
@@ -23,7 +23,7 @@ class Stats:
     :ivar Metric metric: The metric definition for the benchmark. (read only)
     :ivar int iterations: The total number of iterations represented by the data points. (read only)
     :ivar int rounds: The number of rounds each data point represents. (read only)
-    :ivar tuple[int | float, ...] data: Sequence of data points. (read only)
+    :ivar Values data: Tuple of floating point data points. (read only)
     :ivar float mean: The mean of the data. (read only)
     :ivar float median: The median of the data. (read only)
     :ivar float minimum: The minimum of the data. (read only)
@@ -36,16 +36,16 @@ class Stats:
     '''
     __slots__ = ('_metric', '_rounds', '_data', '_percentiles', '_mean', '_median',
                  '_minimum', '_maximum', '_standard_deviation', '_relative_standard_deviation',
-                 '_report', '_report_with_data')
+                 '_stats_block', '_stats_block_full_data')
 
     def __init__(self, *,
                  metric: Metric,
-                 data: Sequence[int | float | Iteration],
+                 data: Values,
                  rounds: int) -> None:
         """Initialize the Stats object.
 
         :param Metric metric: The metric definition for the benchmark.
-        :param Sequence[int | float | Iteration] data: Sequence of data points.
+        :param Values data: Tuple of data points.
         :param int rounds: The number of rounds each data point represents.
         :raises SimpleBenchTypeError: If any of the arguments are of the wrong type.
         :raises SimpleBenchValueError: If any of the arguments have invalid values.
@@ -55,53 +55,38 @@ class Stats:
                                 rounds, 'rounds',
                                 _StatsErrorTag.INVALID_ROUNDS_ARG_TYPE,
                                 _StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)
-        # data is left unsorted to allow for time series data to be preserved
-        self._data: tuple[float, ...] = self._validate_data(metric=metric, data=data)
-        self._percentiles: tuple[float, ...] | None = None
+        self._data: Values = validate_type(
+                                data, Values, 'data',
+                                _StatsErrorTag.INVALID_DATA_ARG_TYPE)
+        self._percentiles: Values | None = None
         self._mean: float | None = None
         self._median: float | None = None
         self._minimum: float | None = None
         self._maximum: float | None = None
         self._standard_deviation: float | None = None
         self._relative_standard_deviation: float | None = None
+        self._stats_block: StatsBlock | None = None
+        self._stats_block_full_data: StatsBlock | None = None
 
-    def _validate_data(self, *, metric: Metric, data: Sequence[int | float | Iteration]) -> tuple[float, ...]:
-        """Validate the data argument.
+    @property
+    def metric(self) -> Metric:
+        '''The metric of the benchmark.'''
+        return self._metric
 
-        :param Metric metric: The metric definition for the benchmark.
-        :param Sequence[int | float | Iteration] data: Sequence of data points.
-        :raises SimpleBenchTypeError: If the data argument is of the wrong type.
-        :raises SimpleBenchValueError: If the data argument has invalid values.
-        :return: A tuple of validated data points as floats.
-        """
-        if not isinstance(data, Sequence):
-            raise SimpleBenchTypeError(
-                'The data argument must be a sequence of numbers or Iteration objects.',
-                tag=_StatsErrorTag.INVALID_DATA_ARG_TYPE)
-
-        validated_data: list[float] = []
-        for index, item in enumerate(data):
-            if isinstance(item, Iteration):
-                validated_data.append(item.metric(metric))
-            elif isinstance(item, (int, float)):
-                validated_data.append(float(item))
-            else:
-                raise SimpleBenchTypeError(
-                    f'The data argument contains an invalid item at index {index}. '
-                    'Each item must be an integer, float, or Iteration object.',
-                    tag=_StatsErrorTag.INVALID_DATA_ARG_ITEM_TYPE)
-
-        return tuple(validated_data)
+    @property
+    def name(self) -> str:
+        '''The name of the metric.'''
+        return self.metric.title
 
     @property
     def unit(self) -> str:
         '''The unit of the data.'''
-        return self._metric.metric_type.unit
+        return self.metric.metric_type.unit
 
     @property
     def scale(self) -> float:
         '''The scale of the data.'''
-        return self._metric.metric_type.scale
+        return self.metric.metric_type.scale
 
     @property
     def rounds(self) -> int:
@@ -128,7 +113,7 @@ class Stats:
         return len(self.data)
 
     @property
-    def data(self) -> tuple[float, ...]:
+    def data(self) -> Values:
         '''The data points.'''
         return self._data
 
@@ -187,7 +172,7 @@ class Stats:
         return self._relative_standard_deviation
 
     @property
-    def percentiles(self) -> tuple[float, ...]:
+    def percentiles(self) -> Values:
         '''Percentiles of the data.
 
         Returns the 0th through 100th percentiles of the data as an immutable tuple.
@@ -196,7 +181,7 @@ class Stats:
             self._percentiles = self._calculate_percentiles()
         return self._percentiles
 
-    def _calculate_percentiles(self) -> tuple[float, ...]:
+    def _calculate_percentiles(self) -> Values:
         """Helper to calculate percentiles.
 
         Note:
@@ -210,33 +195,11 @@ class Stats:
         """
         percentiles_n: list[int] = list(range(0, 101))
         if len(self.data) == 1:
-            return tuple(float(self.data[0]) for _ in percentiles_n)
+            return Values(float(self.data[0]) for _ in percentiles_n)
         quantile_values = statistics.quantiles(self.data, n=102, method='inclusive')
-        return tuple(quantile_values)
+        return Values(quantile_values)
 
-    @property
-    def as_dict(self) -> dict[str, str | float | dict[int, float] | tuple[int | float, ...]]:
-        '''Returns the statistics and data as a JSON-serializable dictionary.
-
-        This includes all the statistics as well as the raw data points.
-
-        The data values are scaled according to the scale factor to provide
-        human-readable values using the base unit rather than the scaled unit.
-
-        The unit is normalized to its SI base unit representation. (e.g., "ms" becomes "s")
-
-        The dictionary is mutability-safe as all data is either a primitive or a copy.
-
-        Returns:
-            A dictionary containing the statistics and the scaled data points.
-        '''
-        # Immutability is preserved because all values are primitives or copies already
-        stats = self.stats_summary.as_dict
-        stats['type'] = f'{self.__class__.__name__}:statistics'
-        stats['data'] = tuple(value / self.scale for value in self.data)
-        return stats
-
-    def stats_block(self, indent: int = 2, full_data: bool = False) -> StatsBlock:
+    def stats_block(self, full_data: bool = False) -> StatsBlock:
         """Returns a ``StatsBlock`` for the statistics.
 
         The data values are scaled according to the scale factor to provide
@@ -244,57 +207,48 @@ class Stats:
 
         The unit is converted to its SI base unit representation. (e.g., "ms" becomes "s")
 
-        This does not include raw data points, only the statistics.
+        This does not include raw data points, only the statistics unless `full_data` is set to True.
 
-        Args:
-            indent (int): The number of spaces to indent each line of the output.
+        The returned StatsBlock is cached for efficiency.
+
+        :param bool full_data: If True, include the raw data points in the StatsBlock measurement field.
+        :return: A StatsBlock object representing the statistics.
         """
+        validate_bool(
+            full_data, 'full_data',
+            _StatsErrorTag.INVALID_FULL_DATA_ARG_TYPE)
+        if full_data:
+            if self._stats_block_full_data is not None:
+                return self._stats_block_full_data
+        else:
+            if self._stats_block is not None:
+                return self._stats_block
 
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> Stats:
-        """Construct a Stats object from a dictionary.
-
-        Example:
-            .. code-block:: python
-
-                stats_dict = {
-                    "unit": "ops/s",
-                    "scale": 1,
-                    "data": [1000, 2000, 1500, 3000, 2500]
-                }
-                stats = Stats.from_dict(stats_dict)
-                print(stats.mean)  # Output: 2000.0
-
-        :param dict data: A dictionary containing the stats data. Must contain 'data' key with a non-empty
-            sequence of data points consisting of integers or floats.
-        :return: A Stats object constructed from the provided dictionary.
-        :raises SimpleBenchTypeError: If the data, unit, or scale arguments are of the wrong type.
-        :raises SimpleBenchKeyError: If the data dictionary does not contain a 'unit' key and
-            no unit argument is provided.
-        :raises SimpleBenchValueError: If the data dictionary does not contain a non-empty 'data' key
-            with at least one data point, if the scale argument is not greater than zero,
-            or if the unit argument is an empty string
-        """
-        if not isinstance(data, dict):
-            raise SimpleBenchTypeError('The data argument must be a dictionary.',
-                                       tag=_StatsErrorTag.FROM_DICT_INVALID_DATA_ARG_TYPE)
-        if 'unit' not in data:
-            raise SimpleBenchKeyError('The data dictionary is missing the required "unit" key.',
-                                      tag=_StatsErrorTag.FROM_DICT_MISSING_UNIT_KEY)
-        if 'scale' not in data:
-            raise SimpleBenchKeyError('The data dictionary is missing the required "scale" key.',
-                                      tag=_StatsErrorTag.FROM_DICT_MISSING_SCALE_KEY)
-        if 'rounds' not in data:
-            raise SimpleBenchKeyError('The data dictionary is missing the required "rounds" key.',
-                                      tag=_StatsErrorTag.FROM_DICT_MISSING_ROUNDS_KEY)
-        if 'data' not in data:
-            raise SimpleBenchKeyError('The data dictionary is missing the required "data" key.',
-                                      tag=_StatsErrorTag.FROM_DICT_MISSING_DATA_KEY)
-
-        return cls(unit=data['unit'],
-                   scale=data['scale'],
-                   rounds=data['rounds'],
-                   data=data['data'])  # type: ignore[arg-type]
+        measurements: Values | None = None
+        if full_data:
+            measurements = Values(value * self.scale for value in self.data)
+        stats_block = StatsBlock(
+            name=self.metric.title,
+            description=self.metric.description,
+            semantic_type=self.metric.metric_type.semantic_type,
+            unit=si_unit_base(self.unit),
+            scale=1.0,
+            iterations=self.iterations,
+            rounds=self.rounds,
+            minimum=self.minimum * self.scale,
+            maximum=self.maximum * self.scale,
+            mean=self.mean * self.scale,
+            median=self.median * self.scale,
+            standard_deviation=self.standard_deviation * self.scale,
+            relative_standard_deviation=self.relative_standard_deviation,
+            percentiles=Values(pct * self.scale for pct in self.percentiles),
+            measurements=measurements
+        )
+        if full_data:
+            self._stats_block_full_data = stats_block
+        else:
+            self._stats_block = stats_block
+        return stats_block
 
     def __eq__(self, other: object) -> bool:
         """Compare two Stats objects for equality.
@@ -351,8 +305,8 @@ class Stats:
         return si_unit_base(self.unit) == si_unit_base(other.unit)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}(unit='{self.unit}', scale={self.scale}, rounds={self.rounds}, "
-                f"data=[{', '.join(str(d) for d in self.data)}])")
+        return (f"{self.__class__.__name__}(metric='{self.metric}', rounds={self.rounds}, "
+                f"data={self.data!r})")
 
     def _validate_metric(self, metric: Metric) -> Metric:
         if not isinstance(metric, Metric):

@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _StatsBlockErrorTag(ErrorTag):
     """Error tags for JSON stats summary exceptions."""
+    INVALID_MEASUREMENTS_TYPE = "INVALID_MEASUREMENTS_TYPE"
+    """The measurements is not a Sequence or None."""
+    INVALID_MEASUREMENTS_CONTENT_TYPE = "INVALID_MEASUREMENTS_CONTENT_TYPE"
+    """One or more items in measurements are not of type float."""
     JSON_SCHEMA_VALIDATION_ERROR = "JSON_SCHEMA_VALIDATION_ERROR"
     """The JSON data does not conform to the expected schema."""
     INVALID_DATA_ARG_EXTRA_KEYS = "INVALID_DATA_ARG_EXTRA_KEYS"

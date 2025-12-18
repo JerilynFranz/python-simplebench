@@ -3,16 +3,25 @@ import re
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchValueError
+from simplebench.report._error_tags import _ValueBlockErrorTag
 from simplebench.report.base import JSONSchema
 from simplebench.report.base import ValueBlock as ValueBlockBase
-from simplebench.report._error_tags import _ValueBlockErrorTag
 from simplebench.validators import validate_positive_float, validate_string, validate_type
 
 from .value_block_schema import ValueBlockSchema
 
 
 class ValueBlock(ValueBlockBase):
-    """Class representing a value block (V1)."""
+    """Class representing a value block (V1).
+
+    :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
+    :param (str | None) timer: The timer string or None.
+    :param str unit: The unit of measurement.
+    :param float scale: The scale factor.
+    :param float value: The value of the block.
+    :raise SimpleBenchTypeError: If any parameter is of incorrect type.
+    :raise SimpleBenchValueError: If any parameter has an invalid value.
+    """
 
     SCHEMA: type[JSONSchema] = ValueBlockSchema
     """JSON schema class for the value block."""
@@ -36,11 +45,11 @@ class ValueBlock(ValueBlockBase):
             value: float | int) -> None:
         """Initialize JSONStatsSummary base class.
 
-        :param semantic_type: The semantic type string for the value block. ('type' field in JSON data)
-        :param timer: The timer string or None.
-        :param unit: The unit of measurement.
-        :param scale: The scale factor.
-        :param value: The value of the block.
+        :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
+        :param (str | None) timer: The timer string or None.
+        :param str unit: The unit of measurement.
+        :param float scale: The scale factor.
+        :param float value: The value of the block.
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """

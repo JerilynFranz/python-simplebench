@@ -3,14 +3,26 @@ from __future__ import annotations
 
 from copy import copy, deepcopy
 from types import MappingProxyType
-from typing import Any, Optional, Sequence
+from typing import Any, Optional, Sequence, TypeAlias
 
+import simplebench.report.versions.v1 as current_version
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metric import Metric, MetricCategory
-from simplebench.validators import validate_non_blank_string, validate_positive_float, validate_positive_int
+from simplebench.types import Values
+from simplebench.validators import (
+    validate_non_blank_string,
+    validate_positive_float,
+    validate_positive_int,
+    validate_type,
+)
 
 from ._error_tags import _ResultsErrorTag
 from .metrics import Iteration, Stats
+
+MetricsObject: TypeAlias = current_version.MetricsObject
+ResultsInfo: TypeAlias = current_version.ResultsInfo
+StatsBlock: TypeAlias = current_version.StatsBlock
+ValueBlock: TypeAlias = current_version.ValueBlock
 
 
 class Results:
@@ -31,9 +43,9 @@ class Results:
     :vartype n: int | float
     :ivar rounds: The number of rounds in the benchmark case. (read only)
     :vartype rounds: int
-    :ivar iterations: A tuple of Iteration objects representing each iteration of
+    :ivar iterations: A dictionary of Value instances representing each iteration of
         the benchmark. (read only)
-    :vartype iterations: tuple[Iteration, ...]
+    :vartype iterations: MappingProxyType[Metric, Values]
     :ivar marks: A dictionary of variation marks used to identify the
         benchmark variation. (read only)
     :vartype marks: MappingProxyType[str, tuple[str, ...]]
@@ -90,7 +102,7 @@ class Results:
         """
         self._stats_cache: dict[Metric, Stats] = {}
         self._sum_cache: dict[Metric, float] = {}
-        self._raw_cache: dict[Metric, tuple[float, ...]] = {}
+        self._raw_cache: dict[Metric, Values] = {}
 
         self._group: str = validate_non_blank_string(
             group, 'group',
@@ -112,13 +124,13 @@ class Results:
             rounds, 'rounds',
             _ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE,
             _ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)
-        self._iterations: tuple[Iteration, ...] = self._validate_iterations(iterations)
-        self._variation_cols: dict[str, str] = self._validate_variation_cols(variation_cols)
-        self._marks: dict[str, tuple[str, ...]] = self._validate_marks(marks)
+        self._iterations: MappingProxyType[Metric, Values] = self._validate_iterations(iterations)
+        self._variation_cols: MappingProxyType[str, str] = self._validate_variation_cols(variation_cols)
+        self._marks: MappingProxyType[str, tuple[str, ...]] = self._validate_marks(marks)
         self._extra_info = self._validate_extra_info(extra_info)
         self._repr_cache: Optional[str] = None  # cache for __repr__
 
-    def _validate_variation_cols(self, value: dict[str, str] | None) -> dict[str, str]:
+    def _validate_variation_cols(self, value: dict[str, str] | None) -> MappingProxyType[str, str]:
         """Validate the variation_cols dictionary.
 
         Args:
@@ -133,7 +145,7 @@ class Results:
             SimpleBenchValueError: If any value is a blank string.
         """
         if value is None:
-            return {}
+            return MappingProxyType({})
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid variation_cols: {value}. Must be a dictionary.',
@@ -157,32 +169,37 @@ class Results:
                     tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE
                 )
         # shallow copy to prevent external mutation
-        return copy(value)
+        return MappingProxyType(copy(value))
 
-    def _validate_iterations(self, value: Sequence[Iteration]) -> tuple[Iteration, ...]:
+    def _validate_iterations(self, value: Sequence[Iteration]) -> MappingProxyType[Metric, Values]:
         """Validate the iterations Sequence.
 
         Args:
             value (Sequence[Iteration]): The iterations Sequence to validate.
 
         Returns:
-            tuple[Iteration, ...]: A copy of the validated iterations as a tuple.
+            MappingProxyType[Metric, Values]: A mapping proxy of the validated iterations.
         """
         if not isinstance(value, Sequence):
             raise SimpleBenchTypeError(
                 f'Invalid iterations type: {type(value)}. Must be of type list.',
                 tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE
             )
-        for iteration in value:
-            if not isinstance(iteration, Iteration):
+        iterations: dict[Metric, list[float]] = {}
+        for measurement in value:
+            if not isinstance(measurement, Iteration):
                 raise SimpleBenchTypeError(
-                    f'Invalid iteration element type: {type(iteration)}. Must be of type Iteration.',
+                    f'Invalid iteration element type: {type(measurement)}. Must be of type Iteration.',
                     tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE
                 )
-        # copy to a tuple to prevent external mutation of sequence
-        return tuple(value)
+            for metric, metric_value in measurement.values:
+                iterations.setdefault(metric, []).append(metric_value)
+        final_iterations: dict[Metric, Values] = {
+            metric: Values(data_set) for metric, data_set in iterations.items()
+        }
+        return MappingProxyType(final_iterations)
 
-    def _validate_marks(self, value: dict[str, tuple[str, ...]] | None) -> dict[str, tuple[str, ...]]:
+    def _validate_marks(self, value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tuple[str, ...]]:
         """Validate the marks dictionary.
 
         Performs shallow copy of the dictionary to prevent external mutation.
@@ -191,14 +208,14 @@ class Results:
             value (dict[str, tuple[str,...]]): The marks dictionary to validate.
 
         Returns:
-            dict[str, tuple[str, ...]]: A shallow copy of the validated marks dictionary.
+            MappingProxyType[str, tuple[str, ...]]: A shallow copy of the validated marks dictionary.
 
         Raises:
             SimpleBenchTypeError: If the marks is not a dictionary or if any key is not a string.
             SimpleBenchValueError: If any key is a blank string.
         """
         if value is None:
-            return {}
+            return MappingProxyType({})
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
                 f'Invalid marks: {value}. Must be a dictionary.',
@@ -229,9 +246,9 @@ class Results:
                     tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE
                 )
             return_value[key] = marks_value
-        return return_value
+        return MappingProxyType(return_value)
 
-    def _validate_extra_info(self, value: dict[str, Any] | None) -> dict[str, Any]:
+    def _validate_extra_info(self, value: dict[str, Any] | None) -> MappingProxyType[str, Any]:
         """Validate the extra_info object if passed, or create a default one if None.
 
         Performs deep copy of the dictionary to help mitigate external mutation. This means
@@ -247,7 +264,7 @@ class Results:
             SimpleBenchTypeError: If the value is not None and not of type dict[str, Any]
         """
         if value is None:
-            return {}
+            return MappingProxyType({})
 
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
@@ -256,7 +273,7 @@ class Results:
             )
 
         # Perform deep copy to prevent external mutation
-        return deepcopy(value)
+        return MappingProxyType(deepcopy(value))
 
     @property
     def group(self) -> str:
@@ -279,7 +296,7 @@ class Results:
         return self._n
 
     @property
-    def iterations(self) -> tuple[Iteration, ...]:
+    def iterations(self) -> MappingProxyType[Metric, Values]:
         """The iterations from the benchmark run."""
         return self._iterations
 
@@ -294,7 +311,7 @@ class Results:
 
         :returns: A read-only mapping of variation column names to their labels.
         """
-        return MappingProxyType(self._variation_cols)
+        return self._variation_cols
 
     @property
     def marks(self) -> MappingProxyType[str, tuple[str, ...]]:
@@ -302,7 +319,7 @@ class Results:
 
         :returns: A read-only mapping of variation mark names to their values.
         """
-        return MappingProxyType(self._marks)
+        return self._marks
 
     @property
     def extra_info(self) -> MappingProxyType[str, Any]:
@@ -310,107 +327,141 @@ class Results:
 
         Returns a read-only mapping to mitigate external mutation.
         """
-        return MappingProxyType(self._extra_info)
+        return self._extra_info
 
     def stats(self, metric: Metric) -> Stats:
         """Returns the statistical summary of the benchmark results for the given metric.
 
-        Args:
-            metric (Metric): The metric of the results to return. Must be a registered metric.
+        The statistical summary includes metrics such as mean, median, standard deviation, etc.
 
-        Returns:
-            Stats: The statistical summary of the benchmark results.
+        The returned Stats object is cached for efficiency.
+
+        :param Metric metric: The metric of the results to return. Must be a registered metric.
+        :return Stats: The statistical summary of the benchmark results.
         """
-        if not isinstance(metric, Metric):
-            raise SimpleBenchTypeError(
-                f'Invalid metric type: {type(metric)}. Must be of type Metric.',
-                tag=_ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE
-            )
-        if not metric.metric_type == MetricCategory.STATISTICAL:
+        validate_type(
+            metric, Metric, 'metric',
+            _ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE)
+
+        if not metric.metric_type.category == MetricCategory.STATISTICAL:
             raise SimpleBenchValueError(
-                (f'Invalid metric: {metric}. Must be Metric with statistical category.'),
+                (f'Invalid metric: {metric}. Must be Metric with statistical type.'),
                 tag=_ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
             )
         if metric not in self._stats_cache:
             self._stats_cache[metric] = Stats(metric=metric,
-                                              data=self.iterations,
-                                              rounds=self.rounds)
+                                              rounds=self.rounds,
+                                              data=self.iterations[metric])
         return self._stats_cache[metric]
 
     def sum(self, metric: Metric) -> float:
         """Returns the cumulative sum of the raw benchmark results for the given metric.
 
-        Args:
-            metric (Metric): The metric of the results to return. Must be a registered metric.
+        The cumulative sum is the total of all raw data points for the specified metric.
 
-        Returns:    float: The cumulative sum of the benchmark results.
+        The returned sum is cached for efficiency.
+
+        :param Metric metric: The metric of the results to return. Must be a registered metric.
+        :return float: The cumulative sum of the benchmark results.
         """
-        if not isinstance(metric, Metric):
-            raise SimpleBenchTypeError(
-                f'Invalid metric type: {type(metric)}. Must be of type Metric.',
-                tag=_ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE
-            )
-        if not metric.metric_type == MetricCategory.CUMULATIVE:
+        validate_type(
+            metric, Metric, 'metric',
+            _ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE
+        )
+        if not metric.metric_type.category == MetricCategory.CUMULATIVE:
             raise SimpleBenchValueError(
                 (f'Invalid metric: {metric}. Must be a Metric with cumulative category.'),
                 tag=_ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
             )
         if metric not in self._sum_cache:
-            self._sum_cache[metric] = sum(iteration.metric(metric) for iteration in self.iterations)
+            self._sum_cache[metric] = sum(self.iterations[metric])
         return self._sum_cache[metric]
 
-    def raw(self, metric: Metric) -> tuple[float, ...]:
+    def raw(self, metric: Metric) -> Values:
         """Returns the raw data point values of the benchmark results for the given metric.
 
-        Args:
-            metric (Metric): The metric of the results to return. Must be a registered metric.
+        :param Metric metric: The metric of the results to return. Must be a registered metric.
+        :return Values: The raw data of the benchmark results as a Values instance.
+        """
+        validate_type(
+            metric, Metric, 'metric',
+            _ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE
+        )
+        if not metric.metric_type.category == MetricCategory.RAW:
+            raise SimpleBenchValueError(
+                (f'Invalid metric: {metric}. Must be Metric with raw type.'),
+                tag=_ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
+            )
+        return self.iterations[metric]
 
-        Returns:
-            tuple[float]: The raw data of the benchmark results.
+    def results_metric(self, metric: Metric) -> Values:
+        """Returns the requested metric of the benchmark results.
+
+        :param Metric metric: The metric of the results to return. Must be a registered metric.
+
+        :return Values: The requested metric values from the benchmark results.
         """
         if not isinstance(metric, Metric):
             raise SimpleBenchTypeError(
                 f'Invalid metric type: {type(metric)}. Must be of type Metric.',
                 tag=_ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE
             )
-        if not metric.metric_type == MetricCategory.RAW:
-            raise SimpleBenchValueError(
-                (f'Invalid metric: {metric}. Must be Metric with raw category.'),
-                tag=_ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
-            )
-        if metric not in self._raw_cache:
-            self._raw_cache[metric] = self.results_metric(metric)
-        return self._raw_cache[metric]
+        return self.iterations[metric]
 
-    def results_metric(self, metric: Metric) -> tuple[float, ...]:
-        """Returns the requested metric of the benchmark results.
+    def stats_block(self, metric: Metric, full_data: bool = False) -> StatsBlock:
+        """Returns the StatsBlock representation of the Stats for the given metric.
 
-        Args:
-            metric (Metric): The metric of the results to return. Must be a registered metric.
+        :param Metric metric: The metric of the results to return. Must be a registered metric.
+        :param bool full_data: Whether to include the full data set in the StatsBlock. Defaults to False.
+
+        :return StatsBlock: The StatsBlock representation of the Stats for the given metric.
+        """
+        stats_instance: Stats = self.stats(metric)
+        if full_data:
+            return stats_instance.stats_block(full_data=True)
+        return stats_instance.stats_block(full_data=False)
+
+    def sum_value_block(self, metric: Metric) -> ValueBlock:
+        """Returns the ValueBlock representation of the sum for the given metric.
+
+        :param Metric metric: The metric of the results to return. Must be a registered metric.
+
+        :return ValueBlock: The ValueBlock representation of the sum for the given metric.
+        """
+        total_sum: float = self.sum(metric)
+        return ValueBlock(
+            semantic_type=metric.metric_type.semantic_type,
+            timer=None,
+            unit=metric.metric_type.unit,
+            scale=metric.metric_type.scale,
+            value=total_sum
+        )
+
+    def results_info(self, full_data: bool = False) -> ResultsInfo:
+        """Returns a summary of the benchmark results.
+
+        :param full_data: Whether to include the full data set in the summary. Defaults to False.
+        :type full_data: bool, optional
 
         Returns:
-            tuple[float]: The requested metric of the benchmark results.
+            results_info: A ResultsInfo object containing the summary of the benchmark results.
         """
-        values: list[float] = []
-        for iteration in self.iterations:
-            values.append(iteration.metric(metric))
-        return tuple(values)
+        metrics: dict[str, MetricsObject.MetricItem] = {}
+        for metric in self.iterations:
+            if metric.metric_type == MetricCategory.STATISTICAL:
+                metrics[metric.label] = self.stats_block(metric, full_data=full_data)
+            elif metric.metric_type == MetricCategory.CUMULATIVE:
+                metrics[metric.label] = self.sum_value_block(metric)
 
-    def as_dict(self, full_data: bool = False) -> dict[str, Any]:
-        '''Returns the benchmark results and statistics as a JSON-serializable dictionary.'''
-        results_dict: dict[str, Any] = {
-            'type': self.__class__.__name__,
-            'group': self.group,
-            'title': self.title,
-            'description': self.description,
-            'n': self.n,
-            'variation_cols': dict(self.variation_cols),  # convert MappingProxyType to dict
-            'marks': dict(self.marks),  # convert MappingProxyType to dict
-            'iterations': [iteration.as_dict for iteration in self.iterations],
-            'rounds': self.rounds,
-            'extra_info': self.extra_info,
-        }
-        return results_dict
+        return ResultsInfo(
+            group=self.group,
+            title=self.title,
+            description=self.description,
+            n=self.n,
+            variation_cols=self.variation_cols,
+            metrics=MetricsObject(metrics),
+            extra_info=self.extra_info,
+        )
 
     def __repr__(self) -> str:
         """Return a string representation of the Results object."""

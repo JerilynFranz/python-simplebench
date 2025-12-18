@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 CPUInfo = current_version.CPUInfo
 ExecutionEnvironment = current_version.ExecutionEnvironment
 MachineInfo = current_version.MachineInfo
-Metrics = current_version.Metrics
+Metrics = current_version.MetricsObject
 MetricsItem = Metrics.MetricItem
 Report = current_version.Report
 ResultsInfo = current_version.ResultsInfo
