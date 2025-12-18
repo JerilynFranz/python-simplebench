@@ -4,6 +4,7 @@ from .execution_environment import execution_environment
 from .machine_info import machine_info
 from .metrics import metrics
 from .python_info import python_info
+from .raw_data_block import raw_data_block
 from .report import report
 from .results import results_info
 from .stats_block import stats_block
@@ -19,6 +20,7 @@ __all__ = [
     'metrics',
     'python_info',
     'report',
+    'raw_data_block',
     'results_info',
     'stats_block',
     'value_block',

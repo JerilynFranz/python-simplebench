@@ -6,6 +6,7 @@ from .json_schema import JSONSchema
 from .machine_info import MachineInfo
 from .metrics import Metrics
 from .python_info import PythonInfo
+from .raw_data_block import RawDataBlock
 from .report import Report
 from .results_info import ResultsInfo
 from .stats_block import StatsBlock
@@ -19,6 +20,7 @@ __all__ = [
     "MachineInfo",
     "Metrics",
     "PythonInfo",
+    "RawDataBlock",
     "Report",
     "ResultsInfo",
     "StatsBlock",

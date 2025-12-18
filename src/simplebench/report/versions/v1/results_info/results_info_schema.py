@@ -108,13 +108,16 @@ class ResultsInfoSchema(JSONSchema):
                 },
                 "metric_block": {
                     "title": "Metric Block",
-                    "description": "A container for a measurement, which can be a single value or a statistical summary.",
+                    "description": "A container for a measurement, which can be a single value, a statistical summary, or raw data.",
                     "oneOf": [
                         {
                             "$ref": "stats-block.json"
                         },
                         {
                             "$ref": "value-block.json"
+                        },
+                        {
+                            "$ref": "raw-data-block.json"
                         }
                     ],
                     "discriminator": {

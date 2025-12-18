@@ -5,6 +5,7 @@ from .execution_environment import ExecutionEnvironment
 from .machine_info import MachineInfo
 from .metrics_object import MetricsObject
 from .python_info import PythonInfo
+from .raw_data_block import RawDataBlock
 from .report import Report
 from .results_info import ResultsInfo
 from .stats_block import StatsBlock
@@ -17,6 +18,7 @@ __all__ = [
     "MachineInfo",
     "MetricsObject",
     "PythonInfo",
+    "RawDataBlock",
     "Report",
     "ResultsInfo",
     "StatsBlock",

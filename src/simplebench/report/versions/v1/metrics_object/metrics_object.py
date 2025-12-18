@@ -23,6 +23,7 @@ from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, Si
 from simplebench.report._error_tags import _MetricsErrorTag
 from simplebench.validators import validate_namespaced_identifier, validate_string
 
+from ..raw_data_block import RawDataBlock
 from ..stats_block import StatsBlock
 from ..value_block import ValueBlock
 
@@ -41,10 +42,13 @@ class MetricsObject(UserDict):
     The typing enforcement is done in the __setitem__ method.
     """
 
-    MetricItem: TypeAlias = StatsBlock | ValueBlock
+    MetricItem: TypeAlias = StatsBlock | ValueBlock | RawDataBlock
     """Type alias for the possible types of metric items in the metrics dictionary.
 
-    Currently, the only possible types are StatsBlock and ValueBlock.
+    Currently, the only possible types are
+    - :class:`~simplebench.report.versions.v1.stats_block.StatsBlock`
+    - :class:`~simplebench.report.versions.v1.value_block.ValueBlock`
+    - :class:`~simplebench.report.versions.v1.raw_data_block.RawDataBlock`
     """
 
     @classmethod
@@ -56,6 +60,7 @@ class MetricsObject(UserDict):
         """
         value_block: str = ValueBlock.TYPE
         stats_block: str = StatsBlock.TYPE
+        raw_data_block: str = RawDataBlock.TYPE
 
         metrics: dict[str, MetricsObject.MetricItem] = {}
         for metric_name, metric_data in data.get('metrics', {}).items():
@@ -75,6 +80,9 @@ class MetricsObject(UserDict):
 
             elif discriminator_type == stats_block:
                 metrics[metric_name] = StatsBlock.from_dict(metric_data)
+
+            elif discriminator_type == raw_data_block:
+                metrics[metric_name] = RawDataBlock.from_dict(metric_data)
 
             else:
                 raise SimpleBenchValueError(

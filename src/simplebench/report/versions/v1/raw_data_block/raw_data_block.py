@@ -1,9 +1,10 @@
-"""Class for JSON value block representation."""
+"""Class for JSON raw data block representation."""
 from typing import Any
 
-from simplebench.report._error_tags import _ValueBlockErrorTag
+from simplebench.report._error_tags import _RawDataBlockErrorTag
 from simplebench.report.base import JSONSchema
-from simplebench.report.base import ValueBlock as ValueBlockBase
+from simplebench.report.base import RawDataBlock as RawDataBlockBase
+from simplebench.types import Values
 from simplebench.validators import (
     validate_namespaced_identifier,
     validate_positive_float,
@@ -11,32 +12,31 @@ from simplebench.validators import (
     validate_type,
 )
 
-from .value_block_schema import ValueBlockSchema
+from .raw_data_block_schema import RawDataBlockSchema
 
 
-class ValueBlock(ValueBlockBase):
-    """Class representing a value block (V1).
-
-    :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
+class RawDataBlock(RawDataBlockBase):
+    """Class representing a raw data block (V1).
+    :param str semantic_type: The semantic type string for the raw data block. ('type' field in JSON data)
     :param (str | None) timer: The timer string or None.
     :param str unit: The unit of measurement.
     :param float scale: The scale factor.
-    :param float value: The value of the block.
+    :param Values data: The raw data values of the block.
     :raise SimpleBenchTypeError: If any parameter is of incorrect type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
 
-    SCHEMA: type[JSONSchema] = ValueBlockSchema
-    """JSON schema class for the value block."""
+    SCHEMA: type[JSONSchema] = RawDataBlockSchema
+    """JSON schema class for the raw data block."""
 
     VERSION: int = SCHEMA.VERSION
-    """Version of the value block schema."""
+    """Version of the raw data block schema."""
 
     TYPE: str = SCHEMA.TYPE
-    """Type of the value block schema."""
+    """Type of the raw data block schema."""
 
     ID: str = SCHEMA.ID
-    """ID of the value block schema."""
+    """ID of the raw data block schema."""
 
     def __init__(
             self,
@@ -45,14 +45,14 @@ class ValueBlock(ValueBlockBase):
             timer: str | None = None,
             unit: str,
             scale: float,
-            value: float | int) -> None:
+            data: Values) -> None:
         """Initialize JSONStatsSummary base class.
 
         :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
         :param (str | None) timer: The timer string or None.
         :param str unit: The unit of measurement.
         :param float scale: The scale factor.
-        :param float value: The value of the block.
+        :param Values data: The raw data values of the block.
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
@@ -60,14 +60,14 @@ class ValueBlock(ValueBlockBase):
         self.timer = timer
         self.unit = unit
         self.scale = scale
-        self.value = value
+        self.data = data
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "ValueBlock":
-        """Create a ValueBlock instance from a dictionary.
+    def from_dict(cls, data: dict[str, Any]) -> "RawDataBlock":
+        """Create a RawDataBlock instance from a dictionary.
 
-        :param data: Dictionary containing the JSON results data.
-        :return: A ValueBlock instance.
+        :param data: Dictionary containing the JSON raw data block data.
+        :return: A RawDataBlock instance.
         """
         init_params = cls.init_params()
         init_params['type'] = str
@@ -79,13 +79,14 @@ class ValueBlock(ValueBlockBase):
             optional={'timer', 'type', 'version'},
             default={'type': cls.TYPE, 'version': cls.VERSION},
             match_on={'type': cls.TYPE, 'version': cls.VERSION},
+            process_as={'data': Values},
         )
         return cls(**kwargs)
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert the ValueBlock instance to a dictionary.
+        """Convert the RawDataBlock instance to a dictionary.
 
-        :return: Dictionary representation of the ValueBlock instance.
+        :return: Dictionary representation of the RawDataBlock instance.
         """
         output: dict[str, Any] = {
             'type': self.TYPE,
@@ -93,7 +94,7 @@ class ValueBlock(ValueBlockBase):
             'semantic_type': self.semantic_type,
             'unit': self.unit,
             'scale': self.scale,
-            'value': self.value,
+            'data': self.data,
         }
         if self.timer is not None:
             output['timer'] = self.timer
@@ -112,8 +113,8 @@ class ValueBlock(ValueBlockBase):
 
         timer_name: str = validate_string(
             value, 'timer',
-            _ValueBlockErrorTag.INVALID_TIMER_TYPE,
-            _ValueBlockErrorTag.INVALID_TIMER_VALUE,
+            _RawDataBlockErrorTag.INVALID_TIMER_TYPE,
+            _RawDataBlockErrorTag.INVALID_TIMER_VALUE,
             allow_blank=False)
 
         return timer_name
@@ -136,8 +137,8 @@ class ValueBlock(ValueBlockBase):
         """
         self._semantic_type: str = validate_namespaced_identifier(
             value, 'semantic_type',
-            _ValueBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
-            _ValueBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE)
+            _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
+            _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE)
 
     @property
     def unit(self) -> str:
@@ -157,8 +158,8 @@ class ValueBlock(ValueBlockBase):
         """
         self._unit: str = validate_string(
             value, 'unit',
-            _ValueBlockErrorTag.INVALID_UNIT_TYPE,
-            _ValueBlockErrorTag.INVALID_UNIT_VALUE,
+            _RawDataBlockErrorTag.INVALID_UNIT_TYPE,
+            _RawDataBlockErrorTag.INVALID_UNIT_VALUE,
             allow_blank=False)
 
     @property
@@ -180,24 +181,24 @@ class ValueBlock(ValueBlockBase):
         """
         self._scale: float = validate_positive_float(
             value, 'scale',
-            _ValueBlockErrorTag.INVALID_SCALE_TYPE,
-            _ValueBlockErrorTag.INVALID_SCALE_VALUE)
+            _RawDataBlockErrorTag.INVALID_SCALE_TYPE,
+            _RawDataBlockErrorTag.INVALID_SCALE_VALUE)
 
     @property
-    def value(self) -> float | int:
-        """Get the value.
+    def data(self) -> Values:
+        """Get the data.
 
-        :return: The value as a float or int.
+        :return: The data.
         """
-        return self._value
+        return self._data
 
-    @value.setter
-    def value(self, value: float | int) -> None:
-        """Set the value.
+    @data.setter
+    def data(self, value: Values) -> None:
+        """Set the data.
 
-        :param value: The value.
-        :raise SimpleBenchTypeError: If value is not a float or int.
+        :param value: The data.
+        :raise SimpleBenchTypeError: If data is not of type Values.
         """
-        self._value: float | int = validate_type(
-            value, (float, int), 'value',
-            _ValueBlockErrorTag.INVALID_VALUE_TYPE)
+        self._data: Values = validate_type(
+            value, Values, 'data',
+            _RawDataBlockErrorTag.INVALID_DATA_TYPE)

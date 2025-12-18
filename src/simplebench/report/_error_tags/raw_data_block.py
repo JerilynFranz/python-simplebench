@@ -1,15 +1,17 @@
-"""Error tags for JSON value block representation exceptions."""
+"""Error tags for JSON raw datablock representation exceptions."""
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class _ValueBlockErrorTag(ErrorTag):
-    """Error tags for JSON value block representation exceptions."""
+class _RawDataBlockErrorTag(ErrorTag):
+    """Error tags for JSON raw data block representation exceptions."""
     INVALID_SEMANTIC_TYPE_TYPE = "INVALID_SEMANTIC_TYPE_TYPE"
     """The semantic type value is not a string."""
     INVALID_SEMANTIC_TYPE_VALUE = "INVALID_SEMANTIC_TYPE_VALUE"
     """The semantic type value is invalid."""
+    INVALID_SEMANTIC_TYPE_PATTERN = "INVALID_SEMANTIC_TYPE_PATTERN"
+    """The semantic type value does not match the required pattern."""
     INVALID_VERSION_TYPE = "INVALID_VERSION_TYPE"
     """The version value is not an integer."""
     UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION"
@@ -24,12 +26,8 @@ class _ValueBlockErrorTag(ErrorTag):
     """The timer value is not a string or None."""
     INVALID_TIMER_VALUE = "INVALID_TIMER_VALUE"
     """The timer value is invalid."""
-    INVALID_VALUE_TYPE = "INVALID_VALUE_TYPE"
-    """The type value is not a string."""
-    INVALID_VALUE_VALUE = "INVALID_VALUE_VALUE"
-    """The type value is invalid."""
-    INVALID_VALUE_PATTERN = "INVALID_VALUE_PATTERN"
-    """The type value does not match the required pattern."""
+    INVALID_DATA_TYPE = "INVALID_DATA_TYPE"
+    """The data value is not of type Values."""
     INVALID_SCALE_TYPE = "INVALID_SCALE_TYPE"
     """The scale value is not a float or int."""
     INVALID_SCALE_VALUE = "INVALID_SCALE_VALUE"
