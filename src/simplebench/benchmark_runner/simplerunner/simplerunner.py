@@ -3,20 +3,43 @@
 SimpleRunner is a basic class for running benchmarks for various actions.
 
 It measures the time taken to execute a given action and the memory usage of the action.
-It also provides a method to auto-calibrate the number of rounds for the benchmark
-timing.
+It also provides a method to automatically calibrate the number of rounds for the benchmark
+timing to achieve a desired level of precision and accuracy in the measurements.
 
-It provides 4 output Results Metrics for each benchmark run:
+It provides several Metrics for each benchmark run:
 
-  - 'simplebench_std::timing_per_operation': The total time taken to execute each operation.
-  - 'simplebench_std::operations_per_second': The number of operations performed per second.
-  - 'simplebench_std::peak_memory': The peak memory usage of the action.
-  - 'simplebench_std::memory': The memory usage of the action.
+- STD_TIMING_STATS: timing statistics for each operation
+- STD_TIMING_RAW: timing raw values for each operation
+- STD_OPS_STATS: operations per second statistics
+- STD_OPS_RAW: operations per second raw values
+- STD_MEMORY_STATS: memory usage statistics
+- STD_MEMORY_RAW: memory usage raw values
+- STD_PEAK_MEMORY_STATS: peak memory usage statistics
+- STD_PEAK_MEMORY_RAW: peak memory usage raw values
+- STD_TOTAL_ELAPSED_TIME: The sum of all timing raw values
+- STD_GC_GEN0_COLLECTIONS_STATS: Number of garbage collections for generation 0
+- STD_GC_GEN0_COLLECTIONS_RAW: Number of garbage collections for generation 0 (raw values)
+- STD_GC_GEN1_COLLECTIONS_STATS: Number of garbage collections for generation 1
+- STD_GC_GEN1_COLLECTIONS_RAW: Number of garbage collections for generation 1 (raw values)
+- STD_GC_GEN2_COLLECTIONS_STATS: Number of garbage collections for generation 2
+- STD_GC_GEN2_COLLECTIONS_RAW: Number of garbage collections for generation 2 (raw values)
+- STD_GC_GEN0_COLLECTED_STATS: Number of objects collected by garbage collection for generation 0
+- STD_GC_GEN0_COLLECTED_RAW: Number of objects collected by garbage collection for generation 0 (raw values)
+- STD_GC_GEN1_COLLECTED_STATS: Number of objects collected by garbage collection for generation 1
+- STD_GC_GEN1_COLLECTED_RAW: Number of objects collected by garbage collection for generation 1 (raw values)
+- STD_GC_GEN2_COLLECTED_STATS: Number of objects collected by garbage collection for generation 2
+- STD_GC_GEN2_COLLECTED_RAW: Number of objects collected by garbage collection for generation 2 (raw values)
+- STD_GC_GEN0_UNCOLLECTABLE_STATS: Number of uncollectable objects for generation 0
+- STD_GC_GEN0_UNCOLLECTABLE_RAW: Number of uncollectable objects for generation 0 (raw values)
+- STD_GC_GEN1_UNCOLLECTABLE_STATS: Number of uncollectable objects for generation 1
+- STD_GC_GEN1_UNCOLLECTABLE_RAW: Number of uncollectable objects for generation 1 (raw values)
+- STD_GC_GEN2_UNCOLLECTABLE_STATS: Number of uncollectable objects for generation 2
+- STD_GC_GEN2_UNCOLLECTABLE_RAW: Number of uncollectable objects for generation 2 (raw values)
 
-  The timing_per_operation and operations_per_second are based on the same
-  timing measurement, and are therefore consistent with each other. Both are
-  provided for convenience and to provide a more complete picture of the benchmark
-  results.
+The timing per operation and operations per second measurements are based on the same
+timing measurement, and are therefore consistent with each other. Both are
+provided for convenience and to provide a more complete picture of the benchmark
+results.
 """
 from __future__ import annotations
 
@@ -26,12 +49,12 @@ import math
 import sys
 import tracemalloc
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Final, Literal, Optional, TypeAlias
 
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
-from simplebench.case.results.metrics import Iteration, Value
 from simplebench.defaults import (
+    DEFAULT_CPU_TIMER,
     DEFAULT_INTERVAL_SCALE,
     DEFAULT_SIGNIFICANT_FIGURES,
     DEFAULT_TIMER,
@@ -40,9 +63,10 @@ from simplebench.defaults import (
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
 from simplebench.exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError
-from simplebench.metric import metrics_registry
+from simplebench.metric import Metric, metrics_registry
 from simplebench.timeout import Timeout
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
+from simplebench.types import Values
 from simplebench.validators import validate_positive_int
 
 from ._error_tags import _SimpleRunnerErrorTag
@@ -51,8 +75,11 @@ if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.session import Session
 
+_TIMERS_NAMESPACE: str = '_simplerunner_timers'
+"""Namespace for dynamically created timer functions."""
 
-def _create_timers_module() -> ModuleType:
+
+def _create_timers_module(namespace: str) -> ModuleType:
     """Create a module to hold dynamically created timer functions.
 
     The module is created using :mod:`importlib` and added to :data:`sys.modules`
@@ -63,20 +90,80 @@ def _create_timers_module() -> ModuleType:
     :rtype: ModuleType
     :raises SimpleBenchImportError: If the module could not be created.
     """
-    spec = importlib.util.spec_from_loader('simplerunner._timers', loader=None)
+    if not isinstance(namespace, str):
+        raise SimpleBenchTypeError(
+            f'Namespace must be a string, got {type(namespace).__name__}',
+            tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_TYPE)
+    if not namespace.isidentifier():
+        raise SimpleBenchTypeError(
+            f'Namespace must be a valid identifier, got {namespace}',
+            tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_VALUE)
+    spec = importlib.util.spec_from_loader(namespace, loader=None)
     if spec is None:
         raise SimpleBenchImportError(
-            'Could not create spec for simplerunner._timers module',
+            f'Could not create spec for {namespace} module',
             tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED)
-    if 'simplerunner._timers' in sys.modules:
-        return sys.modules['simplerunner._timers']
+    if namespace in sys.modules:
+        return sys.modules[namespace]
     timers_module = importlib.util.module_from_spec(spec)
-    sys.modules['simplerunner._timers'] = timers_module
+    sys.modules[namespace] = timers_module
     return timers_module
 
 
-_timers_module = _create_timers_module()  # Ensure the timers module exists
+_timers_module = _create_timers_module(_TIMERS_NAMESPACE)  # Ensure the timers module exists
 """A dynamically created module to hold generated timer functions."""
+
+
+_Measurement: TypeAlias = tuple[
+    float, float,
+    int, int,
+    int, int, int,
+    int, int, int,
+    int, int, int]
+"""A type alias for a measurement tuple.
+
+The tuple contains the following elements:
+    - timing (float): The time taken to execute the action.
+    - cpu_timing (float): The CPU time taken to execute the action.
+    - memory (int): The memory usage of the action.
+    - peak_memory (int): The peak memory usage of the action.
+    - gc_gen0_collections (int): The number of generation 0 garbage collections.
+    - gc_gen0_collected (int): The number of objects collected in generation 0.
+    - gc_gen0_uncollectable (int): The number of uncollectable objects in generation 0.
+    - gc_gen1_collections (int): The number of generation 1 garbage collections.
+    - gc_gen1_collected (int): The number of objects collected in generation 1.
+    - gc_gen1_uncollectable (int): The number of uncollectable objects in generation 1.
+    - gc_gen2_collections (int): The number of generation 2 garbage collections.
+    - gc_gen2_collected (int): The number of objects collected in generation 2.
+    - gc_gen2_uncollectable (int): The number of uncollectable objects in generation 2.
+"""
+
+_TIMING: Final[Literal[0]] = 0
+"""A constant representing the index of the timing element in a measurement tuple."""
+_CPU_TIMING: Final[Literal[1]] = 1
+"""A constant representing the index of the CPU timing element in a measurement tuple."""
+_MEMORY: Final[Literal[2]] = 2
+"""A constant representing the index of the memory element in a measurement tuple."""
+_PEAK_MEMORY: Final[Literal[3]] = 3
+"""A constant representing the index of the peak memory element in a measurement tuple."""
+_GC_GEN0_COLLECTIONS_STATS: Final[Literal[4]] = 4
+"""A constant representing the index of the generation 0 garbage collections element in a measurement tuple."""
+_GC_GEN0_COLLECTED_STATS: Final[Literal[5]] = 5
+"""A constant representing the index of the generation 0 collected garbage element in a measurement tuple."""
+_GC_GEN0_UNCOLLECTABLE_STATS: Final[Literal[6]] = 6
+"""A constant representing the index of the generation 0 uncollectable garbage element in a measurement tuple."""
+_GC_GEN1_COLLECTIONS_STATS: Final[Literal[7]] = 7
+"""A constant representing the index of the generation 1 garbage collections element in a measurement tuple."""
+_GC_GEN1_COLLECTED_STATS: Final[Literal[8]] = 8
+"""A constant representing the index of the generation 1 collected garbage element in a measurement tuple."""
+_GC_GEN1_UNCOLLECTABLE_STATS: Final[Literal[9]] = 9
+"""A constant representing the index of the generation 1 uncollectable garbage element in a measurement tuple."""
+_GC_GEN2_COLLECTIONS_STATS: Final[Literal[10]] = 10
+"""A constant representing the index of the generation 2 garbage collections element in a measurement tuple."""
+_GC_GEN2_COLLECTED_STATS: Final[Literal[11]] = 11
+"""A constant representing the index of the generation 2 collected garbage element in a measurement tuple."""
+_GC_GEN2_UNCOLLECTABLE_STATS: Final[Literal[12]] = 12
+"""A constant representing the index of the generation 2 uncollectable garbage element in a measurement tuple."""
 
 
 class SimpleRunner(BenchmarkRunner):
@@ -208,10 +295,18 @@ class SimpleRunner(BenchmarkRunner):
         return result
 
     def _timer_function(self, rounds: int) -> Callable[
-            [Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]:
+            [
+                Callable[[], int | float],
+                Callable[[], int | float],
+                Callable[..., Any],
+                dict[str, Any]
+            ],
+            tuple[float, float]]:
         """Return a timer function for the benchmark.
 
-        The generated function will call the action `rounds` times and return the total time taken.
+        The generated function will call the action `rounds` times and return the total time
+        taken as a float.
+
         The function is generated as a string and then compiled to avoid the overhead of
         a loop in Python during the actual timing benchmark.
 
@@ -221,8 +316,9 @@ class SimpleRunner(BenchmarkRunner):
 
             def _timer_function_{rounds}(
                     timer: Callable[[], float | int],
+                    cpu_timer: Callable[[], float | int],
                     action: Callable[..., Any],
-                    kwargs: dict[str, Any]) -> float:
+                    kwargs: dict[str, Any]) -> tuple[float, float]:
 
         It is created in the module ``simplerunner._timers`` to avoid polluting the global namespace.
 
@@ -232,8 +328,9 @@ class SimpleRunner(BenchmarkRunner):
 
         :param rounds: The number of test rounds that will be run by the action on each iteration. Must be >= 1.
         :type rounds: int
-        :return: A function that returns the elapsed time for the benchmark as a float.
-        :rtype: Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]
+        :return: A function that returns the elapsed time for the benchmark as a tuple of
+            floats (elapsed time, CPU time).
+        :rtype: Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], tuple[float, float]]
         """
         rounds = validate_positive_int(
             rounds, 'rounds',
@@ -248,11 +345,17 @@ class SimpleRunner(BenchmarkRunner):
         timer_name = f'_simplerunner_timer_function_{rounds}'
         if not hasattr(_timers_module, timer_name):
             time_function_lines: list[str] = []
-            time_function_lines.append(f'def {timer_name}(timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -> float:')  # pylint: disable=line-too-long  # noqa: E501
-            time_function_lines.append('    start = timer()')
+            time_function_lines.extend([
+                f'def {timer_name}(timer: Callable[[], float | int], cpu_timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -> tuple[float, float]:',  # pylint: disable=line-too-long  # noqa: E501
+                '    start = timer()',
+                '    start_cpu = cpu_timer()'
+            ])
             time_function_lines.extend(['    action(**kwargs)'] * rounds)
-            time_function_lines.append('    end = timer()')
-            time_function_lines.append('    return float(end - start)')
+            time_function_lines.extend([
+                '    end = timer()',
+                '    end_cpu = cpu_timer()'
+            ])
+            time_function_lines.append('    return float(end - start), float(end_cpu - start_cpu)')
             time_function_code = '\n'.join(time_function_lines)
             exec(time_function_code, _timers_module.__dict__)  # pylint: disable=exec-used
 
@@ -263,21 +366,22 @@ class SimpleRunner(BenchmarkRunner):
             *,
             rounds: int,
             timer: Callable[[], int | float],
+            cpu_timer: Callable[[], int | float],
             action: Callable[..., Any],
             kwargs: dict[str, Any],
             setup: Optional[Callable[..., Any]],
-            teardown: Optional[Callable[..., Any]]) -> float:
+            teardown: Optional[Callable[..., Any]]) -> tuple[float, float]:
         """Run a single timed iteration of the benchmark action for a given number of rounds.
         This method uses an unrolled loop to call the action the specified number of rounds,
         minimizing the overhead of loop control in Python.
 
-        :param rounds: The number of test rounds that will be run by the action for the iteration.
-        :param timer: The timer function to use for timing.
-        :param action: The action to benchmark.
-        :param kwargs: Keyword arguments to pass to the action.
-        :param setup: A setup function to run before the iteration.
-        :param teardown: A teardown function to run after the iteration.
-        :return: The elapsed time for the iteration in seconds.
+        :param int rounds: The number of test rounds that will be run by the action for the iteration.
+        :param Callable[[], int | float] timer: The timer function to use for timing.
+        :param Callable[..., Any] action: The action to benchmark.
+        :param dict[str, Any] kwargs: Keyword arguments to pass to the action.
+        :param Optional[Callable[..., Any]] setup: A setup function to run before the iteration.
+        :param Optional[Callable[..., Any]] teardown: A teardown function to run after the iteration.
+        :return float: The elapsed time for the iteration in seconds.
         """
         kiloround_timer = self._timer_function(1000)
         timer_metrics: int
@@ -286,31 +390,43 @@ class SimpleRunner(BenchmarkRunner):
             timer_metrics = 1
             if callable(setup):
                 setup()
-            elapsed = self._timer_function(rounds)(timer, action, kwargs)
+            total_elapsed, total_elapsed_cpu = self._timer_function(rounds)(timer,
+                                                                            cpu_timer,
+                                                                            action,
+                                                                            kwargs)
             if callable(teardown):
                 teardown()
         else:
             # for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a "kiloround")
             # to reduce the footprint of the generated timer functions and avoid hitting
             # Python's function size limits.
-            elapsed = 0.0
+            total_elapsed: float = 0.0
+            total_elapsed_cpu: float = 0.0
             timer_metrics = 0
             kiloround_chunks, remaining_rounds = divmod(rounds, 1000)
             if callable(setup):
                 setup()
             while kiloround_chunks:
-                elapsed += kiloround_timer(timer, action, kwargs)
+                elapsed, elapsed_cpu = kiloround_timer(timer, cpu_timer, action, kwargs)
+                total_elapsed += elapsed
+                total_elapsed_cpu += elapsed_cpu
                 kiloround_chunks -= 1
                 timer_metrics += 1
             if remaining_rounds:
                 partial_timer = self._timer_function(remaining_rounds)
-                elapsed += partial_timer(timer, action, kwargs)
+                elapsed, elapsed_cpu = partial_timer(timer, cpu_timer, action, kwargs)
+                total_elapsed += elapsed
+                total_elapsed_cpu += elapsed_cpu
                 timer_metrics += 1
             if callable(teardown):
                 teardown()
-        return elapsed - timer_overhead_ns(timer) * timer_metrics
+        elapsed_time = float(
+            (total_elapsed - timer_overhead_ns(timer) * timer_metrics) * DEFAULT_INTERVAL_SCALE)
+        elapsed_cpu_time = float(
+            (total_elapsed_cpu - timer_overhead_ns(cpu_timer) * timer_metrics) * DEFAULT_INTERVAL_SCALE)
+        return elapsed_time, elapsed_cpu_time
 
-    def default_runner(
+    def default_runner(  # pylint: disable=too-many-arguments, too-many-locals, too-many-statements  # noqa: C901
             self,
             *,
             n: int | float,
@@ -337,10 +453,10 @@ class SimpleRunner(BenchmarkRunner):
             sorts a list of length n, then n should be the length of the list.
             If the action being benchmarked is a function that performs
             a constant-time operation, then n should be 1.
-        :param action: The action to benchmark.
-        :param setup: A setup function to run before each iteration.
-        :param teardown: A teardown function to run after each iteration.
-        :param kwargs: Keyword arguments to pass to the action.
+        :param Callable[..., Any] action: The action to benchmark.
+        :param Optional[Callable[..., Any]] setup: A setup function to run before each iteration.
+        :param Optional[Callable[..., Any]] teardown: A teardown function to run after each iteration.
+        :param Optional[dict[str, Any]] kwargs: Keyword arguments to pass to the action.
         :return: The results of the benchmark.
         :rtype: Results
         """
@@ -354,12 +470,18 @@ class SimpleRunner(BenchmarkRunner):
         max_time: float = self.case.max_time
         iterations: int = self.case.iterations
 
-        # Prioritize the timer from the case, then from the session, then use the default timer
+        # Prioritize the timers from the case, then from the session, then use the default timer
         timer = DEFAULT_TIMER
         if self.case.timer is not None:
             timer = self.case.timer
         elif self.session is not None and self.session.timer is not None:
             timer = self.session.timer
+
+        cpu_timer = DEFAULT_CPU_TIMER
+        if self.case.cpu_timer is not None:
+            cpu_timer = self.case.cpu_timer
+        elif self.session is not None and self.session.cpu_timer is not None:
+            cpu_timer = self.session.cpu_timer
 
         # warmup iterations are not included in the final stats
         # We start the count from -warmup_iterations to ensure we do the correct number of warmup
@@ -375,6 +497,7 @@ class SimpleRunner(BenchmarkRunner):
         if self.case.rounds is None:
             rounds = self._calibrate_rounds(
                 timer=timer,
+                cpu_timer=cpu_timer,
                 kwargs=kwargs,
                 setup=setup,
                 teardown=teardown,
@@ -392,18 +515,16 @@ class SimpleRunner(BenchmarkRunner):
             description=f'Benchmarking {group} (iteration {0:<6d}; time {0.00:<3.2f}s)',
             color=Color.GREEN)
 
-        iterations_list: list[Iteration] = []
-        elapsed_metric = metrics_registry['STD_TIMING']
-        memory_metric = metrics_registry['STD_MEMORY']
-        peak_memory_metric = metrics_registry['STD_PEAK_MEMORY']
+        iterations_list: list[_Measurement] = []
 
         while ((iteration_pass <= iterations_min or wall_time < min_stop_at)
                 and wall_time < max_stop_at):
             iteration_pass += 1
             # Time the action
-            elapsed = self._run_timed_iteration(
+            elapsed, cpu_elapsed = self._run_timed_iteration(
                 rounds=rounds,
                 timer=timer,
+                cpu_timer=cpu_timer,
                 action=action,
                 kwargs=kwargs,
                 setup=setup,
@@ -422,8 +543,15 @@ class SimpleRunner(BenchmarkRunner):
 
             if iteration_pass <= 1:
                 gc.collect()  # Only collect garbage before the first measured iteration
+
             tracemalloc.start()
             tracemalloc.reset_peak()
+
+            # Measure garbage collection counts
+            gc_gen0_start = gc.get_stats()[0]
+            gc_gen1_start = gc.get_stats()[1]
+            gc_gen2_start = gc.get_stats()[2]
+
             start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
             action(**kwargs)
             end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
@@ -438,12 +566,26 @@ class SimpleRunner(BenchmarkRunner):
             memory = end_memory_current - start_memory_current
             peak_memory = end_memory_peak - start_memory_peak
 
-            iteration_result = Iteration((
-                Value(elapsed_metric, float(elapsed)),
-                Value(memory_metric, float(memory)),
-                Value(peak_memory_metric, float(peak_memory))
-            ))
+            # Measure garbage collection counts
+            gc_gen0_end = gc.get_stats()[0]
+            gc_gen1_end = gc.get_stats()[1]
+            gc_gen2_end = gc.get_stats()[2]
 
+            iteration_result: _Measurement = (
+                elapsed,
+                cpu_elapsed,
+                memory,
+                peak_memory,
+                int(gc_gen0_end['collections'] - gc_gen0_start['collections']),
+                int(gc_gen0_end['collected'] - gc_gen0_start['collected']),
+                int(gc_gen0_end['uncollectable'] - gc_gen0_start['uncollectable']),
+                int(gc_gen1_end['collections'] - gc_gen1_start['collections']),
+                int(gc_gen1_end['collected'] - gc_gen1_start['collected']),
+                int(gc_gen1_end['uncollectable'] - gc_gen1_start['uncollectable']),
+                int(gc_gen2_end['collections'] - gc_gen2_start['collections']),
+                int(gc_gen2_end['collected'] - gc_gen2_start['collected']),
+                int(gc_gen2_end['uncollectable'] - gc_gen2_start['uncollectable'])
+            )
             iterations_list.append(iteration_result)
             wall_time = float(timer())
 
@@ -458,13 +600,56 @@ class SimpleRunner(BenchmarkRunner):
                     f'Benchmarking {group} (iteration {iteration_pass:6d}; '
                     f'time {wall_time_elapsed_seconds:<3.2f}s)'))
 
+        retained_metrics: list[int] = [
+            _TIMING, _CPU_TIMING, _MEMORY, _PEAK_MEMORY,
+            _GC_GEN0_COLLECTIONS_STATS, _GC_GEN0_COLLECTED_STATS, _GC_GEN0_UNCOLLECTABLE_STATS,
+            _GC_GEN1_COLLECTIONS_STATS, _GC_GEN1_COLLECTED_STATS, _GC_GEN1_UNCOLLECTABLE_STATS,
+            _GC_GEN2_COLLECTIONS_STATS, _GC_GEN2_COLLECTED_STATS, _GC_GEN2_UNCOLLECTABLE_STATS]
+        values: list[Values] = [] * len(retained_metrics)
+        for metric in sorted(retained_metrics):
+            values[metric] = Values(iteration[metric] for iteration in iterations_list)
+        ops_values: Values = Values(1 / timing if timing else 0.0 for timing in values[_TIMING])
+
+        iteration_results: dict[Metric, Values] = {
+            metrics_registry['STD_TIMING_STATS']: values[_TIMING],
+            metrics_registry['STD_CPU_TIMING_STATS']: values[_CPU_TIMING],
+            metrics_registry['STD_TIMING_RAW']: values[_TIMING],
+            metrics_registry['STD_CPU_TIMING_RAW']: values[_CPU_TIMING],
+            metrics_registry['STD_OPS_STATS']: ops_values,
+            metrics_registry['STD_OPS_RAW']: ops_values,
+            metrics_registry['STD_MEMORY_STATS']: values[_MEMORY],
+            metrics_registry['STD_MEMORY_RAW']: values[_MEMORY],
+            metrics_registry['STD_PEAK_MEMORY_STATS']: values[_PEAK_MEMORY],
+            metrics_registry['STD_PEAK_MEMORY_RAW']: values[_PEAK_MEMORY],
+            metrics_registry['STD_TOTAL_ELAPSED_TIME']: values[_TIMING],
+            metrics_registry['STD_TOTAL_CPU_TIME']: values[_CPU_TIMING],
+            metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS']: values[_GC_GEN0_COLLECTIONS_STATS],
+            metrics_registry['STD_GC_GEN0_COLLECTED_STATS']: values[_GC_GEN0_COLLECTED_STATS],
+            metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS']: values[_GC_GEN0_UNCOLLECTABLE_STATS],
+            metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS']: values[_GC_GEN1_COLLECTIONS_STATS],
+            metrics_registry['STD_GC_GEN1_COLLECTED_STATS']: values[_GC_GEN1_COLLECTED_STATS],
+            metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS']: values[_GC_GEN1_UNCOLLECTABLE_STATS],
+            metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS']: values[_GC_GEN2_COLLECTIONS_STATS],
+            metrics_registry['STD_GC_GEN2_COLLECTED_STATS']: values[_GC_GEN2_COLLECTED_STATS],
+            metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS']: values[_GC_GEN2_UNCOLLECTABLE_STATS],
+            metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW']: values[_GC_GEN0_COLLECTIONS_STATS],
+            metrics_registry['STD_GC_GEN0_COLLECTED_RAW']: values[_GC_GEN0_COLLECTED_STATS],
+            metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW']: values[_GC_GEN0_UNCOLLECTABLE_STATS],
+            metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW']: values[_GC_GEN1_COLLECTIONS_STATS],
+            metrics_registry['STD_GC_GEN1_COLLECTED_RAW']: values[_GC_GEN1_COLLECTED_STATS],
+            metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW']: values[_GC_GEN1_UNCOLLECTABLE_STATS],
+            metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW']: values[_GC_GEN2_COLLECTIONS_STATS],
+            metrics_registry['STD_GC_GEN2_COLLECTED_RAW']: values[_GC_GEN2_COLLECTED_STATS],
+            metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW']: values[_GC_GEN2_UNCOLLECTABLE_STATS],
+        }
+
         benchmark_results = Results(
             group=group,
             title=title,
             description=description,
             n=n,
             rounds=rounds,
-            iterations=iterations_list,
+            iterations=iteration_results,
             extra_info={})
         progress_tracker.stop()
 
@@ -472,6 +657,7 @@ class SimpleRunner(BenchmarkRunner):
 
     def _calibrate_rounds(self, *,  # noqa: C901
                           timer: Callable[[], int],
+                          cpu_timer: Callable[[], int],
                           kwargs: dict[str, Any],
                           setup: Optional[Callable[..., Any]] = None,
                           teardown: Optional[Callable[..., Any]] = None,
@@ -479,14 +665,15 @@ class SimpleRunner(BenchmarkRunner):
         """Auto-calibrate the number of rounds for the benchmark.
 
         This method estimates an appropriate number of rounds to use for the benchmark
-        based on the precision and overhead of the timer function and the expected
+        based on the precision and overhead of the timer functions and the expected
         execution time of the action being benchmarked.
 
         The goal is to choose a number of rounds such that the total time taken
-        for the action is significantly larger than the timer precision and overhead,
+        for the action is significantly larger than the timer functions' precision and overhead,
         to reduce the impact of timer quantization errors on the measurement.
 
         :param timer: The timer function to use for the benchmark.
+        :param cpu_timer: The CPU timer function to use for the benchmark.
         :param kwargs: Keyword arguments to pass to the action.
         :param setup: A setup function to run before each iteration.
         :param teardown: A teardown function to run after each iteration.
@@ -497,6 +684,10 @@ class SimpleRunner(BenchmarkRunner):
             raise SimpleBenchTypeError(
                 'Invalid timer function provided for rounds calibration',
                 tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION)
+        if not is_valid_timer(cpu_timer):
+            raise SimpleBenchTypeError(
+                'Invalid CPU timer function provided for rounds calibration',
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CPU_TIMER_FUNCTION)
         if not isinstance(kwargs, dict):
             raise SimpleBenchTypeError(
                 'Invalid kwargs provided for rounds calibration; must be a dict',
@@ -519,53 +710,74 @@ class SimpleRunner(BenchmarkRunner):
                 tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TEARDOWN)
 
         timer_overhead: float = timer_overhead_ns(timer)
+        cpu_timer_overhead: float = timer_overhead_ns(cpu_timer)
         timer_precision: float = timer_precision_ns(timer)
+        cpu_timer_precision: float = timer_precision_ns(cpu_timer)
 
         # Target significant figures for the measurement
         multiplier: float = math.pow(10, DEFAULT_SIGNIFICANT_FIGURES)
-        noise_floor_ns = timer_precision + timer_overhead
-        target_time_ns = multiplier * noise_floor_ns
+
+        timer_noise_floor_ns = timer_precision + timer_overhead
+        timer_target_time_ns = multiplier * timer_noise_floor_ns
+
+        cpu_timer_noise_floor_ns = cpu_timer_precision + cpu_timer_overhead
+        cpu_timer_target_time_ns = multiplier * cpu_timer_noise_floor_ns
 
         if callable(setup):
             setup()
 
         kiloround_timer = self._timer_function(1000)
         estimate_rounds: int = 1
+        total_action_time_ns: float = 0.0
+        total_action_cpu_time_ns: float = 0.0
+        timer_metrics: int
+
         while True:  # Loop until we find an adequate rounds estimate
             # Use kiloround chunking to avoid generating excessively large timer functions
-            total_action_time_ns: float
-            timer_metrics: int
             if estimate_rounds < 1000:
-                estimate_timer = self._timer_function(estimate_rounds)
-                total_action_time_ns = estimate_timer(timer, action, kwargs)
                 timer_metrics = 1
+                estimate_timer = self._timer_function(estimate_rounds)
+                total_action_time_ns, total_action_cpu_time_ns = estimate_timer(timer,
+                                                                                cpu_timer,
+                                                                                action,
+                                                                                kwargs)
             else:
                 total_action_time_ns = 0.0
+                total_action_cpu_time_ns = 0.0
                 timer_metrics = 0
                 kiloround_chunks, remaining_rounds = divmod(estimate_rounds, 1000)
                 while kiloround_chunks:
-                    total_action_time_ns += kiloround_timer(timer, action, kwargs)
+                    action_time_ns, action_cpu_time_ns = kiloround_timer(timer, cpu_timer, action, kwargs)
+                    total_action_time_ns += action_time_ns
+                    total_action_cpu_time_ns += action_cpu_time_ns
                     kiloround_chunks -= 1
                     timer_metrics += 1
+
                 if remaining_rounds:
                     partial_timer = self._timer_function(remaining_rounds)
-                    total_action_time_ns += partial_timer(timer, action, kwargs)
+                    action_time_ns, action_cpu_time_ns = partial_timer(timer, cpu_timer, action, kwargs)
+                    total_action_time_ns += action_time_ns
+                    total_action_cpu_time_ns += action_cpu_time_ns
                     timer_metrics += 1
 
             # Subtract the cumulative overhead from all timed metrics.
             total_measured_time_ns = total_action_time_ns - (timer_overhead * timer_metrics)
+            total_measured_cpu_time_ns = total_action_cpu_time_ns - (cpu_timer_overhead * timer_metrics)
 
             # loop exit condition
-            if total_measured_time_ns >= target_time_ns:
+            if (total_measured_time_ns >= timer_target_time_ns and
+                    total_measured_cpu_time_ns >= cpu_timer_target_time_ns):
                 break
 
-            if total_measured_time_ns <= 0:
+            if total_measured_time_ns <= 0 or total_measured_cpu_time_ns <= 0:
                 estimate_rounds *= 10
                 continue
 
             # Calculate the average time to estimate the next number of rounds.
             avg_action_time_ns = total_measured_time_ns / estimate_rounds
-            required_rounds = target_time_ns / avg_action_time_ns
+            avg_action_cpu_time_ns = total_measured_cpu_time_ns / estimate_rounds
+            required_rounds = max(timer_target_time_ns / avg_action_time_ns,
+                                  cpu_timer_target_time_ns / avg_action_cpu_time_ns)
             estimate_rounds = int(max(required_rounds, estimate_rounds * 10))
 
         if callable(teardown):

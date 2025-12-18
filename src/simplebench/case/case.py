@@ -5,36 +5,42 @@ import inspect
 import itertools
 from copy import copy
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, Sequence, get_type_hints
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, Sequence
 
 from simplebench import defaults, vcs
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.doc_utils import format_docstring
 from simplebench.enums import Color
-from simplebench.exceptions import (
-    SimpleBenchAttributeError,
-    SimpleBenchBenchmarkError,
-    SimpleBenchTimeoutError,
-    SimpleBenchTypeError,
-    SimpleBenchValueError,
-)
+from simplebench.exceptions import SimpleBenchAttributeError, SimpleBenchBenchmarkError, SimpleBenchTimeoutError
 from simplebench.report.versions import v1 as current_version
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_reporter_callback
-from simplebench.validators import (
-    validate_non_blank_string,
-    validate_non_negative_int,
-    validate_positive_float,
-    validate_positive_int,
-    validate_string,
-    validate_type,
-)
 
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
 from .mark import Mark
+from .validators import (
+    validate_action_signature,
+    validate_benchmark_id,
+    validate_description,
+    validate_group,
+    validate_iterations,
+    validate_kwargs_variations,
+    validate_max_time,
+    validate_min_time,
+    validate_options,
+    validate_rounds,
+    validate_runners,
+    validate_time_range,
+    validate_timeout,
+    validate_timer,
+    validate_title,
+    validate_variation_cols,
+    validate_vcs_info,
+    validate_warmup_iterations,
+)
 
 if TYPE_CHECKING:
     from simplebench.session import Session
@@ -190,10 +196,12 @@ class Case:
                  '_iterations', '_warmup_iterations', '_min_time', '_max_time',
                  '_variation_cols', '_kwargs_variations', '_variation_marks', '_runners',
                  '_callback', '_results', '_options', '_rounds',
-                 '_benchmark_id', '_vcs_info', '_timeout', '_timer')
+                 '_benchmark_id', '_vcs_info', '_timeout', '_timer', '_cpu_timer')
 
     @format_docstring(DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD,
-                      DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__,)
+                      DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__,
+                      DEFAULT_CPU_TIMER=defaults.DEFAULT_CPU_TIMER.__name__,
+                      )
     def __init__(self, *,
                  benchmark_id: Optional[str] = None,
                  vcs_info: Optional[vcs.VCSInfo] = None,
@@ -205,6 +213,7 @@ class Case:
                  warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
                  rounds: int | None = None,
                  timer: Callable[[], int] | None = None,
+                 cpu_timer: Callable[[], int] | None = None,
                  min_time: float = defaults.DEFAULT_MIN_TIME,
                  max_time: float = defaults.DEFAULT_MAX_TIME,
                  timeout: float | int | None = None,
@@ -267,6 +276,11 @@ class Case:
             is used by benchmark runners that require a timer.
 
             The timer function should be a callable that returns a float or int representing the current time.
+        :param cpu_timer: The CPU timer function to use for the benchmark. If None, the default CPU timer
+            from the Session() (if set) or from `simplebench.defaults.DEFAULT_CPU_TIMER` ({DEFAULT_CPU_TIMER})
+            is used by benchmark runners that require a CPU timer.
+
+            The CPU timer function should be a callable that returns a float or int representing the current CPU time.
         :param min_time: The minimum time for the benchmark to run in seconds. Its reference depends on the timer used,
             but by default it is wall-clock time.
         :param max_time: The maximum time for the benchmark run in seconds. Its reference depends on the timer used,
@@ -357,351 +371,32 @@ class Case:
         :raises SimpleBenchTypeError: If any parameter is of incorrect type.
         :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
-        self._group: str = validate_non_blank_string(
-                        group, "group",
-                        _CaseErrorTag.INVALID_GROUP_TYPE,
-                        _CaseErrorTag.INVALID_GROUP_VALUE)
-        # Processed first so can be used for cross-validation of action signature
-        self._kwargs_variations: dict[str, list[Any]] = Case.validate_kwargs_variations(kwargs_variations)
-        self._action: FunctionRunner = Case.validate_action_signature(
+        self._group: str = validate_group(group)
+        # kwargs_variations processed first so it can be used for cross-validation of action signature
+        self._kwargs_variations: dict[str, list[Any]] = validate_kwargs_variations(kwargs_variations)
+        self._action: FunctionRunner = validate_action_signature(
                                             action=action,
                                             kwargs_variations=self._kwargs_variations)
-        title = action.__name__ if title is None else title  # type: ignore[attr-defined]
-        self._title: str = validate_non_blank_string(
-                        title, "title",
-                        _CaseErrorTag.INVALID_TITLE_TYPE,
-                        _CaseErrorTag.INVALID_TITLE_VALUE)
-
-        if description is None:
-            description = action.__doc__ if action.__doc__ else '(no description)'
-        self._description: str = validate_non_blank_string(
-                        description, "description",
-                        _CaseErrorTag.INVALID_DESCRIPTION_TYPE,
-                        _CaseErrorTag.INVALID_DESCRIPTION_VALUE)
-
-        self._iterations: int = validate_positive_int(
-                        iterations, "iterations",
-                        _CaseErrorTag.INVALID_ITERATIONS_TYPE,
-                        _CaseErrorTag.INVALID_ITERATIONS_VALUE)
-        self._warmup_iterations: int = validate_non_negative_int(
-                        warmup_iterations, "warmup_iterations",
-                        _CaseErrorTag.INVALID_WARMUP_ITERATIONS_TYPE,
-                        _CaseErrorTag.INVALID_WARMUP_ITERATIONS_VALUE)
-        self._rounds: int | None = None
-        if rounds is not None:
-            self._rounds = validate_positive_int(
-                        rounds, "rounds",
-                        _CaseErrorTag.INVALID_ROUNDS_TYPE,
-                        _CaseErrorTag.INVALID_ROUNDS_VALUE)
-
-        self._timer: Callable[[], int] | None = None
-        if timer is None:
-            self._timer = None
-        elif not callable(timer):
-            raise SimpleBenchTypeError(
-                f'Invalid timer: {type(timer)}. Must be a callable.',
-                tag=_CaseErrorTag.INVALID_TIMER_NOT_CALLABLE)
-        else:
-            test_value = timer()
-            if not isinstance(test_value, int):
-                raise SimpleBenchTypeError(
-                    (f'Invalid timer: {type(timer)}. Timer callable must return an int, '
-                     f'got {type(test_value)}.'),
-                    tag=_CaseErrorTag.INVALID_TIMER_RETURN_TYPE)
-        self._timer = timer
-
-        self._min_time: float = validate_positive_float(
-                        min_time, "min_time",
-                        _CaseErrorTag.INVALID_MIN_TIME_TYPE,
-                        _CaseErrorTag.INVALID_MIN_TIME_VALUE)
-        self._max_time: float = validate_positive_float(
-                        max_time, "max_time",
-                        _CaseErrorTag.INVALID_MAX_TIME_TYPE,
-                        _CaseErrorTag.INVALID_MAX_TIME_VALUE)
-
-        if timeout is None:
-            timeout_value = self._max_time + defaults.DEFAULT_TIMEOUT_GRACE_PERIOD
-        else:
-            timeout_value = validate_positive_float(
-                            timeout, "timeout",
-                            _CaseErrorTag.INVALID_TIMEOUT_TYPE,
-                            _CaseErrorTag.INVALID_TIMEOUT_VALUE)
-            if timeout_value <= self._max_time:
-                raise SimpleBenchValueError(
-                    f'Invalid timeout: {timeout_value}. Must be greater than max_time {self._max_time}.',
-                    tag=_CaseErrorTag.INVALID_TIMEOUT_LESS_EQUAL_MAX_TIME)
-        self._timeout: float = timeout_value
-        self._benchmark_id: str
-        if benchmark_id is None:
-            self._benchmark_id = generate_benchmark_id(self, action)
-        else:
-            self._benchmark_id = validate_string(
-                benchmark_id, "benchmark_id",
-                _CaseErrorTag.INVALID_BENCHMARK_ID_TYPE,
-                _CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
-                strip=True, allow_blank=False, allow_empty=False)
-        self._variation_cols: dict[str, str] = Case.validate_variation_cols(variation_cols, self._kwargs_variations)
+        self._title: str = validate_title(action=self._action, title=title)
+        self._description: str = validate_description(action=self._action, description=description)
+        self._iterations: int = validate_iterations(iterations)
+        self._warmup_iterations: int = validate_warmup_iterations(warmup_iterations)
+        self._rounds: int | None = validate_rounds(rounds)
+        self._timer: Callable[[], int] | None = validate_timer(timer)
+        self._cpu_timer: Callable[[], int] | None = validate_timer(cpu_timer)
+        self._min_time: float = validate_min_time(min_time)
+        self._max_time: float = validate_max_time(max_time)
+        validate_time_range(self._min_time, self._max_time)
+        self._timeout: float = validate_timeout(timeout=timeout, max_time=self._max_time)
+        self._benchmark_id = validate_benchmark_id(benchmark_id or generate_benchmark_id(self, action))
+        self._variation_cols: dict[str, str] = validate_variation_cols(
+            variation_cols=variation_cols, kwargs_variations=self._kwargs_variations)
         self._variation_marks: dict[str, tuple[str, ...]] = self._generate_variation_marks()
-        self._runners: list[type[BenchmarkRunner]] = Case.validate_runners(runners)
+        self._runners: list[type[BenchmarkRunner]] = validate_runners(runners)
         self._callback: ReporterCallback | None = validate_reporter_callback(callback, allow_none=True)
-        self._options : list[ReporterOptions] = Case.validate_options(options)
+        self._options : list[ReporterOptions] = validate_options(options)
         self._results: list[Results] = []  # No validation needed here
-        self.validate_time_range(self._min_time, self._max_time)
-        self._vcs_info: vcs.VCSInfo | None = vcs.get_vcs_info() if vcs_info is None else validate_type(
-            vcs_info, vcs.VCSInfo, 'vcs_info', _CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE)
-
-    @staticmethod
-    def validate_time_range(min_time: float, max_time: float) -> None:
-        """Validate that min_time < max_time for the case.
-
-        :param min_time: The minimum time.
-        :type min_time: float
-        :param max_time: The maximum time.
-        :type max_time: float
-        :raises SimpleBenchValueError: The min_time is greater than max_time.
-        """
-        if min_time > max_time:
-            raise SimpleBenchValueError(
-                f'Invalid time range: min_time {min_time} > max_time {max_time}.',
-                tag=_CaseErrorTag.INVALID_TIME_RANGE)
-
-    @staticmethod
-    def validate_action_signature(  # pylint: disable=too-many-branches  # noqa: C901
-            action: FunctionRunner,
-            kwargs_variations: dict[str, Any]) -> FunctionRunner:
-        """Validate that action has correct signature.
-
-        An action function must accept one of the two following formats for its parameters:
-
-        **Two Parameters**
-            - _bench: BenchmarkRunner
-            - **kwargs: Arbitrary keyword arguments
-
-        **Explicit Parameters**
-            - _bench: BenchmarkRunner
-            - any number of explicit parameters
-
-        This is equivalent to the `ActionRunner` protocol.
-
-        :param action: The action function to validate.
-        :param kwargs_variations: The kwargs variations for the case.
-        :return: The validated action function.
-        :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature or
-            if the kwargs_variations is not a dictionary with valid keys or if the action signature
-            does not match the kwargs_variations keys.
-        """
-        if not callable(action):
-            raise SimpleBenchTypeError(
-                f'Invalid action: {action}. Must be a callable.',
-                tag=_CaseErrorTag.INVALID_ACTION_NOT_CALLABLE
-                )
-
-        # Resolve type hints to handle string annotations (from __future__ import annotations)
-        try:
-            type_hints = get_type_hints(action)
-        except Exception:  # pylint: disable=broad-exception-caught
-            # Fallback for callables where get_type_hints might fail (e.g. partials without globals)
-            type_hints = {}
-
-        action_signature = inspect.signature(action)
-        kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
-
-        bench_param = action_signature.parameters.get('_bench')
-        if bench_param is None:
-            raise SimpleBenchTypeError(
-                f'Invalid action: {action}. Must accept a "_bench" parameter.',
-                tag=_CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER
-                )
-        if bench_param.annotation is inspect.Parameter.empty:
-            raise SimpleBenchTypeError(
-                f'Invalid action: {action}. "_bench" parameter must be annotated with BenchmarkRunner.',
-                tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED
-                )
-
-        # Use the resolved type hint if available, otherwise use the annotation from signature
-        actual_annotation = type_hints.get('_bench', bench_param.annotation)
-
-        if actual_annotation != BenchmarkRunner:
-            raise SimpleBenchTypeError(
-                f'Invalid action: {action}. "_bench" parameter must be of type BenchmarkRunner.',
-                tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE
-                )
-
-        # No arguments other than _bench
-        if len(action_signature.parameters) == 1:
-            return action
-
-        # Two arguments: _bench and **kwargs
-        if len(action_signature.parameters) == 2:
-            # Check for **kwargs parameter
-            kwargs_param = action_signature.parameters.get('kwargs')
-            if kwargs_param is not None and kwargs_param.kind == inspect.Parameter.VAR_KEYWORD:
-                return action
-
-        # 2 or more arguments, _bench and explicit keyword-only parameters
-        for param_name in action_signature.parameters:
-            if param_name == '_bench':
-                continue
-            if param_name not in kwargs_variations:
-                raise SimpleBenchTypeError(
-                    (f'Invalid action: {action}. Parameter "{param_name}" '
-                     'not found in kwargs_variations.'),
-                    tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS
-                    )
-        for param_name in kwargs_variations:
-            if param_name not in action_signature.parameters:
-                raise SimpleBenchTypeError(
-                    (f'Invalid action: {action}. kwargs_variations key "{param_name}" '
-                     'not found in action parameters.'),
-                    tag=_CaseErrorTag.INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS
-                    )
-
-        # All checks passed
-        return action
-
-    @staticmethod
-    def validate_kwargs_variations(value: dict[str, list[Any]] | None) -> dict[str, list[Any]]:
-        """Validate the kwargs_variations dictionary.
-
-        Validates that the kwargs_variations is a dictionary where each key is a string
-        that is a valid Python identifier, and each value is a non-empty list.
-
-        A shallow copy of the validated dictionary and the lists is performed before returning to prevent
-        external modification.
-
-        :param value: The kwargs_variations dictionary to validate.
-            Defaults to {} if None.
-        :type value: dict[str, list[Any]] | None
-        :return: A shallow copy of the validated kwargs_variations dictionary or {} if not provided.
-            The keys are strings that are valid Python identifiers, and the values are non-empty lists.
-            The lists may contain any type of values.
-        :rtype: dict[str, list[Any]]
-        :raises SimpleBenchTypeError: If the kwargs_variations is not a dictionary or if any key is not a string
-            that is a valid Python identifier.
-        :raises SimpleBenchValueError: If any value is not a list or is an empty list.
-        """
-        if value is None:
-            return {}
-        if not isinstance(value, dict):
-            raise SimpleBenchTypeError(
-                f'Invalid kwargs_variations: {value}. Must be a dictionary.',
-                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT
-                )
-        validated_dict = {}
-        for key, kw_value in value.items():
-            if not isinstance(key, str):
-                raise SimpleBenchTypeError(
-                    f'Invalid kwargs_variations entry key: {key}. Keys must be of type str.',
-                    tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE
-                    )
-            if not key.isidentifier():
-                raise SimpleBenchValueError(
-                    f'Invalid kwargs_variations entry key: {key}. Keys must be valid Python identifiers.',
-                    tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER
-                    )
-            if not isinstance(kw_value, list):
-                raise SimpleBenchTypeError(
-                    f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. Values must be in a list.',
-                    tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST
-                    )
-            if not kw_value:
-                raise SimpleBenchValueError(
-                    (f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. '
-                     'Values cannot be empty lists.'),
-                    tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST
-                    )
-            validated_dict[key] = copy(kw_value)
-        return validated_dict
-
-    @staticmethod
-    def validate_variation_cols(variation_cols: dict[str, str] | None,
-                                kwargs_variations: dict[str, list[Any]]) -> dict[str, str]:
-        """Validate the variation_cols dictionary.
-
-        :param variation_cols: The variation_cols dictionary to validate or None.
-        :type variation_cols: dict[str, str] | None
-        :param kwargs_variations: The kwargs_variations dictionary to validate against.
-        :type kwargs_variations: dict[str, list[Any]]
-        :return: A shallow copy of the validated variation_cols dictionary or {} if not provided.
-            Each key is a keyword argument name from `kwargs_variations`, and each value is a
-            non-blank string to be used as the column label for that argument in reports.
-        :rtype: dict[str, str]
-        :raises SimpleBenchTypeError: If the variation_cols is not a dictionary or if any key or
-            value is not a string.
-        :raises SimpleBenchValueError: If any key is not found in `kwargs_variations` or if any
-            value is a blank string.
-        """
-        if variation_cols is None:
-            return {}
-        if not isinstance(variation_cols, dict):
-            raise SimpleBenchTypeError(
-                f'Invalid variation_cols: {variation_cols}. Must be a dictionary.',
-                tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT
-                )
-        validated_dict: dict[str, str] = {}
-        for key, vc_value in variation_cols.items():
-            if key not in kwargs_variations:
-                raise SimpleBenchValueError(
-                    f'Invalid variation_cols entry key: {key}. Key not found in kwargs_variations.',
-                    tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
-            if not isinstance(vc_value, str):
-                raise SimpleBenchTypeError(
-                    f'Invalid variation_cols entry value for entry "{key}": "{vc_value}". Values must be of type str.',
-                    tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING
-                    )
-            stripped_value = vc_value.strip()
-            if stripped_value == '':
-                raise SimpleBenchValueError(
-                    f'Invalid variation_cols entry value: "{vc_value}". Values cannot be blank strings.',
-                    tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK
-                    )
-            validated_dict[key] = stripped_value
-        return validated_dict
-
-    @staticmethod
-    def validate_runners(runners: Sequence[type[BenchmarkRunner]] | None) -> list[type[BenchmarkRunner]]:
-        """Validate the runner class.
-
-        :param runners: The runner class types to validate or None.
-
-        :param runners: The runner class types to validate.
-        :return: The validated runner classes as a list or an empty list if not provided.
-        :raises SimpleBenchTypeError: If `runners` is not a list of `Runner` or a `None` value.
-        """
-        if runners is None:
-            return []
-        validated_runners: list[type[BenchmarkRunner]] = []
-        for runner in runners:
-            if not issubclass(runner, BenchmarkRunner):
-                raise SimpleBenchTypeError(
-                    f'Invalid runner: {runner}. Must be a subclass of BenchmarkRunner.',
-                    tag=_CaseErrorTag.INVALID_RUNNER_NOT_SUBCLASS_OF_RUNNER)
-            validated_runners.append(runner)
-        return validated_runners
-
-    @staticmethod
-    def validate_options(value: Iterable[ReporterOptions] | None) -> list[ReporterOptions]:
-        """Validate the options list.
-
-        :param value: The options iterable to validate or None.
-        :return: A shallow copy of the validated options as a list or an empty list if not provided.
-        :rtype: list[ReporterOptions]
-        :raises SimpleBenchTypeError: If options is not a list or if any entry is not a ReporterOption.
-        """
-        if value is None:
-            return []
-        if not isinstance(value, Iterable):
-            raise SimpleBenchTypeError(
-                f'Invalid options: {value}. Must be an iterable.',
-                tag=_CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE)
-        options_list: list[ReporterOptions] = list(value)
-        for option in options_list:
-            if not isinstance(option, ReporterOptions):
-                raise SimpleBenchTypeError(
-                    f'Invalid option: {option}. Must be of type ReporterOption or a sub-class.',
-                    tag=_CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
-                    )
-        return options_list
+        self._vcs_info: vcs.VCSInfo | None = validate_vcs_info(vcs_info or vcs.get_vcs_info())
 
     def _generate_variation_marks(self) -> dict[str, tuple[str, ...]]:
         """Generate variation marks for the kwarg variations.
@@ -855,6 +550,17 @@ class Case:
         The timer function should be a callable that returns an int representing the current time.
         """
         return self._timer
+
+    @property
+    def cpu_timer(self) -> Callable[[], int] | None:
+        """The CPU timer function to use for the benchmark.
+
+        If None, the default CPU timer from the Session() (if set) or from
+        `simplebench.defaults.DEFAULT_CPU_TIMER` is used by benchmark runners that require a CPU timer.
+
+        The CPU timer function should be a callable that returns an int representing the current CPU time.
+        """
+        return self._cpu_timer
 
     @property
     def min_time(self) -> float:
@@ -1086,30 +792,6 @@ class Case:
                 completed=variations_counter + 1,
                 refresh=True)
         progress_tracker.stop()
-
-    def as_dict(self, full_data: bool = False) -> dict[str, Any]:
-        """Returns the benchmark case and results as a JSON serializable dict.
-
-        Only the results statistics are included by default. To include full results data,
-        set `full_data` to True.
-
-        :param full_data: Whether to include full results data. Defaults to False.
-        :return: A JSON serializable dict representation of the benchmark case and results.
-        :rtype: dict[str, Any]
-        """
-        results = []
-        for result in self.results:
-            results.append(result.as_dict(full_data=full_data))
-
-        return {
-            'type': self.__class__.__name__,
-            'group': self.group,
-            'title': self.title,
-            'description': self.description,
-            'variation_cols': self.variation_cols,
-            'variation_marks': self.variation_marks,
-            'results': results.as_dict(full_data=full_data)
-        }
 
     def report(self, full_data: bool = False) -> Report:
         """Returns the benchmark case and results as a Report object.

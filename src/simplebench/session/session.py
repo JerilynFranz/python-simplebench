@@ -26,6 +26,7 @@ from simplebench.reporters.reporter_manager import ReporterManager
 from simplebench.utils import sanitize_filename
 
 from ._error_tags import _SessionErrorTag
+from .validators import validate_timer
 
 log = logging.getLogger(__name__)
 
@@ -52,7 +53,8 @@ class Session():
                  show_progress: bool = False,
                  output_path: Optional[Path] = None,
                  console: Optional[Console] = None,
-                 timer: Callable[[], int] | None = None) -> None:
+                 timer: Callable[[], int] | None = None,
+                 cpu_timer: Callable[[], int] | None = None) -> None:
         """Container and orchestrator for session related information while running benchmarks.
 
         :param cases: A Sequence of benchmark cases for the session.
@@ -81,12 +83,13 @@ class Session():
         self.default_runners = default_runners
         self.args_parser = ArgumentParser() if args_parser is None else args_parser
 
-        self.cases = [] if cases is None else cases
+        self.cases = cases or []
         self.verbosity = verbosity
         self.show_progress = show_progress
         self.output_path = output_path
-        self.console = Console() if console is None else console
-        self.timer = defaults.DEFAULT_TIMER if timer is None else timer
+        self.console = console or Console()
+        self.timer = timer
+        self.cpu_timer = cpu_timer
 
         # private attributes
         self._args_parsed: bool = False
@@ -385,29 +388,32 @@ class Session():
         log.info("Session.report() finished.")
 
     @property
-    def timer(self) -> Callable[[], int]:
+    def timer(self) -> Callable[[], int] | None:
         """The timer function used for benchmarking."""
         return self._timer
 
     @timer.setter
-    def timer(self, value: Callable[[], int]) -> None:
+    def timer(self, value: Callable[[], int] | None) -> None:
         """Set the timer function used for benchmarking.
 
         :param value: The timer function used for benchmarking.
         :raises SimpleBenchTypeError: If the value is not a callable that returns an int.
         """
-        if not callable(value):
-            raise SimpleBenchTypeError(
-                f'timer must be a callable - cannot be a {type(value)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_TIMER_ARG
-            )
-        test_result = value()
-        if not isinstance(test_result, int):
-            raise SimpleBenchTypeError(
-                f'timer callable must return an int - cannot return a {type(test_result)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_TIMER_RETURN_TYPE
-            )
-        self._timer = value
+        self._timer: Callable[[], int] | None = validate_timer(value)
+
+    @property
+    def cpu_timer(self) -> Callable[[], int] | None:
+        """The CPUtimer function used for benchmarking."""
+        return self._cpu_timer
+
+    @cpu_timer.setter
+    def cpu_timer(self, value: Callable[[], int] | None) -> None:
+        """Set the CPU timer function used for benchmarking.
+
+        :param value: The timer function used for benchmarking.
+        :raises SimpleBenchTypeError: If the value is not a callable that returns an int.
+        """
+        self._cpu_timer: Callable[[], int] | None = validate_timer(value)
 
     @property
     def default_runners(self) -> list[type[BenchmarkRunner]]:
@@ -450,7 +456,8 @@ class Session():
 
         if not isinstance(runners, Sequence):
             raise SimpleBenchTypeError(
-                f'default_runners must be a Sequence of BenchmarkRunner subclasses or None - cannot be a {type(runners)}',
+                'default_runners must be a Sequence of BenchmarkRunner subclasses '
+                f'or None - cannot be a {type(runners)}',
                 tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
             )
 
@@ -458,7 +465,8 @@ class Session():
         for runner in runners:
             if not (isinstance(runner, type) and issubclass(runner, BenchmarkRunner)) and runner is not BenchmarkRunner:
                 raise SimpleBenchTypeError(
-                    f'default_runners must be a sequence of subclasses of BenchmarkRunner or None - cannot be a {type(runner)}',
+                    'default_runners must be a sequence of subclasses of BenchmarkRunner or '
+                    f'None - cannot be a {type(runner)}',
                     tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
                 )
         self._default_runners = validated_runners

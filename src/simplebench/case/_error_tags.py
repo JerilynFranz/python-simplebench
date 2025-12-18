@@ -8,6 +8,10 @@ from simplebench.exceptions import ErrorTag
 class _CaseErrorTag(ErrorTag):
     """ErrorTags for case-related exceptions.
     """
+    INVALID_CPU_TIMER_NOT_CALLABLE = "INVALID_CPU_TIMER_NOT_CALLABLE"
+    """The CPU timer argument passed to the Case() constructor is not a callable."""
+    INVALID_CPU_TIMER_RETURN_TYPE = "INVALID_CPU_TIMER_RETURN_TYPE"
+    """The CPU timer callable passed to the Case() constructor does not return an int."""
     INVALID_TIMER_NOT_CALLABLE = "INVALID_TIMER_NOT_CALLABLE"
     """The timer argument passed to the Case() constructor is not a callable."""
     INVALID_TIMER_RETURN_TYPE = "INVALID_TIMER_RETURN_TYPE"

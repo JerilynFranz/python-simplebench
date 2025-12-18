@@ -6,6 +6,12 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _SimpleRunnerErrorTag(ErrorTag):
     """ErrorTags for the runners module."""
+    # _create_timers_module() tags
+    RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_TYPE = "RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_TYPE"
+    """The namespace argument for creating the timers module was not a string."""
+    RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_VALUE = "RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_VALUE"
+    """The namespace argument for creating the timers module was not a valid identifier."""
+
     RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED = "RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED"
     """Failed to create the timers module spec"""
     SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE = "SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE"
@@ -18,6 +24,9 @@ class _SimpleRunnerErrorTag(ErrorTag):
     # calibrate_rounds() tags
     SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION = "SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION"
     """The timer argument was not a supported timer function"""
+    SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CPU_TIMER_FUNCTION = (
+        "SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CPU_TIMER_FUNCTION")
+    """The CPU timer argument was not a supported timer function"""
     SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_TYPE = "SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_TYPE"
     """The kwargs argument was not a dict"""
     SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_KEY_TYPE = "SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_KEY_TYPE"

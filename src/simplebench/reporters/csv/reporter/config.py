@@ -92,7 +92,7 @@ class CSVConfig(ReporterConfig):
                     flags=['--csv.ops'], flag_type=FlagType.TARGET_LIST, name='csv-ops',
                     description=('Output ops/second statistical metrics to CSV '
                                  '(filesystem, console, callback, default=filesystem)'),
-                    metrics=MetricsCollection(metrics_registry['STD_OPS'],
+                    metrics=MetricsCollection(metrics_registry['STD_OPS_STATS'],
                                               metrics_registry['STD_TOTAL_ELAPSED_TIME']),
                     targets=allowed_targets,
                     output_format=Format.CSV),
@@ -100,15 +100,15 @@ class CSVConfig(ReporterConfig):
                     flags=['--csv.timing'], flag_type=FlagType.TARGET_LIST, name='csv-timing',
                     description=('Output timing statistical metrics to CSV '
                                  '(filesystem, console, callback, default=filesystem)'),
-                    metrics=MetricsCollection(metrics_registry['STD_TIMING'],
+                    metrics=MetricsCollection(metrics_registry['STD_TIMING_STATS'],
                                               metrics_registry['STD_TOTAL_ELAPSED_TIME']),
                     targets=allowed_targets,
                     output_format=Format.CSV),
                 ChoiceConf(
                     flags=['--csv.memory'], flag_type=FlagType.TARGET_LIST, name='csv-memory',
                     description='Output memory metrics to CSV (filesystem, console, callback, default=filesystem)',
-                    metrics=MetricsCollection(metrics_registry['STD_MEMORY'],
-                                              metrics_registry['STD_PEAK_MEMORY'],
+                    metrics=MetricsCollection(metrics_registry['STD_MEMORY_STATS'],
+                                              metrics_registry['STD_PEAK_MEMORY_STATS'],
                                               metrics_registry['STD_TOTAL_ELAPSED_TIME']),
                     targets=allowed_targets,
                     output_format=Format.CSV),

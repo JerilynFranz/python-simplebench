@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from copy import copy, deepcopy
 from types import MappingProxyType
-from typing import Any, Optional, Sequence, TypeAlias
+from typing import Any, Mapping, Optional, TypeAlias
 
 import simplebench.report.versions.v1 as current_version
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -17,12 +17,13 @@ from simplebench.validators import (
 )
 
 from ._error_tags import _ResultsErrorTag
-from .metrics import Iteration, Stats
+from .metrics import Stats
 
 MetricsObject: TypeAlias = current_version.MetricsObject
 ResultsInfo: TypeAlias = current_version.ResultsInfo
 StatsBlock: TypeAlias = current_version.StatsBlock
 ValueBlock: TypeAlias = current_version.ValueBlock
+RawDataBlock: TypeAlias = current_version.RawDataBlock
 
 
 class Results:
@@ -79,7 +80,7 @@ class Results:
                  description: str,
                  n: float,
                  rounds: int,
-                 iterations: Sequence[Iteration],
+                 iterations: Mapping[Metric, Values],
                  variation_cols: dict[str, str] | None = None,
                  marks: dict[str, tuple[str, ...]] | None = None,
                  extra_info: Optional[dict[str, Any]] = None) -> None:
@@ -90,7 +91,7 @@ class Results:
         :param description: A brief description of the benchmark case.
         :param n: The O() complexity analysis size/weighting.
         :param rounds: The number of rounds the benchmark ran per iteration.
-        :param iterations: A Sequence of metrics and their values for the benchmark.
+        :param iterations: A mapping of metrics to their values for the benchmark.
         :param variation_cols: The columns to use for labelling kwarg variations
             in the benchmark. Defaults to None, which results in an empty dictionary.
         :param marks: A dictionary of variation marks used to identify
@@ -171,33 +172,25 @@ class Results:
         # shallow copy to prevent external mutation
         return MappingProxyType(copy(value))
 
-    def _validate_iterations(self, value: Sequence[Iteration]) -> MappingProxyType[Metric, Values]:
-        """Validate the iterations Sequence.
+    def _validate_iterations(self, iterations: Mapping[Metric, Values]) -> MappingProxyType[Metric, Values]:
+        """Validate the iterations Mapping.
 
         Args:
-            value (Sequence[Iteration]): The iterations Sequence to validate.
-
+            values (Mapping[Metric, Values]): The iterations Mapping to validate.
         Returns:
             MappingProxyType[Metric, Values]: A mapping proxy of the validated iterations.
         """
-        if not isinstance(value, Sequence):
+        if not isinstance(iterations, Mapping):
             raise SimpleBenchTypeError(
-                f'Invalid iterations type: {type(value)}. Must be of type list.',
+                f'Invalid iterations type: {type(iterations)}. Must be of type Mapping[Metric, Values].',
                 tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE
             )
-        iterations: dict[Metric, list[float]] = {}
-        for measurement in value:
-            if not isinstance(measurement, Iteration):
-                raise SimpleBenchTypeError(
-                    f'Invalid iteration element type: {type(measurement)}. Must be of type Iteration.',
-                    tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE
-                )
-            for metric, metric_value in measurement.values:
-                iterations.setdefault(metric, []).append(metric_value)
-        final_iterations: dict[Metric, Values] = {
-            metric: Values(data_set) for metric, data_set in iterations.items()
-        }
-        return MappingProxyType(final_iterations)
+        if not all(isinstance(key, Metric) and isinstance(value, Values) for key, value in iterations.items()):
+            raise SimpleBenchTypeError(
+                'Invalid iterations mapping. All keys must be of type Metric and all values must be of type Values.',
+                tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE
+            )
+        return MappingProxyType(iterations)
 
     def _validate_marks(self, value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tuple[str, ...]]:
         """Validate the marks dictionary.
@@ -392,7 +385,7 @@ class Results:
                 (f'Invalid metric: {metric}. Must be Metric with raw type.'),
                 tag=_ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE
             )
-        return self.iterations[metric]
+        return self._iterations[metric]
 
     def results_metric(self, metric: Metric) -> Values:
         """Returns the requested metric of the benchmark results.
@@ -437,6 +430,22 @@ class Results:
             value=total_sum
         )
 
+    def raw_block(self, metric: Metric) -> RawDataBlock:
+        """Returns the RawDataBlock representation of the raw data for the given metric.
+
+        :param Metric metric: The metric of the results to return. Must be a registered metric.
+
+        :return RawDataBlock: The RawDataBlock representation of the raw data for the given metric.
+        """
+        raw_data: Values = self.raw(metric)
+        return RawDataBlock(
+            semantic_type=metric.metric_type.semantic_type,
+            timer=None,
+            unit=metric.metric_type.unit,
+            scale=metric.metric_type.scale,
+            data=raw_data
+        )
+
     def results_info(self, full_data: bool = False) -> ResultsInfo:
         """Returns a summary of the benchmark results.
 
@@ -452,6 +461,8 @@ class Results:
                 metrics[metric.label] = self.stats_block(metric, full_data=full_data)
             elif metric.metric_type == MetricCategory.CUMULATIVE:
                 metrics[metric.label] = self.sum_value_block(metric)
+            elif metric.metric_type == MetricCategory.RAW:
+                metrics[metric.label] = self.raw_block(metric)
 
         return ResultsInfo(
             group=self.group,

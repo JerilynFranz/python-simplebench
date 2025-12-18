@@ -74,6 +74,9 @@ DEFAULT_WARMUP_ITERATIONS: int = 100
 DEFAULT_TIMER = time.perf_counter_ns
 """Default timer function for benchmarking."""
 
+DEFAULT_CPU_TIMER = time.process_time_ns
+"""Default CPU timer function for benchmarking."""
+
 DEFAULT_MIN_TIME: float = 5.0
 """Default minimum time for a benchmark run (in seconds)."""
 

@@ -62,7 +62,7 @@ class _ResultsErrorTag(ErrorTag):
     PER_ROUND_TIMINGS_INVALID_ARG_TYPE = "PER_ROUND_TIMINGS_INVALID_ARG_TYPE"
     """Something other than an OperationTimings instance was passed as the per_round_timings arg"""
     ITERATIONS_INVALID_ARG_TYPE = "ITERATIONS_INVALID_ARG_TYPE"
-    """Something other than a Sequence of Iteration instances was passed as the iterations arg"""
+    """Something other than a Mapping of Metric to Values instances was passed as the iterations arg"""
     ITERATIONS_INVALID_ARG_IN_SEQUENCE = "ITERATIONS_INVALID_ARG_IN_SEQUENCE"
     """Something other than an Iteration instance was found in the Sequence passed as the iterations arg"""
     VARIATION_COLS_INVALID_ARG_TYPE = "VARIATION_COLS_INVALID_ARG_TYPE"

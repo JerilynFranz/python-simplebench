@@ -69,7 +69,7 @@ class ScatterPlotConfig(ReporterConfig):
                     flags=['--scatter-plot.ops'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-ops',
                     description='Create scatter plots of operations per second results.',
                     metrics=MetricsCollection(metrics=[
-                        metrics_registry['STD_OPS'],
+                        metrics_registry['STD_OPS_STATS'],
                         metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
                     targets=allowed_targets,
                     output_format=Format.GRAPH),
@@ -77,7 +77,7 @@ class ScatterPlotConfig(ReporterConfig):
                     flags=['--scatter-plot.timings'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-timings',
                     description='Create scatter plots of timing results.',
                     metrics=MetricsCollection(metrics=[
-                        metrics_registry['STD_TIMING'],
+                        metrics_registry['STD_TIMING_STATS'],
                         metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
                     targets=allowed_targets,
                     output_format=Format.GRAPH),
@@ -85,8 +85,8 @@ class ScatterPlotConfig(ReporterConfig):
                     flags=['--scatter-plot.memory'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-memory',
                     description='Create scatter plots of memory usage results.',
                     metrics=MetricsCollection(metrics=[
-                        metrics_registry['STD_MEMORY'],
-                        metrics_registry['STD_PEAK_MEMORY'],
+                        metrics_registry['STD_MEMORY_STATS'],
+                        metrics_registry['STD_PEAK_MEMORY_STATS'],
                         metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
                     targets=allowed_targets,
                     output_format=Format.GRAPH),

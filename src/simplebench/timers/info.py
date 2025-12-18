@@ -1,4 +1,16 @@
-"""Module providing timing utilities."""
+"""Module providing timing utilities.
+
+All supported timers return the current time in nanoseconds as an integer.
+
+Supported timers include:
+
+  - `time.monotonic_ns()`: Monotonic clock, cannot go backwards.
+  - `time.perf_counter_ns()`: High-resolution performance counter.
+  - `time.process_time_ns()`: CPU process time.
+  - `time.thread_time_ns()`: CPU thread time.
+  - `fake_timer()`: A fake timer that always returns zero, used only for testing purposes.
+
+"""
 from __future__ import annotations
 
 import importlib.util
