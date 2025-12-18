@@ -6,10 +6,12 @@ It measures the time taken to execute a given action and the memory usage of the
 It also provides a method to automatically calibrate the number of rounds for the benchmark
 timing to achieve a desired level of precision and accuracy in the measurements.
 
-It provides several Metrics for each benchmark run:
+It provides the following standard Metrics for each benchmark run:
 
 - STD_TIMING_STATS: timing statistics for each operation
 - STD_TIMING_RAW: timing raw values for each operation
+- STD_CPU_TIME_STATS: CPU time statistics for each operation
+- STD_CPU_TIME_RAW: CPU time raw values for each operation
 - STD_OPS_STATS: operations per second statistics
 - STD_OPS_RAW: operations per second raw values
 - STD_MEMORY_STATS: memory usage statistics
@@ -17,6 +19,7 @@ It provides several Metrics for each benchmark run:
 - STD_PEAK_MEMORY_STATS: peak memory usage statistics
 - STD_PEAK_MEMORY_RAW: peak memory usage raw values
 - STD_TOTAL_ELAPSED_TIME: The sum of all timing raw values
+- STD_TOTAL_CPU_TIME: The sum of all CPU time raw values
 - STD_GC_GEN0_COLLECTIONS_STATS: Number of garbage collections for generation 0
 - STD_GC_GEN0_COLLECTIONS_RAW: Number of garbage collections for generation 0 (raw values)
 - STD_GC_GEN1_COLLECTIONS_STATS: Number of garbage collections for generation 1
@@ -124,7 +127,7 @@ _Measurement: TypeAlias = tuple[
 
 The tuple contains the following elements:
     - timing (float): The time taken to execute the action.
-    - cpu_timing (float): The CPU time taken to execute the action.
+    - cpu_time (float): The CPU time taken to execute the action.
     - memory (int): The memory usage of the action.
     - peak_memory (int): The peak memory usage of the action.
     - gc_gen0_collections (int): The number of generation 0 garbage collections.
@@ -138,31 +141,36 @@ The tuple contains the following elements:
     - gc_gen2_uncollectable (int): The number of uncollectable objects in generation 2.
 """
 
+# Index constants for measurement tuple elements
+# This is a performance/code readability optimization to avoid using magic numbers
+# Each constant represents the index of a specific element in the measurement tuple
+# This is faster than using NamedTuple field access and provides a good way
+# to process measurement tuples efficiently and clearly
 _TIMING: Final[Literal[0]] = 0
 """A constant representing the index of the timing element in a measurement tuple."""
-_CPU_TIMING: Final[Literal[1]] = 1
+_CPU_TIME: Final[Literal[1]] = 1
 """A constant representing the index of the CPU timing element in a measurement tuple."""
 _MEMORY: Final[Literal[2]] = 2
 """A constant representing the index of the memory element in a measurement tuple."""
 _PEAK_MEMORY: Final[Literal[3]] = 3
 """A constant representing the index of the peak memory element in a measurement tuple."""
-_GC_GEN0_COLLECTIONS_STATS: Final[Literal[4]] = 4
+_GC_GEN0_COLLECTIONS: Final[Literal[4]] = 4
 """A constant representing the index of the generation 0 garbage collections element in a measurement tuple."""
-_GC_GEN0_COLLECTED_STATS: Final[Literal[5]] = 5
+_GC_GEN0_COLLECTED: Final[Literal[5]] = 5
 """A constant representing the index of the generation 0 collected garbage element in a measurement tuple."""
-_GC_GEN0_UNCOLLECTABLE_STATS: Final[Literal[6]] = 6
+_GC_GEN0_UNCOLLECTABLE: Final[Literal[6]] = 6
 """A constant representing the index of the generation 0 uncollectable garbage element in a measurement tuple."""
-_GC_GEN1_COLLECTIONS_STATS: Final[Literal[7]] = 7
+_GC_GEN1_COLLECTIONS: Final[Literal[7]] = 7
 """A constant representing the index of the generation 1 garbage collections element in a measurement tuple."""
-_GC_GEN1_COLLECTED_STATS: Final[Literal[8]] = 8
+_GC_GEN1_COLLECTED: Final[Literal[8]] = 8
 """A constant representing the index of the generation 1 collected garbage element in a measurement tuple."""
-_GC_GEN1_UNCOLLECTABLE_STATS: Final[Literal[9]] = 9
+_GC_GEN1_UNCOLLECTABLE: Final[Literal[9]] = 9
 """A constant representing the index of the generation 1 uncollectable garbage element in a measurement tuple."""
-_GC_GEN2_COLLECTIONS_STATS: Final[Literal[10]] = 10
+_GC_GEN2_COLLECTIONS: Final[Literal[10]] = 10
 """A constant representing the index of the generation 2 garbage collections element in a measurement tuple."""
-_GC_GEN2_COLLECTED_STATS: Final[Literal[11]] = 11
+_GC_GEN2_COLLECTED: Final[Literal[11]] = 11
 """A constant representing the index of the generation 2 collected garbage element in a measurement tuple."""
-_GC_GEN2_UNCOLLECTABLE_STATS: Final[Literal[12]] = 12
+_GC_GEN2_UNCOLLECTABLE: Final[Literal[12]] = 12
 """A constant representing the index of the generation 2 uncollectable garbage element in a measurement tuple."""
 
 
@@ -601,10 +609,10 @@ class SimpleRunner(BenchmarkRunner):
                     f'time {wall_time_elapsed_seconds:<3.2f}s)'))
 
         retained_metrics: list[int] = [
-            _TIMING, _CPU_TIMING, _MEMORY, _PEAK_MEMORY,
-            _GC_GEN0_COLLECTIONS_STATS, _GC_GEN0_COLLECTED_STATS, _GC_GEN0_UNCOLLECTABLE_STATS,
-            _GC_GEN1_COLLECTIONS_STATS, _GC_GEN1_COLLECTED_STATS, _GC_GEN1_UNCOLLECTABLE_STATS,
-            _GC_GEN2_COLLECTIONS_STATS, _GC_GEN2_COLLECTED_STATS, _GC_GEN2_UNCOLLECTABLE_STATS]
+            _TIMING, _CPU_TIME, _MEMORY, _PEAK_MEMORY,
+            _GC_GEN0_COLLECTIONS, _GC_GEN0_COLLECTED, _GC_GEN0_UNCOLLECTABLE,
+            _GC_GEN1_COLLECTIONS, _GC_GEN1_COLLECTED, _GC_GEN1_UNCOLLECTABLE,
+            _GC_GEN2_COLLECTIONS, _GC_GEN2_COLLECTED, _GC_GEN2_UNCOLLECTABLE]
         values: list[Values] = [] * len(retained_metrics)
         for metric in sorted(retained_metrics):
             values[metric] = Values(iteration[metric] for iteration in iterations_list)
@@ -612,9 +620,9 @@ class SimpleRunner(BenchmarkRunner):
 
         iteration_results: dict[Metric, Values] = {
             metrics_registry['STD_TIMING_STATS']: values[_TIMING],
-            metrics_registry['STD_CPU_TIMING_STATS']: values[_CPU_TIMING],
+            metrics_registry['STD_CPU_TIME_STATS']: values[_CPU_TIME],
             metrics_registry['STD_TIMING_RAW']: values[_TIMING],
-            metrics_registry['STD_CPU_TIMING_RAW']: values[_CPU_TIMING],
+            metrics_registry['STD_CPU_TIME_RAW']: values[_CPU_TIME],
             metrics_registry['STD_OPS_STATS']: ops_values,
             metrics_registry['STD_OPS_RAW']: ops_values,
             metrics_registry['STD_MEMORY_STATS']: values[_MEMORY],
@@ -622,25 +630,25 @@ class SimpleRunner(BenchmarkRunner):
             metrics_registry['STD_PEAK_MEMORY_STATS']: values[_PEAK_MEMORY],
             metrics_registry['STD_PEAK_MEMORY_RAW']: values[_PEAK_MEMORY],
             metrics_registry['STD_TOTAL_ELAPSED_TIME']: values[_TIMING],
-            metrics_registry['STD_TOTAL_CPU_TIME']: values[_CPU_TIMING],
-            metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS']: values[_GC_GEN0_COLLECTIONS_STATS],
-            metrics_registry['STD_GC_GEN0_COLLECTED_STATS']: values[_GC_GEN0_COLLECTED_STATS],
-            metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS']: values[_GC_GEN0_UNCOLLECTABLE_STATS],
-            metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS']: values[_GC_GEN1_COLLECTIONS_STATS],
-            metrics_registry['STD_GC_GEN1_COLLECTED_STATS']: values[_GC_GEN1_COLLECTED_STATS],
-            metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS']: values[_GC_GEN1_UNCOLLECTABLE_STATS],
-            metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS']: values[_GC_GEN2_COLLECTIONS_STATS],
-            metrics_registry['STD_GC_GEN2_COLLECTED_STATS']: values[_GC_GEN2_COLLECTED_STATS],
-            metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS']: values[_GC_GEN2_UNCOLLECTABLE_STATS],
-            metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW']: values[_GC_GEN0_COLLECTIONS_STATS],
-            metrics_registry['STD_GC_GEN0_COLLECTED_RAW']: values[_GC_GEN0_COLLECTED_STATS],
-            metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW']: values[_GC_GEN0_UNCOLLECTABLE_STATS],
-            metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW']: values[_GC_GEN1_COLLECTIONS_STATS],
-            metrics_registry['STD_GC_GEN1_COLLECTED_RAW']: values[_GC_GEN1_COLLECTED_STATS],
-            metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW']: values[_GC_GEN1_UNCOLLECTABLE_STATS],
-            metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW']: values[_GC_GEN2_COLLECTIONS_STATS],
-            metrics_registry['STD_GC_GEN2_COLLECTED_RAW']: values[_GC_GEN2_COLLECTED_STATS],
-            metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW']: values[_GC_GEN2_UNCOLLECTABLE_STATS],
+            metrics_registry['STD_TOTAL_CPU_TIME']: values[_CPU_TIME],
+            metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS']: values[_GC_GEN0_COLLECTIONS],
+            metrics_registry['STD_GC_GEN0_COLLECTED_STATS']: values[_GC_GEN0_COLLECTED],
+            metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS']: values[_GC_GEN0_UNCOLLECTABLE],
+            metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS']: values[_GC_GEN1_COLLECTIONS],
+            metrics_registry['STD_GC_GEN1_COLLECTED_STATS']: values[_GC_GEN1_COLLECTED],
+            metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS']: values[_GC_GEN1_UNCOLLECTABLE],
+            metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS']: values[_GC_GEN2_COLLECTIONS],
+            metrics_registry['STD_GC_GEN2_COLLECTED_STATS']: values[_GC_GEN2_COLLECTED],
+            metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS']: values[_GC_GEN2_UNCOLLECTABLE],
+            metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW']: values[_GC_GEN0_COLLECTIONS],
+            metrics_registry['STD_GC_GEN0_COLLECTED_RAW']: values[_GC_GEN0_COLLECTED],
+            metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW']: values[_GC_GEN0_UNCOLLECTABLE],
+            metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW']: values[_GC_GEN1_COLLECTIONS],
+            metrics_registry['STD_GC_GEN1_COLLECTED_RAW']: values[_GC_GEN1_COLLECTED],
+            metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW']: values[_GC_GEN1_UNCOLLECTABLE],
+            metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW']: values[_GC_GEN2_COLLECTIONS],
+            metrics_registry['STD_GC_GEN2_COLLECTED_RAW']: values[_GC_GEN2_COLLECTED],
+            metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW']: values[_GC_GEN2_UNCOLLECTABLE],
         }
 
         benchmark_results = Results(

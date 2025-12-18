@@ -15,6 +15,7 @@ Types for metrics in reporters and benchmarks.
     - `STD_PEAK_MEMORY_STATS`: Peak memory usage metric statistics.
     - `STD_PEAK_MEMORY_RAW`: Raw list of peak memory usage data metric.
     - `STD_TOTAL_ELAPSED_TIME`: Total elapsed time for the benchmark.
+    - `STD_TOTAL_CPU_TIME`: Total CPU time for the benchmark.
     - `STD_CPU_TIME_STATS`: CPU time per measurement metric statistics.
     - `STD_CPU_TIME_RAW`: Raw list of CPU time per measurement data.
     - `STD_GC_GEN0_COLLECTIONS_STATS`: Number of garbage collections for generation 0
@@ -155,6 +156,16 @@ STD_TOTAL_ELAPSED_TIME: Final[MetricType] = MetricType(
     description='Total elapsed time',
     scale=1.0)
 """Total elapsed time metric."""
+
+
+STD_TOTAL_CPU_TIME: Final[MetricType] = MetricType(
+    category=MetricCategory.CUMULATIVE,
+    semantic_type='simplebench_std::total_cpu_time',
+    label='STD_TOTAL_CPU_TIME',
+    unit='s',
+    description='Total CPU time',
+    scale=1.0)
+"""Total CPU time metric."""
 
 STD_CPU_TIME_STATS: Final[MetricType] = MetricType(
     category=MetricCategory.STATISTICAL,
@@ -382,6 +393,7 @@ metrics: Final[MetricTypes] = MetricTypes([  # pylint: disable=invalid-name
 - `STD_PEAK_MEMORY_STATS`: Peak memory usage metric statistics.
 - `STD_PEAK_MEMORY_RAW`: Raw list of peak memory usage data metric.
 - `STD_TOTAL_ELAPSED_TIME`: Total elapsed time for the benchmark.
+- `STD_TOTAL_CPU_TIME`: Total CPU time for the benchmark.
 - `STD_CPU_TIME_STATS`: CPU time per measurement metric statistics.
 - `STD_CPU_TIME_RAW`: Raw list of CPU time per measurement data.
 - `STD_GC_GEN0_COLLECTIONS_STATS`: Number of garbage collections for generation 0
