@@ -15,6 +15,24 @@ from simplebench.validators import validate_iterable_of_type, validate_type
 from ._error_tags import _HydratorErrorTag
 
 
+def _validate_data(data: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate the data dictionary.
+
+    :param data: The data dictionary to validate.
+    :return: A validated, mutable `dict` copy of the data.
+    :raises: SimpleBenchTypeError if the data dictionary is invalid.
+    """
+    validate_type(data, Mapping, 'data',
+                  _HydratorErrorTag.INVALID_DATA_TYPE)
+
+    if not all(isinstance(key, str) for key in data.keys()):
+        raise SimpleBenchTypeError(
+            "All keys in the data dictionary must be of type 'str'",
+            tag=_HydratorErrorTag.INVALID_DATA_KEY_TYPE)
+
+    return dict(data)
+
+
 def _validate_allowed(
         allowed: Mapping[str, Any]) -> Mapping[str, Any]:
     """Validate the allowed parameters dictionary.
@@ -255,13 +273,13 @@ class Hydrator:
     @classmethod
     def import_data(  # noqa: C901
             cls, *,
-            data: dict[str, Any],
-            allowed: dict[str, Any],
+            data: Mapping[str, Any],
+            allowed: Mapping[str, Any],
             skip: Iterable[str] | None = None,
             optional: Iterable[str] | None = None,
-            default: dict[str, Any] | None = None,
-            match_on: dict[str, Any] | None = None,
-            process_as: dict[str, Callable[[Any], Any]] | None = None) -> dict[str, Any]:
+            default: Mapping[str, Any] | None = None,
+            match_on: Mapping[str, Any] | None = None,
+            process_as: Mapping[str, Callable[[Any], Any]] | None = None) -> dict[str, Any]:
         """Process and validate the data dictionary.
 
         :param data: The data dictionary to process.
@@ -288,12 +306,7 @@ class Hydrator:
         Raises:
             SimpleBenchValueError: If the data does not match the rules.
         """
-        validate_type(data, dict, 'data',
-                      _HydratorErrorTag.INVALID_DATA_TYPE)
-        if not all(isinstance(key, str) for key in data.keys()):
-            raise SimpleBenchTypeError(
-                "All keys in the data dictionary must be of type 'str'",
-                tag=_HydratorErrorTag.INVALID_DATA_KEY_TYPE)
+        data = _validate_data(data=data)
 
         allowed_fields: Mapping[str, Any] = _validate_allowed(allowed=allowed)
 

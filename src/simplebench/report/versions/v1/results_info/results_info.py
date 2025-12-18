@@ -4,7 +4,6 @@ The V1 Results object represents the results metric of a version 1 JSON report.
 
 """
 from collections.abc import Hashable, Mapping
-from types import MappingProxyType
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
