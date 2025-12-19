@@ -6,6 +6,12 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ResultsErrorTag(ErrorTag):
     """ErrorTags for exceptions in the Results module."""
+    INVALID_METRIC_ARG_TYPE = "INVALID_METRIC_ARG_TYPE"
+    """Something other than a Metric was passed as the metric arg"""
+    INVALID_METRIC_CATEGORY_ARG_TYPE = "INVALID_METRIC_CATEGORY_ARG_TYPE"
+    """Something other than a MetricCategory was passed as the metric_category arg"""
+    INVALID_METRIC_TYPE_CATEGORY_ARG_VALUE = "INVALID_METRIC_TYPE_CATEGORY_ARG_VALUE"
+    """The metric arg passed must have a metric_type with the specified metric_category"""
     VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE = "VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE"
     """Something other than a str was found as a value in the variation_marks dict
     in the Results constructor"""
