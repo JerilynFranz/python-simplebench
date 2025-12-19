@@ -4,11 +4,14 @@ from __future__ import annotations
 from typing import Any, Iterable
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metrics
-from simplebench.metric.metric_type import MetricCategory
-from simplebench.metric.metrics_registry import filtered_metrics
-from simplebench.metric.metrics_registry import metrics_type_registry as metrics_registry
-from simplebench.metric.metrics_selection import MetricsCollection, MetricsSelection
+from simplebench.metric import (
+    MetricCategory,
+    Metrics,
+    MetricsCollection,
+    MetricsSelection,
+    filtered_metrics,
+    metrics_registry,
+)
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig

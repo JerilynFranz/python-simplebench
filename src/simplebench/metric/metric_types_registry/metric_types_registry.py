@@ -75,7 +75,7 @@ def unregister_metric_types(metric_types: str | Iterable[str] | MetricType | Met
 def reset_metric_types() -> None:
     """Clear all metric types and restore the default meta-metric types and standard metric types."""
     metric_types_registry.clear()
-    metric_types_registry.extend(standard_metric_types.metrics)
+    metric_types_registry.extend(standard_metric_types.metric_types())
 
 
 def clear_metric_types() -> None:

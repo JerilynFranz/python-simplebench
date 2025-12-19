@@ -5,7 +5,7 @@ from typing import Iterable
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metric import Metric
 from simplebench.metric.metrics import Metrics
-from simplebench.metric.metrics_registry import metrics_type_registry as metrics_registry
+from simplebench.metric.metrics_registry import metrics_registry
 
 from ._error_tags import _MetricSelectionErrorTag
 from .metrics_selection import MetricsSelection

@@ -1,12 +1,29 @@
 """Definition for a metric for the simplebench library."""
 import re
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import MetricCategory
 from simplebench.validators import validate_float, validate_namespaced_identifier, validate_string, validate_type
 
 from ._error_tags import _MetricTypeErrorTag
+
+_DEFERRED_IMPORTS_DONE: bool = False
+
+if TYPE_CHECKING:
+    from simplebench.metric.metric_category import MetricCategory
+    _DEFERRED_IMPORTS_DONE = True
+
+else:
+    MetricCategory = None  # pylint: disable=invalid-name
+
+
+def _deferred_imports() -> None:
+    """Perform deferred imports for runtime use to avoid circular dependencies."""
+    global MetricCategory, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
+    if not _DEFERRED_IMPORTS_DONE:
+        from simplebench.metric.metric_category import MetricCategory  # pylint: disable=import-outside-toplevel
+        _DEFERRED_IMPORTS_DONE = True
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -142,6 +159,7 @@ class MetricType:
 
         :raises SimpleBenchTypeError: If the category is not a valid MetricCategory enum value
         """
+        _deferred_imports()
         if not isinstance(self.category, MetricCategory):
             raise SimpleBenchTypeError(
                 f"Metric category '{self.category}' is not a valid MetricCategory enum value",

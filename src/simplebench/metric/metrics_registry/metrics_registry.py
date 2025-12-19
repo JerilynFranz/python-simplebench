@@ -78,7 +78,7 @@ def unregister_metrics(metrics: str | Iterable[str] | Metric | Metrics) -> None:
 def reset_metrics() -> None:
     """Clear all metrics and restore the default meta-metrics and standard metrics."""
     metrics_registry.clear()
-    metrics_registry.extend(standard_metrics.metrics)
+    metrics_registry.extend(standard_metrics.metrics())
 
 
 def clear_metrics() -> None:
