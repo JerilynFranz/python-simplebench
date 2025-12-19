@@ -13,10 +13,19 @@ This makes the implementations of StatsBlock backwards compatible with future ve
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base CPUInfo representation at the time of the V1 schema release.
 
+The code has three basic paths for creating a stats block:
+
+1. Creation by directly instantiating the `StatsBlock` class with the required statistical parameters.
+2. Creation by instantiating the `StatsBlock` class with the raw data measurements and
+   having the class calculate the statistical parameters.
+3. Creation by using the `from_dict` class method to create a `StatsBlock` instance from a
+   dictionary that matches the JSON schema.
+
+The created instance and all values available via properties are immutable once created.
 """
 import statistics
 from math import sqrt
-from typing import Any, Callable, Sequence, TypeVar
+from typing import Any, Sequence
 
 from simplebench.decorators import immutable
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -43,8 +52,6 @@ from .validators import (
     validate_unit,
 )
 
-T = TypeVar("T")
-
 
 class StatsBlock(BaseStatsBlock):
     """Class representing JSON stats summary for V1 reports.
@@ -68,8 +75,8 @@ class StatsBlock(BaseStatsBlock):
     :param maximum: The maximum value of the stats block.
     :param standard_deviation: The standard deviation of the stats block.
     :param relative_standard_deviation: The relative standard deviation of the stats block.
-    :param percentiles: The list of percentiles for the stats block.
-    :param measurements: The list of raw measurements for the stats block.
+    :param percentiles: The list of percentiles for the stats block as a `Values` instance.
+    :param measurements: The list of raw measurements for the stats block as a `Values` instance.
     :raise SimpleBenchTypeError: If any parameter is of an invalid type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
@@ -84,6 +91,24 @@ class StatsBlock(BaseStatsBlock):
 
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
+
+    __slots__ = (
+        "_name",
+        "_description",
+        "_semantic_type",
+        "_unit",
+        "_scale",
+        "_iterations",
+        "_rounds",
+        "_mean",
+        "_median",
+        "_minimum",
+        "_maximum",
+        "_standard_deviation",
+        "_relative_standard_deviation",
+        "_percentiles",
+        "_measurements",
+    )
 
     def __init__(self, *,
                  name: str,
@@ -105,6 +130,21 @@ class StatsBlock(BaseStatsBlock):
 
         The parameters are validated to ensure they meet the required types and constraints
         and match the contract of the JSON schema for the version 1 report.
+
+        .. note::
+
+            The following parameters can be derived from the measurements and cannot be
+            set directly if measurements are provided. If measurements are provided and
+            any of these parameters are also provided a value other than `None`,
+            a `SimpleBenchValueError` will be raised.
+
+            - mean
+            - median
+            - minimum
+            - maximum
+            - standard_deviation
+            - relative_standard_deviation
+            - percentiles
 
         :param name: The name of the stats block.
         :param description: The description of the stats block.
@@ -303,6 +343,9 @@ class StatsBlock(BaseStatsBlock):
             The value is either set directly or calculated from the `measurements` property.
 
         :return int: The number of iterations.
+        :raise SimpleBenchValueError: If iterations cannot be returned because
+            its value was not set directly and cannot be calculated because
+            `measurements` are not available either.
         """
         if self._iterations is None:
             if self.measurements is None:
@@ -584,7 +627,7 @@ class StatsBlock(BaseStatsBlock):
         if self._percentiles is None:
             if self.measurements is None:
                 raise SimpleBenchValueError(
-                    "Cannot calculate relative standard deviation without measurements",
+                    "Cannot calculate percentiles without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
             self._percentiles = self._calculate_percentiles()
         return self._percentiles
@@ -669,24 +712,6 @@ class StatsBlock(BaseStatsBlock):
             raise SimpleBenchValueError(
                 f"Cannot set {name} when measurements are already set",
                 tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-
-    def _validate_measurements_computed_value(
-            self,
-            validate_func: Callable[[Any], T],
-            transform_func: Callable[[Values], T],
-            value: Any) -> T:
-        """Compute a value from measurements or validate it if measurements are not set.
-
-        If `self.measurements` is set, this method computes a value using `transform_func`.
-        If `self.measurements` is not set, it validates the provided `value` using `validate_func`.
-
-        :param validate_func: A function that takes a value and returns a validated value of type T.
-        :param transform_func: A function that takes a Values instance and returns a computed value of type T.
-        :param value: The value to validate if measurements are not available.
-        :return: The computed or validated value.
-        :rtype: T
-        """
-        return validate_func(value) if self.measurements is None else transform_func(self.measurements)
 
     def _calculate_percentiles(self) -> Values:
         """Helper to calculate percentiles from the measurements.
