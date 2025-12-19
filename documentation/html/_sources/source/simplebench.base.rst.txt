@@ -13,3 +13,4 @@ Subpackages
    :maxdepth: 4
 
    simplebench.base.hydrator
+   simplebench.base.lazy_property

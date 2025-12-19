@@ -251,7 +251,19 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.timers.info</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module providing timing utilities.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Module providing timing utilities.</span>
+
+<span class="sd">All supported timers return the current time in nanoseconds as an integer.</span>
+
+<span class="sd">Supported timers include:</span>
+
+<span class="sd">  - `time.monotonic_ns()`: Monotonic clock, cannot go backwards.</span>
+<span class="sd">  - `time.perf_counter_ns()`: High-resolution performance counter.</span>
+<span class="sd">  - `time.process_time_ns()`: CPU process time.</span>
+<span class="sd">  - `time.thread_time_ns()`: CPU thread time.</span>
+<span class="sd">  - `fake_timer()`: A fake timer that always returns zero, used only for testing purposes.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>

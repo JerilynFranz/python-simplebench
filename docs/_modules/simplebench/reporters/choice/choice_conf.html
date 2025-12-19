@@ -257,7 +257,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlagType</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Target</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric.metrics_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsSelection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ChoiceConfErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoiceProtocol</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
@@ -311,8 +311,7 @@
 <span class="sd">    :type name: str</span>
 <span class="sd">    :param description: A brief description of the choice.</span>
 <span class="sd">    :type description: str</span>
-<span class="sd">    :param metrics: A set of :class:`~simplebench.metric.Metric` enums to include in the report.</span>
-<span class="sd">    :type metrics: set[:class:`~simplebench.metric.Metric`]</span>
+<span class="sd">    :param metrics: A :class:`~simplebench.metric.MetricsSelection`.</span>
 <span class="sd">    :param targets: A set of :class:`~simplebench.enums.Target` enums for output.</span>
 <span class="sd">    :type targets: set[:class:`~simplebench.enums.Target`]</span>
 <span class="sd">    :param default_targets: A set of :class:`~simplebench.enums.Target` enums representing the</span>
@@ -348,7 +347,7 @@
                  <span class="n">flag_type</span><span class="p">:</span> <span class="n">FlagType</span><span class="p">,</span>
                  <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span>
+                 <span class="n">metrics</span><span class="p">:</span> <span class="n">MetricsSelection</span><span class="p">,</span>
                  <span class="n">output_format</span><span class="p">:</span> <span class="n">Format</span><span class="p">,</span>
                  <span class="n">targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">],</span>
                  <span class="n">default_targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -464,11 +463,9 @@
             <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Description of the choice (private backing field for attribute)&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">validate_iterable_of_type</span><span class="p">(</span>
-            <span class="n">metrics</span><span class="p">,</span> <span class="n">Metric</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span>
-            <span class="n">_ChoiceConfErrorTag</span><span class="o">.</span><span class="n">SECTIONS_INVALID_ARG_TYPE</span><span class="p">,</span>
-            <span class="n">_ChoiceConfErrorTag</span><span class="o">.</span><span class="n">SECTIONS_INVALID_ARG_VALUE</span><span class="p">,</span>
-            <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="p">:</span> <span class="n">MetricsSelection</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+            <span class="n">metrics</span><span class="p">,</span> <span class="n">MetricsSelection</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span>
+            <span class="n">_ChoiceConfErrorTag</span><span class="o">.</span><span class="n">SECTIONS_INVALID_ARG_TYPE</span><span class="p">)</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Metrics included in the choice (private backing field for attribute)&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_targets</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">validate_iterable_of_type</span><span class="p">(</span>
@@ -598,7 +595,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Metric</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricsSelection</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Metrics included in the choice.</span>
 
 <span class="sd">        These are the metrics that the associated</span>

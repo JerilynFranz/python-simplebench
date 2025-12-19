@@ -176,7 +176,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -252,59 +252,13 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.metric.meta_metrics">
-<span id="simplebench-metric-meta-metrics-module"></span><h1>simplebench.metric.meta_metrics module<a class="headerlink" href="#module-simplebench.metric.meta_metrics" title="Link to this heading">🔗</a></h1>
-<p>Meta Metrics for SimpleBench.</p>
-<p>Meta metrics used by reporters and benchmarks.</p>
-<p>This is used by reporters to specify which metrics of benchmark results to include
-in their output and by benchmarks to specify which metric of the output to generate.</p>
-<p>Defined meta Metrics are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><dl class="simple">
-<dt>META_ALL: All metrics. This is used by reporters to indicate that all</dt><dd><p>known/applicable metrics should be included in the output.</p>
-</dd>
-</dl>
-</li>
-<li><p>META_NULL: No metric. This is used when a reporter does not specify a metric.</p></li>
-</ul>
-</div></blockquote>
-<p>The ‘<a href="#id1"><span class="problematic" id="id2">META_</span></a>’ prefix is used to indicate that the metric is a meta-metric, which
-is not a specific metric but rather a way to specify a set of metrics. This is
-useful for specifying a set of metrics in a concise way, such as when a reporter
-wants to include all known metrics in the output. This is also a reserved prefix
-and should not be used for custom metric definitions to prevent future conflicts.</p>
-<dl class="py data">
-<dt class="sig sig-object py" id="simplebench.metric.meta_metrics.META_ALL">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metric.meta_metrics.</span></span><span class="sig-name descname"><span class="pre">META_ALL</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Final" title="(in Python v3.14)"><span class="pre">Final</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric_definition.metric_definition.html#simplebench.metric.metric_definition.metric_definition.MetricDefinition" title="simplebench.metric.metric_definition.metric_definition.MetricDefinition"><span class="pre">MetricDefinition</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MetricDefinition(semantic_type='simplebench_std::all',</span> <span class="pre">label='META_ALL',</span> <span class="pre">description='Meta-metric</span> <span class="pre">indicating</span> <span class="pre">that</span> <span class="pre">all</span> <span class="pre">metrics</span> <span class="pre">should</span> <span class="pre">be</span> <span class="pre">included',</span> <span class="pre">unit='N/A',</span> <span class="pre">scale=1.0,</span> <span class="pre">meta_metric=True)</span></em><a class="headerlink" href="#simplebench.metric.meta_metrics.META_ALL" title="Link to this definition">🔗</a></dt>
-<dd><p>Meta-metric indicating that all known/applicable metrics should be included.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="simplebench.metric.meta_metrics.META_NULL">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metric.meta_metrics.</span></span><span class="sig-name descname"><span class="pre">META_NULL</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Final" title="(in Python v3.14)"><span class="pre">Final</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric_definition.metric_definition.html#simplebench.metric.metric_definition.metric_definition.MetricDefinition" title="simplebench.metric.metric_definition.metric_definition.MetricDefinition"><span class="pre">MetricDefinition</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MetricDefinition(semantic_type='simplebench_std::null',</span> <span class="pre">label='META_NULL',</span> <span class="pre">description='Meta-metric</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">metric',</span> <span class="pre">unit='NULL',</span> <span class="pre">scale=1.0,</span> <span class="pre">meta_metric=True)</span></em><a class="headerlink" href="#simplebench.metric.meta_metrics.META_NULL" title="Link to this definition">🔗</a></dt>
-<dd><p>No metric. This is used when a reporter does not specify a metric.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="simplebench.metric.meta_metrics.metrics">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metric.meta_metrics.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Final" title="(in Python v3.14)"><span class="pre">Final</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metrics.metrics.html#simplebench.metric.metrics.metrics.Metrics" title="simplebench.metric.metrics.metrics.Metrics"><span class="pre">Metrics</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;simplebench.metric.metrics.metrics.Metrics</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#simplebench.metric.meta_metrics.metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>All defined meta-metrics.</p>
-<ul class="simple">
-<li><p><cite>META_NULL</cite>: No metric. This is used when a reporter does not specify a metric for consumption.</p></li>
-<li><dl class="simple">
-<dt><cite>META_ALL</cite>: All metrics. This is used by reporters to indicate that all known/applicable</dt><dd><p>metrics should be included in the output.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd></dl>
-
+          <section id="simplebench-metric-meta-metrics-module">
+<h1>simplebench.metric.meta_metrics module<a class="headerlink" href="#simplebench-metric-meta-metrics-module" title="Link to this heading">🔗</a></h1>
 </section>
 
         </article>
@@ -332,29 +286,8 @@ and should not be used for custom metric definitions to prevent future conflicts
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">simplebench.metric.meta_metrics module</a><ul>
-<li><a class="reference internal" href="#simplebench.metric.meta_metrics.META_ALL"><code class="docutils literal notranslate"><span class="pre">META_ALL</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metric.meta_metrics.META_NULL"><code class="docutils literal notranslate"><span class="pre">META_NULL</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metric.meta_metrics.metrics"><code class="docutils literal notranslate"><span class="pre">metrics</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

@@ -365,13 +365,16 @@
                 <span class="p">},</span>
                 <span class="s2">&quot;metric_block&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Metric Block&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A container for a measurement, which can be a single value or a statistical summary.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A container for a measurement, which can be a single value, a statistical summary, or raw data.&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;oneOf&quot;</span><span class="p">:</span> <span class="p">[</span>
                         <span class="p">{</span>
                             <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;stats-block.json&quot;</span>
                         <span class="p">},</span>
                         <span class="p">{</span>
                             <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;value-block.json&quot;</span>
+                        <span class="p">},</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;raw-data-block.json&quot;</span>
                         <span class="p">}</span>
                     <span class="p">],</span>
                     <span class="s2">&quot;discriminator&quot;</span><span class="p">:</span> <span class="p">{</span>

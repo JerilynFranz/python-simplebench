@@ -279,6 +279,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">sanitize_filename</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SessionErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_timer</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -307,7 +308,8 @@
                  <span class="n">show_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">output_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Console</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">cpu_timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Container and orchestrator for session related information while running benchmarks.</span>
 
 <span class="sd">        :param cases: A Sequence of benchmark cases for the session.</span>
@@ -336,12 +338,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">default_runners</span> <span class="o">=</span> <span class="n">default_runners</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args_parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span> <span class="k">if</span> <span class="n">args_parser</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">args_parser</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">cases</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">cases</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cases</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cases</span> <span class="o">=</span> <span class="n">cases</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_progress</span> <span class="o">=</span> <span class="n">show_progress</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="n">output_path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span> <span class="k">if</span> <span class="n">console</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">console</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMER</span> <span class="k">if</span> <span class="n">timer</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">timer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">console</span> <span class="ow">or</span> <span class="n">Console</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">timer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu_timer</span> <span class="o">=</span> <span class="n">cpu_timer</span>
 
         <span class="c1"># private attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_args_parsed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -655,29 +658,32 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The timer function used for benchmarking.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span>
 
     <span class="nd">@timer</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the timer function used for benchmarking.</span>
 
 <span class="sd">        :param value: The timer function used for benchmarking.</span>
 <span class="sd">        :raises SimpleBenchTypeError: If the value is not a callable that returns an int.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;timer must be a callable - cannot be a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_SessionErrorTag</span><span class="o">.</span><span class="n">PROPERTY_INVALID_TIMER_ARG</span>
-            <span class="p">)</span>
-        <span class="n">test_result</span> <span class="o">=</span> <span class="n">value</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_result</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;timer callable must return an int - cannot return a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">test_result</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_SessionErrorTag</span><span class="o">.</span><span class="n">PROPERTY_INVALID_TIMER_RETURN_TYPE</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">validate_timer</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cpu_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The CPUtimer function used for benchmarking.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cpu_timer</span>
+
+    <span class="nd">@cpu_timer</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cpu_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the CPU timer function used for benchmarking.</span>
+
+<span class="sd">        :param value: The timer function used for benchmarking.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the value is not a callable that returns an int.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cpu_timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">validate_timer</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">default_runners</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BenchmarkRunner</span><span class="p">]]:</span>
@@ -720,7 +726,8 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">runners</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;default_runners must be a Sequence of BenchmarkRunner subclasses or None - cannot be a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">runners</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;default_runners must be a Sequence of BenchmarkRunner subclasses &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;or None - cannot be a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">runners</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_SessionErrorTag</span><span class="o">.</span><span class="n">PROPERTY_INVALID_DEFAULT_RUNNER_ARG</span>
             <span class="p">)</span>
 
@@ -728,7 +735,8 @@
         <span class="k">for</span> <span class="n">runner</span> <span class="ow">in</span> <span class="n">runners</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">BenchmarkRunner</span><span class="p">))</span> <span class="ow">and</span> <span class="n">runner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">BenchmarkRunner</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s1">&#39;default_runners must be a sequence of subclasses of BenchmarkRunner or None - cannot be a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;default_runners must be a sequence of subclasses of BenchmarkRunner or &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;None - cannot be a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
                     <span class="n">tag</span><span class="o">=</span><span class="n">_SessionErrorTag</span><span class="o">.</span><span class="n">PROPERTY_INVALID_DEFAULT_RUNNER_ARG</span>
                 <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_default_runners</span> <span class="o">=</span> <span class="n">validated_runners</span>

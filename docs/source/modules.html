@@ -270,9 +270,9 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.html#simplebench.Case"><code class="docutils literal notranslate"><span class="pre">Case</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.action"><code class="docutils literal notranslate"><span class="pre">Case.action</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.as_dict"><code class="docutils literal notranslate"><span class="pre">Case.as_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.benchmark_id"><code class="docutils literal notranslate"><span class="pre">Case.benchmark_id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.callback"><code class="docutils literal notranslate"><span class="pre">Case.callback</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.cpu_timer"><code class="docutils literal notranslate"><span class="pre">Case.cpu_timer</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.description"><code class="docutils literal notranslate"><span class="pre">Case.description</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.expanded_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.expanded_kwargs_variations</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.group"><code class="docutils literal notranslate"><span class="pre">Case.group</span></code></a></li>
@@ -289,13 +289,8 @@
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.timeout"><code class="docutils literal notranslate"><span class="pre">Case.timeout</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.timer"><code class="docutils literal notranslate"><span class="pre">Case.timer</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.title"><code class="docutils literal notranslate"><span class="pre">Case.title</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.validate_action_signature"><code class="docutils literal notranslate"><span class="pre">Case.validate_action_signature()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.validate_kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.validate_kwargs_variations()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.validate_options"><code class="docutils literal notranslate"><span class="pre">Case.validate_options()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.validate_runners"><code class="docutils literal notranslate"><span class="pre">Case.validate_runners()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.validate_time_range"><code class="docutils literal notranslate"><span class="pre">Case.validate_time_range()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.validate_variation_cols"><code class="docutils literal notranslate"><span class="pre">Case.validate_variation_cols()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.variation_cols"><code class="docutils literal notranslate"><span class="pre">Case.variation_cols</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.variation_marks"><code class="docutils literal notranslate"><span class="pre">Case.variation_marks</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.vcs_info"><code class="docutils literal notranslate"><span class="pre">Case.vcs_info</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Case.warmup_iterations"><code class="docutils literal notranslate"><span class="pre">Case.warmup_iterations</span></code></a></li>
 </ul>
@@ -309,29 +304,29 @@
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.JSONOptions.full_data"><code class="docutils literal notranslate"><span class="pre">JSONOptions.full_data</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.html#simplebench.Mark"><code class="docutils literal notranslate"><span class="pre">Mark</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Mark.name"><code class="docutils literal notranslate"><span class="pre">Mark.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Mark.value"><code class="docutils literal notranslate"><span class="pre">Mark.value</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.html#simplebench.Results"><code class="docutils literal notranslate"><span class="pre">Results</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.as_dict"><code class="docutils literal notranslate"><span class="pre">Results.as_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.description"><code class="docutils literal notranslate"><span class="pre">Results.description</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.extra_info"><code class="docutils literal notranslate"><span class="pre">Results.extra_info</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.group"><code class="docutils literal notranslate"><span class="pre">Results.group</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.interval_scale"><code class="docutils literal notranslate"><span class="pre">Results.interval_scale</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.interval_unit"><code class="docutils literal notranslate"><span class="pre">Results.interval_unit</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.iterations"><code class="docutils literal notranslate"><span class="pre">Results.iterations</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.memory"><code class="docutils literal notranslate"><span class="pre">Results.memory</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.memory_scale"><code class="docutils literal notranslate"><span class="pre">Results.memory_scale</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.memory_unit"><code class="docutils literal notranslate"><span class="pre">Results.memory_unit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.marks"><code class="docutils literal notranslate"><span class="pre">Results.marks</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.n"><code class="docutils literal notranslate"><span class="pre">Results.n</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.ops_per_interval_scale"><code class="docutils literal notranslate"><span class="pre">Results.ops_per_interval_scale</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.ops_per_interval_unit"><code class="docutils literal notranslate"><span class="pre">Results.ops_per_interval_unit</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.ops_per_second"><code class="docutils literal notranslate"><span class="pre">Results.ops_per_second</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.peak_memory"><code class="docutils literal notranslate"><span class="pre">Results.peak_memory</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.per_round_timings"><code class="docutils literal notranslate"><span class="pre">Results.per_round_timings</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.raw"><code class="docutils literal notranslate"><span class="pre">Results.raw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.raw_block"><code class="docutils literal notranslate"><span class="pre">Results.raw_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.results_info"><code class="docutils literal notranslate"><span class="pre">Results.results_info()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.results_metric"><code class="docutils literal notranslate"><span class="pre">Results.results_metric()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.rounds"><code class="docutils literal notranslate"><span class="pre">Results.rounds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.stats"><code class="docutils literal notranslate"><span class="pre">Results.stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.stats_block"><code class="docutils literal notranslate"><span class="pre">Results.stats_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.sum"><code class="docutils literal notranslate"><span class="pre">Results.sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.sum_value_block"><code class="docutils literal notranslate"><span class="pre">Results.sum_value_block()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.title"><code class="docutils literal notranslate"><span class="pre">Results.title</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.total_elapsed"><code class="docutils literal notranslate"><span class="pre">Results.total_elapsed</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.variation_cols"><code class="docutils literal notranslate"><span class="pre">Results.variation_cols</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Results.variation_marks"><code class="docutils literal notranslate"><span class="pre">Results.variation_marks</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.html#simplebench.RichTableOptions"><code class="docutils literal notranslate"><span class="pre">RichTableOptions</span></code></a><ul>
@@ -348,6 +343,7 @@
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Session.args_parser"><code class="docutils literal notranslate"><span class="pre">Session.args_parser</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Session.cases"><code class="docutils literal notranslate"><span class="pre">Session.cases</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Session.console"><code class="docutils literal notranslate"><span class="pre">Session.console</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Session.cpu_timer"><code class="docutils literal notranslate"><span class="pre">Session.cpu_timer</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Session.default_runners"><code class="docutils literal notranslate"><span class="pre">Session.default_runners</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Session.extend_cases"><code class="docutils literal notranslate"><span class="pre">Session.extend_cases()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.html#simplebench.Session.output_path"><code class="docutils literal notranslate"><span class="pre">Session.output_path</span></code></a></li>
@@ -408,6 +404,7 @@
 <li class="toctree-l2"><a class="reference internal" href="simplebench.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.base.html">simplebench.base package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.base.html#simplebench.base.Hydrator"><code class="docutils literal notranslate"><span class="pre">Hydrator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.base.html#simplebench.base.LazyProperty"><code class="docutils literal notranslate"><span class="pre">LazyProperty</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.base.html#subpackages">Subpackages</a></li>
 </ul>
 </li>
@@ -429,6 +426,7 @@
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html">simplebench.case package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case"><code class="docutils literal notranslate"><span class="pre">Case</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.case.html#simplebench.case.FunctionRunner"><code class="docutils literal notranslate"><span class="pre">FunctionRunner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.case.html#simplebench.case.Mark"><code class="docutils literal notranslate"><span class="pre">Mark</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.case.html#simplebench.case.Results"><code class="docutils literal notranslate"><span class="pre">Results</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.case.html#simplebench.case.generate_benchmark_id"><code class="docutils literal notranslate"><span class="pre">generate_benchmark_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.case.html#subpackages">Subpackages</a></li>
@@ -494,8 +492,23 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.metric.html">simplebench.metric package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric"><code class="docutils literal notranslate"><span class="pre">Metric</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.MetricDefinition"><code class="docutils literal notranslate"><span class="pre">MetricDefinition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.MetricCategory"><code class="docutils literal notranslate"><span class="pre">MetricCategory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.MetricType"><code class="docutils literal notranslate"><span class="pre">MetricType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.MetricTypes"><code class="docutils literal notranslate"><span class="pre">MetricTypes</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metrics"><code class="docutils literal notranslate"><span class="pre">Metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.MetricsCollection"><code class="docutils literal notranslate"><span class="pre">MetricsCollection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.MetricsSelection"><code class="docutils literal notranslate"><span class="pre">MetricsSelection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.MetricsSelectionType"><code class="docutils literal notranslate"><span class="pre">MetricsSelectionType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.MetricsUnspecified"><code class="docutils literal notranslate"><span class="pre">MetricsUnspecified</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.clear_metric_types"><code class="docutils literal notranslate"><span class="pre">clear_metric_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.clear_metrics"><code class="docutils literal notranslate"><span class="pre">clear_metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.filtered_metrics"><code class="docutils literal notranslate"><span class="pre">filtered_metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.register_metric_types"><code class="docutils literal notranslate"><span class="pre">register_metric_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.register_metrics"><code class="docutils literal notranslate"><span class="pre">register_metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.reset_metric_types"><code class="docutils literal notranslate"><span class="pre">reset_metric_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.reset_metrics"><code class="docutils literal notranslate"><span class="pre">reset_metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.unregister_metric_types"><code class="docutils literal notranslate"><span class="pre">unregister_metric_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.unregister_metrics"><code class="docutils literal notranslate"><span class="pre">unregister_metrics()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.metric.html#submodules">Submodules</a></li>
 </ul>
@@ -506,6 +519,7 @@
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.html#simplebench.report.machine_info"><code class="docutils literal notranslate"><span class="pre">machine_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.html#simplebench.report.metrics"><code class="docutils literal notranslate"><span class="pre">metrics()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.html#simplebench.report.python_info"><code class="docutils literal notranslate"><span class="pre">python_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.report.html#simplebench.report.raw_data_block"><code class="docutils literal notranslate"><span class="pre">raw_data_block()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.html#simplebench.report.report"><code class="docutils literal notranslate"><span class="pre">report()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.html#simplebench.report.results_info"><code class="docutils literal notranslate"><span class="pre">results_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.html#simplebench.report.stats_block"><code class="docutils literal notranslate"><span class="pre">stats_block()</span></code></a></li>
@@ -557,6 +571,11 @@
 <li class="toctree-l4"><a class="reference internal" href="simplebench.type_proxies.html#simplebench.type_proxies.is_reporter"><code class="docutils literal notranslate"><span class="pre">is_reporter()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.type_proxies.html#simplebench.type_proxies.is_session"><code class="docutils literal notranslate"><span class="pre">is_session()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.type_proxies.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.types.html">simplebench.types package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.types.html#simplebench.types.Values"><code class="docutils literal notranslate"><span class="pre">Values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.types.html#submodules">Submodules</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html">simplebench.utils package</a><ul>
@@ -626,6 +645,7 @@
 <li class="toctree-l4"><a class="reference internal" href="simplebench.defaults.html#simplebench.defaults.BASE_INTERVAL_UNIT"><code class="docutils literal notranslate"><span class="pre">BASE_INTERVAL_UNIT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.defaults.html#simplebench.defaults.BASE_MEMORY_UNIT"><code class="docutils literal notranslate"><span class="pre">BASE_MEMORY_UNIT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.defaults.html#simplebench.defaults.BASE_OPS_PER_INTERVAL_UNIT"><code class="docutils literal notranslate"><span class="pre">BASE_OPS_PER_INTERVAL_UNIT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.defaults.html#simplebench.defaults.DEFAULT_CPU_TIMER"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CPU_TIMER()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.defaults.html#simplebench.defaults.DEFAULT_INTERVAL_SCALE"><code class="docutils literal notranslate"><span class="pre">DEFAULT_INTERVAL_SCALE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.defaults.html#simplebench.defaults.DEFAULT_INTERVAL_UNIT"><code class="docutils literal notranslate"><span class="pre">DEFAULT_INTERVAL_UNIT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.defaults.html#simplebench.defaults.DEFAULT_ITERATIONS"><code class="docutils literal notranslate"><span class="pre">DEFAULT_ITERATIONS</span></code></a></li>

@@ -260,6 +260,17 @@
           <section id="module-simplebench.timers.info">
 <span id="simplebench-timers-info-module"></span><h1>simplebench.timers.info module<a class="headerlink" href="#module-simplebench.timers.info" title="Link to this heading">🔗</a></h1>
 <p>Module providing timing utilities.</p>
+<p>All supported timers return the current time in nanoseconds as an integer.</p>
+<p>Supported timers include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>time.monotonic_ns()</cite>: Monotonic clock, cannot go backwards.</p></li>
+<li><p><cite>time.perf_counter_ns()</cite>: High-resolution performance counter.</p></li>
+<li><p><cite>time.process_time_ns()</cite>: CPU process time.</p></li>
+<li><p><cite>time.thread_time_ns()</cite>: CPU thread time.</p></li>
+<li><p><cite>fake_timer()</cite>: A fake timer that always returns zero, used only for testing purposes.</p></li>
+</ul>
+</div></blockquote>
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.timers.info.fake_timer">
 <span class="sig-prename descclassname"><span class="pre">simplebench.timers.info.</span></span><span class="sig-name descname"><span class="pre">fake_timer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/simplebench/timers/info.html#fake_timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timers.info.fake_timer" title="Link to this definition">🔗</a></dt>

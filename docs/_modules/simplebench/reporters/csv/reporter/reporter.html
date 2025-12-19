@@ -352,7 +352,7 @@
 <a class="viewcode-back" href="../../../../../source/simplebench.reporters.csv.reporter.reporter.html#simplebench.reporters.csv.CSVReporter.render">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
             <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="n">Case</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ReporterOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renders the benchmark results as tagged CSV data and returns it as a string.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renders the benchmark results for the specified metric as tagged CSV data and returns it as a string.</span>
 
 <span class="sd">        :param case: The :class:`~simplebench.case.Case` instance representing the</span>
 <span class="sd">                     benchmarked code.</span>
@@ -426,12 +426,16 @@
 
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                <span class="n">elapsed_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_metric</span><span class="p">[</span><span class="s1">&#39;STD_ELAPSED_SECONDS&#39;</span><span class="p">]</span>
                 <span class="n">stats_target</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">results_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
                 <span class="n">row</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">options</span><span class="o">.</span><span class="n">variation_cols_last</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">variation_marks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                        <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="c1"># Add variation marks in the order defined by the case</span>
+                    <span class="c1"># and only those that are defined in the variation columns</span>
+                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">marks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="p">:</span>
+                            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
                     <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">included_fields</span><span class="p">:</span>
                         <span class="k">match</span> <span class="n">field</span><span class="p">:</span>
@@ -461,8 +465,9 @@
                                 <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigfigs</span><span class="p">(</span><span class="n">stats_target</span><span class="o">.</span><span class="n">relative_standard_deviation</span><span class="p">))</span>
 
                 <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">variation_cols_last</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">variation_marks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                        <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">marks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="p">:</span>
+                            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 

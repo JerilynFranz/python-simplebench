@@ -13,3 +13,4 @@ Submodules
    :maxdepth: 4
 
    simplebench.session.session
+   simplebench.session.validators

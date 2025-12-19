@@ -13,7 +13,6 @@ Subpackages
    :maxdepth: 4
 
    simplebench.case.results.metrics.stats
-   simplebench.case.results.metrics.value
 
 Submodules
 ----------
@@ -21,4 +20,4 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   simplebench.case.results.metrics.metric
+   simplebench.case.results.metrics.value

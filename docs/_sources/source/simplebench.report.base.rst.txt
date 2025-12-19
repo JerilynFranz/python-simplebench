@@ -18,6 +18,7 @@ Submodules
    simplebench.report.base.machine_info
    simplebench.report.base.metrics
    simplebench.report.base.python_info
+   simplebench.report.base.raw_data_block
    simplebench.report.base.report
    simplebench.report.base.results_info
    simplebench.report.base.stats_block

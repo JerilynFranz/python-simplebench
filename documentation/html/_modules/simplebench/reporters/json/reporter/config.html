@@ -257,7 +257,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlagType</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Target</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">metric_registry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric.metrics_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsSelection</span><span class="p">,</span> <span class="n">MetricsUnspecified</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoiceConf</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoicesConf</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.json.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONOptions</span>
@@ -279,7 +279,7 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">MetricsSelection</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">formats</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Format</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -295,13 +295,13 @@
 <span class="sd">        All arguments are optional. If not provided, the default value for</span>
 <span class="sd">        JSONReporter will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">init_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">metric_registry</span><span class="o">.</span><span class="n">NULL</span><span class="p">}</span>  <span class="c1"># JSON reporter only supports NULL metric</span>
-        <span class="n">init_targets</span> <span class="o">=</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">}</span>
+        <span class="n">init_metrics</span> <span class="o">=</span> <span class="n">MetricsUnspecified</span><span class="p">()</span>
+        <span class="n">allowed_targets</span> <span class="o">=</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">}</span>
         <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
             <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Outputs benchmark results to JSON files.&#39;</span><span class="p">,</span>
             <span class="s1">&#39;metrics&#39;</span><span class="p">:</span> <span class="n">init_metrics</span><span class="p">,</span>
-            <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="n">init_targets</span><span class="p">,</span>
+            <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="n">allowed_targets</span><span class="p">,</span>
             <span class="s1">&#39;default_targets&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">},</span>
             <span class="s1">&#39;formats&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">},</span>
             <span class="s1">&#39;file_suffix&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
@@ -313,7 +313,7 @@
                     <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--json&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span>
                     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;statistical results to JSON (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">,</span>
                     <span class="n">metrics</span><span class="o">=</span><span class="n">init_metrics</span><span class="p">,</span>
-                    <span class="n">targets</span><span class="o">=</span><span class="n">init_targets</span><span class="p">,</span>
+                    <span class="n">targets</span><span class="o">=</span><span class="n">allowed_targets</span><span class="p">,</span>
                     <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
                     <span class="n">options</span><span class="o">=</span><span class="n">JSONOptions</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
                 <span class="n">ChoiceConf</span><span class="p">(</span>
@@ -321,7 +321,7 @@
                     <span class="n">description</span><span class="o">=</span><span class="p">(</span>
                         <span class="s1">&#39;statistical results + full data to JSON (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">),</span>
                     <span class="n">metrics</span><span class="o">=</span><span class="n">init_metrics</span><span class="p">,</span>
-                    <span class="n">targets</span><span class="o">=</span><span class="n">init_targets</span><span class="p">,</span>
+                    <span class="n">targets</span><span class="o">=</span><span class="n">allowed_targets</span><span class="p">,</span>
                     <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">JSON</span><span class="p">,</span>
                     <span class="n">options</span><span class="o">=</span><span class="n">JSONOptions</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
             <span class="p">])</span>

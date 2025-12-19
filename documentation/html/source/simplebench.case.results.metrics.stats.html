@@ -257,26 +257,198 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="simplebench-case-results-metrics-stats-package">
-<h1>simplebench.case.results.metrics.stats package<a class="headerlink" href="#simplebench-case-results-metrics-stats-package" title="Link to this heading">🔗</a></h1>
+          <section id="module-simplebench.case.results.metrics.stats">
+<span id="simplebench-case-results-metrics-stats-package"></span><h1>simplebench.case.results.metrics.stats package<a class="headerlink" href="#module-simplebench.case.results.metrics.stats" title="Link to this heading">🔗</a></h1>
+<p>Stats module for SimpleBench benchmarking framework.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.case.results.metrics.stats.</span></span><span class="sig-name descname"><span class="pre">Stats</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/case/results/metrics/stats/stats.html#Stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Generic container for statistics on a benchmark.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric</strong> (<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><em>Metric</em></a>) – The metric definition for the benchmark. (read only)</p></li>
+<li><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The total number of iterations represented by the data points. (read only)</p></li>
+<li><p><strong>rounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of rounds each data point represents. (read only)</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="simplebench.types.html#simplebench.types.Values" title="simplebench.types.Values"><em>Values</em></a>) – Tuple of floating point data points. (read only)</p></li>
+<li><p><strong>mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The mean of the data. (read only)</p></li>
+<li><p><strong>median</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The median of the data. (read only)</p></li>
+<li><p><strong>minimum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The minimum of the data. (read only)</p></li>
+<li><p><strong>maximum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The maximum of the data. (read only)</p></li>
+<li><p><strong>standard_deviation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The estimated population standard deviation of the data. (read only)</p></li>
+<li><p><strong>relative_standard_deviation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The estimated population relative standard
+deviation of the data. (read only)</p></li>
+<li><p><strong>percentiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>...</em><em>]</em>) – Percentiles of the data. (read only)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize the Stats object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric</strong> (<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><em>Metric</em></a>) – The metric definition for the benchmark.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="simplebench.types.html#simplebench.types.Values" title="simplebench.types.Values"><em>Values</em></a>) – Tuple of data points.</p></li>
+<li><p><strong>rounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of rounds each data point represents.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any of the arguments are of the wrong type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any of the arguments have invalid values.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.data" title="Link to this definition">🔗</a></dt>
+<dd><p>The data points.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.iterations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">iterations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.iterations" title="Link to this definition">🔗</a></dt>
+<dd><p>The total number of iterations represented by the data points.</p>
+<p>Each iteration represents a single measurement, which may represent multiple rounds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.maximum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">maximum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.maximum" title="Link to this definition">🔗</a></dt>
+<dd><p>The maximum of the data.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.mean">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.mean" title="Link to this definition">🔗</a></dt>
+<dd><p>The mean of the data.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.median">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">median</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.median" title="Link to this definition">🔗</a></dt>
+<dd><p>The median of the data.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.metric">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metric</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><span class="pre">Metric</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.metric" title="Link to this definition">🔗</a></dt>
+<dd><p>The metric of the benchmark.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.minimum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minimum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.minimum" title="Link to this definition">🔗</a></dt>
+<dd><p>The minimum of the data.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.name" title="Link to this definition">🔗</a></dt>
+<dd><p>The name of the metric.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.percentiles">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">percentiles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.percentiles" title="Link to this definition">🔗</a></dt>
+<dd><p>Percentiles of the data.</p>
+<p>Returns the 0th through 100th percentiles of the data as an immutable tuple.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.relative_standard_deviation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">relative_standard_deviation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.relative_standard_deviation" title="Link to this definition">🔗</a></dt>
+<dd><p>The relative standard deviation of the data.</p>
+<p>This is expressed as the absolute value of the standard deviation as a
+percentage of the mean.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.rounds">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rounds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.rounds" title="Link to this definition">🔗</a></dt>
+<dd><p>The number of rounds each data point represents.</p>
+<p>Each iteration represents a single measurement, which may represent multiple rounds.
+Multiple rounds are often used to reduce the impact of noise or timer precision and
+accuracy on individual measurements.</p>
+<p>The number of rounds is used to adjust the standard deviation calculation to estimate
+the true standard deviation of the underlying population.</p>
+<p>The number of rounds is typically set to a value that balances the trade-off between
+the number of measurements and the time required to perform the measurements.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.scale">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.scale" title="Link to this definition">🔗</a></dt>
+<dd><p>The scale of the data.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.standard_deviation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">standard_deviation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.standard_deviation" title="Link to this definition">🔗</a></dt>
+<dd><p>The estimated population standard deviation of the data.</p>
+<p>This is computed using the sample standard deviation formula (Bessel’s correction)
+adjusted by the square root of the number of rounds to estimate the population
+standard deviation.</p>
+<p>This provides a better estimate of the true standard deviation of the underlying
+population when each data point represents multiple rounds of measurement.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.stats_block">
+<span class="sig-name descname"><span class="pre">stats_block</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">full_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.stats_block.stats_block.html#simplebench.report.versions.v1.stats_block.stats_block.StatsBlock" title="simplebench.report.versions.v1.stats_block.stats_block.StatsBlock"><span class="pre">StatsBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/metrics/stats/stats.html#Stats.stats_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.stats_block" title="Link to this definition">🔗</a></dt>
+<dd><p>Returns a <code class="docutils literal notranslate"><span class="pre">StatsBlock</span></code> for the statistics.</p>
+<p>The data values are scaled according to the scale factor to provide
+human-readable values using the base unit rather than the scaled unit.</p>
+<p>The unit is converted to its SI base unit representation. (e.g., “ms” becomes “s”)</p>
+<p>This does not include raw data points, only the statistics unless <cite>full_data</cite> is set to True.</p>
+<p>The returned StatsBlock is cached for efficiency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, include the raw data points in the StatsBlock measurement field.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A StatsBlock object representing the statistics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.Stats.unit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.Stats.unit" title="Link to this definition">🔗</a></dt>
+<dd><p>The unit of the data.</p>
+</dd></dl>
+
+</dd></dl>
+
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.case.results.metrics.stats.memory_usage.html">simplebench.case.results.metrics.stats.memory_usage module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.case.results.metrics.stats.operation_timings.html">simplebench.case.results.metrics.stats.operation_timings module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.case.results.metrics.stats.operations_per_interval.html">simplebench.case.results.metrics.stats.operations_per_interval module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.case.results.metrics.stats.peak_memory_usage.html">simplebench.case.results.metrics.stats.peak_memory_usage module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html">simplebench.case.results.metrics.stats.stats module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats"><code class="docutils literal notranslate"><span class="pre">Stats</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.as_dict"><code class="docutils literal notranslate"><span class="pre">Stats.as_dict</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.data"><code class="docutils literal notranslate"><span class="pre">Stats.data</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.from_dict"><code class="docutils literal notranslate"><span class="pre">Stats.from_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.iterations"><code class="docutils literal notranslate"><span class="pre">Stats.iterations</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.maximum"><code class="docutils literal notranslate"><span class="pre">Stats.maximum</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.mean"><code class="docutils literal notranslate"><span class="pre">Stats.mean</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.median"><code class="docutils literal notranslate"><span class="pre">Stats.median</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.metric"><code class="docutils literal notranslate"><span class="pre">Stats.metric</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.minimum"><code class="docutils literal notranslate"><span class="pre">Stats.minimum</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.name"><code class="docutils literal notranslate"><span class="pre">Stats.name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.percentiles"><code class="docutils literal notranslate"><span class="pre">Stats.percentiles</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.relative_standard_deviation"><code class="docutils literal notranslate"><span class="pre">Stats.relative_standard_deviation</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.results.metrics.stats.stats.html#simplebench.case.results.metrics.stats.stats.Stats.rounds"><code class="docutils literal notranslate"><span class="pre">Stats.rounds</span></code></a></li>
@@ -331,6 +503,24 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.case.results.metrics.stats package</a><ul>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats"><code class="docutils literal notranslate"><span class="pre">Stats</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.data"><code class="docutils literal notranslate"><span class="pre">Stats.data</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.iterations"><code class="docutils literal notranslate"><span class="pre">Stats.iterations</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.maximum"><code class="docutils literal notranslate"><span class="pre">Stats.maximum</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.mean"><code class="docutils literal notranslate"><span class="pre">Stats.mean</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.median"><code class="docutils literal notranslate"><span class="pre">Stats.median</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.metric"><code class="docutils literal notranslate"><span class="pre">Stats.metric</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.minimum"><code class="docutils literal notranslate"><span class="pre">Stats.minimum</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.name"><code class="docutils literal notranslate"><span class="pre">Stats.name</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.percentiles"><code class="docutils literal notranslate"><span class="pre">Stats.percentiles</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.relative_standard_deviation"><code class="docutils literal notranslate"><span class="pre">Stats.relative_standard_deviation</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.rounds"><code class="docutils literal notranslate"><span class="pre">Stats.rounds</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.scale"><code class="docutils literal notranslate"><span class="pre">Stats.scale</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.standard_deviation"><code class="docutils literal notranslate"><span class="pre">Stats.standard_deviation</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.stats_block"><code class="docutils literal notranslate"><span class="pre">Stats.stats_block()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.Stats.unit"><code class="docutils literal notranslate"><span class="pre">Stats.unit</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>

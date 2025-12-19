@@ -271,11 +271,11 @@ Metrics object.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metric.metrics.metrics.</span></span><span class="sig-name descname"><span class="pre">Metrics</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric_definition.metric_definition.html#simplebench.metric.metric_definition.metric_definition.MetricDefinition" title="simplebench.metric.metric_definition.metric_definition.MetricDefinition"><span class="pre">MetricDefinition</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.metric.metrics.metrics.Metrics" title="simplebench.metric.metrics.metrics.Metrics"><span class="pre">Metrics</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><span class="pre">Metric</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.metric.metrics.metrics.Metrics" title="simplebench.metric.metrics.metrics.Metrics"><span class="pre">Metrics</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><span class="pre">Metric</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/metric/metrics/metrics.html#Metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metric.metrics.metrics.Metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a>]</p>
 <p>A namespace class for metrics that behaves like a read-only dictionary.
 This class can be used to store and manage metrics in a structured way.
 Each metric is stored as an attribute of the Metrics object.</p>
@@ -284,32 +284,56 @@ values are instances of MetricDefinition. Once a metric is added, it cannot
 be changed.</p>
 <p>The class also provides a method to delete a metric from the Metrics object.
 The key must exist in the Metrics object and contain a MetricDefinition object.</p>
-<p>Initialize the Metrics object with an optional list of metrics.</p>
+<p>Initialize the Metrics object with Metric objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metrics</strong> – An Iterable of MetricDefinition objects to initialize the Metrics object.</p>
+<dd class="field-odd"><p><strong>metrics</strong> – A Metric, an Iterable of Metric objects, or a Metrics instance to initialize the Metrics object.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the input is not an Iterable of MetricDefinition.</p>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the input is not a Metric, an Iterable of Metric
+objects, or a Metrics instance.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchDuplicateKeyError" title="simplebench.exceptions.SimpleBenchDuplicateKeyError"><strong>SimpleBenchDuplicateKeyError</strong></a> – If a duplicate key is found.</p></li>
+</ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.metric.metrics.metrics.Metrics.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metric/metrics/metrics.html#Metrics.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metric.metrics.metrics.Metrics.add" title="Link to this definition">🔗</a></dt>
+<dd><p>Add a single Metric to the Metrics object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metric</strong> – A Metric object to add.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchDuplicateKeyError" title="simplebench.exceptions.SimpleBenchDuplicateKeyError"><strong>SimpleBenchDuplicateKeyError</strong></a> – If a duplicate key is found.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.metric.metrics.metrics.Metrics.extend">
 <span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric_definition.metric_definition.html#simplebench.metric.metric_definition.metric_definition.MetricDefinition" title="simplebench.metric.metric_definition.metric_definition.MetricDefinition"><span class="pre">MetricDefinition</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.metric.metrics.metrics.Metrics" title="simplebench.metric.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><span class="pre">Metric</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.metric.metrics.metrics.Metrics" title="simplebench.metric.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metric/metrics/metrics.html#Metrics.extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metric.metrics.metrics.Metrics.extend" title="Link to this definition">🔗</a></dt>
 <dd><p>Add multiple metrics to the Metrics object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metrics</strong> – An Iterable of MetricDefinition objects or another Metrics object.</p>
+<dd class="field-odd"><p><strong>metrics</strong> – An Iterable of Metric objects or another Metrics object.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the input is not an Iterable of MetricDefinition</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the input is not an Iterable of Metric</p></li>
 <li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchDuplicateKeyError" title="simplebench.exceptions.SimpleBenchDuplicateKeyError"><strong>SimpleBenchDuplicateKeyError</strong></a> – If a duplicate key is found.</p></li>
 </ul>
 </dd>
@@ -359,6 +383,7 @@ The key must exist in the Metrics object and contain a MetricDefinition object.<
             <ul>
 <li><a class="reference internal" href="#">simplebench.metric.metrics.metrics module</a><ul>
 <li><a class="reference internal" href="#simplebench.metric.metrics.metrics.Metrics"><code class="docutils literal notranslate"><span class="pre">Metrics</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.metric.metrics.metrics.Metrics.add"><code class="docutils literal notranslate"><span class="pre">Metrics.add()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.metric.metrics.metrics.Metrics.extend"><code class="docutils literal notranslate"><span class="pre">Metrics.extend()</span></code></a></li>
 </ul>
 </li>

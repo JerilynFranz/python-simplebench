@@ -256,21 +256,32 @@
 <span class="sd">The V1 Results object represents the results metric of a version 1 JSON report.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Mapping</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfo</span> <span class="k">as</span> <span class="n">BaseResultsInfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultsInfoErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfo</span> <span class="k">as</span> <span class="n">BaseResultsInfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_float</span><span class="p">,</span> <span class="n">validate_string</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metrics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsObject</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.results_info_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfoSchema</span>
 
 
 <div class="viewcode-block" id="ResultsInfo">
 <a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.results_info.results_info.html#simplebench.report.versions.v1.ResultsInfo">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ResultsInfo</span><span class="p">(</span><span class="n">BaseResultsInfo</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing JSON results object for V1 reports.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing JSON results object for V1 reports.</span>
+
+<span class="sd">    :param group: The group name of the results.</span>
+<span class="sd">    :param title: The title of the results.</span>
+<span class="sd">    :param description: The description of the results.</span>
+<span class="sd">    :param n: The number of iterations.</span>
+<span class="sd">    :param variation_cols: The variation columns.</span>
+<span class="sd">    :param marks: The variation marks.</span>
+<span class="sd">    :param metrics: The list of metrics.</span>
+<span class="sd">    :param extra_info: Additional information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">SCHEMA</span> <span class="o">=</span> <span class="n">ResultsInfoSchema</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON report schema for version 1 reports.&quot;&quot;&quot;</span>
 
@@ -289,9 +300,9 @@
                  <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">n</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">variation_cols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-                 <span class="n">metrics</span><span class="p">:</span> <span class="n">Metrics</span><span class="p">,</span>
-                 <span class="n">extra_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+                 <span class="n">variation_cols</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                 <span class="n">metrics</span><span class="p">:</span> <span class="n">MetricsObject</span><span class="p">,</span>
+                 <span class="n">extra_info</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">],</span>
                  <span class="p">):</span>  <span class="c1"># pylint: disable=super-init-not-called</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Results v1 instance.</span>
 
@@ -314,10 +325,10 @@
 <div class="viewcode-block" id="ResultsInfo.from_dict">
 <a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.results_info.results_info.html#simplebench.report.versions.v1.ResultsInfo.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ResultsInfo&#39;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a JSON Results object instance from a dictionary.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ResultsInfo&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a JSON Results object instance from a mapping.</span>
 
-<span class="sd">        :param data: Dictionary containing the JSON results object data.</span>
+<span class="sd">        :param data: Mapping containing the JSON results object data.</span>
 <span class="sd">        :return: JSON Results object instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">()</span>
@@ -331,7 +342,7 @@
             <span class="n">optional</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">},</span>
             <span class="n">default</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">VERSION</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">TYPE</span><span class="p">},</span>
             <span class="n">match_on</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">VERSION</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">TYPE</span><span class="p">},</span>
-            <span class="n">process_as</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;metrics&#39;</span><span class="p">:</span> <span class="n">Metrics</span><span class="o">.</span><span class="n">from_dict</span><span class="p">})</span>
+            <span class="n">process_as</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;metrics&#39;</span><span class="p">:</span> <span class="n">MetricsObject</span><span class="o">.</span><span class="n">from_dict</span><span class="p">})</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -413,22 +424,22 @@
                 <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsInfoErrorTag</span><span class="o">.</span><span class="n">INVALID_N_VALUE</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the variation columns.</span>
 
-<span class="sd">        :return: A dictionary of variation columns.</span>
+<span class="sd">        :return: A mapping of variation columns.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span>
 
     <span class="nd">@variation_cols</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the variation columns.</span>
 
-<span class="sd">        :param value: A dictionary of variation columns.</span>
+<span class="sd">        :param value: A mapping of variation columns.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;variation_cols must be a dictionary, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;variation_cols must be a Mapping[str, str], got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsInfoErrorTag</span><span class="o">.</span><span class="n">INVALID_VARIATION_COLS_TYPE</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
@@ -436,10 +447,10 @@
                 <span class="s2">&quot;All keys and values in variation_cols must be strings&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsInfoErrorTag</span><span class="o">.</span><span class="n">INVALID_VARIATION_COLS_CONTENT</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metrics</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricsObject</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the metrics.</span>
 
 <span class="sd">        :return: The metrics dictionary.</span>
@@ -447,37 +458,41 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span>
 
     <span class="nd">@metrics</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Metrics</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">MetricsObject</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the metrics.</span>
 
 <span class="sd">        :param value: The metrics.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetricsObject</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;metrics must be a Metrics instance, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsInfoErrorTag</span><span class="o">.</span><span class="n">INVALID_TYPE_TYPE</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="p">:</span> <span class="n">Metrics</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="p">:</span> <span class="n">MetricsObject</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extra_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extra_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the extra info.</span>
 
-<span class="sd">        :return: The extra info dictionary.</span>
+<span class="sd">        :return: The extra info mapping.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span>
 
     <span class="nd">@extra_info</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extra_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extra_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the extra info.</span>
 
-<span class="sd">        :param value: The extra info dictionary.</span>
+<span class="sd">        :param value: The extra info mapping.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;extra_info must be a dictionary, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;extra_info must be a Mapping[str, Hashable], got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsInfoErrorTag</span><span class="o">.</span><span class="n">INVALID_TYPE_TYPE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s2">&quot;All keys in extra_info must be strings and all values must be hashable&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_ResultsInfoErrorTag</span><span class="o">.</span><span class="n">INVALID_TYPE_TYPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
 
 </pre></div>
         </article>

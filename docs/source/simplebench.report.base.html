@@ -614,6 +614,64 @@ for the ExecutionEnvironment class.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.base.RawDataBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.base.</span></span><span class="sig-name descname"><span class="pre">RawDataBlock</span></span><a class="reference internal" href="../_modules/simplebench/report/base/raw_data_block.html#RawDataBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.RawDataBlock" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.base.hydrator.hydrator.html#simplebench.base.hydrator.hydrator.Hydrator" title="simplebench.base.hydrator.hydrator.Hydrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hydrator</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Base class representing a raw data block.</p>
+<p>Initialize RawDataBlock class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.base.RawDataBlock.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#simplebench.report.base.RawDataBlock.ID" title="Link to this definition">🔗</a></dt>
+<dd><p>ID of the RawDataBlock class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.base.RawDataBlock.SCHEMA">
+<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.base.RawDataBlock.SCHEMA" title="Link to this definition">🔗</a></dt>
+<dd><p>alias of <a class="reference internal" href="simplebench.report.base.json_schema.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.base.RawDataBlock.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#simplebench.report.base.RawDataBlock.TYPE" title="Link to this definition">🔗</a></dt>
+<dd><p>Type of the RawDataBlock class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.base.RawDataBlock.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#simplebench.report.base.RawDataBlock.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>Version of the RawDataBlock class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.base.RawDataBlock.from_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock" title="simplebench.report.base.raw_data_block.RawDataBlock"><span class="pre">RawDataBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/base/raw_data_block.html#RawDataBlock.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.RawDataBlock.from_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a RawDataBlock instance from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Dictionary containing the JSON results data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>RawDataBlock instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.base.RawDataBlock.to_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/base/raw_data_block.html#RawDataBlock.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.RawDataBlock.to_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert the RawDataBlock instance to a dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="simplebench.report.base.Report">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.base.</span></span><span class="sig-name descname"><span class="pre">Report</span></span><a class="reference internal" href="../_modules/simplebench/report/base/report.html#Report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.Report" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.base.hydrator.hydrator.html#simplebench.base.hydrator.hydrator.Hydrator" title="simplebench.base.hydrator.hydrator.Hydrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hydrator</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
@@ -1010,6 +1068,18 @@ for the version.</p>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.report.base.raw_data_block.html">simplebench.report.base.raw_data_block module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock"><code class="docutils literal notranslate"><span class="pre">RawDataBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock.ID"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock.SCHEMA"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.SCHEMA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock.TYPE"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock.VERSION"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.VERSION</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock.from_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.to_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.report.base.report.html">simplebench.report.base.report module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.report.base.report.html#simplebench.report.base.report.Report"><code class="docutils literal notranslate"><span class="pre">Report</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.report.html#simplebench.report.base.report.Report.SCHEMA"><code class="docutils literal notranslate"><span class="pre">Report.SCHEMA</span></code></a></li>
@@ -1158,6 +1228,15 @@ for the version.</p>
 <li><a class="reference internal" href="#simplebench.report.base.PythonInfo.hash_id"><code class="docutils literal notranslate"><span class="pre">PythonInfo.hash_id</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.base.PythonInfo.is_execution_environment"><code class="docutils literal notranslate"><span class="pre">PythonInfo.is_execution_environment()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.base.PythonInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">PythonInfo.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.report.base.RawDataBlock"><code class="docutils literal notranslate"><span class="pre">RawDataBlock</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.report.base.RawDataBlock.ID"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.ID</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.base.RawDataBlock.SCHEMA"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.SCHEMA</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.base.RawDataBlock.TYPE"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.TYPE</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.base.RawDataBlock.VERSION"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.VERSION</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.base.RawDataBlock.from_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.from_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.base.RawDataBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.report.base.Report"><code class="docutils literal notranslate"><span class="pre">Report</span></code></a><ul>

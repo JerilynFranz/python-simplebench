@@ -30,6 +30,7 @@ Subpackages
    simplebench.timeout
    simplebench.timers
    simplebench.type_proxies
+   simplebench.types
    simplebench.utils
    simplebench.validators
    simplebench.vcs

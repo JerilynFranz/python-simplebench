@@ -672,37 +672,52 @@ If not provided, it defaults to an empty string and will be computed automatical
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.Metrics">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.</span></span><span class="sig-name descname"><span class="pre">Metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metrics.MetricItem</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/metrics/metrics.html#Metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.Metrics" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.MetricsObject">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.</span></span><span class="sig-name descname"><span class="pre">MetricsObject</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MetricsObject.MetricItem</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/metrics_object/metrics_object.html#MetricsObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.MetricsObject" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.UserDict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserDict</span></code></a></p>
-<p>Base class representing the ‘metrics’ object in a JSON report results object.</p>
+<p>Base class representing the ‘metrics’ object in a JSON report ResultsInfo object.</p>
 <p>This is a dictionary where the keys are metric names (strings) and the values
 are MetricItem objects (either a StatsBlock or a ValueBlock).</p>
+<p>It is not a standalone JSON schema object, but rather a subcomponent
+of the results-info JSON schema object.</p>
+<p>See <a class="reference internal" href="simplebench.report.versions.v1.results_info.html#simplebench.report.versions.v1.results_info.ResultsInfo" title="simplebench.report.versions.v1.results_info.ResultsInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsInfo</span></code></a> for more details.</p>
 <p>The typing enforcement is done in the __setitem__ method.</p>
-<p>Initialize a Metrics v1 instance.
-:param metrics: The metrics dictionary. The keys are metric names</p>
-<blockquote>
-<div><p>and the values are Metrics.MetricItem objects (either a StatsBlock or a ValueBlock).</p>
+<p>Initialize a Metrics v1 instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metrics</strong> (<em>Mapping</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>MetricsObject.MetricItem</em><em>]</em>) – <p>The metrics dictionary. The keys are metric names
+and the values are Metrics.MetricItem objects (either a StatsBlock or a ValueBlock).</p>
 <p>The keys must must be in the format ‘namespace::type_name’
 where both namespace and type_name start and end with an alphanumeric character
 and can contain underscores in between.”</p>
-</div></blockquote>
+</p>
+</dd>
+</dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.Metrics.MetricItem">
-<span class="sig-name descname"><span class="pre">MetricItem</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeAlias" title="(in Python v3.14)"><span class="pre">TypeAlias</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">simplebench.report.versions.v1.stats_block.stats_block.StatsBlock</span> <span class="pre">|</span> <span class="pre">simplebench.report.versions.v1.value_block.value_block.ValueBlock</span></em><a class="headerlink" href="#simplebench.report.versions.v1.Metrics.MetricItem" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.MetricsObject.MetricItem">
+<span class="sig-name descname"><span class="pre">MetricItem</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeAlias" title="(in Python v3.14)"><span class="pre">TypeAlias</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">simplebench.report.versions.v1.stats_block.stats_block.StatsBlock</span> <span class="pre">|</span> <span class="pre">simplebench.report.versions.v1.value_block.value_block.ValueBlock</span> <span class="pre">|</span> <span class="pre">simplebench.report.versions.v1.raw_data_block.raw_data_block.RawDataBlock</span></em><a class="headerlink" href="#simplebench.report.versions.v1.MetricsObject.MetricItem" title="Link to this definition">🔗</a></dt>
 <dd><p>Type alias for the possible types of metric items in the metrics dictionary.</p>
-<p>Currently, the only possible types are StatsBlock and ValueBlock.</p>
+<p>Currently, the only possible types are
+- <a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock" title="simplebench.report.versions.v1.stats_block.StatsBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlock</span></code></a>
+- <a class="reference internal" href="simplebench.report.versions.v1.value_block.html#simplebench.report.versions.v1.value_block.ValueBlock" title="simplebench.report.versions.v1.value_block.ValueBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueBlock</span></code></a>
+- <a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock" title="simplebench.report.versions.v1.raw_data_block.RawDataBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">RawDataBlock</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.Metrics.from_dict">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.MetricsObject.from_dict">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.metrics.metrics.html#simplebench.report.versions.v1.metrics.metrics.Metrics" title="simplebench.report.versions.v1.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/metrics/metrics.html#Metrics.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.Metrics.from_dict" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html#simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject" title="simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/metrics_object/metrics_object.html#MetricsObject.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.MetricsObject.from_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a Metrics object instance from a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -893,6 +908,167 @@ for the version.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.</span></span><span class="sig-name descname"><span class="pre">RawDataBlock</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">semantic_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/raw_data_block/raw_data_block.html#RawDataBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.raw_data_block.html#simplebench.report.base.raw_data_block.RawDataBlock" title="simplebench.report.base.raw_data_block.RawDataBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">RawDataBlock</span></code></a></p>
+<p>Class representing a raw data block (V1).
+:param str semantic_type: The semantic type string for the raw data block. (‘type’ field in JSON data)
+:param (str | None) timer: The timer string or None.
+:param str unit: The unit of measurement.
+:param float scale: The scale factor.
+:param Values data: The raw data values of the block.
+:raise SimpleBenchTypeError: If any parameter is of incorrect type.
+:raise SimpleBenchValueError: If any parameter has an invalid value.</p>
+<p>Initialize JSONStatsSummary base class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>semantic_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The semantic type string for the value block. (‘type’ field in JSON data)</p></li>
+<li><p><strong>timer</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em><em>)</em>) – The timer string or None.</p></li>
+<li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unit of measurement.</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scale factor.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="simplebench.types.html#simplebench.types.Values" title="simplebench.types.Values"><em>Values</em></a>) – The raw data values of the block.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any parameter is of incorrect type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any parameter has an invalid value.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/raw-data-block.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.ID" title="Link to this definition">🔗</a></dt>
+<dd><p>ID of the raw data block schema.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.SCHEMA">
+<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.SCHEMA" title="Link to this definition">🔗</a></dt>
+<dd><p>alias of <a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.raw_data_block_schema.html#simplebench.report.versions.v1.raw_data_block.raw_data_block_schema.RawDataBlockSchema" title="simplebench.report.versions.v1.raw_data_block.raw_data_block_schema.RawDataBlockSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">RawDataBlockSchema</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchRawDataBlock::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.TYPE" title="Link to this definition">🔗</a></dt>
+<dd><p>Type of the raw data block schema.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>Version of the raw data block schema.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.data" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.raw_data_block.RawDataBlock" title="simplebench.report.versions.v1.raw_data_block.raw_data_block.RawDataBlock"><span class="pre">RawDataBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/raw_data_block/raw_data_block.html#RawDataBlock.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.from_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a RawDataBlock instance from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Dictionary containing the JSON raw data block data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A RawDataBlock instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.scale">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.scale" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the scale factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The scale factor.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If scale is not a float.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.semantic_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">semantic_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.semantic_type" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the semantic type value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The semantic type value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/raw_data_block/raw_data_block.html#RawDataBlock.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.to_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert the RawDataBlock instance to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary representation of the RawDataBlock instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.unit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.unit" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the unit of measurement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The unit of measurement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.RawDataBlock.validate_timer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_timer</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/raw_data_block/raw_data_block.html#RawDataBlock.validate_timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.RawDataBlock.validate_timer" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate the timer.
+:param value: The timer string to validate.
+:return: The validated timer string or None.
+:raise SimpleBenchTypeError: If the timer is not a string or None.
+:raises SimpleBenchValueError: If the timer string is invalid.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.Report">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.</span></span><span class="sig-name descname"><span class="pre">Report</span></span><span class="sig-paren">(</span>
 
@@ -1024,14 +1200,28 @@ for the version.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">variation_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.versions.v1.metrics.metrics.html#simplebench.report.versions.v1.metrics.metrics.Metrics" title="simplebench.report.versions.v1.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">extra_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">variation_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html#simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject" title="simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">extra_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Hashable" title="(in Python v3.14)"><span class="pre">Hashable</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info.html#ResultsInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.ResultsInfo" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.report.base.results_info.html#simplebench.report.base.results_info.ResultsInfo" title="simplebench.report.base.results_info.ResultsInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsInfo</span></code></a></p>
 <p>Class representing JSON results object for V1 reports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> – The group name of the results.</p></li>
+<li><p><strong>title</strong> – The title of the results.</p></li>
+<li><p><strong>description</strong> – The description of the results.</p></li>
+<li><p><strong>n</strong> – The number of iterations.</p></li>
+<li><p><strong>variation_cols</strong> – The variation columns.</p></li>
+<li><p><strong>marks</strong> – The variation marks.</p></li>
+<li><p><strong>metrics</strong> – The list of metrics.</p></li>
+<li><p><strong>extra_info</strong> – Additional information.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Initialize a Results v1 instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1078,11 +1268,11 @@ for the version.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.ResultsInfo.extra_info">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extra_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.report.versions.v1.ResultsInfo.extra_info" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extra_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Hashable" title="(in Python v3.14)"><span class="pre">Hashable</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.report.versions.v1.ResultsInfo.extra_info" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the extra info.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The extra info dictionary.</p>
+<dd class="field-odd"><p>The extra info mapping.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1092,14 +1282,14 @@ for the version.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.results_info.results_info.html#simplebench.report.versions.v1.results_info.results_info.ResultsInfo" title="simplebench.report.versions.v1.results_info.results_info.ResultsInfo"><span class="pre">ResultsInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info.html#ResultsInfo.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.ResultsInfo.from_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Create a JSON Results object instance from a dictionary.</p>
+<dd><p>Create a JSON Results object instance from a mapping.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – Dictionary containing the JSON results object data.</p>
+<dd class="field-odd"><p><strong>data</strong> – Mapping containing the JSON results object data.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>JSON Results object instance.</p>
@@ -1115,7 +1305,7 @@ for the version.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.ResultsInfo.metrics">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.versions.v1.metrics.metrics.html#simplebench.report.versions.v1.metrics.metrics.Metrics" title="simplebench.report.versions.v1.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.ResultsInfo.metrics" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html#simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject" title="simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.ResultsInfo.metrics" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the metrics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1149,11 +1339,11 @@ for the version.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.ResultsInfo.variation_cols">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.report.versions.v1.ResultsInfo.variation_cols" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.report.versions.v1.ResultsInfo.variation_cols" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the variation columns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary of variation columns.</p>
+<dd class="field-odd"><p>A mapping of variation columns.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1171,20 +1361,52 @@ for the version.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">semantic_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">median</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">standard_deviation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">relative_standard_deviation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">percentiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">median</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">standard_deviation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">relative_standard_deviation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">percentiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">measurements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/stats_block/stats_block.html#StatsBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.StatsBlock" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.report.base.stats_block.html#simplebench.report.base.stats_block.StatsBlock" title="simplebench.report.base.stats_block.StatsBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlock</span></code></a></p>
 <p>Class representing JSON stats summary for V1 reports.</p>
+<p>This class represents a stats block information in a JSON report.
+It implements validation and serialization/deserialization methods to and from dictionaries
+for the following JSON Schema version:</p>
+<p><a class="reference external" href="https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/stats-block.json">https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/stats-block.json</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the stats block.</p></li>
+<li><p><strong>description</strong> – The description of the stats block.</p></li>
+<li><p><strong>semantic_type</strong> – The semantic type of the stats block.</p></li>
+<li><p><strong>unit</strong> – The unit of measurement for the stats block.</p></li>
+<li><p><strong>scale</strong> – The scale factor for the stats block.</p></li>
+<li><p><strong>iterations</strong> – The number of iterations measured for the stats block.</p></li>
+<li><p><strong>rounds</strong> – The number of rounds in each iteration measured.</p></li>
+<li><p><strong>mean</strong> – The mean value of the stats block.</p></li>
+<li><p><strong>median</strong> – The median value of the stats block.</p></li>
+<li><p><strong>minimum</strong> – The minimum value of the stats block.</p></li>
+<li><p><strong>maximum</strong> – The maximum value of the stats block.</p></li>
+<li><p><strong>standard_deviation</strong> – The standard deviation of the stats block.</p></li>
+<li><p><strong>relative_standard_deviation</strong> – The relative standard deviation of the stats block.</p></li>
+<li><p><strong>percentiles</strong> – The list of percentiles for the stats block.</p></li>
+<li><p><strong>measurements</strong> – The list of raw measurements for the stats block.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any parameter is of an invalid type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any parameter has an invalid value.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Initialize a StatsBlock object with the given parameters.</p>
 <p>The parameters are validated to ensure they meet the required types and constraints
 and match the contract of the JSON schema for the version 1 report.</p>
@@ -1205,6 +1427,7 @@ and match the contract of the JSON schema for the version 1 report.</p>
 <li><p><strong>standard_deviation</strong> – The standard deviation of the stats block.</p></li>
 <li><p><strong>relative_standard_deviation</strong> – The relative standard deviation of the stats block.</p></li>
 <li><p><strong>percentiles</strong> – The list of percentiles for the stats block.</p></li>
+<li><p><strong>measurements</strong> – The list of raw measurements for the stats block.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -1266,7 +1489,7 @@ and match the contract of the JSON schema for the version 1 report.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">iterations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.StatsBlock.iterations" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the number of iterations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Return int<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The number of iterations.</p>
 </dd>
 </dl>
@@ -1290,6 +1513,17 @@ and match the contract of the JSON schema for the version 1 report.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The mean value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.StatsBlock.measurements">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">measurements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.StatsBlock.measurements" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the Values instance containing the raw measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return Values | None<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The Values instance containing the raw measurements, or None if not set.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1537,15 +1771,32 @@ If not provided, it defaults to an empty string and will be computed automatical
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/value_block/value_block.html#ValueBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.ValueBlock" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.report.base.value_block.html#simplebench.report.base.value_block.ValueBlock" title="simplebench.report.base.value_block.ValueBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueBlock</span></code></a></p>
 <p>Class representing a value block (V1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>semantic_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The semantic type string for the value block. (‘type’ field in JSON data)</p></li>
+<li><p><strong>timer</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em><em>)</em>) – The timer string or None.</p></li>
+<li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unit of measurement.</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scale factor.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The value of the block.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any parameter is of incorrect type.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any parameter has an invalid value.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Initialize JSONStatsSummary base class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>semantic_type</strong> – The semantic type string for the value block. (‘type’ field in JSON data)</p></li>
-<li><p><strong>timer</strong> – The timer string or None.</p></li>
-<li><p><strong>unit</strong> – The unit of measurement.</p></li>
-<li><p><strong>scale</strong> – The scale factor.</p></li>
-<li><p><strong>value</strong> – The value of the block.</p></li>
+<li><p><strong>semantic_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The semantic type string for the value block. (‘type’ field in JSON data)</p></li>
+<li><p><strong>timer</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em><em>)</em>) – The timer string or None.</p></li>
+<li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unit of measurement.</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scale factor.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The value of the block.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -1644,22 +1895,6 @@ If not provided, it defaults to an empty string and will be computed automatical
 <dd class="field-odd"><p>The unit of measurement.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.ValueBlock.validate_semantic_type_pattern">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_semantic_type_pattern</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/value_block/value_block.html#ValueBlock.validate_semantic_type_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.ValueBlock.validate_semantic_type_pattern" title="Link to this definition">🔗</a></dt>
-<dd><p>Validate the semantic type.
-:param value: The semantic type string to validate.
-:return: The validated semantic type string.
-:raise SimpleBenchTypeError: If the semantic type is not a string.
-:raises SimpleBenchValueError: If the semantic type string is invalid.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1785,15 +2020,15 @@ If not provided, it defaults to an empty string and will be computed automatical
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.metrics.html">simplebench.report.versions.v1.metrics package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.metrics.html#simplebench.report.versions.v1.metrics.Metrics"><code class="docutils literal notranslate"><span class="pre">Metrics</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.metrics.html#simplebench.report.versions.v1.metrics.Metrics.MetricItem"><code class="docutils literal notranslate"><span class="pre">Metrics.MetricItem</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.metrics.html#simplebench.report.versions.v1.metrics.Metrics.from_dict"><code class="docutils literal notranslate"><span class="pre">Metrics.from_dict()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.html">simplebench.report.versions.v1.metrics_object package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.html#simplebench.report.versions.v1.metrics_object.MetricsObject"><code class="docutils literal notranslate"><span class="pre">MetricsObject</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.html#simplebench.report.versions.v1.metrics_object.MetricsObject.MetricItem"><code class="docutils literal notranslate"><span class="pre">MetricsObject.MetricItem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.html#simplebench.report.versions.v1.metrics_object.MetricsObject.from_dict"><code class="docutils literal notranslate"><span class="pre">MetricsObject.from_dict()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.metrics.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.metrics.metrics.html">simplebench.report.versions.v1.metrics.metrics module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.report.versions.v1.metrics.metrics.html#simplebench.report.versions.v1.metrics.metrics.Metrics"><code class="docutils literal notranslate"><span class="pre">Metrics</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html">simplebench.report.versions.v1.metrics_object.metrics_object module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html#simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><code class="docutils literal notranslate"><span class="pre">MetricsObject</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1832,6 +2067,41 @@ If not provided, it defaults to an empty string and will be computed automatical
 </li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html">simplebench.report.versions.v1.python_info.python_info_schema module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html">simplebench.report.versions.v1.raw_data_block package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock"><code class="docutils literal notranslate"><span class="pre">RawDataBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.ID"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.SCHEMA"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.SCHEMA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.TYPE"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.VERSION"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.VERSION</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.data"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.data</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.from_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.scale"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.scale</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.semantic_type"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.semantic_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.unit"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.unit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock.validate_timer"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.validate_timer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlockSchema"><code class="docutils literal notranslate"><span class="pre">RawDataBlockSchema</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlockSchema.ID"><code class="docutils literal notranslate"><span class="pre">RawDataBlockSchema.ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlockSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">RawDataBlockSchema.TYPE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlockSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">RawDataBlockSchema.VERSION</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlockSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlockSchema.as_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.raw_data_block.html">simplebench.report.versions.v1.raw_data_block.raw_data_block module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.raw_data_block.RawDataBlock"><code class="docutils literal notranslate"><span class="pre">RawDataBlock</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.raw_data_block_schema.html">simplebench.report.versions.v1.raw_data_block.raw_data_block_schema module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.raw_data_block_schema.html#simplebench.report.versions.v1.raw_data_block.raw_data_block_schema.RawDataBlockSchema"><code class="docutils literal notranslate"><span class="pre">RawDataBlockSchema</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1916,6 +2186,7 @@ If not provided, it defaults to an empty string and will be computed automatical
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock.iterations"><code class="docutils literal notranslate"><span class="pre">StatsBlock.iterations</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock.maximum"><code class="docutils literal notranslate"><span class="pre">StatsBlock.maximum</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock.mean"><code class="docutils literal notranslate"><span class="pre">StatsBlock.mean</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock.measurements"><code class="docutils literal notranslate"><span class="pre">StatsBlock.measurements</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock.median"><code class="docutils literal notranslate"><span class="pre">StatsBlock.median</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock.minimum"><code class="docutils literal notranslate"><span class="pre">StatsBlock.minimum</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock.name"><code class="docutils literal notranslate"><span class="pre">StatsBlock.name</span></code></a></li>
@@ -1960,7 +2231,6 @@ If not provided, it defaults to an empty string and will be computed automatical
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.html#simplebench.report.versions.v1.value_block.ValueBlock.semantic_type"><code class="docutils literal notranslate"><span class="pre">ValueBlock.semantic_type</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.html#simplebench.report.versions.v1.value_block.ValueBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlock.to_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.html#simplebench.report.versions.v1.value_block.ValueBlock.unit"><code class="docutils literal notranslate"><span class="pre">ValueBlock.unit</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.html#simplebench.report.versions.v1.value_block.ValueBlock.validate_semantic_type_pattern"><code class="docutils literal notranslate"><span class="pre">ValueBlock.validate_semantic_type_pattern()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.html#simplebench.report.versions.v1.value_block.ValueBlock.validate_timer"><code class="docutils literal notranslate"><span class="pre">ValueBlock.validate_timer()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.html#simplebench.report.versions.v1.value_block.ValueBlock.value"><code class="docutils literal notranslate"><span class="pre">ValueBlock.value</span></code></a></li>
 </ul>
@@ -2097,9 +2367,9 @@ If not provided, it defaults to an empty string and will be computed automatical
 <li><a class="reference internal" href="#simplebench.report.versions.v1.MachineInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">MachineInfo.to_dict()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.Metrics"><code class="docutils literal notranslate"><span class="pre">Metrics</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.Metrics.MetricItem"><code class="docutils literal notranslate"><span class="pre">Metrics.MetricItem</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.Metrics.from_dict"><code class="docutils literal notranslate"><span class="pre">Metrics.from_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.MetricsObject"><code class="docutils literal notranslate"><span class="pre">MetricsObject</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.MetricsObject.MetricItem"><code class="docutils literal notranslate"><span class="pre">MetricsObject.MetricItem</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.MetricsObject.from_dict"><code class="docutils literal notranslate"><span class="pre">MetricsObject.from_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.PythonInfo"><code class="docutils literal notranslate"><span class="pre">PythonInfo</span></code></a><ul>
@@ -2117,6 +2387,20 @@ If not provided, it defaults to an empty string and will be computed automatical
 <li><a class="reference internal" href="#simplebench.report.versions.v1.PythonInfo.release"><code class="docutils literal notranslate"><span class="pre">PythonInfo.release</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.PythonInfo.system"><code class="docutils literal notranslate"><span class="pre">PythonInfo.system</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.PythonInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">PythonInfo.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock"><code class="docutils literal notranslate"><span class="pre">RawDataBlock</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.ID"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.ID</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.SCHEMA"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.SCHEMA</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.TYPE"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.TYPE</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.VERSION"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.VERSION</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.data"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.data</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.from_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.from_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.scale"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.scale</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.semantic_type"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.semantic_type</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.unit"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.unit</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.RawDataBlock.validate_timer"><code class="docutils literal notranslate"><span class="pre">RawDataBlock.validate_timer()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.Report"><code class="docutils literal notranslate"><span class="pre">Report</span></code></a><ul>
@@ -2161,6 +2445,7 @@ If not provided, it defaults to an empty string and will be computed automatical
 <li><a class="reference internal" href="#simplebench.report.versions.v1.StatsBlock.iterations"><code class="docutils literal notranslate"><span class="pre">StatsBlock.iterations</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.StatsBlock.maximum"><code class="docutils literal notranslate"><span class="pre">StatsBlock.maximum</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.StatsBlock.mean"><code class="docutils literal notranslate"><span class="pre">StatsBlock.mean</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.StatsBlock.measurements"><code class="docutils literal notranslate"><span class="pre">StatsBlock.measurements</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.StatsBlock.median"><code class="docutils literal notranslate"><span class="pre">StatsBlock.median</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.StatsBlock.minimum"><code class="docutils literal notranslate"><span class="pre">StatsBlock.minimum</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.StatsBlock.name"><code class="docutils literal notranslate"><span class="pre">StatsBlock.name</span></code></a></li>
@@ -2194,7 +2479,6 @@ If not provided, it defaults to an empty string and will be computed automatical
 <li><a class="reference internal" href="#simplebench.report.versions.v1.ValueBlock.semantic_type"><code class="docutils literal notranslate"><span class="pre">ValueBlock.semantic_type</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.ValueBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlock.to_dict()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.ValueBlock.unit"><code class="docutils literal notranslate"><span class="pre">ValueBlock.unit</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.ValueBlock.validate_semantic_type_pattern"><code class="docutils literal notranslate"><span class="pre">ValueBlock.validate_semantic_type_pattern()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.ValueBlock.validate_timer"><code class="docutils literal notranslate"><span class="pre">ValueBlock.validate_timer()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.ValueBlock.value"><code class="docutils literal notranslate"><span class="pre">ValueBlock.value</span></code></a></li>
 </ul>

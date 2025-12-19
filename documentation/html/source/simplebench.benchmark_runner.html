@@ -400,6 +400,13 @@ from <a class="reference internal" href="#simplebench.benchmark_runner.SimpleRun
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.case.results.results.html#simplebench.case.results.results.Results" title="simplebench.case.results.results.Results"><span class="pre">Results</span></a></span></span><a class="reference internal" href="../_modules/simplebench/benchmark_runner/simplerunner/simplerunner.html#SimpleRunner.default_runner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.benchmark_runner.SimpleRunner.default_runner" title="Link to this definition">🔗</a></dt>
 <dd><p>Run a generic benchmark using the specified action and test case.</p>
+<p>It runs a complete benchmark for a specific combination of kwarg variations
+according to the parameters defined in the benchmark case, including the
+number of iterations, minimum and maximum time limits, and warmup iterations.</p>
+<p>All measurements are collected into <a class="reference internal" href="simplebench.case.results.html#simplebench.case.results.Results" title="simplebench.case.results.Results"><code class="xref py py-class docutils literal notranslate"><span class="pre">Results</span></code></a>
+which is returned at the end of the benchmark.</p>
+<p>The same number of rounds is used for every iteration in a single Results,
+which is either auto-calibrated or specified in the benchmark case.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -410,10 +417,10 @@ sorts a list of length n, then n should be the length of the list.
 If the action being benchmarked is a function that performs
 a constant-time operation, then n should be 1.</p>
 </p></li>
-<li><p><strong>action</strong> – The action to benchmark.</p></li>
-<li><p><strong>setup</strong> – A setup function to run before each iteration.</p></li>
-<li><p><strong>teardown</strong> – A teardown function to run after each iteration.</p></li>
-<li><p><strong>kwargs</strong> – Keyword arguments to pass to the action.</p></li>
+<li><p><strong>action</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><em>Any</em><em>]</em>) – The action to benchmark.</p></li>
+<li><p><strong>setup</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>[</em><em>...</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – A setup function to run before each iteration.</p></li>
+<li><p><strong>teardown</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>[</em><em>...</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – A teardown function to run after each iteration.</p></li>
+<li><p><strong>kwargs</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em>) – Keyword arguments to pass to the action.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

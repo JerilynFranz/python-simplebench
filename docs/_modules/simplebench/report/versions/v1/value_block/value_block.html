@@ -252,14 +252,17 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for simplebench.report.versions.v1.value_block.value_block</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Class for JSON value block representation.&quot;&quot;&quot;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ValueBlockErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValueBlock</span> <span class="k">as</span> <span class="n">ValueBlockBase</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ValueBlockErrorTag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_positive_float</span><span class="p">,</span> <span class="n">validate_string</span><span class="p">,</span> <span class="n">validate_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">validate_namespaced_identifier</span><span class="p">,</span>
+    <span class="n">validate_positive_float</span><span class="p">,</span>
+    <span class="n">validate_string</span><span class="p">,</span>
+    <span class="n">validate_type</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.value_block_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValueBlockSchema</span>
 
@@ -267,7 +270,16 @@
 <div class="viewcode-block" id="ValueBlock">
 <a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.ValueBlock">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ValueBlock</span><span class="p">(</span><span class="n">ValueBlockBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing a value block (V1).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing a value block (V1).</span>
+
+<span class="sd">    :param str semantic_type: The semantic type string for the value block. (&#39;type&#39; field in JSON data)</span>
+<span class="sd">    :param (str | None) timer: The timer string or None.</span>
+<span class="sd">    :param str unit: The unit of measurement.</span>
+<span class="sd">    :param float scale: The scale factor.</span>
+<span class="sd">    :param float value: The value of the block.</span>
+<span class="sd">    :raise SimpleBenchTypeError: If any parameter is of incorrect type.</span>
+<span class="sd">    :raise SimpleBenchValueError: If any parameter has an invalid value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">SCHEMA</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">JSONSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValueBlockSchema</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;JSON schema class for the value block.&quot;&quot;&quot;</span>
@@ -291,11 +303,11 @@
             <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize JSONStatsSummary base class.</span>
 
-<span class="sd">        :param semantic_type: The semantic type string for the value block. (&#39;type&#39; field in JSON data)</span>
-<span class="sd">        :param timer: The timer string or None.</span>
-<span class="sd">        :param unit: The unit of measurement.</span>
-<span class="sd">        :param scale: The scale factor.</span>
-<span class="sd">        :param value: The value of the block.</span>
+<span class="sd">        :param str semantic_type: The semantic type string for the value block. (&#39;type&#39; field in JSON data)</span>
+<span class="sd">        :param (str | None) timer: The timer string or None.</span>
+<span class="sd">        :param str unit: The unit of measurement.</span>
+<span class="sd">        :param float scale: The scale factor.</span>
+<span class="sd">        :param float value: The value of the block.</span>
 <span class="sd">        :raise SimpleBenchTypeError: If any parameter is of incorrect type.</span>
 <span class="sd">        :raise SimpleBenchValueError: If any parameter has an invalid value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -363,38 +375,11 @@
 
         <span class="n">timer_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_string</span><span class="p">(</span>
             <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;timer&#39;</span><span class="p">,</span>
-            <span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_VALUE_TIMER_TYPE</span><span class="p">,</span>
-            <span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_VALUE_TIMER_VALUE</span><span class="p">,</span>
+            <span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMER_TYPE</span><span class="p">,</span>
+            <span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMER_VALUE</span><span class="p">,</span>
             <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">timer_name</span></div>
-
-
-    <span class="n">_SEMANTIC_TYPE_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[a-zA-Z0-9_]+::[a-zA-Z0-9_]+$&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pattern for validating the semantic type string.&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="ValueBlock.validate_semantic_type_pattern">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.ValueBlock.validate_semantic_type_pattern">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">validate_semantic_type_pattern</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the semantic type.</span>
-<span class="sd">        :param value: The semantic type string to validate.</span>
-<span class="sd">        :return: The validated semantic type string.</span>
-<span class="sd">        :raise SimpleBenchTypeError: If the semantic type is not a string.</span>
-<span class="sd">        :raises SimpleBenchValueError: If the semantic type string is invalid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_string</span><span class="p">(</span>
-            <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;semantic_type&#39;</span><span class="p">,</span>
-            <span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_VALUE_TYPE</span><span class="p">,</span>
-            <span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_VALUE_VALUE</span><span class="p">,</span>
-            <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_SEMANTIC_TYPE_PATTERN</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_name</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Invalid type format for ValueBlock: </span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_VALUE_PATTERN</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">type_name</span></div>
 
 
     <span class="nd">@property</span>
@@ -413,7 +398,10 @@
 <span class="sd">        :raise SimpleBenchTypeError: If type is not a string.</span>
 <span class="sd">        :raise SimpleBenchValueError: If type is an invalid format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_semantic_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_semantic_type_pattern</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_semantic_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_namespaced_identifier</span><span class="p">(</span>
+            <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;semantic_type&#39;</span><span class="p">,</span>
+            <span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_SEMANTIC_TYPE_TYPE</span><span class="p">,</span>
+            <span class="n">_ValueBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_SEMANTIC_TYPE_VALUE</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

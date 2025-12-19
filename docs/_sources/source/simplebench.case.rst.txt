@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   simplebench.case.mark
    simplebench.case.results
 
 Submodules
@@ -22,3 +23,4 @@ Submodules
 
    simplebench.case.case
    simplebench.case.function_runner
+   simplebench.case.validators

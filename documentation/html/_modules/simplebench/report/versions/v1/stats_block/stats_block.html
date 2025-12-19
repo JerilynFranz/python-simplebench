@@ -267,12 +267,14 @@
 <span class="sd">of the base CPUInfo representation at the time of the V1 schema release.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_StatsBlockErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatsBlock</span> <span class="k">as</span> <span class="n">BaseStatsBlock</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_StatsBlockErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types.values</span><span class="w"> </span><span class="kn">import</span> <span class="n">Values</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">validate_float</span><span class="p">,</span>
     <span class="n">validate_namespaced_identifier</span><span class="p">,</span>
@@ -288,7 +290,32 @@
 <div class="viewcode-block" id="StatsBlock">
 <a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.stats_block.stats_block.html#simplebench.report.versions.v1.StatsBlock">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StatsBlock</span><span class="p">(</span><span class="n">BaseStatsBlock</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing JSON stats summary for V1 reports.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing JSON stats summary for V1 reports.</span>
+
+<span class="sd">    This class represents a stats block information in a JSON report.</span>
+<span class="sd">    It implements validation and serialization/deserialization methods to and from dictionaries</span>
+<span class="sd">    for the following JSON Schema version:</span>
+
+<span class="sd">    https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/stats-block.json</span>
+
+<span class="sd">    :param name: The name of the stats block.</span>
+<span class="sd">    :param description: The description of the stats block.</span>
+<span class="sd">    :param semantic_type: The semantic type of the stats block.</span>
+<span class="sd">    :param unit: The unit of measurement for the stats block.</span>
+<span class="sd">    :param scale: The scale factor for the stats block.</span>
+<span class="sd">    :param iterations: The number of iterations measured for the stats block.</span>
+<span class="sd">    :param rounds: The number of rounds in each iteration measured.</span>
+<span class="sd">    :param mean: The mean value of the stats block.</span>
+<span class="sd">    :param median: The median value of the stats block.</span>
+<span class="sd">    :param minimum: The minimum value of the stats block.</span>
+<span class="sd">    :param maximum: The maximum value of the stats block.</span>
+<span class="sd">    :param standard_deviation: The standard deviation of the stats block.</span>
+<span class="sd">    :param relative_standard_deviation: The relative standard deviation of the stats block.</span>
+<span class="sd">    :param percentiles: The list of percentiles for the stats block.</span>
+<span class="sd">    :param measurements: The list of raw measurements for the stats block.</span>
+<span class="sd">    :raise SimpleBenchTypeError: If any parameter is of an invalid type.</span>
+<span class="sd">    :raise SimpleBenchValueError: If any parameter has an invalid value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">SCHEMA</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">JSONSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">StatsBlockSchema</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON schema class for the stats summary block in version 1 reports.&quot;&quot;&quot;</span>
 
@@ -307,15 +334,16 @@
                  <span class="n">semantic_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">median</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">minimum</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">maximum</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">standard_deviation</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">relative_standard_deviation</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">percentiles</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">median</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">minimum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">maximum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">relative_standard_deviation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">percentiles</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">measurements</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">Values</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a StatsBlock object with the given parameters.</span>
 
 <span class="sd">        The parameters are validated to ensure they meet the required types and constraints</span>
@@ -335,9 +363,14 @@
 <span class="sd">        :param standard_deviation: The standard deviation of the stats block.</span>
 <span class="sd">        :param relative_standard_deviation: The relative standard deviation of the stats block.</span>
 <span class="sd">        :param percentiles: The list of percentiles for the stats block.</span>
+<span class="sd">        :param measurements: The list of raw measurements for the stats block.</span>
 <span class="sd">        :raise SimpleBenchTypeError: If any parameter is of an invalid type.</span>
 <span class="sd">        :raise SimpleBenchValueError: If any parameter has an invalid value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set first so if other properties that can be lazy computed from</span>
+        <span class="c1"># measurements are omitted they can be inferred as needed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="n">measurements</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">semantic_type</span> <span class="o">=</span> <span class="n">semantic_type</span>
@@ -352,6 +385,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">standard_deviation</span> <span class="o">=</span> <span class="n">standard_deviation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">relative_standard_deviation</span> <span class="o">=</span> <span class="n">relative_standard_deviation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">percentiles</span> <span class="o">=</span> <span class="n">percentiles</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_lazy_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of iterations for the stats block.</span>
+
+<span class="sd">        This is a lazy property descriptor function that computes the</span>
+<span class="sd">        number of iterations based on the measurements if the iterations</span>
+<span class="sd">        property was not explicitly set.</span>
+
+<span class="sd">        If the measurements property is not set, this method will raise a</span>
+<span class="sd">        SimpleBenchValueError.</span>
+
+<span class="sd">        :return int: The number of iterations</span>
+<span class="sd">        :raise SimpleBenchValueError: If the measurements property is not set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Cannot determine the number of iterations because measurements are not set.&quot;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_StatsBlockErrorTag</span><span class="o">.</span><span class="n">LAZY_PROPERTY_REQUIREMENTS_ERROR</span><span class="p">)</span>
 
 <div class="viewcode-block" id="StatsBlock.from_dict">
 <a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.stats_block.stats_block.html#simplebench.report.versions.v1.StatsBlock.from_dict">[docs]</a>
@@ -378,6 +430,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the StatsBlock object to a dictionary.&quot;&quot;&quot;</span>
         <span class="n">property_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">property_keys</span><span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;measurements&#39;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPE</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">VERSION</span>
 
@@ -516,18 +570,32 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of iterations.</span>
 
-<span class="sd">        :return: The number of iterations.</span>
+<span class="sd">        :return int: The number of iterations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span>
 
     <span class="nd">@iterations</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the number of iterations.</span>
 
 <span class="sd">        :param value: The number of iterations.</span>
 <span class="sd">        :raise SimpleBenchTypeError: If iterations is not an integer.</span>
 <span class="sd">        :raise SimpleBenchValueError: If iterations is not a positive integer.</span>
+<span class="sd">        :raise SimpleBenchValueError: If measurements is set and the number of</span>
+<span class="sd">            iterations does not match the number of measurements.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Cannot determine the number of iterations because neither iterations or measurements are set.&quot;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_StatsBlockErrorTag</span><span class="o">.</span><span class="n">LAZY_PROPERTY_REQUIREMENTS_ERROR</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The number of iterations does not match the number of measurements.&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_StatsBlockErrorTag</span><span class="o">.</span><span class="n">ITERATIONS_INCONSISTENT_WITH_MEASUREMENTS</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span> <span class="o">=</span> <span class="n">validate_positive_int</span><span class="p">(</span>
             <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;iterations&quot;</span><span class="p">,</span>
             <span class="n">_StatsBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_ITERATIONS_TYPE</span><span class="p">,</span>
@@ -699,7 +767,49 @@
                 <span class="s2">&quot;percentiles must be a sequence of 101 numbers&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_StatsBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_PERCENTILES_LENGTH</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_percentiles</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">validated_sequence</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_percentiles</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">validated_sequence</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Values</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the Values instance containing the raw measurements.</span>
+
+<span class="sd">        :return Values | None: The Values instance containing the raw measurements, or None if not set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measurements</span>
+
+    <span class="nd">@measurements</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">measurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">Values</span> <span class="o">|</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the list of raw measurements.</span>
+
+<span class="sd">        :param value: A Sequence of raw float measurements or a Values instance.</span>
+<span class="sd">        :raise SimpleBenchTypeError: If measurements is not a Sequence of float, a Values instance, or None.</span>
+<span class="sd">        :raise SimpleBenchValueError: If the Sequence or Values instance contains fewer than 3 values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_measurements</span><span class="p">:</span> <span class="n">Values</span> <span class="o">|</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_measurements</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">Sequence</span><span class="p">,</span> <span class="n">Values</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;measurements must be a Sequence of float, a Values instance, or None, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_StatsBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_MEASUREMENTS_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;measurements must contain at least 3 values or statistics cannot be computed&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_StatsBlockErrorTag</span><span class="o">.</span><span class="n">TOO_FEW_MEASUREMENTS</span><span class="p">)</span>
+
+        <span class="c1"># Values instances don&#39;t need further validation because they are already validated</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Values</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_measurements</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">return</span>
+
+        <span class="c1"># This check only runs if value is a Sequence (not a Values instance)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                <span class="s2">&quot;All items in measurements must be of type float&quot;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_StatsBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_MEASUREMENTS_CONTENT_TYPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_measurements</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

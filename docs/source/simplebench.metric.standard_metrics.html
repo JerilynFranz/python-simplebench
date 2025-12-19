@@ -260,63 +260,80 @@
           <section id="module-simplebench.metric.standard_metrics">
 <span id="simplebench-metric-standard-metrics-module"></span><h1>simplebench.metric.standard_metrics module<a class="headerlink" href="#module-simplebench.metric.standard_metrics" title="Link to this heading">🔗</a></h1>
 <p>Standard Metrics defined by SimpleRunner benchmark runner.</p>
-<p>Categories for metrics in reporters and benchmarks.</p>
-<blockquote>
-<div><p>This is used by reporters to specify which metrics of benchmark results to include
-in their output and by benchmarks to specify which metric of the output to generate.</p>
+<p>Types for metrics in reporters and benchmarks.</p>
+<p>This is used by reporters to specify what the metrics of benchmark results are.</p>
 <p>Defined Metrics are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>STD_OPS: Operations per second metric.</p></li>
-<li><p>STD_TIMING: Time per measurement metric.</p></li>
-<li><p>STD_MEMORY: Memory usage metric.</p></li>
-<li><p>STD_PEAK_MEMORY: Peak memory usage metric.</p></li>
+<ul class="simple">
+<li><p><cite>STD_OPS_STATS</cite>: Operations per second statistics.</p></li>
+<li><p><cite>STD_OPS_RAW</cite>: Operations per second raw values.</p></li>
+<li><p><cite>STD_TIMING_STATS</cite>: Time per measurement statistics.</p></li>
+<li><p><cite>STD_TIMING_RAW</cite>: Time per measurement raw values.</p></li>
+<li><p><cite>STD_MEMORY_STATS</cite>: Memory usage statistics.</p></li>
+<li><p><cite>STD_MEMORY_RAW</cite>: Memory usage raw values.</p></li>
+<li><p><cite>STD_PEAK_MEMORY_STATS</cite>: Peak memory usage statistics.</p></li>
+<li><p><cite>STD_PEAK_MEMORY_RAW</cite>: Peak memory usage raw values.</p></li>
+<li><p><cite>STD_TOTAL_ELAPSED_TIME</cite>: Total elapsed time metric.</p></li>
+<li><p><cite>STD_TOTAL_CPU_TIME</cite>: Total CPU time metric.</p></li>
+<li><p><cite>STD_CPU_TIME_STATS</cite>: CPU time per measurement statistics.</p></li>
+<li><p><cite>STD_CPU_TIME_RAW</cite>: CPU time per measurement raw values.</p></li>
+<li><p><cite>STD_GC_GEN0_COLLECTIONS_STATS</cite>: Generation 0 garbage collections statistics.</p></li>
+<li><p><cite>STD_GC_GEN0_COLLECTIONS_RAW</cite>: Generation 0 garbage collections raw values.</p></li>
+<li><p><cite>STD_GC_GEN1_COLLECTIONS_STATS</cite>: Generation 1 garbage collections statistics.</p></li>
+<li><p><cite>STD_GC_GEN1_COLLECTIONS_RAW</cite>: Generation 1 garbage collections raw values.</p></li>
+<li><p><cite>STD_GC_GEN2_COLLECTIONS_STATS</cite>: Generation 2 garbage collections statistics.</p></li>
+<li><p><cite>STD_GC_GEN2_COLLECTIONS_RAW</cite>: Generation 2 garbage collections raw values.</p></li>
+<li><p><cite>STD_GC_GEN0_COLLECTED_STATS</cite>: Generation 0 garbage collected objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN0_COLLECTED_RAW</cite>: Generation 0 garbage collected objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN1_COLLECTED_STATS</cite>: Generation 1 garbage collected objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN1_COLLECTED_RAW</cite>: Generation 1 garbage collected objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN2_COLLECTED_STATS</cite>: Generation 2 garbage collected objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN2_COLLECTED_RAW</cite>: Generation 2 garbage collected objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN0_UNCOLLECTABLE_STATS</cite>: Generation 0 uncollectable objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN0_UNCOLLECTABLE_RAW</cite>: Generation 0 uncollectable objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN1_UNCOLLECTABLE_STATS</cite>: Generation 1 uncollectable objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN1_UNCOLLECTABLE_RAW</cite>: Generation 1 uncollectable objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN2_UNCOLLECTABLE_STATS</cite>: Generation 2 uncollectable objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN2_UNCOLLECTABLE_RAW</cite>: Generation 2 uncollectable objects raw values.</p></li>
 </ul>
-</div></blockquote>
 <p>The ‘<a href="#id1"><span class="problematic" id="id2">STD_</span></a>’ prefix is used to indicate that the metric is a standard metric
 defined by the SimpleBench library. Custom metrics should use a different prefix.
 Ideally, custom metrics should use a prefix that is unique to the benchmark or
 benchmark suite that defines them to avoid conflicts with other metrics.</p>
-</div></blockquote>
-<dl class="py data">
-<dt class="sig sig-object py" id="simplebench.metric.standard_metrics.STD_MEMORY">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metric.standard_metrics.</span></span><span class="sig-name descname"><span class="pre">STD_MEMORY</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Final" title="(in Python v3.14)"><span class="pre">Final</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric_definition.metric_definition.html#simplebench.metric.metric_definition.metric_definition.MetricDefinition" title="simplebench.metric.metric_definition.metric_definition.MetricDefinition"><span class="pre">MetricDefinition</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MetricDefinition(semantic_type='simplebench_std::memory',</span> <span class="pre">label='STD_MEMORY_STATS',</span> <span class="pre">description='Memory</span> <span class="pre">usage',</span> <span class="pre">unit='bytes',</span> <span class="pre">scale=1.0,</span> <span class="pre">meta_metric=False)</span></em><a class="headerlink" href="#simplebench.metric.standard_metrics.STD_MEMORY" title="Link to this definition">🔗</a></dt>
-<dd><p>Memory usage metric.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="simplebench.metric.standard_metrics.STD_OPS">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metric.standard_metrics.</span></span><span class="sig-name descname"><span class="pre">STD_OPS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Final" title="(in Python v3.14)"><span class="pre">Final</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric_definition.metric_definition.html#simplebench.metric.metric_definition.metric_definition.MetricDefinition" title="simplebench.metric.metric_definition.metric_definition.MetricDefinition"><span class="pre">MetricDefinition</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MetricDefinition(semantic_type='simplebench_std::operations_per_second',</span> <span class="pre">label='STD_OPS_STATS',</span> <span class="pre">description='Operations</span> <span class="pre">per</span> <span class="pre">second',</span> <span class="pre">unit='ops/s',</span> <span class="pre">scale=1.0,</span> <span class="pre">meta_metric=False)</span></em><a class="headerlink" href="#simplebench.metric.standard_metrics.STD_OPS" title="Link to this definition">🔗</a></dt>
-<dd><p>Operations per second metric.</p>
-<p>The operations per second is the average number of operations performed per second.
-This is the inverse of STD_TIMING.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="simplebench.metric.standard_metrics.STD_PEAK_MEMORY">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metric.standard_metrics.</span></span><span class="sig-name descname"><span class="pre">STD_PEAK_MEMORY</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Final" title="(in Python v3.14)"><span class="pre">Final</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric_definition.metric_definition.html#simplebench.metric.metric_definition.metric_definition.MetricDefinition" title="simplebench.metric.metric_definition.metric_definition.MetricDefinition"><span class="pre">MetricDefinition</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MetricDefinition(semantic_type='simplebench_std::peak_memory',</span> <span class="pre">label='STD_PEAK_MEMORY_STATS',</span> <span class="pre">description='Peak</span> <span class="pre">memory</span> <span class="pre">usage',</span> <span class="pre">unit='bytes',</span> <span class="pre">scale=1.0,</span> <span class="pre">meta_metric=False)</span></em><a class="headerlink" href="#simplebench.metric.standard_metrics.STD_PEAK_MEMORY" title="Link to this definition">🔗</a></dt>
-<dd><p>Peak Memory usage metric.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="simplebench.metric.standard_metrics.STD_TIMING">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metric.standard_metrics.</span></span><span class="sig-name descname"><span class="pre">STD_TIMING</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Final" title="(in Python v3.14)"><span class="pre">Final</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metric_definition.metric_definition.html#simplebench.metric.metric_definition.metric_definition.MetricDefinition" title="simplebench.metric.metric_definition.metric_definition.MetricDefinition"><span class="pre">MetricDefinition</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MetricDefinition(semantic_type='simplebench_std::time_per_operation',</span> <span class="pre">label='STD_TIMING_STATS',</span> <span class="pre">description='Time</span> <span class="pre">per</span> <span class="pre">measurement',</span> <span class="pre">unit='s',</span> <span class="pre">scale=1.0,</span> <span class="pre">meta_metric=False)</span></em><a class="headerlink" href="#simplebench.metric.standard_metrics.STD_TIMING" title="Link to this definition">🔗</a></dt>
-<dd><p>Time per measurement metric.</p>
-<p>This is the inverse of STD_OPS and has the technical unit of ‘s/ops’, but is usually
-referred to as ‘s’ for simplicity and common usage.</p>
-<p>The time per measurement is the average of the per-round execution times for an iteration
-(an iteration is considered a single measurement but may consist of multiple rounds).</p>
-</dd></dl>
-
-<dl class="py data">
+<dl class="py function">
 <dt class="sig sig-object py" id="simplebench.metric.standard_metrics.metrics">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metric.standard_metrics.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Final" title="(in Python v3.14)"><span class="pre">Final</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metric.metrics.metrics.html#simplebench.metric.metrics.metrics.Metrics" title="simplebench.metric.metrics.metrics.Metrics"><span class="pre">Metrics</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;simplebench.metric.metrics.metrics.Metrics</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#simplebench.metric.standard_metrics.metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Standard metrics defined by the SimpleBench library.</p>
+<span class="sig-prename descclassname"><span class="pre">simplebench.metric.standard_metrics.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.metric.metrics.metrics.html#simplebench.metric.metrics.metrics.Metrics" title="simplebench.metric.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metric/standard_metrics.html#metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metric.standard_metrics.metrics" title="Link to this definition">🔗</a></dt>
+<dd><p>Standard Metrics definitions</p>
 <ul class="simple">
-<li><p><cite>STD_OPS</cite>: Operations per second metric.</p></li>
-<li><p><cite>STD_TIMING</cite>: Time per measurement metric.</p></li>
-<li><p><cite>STD_MEMORY</cite>: Memory usage metric.</p></li>
-<li><p><cite>STD_PEAK_MEMORY</cite>: Peak memory usage metric.</p></li>
+<li><p><cite>STD_OPS_STATS</cite>: Operations per second statistics.</p></li>
+<li><p><cite>STD_OPS_RAW</cite>: Operations per second raw values.</p></li>
+<li><p><cite>STD_TIMING_STATS</cite>: Time per measurement statistics.</p></li>
+<li><p><cite>STD_TIMING_RAW</cite>: Time per measurement raw values.</p></li>
+<li><p><cite>STD_MEMORY_STATS</cite>: Memory usage statistics.</p></li>
+<li><p><cite>STD_MEMORY_RAW</cite>: Memory usage raw values.</p></li>
+<li><p><cite>STD_PEAK_MEMORY_STATS</cite>: Peak memory usage statistics.</p></li>
+<li><p><cite>STD_PEAK_MEMORY_RAW</cite>: Peak memory usage raw values.</p></li>
+<li><p><cite>STD_TOTAL_ELAPSED_TIME</cite>: Total elapsed time metric.</p></li>
+<li><p><cite>STD_TOTAL_CPU_TIME</cite>: Total CPU time metric.</p></li>
+<li><p><cite>STD_CPU_TIME_STATS</cite>: CPU time per measurement statistics.</p></li>
+<li><p><cite>STD_CPU_TIME_RAW</cite>: CPU time per measurement raw values.</p></li>
+<li><p><cite>STD_GC_GEN0_COLLECTIONS_STATS</cite>: Generation 0 garbage collections statistics.</p></li>
+<li><p><cite>STD_GC_GEN0_COLLECTIONS_RAW</cite>: Generation 0 garbage collections raw values.</p></li>
+<li><p><cite>STD_GC_GEN1_COLLECTIONS_STATS</cite>: Generation 1 garbage collections statistics.</p></li>
+<li><p><cite>STD_GC_GEN1_COLLECTIONS_RAW</cite>: Generation 1 garbage collections raw values.</p></li>
+<li><p><cite>STD_GC_GEN2_COLLECTIONS_STATS</cite>: Generation 2 garbage collections statistics.</p></li>
+<li><p><cite>STD_GC_GEN2_COLLECTIONS_RAW</cite>: Generation 2 garbage collections raw values.</p></li>
+<li><p><cite>STD_GC_GEN0_COLLECTED_STATS</cite>: Generation 0 garbage collected objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN0_COLLECTED_RAW</cite>: Generation 0 garbage collected objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN1_COLLECTED_STATS</cite>: Generation 1 garbage collected objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN1_COLLECTED_RAW</cite>: Generation 1 garbage collected objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN2_COLLECTED_STATS</cite>: Generation 2 garbage collected objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN2_COLLECTED_RAW</cite>: Generation 2 garbage collected objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN0_UNCOLLECTABLE_STATS</cite>: Generation 0 uncollectable objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN0_UNCOLLECTABLE_RAW</cite>: Generation 0 uncollectable objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN1_UNCOLLECTABLE_STATS</cite>: Generation 1 uncollectable objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN1_UNCOLLECTABLE_RAW</cite>: Generation 1 uncollectable objects raw values.</p></li>
+<li><p><cite>STD_GC_GEN2_UNCOLLECTABLE_STATS</cite>: Generation 2 uncollectable objects statistics.</p></li>
+<li><p><cite>STD_GC_GEN2_UNCOLLECTABLE_RAW</cite>: Generation 2 uncollectable objects raw values.</p></li>
 </ul>
 </dd></dl>
 
@@ -360,11 +377,7 @@ referred to as ‘s’ for simplicity and common usage.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.metric.standard_metrics module</a><ul>
-<li><a class="reference internal" href="#simplebench.metric.standard_metrics.STD_MEMORY"><code class="docutils literal notranslate"><span class="pre">STD_MEMORY</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metric.standard_metrics.STD_OPS"><code class="docutils literal notranslate"><span class="pre">STD_OPS</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metric.standard_metrics.STD_PEAK_MEMORY"><code class="docutils literal notranslate"><span class="pre">STD_PEAK_MEMORY</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metric.standard_metrics.STD_TIMING"><code class="docutils literal notranslate"><span class="pre">STD_TIMING</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metric.standard_metrics.metrics"><code class="docutils literal notranslate"><span class="pre">metrics</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.metric.standard_metrics.metrics"><code class="docutils literal notranslate"><span class="pre">metrics()</span></code></a></li>
 </ul>
 </li>
 </ul>

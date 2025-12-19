@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
-        <title>simplebench.metric.metric module - simplebench 0.9.0-alpha documentation</title>
+        <title>simplebench.metric.metric package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -258,15 +258,65 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-simplebench.metric.metric">
-<span id="simplebench-metric-metric-module"></span><h1>simplebench.metric.metric module<a class="headerlink" href="#module-simplebench.metric.metric" title="Link to this heading">🔗</a></h1>
-<p>Base class for all benchmark metric classes</p>
+<span id="simplebench-metric-metric-package"></span><h1>simplebench.metric.metric package<a class="headerlink" href="#module-simplebench.metric.metric" title="Link to this heading">🔗</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.metric.metric.Metric">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metric.metric.</span></span><span class="sig-name descname"><span class="pre">Metric</span></span><a class="reference internal" href="../_modules/simplebench/metric/metric.html#Metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metric.metric.Metric" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metric.metric.</span></span><span class="sig-name descname"><span class="pre">Metric</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metric.metric_type.metric_type.html#simplebench.metric.metric_type.metric_type.MetricType" title="simplebench.metric.metric_type.metric_type.MetricType"><span class="pre">MetricType</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/metric/metric/metric.html#Metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metric.metric.Metric" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Base class for all benchmark metric definition classes</p>
+<p>Metric class to define a metric for use.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.metric.metric.Metric.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.metric.metric.Metric.description" title="Link to this definition">🔗</a></dt>
+<dd><p>Description of the metric.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.metric.metric.Metric.label">
+<span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.metric.metric.Metric.label" title="Link to this definition">🔗</a></dt>
+<dd><p>Unique identifier for the metric.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.metric.metric.Metric.metric_type">
+<span class="sig-name descname"><span class="pre">metric_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metric.metric_type.metric_type.html#simplebench.metric.metric_type.metric_type.MetricType" title="simplebench.metric.metric_type.metric_type.MetricType"><span class="pre">MetricType</span></a></em><a class="headerlink" href="#simplebench.metric.metric.Metric.metric_type" title="Link to this definition">🔗</a></dt>
+<dd><p>Type of the metric, defined by MetricType</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.metric.metric.Metric.title">
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.metric.metric.Metric.title" title="Link to this definition">🔗</a></dt>
+<dd><p>Title of the metric.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.metric.metric.metric.html">simplebench.metric.metric.metric module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric"><code class="docutils literal notranslate"><span class="pre">Metric</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric.description"><code class="docutils literal notranslate"><span class="pre">Metric.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric.label"><code class="docutils literal notranslate"><span class="pre">Metric.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric.metric_type"><code class="docutils literal notranslate"><span class="pre">Metric.metric_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric.title"><code class="docutils literal notranslate"><span class="pre">Metric.title</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 </section>
 
         </article>
@@ -306,8 +356,15 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">simplebench.metric.metric module</a><ul>
-<li><a class="reference internal" href="#simplebench.metric.metric.Metric"><code class="docutils literal notranslate"><span class="pre">Metric</span></code></a></li>
+<li><a class="reference internal" href="#">simplebench.metric.metric package</a><ul>
+<li><a class="reference internal" href="#simplebench.metric.metric.Metric"><code class="docutils literal notranslate"><span class="pre">Metric</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.metric.metric.Metric.description"><code class="docutils literal notranslate"><span class="pre">Metric.description</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.metric.metric.Metric.label"><code class="docutils literal notranslate"><span class="pre">Metric.label</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.metric.metric.Metric.metric_type"><code class="docutils literal notranslate"><span class="pre">Metric.metric_type</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.metric.metric.Metric.title"><code class="docutils literal notranslate"><span class="pre">Metric.title</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>
 </ul>

@@ -266,14 +266,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchDuplicateKeyError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric.metric_definition</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric.metric.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_MetricsErrorTag</span>
 
 
 <div class="viewcode-block" id="Metrics">
 <a class="viewcode-back" href="../../../../source/simplebench.metric.metrics.metrics.html#simplebench.metric.Metrics">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Metrics</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Metrics</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A namespace class for metrics that behaves like a read-only dictionary.</span>
 <span class="sd">    This class can be used to store and manage metrics in a structured way.</span>
@@ -295,24 +295,28 @@
 <span class="sd">    start or end with an underscore or digit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MetricDefinition</span><span class="p">]</span> <span class="o">|</span> <span class="s1">&#39;Metrics&#39;</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Metrics object with an optional list of metrics.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">|</span> <span class="s1">&#39;Metrics&#39;</span> <span class="o">|</span> <span class="n">Metric</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Metrics object with Metric objects.</span>
 
-<span class="sd">        :param metrics: An Iterable of MetricDefinition objects to initialize the Metrics object.</span>
-<span class="sd">        :raises SimpleBenchTypeError: If the input is not an Iterable of MetricDefinition.</span>
+<span class="sd">        :param metrics: A Metric, an Iterable of Metric objects, or a Metrics instance to initialize the Metrics object.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the input is not a Metric, an Iterable of Metric</span>
+<span class="sd">            objects, or a Metrics instance.</span>
+<span class="sd">        :raises SimpleBenchDuplicateKeyError: If a duplicate key is found.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">metrics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">Metric</span><span class="p">):</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">metrics</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Metrics.extend">
 <a class="viewcode-back" href="../../../../source/simplebench.metric.metrics.metrics.html#simplebench.metric.Metrics.extend">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MetricDefinition</span><span class="p">]</span> <span class="o">|</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">|</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add multiple metrics to the Metrics object.</span>
 
-<span class="sd">        :param metrics: An Iterable of MetricDefinition objects or another Metrics object.</span>
-<span class="sd">        :raises SimpleBenchTypeError: If the input is not an Iterable of MetricDefinition</span>
+<span class="sd">        :param metrics: An Iterable of Metric objects or another Metrics object.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the input is not an Iterable of Metric</span>
 <span class="sd">        :raises SimpleBenchDuplicateKeyError: If a duplicate key is found.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">):</span>
@@ -322,6 +326,17 @@
 
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">validated_metrics</span><span class="p">:</span>
             <span class="bp">self</span><span class="p">[</span><span class="n">metric</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span></div>
+
+
+<div class="viewcode-block" id="Metrics.add">
+<a class="viewcode-back" href="../../../../source/simplebench.metric.metrics.metrics.html#simplebench.metric.Metrics.add">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a single Metric to the Metrics object.</span>
+
+<span class="sd">        :param metric: A Metric object to add.</span>
+<span class="sd">        :raises SimpleBenchDuplicateKeyError: If a duplicate key is found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">metric</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_key_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -334,24 +349,24 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_metrics_iterable</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
-            <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MetricDefinition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">MetricDefinition</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that the input is an Iterable of MetricDefinition objects.</span>
+            <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Metric</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Metric</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that the input is an Iterable of Metric objects.</span>
 
-<span class="sd">        :param metrics: An Iterable of MetricDefinition objects.</span>
-<span class="sd">        :return: A list of MetricDefinition objects.</span>
-<span class="sd">        :raises SimpleBenchTypeError: If the input is not an Iterable of MetricDefinition.</span>
+<span class="sd">        :param metrics: An Iterable of Metric objects.</span>
+<span class="sd">        :return: A list of Metric objects.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If the input is not an Iterable of Metric.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Not an Iterable of MetricDefinition&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Not an Iterable of Metric&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_MetricsErrorTag</span><span class="o">.</span><span class="n">NOT_ITERABLE_ERROR</span><span class="p">)</span>
 
         <span class="c1"># Convert to a list *once* to avoid exhausting the iterator.</span>
         <span class="n">metrics_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">MetricDefinition</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">Metric</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics_list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Not an Iterable of MetricDefinition&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Not an Iterable of Metric&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_MetricsErrorTag</span><span class="o">.</span><span class="n">INVALID_METRICS_LIST_ITEM_TYPE</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">metrics_list</span>
@@ -390,7 +405,7 @@
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricDefinition</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metric</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a mapping value from the Metrics object.</span>
 
 <span class="sd">        If the key is not a string, a SimpleBenchTypeError is raised.</span>
@@ -408,7 +423,7 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">MetricDefinition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Metric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a mapping value in the Metrics object.</span>
 
 <span class="sd">        - If the key is not a string, a SimpleBenchTypeError is raised.</span>
@@ -425,13 +440,13 @@
 <span class="sd">        :raises SimpleBenchDuplicateKeyError: If the key already exists in the Metrics object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_key_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetricDefinition</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Metric</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;value must be an instance of MetricDefinition&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value must be an instance of Metric&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_MetricsErrorTag</span><span class="o">.</span><span class="n">TYPE_ERROR</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="n">value</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Key must match the label of the MetricDefinition object&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Key must match the label of the Metric object&quot;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_MetricsErrorTag</span><span class="o">.</span><span class="n">MISMATCHED_KEY</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="c1"># If the exact same object is already registered, it&#39;s a no-op.</span>
@@ -447,37 +462,41 @@
         <span class="c1"># Use object.__setattr__ to bypass our custom __setattr__ method.</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Metrics object by combining two Metrics objects.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics | Metric&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Metrics object by combining two Metrics objects</span>
+<span class="sd">        or adding a single Metric object.</span>
 
-<span class="sd">        :param other: The Metrics object to add.</span>
+<span class="sd">        :param other: The Metrics or Metric object to add.</span>
 <span class="sd">        :return: A new Metrics object containing the combined metrics.</span>
 <span class="sd">        :raises TypeError: If the other object is not a Metrics instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">Metric</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
         <span class="c1"># Create a new Metrics object from the first one.</span>
         <span class="n">new_metrics</span> <span class="o">=</span> <span class="n">Metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="c1"># Extend it with metrics from the second one.</span>
-        <span class="n">new_metrics</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">new_metrics</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">other</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">new_metrics</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Metrics object by subtracting another Metrics object&#39;s keys.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics | Metric&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Metrics object by subtracting another Metrics or Metric object&#39;s keys.</span>
 
 <span class="sd">        The new object will contain all metrics from this object, except for those</span>
 <span class="sd">        whose keys are also present in the `other` object.</span>
 
-<span class="sd">        :param other: The Metrics object whose keys will be subtracted.</span>
+<span class="sd">        :param other: The Metrics or Metric object whose keys will be subtracted.</span>
 <span class="sd">        :return: A new Metrics object with the subtracted metrics.</span>
 <span class="sd">        :raises TypeError: If the other object is not a Metrics instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">Metric</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
         <span class="c1"># Create an iterable of metrics from `self` that are not in `other`.</span>
-        <span class="n">metrics_to_keep</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metric</span><span class="p">):</span>
+            <span class="n">metrics_to_keep</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Metrics</span>
+            <span class="n">metrics_to_keep</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">other</span><span class="p">)</span>
 
         <span class="c1"># Return a new Metrics object initialized with the filtered metrics.</span>
         <span class="k">return</span> <span class="n">Metrics</span><span class="p">(</span><span class="n">metrics_to_keep</span><span class="p">)</span>
@@ -499,23 +518,29 @@
 <span class="sd">        :param other: The Metrics object to intersect with.</span>
 <span class="sd">        :return: A new Metrics object representing the intersection.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="n">Metric</span> <span class="o">|</span> <span class="n">Metrics</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-        <span class="n">intersecting_metrics</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metric</span><span class="p">):</span>
+            <span class="n">intersecting_metrics</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">intersecting_metrics</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Metrics</span><span class="p">(</span><span class="n">intersecting_metrics</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__xor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__xor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics | Metric&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new Metrics object representing the symmetric difference.</span>
 
 <span class="sd">        The new object will contain metrics that are in either this object or</span>
 <span class="sd">        the `other` object, but not in both.</span>
 
-<span class="sd">        :param other: The Metrics object to perform the symmetric difference with.</span>
+<span class="sd">        :param other: The Metrics or Metric object to perform the symmetric difference with.</span>
 <span class="sd">        :return: A new Metrics object representing the symmetric difference.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">Metric</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metric</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">Metrics</span><span class="p">([</span><span class="n">other</span><span class="p">])</span>
 
         <span class="n">sym_diff_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">^</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">sym_diff_metrics</span> <span class="o">=</span> <span class="p">[]</span>
@@ -527,25 +552,27 @@
 
         <span class="k">return</span> <span class="n">Metrics</span><span class="p">(</span><span class="n">sym_diff_metrics</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics | Metric&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform in-place addition (extend).</span>
 
 <span class="sd">        :param other: The Metrics object to add.</span>
 <span class="sd">        :return: The modified Metrics object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">Metric</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">other</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;Metrics | Metric&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Metrics&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform in-place subtraction.</span>
 
 <span class="sd">        :param other: The Metrics object whose keys will be removed.</span>
 <span class="sd">        :return: The modified Metrics object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metrics</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">Metric</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Metric</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">Metrics</span><span class="p">([</span><span class="n">other</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
@@ -579,11 +606,11 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">MetricDefinition</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">Metric</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_key_name</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MetricDefinition</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_key_name</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Metric</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">key</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>

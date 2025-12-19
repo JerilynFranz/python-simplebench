@@ -256,20 +256,46 @@
 <span class="sd">SimpleRunner is a basic class for running benchmarks for various actions.</span>
 
 <span class="sd">It measures the time taken to execute a given action and the memory usage of the action.</span>
-<span class="sd">It also provides a method to auto-calibrate the number of rounds for the benchmark</span>
-<span class="sd">timing.</span>
+<span class="sd">It also provides a method to automatically calibrate the number of rounds for the benchmark</span>
+<span class="sd">timing to achieve a desired level of precision and accuracy in the measurements.</span>
 
-<span class="sd">It provides 4 output Results Metrics for each benchmark run:</span>
+<span class="sd">It provides the following standard Metrics for each benchmark run:</span>
 
-<span class="sd">  - &#39;simplebench_std::timing_per_operation&#39;: The total time taken to execute each operation.</span>
-<span class="sd">  - &#39;simplebench_std::operations_per_second&#39;: The number of operations performed per second.</span>
-<span class="sd">  - &#39;simplebench_std::peak_memory&#39;: The peak memory usage of the action.</span>
-<span class="sd">  - &#39;simplebench_std::memory&#39;: The memory usage of the action.</span>
+<span class="sd">- STD_TIMING_STATS: timing statistics for each operation</span>
+<span class="sd">- STD_TIMING_RAW: timing raw values for each operation</span>
+<span class="sd">- STD_CPU_TIME_STATS: CPU time statistics for each operation</span>
+<span class="sd">- STD_CPU_TIME_RAW: CPU time raw values for each operation</span>
+<span class="sd">- STD_OPS_STATS: operations per second statistics</span>
+<span class="sd">- STD_OPS_RAW: operations per second raw values</span>
+<span class="sd">- STD_MEMORY_STATS: memory usage statistics</span>
+<span class="sd">- STD_MEMORY_RAW: memory usage raw values</span>
+<span class="sd">- STD_PEAK_MEMORY_STATS: peak memory usage statistics</span>
+<span class="sd">- STD_PEAK_MEMORY_RAW: peak memory usage raw values</span>
+<span class="sd">- STD_TOTAL_ELAPSED_TIME: The sum of all timing raw values</span>
+<span class="sd">- STD_TOTAL_CPU_TIME: The sum of all CPU time raw values</span>
+<span class="sd">- STD_GC_GEN0_COLLECTIONS_STATS: Number of garbage collections for generation 0</span>
+<span class="sd">- STD_GC_GEN0_COLLECTIONS_RAW: Number of garbage collections for generation 0 (raw values)</span>
+<span class="sd">- STD_GC_GEN1_COLLECTIONS_STATS: Number of garbage collections for generation 1</span>
+<span class="sd">- STD_GC_GEN1_COLLECTIONS_RAW: Number of garbage collections for generation 1 (raw values)</span>
+<span class="sd">- STD_GC_GEN2_COLLECTIONS_STATS: Number of garbage collections for generation 2</span>
+<span class="sd">- STD_GC_GEN2_COLLECTIONS_RAW: Number of garbage collections for generation 2 (raw values)</span>
+<span class="sd">- STD_GC_GEN0_COLLECTED_STATS: Number of objects collected by garbage collection for generation 0</span>
+<span class="sd">- STD_GC_GEN0_COLLECTED_RAW: Number of objects collected by garbage collection for generation 0 (raw values)</span>
+<span class="sd">- STD_GC_GEN1_COLLECTED_STATS: Number of objects collected by garbage collection for generation 1</span>
+<span class="sd">- STD_GC_GEN1_COLLECTED_RAW: Number of objects collected by garbage collection for generation 1 (raw values)</span>
+<span class="sd">- STD_GC_GEN2_COLLECTED_STATS: Number of objects collected by garbage collection for generation 2</span>
+<span class="sd">- STD_GC_GEN2_COLLECTED_RAW: Number of objects collected by garbage collection for generation 2 (raw values)</span>
+<span class="sd">- STD_GC_GEN0_UNCOLLECTABLE_STATS: Number of uncollectable objects for generation 0</span>
+<span class="sd">- STD_GC_GEN0_UNCOLLECTABLE_RAW: Number of uncollectable objects for generation 0 (raw values)</span>
+<span class="sd">- STD_GC_GEN1_UNCOLLECTABLE_STATS: Number of uncollectable objects for generation 1</span>
+<span class="sd">- STD_GC_GEN1_UNCOLLECTABLE_RAW: Number of uncollectable objects for generation 1 (raw values)</span>
+<span class="sd">- STD_GC_GEN2_UNCOLLECTABLE_STATS: Number of uncollectable objects for generation 2</span>
+<span class="sd">- STD_GC_GEN2_UNCOLLECTABLE_RAW: Number of uncollectable objects for generation 2 (raw values)</span>
 
-<span class="sd">  The timing_per_operation and operations_per_second are based on the same</span>
-<span class="sd">  timing measurement, and are therefore consistent with each other. Both are</span>
-<span class="sd">  provided for convenience and to provide a more complete picture of the benchmark</span>
-<span class="sd">  results.</span>
+<span class="sd">The timing per operation and operations per second measurements are based on the same</span>
+<span class="sd">timing measurement, and are therefore consistent with each other. Both are</span>
+<span class="sd">provided for convenience and to provide a more complete picture of the benchmark</span>
+<span class="sd">results.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -279,11 +305,12 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tracemalloc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.benchmark_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">BenchmarkRunner</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iteration</span><span class="p">,</span> <span class="n">Results</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_CPU_TIMER</span><span class="p">,</span>
     <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">,</span>
     <span class="n">DEFAULT_SIGNIFICANT_FIGURES</span><span class="p">,</span>
     <span class="n">DEFAULT_TIMER</span><span class="p">,</span>
@@ -292,9 +319,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.display.progress_tracker</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressTracker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchImportError</span><span class="p">,</span> <span class="n">SimpleBenchTimeoutError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">metrics_registry</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.timeout</span><span class="w"> </span><span class="kn">import</span> <span class="n">Timeout</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.timers</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_valid_timer</span><span class="p">,</span> <span class="n">timer_overhead_ns</span><span class="p">,</span> <span class="n">timer_precision_ns</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Values</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_positive_int</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SimpleRunnerErrorTag</span>
@@ -303,8 +331,11 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 
+<span class="n">_TIMERS_NAMESPACE</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;_simplerunner_timers&#39;</span>
+<span class="sd">&quot;&quot;&quot;Namespace for dynamically created timer functions.&quot;&quot;&quot;</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_timers_module</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ModuleType</span><span class="p">:</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_timers_module</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a module to hold dynamically created timer functions.</span>
 
 <span class="sd">    The module is created using :mod:`importlib` and added to :data:`sys.modules`</span>
@@ -315,20 +346,85 @@
 <span class="sd">    :rtype: ModuleType</span>
 <span class="sd">    :raises SimpleBenchImportError: If the module could not be created.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_loader</span><span class="p">(</span><span class="s1">&#39;simplerunner._timers&#39;</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Namespace must be a string, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">namespace</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SimpleRunnerErrorTag</span><span class="o">.</span><span class="n">RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_TYPE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">namespace</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Namespace must be a valid identifier, got </span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">_SimpleRunnerErrorTag</span><span class="o">.</span><span class="n">RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_VALUE</span><span class="p">)</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_loader</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">SimpleBenchImportError</span><span class="p">(</span>
-            <span class="s1">&#39;Could not create spec for simplerunner._timers module&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;Could not create spec for </span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s1"> module&#39;</span><span class="p">,</span>
             <span class="n">tag</span><span class="o">=</span><span class="n">_SimpleRunnerErrorTag</span><span class="o">.</span><span class="n">RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s1">&#39;simplerunner._timers&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;simplerunner._timers&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">namespace</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">namespace</span><span class="p">]</span>
     <span class="n">timers_module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;simplerunner._timers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timers_module</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">namespace</span><span class="p">]</span> <span class="o">=</span> <span class="n">timers_module</span>
     <span class="k">return</span> <span class="n">timers_module</span>
 
 
-<span class="n">_timers_module</span> <span class="o">=</span> <span class="n">_create_timers_module</span><span class="p">()</span>  <span class="c1"># Ensure the timers module exists</span>
+<span class="n">_timers_module</span> <span class="o">=</span> <span class="n">_create_timers_module</span><span class="p">(</span><span class="n">_TIMERS_NAMESPACE</span><span class="p">)</span>  <span class="c1"># Ensure the timers module exists</span>
 <span class="sd">&quot;&quot;&quot;A dynamically created module to hold generated timer functions.&quot;&quot;&quot;</span>
+
+
+<span class="n">_Measurement</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;A type alias for a measurement tuple.</span>
+
+<span class="sd">The tuple contains the following elements:</span>
+<span class="sd">    - timing (float): The time taken to execute the action.</span>
+<span class="sd">    - cpu_time (float): The CPU time taken to execute the action.</span>
+<span class="sd">    - memory (int): The memory usage of the action.</span>
+<span class="sd">    - peak_memory (int): The peak memory usage of the action.</span>
+<span class="sd">    - gc_gen0_collections (int): The number of generation 0 garbage collections.</span>
+<span class="sd">    - gc_gen0_collected (int): The number of objects collected in generation 0.</span>
+<span class="sd">    - gc_gen0_uncollectable (int): The number of uncollectable objects in generation 0.</span>
+<span class="sd">    - gc_gen1_collections (int): The number of generation 1 garbage collections.</span>
+<span class="sd">    - gc_gen1_collected (int): The number of objects collected in generation 1.</span>
+<span class="sd">    - gc_gen1_uncollectable (int): The number of uncollectable objects in generation 1.</span>
+<span class="sd">    - gc_gen2_collections (int): The number of generation 2 garbage collections.</span>
+<span class="sd">    - gc_gen2_collected (int): The number of objects collected in generation 2.</span>
+<span class="sd">    - gc_gen2_uncollectable (int): The number of uncollectable objects in generation 2.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Index constants for measurement tuple elements</span>
+<span class="c1"># This is a performance/code readability optimization to avoid using magic numbers</span>
+<span class="c1"># Each constant represents the index of a specific element in the measurement tuple</span>
+<span class="c1"># This is faster than using NamedTuple field access and provides a good way</span>
+<span class="c1"># to process measurement tuples efficiently and clearly</span>
+<span class="n">_TIMING</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the timing element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_CPU_TIME</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the CPU timing element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_MEMORY</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the memory element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_PEAK_MEMORY</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the peak memory element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN0_COLLECTIONS</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">4</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 0 garbage collections element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN0_COLLECTED</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 0 collected garbage element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN0_UNCOLLECTABLE</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 0 uncollectable garbage element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN1_COLLECTIONS</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">7</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 1 garbage collections element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN1_COLLECTED</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">8</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 1 collected garbage element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN1_UNCOLLECTABLE</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">9</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 1 uncollectable garbage element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN2_COLLECTIONS</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">10</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 2 garbage collections element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN2_COLLECTED</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">11</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 2 collected garbage element in a measurement tuple.&quot;&quot;&quot;</span>
+<span class="n">_GC_GEN2_UNCOLLECTABLE</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">12</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="sd">&quot;&quot;&quot;A constant representing the index of the generation 2 uncollectable garbage element in a measurement tuple.&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="SimpleRunner">
@@ -465,10 +561,18 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_timer_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span>
-            <span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">float</span><span class="p">]:</span>
+            <span class="p">[</span>
+                <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+                <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+                <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+                <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+            <span class="p">],</span>
+            <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a timer function for the benchmark.</span>
 
-<span class="sd">        The generated function will call the action `rounds` times and return the total time taken.</span>
+<span class="sd">        The generated function will call the action `rounds` times and return the total time</span>
+<span class="sd">        taken as a float.</span>
+
 <span class="sd">        The function is generated as a string and then compiled to avoid the overhead of</span>
 <span class="sd">        a loop in Python during the actual timing benchmark.</span>
 
@@ -478,8 +582,9 @@
 
 <span class="sd">            def _timer_function_{rounds}(</span>
 <span class="sd">                    timer: Callable[[], float | int],</span>
+<span class="sd">                    cpu_timer: Callable[[], float | int],</span>
 <span class="sd">                    action: Callable[..., Any],</span>
-<span class="sd">                    kwargs: dict[str, Any]) -&gt; float:</span>
+<span class="sd">                    kwargs: dict[str, Any]) -&gt; tuple[float, float]:</span>
 
 <span class="sd">        It is created in the module ``simplerunner._timers`` to avoid polluting the global namespace.</span>
 
@@ -489,8 +594,9 @@
 
 <span class="sd">        :param rounds: The number of test rounds that will be run by the action on each iteration. Must be &gt;= 1.</span>
 <span class="sd">        :type rounds: int</span>
-<span class="sd">        :return: A function that returns the elapsed time for the benchmark as a float.</span>
-<span class="sd">        :rtype: Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], float]</span>
+<span class="sd">        :return: A function that returns the elapsed time for the benchmark as a tuple of</span>
+<span class="sd">            floats (elapsed time, CPU time).</span>
+<span class="sd">        :rtype: Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], tuple[float, float]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rounds</span> <span class="o">=</span> <span class="n">validate_positive_int</span><span class="p">(</span>
             <span class="n">rounds</span><span class="p">,</span> <span class="s1">&#39;rounds&#39;</span><span class="p">,</span>
@@ -505,11 +611,17 @@
         <span class="n">timer_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_simplerunner_timer_function_</span><span class="si">{</span><span class="n">rounds</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_timers_module</span><span class="p">,</span> <span class="n">timer_name</span><span class="p">):</span>
             <span class="n">time_function_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;def </span><span class="si">{</span><span class="n">timer_name</span><span class="si">}</span><span class="s1">(timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -&gt; float:&#39;</span><span class="p">)</span>  <span class="c1"># pylint: disable=line-too-long  # noqa: E501</span>
-            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    start = timer()&#39;</span><span class="p">)</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="sa">f</span><span class="s1">&#39;def </span><span class="si">{</span><span class="n">timer_name</span><span class="si">}</span><span class="s1">(timer: Callable[[], float | int], cpu_timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -&gt; tuple[float, float]:&#39;</span><span class="p">,</span>  <span class="c1"># pylint: disable=line-too-long  # noqa: E501</span>
+                <span class="s1">&#39;    start = timer()&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;    start_cpu = cpu_timer()&#39;</span>
+            <span class="p">])</span>
             <span class="n">time_function_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;    action(**kwargs)&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rounds</span><span class="p">)</span>
-            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    end = timer()&#39;</span><span class="p">)</span>
-            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    return float(end - start)&#39;</span><span class="p">)</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="s1">&#39;    end = timer()&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;    end_cpu = cpu_timer()&#39;</span>
+            <span class="p">])</span>
+            <span class="n">time_function_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    return float(end - start), float(end_cpu - start_cpu)&#39;</span><span class="p">)</span>
             <span class="n">time_function_code</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">time_function_lines</span><span class="p">)</span>
             <span class="n">exec</span><span class="p">(</span><span class="n">time_function_code</span><span class="p">,</span> <span class="n">_timers_module</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>  <span class="c1"># pylint: disable=exec-used</span>
 
@@ -520,21 +632,22 @@
             <span class="o">*</span><span class="p">,</span>
             <span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
+            <span class="n">cpu_timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">],</span>
             <span class="n">action</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
             <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
             <span class="n">setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
-            <span class="n">teardown</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="n">teardown</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a single timed iteration of the benchmark action for a given number of rounds.</span>
 <span class="sd">        This method uses an unrolled loop to call the action the specified number of rounds,</span>
 <span class="sd">        minimizing the overhead of loop control in Python.</span>
 
-<span class="sd">        :param rounds: The number of test rounds that will be run by the action for the iteration.</span>
-<span class="sd">        :param timer: The timer function to use for timing.</span>
-<span class="sd">        :param action: The action to benchmark.</span>
-<span class="sd">        :param kwargs: Keyword arguments to pass to the action.</span>
-<span class="sd">        :param setup: A setup function to run before the iteration.</span>
-<span class="sd">        :param teardown: A teardown function to run after the iteration.</span>
-<span class="sd">        :return: The elapsed time for the iteration in seconds.</span>
+<span class="sd">        :param int rounds: The number of test rounds that will be run by the action for the iteration.</span>
+<span class="sd">        :param Callable[[], int | float] timer: The timer function to use for timing.</span>
+<span class="sd">        :param Callable[..., Any] action: The action to benchmark.</span>
+<span class="sd">        :param dict[str, Any] kwargs: Keyword arguments to pass to the action.</span>
+<span class="sd">        :param Optional[Callable[..., Any]] setup: A setup function to run before the iteration.</span>
+<span class="sd">        :param Optional[Callable[..., Any]] teardown: A teardown function to run after the iteration.</span>
+<span class="sd">        :return float: The elapsed time for the iteration in seconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kiloround_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
         <span class="n">timer_metrics</span><span class="p">:</span> <span class="nb">int</span>
@@ -543,33 +656,45 @@
             <span class="n">timer_metrics</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
                 <span class="n">setup</span><span class="p">()</span>
-            <span class="n">elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">rounds</span><span class="p">)(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">total_elapsed</span><span class="p">,</span> <span class="n">total_elapsed_cpu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">rounds</span><span class="p">)(</span><span class="n">timer</span><span class="p">,</span>
+                                                                            <span class="n">cpu_timer</span><span class="p">,</span>
+                                                                            <span class="n">action</span><span class="p">,</span>
+                                                                            <span class="n">kwargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
                 <span class="n">teardown</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a &quot;kiloround&quot;)</span>
             <span class="c1"># to reduce the footprint of the generated timer functions and avoid hitting</span>
             <span class="c1"># Python&#39;s function size limits.</span>
-            <span class="n">elapsed</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">total_elapsed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">total_elapsed_cpu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">timer_metrics</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">kiloround_chunks</span><span class="p">,</span> <span class="n">remaining_rounds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">rounds</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
                 <span class="n">setup</span><span class="p">()</span>
             <span class="k">while</span> <span class="n">kiloround_chunks</span><span class="p">:</span>
-                <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">elapsed</span><span class="p">,</span> <span class="n">elapsed_cpu</span> <span class="o">=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">cpu_timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">total_elapsed</span> <span class="o">+=</span> <span class="n">elapsed</span>
+                <span class="n">total_elapsed_cpu</span> <span class="o">+=</span> <span class="n">elapsed_cpu</span>
                 <span class="n">kiloround_chunks</span> <span class="o">-=</span> <span class="mi">1</span>
                 <span class="n">timer_metrics</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">remaining_rounds</span><span class="p">:</span>
                 <span class="n">partial_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">remaining_rounds</span><span class="p">)</span>
-                <span class="n">elapsed</span> <span class="o">+=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">elapsed</span><span class="p">,</span> <span class="n">elapsed_cpu</span> <span class="o">=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">cpu_timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">total_elapsed</span> <span class="o">+=</span> <span class="n">elapsed</span>
+                <span class="n">total_elapsed_cpu</span> <span class="o">+=</span> <span class="n">elapsed_cpu</span>
                 <span class="n">timer_metrics</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>
                 <span class="n">teardown</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">elapsed</span> <span class="o">-</span> <span class="n">timer_overhead_ns</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span> <span class="o">*</span> <span class="n">timer_metrics</span>
+        <span class="n">elapsed_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">total_elapsed</span> <span class="o">-</span> <span class="n">timer_overhead_ns</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span> <span class="o">*</span> <span class="n">timer_metrics</span><span class="p">)</span> <span class="o">*</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">)</span>
+        <span class="n">elapsed_cpu_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">total_elapsed_cpu</span> <span class="o">-</span> <span class="n">timer_overhead_ns</span><span class="p">(</span><span class="n">cpu_timer</span><span class="p">)</span> <span class="o">*</span> <span class="n">timer_metrics</span><span class="p">)</span> <span class="o">*</span> <span class="n">DEFAULT_INTERVAL_SCALE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">elapsed_time</span><span class="p">,</span> <span class="n">elapsed_cpu_time</span>
 
 <div class="viewcode-block" id="SimpleRunner.default_runner">
 <a class="viewcode-back" href="../../../../source/simplebench.benchmark_runner.simplerunner.simplerunner.html#simplebench.benchmark_runner.SimpleRunner.default_runner">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">default_runner</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_runner</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-locals, too-many-statements  # noqa: C901</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="o">*</span><span class="p">,</span>
             <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
@@ -579,6 +704,16 @@
             <span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a generic benchmark using the specified action and test case.</span>
 
+<span class="sd">        It runs a complete benchmark for a specific combination of kwarg variations</span>
+<span class="sd">        according to the parameters defined in the benchmark case, including the</span>
+<span class="sd">        number of iterations, minimum and maximum time limits, and warmup iterations.</span>
+
+<span class="sd">        All measurements are collected into :class:`~.simplebench.case.results.Results`</span>
+<span class="sd">        which is returned at the end of the benchmark.</span>
+
+<span class="sd">        The same number of rounds is used for every iteration in a single Results,</span>
+<span class="sd">        which is either auto-calibrated or specified in the benchmark case.</span>
+
 <span class="sd">        :param n: The **O()** &#39;n&#39; weight of the benchmark. This is used to calculate</span>
 <span class="sd">            a weight for the purpose of **O()** analysis.</span>
 
@@ -586,10 +721,10 @@
 <span class="sd">            sorts a list of length n, then n should be the length of the list.</span>
 <span class="sd">            If the action being benchmarked is a function that performs</span>
 <span class="sd">            a constant-time operation, then n should be 1.</span>
-<span class="sd">        :param action: The action to benchmark.</span>
-<span class="sd">        :param setup: A setup function to run before each iteration.</span>
-<span class="sd">        :param teardown: A teardown function to run after each iteration.</span>
-<span class="sd">        :param kwargs: Keyword arguments to pass to the action.</span>
+<span class="sd">        :param Callable[..., Any] action: The action to benchmark.</span>
+<span class="sd">        :param Optional[Callable[..., Any]] setup: A setup function to run before each iteration.</span>
+<span class="sd">        :param Optional[Callable[..., Any]] teardown: A teardown function to run after each iteration.</span>
+<span class="sd">        :param Optional[dict[str, Any]] kwargs: Keyword arguments to pass to the action.</span>
 <span class="sd">        :return: The results of the benchmark.</span>
 <span class="sd">        :rtype: Results</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -603,12 +738,18 @@
         <span class="n">max_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">max_time</span>
         <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">iterations</span>
 
-        <span class="c1"># Prioritize the timer from the case, then from the session, then use the default timer</span>
+        <span class="c1"># Prioritize the timers from the case, then from the session, then use the default timer</span>
         <span class="n">timer</span> <span class="o">=</span> <span class="n">DEFAULT_TIMER</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">timer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">timer</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">timer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">timer</span>
+
+        <span class="n">cpu_timer</span> <span class="o">=</span> <span class="n">DEFAULT_CPU_TIMER</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">cpu_timer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cpu_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">cpu_timer</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">cpu_timer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cpu_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">cpu_timer</span>
 
         <span class="c1"># warmup iterations are not included in the final stats</span>
         <span class="c1"># We start the count from -warmup_iterations to ensure we do the correct number of warmup</span>
@@ -624,6 +765,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">rounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibrate_rounds</span><span class="p">(</span>
                 <span class="n">timer</span><span class="o">=</span><span class="n">timer</span><span class="p">,</span>
+                <span class="n">cpu_timer</span><span class="o">=</span><span class="n">cpu_timer</span><span class="p">,</span>
                 <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
                 <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="p">,</span>
                 <span class="n">teardown</span><span class="o">=</span><span class="n">teardown</span><span class="p">,</span>
@@ -641,16 +783,16 @@
             <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Benchmarking </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s1"> (iteration </span><span class="si">{</span><span class="mi">0</span><span class="si">:</span><span class="s1">&lt;6d</span><span class="si">}</span><span class="s1">; time </span><span class="si">{</span><span class="mf">0.00</span><span class="si">:</span><span class="s1">&lt;3.2f</span><span class="si">}</span><span class="s1">s)&#39;</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span><span class="p">)</span>
 
-        <span class="n">total_elapsed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="n">iterations_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Iteration</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">iterations_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_Measurement</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">while</span> <span class="p">((</span><span class="n">iteration_pass</span> <span class="o">&lt;=</span> <span class="n">iterations_min</span> <span class="ow">or</span> <span class="n">wall_time</span> <span class="o">&lt;</span> <span class="n">min_stop_at</span><span class="p">)</span>
                 <span class="ow">and</span> <span class="n">wall_time</span> <span class="o">&lt;</span> <span class="n">max_stop_at</span><span class="p">):</span>
             <span class="n">iteration_pass</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="c1"># Time the action</span>
-            <span class="n">elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_timed_iteration</span><span class="p">(</span>
+            <span class="n">elapsed</span><span class="p">,</span> <span class="n">cpu_elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_timed_iteration</span><span class="p">(</span>
                 <span class="n">rounds</span><span class="o">=</span><span class="n">rounds</span><span class="p">,</span>
                 <span class="n">timer</span><span class="o">=</span><span class="n">timer</span><span class="p">,</span>
+                <span class="n">cpu_timer</span><span class="o">=</span><span class="n">cpu_timer</span><span class="p">,</span>
                 <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
                 <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
                 <span class="n">setup</span><span class="o">=</span><span class="n">setup</span><span class="p">,</span>
@@ -669,8 +811,15 @@
 
             <span class="k">if</span> <span class="n">iteration_pass</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>  <span class="c1"># Only collect garbage before the first measured iteration</span>
+
             <span class="n">tracemalloc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
             <span class="n">tracemalloc</span><span class="o">.</span><span class="n">reset_peak</span><span class="p">()</span>
+
+            <span class="c1"># Measure garbage collection counts</span>
+            <span class="n">gc_gen0_start</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">gc_gen1_start</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">gc_gen2_start</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+
             <span class="n">start_memory_current</span><span class="p">,</span> <span class="n">start_memory_peak</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()</span>
             <span class="n">action</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">end_memory_current</span><span class="p">,</span> <span class="n">end_memory_peak</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()</span>
@@ -679,15 +828,33 @@
                 <span class="n">teardown</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="n">iteration_pass</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># Warmup iterations not included in final stats</span>
+                <span class="c1"># Warmup iterations not included in results</span>
                 <span class="k">continue</span>
 
             <span class="n">memory</span> <span class="o">=</span> <span class="n">end_memory_current</span> <span class="o">-</span> <span class="n">start_memory_current</span>
             <span class="n">peak_memory</span> <span class="o">=</span> <span class="n">end_memory_peak</span> <span class="o">-</span> <span class="n">start_memory_peak</span>
-            <span class="n">iteration_result</span> <span class="o">=</span> <span class="n">Iteration</span><span class="p">(</span>
-                <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">rounds</span><span class="o">=</span><span class="n">rounds</span><span class="p">,</span> <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span> <span class="n">peak_memory</span><span class="o">=</span><span class="n">peak_memory</span><span class="p">)</span>
+
+            <span class="c1"># Measure garbage collection counts</span>
+            <span class="n">gc_gen0_end</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">gc_gen1_end</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">gc_gen2_end</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="n">iteration_result</span><span class="p">:</span> <span class="n">_Measurement</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">elapsed</span><span class="p">,</span>
+                <span class="n">cpu_elapsed</span><span class="p">,</span>
+                <span class="n">memory</span><span class="p">,</span>
+                <span class="n">peak_memory</span><span class="p">,</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen0_end</span><span class="p">[</span><span class="s1">&#39;collections&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen0_start</span><span class="p">[</span><span class="s1">&#39;collections&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen0_end</span><span class="p">[</span><span class="s1">&#39;collected&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen0_start</span><span class="p">[</span><span class="s1">&#39;collected&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen0_end</span><span class="p">[</span><span class="s1">&#39;uncollectable&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen0_start</span><span class="p">[</span><span class="s1">&#39;uncollectable&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen1_end</span><span class="p">[</span><span class="s1">&#39;collections&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen1_start</span><span class="p">[</span><span class="s1">&#39;collections&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen1_end</span><span class="p">[</span><span class="s1">&#39;collected&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen1_start</span><span class="p">[</span><span class="s1">&#39;collected&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen1_end</span><span class="p">[</span><span class="s1">&#39;uncollectable&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen1_start</span><span class="p">[</span><span class="s1">&#39;uncollectable&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen2_end</span><span class="p">[</span><span class="s1">&#39;collections&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen2_start</span><span class="p">[</span><span class="s1">&#39;collections&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen2_end</span><span class="p">[</span><span class="s1">&#39;collected&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen2_start</span><span class="p">[</span><span class="s1">&#39;collected&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">gc_gen2_end</span><span class="p">[</span><span class="s1">&#39;uncollectable&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gc_gen2_start</span><span class="p">[</span><span class="s1">&#39;uncollectable&#39;</span><span class="p">])</span>
+            <span class="p">)</span>
             <span class="n">iterations_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iteration_result</span><span class="p">)</span>
-            <span class="n">total_elapsed</span> <span class="o">+=</span> <span class="n">iteration_result</span><span class="o">.</span><span class="n">elapsed</span>
             <span class="n">wall_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">timer</span><span class="p">())</span>
 
             <span class="c1"># Update progress display if showing progress</span>
@@ -701,15 +868,56 @@
                     <span class="sa">f</span><span class="s1">&#39;Benchmarking </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s1"> (iteration </span><span class="si">{</span><span class="n">iteration_pass</span><span class="si">:</span><span class="s1">6d</span><span class="si">}</span><span class="s1">; &#39;</span>
                     <span class="sa">f</span><span class="s1">&#39;time </span><span class="si">{</span><span class="n">wall_time_elapsed_seconds</span><span class="si">:</span><span class="s1">&lt;3.2f</span><span class="si">}</span><span class="s1">s)&#39;</span><span class="p">))</span>
 
+        <span class="n">retained_metrics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">_TIMING</span><span class="p">,</span> <span class="n">_CPU_TIME</span><span class="p">,</span> <span class="n">_MEMORY</span><span class="p">,</span> <span class="n">_PEAK_MEMORY</span><span class="p">,</span>
+            <span class="n">_GC_GEN0_COLLECTIONS</span><span class="p">,</span> <span class="n">_GC_GEN0_COLLECTED</span><span class="p">,</span> <span class="n">_GC_GEN0_UNCOLLECTABLE</span><span class="p">,</span>
+            <span class="n">_GC_GEN1_COLLECTIONS</span><span class="p">,</span> <span class="n">_GC_GEN1_COLLECTED</span><span class="p">,</span> <span class="n">_GC_GEN1_UNCOLLECTABLE</span><span class="p">,</span>
+            <span class="n">_GC_GEN2_COLLECTIONS</span><span class="p">,</span> <span class="n">_GC_GEN2_COLLECTED</span><span class="p">,</span> <span class="n">_GC_GEN2_UNCOLLECTABLE</span><span class="p">]</span>
+        <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Values</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">retained_metrics</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">retained_metrics</span><span class="p">):</span>
+            <span class="n">values</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span><span class="n">iteration</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="n">iterations_list</span><span class="p">)</span>
+        <span class="n">ops_values</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">Values</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">timing</span> <span class="k">if</span> <span class="n">timing</span> <span class="k">else</span> <span class="mf">0.0</span> <span class="k">for</span> <span class="n">timing</span> <span class="ow">in</span> <span class="n">values</span><span class="p">[</span><span class="n">_TIMING</span><span class="p">])</span>
+
+        <span class="n">iteration_results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Metric</span><span class="p">,</span> <span class="n">Values</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TIMING_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_TIMING</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_CPU_TIME_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_CPU_TIME</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TIMING_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_TIMING</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_CPU_TIME_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_CPU_TIME</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_OPS_STATS&#39;</span><span class="p">]:</span> <span class="n">ops_values</span><span class="p">,</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_OPS_RAW&#39;</span><span class="p">]:</span> <span class="n">ops_values</span><span class="p">,</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_MEMORY_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_MEMORY</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_MEMORY_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_MEMORY</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_PEAK_MEMORY_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_PEAK_MEMORY</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_PEAK_MEMORY_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_PEAK_MEMORY</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TOTAL_ELAPSED_TIME&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_TIMING</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TOTAL_CPU_TIME&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_CPU_TIME</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN0_COLLECTIONS_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN0_COLLECTIONS</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN0_COLLECTED_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN0_COLLECTED</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN0_UNCOLLECTABLE_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN0_UNCOLLECTABLE</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN1_COLLECTIONS_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN1_COLLECTIONS</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN1_COLLECTED_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN1_COLLECTED</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN1_UNCOLLECTABLE_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN1_UNCOLLECTABLE</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN2_COLLECTIONS_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN2_COLLECTIONS</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN2_COLLECTED_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN2_COLLECTED</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN2_UNCOLLECTABLE_STATS&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN2_UNCOLLECTABLE</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN0_COLLECTIONS_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN0_COLLECTIONS</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN0_COLLECTED_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN0_COLLECTED</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN0_UNCOLLECTABLE_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN0_UNCOLLECTABLE</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN1_COLLECTIONS_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN1_COLLECTIONS</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN1_COLLECTED_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN1_COLLECTED</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN1_UNCOLLECTABLE_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN1_UNCOLLECTABLE</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN2_COLLECTIONS_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN2_COLLECTIONS</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN2_COLLECTED_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN2_COLLECTED</span><span class="p">],</span>
+            <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_GC_GEN2_UNCOLLECTABLE_RAW&#39;</span><span class="p">]:</span> <span class="n">values</span><span class="p">[</span><span class="n">_GC_GEN2_UNCOLLECTABLE</span><span class="p">],</span>
+        <span class="p">}</span>
+
         <span class="n">benchmark_results</span> <span class="o">=</span> <span class="n">Results</span><span class="p">(</span>
             <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
-            <span class="n">variation_marks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">variation_marks</span><span class="p">,</span>
             <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
             <span class="n">rounds</span><span class="o">=</span><span class="n">rounds</span><span class="p">,</span>
-            <span class="n">iterations</span><span class="o">=</span><span class="n">iterations_list</span><span class="p">,</span>
-            <span class="n">total_elapsed</span><span class="o">=</span><span class="n">total_elapsed</span><span class="p">,</span>
+            <span class="n">iterations</span><span class="o">=</span><span class="n">iteration_results</span><span class="p">,</span>
             <span class="n">extra_info</span><span class="o">=</span><span class="p">{})</span>
         <span class="n">progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
@@ -718,6 +926,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calibrate_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>  <span class="c1"># noqa: C901</span>
                           <span class="n">timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">],</span>
+                          <span class="n">cpu_timer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">int</span><span class="p">],</span>
                           <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
                           <span class="n">setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                           <span class="n">teardown</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -725,14 +934,15 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Auto-calibrate the number of rounds for the benchmark.</span>
 
 <span class="sd">        This method estimates an appropriate number of rounds to use for the benchmark</span>
-<span class="sd">        based on the precision and overhead of the timer function and the expected</span>
+<span class="sd">        based on the precision and overhead of the timer functions and the expected</span>
 <span class="sd">        execution time of the action being benchmarked.</span>
 
 <span class="sd">        The goal is to choose a number of rounds such that the total time taken</span>
-<span class="sd">        for the action is significantly larger than the timer precision and overhead,</span>
+<span class="sd">        for the action is significantly larger than the timer functions&#39; precision and overhead,</span>
 <span class="sd">        to reduce the impact of timer quantization errors on the measurement.</span>
 
 <span class="sd">        :param timer: The timer function to use for the benchmark.</span>
+<span class="sd">        :param cpu_timer: The CPU timer function to use for the benchmark.</span>
 <span class="sd">        :param kwargs: Keyword arguments to pass to the action.</span>
 <span class="sd">        :param setup: A setup function to run before each iteration.</span>
 <span class="sd">        :param teardown: A teardown function to run after each iteration.</span>
@@ -743,6 +953,10 @@
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s1">&#39;Invalid timer function provided for rounds calibration&#39;</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="n">_SimpleRunnerErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid_timer</span><span class="p">(</span><span class="n">cpu_timer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid CPU timer function provided for rounds calibration&#39;</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_SimpleRunnerErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CPU_TIMER_FUNCTION</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SimpleBenchTypeError</span><span class="p">(</span>
                 <span class="s1">&#39;Invalid kwargs provided for rounds calibration; must be a dict&#39;</span><span class="p">,</span>
@@ -765,53 +979,74 @@
                 <span class="n">tag</span><span class="o">=</span><span class="n">_SimpleRunnerErrorTag</span><span class="o">.</span><span class="n">SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TEARDOWN</span><span class="p">)</span>
 
         <span class="n">timer_overhead</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timer_overhead_ns</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span>
+        <span class="n">cpu_timer_overhead</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timer_overhead_ns</span><span class="p">(</span><span class="n">cpu_timer</span><span class="p">)</span>
         <span class="n">timer_precision</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timer_precision_ns</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span>
+        <span class="n">cpu_timer_precision</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timer_precision_ns</span><span class="p">(</span><span class="n">cpu_timer</span><span class="p">)</span>
 
         <span class="c1"># Target significant figures for the measurement</span>
         <span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">DEFAULT_SIGNIFICANT_FIGURES</span><span class="p">)</span>
-        <span class="n">noise_floor_ns</span> <span class="o">=</span> <span class="n">timer_precision</span> <span class="o">+</span> <span class="n">timer_overhead</span>
-        <span class="n">target_time_ns</span> <span class="o">=</span> <span class="n">multiplier</span> <span class="o">*</span> <span class="n">noise_floor_ns</span>
+
+        <span class="n">timer_noise_floor_ns</span> <span class="o">=</span> <span class="n">timer_precision</span> <span class="o">+</span> <span class="n">timer_overhead</span>
+        <span class="n">timer_target_time_ns</span> <span class="o">=</span> <span class="n">multiplier</span> <span class="o">*</span> <span class="n">timer_noise_floor_ns</span>
+
+        <span class="n">cpu_timer_noise_floor_ns</span> <span class="o">=</span> <span class="n">cpu_timer_precision</span> <span class="o">+</span> <span class="n">cpu_timer_overhead</span>
+        <span class="n">cpu_timer_target_time_ns</span> <span class="o">=</span> <span class="n">multiplier</span> <span class="o">*</span> <span class="n">cpu_timer_noise_floor_ns</span>
 
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">setup</span><span class="p">):</span>
             <span class="n">setup</span><span class="p">()</span>
 
         <span class="n">kiloround_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
         <span class="n">estimate_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">total_action_time_ns</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">total_action_cpu_time_ns</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">timer_metrics</span><span class="p">:</span> <span class="nb">int</span>
+
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># Loop until we find an adequate rounds estimate</span>
             <span class="c1"># Use kiloround chunking to avoid generating excessively large timer functions</span>
-            <span class="n">total_action_time_ns</span><span class="p">:</span> <span class="nb">float</span>
-            <span class="n">timer_metrics</span><span class="p">:</span> <span class="nb">int</span>
             <span class="k">if</span> <span class="n">estimate_rounds</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
-                <span class="n">estimate_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">estimate_rounds</span><span class="p">)</span>
-                <span class="n">total_action_time_ns</span> <span class="o">=</span> <span class="n">estimate_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">timer_metrics</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">estimate_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">estimate_rounds</span><span class="p">)</span>
+                <span class="n">total_action_time_ns</span><span class="p">,</span> <span class="n">total_action_cpu_time_ns</span> <span class="o">=</span> <span class="n">estimate_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span>
+                                                                                <span class="n">cpu_timer</span><span class="p">,</span>
+                                                                                <span class="n">action</span><span class="p">,</span>
+                                                                                <span class="n">kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">total_action_time_ns</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">total_action_cpu_time_ns</span> <span class="o">=</span> <span class="mf">0.0</span>
                 <span class="n">timer_metrics</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">kiloround_chunks</span><span class="p">,</span> <span class="n">remaining_rounds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">estimate_rounds</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
                 <span class="k">while</span> <span class="n">kiloround_chunks</span><span class="p">:</span>
-                    <span class="n">total_action_time_ns</span> <span class="o">+=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">action_time_ns</span><span class="p">,</span> <span class="n">action_cpu_time_ns</span> <span class="o">=</span> <span class="n">kiloround_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">cpu_timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">total_action_time_ns</span> <span class="o">+=</span> <span class="n">action_time_ns</span>
+                    <span class="n">total_action_cpu_time_ns</span> <span class="o">+=</span> <span class="n">action_cpu_time_ns</span>
                     <span class="n">kiloround_chunks</span> <span class="o">-=</span> <span class="mi">1</span>
                     <span class="n">timer_metrics</span> <span class="o">+=</span> <span class="mi">1</span>
+
                 <span class="k">if</span> <span class="n">remaining_rounds</span><span class="p">:</span>
                     <span class="n">partial_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_function</span><span class="p">(</span><span class="n">remaining_rounds</span><span class="p">)</span>
-                    <span class="n">total_action_time_ns</span> <span class="o">+=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">action_time_ns</span><span class="p">,</span> <span class="n">action_cpu_time_ns</span> <span class="o">=</span> <span class="n">partial_timer</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="n">cpu_timer</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">total_action_time_ns</span> <span class="o">+=</span> <span class="n">action_time_ns</span>
+                    <span class="n">total_action_cpu_time_ns</span> <span class="o">+=</span> <span class="n">action_cpu_time_ns</span>
                     <span class="n">timer_metrics</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="c1"># Subtract the cumulative overhead from all timed metrics.</span>
             <span class="n">total_measured_time_ns</span> <span class="o">=</span> <span class="n">total_action_time_ns</span> <span class="o">-</span> <span class="p">(</span><span class="n">timer_overhead</span> <span class="o">*</span> <span class="n">timer_metrics</span><span class="p">)</span>
+            <span class="n">total_measured_cpu_time_ns</span> <span class="o">=</span> <span class="n">total_action_cpu_time_ns</span> <span class="o">-</span> <span class="p">(</span><span class="n">cpu_timer_overhead</span> <span class="o">*</span> <span class="n">timer_metrics</span><span class="p">)</span>
 
             <span class="c1"># loop exit condition</span>
-            <span class="k">if</span> <span class="n">total_measured_time_ns</span> <span class="o">&gt;=</span> <span class="n">target_time_ns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">total_measured_time_ns</span> <span class="o">&gt;=</span> <span class="n">timer_target_time_ns</span> <span class="ow">and</span>
+                    <span class="n">total_measured_cpu_time_ns</span> <span class="o">&gt;=</span> <span class="n">cpu_timer_target_time_ns</span><span class="p">):</span>
                 <span class="k">break</span>
 
-            <span class="k">if</span> <span class="n">total_measured_time_ns</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">total_measured_time_ns</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">total_measured_cpu_time_ns</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">estimate_rounds</span> <span class="o">*=</span> <span class="mi">10</span>
                 <span class="k">continue</span>
 
             <span class="c1"># Calculate the average time to estimate the next number of rounds.</span>
             <span class="n">avg_action_time_ns</span> <span class="o">=</span> <span class="n">total_measured_time_ns</span> <span class="o">/</span> <span class="n">estimate_rounds</span>
-            <span class="n">required_rounds</span> <span class="o">=</span> <span class="n">target_time_ns</span> <span class="o">/</span> <span class="n">avg_action_time_ns</span>
+            <span class="n">avg_action_cpu_time_ns</span> <span class="o">=</span> <span class="n">total_measured_cpu_time_ns</span> <span class="o">/</span> <span class="n">estimate_rounds</span>
+            <span class="n">required_rounds</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">timer_target_time_ns</span> <span class="o">/</span> <span class="n">avg_action_time_ns</span><span class="p">,</span>
+                                  <span class="n">cpu_timer_target_time_ns</span> <span class="o">/</span> <span class="n">avg_action_cpu_time_ns</span><span class="p">)</span>
             <span class="n">estimate_rounds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">required_rounds</span><span class="p">,</span> <span class="n">estimate_rounds</span> <span class="o">*</span> <span class="mi">10</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">teardown</span><span class="p">):</span>

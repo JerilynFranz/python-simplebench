@@ -257,7 +257,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlagType</span><span class="p">,</span> <span class="n">Format</span><span class="p">,</span> <span class="n">Target</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">metric_registry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.metric</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MetricCategory</span><span class="p">,</span>
+    <span class="n">Metrics</span><span class="p">,</span>
+    <span class="n">MetricsCollection</span><span class="p">,</span>
+    <span class="n">MetricsSelection</span><span class="p">,</span>
+    <span class="n">filtered_metrics</span><span class="p">,</span>
+    <span class="n">metrics_registry</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choice.choice_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoiceConf</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.choices.choices_conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChoicesConf</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterConfig</span>
@@ -274,16 +281,15 @@
 
 <span class="sd">    By default, the CSVReporter is configured to output benchmark results</span>
 <span class="sd">    to CSV files in the filesystem, with options to also output to console</span>
-<span class="sd">    and via callback. The default metrics included are OPS, TIMING, MEMORY,</span>
-<span class="sd">    and PEAK_MEMORY.</span>
-
+<span class="sd">    and via callback. The default metrics included are all registered statistical</span>
+<span class="sd">    metrics.</span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    :ivar name: The name of the reporter. Default is &#39;csv&#39;.</span>
 <span class="sd">    :ivar description: A brief description of the reporter. Default is</span>
 <span class="sd">        &#39;Outputs benchmark results to CSV files.&#39;.</span>
-<span class="sd">    :ivar metrics: The metrics to include in the report. Default includes</span>
-<span class="sd">        OPS, TIMING, MEMORY, and PEAK_MEMORY.</span>
+<span class="sd">    :ivar metrics: The metrics to include in the report. Default includes all registered</span>
+<span class="sd">        metrics.</span>
 <span class="sd">    :ivar targets: The output targets for the report. Default includes</span>
 <span class="sd">        FILESYSTEM, CONSOLE, and CALLBACK.</span>
 <span class="sd">    :ivar default_targets: The default output target if none is specified. Default is FILESYSTEM.</span>
@@ -295,13 +301,12 @@
 <span class="sd">    :ivar choices: The choice configurations available for this reporter. Default includes</span>
 <span class="sd">        several pre-defined choices for different metrics of the report.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">MetricsSelection</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">default_targets</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">formats</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Format</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -317,11 +322,16 @@
 <span class="sd">        All arguments are optional. If not provided, the default value for</span>
 <span class="sd">        CSVReporter will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_processable_metrics</span><span class="p">:</span> <span class="n">Metrics</span> <span class="o">=</span> <span class="n">filtered_metrics</span><span class="p">(</span>
+            <span class="n">metric_categories</span><span class="o">=</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">STATISTICAL</span><span class="p">)</span>
+        <span class="n">all_processable_metrics</span> <span class="o">+=</span> <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TOTAL_ELAPSED_TIME&#39;</span><span class="p">]</span>
+        <span class="n">allowed_targets</span> <span class="o">=</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">}</span>
+
         <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span>
             <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Outputs benchmark results to CSV files.&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;metrics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">metric_registry</span><span class="o">.</span><span class="n">OPS</span><span class="p">,</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">TIMING</span><span class="p">,</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">MEMORY</span><span class="p">,</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">PEAK_MEMORY</span><span class="p">},</span>
-            <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">},</span>
+            <span class="s1">&#39;metrics&#39;</span><span class="p">:</span> <span class="n">MetricsCollection</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="n">all_processable_metrics</span><span class="p">),</span>
+            <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="n">allowed_targets</span><span class="p">,</span>
             <span class="s1">&#39;default_targets&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">},</span>
             <span class="s1">&#39;formats&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">Format</span><span class="o">.</span><span class="n">CSV</span><span class="p">},</span>
             <span class="s1">&#39;file_suffix&#39;</span><span class="p">:</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span>
@@ -331,27 +341,34 @@
             <span class="s1">&#39;choices&#39;</span><span class="p">:</span> <span class="n">ChoicesConf</span><span class="p">([</span>
                 <span class="n">ChoiceConf</span><span class="p">(</span>
                     <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--csv&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;csv&#39;</span><span class="p">,</span>
-                    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Output all results to CSV (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">,</span>
-                    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">metric_registry</span><span class="o">.</span><span class="n">OPS</span><span class="p">,</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">TIMING</span><span class="p">,</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">MEMORY</span><span class="p">,</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">PEAK_MEMORY</span><span class="p">],</span>
-                    <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">],</span>
+                    <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Output all available statistical metrics to CSV (filesystem, console, callback, &#39;</span>
+                                 <span class="s1">&#39;default=filesystem)&#39;</span><span class="p">),</span>
+                    <span class="n">metrics</span><span class="o">=</span><span class="n">MetricsCollection</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="n">all_processable_metrics</span><span class="p">),</span>
+                    <span class="n">targets</span><span class="o">=</span><span class="n">allowed_targets</span><span class="p">,</span>
                     <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">CSV</span><span class="p">),</span>
                 <span class="n">ChoiceConf</span><span class="p">(</span>
                     <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--csv.ops&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;csv-ops&#39;</span><span class="p">,</span>
-                    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Output ops/second results to CSV (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">,</span>
-                    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">metric_registry</span><span class="o">.</span><span class="n">OPS</span><span class="p">],</span>
-                    <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">],</span>
+                    <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Output ops/second statistical metrics to CSV &#39;</span>
+                                 <span class="s1">&#39;(filesystem, console, callback, default=filesystem)&#39;</span><span class="p">),</span>
+                    <span class="n">metrics</span><span class="o">=</span><span class="n">MetricsCollection</span><span class="p">(</span><span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_OPS_STATS&#39;</span><span class="p">],</span>
+                                              <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TOTAL_ELAPSED_TIME&#39;</span><span class="p">]),</span>
+                    <span class="n">targets</span><span class="o">=</span><span class="n">allowed_targets</span><span class="p">,</span>
                     <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">CSV</span><span class="p">),</span>
                 <span class="n">ChoiceConf</span><span class="p">(</span>
                     <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--csv.timing&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;csv-timing&#39;</span><span class="p">,</span>
-                    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Output timing results to CSV (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">,</span>
-                    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">metric_registry</span><span class="o">.</span><span class="n">TIMING</span><span class="p">],</span>
-                    <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">],</span>
+                    <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Output timing statistical metrics to CSV &#39;</span>
+                                 <span class="s1">&#39;(filesystem, console, callback, default=filesystem)&#39;</span><span class="p">),</span>
+                    <span class="n">metrics</span><span class="o">=</span><span class="n">MetricsCollection</span><span class="p">(</span><span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TIMING_STATS&#39;</span><span class="p">],</span>
+                                              <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TOTAL_ELAPSED_TIME&#39;</span><span class="p">]),</span>
+                    <span class="n">targets</span><span class="o">=</span><span class="n">allowed_targets</span><span class="p">,</span>
                     <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">CSV</span><span class="p">),</span>
                 <span class="n">ChoiceConf</span><span class="p">(</span>
                     <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--csv.memory&#39;</span><span class="p">],</span> <span class="n">flag_type</span><span class="o">=</span><span class="n">FlagType</span><span class="o">.</span><span class="n">TARGET_LIST</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;csv-memory&#39;</span><span class="p">,</span>
-                    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Output memory results to CSV (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">,</span>
-                    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">metric_registry</span><span class="o">.</span><span class="n">MEMORY</span><span class="p">,</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">PEAK_MEMORY</span><span class="p">],</span>
-                    <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="n">Target</span><span class="o">.</span><span class="n">FILESYSTEM</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CONSOLE</span><span class="p">,</span> <span class="n">Target</span><span class="o">.</span><span class="n">CALLBACK</span><span class="p">],</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Output memory metrics to CSV (filesystem, console, callback, default=filesystem)&#39;</span><span class="p">,</span>
+                    <span class="n">metrics</span><span class="o">=</span><span class="n">MetricsCollection</span><span class="p">(</span><span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_MEMORY_STATS&#39;</span><span class="p">],</span>
+                                              <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_PEAK_MEMORY_STATS&#39;</span><span class="p">],</span>
+                                              <span class="n">metrics_registry</span><span class="p">[</span><span class="s1">&#39;STD_TOTAL_ELAPSED_TIME&#39;</span><span class="p">]),</span>
+                    <span class="n">targets</span><span class="o">=</span><span class="n">allowed_targets</span><span class="p">,</span>
                     <span class="n">output_format</span><span class="o">=</span><span class="n">Format</span><span class="o">.</span><span class="n">CSV</span><span class="p">),</span>
             <span class="p">])</span>
         <span class="p">}</span>

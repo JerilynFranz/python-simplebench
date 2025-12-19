@@ -266,29 +266,28 @@
 
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/case/results/metrics/stats/stats.html#Stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.case.results.metrics.metric.html#simplebench.case.results.metrics.metric.Metric" title="simplebench.case.results.metrics.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Generic container for statistics on a benchmark.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unit of measurement for the benchmark (e.g., “ops/s”). (read only)</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scale factor for the measurements (e.g. 1 for seconds). (read only)</p></li>
+<li><p><strong>metric</strong> (<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><em>Metric</em></a>) – The metric definition for the benchmark. (read only)</p></li>
 <li><p><strong>iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The total number of iterations represented by the data points. (read only)</p></li>
 <li><p><strong>rounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of rounds each data point represents. (read only)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>...</em><em>]</em>) – Sequence of data points. (read only)</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="simplebench.types.html#simplebench.types.Values" title="simplebench.types.Values"><em>Values</em></a>) – Tuple of floating point data points. (read only)</p></li>
 <li><p><strong>mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The mean of the data. (read only)</p></li>
 <li><p><strong>median</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The median of the data. (read only)</p></li>
 <li><p><strong>minimum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The minimum of the data. (read only)</p></li>
 <li><p><strong>maximum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The maximum of the data. (read only)</p></li>
 <li><p><strong>standard_deviation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The estimated population standard deviation of the data. (read only)</p></li>
-<li><p><strong>relative_standard_deviation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The relative standard deviation of the data. (read only)</p></li>
+<li><p><strong>relative_standard_deviation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The estimated population relative standard
+deviation of the data. (read only)</p></li>
 <li><p><strong>percentiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>...</em><em>]</em>) – Percentiles of the data. (read only)</p></li>
 </ul>
 </dd>
@@ -297,9 +296,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unit of measurement for the benchmark (e.g., “ops/s”).</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scale factor for the measurements (e.g. 1 for seconds).</p></li>
-<li><p><strong>data</strong> (<em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Sequence of data points.</p></li>
+<li><p><strong>metric</strong> (<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><em>Metric</em></a>) – The metric definition for the benchmark.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="simplebench.types.html#simplebench.types.Values" title="simplebench.types.Values"><em>Values</em></a>) – Tuple of data points.</p></li>
 <li><p><strong>rounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of rounds each data point represents.</p></li>
 </ul>
 </dd>
@@ -311,66 +309,9 @@
 </dd>
 </dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.stats.Stats.as_dict">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.as_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Returns the statistics and data as a JSON-serializable dictionary.</p>
-<p>This includes all the statistics as well as the raw data points.</p>
-<p>The data values are scaled according to the scale factor to provide
-human-readable values using the base unit rather than the scaled unit.</p>
-<p>The unit is normalized to its SI base unit representation. (e.g., “ms” becomes “s”)</p>
-<p>The dictionary is mutability-safe as all data is either a primitive or a copy.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary containing the statistics and the scaled data points.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.stats.Stats.data">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.data" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.data" title="Link to this definition">🔗</a></dt>
 <dd><p>The data points.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.stats.Stats.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats" title="simplebench.case.results.metrics.stats.stats.Stats"><span class="pre">Stats</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/metrics/stats/stats.html#Stats.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.from_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Construct a Stats object from a dictionary.</p>
-<p class="rubric">Example</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stats_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;ops/s&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">1500</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">2500</span><span class="p">]</span>
-<span class="p">}</span>
-<span class="n">stats</span> <span class="o">=</span> <span class="n">Stats</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">stats_dict</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>  <span class="c1"># Output: 2000.0</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – A dictionary containing the stats data. Must contain ‘data’ key with a non-empty
-sequence of data points consisting of integers or floats.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A Stats object constructed from the provided dictionary.</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the data, unit, or scale arguments are of the wrong type.</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchKeyError" title="simplebench.exceptions.SimpleBenchKeyError"><strong>SimpleBenchKeyError</strong></a> – If the data dictionary does not contain a ‘unit’ key and
-no unit argument is provided.</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the data dictionary does not contain a non-empty ‘data’ key
-with at least one data point, if the scale argument is not greater than zero,
-or if the unit argument is an empty string</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -399,14 +340,26 @@ or if the unit argument is an empty string</p></li>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.stats.Stats.metric">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metric</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metric.metric.metric.html#simplebench.metric.metric.metric.Metric" title="simplebench.metric.metric.metric.Metric"><span class="pre">Metric</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.metric" title="Link to this definition">🔗</a></dt>
+<dd><p>The metric of the benchmark.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.stats.Stats.minimum">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minimum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.minimum" title="Link to this definition">🔗</a></dt>
 <dd><p>The minimum of the data.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.stats.Stats.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.name" title="Link to this definition">🔗</a></dt>
+<dd><p>The name of the metric.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="simplebench.case.results.metrics.stats.stats.Stats.percentiles">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">percentiles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.percentiles" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">percentiles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values" title="simplebench.types.values.Values"><span class="pre">Values</span></a></em><a class="headerlink" href="#simplebench.case.results.metrics.stats.stats.Stats.percentiles" title="Link to this definition">🔗</a></dt>
 <dd><p>Percentiles of the data.</p>
 <p>Returns the 0th through 100th percentiles of the data as an immutable tuple.</p>
 </dd></dl>
@@ -454,7 +407,6 @@ population when each data point represents multiple rounds of measurement.</p>
 <span class="sig-name descname"><span class="pre">stats_block</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">full_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
@@ -463,10 +415,14 @@ population when each data point represents multiple rounds of measurement.</p>
 <p>The data values are scaled according to the scale factor to provide
 human-readable values using the base unit rather than the scaled unit.</p>
 <p>The unit is converted to its SI base unit representation. (e.g., “ms” becomes “s”)</p>
-<p>This does not include raw data points, only the statistics.</p>
+<p>This does not include raw data points, only the statistics unless <cite>full_data</cite> is set to True.</p>
+<p>The returned StatsBlock is cached for efficiency.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>indent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of spaces to indent each line of the output.</p>
+<dd class="field-odd"><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, include the raw data points in the StatsBlock measurement field.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A StatsBlock object representing the statistics.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -520,14 +476,14 @@ human-readable values using the base unit rather than the scaled unit.</p>
             <ul>
 <li><a class="reference internal" href="#">simplebench.case.results.metrics.stats.stats module</a><ul>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats"><code class="docutils literal notranslate"><span class="pre">Stats</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.as_dict"><code class="docutils literal notranslate"><span class="pre">Stats.as_dict</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.data"><code class="docutils literal notranslate"><span class="pre">Stats.data</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.from_dict"><code class="docutils literal notranslate"><span class="pre">Stats.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.iterations"><code class="docutils literal notranslate"><span class="pre">Stats.iterations</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.maximum"><code class="docutils literal notranslate"><span class="pre">Stats.maximum</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.mean"><code class="docutils literal notranslate"><span class="pre">Stats.mean</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.median"><code class="docutils literal notranslate"><span class="pre">Stats.median</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.metric"><code class="docutils literal notranslate"><span class="pre">Stats.metric</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.minimum"><code class="docutils literal notranslate"><span class="pre">Stats.minimum</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.name"><code class="docutils literal notranslate"><span class="pre">Stats.name</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.percentiles"><code class="docutils literal notranslate"><span class="pre">Stats.percentiles</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.relative_standard_deviation"><code class="docutils literal notranslate"><span class="pre">Stats.relative_standard_deviation</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.case.results.metrics.stats.stats.Stats.rounds"><code class="docutils literal notranslate"><span class="pre">Stats.rounds</span></code></a></li>

@@ -278,6 +278,12 @@
 <dd><p>Base unit for operations per interval.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.defaults.DEFAULT_CPU_TIMER">
+<span class="sig-prename descclassname"><span class="pre">simplebench.defaults.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_CPU_TIMER</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simplebench.defaults.DEFAULT_CPU_TIMER" title="Link to this definition">🔗</a></dt>
+<dd><p>Default CPU timer function for benchmarking.</p>
+</dd></dl>
+
 <dl class="py data">
 <dt class="sig sig-object py" id="simplebench.defaults.DEFAULT_INTERVAL_SCALE">
 <span class="sig-prename descclassname"><span class="pre">simplebench.defaults.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_INTERVAL_SCALE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-09</span></em><a class="headerlink" href="#simplebench.defaults.DEFAULT_INTERVAL_SCALE" title="Link to this definition">🔗</a></dt>
@@ -370,7 +376,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">runners:</span> <span class="pre">list[type[BenchmarkRunner]]</span> <span class="pre">|</span> <span class="pre">~simplebench.defaults._NoDefault</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;simplebench.defaults._NoDefault</span> <span class="pre">object&gt;</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.benchmark_runner.html#simplebench.benchmark_runner.BenchmarkRunner" title="simplebench.benchmark_runner.BenchmarkRunner"><span class="pre">BenchmarkRunner</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/defaults.html#default_runners"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.defaults.default_runners" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.benchmark_runner.benchmark_runner.html#simplebench.benchmark_runner.benchmark_runner.BenchmarkRunner" title="simplebench.benchmark_runner.benchmark_runner.BenchmarkRunner"><span class="pre">BenchmarkRunner</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/defaults.html#default_runners"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.defaults.default_runners" title="Link to this definition">🔗</a></dt>
 <dd><p>Default list of runner classes to use for benchmarking.</p>
 <p>This function allows you to set or get the default list of runner classes
 used for benchmarking.</p>
@@ -441,6 +447,7 @@ used for benchmarking.</p>
 <li><a class="reference internal" href="#simplebench.defaults.BASE_INTERVAL_UNIT"><code class="docutils literal notranslate"><span class="pre">BASE_INTERVAL_UNIT</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.defaults.BASE_MEMORY_UNIT"><code class="docutils literal notranslate"><span class="pre">BASE_MEMORY_UNIT</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.defaults.BASE_OPS_PER_INTERVAL_UNIT"><code class="docutils literal notranslate"><span class="pre">BASE_OPS_PER_INTERVAL_UNIT</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.defaults.DEFAULT_CPU_TIMER"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CPU_TIMER()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.defaults.DEFAULT_INTERVAL_SCALE"><code class="docutils literal notranslate"><span class="pre">DEFAULT_INTERVAL_SCALE</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.defaults.DEFAULT_INTERVAL_UNIT"><code class="docutils literal notranslate"><span class="pre">DEFAULT_INTERVAL_UNIT</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.defaults.DEFAULT_ITERATIONS"><code class="docutils literal notranslate"><span class="pre">DEFAULT_ITERATIONS</span></code></a></li>
