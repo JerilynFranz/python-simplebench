@@ -72,7 +72,12 @@ class StatsBlockSchema(JSONSchema):
                 },
                 "timer": {
                     "title": "Timer",
-                    "description": "The timing function used for this measurement (e.g., 'perf_counter'). Should be included for any timing-related metrics.",
+                    "description": "The timing function used for this measurement (e.g., 'perf_counter_ns'). Should be included for any timing-related metrics.",
+                    "type": "string"
+                },
+                "cpu_timer": {
+                    "title": "CPU Timer",
+                    "description": "The CPU timing function used for this measurement (e.g., 'process_time_ns'). Should be included for any CPU time-related metrics.",
                     "type": "string"
                 },
                 "unit": {

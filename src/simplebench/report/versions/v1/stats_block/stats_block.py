@@ -187,7 +187,14 @@ class StatsBlock(BaseStatsBlock):
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "StatsBlock":
-        """Create a StatsBlock object from a dictionary."""
+        """Create a StatsBlock object from a dictionary representation
+        that conforms to the version 1 :class:`StatsBlockSchema`.
+
+        :param data: A dictionary representation of a StatsBlock.
+        :return StatsBlock: A StatsBlock object created from the dictionary.
+        :raise SimpleBenchTypeError: If any parameter in the dictionary is of an invalid type.
+        :raise SimpleBenchValueError: If any parameter in the dictionary has an invalid value.
+        """
         allowed_keys = cls.init_params()
         allowed_keys['version'] = int
         allowed_keys['type'] = str
@@ -195,17 +202,27 @@ class StatsBlock(BaseStatsBlock):
         kwargs = cls.import_data(
             data=data,
             allowed=allowed_keys,
-            skip={'version', 'type'},
+            skip={'version', 'type', 'measurements'},
             optional={'description', 'version', 'type'},
             default={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE})
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+            process_as={'percentiles': Values})
         return cls(**kwargs)
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert the StatsBlock object to a dictionary."""
+        """Convert the StatsBlock object to a dictionary.
+
+        The exported dictionary representation includes all properties of the StatsBlock
+        except for the `measurements` property, which is not included.
+
+        It is the canonical representation of the StatsBlock suitable for serialization to JSON
+        and deserialization back into a StatsBlock object.
+
+        :return: A dictionary representation of the StatsBlock.
+        """
         property_keys = self.init_params().keys()
         data = {key: getattr(self, key) for key in property_keys}
-        if self.measurements is None:
+        if 'measurements' in data:  # not included in the exported dictionary representation
             del data['measurements']
         data['type'] = self.TYPE
         data['version'] = self.VERSION
