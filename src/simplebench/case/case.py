@@ -18,29 +18,10 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_reporter_callback
 
+from . import validate
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
 from .mark import Mark
-from .validators import (
-    validate_action_signature,
-    validate_benchmark_id,
-    validate_description,
-    validate_group,
-    validate_iterations,
-    validate_kwargs_variations,
-    validate_max_time,
-    validate_min_time,
-    validate_options,
-    validate_rounds,
-    validate_runners,
-    validate_time_range,
-    validate_timeout,
-    validate_timer,
-    validate_title,
-    validate_variation_cols,
-    validate_vcs_info,
-    validate_warmup_iterations,
-)
 
 if TYPE_CHECKING:
     from simplebench.session import Session
@@ -371,32 +352,29 @@ class Case:
         :raises SimpleBenchTypeError: If any parameter is of incorrect type.
         :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
-        self._group: str = validate_group(group)
         # kwargs_variations processed first so it can be used for cross-validation of action signature
-        self._kwargs_variations: dict[str, list[Any]] = validate_kwargs_variations(kwargs_variations)
-        self._action: FunctionRunner = validate_action_signature(
-                                            action=action,
-                                            kwargs_variations=self._kwargs_variations)
-        self._title: str = validate_title(action=self._action, title=title)
-        self._description: str = validate_description(action=self._action, description=description)
-        self._iterations: int = validate_iterations(iterations)
-        self._warmup_iterations: int = validate_warmup_iterations(warmup_iterations)
-        self._rounds: int | None = validate_rounds(rounds)
-        self._timer: Callable[[], int] | None = validate_timer(timer)
-        self._cpu_timer: Callable[[], int] | None = validate_timer(cpu_timer)
-        self._min_time: float = validate_min_time(min_time)
-        self._max_time: float = validate_max_time(max_time)
-        validate_time_range(self._min_time, self._max_time)
-        self._timeout: float = validate_timeout(timeout=timeout, max_time=self._max_time)
-        self._benchmark_id = validate_benchmark_id(benchmark_id or generate_benchmark_id(self, action))
-        self._variation_cols: dict[str, str] = validate_variation_cols(
-            variation_cols=variation_cols, kwargs_variations=self._kwargs_variations)
+        self._kwargs_variations: dict[str, list[Any]] = validate.kwargs_variations(kwargs_variations)
+        self._group: str = validate.group(group)
+        self._action: FunctionRunner = validate.action_signature(action, self._kwargs_variations)
+        self._title: str = validate.title(self._action, title)
+        self._description: str = validate.description(self._action, description)
+        self._iterations: int = validate.iterations(iterations)
+        self._warmup_iterations: int = validate.warmup_iterations(warmup_iterations)
+        self._rounds: int | None = validate.rounds(rounds)
+        self._timer: Callable[[], int] | None = validate.timer(timer)
+        self._cpu_timer: Callable[[], int] | None = validate.timer(cpu_timer)
+        self._min_time: float = validate.min_time(min_time)
+        self._max_time: float = validate.max_time(max_time)
+        validate.time_range(self._min_time, self._max_time)
+        self._timeout: float = validate.timeout(timeout, self._max_time)
+        self._benchmark_id = validate.benchmark_id(benchmark_id or generate_benchmark_id(self, action))
+        self._variation_cols: dict[str, str] = validate.variation_cols(variation_cols, self._kwargs_variations)
         self._variation_marks: dict[str, tuple[str, ...]] = self._generate_variation_marks()
-        self._runners: list[type[BenchmarkRunner]] = validate_runners(runners)
+        self._runners: list[type[BenchmarkRunner]] = validate.runners(runners)
         self._callback: ReporterCallback | None = validate_reporter_callback(callback, allow_none=True)
-        self._options : list[ReporterOptions] = validate_options(options)
+        self._options : list[ReporterOptions] = validate.options(options)
         self._results: list[Results] = []  # No validation needed here
-        self._vcs_info: vcs.VCSInfo | None = validate_vcs_info(vcs_info or vcs.get_vcs_info())
+        self._vcs_info: vcs.VCSInfo | None = validate.vcs_info(vcs_info or vcs.get_vcs_info())
 
     def _generate_variation_marks(self) -> dict[str, tuple[str, ...]]:
         """Generate variation marks for the kwarg variations.

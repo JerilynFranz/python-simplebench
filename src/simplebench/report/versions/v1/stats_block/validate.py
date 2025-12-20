@@ -15,7 +15,7 @@ from simplebench.validators import (
 )
 
 
-def validate_description(value: str) -> str:
+def description(value: str) -> str:
     """Validates that description is a string.
 
     .. note::
@@ -33,7 +33,7 @@ def validate_description(value: str) -> str:
                 allow_blank=True, strip=True)
 
 
-def validate_mean(value: float | None) -> float | None:
+def mean(value: float | None) -> float | None:
     """Validates that mean is a floating point number or None.
 
     :param float | None value: The value to validate.
@@ -47,7 +47,7 @@ def validate_mean(value: float | None) -> float | None:
                 _StatsBlockErrorTag.INVALID_MEAN_TYPE)
 
 
-def validate_median(value: float | None) -> float | None:
+def median(value: float | None) -> float | None:
     """Validates that the median is a floating point number or None.
 
     :param float | None value: The value to validate.
@@ -61,7 +61,7 @@ def validate_median(value: float | None) -> float | None:
                 _StatsBlockErrorTag.INVALID_MEDIAN_TYPE)
 
 
-def validate_minimum(value: float | None) -> float | None:
+def minimum(value: float | None) -> float | None:
     """Validates that the minimum is a floating point number or None.
 
     :param float | None value: The value to validate.
@@ -75,7 +75,7 @@ def validate_minimum(value: float | None) -> float | None:
                 _StatsBlockErrorTag.INVALID_MINIMUM_TYPE)
 
 
-def validate_maximum(value: float | None) -> float | None:
+def maximum(value: float | None) -> float | None:
     """Validates that the maximum is a floating point number or None.
 
     :param float | None value: The value to validate.
@@ -89,7 +89,7 @@ def validate_maximum(value: float | None) -> float | None:
                 _StatsBlockErrorTag.INVALID_MAXIMUM_TYPE)
 
 
-def validate_name(value: str) -> str:
+def name(value: str) -> str:
     """Validates that name is a non-blank string.
 
     :param str value: The value to validate.
@@ -104,7 +104,7 @@ def validate_name(value: str) -> str:
                 allow_blank=False)
 
 
-def validate_rounds(value: int) -> int:
+def rounds(value: int) -> int:
     """Validates that rounds is a positive integer.
 
     :param int value: The value to validate.
@@ -118,7 +118,7 @@ def validate_rounds(value: int) -> int:
                 _StatsBlockErrorTag.INVALID_ROUNDS_VALUE)
 
 
-def validate_iterations(value: int | None) -> int | None:
+def iterations(value: int | None) -> int | None:
     """Validates that iterations is a positive integer.
 
     :param int | None value: The value to validate.
@@ -134,7 +134,7 @@ def validate_iterations(value: int | None) -> int | None:
                 _StatsBlockErrorTag.INVALID_ITERATIONS_VALUE)
 
 
-def validate_percentiles(value: Values | Sequence[float | int] | None) -> Values | None:
+def percentiles(value: Values | Sequence[float | int] | None) -> Values | None:
     """Validates that percentiles is a sequence of floats or ints or None.
 
     :param Values | Sequence[float | int] | None value: The value to validate.
@@ -173,7 +173,7 @@ def validate_percentiles(value: Values | Sequence[float | int] | None) -> Values
     return validated_values
 
 
-def validate_relative_standard_deviation(value: float | None) -> float | None:
+def relative_standard_deviation(value: float | None) -> float | None:
     """Validates that relative_standard_deviation is a float or None.
 
     It also checks that it is non-negative if it is not None.
@@ -191,7 +191,7 @@ def validate_relative_standard_deviation(value: float | None) -> float | None:
             _StatsBlockErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_VALUE)
 
 
-def validate_scale(value: float) -> float:
+def scale(value: float) -> float:
     """Validate that scale is a positive floating point number (greater than 0).
 
     :param float value: The value to validate.
@@ -205,7 +205,7 @@ def validate_scale(value: float) -> float:
             _StatsBlockErrorTag.INVALID_SCALE_VALUE)
 
 
-def validate_semantic_type(value: str) -> str:
+def semantic_type(value: str) -> str:
     """Validate that semantic_type is a valid namespaced identifier
 
     A namespaced identifier is a string in the format "namespace::identifier"
@@ -224,7 +224,7 @@ def validate_semantic_type(value: str) -> str:
                 _StatsBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE)
 
 
-def validate_standard_deviation(value: float | None) -> float | None:
+def standard_deviation(value: float | None) -> float | None:
     """Validates that standard_deviation is a float or None.
 
     It also checks that it is non-negative if it is not None.
@@ -242,7 +242,7 @@ def validate_standard_deviation(value: float | None) -> float | None:
             _StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_VALUE)
 
 
-def validate_unit(value: str) -> str:
+def unit(value: str) -> str:
     """Validates that unit is a non-blank string.
 
     :param str value: The value to validate.

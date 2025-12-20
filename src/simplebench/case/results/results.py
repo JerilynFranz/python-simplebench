@@ -9,16 +9,9 @@ from simplebench.metric import Metric, MetricCategory
 from simplebench.types import Values
 from simplebench.validators import validate_non_blank_string, validate_positive_float, validate_positive_int
 
+from . import validate
 from ._error_tags import _ResultsErrorTag
 from .metrics import Stats
-from .validators import (
-    validate_belongs_to_metric_category,
-    validate_extra_info,
-    validate_iterations,
-    validate_marks,
-    validate_metric,
-    validate_variation_cols,
-)
 
 MetricsObject: TypeAlias = current_version.MetricsObject
 ResultsInfo: TypeAlias = current_version.ResultsInfo
@@ -126,10 +119,10 @@ class Results:
             rounds, 'rounds',
             _ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE,
             _ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)
-        self._iterations: MappingProxyType[Metric, Values] = validate_iterations(iterations)
-        self._variation_cols: MappingProxyType[str, str] = validate_variation_cols(variation_cols)
-        self._marks: MappingProxyType[str, tuple[str, ...]] = validate_marks(marks)
-        self._extra_info = validate_extra_info(extra_info)
+        self._iterations: MappingProxyType[Metric, Values] = validate.iterations(iterations)
+        self._variation_cols: MappingProxyType[str, str] = validate.variation_cols(variation_cols)
+        self._marks: MappingProxyType[str, tuple[str, ...]] = validate.marks(marks)
+        self._extra_info = validate.extra_info(extra_info)
         self._repr_cache: Optional[str] = None  # cache for __repr__
 
     @property
@@ -197,7 +190,7 @@ class Results:
         :param Metric metric: The metric of the results to return. Must be a registered metric.
         :return Stats: The statistical summary of the benchmark results.
         """
-        validate_belongs_to_metric_category(metric, MetricCategory.STATISTICAL)
+        validate.belongs_to_metric_category(metric, MetricCategory.STATISTICAL)
         if metric not in self._stats_cache:
             self._stats_cache[metric] = Stats(metric=metric,
                                               rounds=self.rounds,
@@ -214,7 +207,7 @@ class Results:
         :param Metric metric: The metric of the results to return. Must be a registered metric.
         :return float: The cumulative sum of the benchmark results.
         """
-        validate_belongs_to_metric_category(metric, MetricCategory.CUMULATIVE)
+        validate.belongs_to_metric_category(metric, MetricCategory.CUMULATIVE)
         if metric not in self._sum_cache:
             self._sum_cache[metric] = sum(self.iterations[metric])
         return self._sum_cache[metric]
@@ -225,7 +218,7 @@ class Results:
         :param Metric metric: The metric of the results to return. Must be a registered metric.
         :return Values: The raw data of the benchmark results as a Values instance.
         """
-        validate_belongs_to_metric_category(metric, MetricCategory.RAW)
+        validate.belongs_to_metric_category(metric, MetricCategory.RAW)
         return self._iterations[metric]
 
     def results_metric(self, metric: Metric) -> Values:
@@ -235,7 +228,7 @@ class Results:
 
         :return Values: The requested metric values from the benchmark results.
         """
-        validate_metric(metric)
+        validate.metric(metric)
         return self.iterations[metric]
 
     def stats_block(self, metric: Metric, full_data: bool = False) -> StatsBlock:
@@ -246,7 +239,7 @@ class Results:
 
         :return StatsBlock: The StatsBlock representation of the Stats for the given metric.
         """
-        validate_metric(metric)
+        validate.metric(metric)
         stats_instance: Stats = self.stats(metric)
         if full_data:
             return stats_instance.stats_block(full_data=True)
@@ -259,7 +252,7 @@ class Results:
 
         :return ValueBlock: The ValueBlock representation of the sum for the given metric.
         """
-        validate_metric(metric)
+        validate.metric(metric)
         total_sum: float = self.sum(metric)
         return ValueBlock(
             semantic_type=metric.metric_type.semantic_type,
@@ -275,7 +268,7 @@ class Results:
         :param Metric metric: The metric of the results to return. Must be a registered metric.
         :return RawDataBlock: The RawDataBlock representation of the raw data for the given metric.
         """
-        validate_metric(metric)
+        validate.metric(metric)
         raw_data: Values = self.raw(metric)
         return RawDataBlock(
             semantic_type=metric.metric_type.semantic_type,

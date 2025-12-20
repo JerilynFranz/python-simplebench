@@ -6,15 +6,8 @@ from simplebench.report.base import JSONSchema
 from simplebench.report.base import RawDataBlock as RawDataBlockBase
 from simplebench.types import Values
 
+from . import validate
 from .raw_data_block_schema import RawDataBlockSchema
-from .validators import (
-    validate_cpu_timer,
-    validate_data,
-    validate_scale,
-    validate_semantic_type,
-    validate_timer,
-    validate_unit,
-)
 
 
 class RawDataBlock(RawDataBlockBase):
@@ -128,7 +121,7 @@ class RawDataBlock(RawDataBlockBase):
         :raise SimpleBenchTypeError: If type is not a string.
         :raise SimpleBenchValueError: If type is an invalid format.
         """
-        self._semantic_type: str = validate_semantic_type(value)
+        self._semantic_type: str = validate.semantic_type(value)
 
     @property
     def unit(self) -> str:
@@ -147,7 +140,7 @@ class RawDataBlock(RawDataBlockBase):
         :raise SimpleBenchTypeError: If unit is not a string.
         :raise SimpleBenchValueError: If unit is an empty string.
         """
-        self._unit: str = validate_unit(value)
+        self._unit: str = validate.unit(value)
 
     @property
     def scale(self) -> float:
@@ -167,7 +160,7 @@ class RawDataBlock(RawDataBlockBase):
         :raise SimpleBenchTypeError: If scale is not a float.
         :raise SimpleBenchValueError: If scale is not a positive number.
         """
-        self._scale: float = validate_scale(value)
+        self._scale: float = validate.scale(value)
 
     @property
     def cpu_timer(self) -> str | None:
@@ -186,7 +179,7 @@ class RawDataBlock(RawDataBlockBase):
         :raise SimpleBenchTypeError: If cpu_timer is not a string or None.
         :raise SimpleBenchValueError: If cpu_timer is an invalid string.
         """
-        self._cpu_timer: str | None = validate_cpu_timer(value)
+        self._cpu_timer: str | None = validate.cpu_timer(value)
 
     @property
     def timer(self) -> str | None:
@@ -205,7 +198,7 @@ class RawDataBlock(RawDataBlockBase):
         :raise SimpleBenchTypeError: If timer is not a string or None.
         :raise SimpleBenchValueError: If timer is an invalid string.
         """
-        self._timer: str | None = validate_timer(value)
+        self._timer: str | None = validate.timer(value)
 
     @property
     def data(self) -> Values:
@@ -223,4 +216,4 @@ class RawDataBlock(RawDataBlockBase):
         :param values: The data.
         :raise SimpleBenchTypeError: If data is not of type Values.
         """
-        self._data: Values = validate_data(values)
+        self._data: Values = validate.data(values)

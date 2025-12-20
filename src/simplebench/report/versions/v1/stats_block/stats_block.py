@@ -34,23 +34,8 @@ from simplebench.report.base import JSONSchema
 from simplebench.report.base import StatsBlock as BaseStatsBlock
 from simplebench.types.values import Values
 
+from . import validate
 from .stats_block_schema import StatsBlockSchema
-from .validators import (
-    validate_description,
-    validate_iterations,
-    validate_maximum,
-    validate_mean,
-    validate_median,
-    validate_minimum,
-    validate_name,
-    validate_percentiles,
-    validate_relative_standard_deviation,
-    validate_rounds,
-    validate_scale,
-    validate_semantic_type,
-    validate_standard_deviation,
-    validate_unit,
-)
 
 
 class StatsBlock(BaseStatsBlock):
@@ -247,7 +232,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchValueError: If name is an empty string.
         :raise SimpleBenchAttributeError: If name is already set.
         """
-        self._name: str = validate_name(value)
+        self._name: str = validate.name(value)
 
     @property
     def description(self) -> str:
@@ -266,7 +251,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchTypeError: If description is not a string.
         :raise SimpleBenchAttributeError: If description is already set.
         """
-        self._description: str = validate_description(value)
+        self._description: str = validate.description(value)
 
     @property
     def semantic_type(self) -> str:
@@ -309,7 +294,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchValueError: If semantic_type is not a valid namespaced identifier.
         :raise SimpleBenchAttributeError: If semantic_type is already set.
         """
-        self._semantic_type = validate_semantic_type(value)
+        self._semantic_type = validate.semantic_type(value)
 
     @property
     def unit(self) -> str:
@@ -329,7 +314,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchValueError: If unit is an empty string.
         :raise SimpleBenchAttributeError: If unit is already set.
         """
-        self._unit: str = validate_unit(value)
+        self._unit: str = validate.unit(value)
 
     @property
     def scale(self) -> float:
@@ -350,7 +335,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchValueError: If scale is not a positive number.
         :raise SimpleBenchAttributeError: If scale is already set.
         """
-        self._scale: float = validate_scale(value)
+        self._scale: float = validate.scale(value)
 
     @property
     def iterations(self) -> int:
@@ -387,7 +372,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchAttributeError: If iterations is already set.
         """
         self._validate_no_measurements('iterations')
-        self._iterations: int | None = validate_iterations(value)
+        self._iterations: int | None = validate.iterations(value)
 
     @property
     def rounds(self) -> int:
@@ -407,7 +392,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchValueError: If rounds is not a positive integer.
         :raise SimpleBenchAttributeError: If rounds is already set.
         """
-        self._rounds: int = validate_rounds(value)
+        self._rounds: int = validate.rounds(value)
 
     @property
     def mean(self) -> float:
@@ -440,7 +425,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchTypeError: If mean is not a float.
         """
         self._validate_no_measurements('mean')
-        self._mean: float | None = validate_mean(value)
+        self._mean: float | None = validate.mean(value)
 
     @property
     def median(self) -> float:
@@ -473,7 +458,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchTypeError: If median is not a float.
         """
         self._validate_no_measurements('median')
-        self._median: float | None = validate_median(value)
+        self._median: float | None = validate.median(value)
 
     @property
     def minimum(self) -> float:
@@ -506,7 +491,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchAttributeError: If measurements are already set.
         """
         self._validate_no_measurements("minimum")
-        self._minimum: float | None = validate_minimum(value)
+        self._minimum: float | None = validate.minimum(value)
 
     @property
     def maximum(self) -> float:
@@ -539,7 +524,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchAttributeError: If maximum is already set.
         """
         self._validate_no_measurements("maximum")
-        self._maximum: float | None = validate_maximum(value)
+        self._maximum: float | None = validate.maximum(value)
 
     @property
     def standard_deviation(self) -> float:
@@ -579,7 +564,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchAttributeError: If standard_deviation is already set.
         """
         self._validate_no_measurements("standard_deviation")
-        self._standard_deviation: float | None = validate_standard_deviation(value)
+        self._standard_deviation: float | None = validate.standard_deviation(value)
 
     @property
     def relative_standard_deviation(self) -> float:
@@ -625,7 +610,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchAttributeError: If relative_standard_deviation is already set.
         """
         self._validate_no_measurements("relative_standard_deviation")
-        self._relative_standard_deviation: float | None = validate_relative_standard_deviation(value)
+        self._relative_standard_deviation: float | None = validate.relative_standard_deviation(value)
 
     @property
     def percentiles(self) -> Values:
@@ -665,7 +650,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchAttributeError: If percentiles is already set.
         """
         self._validate_no_measurements("percentiles")
-        self._percentiles: Values | None = validate_percentiles(value)
+        self._percentiles: Values | None = validate.percentiles(value)
 
     @property
     def measurements(self) -> Values | None:

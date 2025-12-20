@@ -11,7 +11,7 @@ from simplebench.validators import (
 )
 
 
-def validate_data(value: Values) -> Values:
+def data(value: Values) -> Values:
     """Validate the data.
 
     :param Values value: The data to validate.
@@ -23,7 +23,7 @@ def validate_data(value: Values) -> Values:
         _RawDataBlockErrorTag.INVALID_DATA_TYPE)
 
 
-def validate_scale(value: float) -> float:
+def scale(value: float) -> float:
     """Validate that scale is a positive floating point number (greater than 0).
 
     :param float value: The value to validate.
@@ -37,7 +37,7 @@ def validate_scale(value: float) -> float:
             _RawDataBlockErrorTag.INVALID_SCALE_VALUE)
 
 
-def validate_semantic_type(value: Any) -> str:
+def semantic_type(value: Any) -> str:
     """Validate the semantic_type
 
     The semantic_type must be a valid namespaced identifier.
@@ -53,7 +53,7 @@ def validate_semantic_type(value: Any) -> str:
             _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE)
 
 
-def validate_timer(value: Any) -> str | None:
+def timer(value: Any) -> str | None:
     """Validate the timer.
     :param value: The timer string to validate.
     :return str | None: The validated timer string or None.
@@ -72,7 +72,7 @@ def validate_timer(value: Any) -> str | None:
     return timer_name
 
 
-def validate_cpu_timer(value: Any) -> str | None:
+def cpu_timer(value: Any) -> str | None:
     """Validate the cpu_timer.
     :param value: The cpu timer string to validate.
     :return str | None: The validated cpu timer string or None.
@@ -91,7 +91,7 @@ def validate_cpu_timer(value: Any) -> str | None:
     return timer_name
 
 
-def validate_unit(value: str) -> str:
+def unit(value: str) -> str:
     """Validates that unit is a non-blank string.
 
     :param str value: The value to validate.

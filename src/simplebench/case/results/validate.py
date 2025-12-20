@@ -12,7 +12,7 @@ from simplebench.validators import validate_type
 from ._error_tags import _ResultsErrorTag
 
 
-def validate_metric(value: Metric) -> Metric:
+def metric(value: Metric) -> Metric:
     """Validates an argument to ensure it is of type Metric.
 
     :param Metric value: The metric to validate.
@@ -25,7 +25,7 @@ def validate_metric(value: Metric) -> Metric:
     return value
 
 
-def validate_belongs_to_metric_category(value: Metric, metric_category: MetricCategory) -> Metric:
+def belongs_to_metric_category(value: Metric, metric_category: MetricCategory) -> Metric:
     """Validates that a Metric belongs to a specific MetricCategory.
 
     :param Metric value: The metric to validate.
@@ -35,7 +35,7 @@ def validate_belongs_to_metric_category(value: Metric, metric_category: MetricCa
         type MetricCategory.
     :raises SimpleBenchValueError: If the metric does not belong to the specified metric_category.
     """
-    validate_metric(value)
+    metric(value)
     validate_type(
         metric_category, MetricCategory, 'metric_category',
         _ResultsErrorTag.INVALID_METRIC_CATEGORY_ARG_TYPE)
@@ -47,7 +47,7 @@ def validate_belongs_to_metric_category(value: Metric, metric_category: MetricCa
     return value
 
 
-def validate_variation_cols(value: dict[str, str] | None) -> MappingProxyType[str, str]:
+def variation_cols(value: dict[str, str] | None) -> MappingProxyType[str, str]:
     """Validate the variation_cols dictionary.
 
     :param dict[str, str] | None value: The variation_cols dictionary to validate.
@@ -84,28 +84,28 @@ def validate_variation_cols(value: dict[str, str] | None) -> MappingProxyType[st
     return MappingProxyType(copy(value))
 
 
-def validate_iterations(iterations: Mapping[Metric, Values]) -> MappingProxyType[Metric, Values]:
+def iterations(iterations_value: Mapping[Metric, Values]) -> MappingProxyType[Metric, Values]:
     """Validate the iterations Mapping.
 
-    :param Mapping[Metric, Values] iterations: The iterations Mapping to validate.
+    :param Mapping[Metric, Values] iterations_value: The iterations Mapping to validate.
     :returns MappingProxyType[Metric, Values]: A mapping proxy of the validated iterations.
     :raises SimpleBenchTypeError: If the iterations is not a Mapping or if any key is not of type Metric
         or any value is not of type Values.
     """
-    if not isinstance(iterations, Mapping):
+    if not isinstance(iterations_value, Mapping):
         raise SimpleBenchTypeError(
-            f'Invalid iterations type: {type(iterations)}. Must be of type Mapping[Metric, Values].',
+            f'Invalid iterations type: {type(iterations_value)}. Must be of type Mapping[Metric, Values].',
             tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE
         )
-    if not all(isinstance(key, Metric) and isinstance(value, Values) for key, value in iterations.items()):
+    if not all(isinstance(key, Metric) and isinstance(value, Values) for key, value in iterations_value.items()):
         raise SimpleBenchTypeError(
             'Invalid iterations mapping. All keys must be of type Metric and all values must be of type Values.',
             tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE
         )
-    return MappingProxyType(iterations)
+    return MappingProxyType(iterations_value)
 
 
-def validate_marks(value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tuple[str, ...]]:
+def marks(value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tuple[str, ...]]:
     """Validate the marks dictionary.
 
     Performs shallow copy of the dictionary to prevent external mutation.
@@ -151,7 +151,7 @@ def validate_marks(value: dict[str, tuple[str, ...]] | None) -> MappingProxyType
     return MappingProxyType(return_value)
 
 
-def validate_extra_info(value: dict[str, Any] | None) -> MappingProxyType[str, Any]:
+def extra_info(value: dict[str, Any] | None) -> MappingProxyType[str, Any]:
     """Validate the extra_info object if passed, or create a default one if None.
 
     Performs deep copy of the dictionary to help mitigate external mutation. This means
