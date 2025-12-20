@@ -1,7 +1,6 @@
 """Class for JSON raw data block representation."""
 from typing import Any
 
-from simplebench.decorators import immutable
 from simplebench.report.base import JSONSchema
 from simplebench.report.base import RawDataBlock as RawDataBlockBase
 from simplebench.types import Values
@@ -54,12 +53,12 @@ class RawDataBlock(RawDataBlockBase):
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
-        self.semantic_type = semantic_type
-        self.timer = timer
-        self.cpu_timer = cpu_timer
-        self.unit = unit
-        self.scale = scale
-        self.data = data
+        self._semantic_type = validate.semantic_type(semantic_type)
+        self._timer = validate.timer(timer)
+        self._cpu_timer = validate.cpu_timer(cpu_timer)
+        self._unit = validate.unit(unit)
+        self._scale = validate.scale(scale)
+        self._data = validate.data(data)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "RawDataBlock":
@@ -112,17 +111,6 @@ class RawDataBlock(RawDataBlockBase):
         """
         return self._semantic_type
 
-    @semantic_type.setter
-    @immutable
-    def semantic_type(self, value: str) -> None:
-        """Set the semantic type value.
-
-        :param str value: The semantic type value.
-        :raise SimpleBenchTypeError: If type is not a string.
-        :raise SimpleBenchValueError: If type is an invalid format.
-        """
-        self._semantic_type: str = validate.semantic_type(value)
-
     @property
     def unit(self) -> str:
         """Get the unit of measurement.
@@ -130,17 +118,6 @@ class RawDataBlock(RawDataBlockBase):
         :return: The unit of measurement.
         """
         return self._unit
-
-    @unit.setter
-    @immutable
-    def unit(self, value: str) -> None:
-        """Set the unit of measurement.
-
-        :param value: The unit of measurement.
-        :raise SimpleBenchTypeError: If unit is not a string.
-        :raise SimpleBenchValueError: If unit is an empty string.
-        """
-        self._unit: str = validate.unit(value)
 
     @property
     def scale(self) -> float:
@@ -151,17 +128,6 @@ class RawDataBlock(RawDataBlockBase):
         """
         return self._scale
 
-    @scale.setter
-    @immutable
-    def scale(self, value: float) -> None:
-        """Set the scale factor.
-
-        :param value: The scale factor.
-        :raise SimpleBenchTypeError: If scale is not a float.
-        :raise SimpleBenchValueError: If scale is not a positive number.
-        """
-        self._scale: float = validate.scale(value)
-
     @property
     def cpu_timer(self) -> str | None:
         """Get the CPU timer.
@@ -169,17 +135,6 @@ class RawDataBlock(RawDataBlockBase):
         :return str | None: The CPU timer.
         """
         return self._cpu_timer
-
-    @cpu_timer.setter
-    @immutable
-    def cpu_timer(self, value: str | None) -> None:
-        """Set the CPU timer.
-
-        :param value: The CPU timer.
-        :raise SimpleBenchTypeError: If cpu_timer is not a string or None.
-        :raise SimpleBenchValueError: If cpu_timer is an invalid string.
-        """
-        self._cpu_timer: str | None = validate.cpu_timer(value)
 
     @property
     def timer(self) -> str | None:
@@ -189,17 +144,6 @@ class RawDataBlock(RawDataBlockBase):
         """
         return self._timer
 
-    @timer.setter
-    @immutable
-    def timer(self, value: str | None) -> None:
-        """Set the timer.
-
-        :param value: The timer.
-        :raise SimpleBenchTypeError: If timer is not a string or None.
-        :raise SimpleBenchValueError: If timer is an invalid string.
-        """
-        self._timer: str | None = validate.timer(value)
-
     @property
     def data(self) -> Values:
         """Get the data.
@@ -208,12 +152,45 @@ class RawDataBlock(RawDataBlockBase):
         """
         return self._data
 
-    @data.setter
-    @immutable
-    def data(self, values: Values) -> None:
-        """Set the data.
+    def __repr__(self) -> str:
+        """Get the string representation of the RawDataBlock instance.
 
-        :param values: The data.
-        :raise SimpleBenchTypeError: If data is not of type Values.
+        :return: String representation of the RawDataBlock instance.
         """
-        self._data: Values = validate.data(values)
+        return (
+            f"RawDataBlock(semantic_type={self.semantic_type!r}, "
+            f"timer={self.timer!r}, cpu_timer={self.cpu_timer!r}, "
+            f"unit={self.unit!r}, scale={self.scale!r}, "
+            f"data={self.data!r})"
+        )
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two RawDataBlock instances.
+
+        :param other: The other object to compare with.
+        :return: True if both instances are equal, False otherwise.
+        """
+        if not isinstance(other, RawDataBlock):
+            return NotImplemented
+
+        return (
+            self.semantic_type == other.semantic_type and
+            self.timer == other.timer and
+            self.cpu_timer == other.cpu_timer and
+            self.unit == other.unit and
+            self.scale == other.scale and
+            self.data == other.data
+        )
+
+    def __hash__(self) -> int:
+        """Get the hash of the RawDataBlock instance.
+
+        :return: Hash of the RawDataBlock instance.
+        """
+        return hash((
+            self.semantic_type,
+            self.timer,
+            self.cpu_timer,
+            self.unit,
+            self.scale,
+            self.data))

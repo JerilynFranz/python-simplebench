@@ -25,10 +25,10 @@ The created instance and all values available via properties are immutable once 
 """
 import statistics
 from math import sqrt
-from typing import Any, Sequence
+from typing import Any, Sequence, overload
 
 from simplebench.decorators import immutable
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.report.base import JSONSchema
 from simplebench.report.base import StatsBlock as BaseStatsBlock
@@ -61,7 +61,7 @@ class StatsBlock(BaseStatsBlock):
     :param standard_deviation: The standard deviation of the stats block.
     :param relative_standard_deviation: The relative standard deviation of the stats block.
     :param percentiles: The list of percentiles for the stats block as a `Values` instance.
-    :param measurements: The list of raw measurements for the stats block as a `Values` instance.
+    :param measurements: A list of raw measurements for initializing the stats block as a `Values` instance.
     :raise SimpleBenchTypeError: If any parameter is of an invalid type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
@@ -76,6 +76,36 @@ class StatsBlock(BaseStatsBlock):
 
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
+
+    # These are the public properties that define the object's state for comparison and hashing.
+    # This avoids comparing internal-only or cached attributes like _measurements or _hash_cache.
+    _COMPARISON_ATTRIBUTES = (
+        "name",
+        "description",
+        "semantic_type",
+        "unit",
+        "scale",
+        "iterations",
+        "rounds",
+        "mean",
+        "median",
+        "minimum",
+        "maximum",
+        "standard_deviation",
+        "relative_standard_deviation",
+        "percentiles",
+    )
+
+    _DERIVABLE_PROPERTIES = (
+        "iterations",
+        "mean",
+        "median",
+        "minimum",
+        "maximum",
+        "standard_deviation",
+        "relative_standard_deviation",
+        "percentiles",
+    )
 
     __slots__ = (
         "_name",
@@ -93,7 +123,37 @@ class StatsBlock(BaseStatsBlock):
         "_relative_standard_deviation",
         "_percentiles",
         "_measurements",
+        "_hash_cache",
     )
+
+    @overload
+    def __init__(self, *,
+                 name: str,
+                 description: str,
+                 semantic_type: str,
+                 unit: str,
+                 scale: float,
+                 rounds: int,
+                 measurements: Sequence[float] | Values) -> None:
+        """Initialize a StatsBlock by calculating statistics from raw measurements."""
+
+    @overload
+    def __init__(self, *,
+                 name: str,
+                 description: str,
+                 semantic_type: str,
+                 unit: str,
+                 scale: float,
+                 iterations: int,
+                 rounds: int,
+                 mean: float,
+                 median: float,
+                 minimum: float,
+                 maximum: float,
+                 standard_deviation: float,
+                 relative_standard_deviation: float,
+                 percentiles: Sequence[float]) -> None:
+        """Initialize a StatsBlock with pre-calculated statistical values."""
 
     def __init__(self, *,
                  name: str,
@@ -153,7 +213,12 @@ class StatsBlock(BaseStatsBlock):
         # measurements are blocked from being set directly as they can be inferred as needed.
         # This prevents setting properties that can be derived from measurements
         # and possibly causing inconsistencies.
-        self.measurements = measurements
+        self._measurements: Values | None = validate.measurements(measurements)
+        """The raw measurements for the stats block as a Values instance or None.
+
+        It is a private attribute and should not be accessed directly. It is not
+        included in the exported dictionary representation of the StatsBlock or
+        considered part of the object's identity for equality or hashing."""
 
         self.name = name
         self.description = description
@@ -169,6 +234,8 @@ class StatsBlock(BaseStatsBlock):
         self.standard_deviation = standard_deviation
         self.relative_standard_deviation = relative_standard_deviation
         self.percentiles = percentiles
+        self._hash_cache: int | None = None
+        self._validate_stats_block_consistency()
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "StatsBlock":
@@ -350,11 +417,11 @@ class StatsBlock(BaseStatsBlock):
             `measurements` are not available either.
         """
         if self._iterations is None:
-            if self.measurements is None:
+            if self._measurements is None:
                 raise SimpleBenchValueError(
                     "Cannot calculate iterations without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._iterations = len(self.measurements)
+            self._iterations = len(self._measurements)
         return self._iterations
 
     @iterations.setter
@@ -404,11 +471,11 @@ class StatsBlock(BaseStatsBlock):
         :return float: The mean value.
         """
         if self._mean is None:
-            if self.measurements is None:
+            if self._measurements is None:
                 raise SimpleBenchValueError(
                     "Cannot calculate mean without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._mean = statistics.mean(self.measurements)
+            self._mean = statistics.mean(self._measurements)
         return self._mean
 
     @mean.setter
@@ -437,11 +504,11 @@ class StatsBlock(BaseStatsBlock):
         :return float: The median value.
         """
         if self._median is None:
-            if self.measurements is None:
+            if self._measurements is None:
                 raise SimpleBenchValueError(
                     "Cannot calculate median without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._median = statistics.median(self.measurements)
+            self._median = statistics.median(self._measurements)
         return self._median
 
     @median.setter
@@ -470,11 +537,11 @@ class StatsBlock(BaseStatsBlock):
         :return: The minimum value.
         """
         if self._minimum is None:
-            if self.measurements is None:
+            if self._measurements is None:
                 raise SimpleBenchValueError(
                     "Cannot calculate minimum without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._minimum = float(min(self.measurements))
+            self._minimum = float(min(self._measurements))
         return self._minimum
 
     @minimum.setter
@@ -503,11 +570,11 @@ class StatsBlock(BaseStatsBlock):
         :return: The maximum value.
         """
         if self._maximum is None:
-            if self.measurements is None:
+            if self._measurements is None:
                 raise SimpleBenchValueError(
                     "Cannot calculate maximum without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._maximum = float(max(self.measurements))
+            self._maximum = float(max(self._measurements))
         return self._maximum
 
     @maximum.setter
@@ -536,13 +603,13 @@ class StatsBlock(BaseStatsBlock):
         :return: The standard deviation.
         """
         if self._standard_deviation is None:
-            if self.measurements is None:
+            if self._measurements is None:
                 raise SimpleBenchValueError(
                     "Cannot calculate standard deviation without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            if len(self.measurements) > 1:
+            if len(self._measurements) > 1:
                 self._standard_deviation = float(
-                    statistics.stdev(self.measurements) * sqrt(self.rounds))
+                    statistics.stdev(self._measurements) * sqrt(self.rounds))
             else:
                 self._standard_deviation = 0.0
 
@@ -588,7 +655,7 @@ class StatsBlock(BaseStatsBlock):
         :return: The relative standard deviation.
         """
         if self._relative_standard_deviation is None:
-            if self.measurements is None:
+            if self._measurements is None:
                 raise SimpleBenchValueError(
                     "Cannot calculate relative standard deviation without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
@@ -627,7 +694,7 @@ class StatsBlock(BaseStatsBlock):
 
         """
         if self._percentiles is None:
-            if self.measurements is None:
+            if self._measurements is None:
                 raise SimpleBenchValueError(
                     "Cannot calculate percentiles without measurements",
                     tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
@@ -652,65 +719,13 @@ class StatsBlock(BaseStatsBlock):
         self._validate_no_measurements("percentiles")
         self._percentiles: Values | None = validate.percentiles(value)
 
-    @property
-    def measurements(self) -> Values | None:
-        """Get the Values instance containing the raw measurements.
-
-        :return Values | None: The Values instance containing the raw measurements, or None if not set.
-        """
-        return self._measurements
-
-    @measurements.setter
-    @immutable
-    def measurements(self, value: Sequence[float] | Values | None) -> None:
-        """Set the values of raw measurements.
-
-        The measurements can be provided as a Sequence of float values or as a
-        Values instance and are stored as a Values instance.
-
-        .. warning:: At least 3 measurements are required
-
-            If fewer than 3 measurements are provided a SimpleBenchValueError
-            will be raised.
-
-        :param value: A Sequence of raw float measurements or a Values instance.
-        :raise SimpleBenchTypeError: If measurements is not a Sequence of float, a Values instance, or None.
-        :raise SimpleBenchValueError: If the Sequence or Values instance contains fewer than 3 values.
-        :raise SimpleBenchValueError: If attempting to set measurements after they have already been set.
-        """
-        self._measurements: Values | None = None
-
-        if value is None:
-            return
-
-        if not isinstance(value, (Sequence, Values)):
-            raise SimpleBenchTypeError(
-                f"measurements must be a Sequence of float, a Values instance, or None, got {type(value)}",
-                tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_TYPE)
-        if len(value) < 3:
-            raise SimpleBenchValueError(
-                "measurements must contain at least 3 values or statistics cannot be computed",
-                tag=_StatsBlockErrorTag.TOO_FEW_MEASUREMENTS)
-
-        # Values instances don't need further validation because they are already validated
-        if isinstance(value, Values):
-            self._measurements = value
-            return
-
-        # This check only runs if value is a Sequence (not a Values instance)
-        if not all(isinstance(v, float) for v in value):
-            raise SimpleBenchValueError(
-                "All items in measurements must be of type float",
-                tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_CONTENT_TYPE)
-        self._measurements = Values(value)
-
     def _validate_no_measurements(self, name: str) -> None:
         """Raises an exception if the measurements value is not None.
 
         :param name: The name of the value being set.
         :raises SimpleBenchValueError: If measurements are already set.
         """
-        if self.measurements is not None:
+        if self._measurements is not None:
             raise SimpleBenchValueError(
                 f"Cannot set {name} when measurements are already set",
                 tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
@@ -731,7 +746,7 @@ class StatsBlock(BaseStatsBlock):
         Returns:
             A Values instance containing the percentiles from 0 to 100.
         """
-        data = self.measurements
+        data = self._measurements
         if data is None:
             raise SimpleBenchValueError(
                 "Cannot calculate percentiles because measurements are not set",
@@ -741,3 +756,73 @@ class StatsBlock(BaseStatsBlock):
             return Values([data_value] * 101)
         quantile_values = statistics.quantiles(data, n=102, method='inclusive')
         return Values(quantile_values)
+
+    def _validate_stats_block_consistency(self) -> None:
+        """Validate the consistency of the StatsBlock instance.
+
+        This method checks that if measurements are NOT provided,
+        then all statistical properties that could otherwise be derived
+        from them have been explicitly set.
+
+        :raise SimpleBenchValueError: If measurements are NOT provided
+            and any of the derivable statistical properties were not set.
+        """
+        if self._measurements is not None:
+            return
+
+        # If no measurements, all derivable properties must have been set.
+        unset_properties: list[str] = []
+        for attr in self._DERIVABLE_PROPERTIES:
+            backing_attr = f"_{attr}"
+            if getattr(self, backing_attr, None) is None:
+                unset_properties.append(attr)
+
+        if unset_properties:
+            raise SimpleBenchValueError(
+                "Either the 'measurements' argument must be provided, or all of the following arguments must be set: "
+                f"{', '.join(unset_properties)}",
+                tag=_StatsBlockErrorTag.INVALID_STATS_BLOCK_ARGUMENTS)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two StatsBlock instances.
+
+        .. note::
+            Triggers the lazy eval properties to be evaluated if they have not been already.
+            This ensures that comparisons are made based on the actual values of the properties.
+
+            This can be expensive the first time it is called if many properties
+            need to be calculated from many measurements.
+
+            This is unavoidable since equality must reflect the actual state of the object.
+
+        :param other: The other StatsBlock instance to compare with.
+        :return bool: True if the two StatsBlock instances are equal, False otherwise.
+        """
+        if not isinstance(other, StatsBlock):
+            return NotImplemented
+
+        # Use all() with a generator for an efficient, short-circuiting comparison
+        # of the public properties that define the object's state.
+        return all(getattr(self, attr) == getattr(other, attr) for attr in self._COMPARISON_ATTRIBUTES)
+
+    def __hash__(self) -> int:
+        """Compute the hash of the StatsBlock instance.
+
+        The hash is computed from the public properties that define the object's state
+        and is cached for performance.
+
+        .. note::
+            Triggers the lazy eval properties to be evaluated if they have not been already.
+            This ensures that the hash is based on the actual values of the properties.
+
+            This can be expensive the first time it is called if many properties
+            need to be calculated from many measurements. This is unavoidable
+            since the hash must reflect the actual state of the object.
+
+        :return int: The hash value of the StatsBlock instance.
+        """
+        if self._hash_cache is None:
+            # Build a tuple of all state-defining public properties and hash it.
+            state = tuple(getattr(self, attr) for attr in self._COMPARISON_ATTRIBUTES)
+            self._hash_cache = hash(state)   # pylint: disable=attribute-defined-outside-init
+        return self._hash_cache

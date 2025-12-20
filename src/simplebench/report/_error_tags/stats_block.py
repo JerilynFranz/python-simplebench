@@ -6,6 +6,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _StatsBlockErrorTag(ErrorTag):
     """Error tags for JSON stats summary exceptions."""
+    INVALID_STATS_BLOCK_ARGUMENTS = "INVALID_STATS_BLOCK_ARGUMENTS"
+    """The arguments provided to StatsBlock are invalid."""
     INVALID_PERCENTILES_ORDER = "INVALID_PERCENTILES_ORDER"
     """The percentiles are not sorted in ascending order."""
     INVALID_MEASUREMENTS_STATE = "INVALID_MEASUREMENTS_STATE"

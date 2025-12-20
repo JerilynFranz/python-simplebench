@@ -1,12 +1,13 @@
 """Base class for JSON value block representation."""
 from abc import ABC, abstractmethod
+from collections.abc import Hashable
 
 from simplebench.base import Hydrator
 
 from .json_schema import JSONSchema
 
 
-class RawDataBlock(Hydrator, ABC):
+class RawDataBlock(Hydrator, Hashable, ABC):
     """Base class representing a raw data block."""
 
     VERSION: int = 0

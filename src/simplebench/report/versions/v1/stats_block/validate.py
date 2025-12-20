@@ -1,7 +1,7 @@
 """Validation functions for V1 StatsBlock properties."""
 from typing import Sequence
 
-from simplebench.exceptions import SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.types import Values
 from simplebench.validators import (
@@ -87,6 +87,35 @@ def maximum(value: float | None) -> float | None:
     return validate_float(
                 value, 'maximum',
                 _StatsBlockErrorTag.INVALID_MAXIMUM_TYPE)
+
+
+def measurements(value: Sequence[float] | Values | None) -> Values | None:
+    """Validates that measurements is a None, or a Values instance, or sequence of floats.
+
+    :param Sequence[float] | Values | None value: The value to validate.
+    :return Values | None: None, or a validated Values object containing floats.
+    :raise SimpleBenchTypeError: If the value is not None or a sequence of floats.
+    :raise SimpleBenchValueError: If the value is a sequence with fewer than 3 items.
+    """
+    if not isinstance(value, (Sequence, Values)):
+        raise SimpleBenchTypeError(
+            f"measurements must be a Sequence of float, a Values instance, or None, got {type(value)}",
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_TYPE)
+    if len(value) < 3:
+        raise SimpleBenchValueError(
+            "measurements must contain at least 3 values or statistics cannot be computed",
+            tag=_StatsBlockErrorTag.TOO_FEW_MEASUREMENTS)
+
+    # Values instances don't need further validation because they are already validated
+    if isinstance(value, Values):
+        return value
+
+    # This check only runs if value is a Sequence (not a Values instance)
+    if not all(isinstance(v, float) for v in value):
+        raise SimpleBenchTypeError(
+            "All items in measurements must be of type float",
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_CONTENT_TYPE)
+    return Values(value)
 
 
 def name(value: str) -> str:
